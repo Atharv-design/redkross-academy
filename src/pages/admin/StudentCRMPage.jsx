@@ -135,7 +135,7 @@ export default function StudentCRMPage() {
                     </div>
                   </div>
 
-                  <div className="text-right flex-shrink-0 text-xs font-mono text-[#F59E0B] font-bold">
+                  <div className="text-right flex-shrink-0 text-xs font-mono text-[#65F58A] font-bold">
                     {student.token_balance || 100} T
                   </div>
                 </button>
@@ -180,7 +180,7 @@ export default function StudentCRMPage() {
                 </div>
                 <div className="p-3.5 rounded-xl bg-[#071018] border border-[#263440] space-y-1">
                   <div className="text-[10px] font-mono text-[#94A3B8] uppercase">Active Streak</div>
-                  <div className="text-lg font-bold text-[#F59E0B] font-mono">{selectedStudent.streak_days || 1} Days</div>
+                  <div className="text-lg font-bold text-[#65F58A] font-mono">{selectedStudent.streak_days || 1} Days</div>
                 </div>
               </div>
 

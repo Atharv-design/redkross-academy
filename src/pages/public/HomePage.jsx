@@ -89,7 +89,7 @@ export default function HomePage() {
                 <div className="text-[11px] text-[#94A3B8] font-mono mt-1">Audit Verification</div>
               </div>
               <div className="p-4 glass-card rounded-xl text-center">
-                <div className="text-2xl sm:text-3xl font-bold text-[#F59E0B] font-mono tabular-nums">500 T</div>
+                <div className="text-2xl sm:text-3xl font-bold text-[#65F58A] font-mono tabular-nums">500 T</div>
                 <div className="text-[11px] text-[#94A3B8] font-mono mt-1">Token Bounties</div>
               </div>
             </div>
@@ -263,7 +263,7 @@ export default function HomePage() {
             </div>
 
             <div className="glass-card rounded-2xl p-6 sm:p-7 space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B]">
+              <div className="w-10 h-10 rounded-xl bg-[#35E6B5]/10 border border-[#35E6B5]/30 flex items-center justify-center text-[#65F58A]">
                 <Clock className="w-5 h-5" />
               </div>
               <h3 className="font-royal text-base font-bold text-white">24-Hour Mandatory Retake Lockout</h3>

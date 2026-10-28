@@ -24,19 +24,20 @@ body {
   color: #F1F5F9;
   overflow-x: hidden;
   background-image: 
-    radial-gradient(circle at 18% 15%, rgba(101, 245, 138, 0.035) 0%, transparent 48%),
-    radial-gradient(circle at 82% 80%, rgba(245, 158, 11, 0.03) 0%, transparent 52%);
+    radial-gradient(circle at 18% 15%, rgba(101, 245, 138, 0.05) 0%, transparent 52%),
+    radial-gradient(circle at 82% 80%, rgba(53, 230, 181, 0.04) 0%, transparent 55%),
+    radial-gradient(circle at 50% 50%, rgba(0, 255, 163, 0.025) 0%, transparent 60%);
   background-attachment: fixed;
 }
 
 /* Glassmorphism System for RedKross Academy */
 @layer components {
   .glass-card {
-    background: rgba(16, 25, 35, 0.68);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(38, 52, 64, 0.75);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+    background: rgba(16, 25, 35, 0.72);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(38, 52, 64, 0.85);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
   }
 
   .glass-card-hover {
@@ -44,35 +45,47 @@ body {
   }
 
   .glass-card-hover:hover {
-    background: rgba(27, 37, 48, 0.85);
+    background: rgba(27, 37, 48, 0.88);
     border-color: rgba(101, 245, 138, 0.45);
-    box-shadow: 0 16px 40px 0 rgba(0, 255, 163, 0.12);
+    box-shadow: 0 16px 40px 0 rgba(0, 255, 163, 0.15);
     transform: translateY(-2px);
   }
 
+  .glass-card-mint-hover {
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .glass-card-mint-hover:hover {
+    background: rgba(27, 37, 48, 0.88);
+    border-color: rgba(53, 230, 181, 0.5);
+    box-shadow: 0 16px 40px 0 rgba(53, 230, 181, 0.15);
+    transform: translateY(-2px);
+  }
+
+  /* Backward compatibility for amber-hover mapped to mint */
   .glass-card-amber-hover {
     transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .glass-card-amber-hover:hover {
-    background: rgba(27, 37, 48, 0.85);
-    border-color: rgba(245, 158, 11, 0.5);
-    box-shadow: 0 16px 40px 0 rgba(245, 158, 11, 0.14);
+    background: rgba(27, 37, 48, 0.88);
+    border-color: rgba(53, 230, 181, 0.5);
+    box-shadow: 0 16px 40px 0 rgba(0, 255, 163, 0.15);
     transform: translateY(-2px);
   }
 
   .glass-panel {
-    background: rgba(11, 18, 27, 0.78);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(38, 52, 64, 0.7);
+    background: rgba(11, 18, 27, 0.82);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(38, 52, 64, 0.75);
   }
 
   .glass-nav {
-    background: rgba(11, 18, 27, 0.88);
+    background: rgba(11, 18, 27, 0.90);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
-    border-bottom: 1px solid rgba(38, 52, 64, 0.7);
+    border-bottom: 1px solid rgba(38, 52, 64, 0.75);
   }
 
   .glass-pill {
@@ -83,12 +96,12 @@ body {
     color: #65F58A;
   }
 
-  .glass-pill-amber {
-    background: rgba(245, 158, 11, 0.08);
+  .glass-pill-amber, .glass-pill-mint {
+    background: rgba(53, 230, 181, 0.08);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(245, 158, 11, 0.32);
-    color: #F59E0B;
+    border: 1px solid rgba(53, 230, 181, 0.32);
+    color: #35E6B5;
   }
 
   .glass-button-primary {
@@ -130,11 +143,11 @@ body {
     filter: drop-shadow(0 2px 14px rgba(101, 245, 138, 0.25));
   }
 
-  .title-shading-amber {
-    background: linear-gradient(180deg, #FFFFFF 0%, #FEF3C7 55%, #F59E0B 100%);
+  .title-shading-amber, .title-shading-mint {
+    background: linear-gradient(180deg, #FFFFFF 0%, #D1FAE5 55%, #35E6B5 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 2px 14px rgba(245, 158, 11, 0.25));
+    filter: drop-shadow(0 2px 14px rgba(53, 230, 181, 0.25));
   }
 
   .title-shading-white {

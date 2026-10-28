@@ -83,26 +83,26 @@ export default function Footer() {
                 href={ecosystem.cybersecurity}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between text-xs text-gray-300 hover:border-cyan-400/40 hover:bg-white/10 transition-all group"
+                className="p-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between text-xs text-gray-300 hover:border-[#35E6B5]/40 hover:bg-white/10 transition-all group"
               >
                 <div>
                   <span className="text-[10px] text-gray-500 font-mono block">CYBERSECURITY PLATFORM</span>
-                  <span className="font-semibold text-white group-hover:text-cyan-400">cybersecurity.redkross.org.in</span>
+                  <span className="font-semibold text-white group-hover:text-[#35E6B5]">cybersecurity.redkross.org.in</span>
                 </div>
-                <ArrowUpRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-cyan-400" />
+                <ArrowUpRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-[#35E6B5]" />
               </a>
 
               <a 
                 href={ecosystem.psychology}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between text-xs text-gray-300 hover:border-[#FFA439]/40 hover:bg-white/10 transition-all group"
+                className="p-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between text-xs text-gray-300 hover:border-[#65F58A]/40 hover:bg-white/10 transition-all group"
               >
                 <div>
                   <span className="text-[10px] text-gray-500 font-mono block">PSYCHOLOGY & WELLBEING</span>
-                  <span className="font-semibold text-white group-hover:text-[#FFA439]">psychology.redkross.org.in</span>
+                  <span className="font-semibold text-white group-hover:text-[#65F58A]">psychology.redkross.org.in</span>
                 </div>
-                <ArrowUpRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-[#FFA439]" />
+                <ArrowUpRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-[#65F58A]" />
               </a>
             </div>
           </div>

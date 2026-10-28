@@ -195,7 +195,7 @@ export default function DictoCyberCard({
   // Theme styling for pill badges
   const getPillTheme = () => {
     if (tpl.theme === 'amber') {
-      return 'border-[#F59E0B]/40 text-[#FBBF24] bg-[#F59E0B]/10';
+      return 'border-[#35E6B5]/40 text-[#00FFA3] bg-[#35E6B5]/10';
     }
     if (tpl.theme === 'crimson') {
       return 'border-[#EF4444]/40 text-[#F87171] bg-[#EF4444]/15';
@@ -205,7 +205,7 @@ export default function DictoCyberCard({
 
   const getArrowBtnTheme = () => {
     if (tpl.theme === 'amber') {
-      return 'border-[#F59E0B]/60 text-[#FBBF24] hover:bg-[#FBBF24] hover:text-black shadow-[0_0_15px_rgba(245,158,11,0.35)]';
+      return 'border-[#35E6B5]/60 text-[#00FFA3] hover:bg-[#00FFA3] hover:text-black shadow-[0_0_15px_rgba(53,230,181,0.35)]';
     }
     if (tpl.theme === 'crimson') {
       return 'border-[#EF4444]/60 text-[#F87171] hover:bg-[#EF4444] hover:text-white shadow-[0_0_15px_rgba(239,68,68,0.35)]';
@@ -270,10 +270,10 @@ export default function DictoCyberCard({
           <Link
             to={actionHref}
             onClick={onClick}
-            className="w-full h-10 rounded-full bg-[#F59E0B]/20 hover:bg-[#F59E0B] text-[#FBBF24] hover:text-black border border-[#F59E0B]/50 font-royal font-bold text-[11px] sm:text-xs uppercase tracking-wider transition-all flex items-center justify-between px-4 group/btn shadow-[0_0_20px_rgba(245,158,11,0.25)]"
+            className="w-full h-10 rounded-full bg-[#35E6B5]/20 hover:bg-[#35E6B5] text-[#00FFA3] hover:text-black border border-[#35E6B5]/50 font-royal font-bold text-[11px] sm:text-xs uppercase tracking-wider transition-all flex items-center justify-between px-4 group/btn shadow-[0_0_20px_rgba(0,255,163,0.25)]"
           >
             <span>{actionText || 'Inspect Track Syllabus'}</span>
-            <div className="w-6 h-6 rounded-full bg-[#101923] text-[#FBBF24] group-hover/btn:bg-black group-hover/btn:text-[#FBBF24] flex items-center justify-center transition-colors">
+            <div className="w-6 h-6 rounded-full bg-[#101923] text-[#00FFA3] group-hover/btn:bg-black group-hover/btn:text-[#00FFA3] flex items-center justify-center transition-colors">
               <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
             </div>
           </Link>
@@ -327,15 +327,15 @@ export default function DictoCyberCard({
               {v === 6 && (
                 <>
                   <span className="flex items-center gap-1">
-                    <Users className="w-3.5 h-3.5 text-[#F59E0B]" />
+                    <Users className="w-3.5 h-3.5 text-[#35E6B5]" />
                     <span>{m1}</span>
                   </span>
                   <span className="flex items-center gap-1">
-                    <Clock className="w-3.5 h-3.5 text-[#FBBF24]" />
+                    <Clock className="w-3.5 h-3.5 text-[#00FFA3]" />
                     <span>{m2}</span>
                   </span>
                   <span className="hidden md:flex items-center gap-1">
-                    <Award className="w-3.5 h-3.5 text-[#F59E0B]" />
+                    <Award className="w-3.5 h-3.5 text-[#35E6B5]" />
                     <span>{m3}</span>
                   </span>
                 </>
@@ -344,11 +344,11 @@ export default function DictoCyberCard({
               {v === 8 && (
                 <>
                   <span className="flex items-center gap-1">
-                    <Box className="w-3 h-3 text-[#F59E0B]" />
+                    <Box className="w-3 h-3 text-[#35E6B5]" />
                     <span>{m1}</span>
                   </span>
                   <span className="flex items-center gap-1">
-                    <GitBranch className="w-3 h-3 text-[#FBBF24]" />
+                    <GitBranch className="w-3 h-3 text-[#00FFA3]" />
                     <span>{m2}</span>
                   </span>
                 </>
@@ -361,7 +361,7 @@ export default function DictoCyberCard({
                     {Array.from({ length: sockets }).map((_, idx) => (
                       <span
                         key={idx}
-                        className="w-3.5 h-3.5 rounded-full bg-[#1B2530] border border-[#F59E0B]/50 flex items-center justify-center text-[8px] text-[#FBBF24] font-mono"
+                        className="w-3.5 h-3.5 rounded-full bg-[#1B2530] border border-[#35E6B5]/50 flex items-center justify-center text-[8px] text-[#00FFA3] font-mono"
                       >
                         ●
                       </span>

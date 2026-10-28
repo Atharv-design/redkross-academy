@@ -281,7 +281,7 @@ export default function CourseDetailPage() {
                 </div>
                 <div className="flex justify-between text-[#94A3B8]">
                   <span>Token Bounty</span>
-                  <span className="text-[#F59E0B] font-bold">+{course.total_tokens_reward} Tokens</span>
+                  <span className="text-[#65F58A] font-bold">+{course.total_tokens_reward} Tokens</span>
                 </div>
                 <div className="flex justify-between text-[#94A3B8]">
                   <span>Evaluation Format</span>

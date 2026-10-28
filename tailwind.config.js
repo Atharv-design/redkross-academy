@@ -25,8 +25,8 @@ export default {
           neon: '#65F58A',
           mint: '#35E6B5',
           glow: '#00FFA3',
-          amber: '#F59E0B',
-          'amber-glow': '#FBBF24',
+          amber: '#35E6B5',
+          'amber-glow': '#00FFA3',
           'text-primary': '#F1F5F9',
           'text-secondary': '#94A3B8',
           border: '#263440',
@@ -47,9 +47,9 @@ export default {
         },
         cyber: {
           cyan: '#35E6B5',
-          sky: '#38BDF8',
+          sky: '#35E6B5',
           emerald: '#65F58A',
-          amber: '#F59E0B',
+          amber: '#65F58A',
           glow: '#00FFA3',
         }
       },

@@ -16,9 +16,10 @@ export default function CyberBackgroundWatermark() {
       aria-hidden="true" 
       className="fixed inset-0 pointer-events-none z-0 overflow-hidden flex items-center justify-center select-none"
     >
-      {/* 1. Subtle Center Ambient Glows (Neon Green & Amber) */}
-      <div className="absolute w-[580px] h-[580px] bg-[#65F58A]/[0.022] rounded-full blur-[140px]" />
-      <div className="absolute w-[440px] h-[440px] bg-[#F59E0B]/[0.018] rounded-full blur-[130px]" />
+      {/* 1. Subtle Center Ambient Glows (Strict Neon Green, Glow & Mint) */}
+      <div className="absolute w-[640px] h-[640px] bg-[#65F58A]/[0.035] rounded-full blur-[140px]" />
+      <div className="absolute w-[480px] h-[480px] bg-[#00FFA3]/[0.028] rounded-full blur-[130px]" />
+      <div className="absolute w-[360px] h-[360px] bg-[#35E6B5]/[0.025] rounded-full blur-[110px]" />
 
       {/* 2. Cyber Hairline Crosshair Axes */}
       <div className="absolute w-full h-[1px] bg-gradient-to-r from-transparent via-[#65F58A]/[0.08] to-transparent" />
@@ -55,7 +56,7 @@ export default function CyberBackgroundWatermark() {
           alt=""
           className="w-[280px] sm:w-[420px] md:w-[500px] lg:w-[580px] h-auto object-contain opacity-[0.14] transition-opacity duration-1000 pointer-events-none"
           style={{
-            filter: 'drop-shadow(0 0 45px rgba(101, 245, 138, 0.35)) drop-shadow(0 0 90px rgba(245, 158, 11, 0.2))',
+            filter: 'drop-shadow(0 0 50px rgba(101, 245, 138, 0.45)) drop-shadow(0 0 100px rgba(0, 255, 163, 0.25))',
             maskImage: 'radial-gradient(circle at center, black 50%, transparent 85%)',
             WebkitMaskImage: 'radial-gradient(circle at center, black 50%, transparent 85%)'
           }}

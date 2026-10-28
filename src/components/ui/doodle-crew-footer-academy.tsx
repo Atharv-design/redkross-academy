@@ -1068,30 +1068,30 @@ type Metrics = { advances: number[]; cap: number }
 
 
 const REDKROSS_PALETTE = [
-  "#00F0FF", // R - Electric Neon Cyan
-  "#38BDF8", // E - Sky Cyber Blue
-  "#0EA5E9", // D - Electric Azure
-  "#0284C7", // K - Deep Blue
-  "#2563EB", // R - Vivid Cobalt
-  "#0FB7B7", // O - Radiant Teal
-  "#38BDF8", // S - Sky Blue
-  "#00F0FF", // S - Electric Neon Cyan
+  "#65F58A", // R - Neon Green
+  "#35E6B5", // E - Mint Green
+  "#00FFA3", // D - Electric Azure
+  "#45F5A1", // K - Progress Green
+  "#65F58A", // R - Vivid Cobalt
+  "#35E6B5", // O - Radiant Teal
+  "#35E6B5", // S - Mint Green
+  "#65F58A", // S - Neon Green
 ]
 
 const REDKROSS_SUB_PALETTE = [
-  "#00F0FF", // C - Cyan
-  "#38BDF8", // Y - Sky
-  "#0EA5E9", // B - Azure
-  "#2563EB", // E - Cobalt
-  "#0FB7B7", // R - Teal
-  "#00F0FF", // S - Cyan
-  "#38BDF8", // E - Sky
-  "#0EA5E9", // C - Azure
-  "#2563EB", // U - Cobalt
-  "#0FB7B7", // R - Teal
-  "#38BDF8", // I - Sky
-  "#00F0FF", // T - Cyan
-  "#FFA439", // Y - Radiant Amber
+  "#65F58A", // C - Neon Green
+  "#35E6B5", // Y - Mint Green
+  "#00FFA3", // B - Azure
+  "#65F58A", // E - Cobalt
+  "#35E6B5", // R - Teal
+  "#65F58A", // S - Neon Green
+  "#35E6B5", // E - Mint Green
+  "#00FFA3", // C - Azure
+  "#65F58A", // U - Cobalt
+  "#35E6B5", // R - Teal
+  "#35E6B5", // I - Mint Green
+  "#65F58A", // T - Neon Green
+  "#00FFA3", // Y - Radiant Amber
 ]
 
 const FONT_SIZE = 200
@@ -2661,13 +2661,13 @@ const CSS =
 
   ".dcf-art .dcf-shadow{fill:var(--dcf-ink);stroke:none;opacity:.14}" +
 
-  ".dcf-ground path{fill:none;stroke:var(--dcf-accent,#00F0FF);stroke-width:2.4;stroke-linecap:round;filter:drop-shadow(0 0 10px rgba(0,240,255,.5))}" +
+  ".dcf-ground path{fill:none;stroke:var(--dcf-accent,#65F58A);stroke-width:2.4;stroke-linecap:round;filter:drop-shadow(0 0 10px rgba(101,245,138,.5))}" +
 
   ".dcf-ground .dcf-tufts{stroke-width:1.8}" +
 
-  ".dcf-pebble{fill:var(--dcf-bg);stroke:var(--dcf-accent,#00F0FF)!important;stroke-width:1.6}" +
+  ".dcf-pebble{fill:var(--dcf-bg);stroke:var(--dcf-accent,#65F58A)!important;stroke-width:1.6}" +
 
-  ".dcf-dust{fill:none;stroke:var(--dcf-accent,#00F0FF);stroke-width:3;stroke-linecap:round;opacity:0}" +
+  ".dcf-dust{fill:none;stroke:var(--dcf-accent,#65F58A);stroke-width:3;stroke-linecap:round;opacity:0}" +
 
   ".dcf-hit{fill:transparent;stroke:none;cursor:pointer;outline:none}" +
 
@@ -2733,7 +2733,7 @@ const CSS =
 
   ".dcf-btn.is-outline{background:rgba(14,14,22,.85);color:#f9fafb;border:2px solid rgba(229,122,0,.5);backdrop-filter:blur(8px)}" +
 
-  ".dcf-btn.is-solid{background:linear-gradient(135deg,#0284C7 0%,#00F0FF 100%);color:#03060A;border:2px solid #00F0FF;box-shadow:0 4px 18px rgba(0,240,255,.4);font-weight:700}" +
+  ".dcf-btn.is-solid{background:linear-gradient(135deg,#65F58A 0%,#35E6B5 100%);color:#03060A;border:2px solid #65F58A;box-shadow:0 4px 18px rgba(0,255,163,.4);font-weight:700}" +
 
   ".dcf-btn.is-solid .dcf-icon{stroke:var(--dcf-bg)}" +
 

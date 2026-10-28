@@ -140,7 +140,7 @@ export default function QuizAssessmentPage() {
 
   if (!enrolment || !course || !quizMeta) {
     return (
-      <div className="min-h-screen bg-[#090D16] py-24 text-center">
+      <div className="min-h-screen bg-[#071018] py-24 text-center">
         <h2 className="text-xl font-bold text-white mb-2">Quiz Not Found</h2>
         <Link to={`/student/learn/${enrolmentId}`} className="px-4 py-2 bg-redkross-600 rounded text-white text-xs font-semibold">
           Return to Classroom
@@ -199,7 +199,7 @@ export default function QuizAssessmentPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#090D16] py-12">
+    <div className="min-h-screen bg-[#071018] py-12">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Top Breadcrumb */}
         <div className="flex items-center justify-between pb-4 border-b border-surface-border">
@@ -407,7 +407,7 @@ export default function QuizAssessmentPage() {
 
               {/* Countdown Timer */}
               <div className="flex items-center space-x-2 text-xs font-mono">
-                <Clock className="w-4 h-4 text-cyber-cyan" />
+                <Clock className="w-4 h-4 text-[#35E6B5]" />
                 <span className="text-white font-bold tabular-nums">
                   {Math.floor(timerSeconds / 60)}:{(timerSeconds % 60).toString().padStart(2, '0')}
                 </span>

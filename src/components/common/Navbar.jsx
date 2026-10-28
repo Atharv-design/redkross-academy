@@ -72,7 +72,7 @@ export default function Navbar() {
               href={ecosystem.cybersecurity}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-slate-400 hover:text-cyan-400 transition-colors hidden sm:flex"
+              className="flex items-center gap-1.5 text-slate-400 hover:text-[#35E6B5] transition-colors hidden sm:flex"
             >
               <span>Cybersecurity Platform</span>
               <ExternalLink className="w-3 h-3 opacity-60" />
@@ -82,7 +82,7 @@ export default function Navbar() {
               href={ecosystem.psychology}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-slate-400 hover:text-[#FFA439] transition-colors hidden md:flex"
+              className="flex items-center gap-1.5 text-slate-400 hover:text-[#65F58A] transition-colors hidden md:flex"
             >
               <span>Psychology Platform</span>
               <ExternalLink className="w-3 h-3 opacity-60" />

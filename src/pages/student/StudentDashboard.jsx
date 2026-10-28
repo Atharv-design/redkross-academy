@@ -9,7 +9,7 @@ export default function StudentDashboard() {
 
   if (!currentUser) {
     return (
-      <div className="min-h-screen bg-[#090D16] py-24 text-center">
+      <div className="min-h-screen bg-[#071018] py-24 text-center">
         <h2 className="text-xl font-bold text-white mb-2">Authentication Required</h2>
         <p className="text-xs text-slate-400 mb-4">Please select a student identity or sign in to access your learning portal.</p>
       </div>
@@ -30,7 +30,7 @@ export default function StudentDashboard() {
     : 0;
 
   return (
-    <div className="min-h-screen bg-[#090D16] py-12">
+    <div className="min-h-screen bg-[#071018] py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         {/* Welcome Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-surface-border gap-4">
@@ -74,7 +74,7 @@ export default function StudentDashboard() {
 
         {/* Continue Learning Hero Card */}
         {primaryCourse && primaryEnrolment && (
-          <div className="bg-gradient-to-r from-surface-card via-surface-card to-[#131B2E] border border-surface-border rounded-xl p-8 shadow-xl relative overflow-hidden">
+          <div className="bg-gradient-to-r from-surface-card via-surface-card to-[#1B2530] border border-surface-border rounded-xl p-8 shadow-xl relative overflow-hidden">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
               <div className="space-y-3 max-w-2xl">
                 <div className="inline-flex items-center space-x-2 text-xs font-mono text-redkross-400 font-semibold px-2.5 py-1 rounded bg-redkross-600/10 border border-redkross-600/30">

@@ -86,30 +86,30 @@ export default function CourseCardVariant({ course, variantId, variantIndex = 0,
         // Variant 1: Amber / Gold Glowing Shield with Keyhole Padlock on Isometric Pedestal
         return (
           <div className="relative w-full h-44 flex items-center justify-center overflow-hidden my-2">
-            <div className="absolute inset-0 bg-gradient-to-t from-[#F59E0B]/10 to-transparent rounded-xl" />
-            <svg viewBox="0 0 200 140" className="w-44 h-auto drop-shadow-[0_0_22px_rgba(245,158,11,0.55)]">
+            <div className="absolute inset-0 bg-gradient-to-t from-[#35E6B5]/10 to-transparent rounded-xl" />
+            <svg viewBox="0 0 200 140" className="w-44 h-auto drop-shadow-[0_0_22px_rgba(53,230,181,0.55)]">
               {/* Stepped Hexagonal Pedestal */}
-              <polygon points="100,105 160,118 100,132 40,118" fill="#1B2530" stroke="#F59E0B" strokeWidth="1.2" />
-              <polygon points="100,98 150,110 100,122 50,110" fill="#101923" stroke="#FBBF24" strokeWidth="1.5" />
+              <polygon points="100,105 160,118 100,132 40,118" fill="#1B2530" stroke="#35E6B5" strokeWidth="1.2" />
+              <polygon points="100,98 150,110 100,122 50,110" fill="#101923" stroke="#00FFA3" strokeWidth="1.5" />
               {/* Glowing Ambient Rays */}
-              <line x1="100" y1="30" x2="100" y2="98" stroke="#F59E0B" strokeWidth="0.8" strokeDasharray="3 3" strokeOpacity="0.6" />
+              <line x1="100" y1="30" x2="100" y2="98" stroke="#35E6B5" strokeWidth="0.8" strokeDasharray="3 3" strokeOpacity="0.6" />
               {/* Shield Outline */}
               <path
                 d="M 100 24 Q 135 28 140 58 Q 140 88 100 106 Q 60 88 60 58 Q 65 28 100 24 Z"
                 fill="#182534"
-                stroke="#F59E0B"
+                stroke="#35E6B5"
                 strokeWidth="2.5"
               />
               {/* Inner Shield Layer */}
               <path
                 d="M 100 32 Q 128 35 132 60 Q 132 82 100 98 Q 68 82 68 60 Q 72 35 100 32 Z"
                 fill="none"
-                stroke="#FBBF24"
+                stroke="#00FFA3"
                 strokeWidth="1.5"
               />
               {/* Golden Padlock in Center */}
-              <rect x="88" y="58" width="24" height="20" rx="3" fill="#F59E0B" stroke="#FBBF24" strokeWidth="1.5" />
-              <path d="M 93 58 V 50 A 7 7 0 0 1 107 50 V 58" fill="none" stroke="#FBBF24" strokeWidth="2.5" strokeLinecap="round" />
+              <rect x="88" y="58" width="24" height="20" rx="3" fill="#35E6B5" stroke="#00FFA3" strokeWidth="1.5" />
+              <path d="M 93 58 V 50 A 7 7 0 0 1 107 50 V 58" fill="none" stroke="#00FFA3" strokeWidth="2.5" strokeLinecap="round" />
               <circle cx="100" cy="66" r="2.5" fill="#071018" />
               <polygon points="98.5,67 101.5,67 101,73 99,73" fill="#071018" />
             </svg>
@@ -172,22 +172,22 @@ export default function CourseCardVariant({ course, variantId, variantIndex = 0,
         // Variant 4: Amber Forensic Magnifying Glass Inspecting Binary Circuits
         return (
           <div className="relative w-full h-44 flex items-center justify-center overflow-hidden my-2">
-            <div className="absolute inset-0 bg-gradient-to-t from-[#F59E0B]/10 to-transparent rounded-xl" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#35E6B5]/10 to-transparent rounded-xl" />
             <svg viewBox="0 0 200 140" className="w-44 h-auto drop-shadow-[0_0_22px_rgba(245,158,11,0.5)]">
               {/* Circuit Board Trace Lines */}
-              <path d="M 40 100 L 75 100 L 90 115 L 140 115" fill="none" stroke="#F59E0B" strokeWidth="1.2" strokeOpacity="0.4" />
-              <path d="M 60 40 L 95 40 L 110 55 L 160 55" fill="none" stroke="#FBBF24" strokeWidth="1.2" strokeOpacity="0.5" />
-              <circle cx="40" cy="100" r="2.5" fill="#F59E0B" />
-              <circle cx="160" cy="55" r="2.5" fill="#FBBF24" />
+              <path d="M 40 100 L 75 100 L 90 115 L 140 115" fill="none" stroke="#35E6B5" strokeWidth="1.2" strokeOpacity="0.4" />
+              <path d="M 60 40 L 95 40 L 110 55 L 160 55" fill="none" stroke="#00FFA3" strokeWidth="1.2" strokeOpacity="0.5" />
+              <circle cx="40" cy="100" r="2.5" fill="#35E6B5" />
+              <circle cx="160" cy="55" r="2.5" fill="#00FFA3" />
               {/* Magnifying Glass Lens */}
-              <circle cx="118" cy="62" r="32" fill="#14202C" fillOpacity="0.8" stroke="#F59E0B" strokeWidth="3" />
-              <circle cx="118" cy="62" r="26" fill="none" stroke="#FBBF24" strokeWidth="1.5" />
+              <circle cx="118" cy="62" r="32" fill="#14202C" fillOpacity="0.8" stroke="#35E6B5" strokeWidth="3" />
+              <circle cx="118" cy="62" r="26" fill="none" stroke="#00FFA3" strokeWidth="1.5" />
               {/* Hex Key Target inside lens */}
-              <polygon points="118,50 128,56 128,68 118,74 108,68 108,56" fill="none" stroke="#F59E0B" strokeWidth="1.5" />
-              <circle cx="118" cy="62" r="3" fill="#FBBF24" />
+              <polygon points="118,50 128,56 128,68 118,74 108,68 108,56" fill="none" stroke="#35E6B5" strokeWidth="1.5" />
+              <circle cx="118" cy="62" r="3" fill="#00FFA3" />
               {/* Handle angled down-left */}
-              <line x1="96" y1="84" x2="62" y2="118" stroke="#F59E0B" strokeWidth="6" strokeLinecap="round" />
-              <line x1="96" y1="84" x2="62" y2="118" stroke="#FBBF24" strokeWidth="2.5" strokeLinecap="round" />
+              <line x1="96" y1="84" x2="62" y2="118" stroke="#35E6B5" strokeWidth="6" strokeLinecap="round" />
+              <line x1="96" y1="84" x2="62" y2="118" stroke="#00FFA3" strokeWidth="2.5" strokeLinecap="round" />
             </svg>
           </div>
         );
@@ -226,19 +226,19 @@ export default function CourseCardVariant({ course, variantId, variantIndex = 0,
         // Variant 6: Amber Isometric Hardware Chip Processor
         return (
           <div className="relative w-full h-44 flex items-center justify-center overflow-hidden my-2">
-            <div className="absolute inset-0 bg-gradient-to-t from-[#F59E0B]/10 to-transparent rounded-xl" />
-            <svg viewBox="0 0 200 140" className="w-44 h-auto drop-shadow-[0_0_22px_rgba(245,158,11,0.55)]">
+            <div className="absolute inset-0 bg-gradient-to-t from-[#35E6B5]/10 to-transparent rounded-xl" />
+            <svg viewBox="0 0 200 140" className="w-44 h-auto drop-shadow-[0_0_22px_rgba(53,230,181,0.55)]">
               {/* Motherboard Circuit Base */}
-              <polygon points="100,108 165,124 100,138 35,124" fill="#101923" stroke="#F59E0B" strokeWidth="1" strokeOpacity="0.5" />
+              <polygon points="100,108 165,124 100,138 35,124" fill="#101923" stroke="#35E6B5" strokeWidth="1" strokeOpacity="0.5" />
               {/* Main Chip Die */}
-              <polygon points="100,72 145,86 100,100 55,86" fill="#1B2530" stroke="#F59E0B" strokeWidth="2" />
-              <polygon points="100,72 145,86 145,95 100,81" fill="#14202C" stroke="#F59E0B" strokeWidth="1" />
-              <polygon points="55,86 100,100 100,109 55,95" fill="#0E1620" stroke="#F59E0B" strokeWidth="1" />
+              <polygon points="100,72 145,86 100,100 55,86" fill="#1B2530" stroke="#35E6B5" strokeWidth="2" />
+              <polygon points="100,72 145,86 145,95 100,81" fill="#14202C" stroke="#35E6B5" strokeWidth="1" />
+              <polygon points="55,86 100,100 100,109 55,95" fill="#0E1620" stroke="#35E6B5" strokeWidth="1" />
               {/* Core Heat Spreader */}
-              <polygon points="100,78 130,88 100,98 70,88" fill="#F59E0B" fillOpacity="0.8" stroke="#FBBF24" strokeWidth="1.5" />
+              <polygon points="100,78 130,88 100,98 70,88" fill="#35E6B5" fillOpacity="0.8" stroke="#00FFA3" strokeWidth="1.5" />
               {/* Circuit Bus Pins */}
               {[-30, -15, 0, 15, 30].map((dx, i) => (
-                <line key={i} x1={100 + dx} y1={92 + Math.abs(dx) * 0.2} x2={100 + dx * 1.5} y2={118} stroke="#FBBF24" strokeWidth="1" />
+                <line key={i} x1={100 + dx} y1={92 + Math.abs(dx) * 0.2} x2={100 + dx * 1.5} y2={118} stroke="#00FFA3" strokeWidth="1" />
               ))}
               <circle cx="100" cy="88" r="3" fill="#FFFFFF" />
             </svg>
@@ -257,7 +257,7 @@ export default function CourseCardVariant({ course, variantId, variantIndex = 0,
               <ellipse cx="100" cy="60" rx="55" ry="15" fill="none" stroke="#35E6B5" strokeWidth="1" strokeDasharray="3 2" />
               <circle cx="75" cy="55" r="2.5" fill="#65F58A" />
               <circle cx="120" cy="62" r="2.5" fill="#00FFA3" />
-              <circle cx="140" cy="58" r="2" fill="#F59E0B" />
+              <circle cx="140" cy="58" r="2" fill="#35E6B5" />
               {/* SOC Analyst Desk Console */}
               <polygon points="45,115 155,115 140,95 60,95" fill="#1B2530" stroke="#65F58A" strokeWidth="1.2" />
               {/* Operator Monitors */}
@@ -308,23 +308,23 @@ export default function CourseCardVariant({ course, variantId, variantIndex = 0,
         // Variant 9: Amber Academic Graduation Cap Floating over Terminal Workstation
         return (
           <div className="relative w-full h-44 flex items-center justify-center overflow-hidden my-2">
-            <div className="absolute inset-0 bg-gradient-to-t from-[#F59E0B]/10 to-transparent rounded-xl" />
-            <svg viewBox="0 0 200 140" className="w-44 h-auto drop-shadow-[0_0_22px_rgba(245,158,11,0.55)]">
+            <div className="absolute inset-0 bg-gradient-to-t from-[#35E6B5]/10 to-transparent rounded-xl" />
+            <svg viewBox="0 0 200 140" className="w-44 h-auto drop-shadow-[0_0_22px_rgba(53,230,181,0.55)]">
               {/* Workstation Base */}
-              <ellipse cx="100" cy="120" rx="65" ry="14" fill="#101923" stroke="#F59E0B" strokeWidth="1" strokeOpacity="0.4" />
+              <ellipse cx="100" cy="120" rx="65" ry="14" fill="#101923" stroke="#35E6B5" strokeWidth="1" strokeOpacity="0.4" />
               {/* Glowing Monitor Display */}
-              <polygon points="65,108 135,108 142,65 58,65" fill="#14202C" stroke="#F59E0B" strokeWidth="1.5" />
+              <polygon points="65,108 135,108 142,65 58,65" fill="#14202C" stroke="#35E6B5" strokeWidth="1.5" />
               {/* Holographic Certificate Crest inside monitor */}
-              <circle cx="100" cy="85" r="12" fill="none" stroke="#FBBF24" strokeWidth="1.2" />
-              <line x1="75" y1="75" x2="125" y2="75" stroke="#F59E0B" strokeWidth="1" />
-              <line x1="82" y1="95" x2="118" y2="95" stroke="#FBBF24" strokeWidth="1" />
+              <circle cx="100" cy="85" r="12" fill="none" stroke="#00FFA3" strokeWidth="1.2" />
+              <line x1="75" y1="75" x2="125" y2="75" stroke="#35E6B5" strokeWidth="1" />
+              <line x1="82" y1="95" x2="118" y2="95" stroke="#00FFA3" strokeWidth="1" />
               {/* Floating Mortarboard Cap */}
-              <polygon points="100,32 145,45 100,58 55,45" fill="#1B2530" stroke="#F59E0B" strokeWidth="2.5" />
-              <polygon points="100,45 130,53 100,61 70,53" fill="#F59E0B" fillOpacity="0.8" />
-              <rect x="80" y="52" width="40" height="12" rx="2" fill="#14202C" stroke="#FBBF24" strokeWidth="1" />
+              <polygon points="100,32 145,45 100,58 55,45" fill="#1B2530" stroke="#35E6B5" strokeWidth="2.5" />
+              <polygon points="100,45 130,53 100,61 70,53" fill="#35E6B5" fillOpacity="0.8" />
+              <rect x="80" y="52" width="40" height="12" rx="2" fill="#14202C" stroke="#00FFA3" strokeWidth="1" />
               {/* Golden Tassel */}
-              <line x1="100" y1="45" x2="142" y2="60" stroke="#FBBF24" strokeWidth="1.8" />
-              <circle cx="142" cy="61" r="2.5" fill="#FBBF24" />
+              <line x1="100" y1="45" x2="142" y2="60" stroke="#00FFA3" strokeWidth="1.8" />
+              <circle cx="142" cy="61" r="2.5" fill="#00FFA3" />
             </svg>
           </div>
         );
@@ -353,7 +353,7 @@ export default function CourseCardVariant({ course, variantId, variantIndex = 0,
     <div
       className={`group relative flex flex-col justify-between p-6 sm:p-7 bg-[#101923]/80 backdrop-blur-xl border transition-all duration-400 ${
         isAmber
-          ? 'border-[#263440] hover:border-[#F59E0B]/60 hover:shadow-[0_12px_40px_rgba(245,158,11,0.18)]'
+          ? 'border-[#263440] hover:border-[#35E6B5]/60 hover:shadow-[0_12px_40px_rgba(53,230,181,0.18)]'
           : 'border-[#263440] hover:border-[#65F58A]/60 hover:shadow-[0_12px_40px_rgba(101,245,138,0.18)]'
       } ${getClipClass()} hover:-translate-y-1.5`}
     >
@@ -363,7 +363,7 @@ export default function CourseCardVariant({ course, variantId, variantIndex = 0,
           <span
             className={`px-3 py-1 rounded-full text-[11px] font-mono font-semibold uppercase tracking-wider border ${
               isAmber
-                ? 'bg-[#F59E0B]/10 border-[#F59E0B]/35 text-[#F59E0B]'
+                ? 'bg-[#35E6B5]/10 border-[#35E6B5]/35 text-[#35E6B5]'
                 : 'bg-[#65F58A]/10 border-[#65F58A]/35 text-[#65F58A]'
             }`}
           >
@@ -412,7 +412,7 @@ export default function CourseCardVariant({ course, variantId, variantIndex = 0,
           <div className="text-[9px] font-mono uppercase tracking-wider text-[#94A3B8]">
             MILESTONE CREDENTIAL
           </div>
-          <div className={`text-xs font-royal font-bold ${isAmber ? 'text-[#F59E0B]' : 'text-[#65F58A]'} truncate max-w-[180px] sm:max-w-[220px]`}>
+          <div className={`text-xs font-royal font-bold ${isAmber ? 'text-[#35E6B5]' : 'text-[#65F58A]'} truncate max-w-[180px] sm:max-w-[220px]`}>
             {credentialName}
           </div>
         </div>
@@ -422,7 +422,7 @@ export default function CourseCardVariant({ course, variantId, variantIndex = 0,
           to={`/courses/${course.id}`}
           className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all ${
             isAmber
-              ? 'border-[#F59E0B]/50 bg-[#F59E0B]/10 text-[#F59E0B] group-hover:bg-[#F59E0B] group-hover:text-black group-hover:scale-110 shadow-[0_0_15px_rgba(245,158,11,0.3)]'
+              ? 'border-[#35E6B5]/50 bg-[#35E6B5]/10 text-[#35E6B5] group-hover:bg-[#35E6B5] group-hover:text-black group-hover:scale-110 shadow-[0_0_15px_rgba(53,230,181,0.3)]'
               : 'border-[#65F58A]/50 bg-[#65F58A]/10 text-[#65F58A] group-hover:bg-[#65F58A] group-hover:text-black group-hover:scale-110 shadow-[0_0_15px_rgba(101,245,138,0.3)]'
           }`}
           aria-label={`View syllabus for ${course.title}`}

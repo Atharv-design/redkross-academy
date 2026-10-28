@@ -10,7 +10,7 @@ export default function TokenWalletPage() {
 
   if (!currentUser) {
     return (
-      <div className="min-h-screen bg-[#090D16] py-24 text-center">
+      <div className="min-h-screen bg-[#071018] py-24 text-center">
         <h2 className="text-xl font-bold text-white mb-2">Please Sign In</h2>
       </div>
     );
@@ -52,13 +52,13 @@ export default function TokenWalletPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#090D16] py-12">
+    <div className="min-h-screen bg-[#071018] py-12">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         {/* Header Breadcrumb */}
         <div className="flex items-center justify-between pb-4 border-b border-surface-border">
           <Link
             to="/student"
-            className="flex items-center space-x-1.5 text-xs font-mono text-slate-400 hover:text-white transition-colors"
+            className="flex items-center space-x-1.5 text-xs font-mono text-slate-400 hover:text-[#071018] transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
             <span>Return to Dashboard</span>
@@ -69,16 +69,16 @@ export default function TokenWalletPage() {
         </div>
 
         {/* Wallet Overview Hero */}
-        <div className="bg-gradient-to-r from-surface-card via-surface-card to-[#1E170A] border border-surface-border rounded-xl p-8 shadow-2xl relative overflow-hidden">
+        <div className="bg-gradient-to-r from-surface-card via-surface-card to-[#1B2530] border border-surface-border rounded-xl p-8 shadow-2xl relative overflow-hidden">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10">
             <div className="space-y-2">
-              <div className="flex items-center space-x-2 text-xs font-mono text-amber-400">
+              <div className="flex items-center space-x-2 text-xs font-mono text-[#65F58A]">
                 <Coins className="w-4 h-4 animate-pulse-subtle" />
                 <span>NON-MONETARY REWARDS LEDGER (PRD SECTION 8)</span>
               </div>
               <div className="text-4xl sm:text-5xl font-extrabold text-white font-mono tracking-tight tabular-nums flex items-baseline space-x-3">
                 <span>{tokenBalance}</span>
-                <span className="text-lg text-amber-400/80 font-sans font-bold">RedKross Tokens</span>
+                <span className="text-lg text-[#65F58A]/80 font-sans font-bold">RedKross Tokens</span>
               </div>
               <p className="text-xs text-slate-400 max-w-md">
                 Tokens are earned strictly through continuous study, milestone progress, and passing evaluations. They cannot be transferred, sold, or converted into real currency.
@@ -112,7 +112,7 @@ export default function TokenWalletPage() {
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-bold text-white flex items-center space-x-2">
-                <Coins className="w-4 h-4 text-amber-400" />
+                <Coins className="w-4 h-4 text-[#65F58A]" />
                 <span>Append-Only Ledger History</span>
               </h2>
               <span className="text-xs font-mono text-slate-400">{transactions.length} Records</span>
@@ -166,7 +166,7 @@ export default function TokenWalletPage() {
               <div className="p-4 rounded-xl bg-surface-card border border-surface-border space-y-2">
                 <div className="flex items-center justify-between text-xs font-bold text-white">
                   <span>50% Certification Voucher</span>
-                  <span className="text-amber-400 font-mono">200 Tokens</span>
+                  <span className="text-[#65F58A] font-mono">200 Tokens</span>
                 </div>
                 <p className="text-[11px] text-slate-400 leading-snug">
                   Apply a 50% discount towards any verified certification final exam.
@@ -174,7 +174,7 @@ export default function TokenWalletPage() {
                 <button
                   onClick={() => handleRedeemVoucher('50% Certification Discount Voucher', 200)}
                   disabled={tokenBalance < 200}
-                  className="w-full py-2 rounded-lg bg-surface-100 hover:bg-amber-600 hover:text-white disabled:opacity-40 text-xs font-semibold text-slate-300 transition-colors"
+                  className="w-full py-2 rounded-lg bg-surface-100 hover:bg-[#65F58A] hover:text-[#071018] disabled:opacity-40 text-xs font-semibold text-slate-300 transition-colors"
                 >
                   Redeem Voucher
                 </button>
@@ -183,7 +183,7 @@ export default function TokenWalletPage() {
               <div className="p-4 rounded-xl bg-surface-card border border-surface-border space-y-2">
                 <div className="flex items-center justify-between text-xs font-bold text-white">
                   <span>Advanced Threat Lab Manual</span>
-                  <span className="text-amber-400 font-mono">150 Tokens</span>
+                  <span className="text-[#65F58A] font-mono">150 Tokens</span>
                 </div>
                 <p className="text-[11px] text-slate-400 leading-snug">
                   Unlock the 80-page deep-dive incident responder malware analysis runbook.
@@ -191,7 +191,7 @@ export default function TokenWalletPage() {
                 <button
                   onClick={() => handleRedeemVoucher('Advanced Threat Lab Manual (PDF)', 150)}
                   disabled={tokenBalance < 150}
-                  className="w-full py-2 rounded-lg bg-surface-100 hover:bg-amber-600 hover:text-white disabled:opacity-40 text-xs font-semibold text-slate-300 transition-colors"
+                  className="w-full py-2 rounded-lg bg-surface-100 hover:bg-[#65F58A] hover:text-[#071018] disabled:opacity-40 text-xs font-semibold text-slate-300 transition-colors"
                 >
                   Unlock Runbook
                 </button>
@@ -200,7 +200,7 @@ export default function TokenWalletPage() {
               <div className="p-4 rounded-xl bg-surface-card border border-surface-border space-y-2">
                 <div className="flex items-center justify-between text-xs font-bold text-white">
                   <span>RedKross Verified Badge Flair</span>
-                  <span className="text-amber-400 font-mono">100 Tokens</span>
+                  <span className="text-[#65F58A] font-mono">100 Tokens</span>
                 </div>
                 <p className="text-[11px] text-slate-400 leading-snug">
                   Display an illuminated gold defender shield badge on your public student profile.
@@ -208,7 +208,7 @@ export default function TokenWalletPage() {
                 <button
                   onClick={() => handleRedeemVoucher('Verified Badge Flair', 100)}
                   disabled={tokenBalance < 100}
-                  className="w-full py-2 rounded-lg bg-surface-100 hover:bg-amber-600 hover:text-white disabled:opacity-40 text-xs font-semibold text-slate-300 transition-colors"
+                  className="w-full py-2 rounded-lg bg-surface-100 hover:bg-[#65F58A] hover:text-[#071018] disabled:opacity-40 text-xs font-semibold text-slate-300 transition-colors"
                 >
                   Equip Badge Flair
                 </button>

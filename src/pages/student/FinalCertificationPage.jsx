@@ -103,7 +103,7 @@ export default function FinalCertificationPage() {
 
   if (!enrolment || !course || !examMeta) {
     return (
-      <div className="min-h-screen bg-[#090D16] py-24 text-center">
+      <div className="min-h-screen bg-[#071018] py-24 text-center">
         <h2 className="text-xl font-bold text-white mb-2">Final Assessment Not Found</h2>
         <Link to="/student" className="px-4 py-2 bg-redkross-600 rounded text-white text-xs font-semibold">
           Return to Dashboard
@@ -152,7 +152,7 @@ export default function FinalCertificationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#090D16] py-12">
+    <div className="min-h-screen bg-[#071018] py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Navigation Breadcrumb */}
         <div className="flex items-center justify-between pb-4 border-b border-surface-border">
@@ -185,7 +185,7 @@ export default function FinalCertificationPage() {
             </div>
 
             {/* Certificate Canvas Box */}
-            <div className="p-8 rounded-xl bg-[#060910] border-2 border-amber-500/30 text-center space-y-6 relative overflow-hidden shadow-2xl">
+            <div className="p-8 rounded-xl bg-[#101923] border-2 border-red-500/40 text-center space-y-6 relative overflow-hidden shadow-2xl">
               <div className="flex items-center justify-between border-b border-surface-border pb-4">
                 <div className="flex items-center space-x-2">
                   <Shield className="w-6 h-6 text-redkross-500" />
@@ -200,7 +200,7 @@ export default function FinalCertificationPage() {
                 <div className="text-xs text-slate-400 max-w-md mx-auto pt-2">
                   has demonstrated rigorous defensive proficiency in 24/7 SOC log analysis, incident triage, and forensic order of volatility and is awarded the title of
                 </div>
-                <div className="text-2xl font-bold text-amber-400 font-mono tracking-wider pt-2">
+                <div className="text-2xl font-bold text-red-400 font-mono tracking-wider pt-2">
                   {issuedCredential.credential_title}
                 </div>
               </div>
@@ -362,7 +362,7 @@ export default function FinalCertificationPage() {
                 <span className="text-slate-200 font-bold">COMPREHENSIVE FINAL CERTIFICATION EXAM</span>
               </div>
               <div className="flex items-center space-x-2 text-xs font-mono">
-                <Clock className="w-4 h-4 text-cyber-cyan" />
+                <Clock className="w-4 h-4 text-[#35E6B5]" />
                 <span className="text-white font-bold tabular-nums">
                   {Math.floor(timerSeconds / 60)}:{(timerSeconds % 60).toString().padStart(2, '0')}
                 </span>

@@ -61,7 +61,7 @@ export default function LessonPlayerPage() {
 
   if (!enrolment || !course) {
     return (
-      <div className="min-h-screen bg-[#090D16] py-24 text-center px-4">
+      <div className="min-h-screen bg-[#071018] py-24 text-center px-4">
         <h2 className="text-xl font-bold text-white mb-2">Enrolment Not Found</h2>
         <p className="text-xs text-slate-400 mb-4">Please verify that you are enrolled in this training course.</p>
         <Link to="/student" className="px-5 py-2.5 bg-redkross-600 rounded-lg text-white text-xs font-semibold inline-flex items-center space-x-2">
@@ -101,7 +101,7 @@ export default function LessonPlayerPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#090D16] flex flex-col">
+    <div className="min-h-screen bg-[#071018] flex flex-col">
       {/* Top Bar Navigation */}
       <div className="h-14 bg-surface-card border-b border-surface-border px-3 sm:px-6 flex items-center justify-between z-20">
         <div className="flex items-center space-x-2 sm:space-x-3 truncate">
@@ -320,8 +320,8 @@ export default function LessonPlayerPage() {
                       ? activeLesson.content
                           .replace(/### (.*)/g, '<h3 class="text-base sm:text-lg font-bold text-white mt-4 mb-2">$1</h3>')
                           .replace(/#### (.*)/g, '<h4 class="text-xs sm:text-sm font-bold text-redkross-400 mt-3 mb-1">$1</h4>')
-                          .replace(/```bash([\s\S]*?)```/g, '<pre class="bg-black/70 p-3 sm:p-4 rounded-lg font-mono text-[11px] sm:text-xs text-cyber-cyan border border-slate-800 overflow-x-auto my-3"><code>$1</code></pre>')
-                          .replace(/```powershell([\s\S]*?)```/g, '<pre class="bg-black/70 p-3 sm:p-4 rounded-lg font-mono text-[11px] sm:text-xs text-cyber-sky border border-slate-800 overflow-x-auto my-3"><code>$1</code></pre>')
+                          .replace(/```bash([\s\S]*?)```/g, '<pre class="bg-black/70 p-3 sm:p-4 rounded-lg font-mono text-[11px] sm:text-xs text-[#35E6B5] border border-slate-800 overflow-x-auto my-3"><code>$1</code></pre>')
+                          .replace(/```powershell([\s\S]*?)```/g, '<pre class="bg-black/70 p-3 sm:p-4 rounded-lg font-mono text-[11px] sm:text-xs text-[#65F58A] border border-slate-800 overflow-x-auto my-3"><code>$1</code></pre>')
                           .replace(/```sql([\s\S]*?)```/g, '<pre class="bg-black/70 p-3 sm:p-4 rounded-lg font-mono text-[11px] sm:text-xs text-amber-300 border border-slate-800 overflow-x-auto my-3"><code>$1</code></pre>')
                           .replace(/> (.*)/g, '<blockquote class="border-l-4 border-redkross-500 pl-3 sm:pl-4 py-1 text-slate-300 bg-redkross-950/20 rounded-r text-[11px] sm:text-xs my-3 font-mono">$1</blockquote>')
                       : '<p>Content being rendered...</p>',
@@ -377,7 +377,7 @@ export default function LessonPlayerPage() {
           } lg:max-h-[calc(100vh-3.5rem)]`}
         >
           <div className="text-xs font-mono uppercase tracking-wider text-slate-400 flex items-center space-x-1.5">
-            <Download className="w-3.5 h-3.5 text-cyber-cyan" />
+            <Download className="w-3.5 h-3.5 text-[#35E6B5]" />
             <span>Lesson Resources</span>
           </div>
 
@@ -398,7 +398,7 @@ export default function LessonPlayerPage() {
                   <span>{res.size}</span>
                   <button
                     onClick={() => alert(`Simulating download for ${res.name}`)}
-                    className="text-cyber-cyan hover:underline"
+                    className="text-[#35E6B5] hover:underline"
                   >
                     Download
                   </button>

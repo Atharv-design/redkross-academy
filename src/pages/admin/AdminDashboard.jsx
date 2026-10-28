@@ -102,7 +102,7 @@ export default function AdminDashboard() {
       {/* Top Administrative Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-[#263440] gap-4">
         <div>
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#F59E0B]/10 border border-[#F59E0B]/30 text-[#F59E0B] text-xs font-mono mb-2">
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#35E6B5]/10 border border-[#35E6B5]/30 text-[#65F58A] text-xs font-mono mb-2">
             <Shield className="w-3.5 h-3.5" />
             <span>OPERATIONS COMMAND CENTER</span>
           </div>
@@ -227,7 +227,7 @@ export default function AdminDashboard() {
 
         <div className="p-5 glass-card rounded-2xl space-y-1">
           <div className="text-[11px] font-mono text-[#94A3B8] uppercase">Token Circulation</div>
-          <div className="text-2xl font-bold text-[#F59E0B] font-mono tabular-nums">{metrics.total_tokens_circulated}</div>
+          <div className="text-2xl font-bold text-[#65F58A] font-mono tabular-nums">{metrics.total_tokens_circulated}</div>
           <div className="text-[10px] text-[#94A3B8] font-mono">Non-Monetary Ledger</div>
         </div>
       </div>
