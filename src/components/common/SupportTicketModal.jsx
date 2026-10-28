@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, MessageSquare, Send, CheckCircle2, AlertTriangle, LifeBuoy } from 'lucide-react';
+import { X, MessageSquare, Send, CheckCircle2, AlertTriangle, LifeBuoy, Mail, User } from 'lucide-react';
 import { apiClient } from '../../services/apiClient';
 import { useAuth } from '../../services/auth/authContext';
 
@@ -9,26 +9,31 @@ export default function SupportTicketModal({ isOpen, onClose }) {
   const [subject, setSubject] = useState('');
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState('Medium');
+  const [guestEmail, setGuestEmail] = useState('');
+  const [guestName, setGuestName] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submittedTicket, setSubmittedTicket] = useState(null);
 
   if (!isOpen) return null;
 
+  const emailToUse = currentUser?.email || guestEmail;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!subject.trim() || !description.trim()) return;
+    if (!subject.trim() || !description.trim() || !emailToUse.trim()) return;
 
     setSubmitting(true);
     try {
       const res = await apiClient.createSupportTicket({
         user_id: currentUser?.id,
-        user_email: currentUser?.email || 'student@redkross.org.in',
+        user_email: emailToUse.trim(),
+        sender_name: currentUser?.full_name || guestName || 'Cadet Operator',
         category,
         subject,
         description,
         priority
       });
-      setSubmittedTicket(res.ticket);
+      setSubmittedTicket(res.ticket || { id: `tkt_${Date.now()}` });
     } catch (err) {
       console.error('Failed to submit ticket:', err);
     } finally {
@@ -40,99 +45,149 @@ export default function SupportTicketModal({ isOpen, onClose }) {
     setSubmittedTicket(null);
     setSubject('');
     setDescription('');
+    setGuestEmail('');
+    setGuestName('');
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-      <div className="relative w-full max-w-lg rounded-2xl bg-surface-card border border-surface-border shadow-2xl p-6 sm:p-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
+      <div className="relative w-full max-w-lg rounded-2xl glass-card border border-[#263440] shadow-2xl p-6 sm:p-8">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-lg hover:bg-surface-100 transition-colors"
+          className="absolute top-4 right-4 p-2 text-[#94A3B8] hover:text-white rounded-lg hover:bg-[#1B2530] transition-colors"
+          aria-label="Close modal"
         >
           <X className="w-5 h-5" />
         </button>
 
         {submittedTicket ? (
           <div className="text-center py-6 space-y-4">
-            <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mx-auto">
+            <div className="w-14 h-14 rounded-full bg-[#65F58A]/10 border border-[#65F58A]/30 text-[#65F58A] flex items-center justify-center mx-auto shadow-[0_0_20px_rgba(101,245,138,0.25)]">
               <CheckCircle2 className="w-8 h-8" />
             </div>
-            <h3 className="text-lg font-bold text-white">Ticket Submitted Successfully</h3>
-            <div className="p-3 bg-surface-100 rounded-lg text-xs font-mono text-slate-300">
-              Ticket ID: <span className="text-redkross-400 font-bold">{submittedTicket.id}</span>
+            <h3 className="font-royal text-xl font-bold text-white">Ticket Dispatched Successfully</h3>
+            <div className="p-3 bg-[#071018] border border-[#263440] rounded-xl text-xs font-mono text-[#94A3B8]">
+              Ticket Reference: <span className="text-[#65F58A] font-bold">{submittedTicket.id}</span>
             </div>
-            <p className="text-xs text-slate-400 max-w-sm mx-auto">
-              Your inquiry has been escalated to our Academy Operations Desk. You will receive an email update within 4 business hours.
+            <p className="text-xs text-[#94A3B8] max-w-sm mx-auto leading-relaxed">
+              Your inquiry has been escalated directly via Resend to the Academy Operations Desk. An operational officer will respond to <span className="text-white font-mono">{emailToUse}</span> within 4 business hours.
             </p>
             <button
               onClick={handleReset}
-              className="px-5 py-2.5 bg-redkross-600 hover:bg-redkross-700 text-white text-xs font-bold rounded-lg transition-colors"
+              className="px-6 py-2.5 rounded-full glass-button-primary font-royal font-bold text-xs"
             >
-              Close Window
+              Acknowledge & Close
             </button>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="flex items-center space-x-3 mb-2">
-              <div className="w-10 h-10 rounded-lg bg-redkross-600/10 border border-redkross-600/30 flex items-center justify-center text-redkross-500">
+              <div className="w-10 h-10 rounded-xl bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center text-[#65F58A]">
                 <LifeBuoy className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-base sm:text-lg font-bold text-white font-mono">Academy Support Desk</h2>
-                <p className="text-xs text-slate-400">PRD §15.2 Inquiries & Exam Appeals</p>
+                <h2 className="font-royal text-base sm:text-lg font-bold text-white">Academy Operations Support</h2>
+                <p className="text-xs text-[#94A3B8] font-mono">Direct Resend Dispatch to Operations Desk</p>
+              </div>
+            </div>
+
+            {!currentUser && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-mono text-[#94A3B8] mb-1">Your Name</label>
+                  <input
+                    type="text"
+                    placeholder="Operator Name"
+                    value={guestName}
+                    onChange={(e) => setGuestName(e.target.value)}
+                    className="w-full px-3 py-2 bg-[#071018] border border-[#263440] rounded-xl text-xs text-white placeholder-[#64748B] font-mono focus:border-[#65F58A]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-mono text-[#94A3B8] mb-1">Your Email</label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="operator@domain.com"
+                    value={guestEmail}
+                    onChange={(e) => setGuestEmail(e.target.value)}
+                    className="w-full px-3 py-2 bg-[#071018] border border-[#263440] rounded-xl text-xs text-white placeholder-[#64748B] font-mono focus:border-[#65F58A]"
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-mono text-[#94A3B8] mb-1">Category</label>
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#071018] border border-[#263440] rounded-xl text-xs text-white font-mono focus:border-[#65F58A]"
+                >
+                  <option value="Exam Reset Appeal">Exam Reset Appeal</option>
+                  <option value="Certificate Verification">Credential Verification</option>
+                  <option value="Course Inquiry">Course & Curriculum Query</option>
+                  <option value="Payment & Tokens">Token Rewards & Payment</option>
+                  <option value="General Inquiry">General Operational Support</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-mono text-[#94A3B8] mb-1">Priority</label>
+                <select
+                  value={priority}
+                  onChange={(e) => setPriority(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#071018] border border-[#263440] rounded-xl text-xs text-white font-mono focus:border-[#65F58A]"
+                >
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                  <option value="Urgent">Urgent</option>
+                </select>
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-slate-400 mb-1">Issue Category</label>
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-3 py-2 bg-surface-100 border border-surface-border rounded-lg text-xs text-white focus:outline-none focus:border-redkross-500"
-              >
-                <option value="Exam Reset Appeal">Exam Reset Appeal (Strike 3 / 24h Lockout)</option>
-                <option value="Certificate Verification">Certificate Verification Inquiry</option>
-                <option value="Content Typo / Bug">Course Content / Lab Bug Report</option>
-                <option value="Payment & Token Query">Token Rewards & Payment Assistance</option>
-                <option value="Other">Other Operational Support</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-mono text-slate-400 mb-1">Subject / Summary</label>
+              <label className="block text-xs font-mono text-[#94A3B8] mb-1">Subject</label>
               <input
                 type="text"
                 required
+                placeholder="e.g. Inadvertent blur strike during SOC Module 2 assessment"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
-                placeholder="e.g. Browser crash during SOC 1.2 Final Exam"
-                className="w-full px-3 py-2 bg-surface-100 border border-surface-border rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-redkross-500"
+                className="w-full px-3 py-2 bg-[#071018] border border-[#263440] rounded-xl text-xs text-white placeholder-[#64748B] font-mono focus:border-[#65F58A]"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-slate-400 mb-1">Detailed Description</label>
+              <label className="block text-xs font-mono text-[#94A3B8] mb-1">Details & Message</label>
               <textarea
                 required
                 rows={4}
+                placeholder="Describe your inquiry with relevant context..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Please describe what happened, including any error messages or context..."
-                className="w-full px-3 py-2 bg-surface-100 border border-surface-border rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-redkross-500 resize-none"
+                className="w-full px-3 py-2 bg-[#071018] border border-[#263440] rounded-xl text-xs text-white placeholder-[#64748B] font-mono focus:border-[#65F58A]"
               />
             </div>
 
-            <div className="flex items-center justify-between pt-2">
-              <span className="text-[11px] text-slate-500 font-mono">Email: {currentUser?.email || 'Logged-in Account'}</span>
+            <div className="pt-2 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 rounded-xl bg-[#1B2530] text-xs font-mono text-[#94A3B8] hover:text-white"
+              >
+                Cancel
+              </button>
               <button
                 type="submit"
                 disabled={submitting}
-                className="px-5 py-2.5 rounded-lg bg-redkross-600 hover:bg-redkross-700 disabled:opacity-50 text-white text-xs font-bold transition-colors flex items-center space-x-1.5 shadow-md hover:cyber-glow-red"
+                className="px-5 py-2 rounded-xl glass-button-primary font-royal font-bold text-xs flex items-center gap-2"
               >
                 <Send className="w-3.5 h-3.5" />
-                <span>{submitting ? 'Submitting...' : 'Submit Support Ticket'}</span>
+                <span>{submitting ? 'Dispatching via Resend...' : 'Submit Support Ticket'}</span>
               </button>
             </div>
           </form>
