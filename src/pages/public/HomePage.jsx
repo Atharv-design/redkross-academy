@@ -4,7 +4,6 @@ import { Shield, Award, Terminal, ArrowRight, CheckCircle2, Lock, Zap, BookOpen,
 import { mockEngine } from '../../services/db/mockEngine';
 import { apiClient } from '../../services/apiClient';
 import CourseCardVariant from '../../components/cards/CourseCardVariant';
-import DictoCyberCard from '../../components/cards/DictoCyberCard';
 
 export default function HomePage() {
   const [courses, setCourses] = useState([]);
@@ -126,14 +125,13 @@ export default function HomePage() {
                 </Link>
               </div>
 
-              {/* Cards Grid Rendering all 10 Distinct Visual Card Variants */}
+              {/* Cards Grid Rendering the Unique 10 Visual Variants */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                {courses.map((course, idx) => (
+                {courses.slice(0, 6).map((course) => (
                   <CourseCardVariant
                     key={course.id}
                     course={course}
-                    variantId={course.card_variant || `variant-${String(idx + 1).padStart(2, '0')}`}
-                    className={course.card_variant === 'variant-06' ? 'lg:col-span-2' : ''}
+                    variantId={course.card_variant}
                   />
                 ))}
               </div>
@@ -181,54 +179,58 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-            {/* Track 1: Ultra-Wide Mountain Summit Banner (Card 6) */}
-            <div className="lg:col-span-3">
-              <DictoCyberCard
-                variant={6}
-                tag="CAREER ASCENT TRACK"
-                pathwayTag="Flagship Track 01"
-                title="Tier-1 to Tier-2 SOC Analyst Career Track"
-                description="Comprehensive 12-week training for 24/7 security operations centres: alert triage, SIEM correlation, network forensics, and rapid defensive containment under NIST SP 800-61."
-                tags={['SIEM / Splunk / Elastic', 'MITRE ATT&CK', 'Packet Inspection', 'Incident Handling']}
-                meta1="1,420 Enrolled Defenders in 2026 Cohort"
-                meta2="12 Weeks • 48 Hours Comprehensive Curriculum • CRSS Credential"
-                actionHref="/paths"
-                actionText="Explore Track Syllabus & Labs"
-              />
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {learningPaths.map((path) => (
+              <div
+                key={path.id}
+                className="glass-card glass-card-hover rounded-2xl p-6 sm:p-7 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold uppercase tracking-wider bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30">
+                      {path.difficulty}
+                    </span>
+                    <span className="text-xs font-mono text-[#94A3B8]">
+                      {path.estimated_weeks} Weeks • {path.total_hours}h
+                    </span>
+                  </div>
 
-            {/* Track 2: Holographic Wireframe Globe (Card 2) */}
-            <div className="lg:col-span-2">
-              <DictoCyberCard
-                variant={2}
-                tag="FORENSIC INVESTIGATION"
-                pathwayTag="Specialist Track 02"
-                title="Threat Hunting & Digital Forensics Specialist"
-                description="Proactive adversary detection, memory volatility forensics, network packet reassembly, and threat intelligence synthesis across multi-cloud enterprise environments."
-                tags={['Memory Volatility 3', 'YARA & Sigma Rules', 'Adversary Emulation', 'PCAP Forensics']}
-                meta1="820 Active Forensic Analysts"
-                meta2="14 Weeks • 56 Hours Hands-On Labs • CTDH Credential"
-                actionHref="/paths"
-                actionText="View Specialist Track"
-              />
-            </div>
+                  <h3 className="font-royal text-xl font-bold text-white mb-2 leading-snug">
+                    {path.title}
+                  </h3>
+                  <p className="text-xs text-[#94A3B8] leading-relaxed mb-4">
+                    {path.short_desc}
+                  </p>
 
-            {/* Track 3: 3D Isometric Cyber Vault Cube (Card 8) */}
-            <div className="lg:col-span-1">
-              <DictoCyberCard
-                variant={8}
-                tag="CLOUD & INFRASTRUCTURE"
-                pathwayTag="Architect Track 03"
-                title="Defensive Infrastructure Architect"
-                description="Harden enterprise endpoints, configure zero-trust perimeters, and master cloud workload defense across AWS and GCP."
-                tags={['Cloud IAM Hardening', 'Zero Trust Architecture', 'Kubernetes Security']}
-                meta1="AWS & GCP Cloud Workload Defense"
-                meta2="16 Weeks • 64 Hours • CDSA Credential"
-                actionHref="/paths"
-                actionText="Inspect Track Details"
-              />
-            </div>
+                  <div className="space-y-1.5 mb-6">
+                    <div className="text-[10px] font-mono text-[#94A3B8] uppercase tracking-wider font-semibold">
+                      Skills Validated
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {path.skills.map((skill, idx) => (
+                        <span key={idx} className="text-[10px] px-2 py-0.5 rounded bg-[#1B2530] text-slate-300 font-mono border border-[#263440]">
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-[#263440] flex items-center justify-between">
+                  <div>
+                    <div className="text-[9px] text-[#94A3B8] font-mono uppercase">Milestone Credential</div>
+                    <div className="text-xs font-royal font-bold text-[#65F58A]">{path.milestone_cert}</div>
+                  </div>
+                  <Link
+                    to="/paths"
+                    className="w-9 h-9 rounded-full bg-[#1B2530] hover:bg-[#65F58A] text-white hover:text-black flex items-center justify-center transition-all shadow"
+                    aria-label={`View track ${path.title}`}
+                  >
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -249,49 +251,36 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-            {/* Safeguard 1: Card 4 (Crimson Red Alert Terminal) */}
-            <DictoCyberCard
-              variant={4}
-              tag="CRITICAL PROCTORING SENTINEL"
-              pathwayTag="3-Strike Anti-Cheat"
-              title="3-Strike Exam Focus Tracking"
-              description="Active window blur and tab-switching surveillance. Strike 1 warns the candidate; Strike 2 deducts 50 RedKross tokens; Strike 3 terminates the exam immediately with an automated violation incident report."
-              tags={['Client Blur Tracking', 'Token Penalty', 'Automated Exam Abort']}
-              meta1="Real-Time Proctoring Telemetry Active"
-              meta2="Immutable Incident Audit Queue Logging"
-              actionHref="/verify"
-              actionText="View Proctoring Standards"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="glass-card rounded-2xl p-6 sm:p-7 space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center text-[#65F58A]">
+                <Zap className="w-5 h-5" />
+              </div>
+              <h3 className="font-royal text-base font-bold text-white">3-Strike Exam Focus Tracking</h3>
+              <p className="text-xs text-[#94A3B8] leading-relaxed">
+                During evaluated assessments, client tab switches and window blur events are actively tracked. Strike 1 warns the student; Strike 2 deducts 50 RedKross Tokens; Strike 3 immediately aborts the exam and locks the evaluation window.
+              </p>
+            </div>
 
-            {/* Safeguard 2: Card 7 (Radar HUD with Checkmark & Progress Bar) */}
-            <DictoCyberCard
-              variant={7}
-              tag="REMEDIATION COOLDOWN"
-              pathwayTag="24h Mandatory Cooldown"
-              title="24-Hour Mandatory Retake Lockout"
-              description="Exhausting 3 failed attempts or suffering a Strike 3 violation locks the candidate out for 24 hours server-side to enforce structured review of curriculum materials before re-attempting."
-              tags={['Attempt Threshold', '24-Hour Cooldown', 'Structured Remediation']}
-              meta1="Server-Enforced Cooldown Protocol"
-              meta2="Mandatory Material Review Verification"
-              progress={100}
-              actionHref="/verify"
-              actionText="Read Cooldown Policy"
-            />
+            <div className="glass-card rounded-2xl p-6 sm:p-7 space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B]">
+                <Clock className="w-5 h-5" />
+              </div>
+              <h3 className="font-royal text-base font-bold text-white">24-Hour Mandatory Retake Lockout</h3>
+              <p className="text-xs text-[#94A3B8] leading-relaxed">
+                Exhausting 3 failed attempts or suffering a Strike 3 violation triggers an automated 24-hour server cooldown period to enforce structured material remediation before re-attempting.
+              </p>
+            </div>
 
-            {/* Safeguard 3: Card 3 (Bastion Glass Shield with Padlock) */}
-            <DictoCyberCard
-              variant={3}
-              tag="CRYPTOGRAPHIC INTEGRITY"
-              pathwayTag="Public Resolver"
-              title="Cryptographic Proof & Public Resolver"
-              description="Every earned certificate produces an immutable SHA-256 digital signature, tamper-proof QR code, and instant verification URL directly verifiable by prospective employers."
-              tags={['SHA-256 Hash', 'Tamper-Proof Proofs', 'Live QR Scan']}
-              meta1="Public Key Escrow Ledger Integration"
-              meta2="Instant Employer QR Code Verification"
-              actionHref="/verify"
-              actionText="Test Live Resolver"
-            />
+            <div className="glass-card rounded-2xl p-6 sm:p-7 space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-[#35E6B5]/10 border border-[#35E6B5]/30 flex items-center justify-center text-[#35E6B5]">
+                <Shield className="w-5 h-5" />
+              </div>
+              <h3 className="font-royal text-base font-bold text-white">Cryptographic Verification</h3>
+              <p className="text-xs text-[#94A3B8] leading-relaxed">
+                Every earned certificate generates an immutable hexadecimal digital signature and public verification URL with QR code, directly verifiable by prospective employers.
+              </p>
+            </div>
           </div>
         </div>
       </section>

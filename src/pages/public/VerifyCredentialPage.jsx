@@ -74,7 +74,7 @@ export default function VerifyCredentialPage() {
                 placeholder="Enter Credential ID (e.g. RK-SOC-89421)"
                 value={searchId}
                 onChange={(e) => setSearchId(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#101923]/90 border border-[#263440] text-xs sm:text-sm text-white placeholder-[#64748B] font-mono focus:outline-none focus:border-[#65F58A] uppercase tracking-wider transition-colors"
+                className="w-full pl-10 pr-4 py-3 rounded-xl glass-input text-xs sm:text-sm text-white placeholder-[#64748B] font-mono focus:outline-none uppercase tracking-wider transition-colors"
               />
             </div>
             <button
@@ -90,7 +90,7 @@ export default function VerifyCredentialPage() {
 
         {/* Verification Result Display */}
         {hasSearched && credential ? (
-          <div className="bg-[#101923]/95 backdrop-blur-xl border border-[#35E6B5]/40 hover:border-[#65F58A] cyber-clip-diagonal-both rounded-2xl p-6 sm:p-8 space-y-6 relative overflow-hidden shadow-[0_12px_40px_rgba(53,230,181,0.18)] transition-all">
+          <div className="glass-card rounded-2xl p-6 sm:p-8 space-y-6 relative overflow-hidden">
             {/* Top Security Banner */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-[#263440] gap-4">
               <div className="flex items-center space-x-4">

@@ -148,10 +148,10 @@ export default function AdminDashboard() {
       </div>
 
       {/* Phase 3.3 Catalog Release Controller Banner */}
-      <div className={`p-6 rounded-2xl border transition-all ${
+      <div className={`p-6 rounded-2xl glass-card transition-all ${
         isCatalogEnabled
-          ? 'bg-[#101923] border-[#65F58A]/50 shadow-[0_0_30px_rgba(101,245,138,0.12)]'
-          : 'bg-[#101923] border-[#263440]'
+          ? 'border-[#65F58A]/50 shadow-[0_0_30px_rgba(101,245,138,0.15)]'
+          : 'border-[#263440]'
       }`}>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2 max-w-2xl">
@@ -199,33 +199,33 @@ export default function AdminDashboard() {
         )}
       </div>
 
-      {/* Operations KPI Metrics with Dicto Cyber Card Geometries */}
+      {/* Operations KPI Metrics */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <div className="p-5 bg-[#101923]/90 backdrop-blur-xl border border-[#35E6B5]/40 hover:border-[#65F58A] cyber-clip-diagonal-both space-y-1 transition-all hover:shadow-[0_8px_30px_rgba(53,230,181,0.2)]">
+        <div className="p-5 glass-card rounded-2xl space-y-1">
           <div className="text-[11px] font-mono text-[#94A3B8] uppercase">Enrolled Students</div>
           <div className="text-2xl font-bold text-white font-mono tabular-nums">{metrics.total_students}</div>
           <div className="text-[10px] text-[#65F58A] font-mono">100% Verified Ident</div>
         </div>
 
-        <div className="p-5 bg-[#101923]/90 backdrop-blur-xl border border-[#65F58A]/40 hover:border-[#00FFA3] cyber-clip-corner-top-left space-y-1 transition-all hover:shadow-[0_8px_30px_rgba(101,245,138,0.2)]">
+        <div className="p-5 glass-card rounded-2xl space-y-1">
           <div className="text-[11px] font-mono text-[#94A3B8] uppercase">Active Enrolments</div>
           <div className="text-2xl font-bold text-[#35E6B5] font-mono tabular-nums">{metrics.total_enrolments}</div>
           <div className="text-[10px] text-[#94A3B8] font-mono">Curriculum Seats</div>
         </div>
 
-        <div className="p-5 bg-[#101923]/90 backdrop-blur-xl border border-[#F59E0B]/40 hover:border-[#FBBF24] cyber-clip-notch-bottom space-y-1 transition-all hover:shadow-[0_8px_30px_rgba(245,158,11,0.2)]">
+        <div className="p-5 glass-card rounded-2xl space-y-1">
           <div className="text-[11px] font-mono text-[#94A3B8] uppercase">Issued Credentials</div>
-          <div className="text-2xl font-bold text-[#FBBF24] font-mono tabular-nums">{metrics.total_credentials_issued}</div>
+          <div className="text-2xl font-bold text-[#65F58A] font-mono tabular-nums">{metrics.total_credentials_issued}</div>
           <div className="text-[10px] text-[#94A3B8] font-mono">Cryptographically Signed</div>
         </div>
 
-        <div className="p-5 bg-[#101923]/90 backdrop-blur-xl border border-[#EF4444]/40 hover:border-[#F87171] cyber-clip-corner-top-right space-y-1 transition-all hover:shadow-[0_8px_30px_rgba(239,68,68,0.2)]">
-          <div className="text-[11px] font-mono text-[#F87171] uppercase">Flagged Incidents</div>
+        <div className="p-5 glass-card rounded-2xl space-y-1">
+          <div className="text-[11px] font-mono text-[#94A3B8] uppercase">Flagged Incidents</div>
           <div className="text-2xl font-bold text-rose-400 font-mono tabular-nums">{metrics.active_exam_incidents}</div>
           <div className="text-[10px] text-rose-400 font-mono">Proctoring Telemetry</div>
         </div>
 
-        <div className="p-5 bg-[#101923]/90 backdrop-blur-xl border border-[#F59E0B]/40 hover:border-[#FBBF24] cyber-clip-diagonal-both space-y-1 transition-all hover:shadow-[0_8px_30px_rgba(245,158,11,0.2)]">
+        <div className="p-5 glass-card rounded-2xl space-y-1">
           <div className="text-[11px] font-mono text-[#94A3B8] uppercase">Token Circulation</div>
           <div className="text-2xl font-bold text-[#F59E0B] font-mono tabular-nums">{metrics.total_tokens_circulated}</div>
           <div className="text-[10px] text-[#94A3B8] font-mono">Non-Monetary Ledger</div>
@@ -250,7 +250,7 @@ export default function AdminDashboard() {
           <div className="space-y-3">
             {violations.length > 0 ? (
               violations.map((v) => (
-                <div key={v.id} className="p-3.5 rounded-xl bg-[#071018] border border-[#263440] flex items-center justify-between text-xs">
+                <div key={v.id} className="p-3.5 rounded-xl bg-[#101923]/60 backdrop-blur-md border border-[#263440] flex items-center justify-between text-xs">
                   <div>
                     <div className="text-white font-semibold font-mono">{v.student_name || 'Anonymous Cadet'}</div>
                     <div className="text-[11px] text-rose-400 font-mono mt-0.5">{v.reason} (Strike {v.strike_count}/3)</div>

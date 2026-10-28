@@ -146,7 +146,7 @@ export default function CourseCatalogPage() {
                 placeholder="Search by topic, skill, or framework (e.g. SOC, SIEM, MITRE, Wireshark)..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#071018]/80 border border-[#263440] text-xs sm:text-sm text-white placeholder-[#64748B] font-mono focus:outline-none focus:border-[#65F58A] transition-colors"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl glass-input text-xs sm:text-sm text-white placeholder-[#64748B] font-mono focus:outline-none transition-colors"
               />
             </div>
 
@@ -155,22 +155,22 @@ export default function CourseCatalogPage() {
               <select
                 value={selectedDifficulty}
                 onChange={(e) => setSelectedDifficulty(e.target.value)}
-                className="px-3 py-2 rounded-xl bg-[#071018]/80 border border-[#263440] text-xs font-mono text-slate-300 focus:outline-none focus:border-[#65F58A]"
+                className="px-3 py-2 rounded-xl glass-input text-xs font-mono text-slate-300 focus:outline-none"
               >
-                <option value="All">All Difficulties</option>
-                <option value="Beginner">Beginner</option>
-                <option value="Intermediate">Intermediate</option>
-                <option value="Advanced">Advanced</option>
+                <option value="All" className="bg-[#101923] text-white">All Difficulties</option>
+                <option value="Beginner" className="bg-[#101923] text-white">Beginner</option>
+                <option value="Intermediate" className="bg-[#101923] text-white">Intermediate</option>
+                <option value="Advanced" className="bg-[#101923] text-white">Advanced</option>
               </select>
 
               <select
                 value={selectedPricing}
                 onChange={(e) => setSelectedPricing(e.target.value)}
-                className="px-3 py-2 rounded-xl bg-[#071018]/80 border border-[#263440] text-xs font-mono text-slate-300 focus:outline-none focus:border-[#65F58A]"
+                className="px-3 py-2 rounded-xl glass-input text-xs font-mono text-slate-300 focus:outline-none"
               >
-                <option value="All">All Access</option>
-                <option value="Free">Free to Learn</option>
-                <option value="Paid">Certification Tracks</option>
+                <option value="All" className="bg-[#101923] text-white">All Access</option>
+                <option value="Free" className="bg-[#101923] text-white">Free to Learn</option>
+                <option value="Paid" className="bg-[#101923] text-white">Certification Tracks</option>
               </select>
 
               {(searchQuery || selectedDifficulty !== 'All' || selectedPricing !== 'All') && (
@@ -192,12 +192,11 @@ export default function CourseCatalogPage() {
         {/* 10 Unique Distinct Course Cards Display using their stored card_variant */}
         {filteredCourses.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {filteredCourses.map((course, idx) => (
+            {filteredCourses.map((course) => (
               <CourseCardVariant
                 key={course.id}
                 course={course}
-                variantId={course.card_variant || `variant-${String(idx + 1).padStart(2, '0')}`}
-                className={course.card_variant === 'variant-06' ? 'lg:col-span-2' : ''}
+                variantId={course.card_variant}
               />
             ))}
           </div>

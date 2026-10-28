@@ -180,13 +180,13 @@ export default function CourseDetailPage() {
 
               <div className="space-y-4">
                 {(course.modules || []).map((module, modIdx) => (
-                  <div key={module.id || modIdx} className="rounded-xl border border-[#263440] bg-[#14202C]/60 overflow-hidden">
+                  <div key={module.id || modIdx} className="rounded-xl border border-[#263440] bg-[#101923]/60 backdrop-blur-md overflow-hidden shadow-sm">
                     <button
                       onClick={() => toggleModule(modIdx)}
-                      className="w-full p-4 text-left flex items-center justify-between hover:bg-[#1B2530] transition-colors"
+                      className="w-full p-4 text-left flex items-center justify-between hover:bg-[#1B2530]/60 transition-colors"
                     >
                       <div className="flex items-center gap-3">
-                        <span className="w-6 h-6 rounded-full bg-[#1B2530] text-[#65F58A] border border-[#65F58A]/30 flex items-center justify-center text-xs font-mono font-bold">
+                        <span className="w-6 h-6 rounded-full bg-[#1B2530] text-[#65F58A] border border-[#65F58A]/30 flex items-center justify-center text-xs font-mono font-bold shadow-[0_0_8px_rgba(101,245,138,0.2)]">
                           {modIdx + 1}
                         </span>
                         <span className="font-royal font-bold text-sm text-white">{module.title}</span>
@@ -199,11 +199,11 @@ export default function CourseDetailPage() {
                     </button>
 
                     {expandedModules[modIdx] && (
-                      <div className="p-4 border-t border-[#263440] space-y-2.5 bg-[#0D151F]">
+                      <div className="p-4 border-t border-[#263440] space-y-2.5 bg-[#0B121B]/50 backdrop-blur-md">
                         {(module.lessons || []).map((lesson, lIdx) => (
                           <div
                             key={lesson.id || lIdx}
-                            className="p-3 rounded-lg bg-[#14202C] border border-[#263440] flex items-center justify-between text-xs"
+                            className="p-3 rounded-lg bg-[#101923]/70 backdrop-blur-md border border-[#263440] hover:border-[#65F58A]/40 flex items-center justify-between text-xs transition-colors"
                           >
                             <div className="flex items-center gap-2.5 truncate">
                               <BookOpen className="w-4 h-4 text-[#35E6B5] flex-shrink-0" />
@@ -227,9 +227,9 @@ export default function CourseDetailPage() {
             </div>
           </div>
 
-          {/* Sidebar CTA Card (Right Column) with Dicto Cyber Card Styling */}
+          {/* Sidebar CTA Card (Right Column) */}
           <div className="space-y-6">
-            <div className="bg-[#101923]/95 backdrop-blur-xl border border-[#35E6B5]/40 hover:border-[#65F58A] cyber-clip-corner-top-right rounded-2xl p-6 sm:p-7 space-y-6 sticky top-28 shadow-[0_12px_40px_rgba(53,230,181,0.15)] transition-all">
+            <div className="glass-card rounded-2xl p-6 sm:p-7 space-y-6 sticky top-28">
               <div className="space-y-2">
                 <div className="text-[10px] font-mono uppercase tracking-wider text-[#94A3B8]">Enrollment Status</div>
                 <div className="flex items-baseline gap-2">
@@ -300,7 +300,7 @@ export default function CourseDetailPage() {
       {/* Grant / Coupon Modal */}
       {showGrantModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-          <div className="glass-card rounded-2xl p-6 sm:p-8 max-w-md w-full space-y-4">
+          <div className="glass-modal rounded-2xl p-6 sm:p-8 max-w-md w-full space-y-4 shadow-2xl">
             <h3 className="font-royal text-lg font-bold text-white flex items-center gap-2">
               <Gift className="w-5 h-5 text-[#65F58A]" />
               <span>Apply Academic Grant / Coupon</span>
@@ -314,7 +314,7 @@ export default function CourseDetailPage() {
                 placeholder="Enter Code (e.g. GRANT100)"
                 value={couponCode}
                 onChange={(e) => setCouponCode(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-[#071018] border border-[#263440] text-sm text-white font-mono uppercase focus:outline-none focus:border-[#65F58A]"
+                className="w-full px-4 py-2.5 rounded-xl glass-input text-sm text-white font-mono uppercase focus:outline-none"
               />
               {grantError && <div className="text-xs text-rose-400 font-mono">{grantError}</div>}
               {grantSuccess && <div className="text-xs text-[#65F58A] font-mono">Grant Verified! Enrolling...</div>}
@@ -322,7 +322,7 @@ export default function CourseDetailPage() {
                 <button
                   type="button"
                   onClick={() => setShowGrantModal(false)}
-                  className="px-4 py-2 rounded-xl bg-[#1B2530] text-xs font-mono text-slate-300"
+                  className="px-4 py-2 rounded-xl bg-[#1B2530] text-xs font-mono text-slate-300 hover:text-white transition-colors"
                 >
                   Cancel
                 </button>

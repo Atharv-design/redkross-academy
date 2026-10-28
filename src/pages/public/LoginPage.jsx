@@ -148,7 +148,7 @@ export default function LoginPage() {
                   placeholder="e.g. Alex Mercer"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#071018] border border-[#263440] text-xs text-white placeholder-[#64748B] font-mono focus:outline-none focus:border-[#65F58A]"
+                  className="w-full px-3.5 py-2.5 rounded-xl glass-input text-xs text-white placeholder-[#64748B] font-mono focus:outline-none"
                 />
               </div>
             )}
@@ -163,7 +163,7 @@ export default function LoginPage() {
                 placeholder="cadet@domain.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#071018] border border-[#263440] text-xs text-white placeholder-[#64748B] font-mono focus:outline-none focus:border-[#65F58A]"
+                className="w-full px-3.5 py-2.5 rounded-xl glass-input text-xs text-white placeholder-[#64748B] font-mono focus:outline-none"
               />
             </div>
 
@@ -178,7 +178,7 @@ export default function LoginPage() {
                 placeholder="••••••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#071018] border border-[#263440] text-xs text-white placeholder-[#64748B] font-mono focus:outline-none focus:border-[#65F58A]"
+                className="w-full px-3.5 py-2.5 rounded-xl glass-input text-xs text-white placeholder-[#64748B] font-mono focus:outline-none"
               />
             </div>
 

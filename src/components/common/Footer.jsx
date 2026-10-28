@@ -5,9 +5,9 @@ import DoodleCrewFooter from '../ui/doodle-crew-footer-academy';
 
 export default function Footer() {
   return (
-    <footer className="bg-[#050B11] border-t border-[#263440] text-[#94A3B8] font-sans relative overflow-hidden select-none">
+    <footer className="relative overflow-hidden select-none bg-[#071018]/75 backdrop-blur-2xl border-t border-[#65F58A]/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.08),_0_-12px_45px_rgba(0,0,0,0.6)] text-[#94A3B8] font-sans">
       {/* Subtle Neon Radial Ambient Glow */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[850px] h-[320px] bg-[#65F58A]/[0.02] rounded-full blur-[160px] pointer-events-none" />
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[850px] h-[320px] bg-[#65F58A]/[0.035] rounded-full blur-[160px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
@@ -68,7 +68,7 @@ export default function Footer() {
                 href="https://redkross.org.in"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between text-xs text-gray-300 hover:border-[#65F58A]/40 hover:bg-white/10 transition-all group"
+                className="p-3 rounded-xl bg-[#101923]/60 backdrop-blur-md border border-[#263440] flex items-center justify-between text-xs text-gray-300 hover:border-[#65F58A]/50 hover:bg-[#1B2530]/80 transition-all group shadow-sm"
               >
                 <div>
                   <span className="text-[10px] text-gray-500 font-mono block">PARENT FOUNDATION</span>
@@ -81,33 +81,33 @@ export default function Footer() {
                 href="https://cyber.redkross.org.in"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between text-xs text-gray-300 hover:border-cyan-400/40 hover:bg-white/10 transition-all group"
+                className="p-3 rounded-xl bg-[#101923]/60 backdrop-blur-md border border-[#263440] flex items-center justify-between text-xs text-gray-300 hover:border-[#35E6B5]/50 hover:bg-[#1B2530]/80 transition-all group shadow-sm"
               >
                 <div>
                   <span className="text-[10px] text-gray-500 font-mono block">CYBERSECURITY LABS</span>
-                  <span className="font-semibold text-white group-hover:text-cyan-400">cyber.redkross.org.in</span>
+                  <span className="font-semibold text-white group-hover:text-[#35E6B5]">cyber.redkross.org.in</span>
                 </div>
-                <ArrowUpRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-cyan-400" />
+                <ArrowUpRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-[#35E6B5]" />
               </a>
 
               <a 
                 href="https://psychology.redkross.org.in"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between text-xs text-gray-300 hover:border-[#FFA439]/40 hover:bg-white/10 transition-all group"
+                className="p-3 rounded-xl bg-[#101923]/60 backdrop-blur-md border border-[#263440] flex items-center justify-between text-xs text-gray-300 hover:border-[#F59E0B]/50 hover:bg-[#1B2530]/80 transition-all group shadow-sm"
               >
                 <div>
                   <span className="text-[10px] text-gray-500 font-mono block">PSYCHOLOGY & WELLBEING</span>
-                  <span className="font-semibold text-white group-hover:text-[#FFA439]">psychology.redkross.org.in</span>
+                  <span className="font-semibold text-white group-hover:text-[#F59E0B]">psychology.redkross.org.in</span>
                 </div>
-                <ArrowUpRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-[#FFA439]" />
+                <ArrowUpRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-[#F59E0B]" />
               </a>
             </div>
           </div>
         </div>
 
         {/* Interactive Hand-Drawn Doodle Crew Brandmark for RedKross Academy */}
-        <div className="my-8 pt-6 border-t border-white/5">
+        <div className="my-8 pt-6 border-t border-white/10 glass-card rounded-2xl p-4 sm:p-6 shadow-xl">
           <DoodleCrewFooter
             as="div"
             showTop={false}
@@ -115,12 +115,13 @@ export default function Footer() {
             wordmark="REDKROSS"
             subWordmark="ACADEMY"
             wordmarkColorMode="logo"
+            preset="academy"
             tagline="Empowering Next-Gen Defensive Security Practitioners with Rigorous Curricula and Verifiable Credentials"
             height="520px"
             palette={{
-              background: "#050B11",
-              ink: "#F1F5F9",
-              accent: "#65F58A"
+              background: "transparent",
+              ink: "#65F58A",
+              accent: "#00FFA3"
             }}
             crew={[
               { kind: "yeti", letter: 0, seat: "front", scale: 0.44, offset: -0.32, says: "Mastering Tier-1 to Tier-2 SOC log triage!" },
@@ -132,8 +133,8 @@ export default function Footer() {
               { kind: "bird", letter: 6, seat: "top", offset: -0.08, flip: true, says: "Final certification milestone unlocked!" },
               { kind: "cat", letter: 7, seat: "front", flip: true, offset: 0.12, says: "Defend against advanced persistent threats!" }
             ]}
-            doodles={[]}
-            doodleCount={0}
+            doodles={["bolt", "star", "flame", "sparkle", "spiral", "plane"]}
+            doodleCount={12}
             actions={[
               { label: "Explore Learning Tracks", href: "/paths", variant: "solid" },
               { label: "Verify Credential", href: "/verify", variant: "outline" }

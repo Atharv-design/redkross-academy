@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Shield, Sparkles, Award, ArrowRight, BookOpen, Terminal, CheckCircle2 } from 'lucide-react';
-import DictoCyberCard from '../../components/cards/DictoCyberCard';
 
 /**
  * Learning Paths Page (Phase 3: Strict Empty-State Requirement)
@@ -72,56 +71,44 @@ export default function LearningPathsPage() {
           </p>
         </div>
 
-        {/* Educational Framework Pillars with Dicto Cyber Card Designs */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 max-w-6xl mx-auto text-left">
-          {/* Pillar 1: Card 5 (Cyber Grimoire & Neural Brain) */}
-          <DictoCyberCard
-            variant={5}
-            tag="HANDS-ON TELEMETRY"
-            pathwayTag="Framework 01"
-            title="Telemetry & Live SIEM Labs"
-            description="Real-world log correlation across SIEM and defensive monitoring stacks with automated telemetry ingestion pipelines."
-            tags={['Elastic Common Schema', 'Sysmon Ingestion', 'Linux Auditd']}
-            meta1="Live Virtual Machine Sandbox Labs"
-            meta2="Continuous Defensive Signal Correlation"
-            actionHref="/verify"
-            actionText="Explore Framework"
-          />
+        {/* Educational Framework Pillars (Informative without leaking course cards) */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 max-w-2xl mx-auto text-left">
+          <div className="glass-card rounded-2xl p-5 space-y-2 hover:border-[#65F58A]/50 transition-all">
+            <div className="w-8 h-8 rounded-xl bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center shadow-[0_0_12px_rgba(101,245,138,0.2)]">
+              <Terminal className="w-4 h-4 text-[#65F58A]" />
+            </div>
+            <div className="font-royal text-xs font-bold text-white">Hands-on Telemetry</div>
+            <p className="text-[11px] text-[#94A3B8] leading-relaxed">
+              Real-world log correlation across SIEM and defensive monitoring stacks.
+            </p>
+          </div>
 
-          {/* Pillar 2: Card 9 (Hooded Operator Command Matrix) */}
-          <DictoCyberCard
-            variant={9}
-            tag="ADVERSARY MAPPING"
-            pathwayTag="Framework 02"
-            title="MITRE ATT&CK Methodology"
-            description="Curricula aligned strictly with MITRE ATT&CK defensive methodologies, mapping adversary TTPs to defensive detections."
-            tags={['Enterprise Matrix', 'TTP Correlation', 'Sigma Rules']}
-            meta1="Standardized Defense-in-Depth Models"
-            meta2="Adversary Emulation Telemetry"
-            actionHref="/verify"
-            actionText="View Mappings"
-          />
+          <div className="glass-card rounded-2xl p-5 space-y-2 hover:border-[#35E6B5]/50 transition-all">
+            <div className="w-8 h-8 rounded-xl bg-[#35E6B5]/10 border border-[#35E6B5]/30 flex items-center justify-center shadow-[0_0_12px_rgba(53,230,181,0.2)]">
+              <Shield className="w-4 h-4 text-[#35E6B5]" />
+            </div>
+            <div className="font-royal text-xs font-bold text-white">Adversary Mapping</div>
+            <p className="text-[11px] text-[#94A3B8] leading-relaxed">
+              Curricula aligned strictly with MITRE ATT&CK defensive methodologies.
+            </p>
+          </div>
 
-          {/* Pillar 3: Card 10 (Star Medal Trophy & Milestone Sockets) */}
-          <DictoCyberCard
-            variant={10}
-            tag="INSTITUTIONAL RIGOR"
-            pathwayTag="Framework 03"
-            title="Tamper-Proof Verification"
-            description="Cryptographically signed credentials published to the public registry with immutable verification proofs and QR resolver."
-            tags={['SHA-256 Digest', 'Public Registry', 'Live QR Scan']}
-            meta1="Verified Employer Lookup Protocol"
-            meta2="Tamper-Evident Institutional Diploma"
-            actionHref="/verify"
-            actionText="Verify Proofs"
-          />
+          <div className="glass-card rounded-2xl p-5 space-y-2 hover:border-[#65F58A]/50 transition-all">
+            <div className="w-8 h-8 rounded-xl bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center shadow-[0_0_12px_rgba(101,245,138,0.2)]">
+              <Award className="w-4 h-4 text-[#65F58A]" />
+            </div>
+            <div className="font-royal text-xs font-bold text-white">Tamper-Proof Proofs</div>
+            <p className="text-[11px] text-[#94A3B8] leading-relaxed">
+              Cryptographically verified credentials on the public registry.
+            </p>
+          </div>
         </div>
 
         {/* Action Links */}
         <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             to="/verify"
-            className="w-full sm:w-auto px-6 py-3 rounded-full bg-[#101923] hover:bg-[#1B2530] border border-[#263440] text-xs font-mono text-[#94A3B8] hover:text-white transition-all flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-6 py-3 rounded-full glass-card hover:bg-[#1B2530] border border-[#263440] text-xs font-mono text-[#94A3B8] hover:text-white transition-all flex items-center justify-center gap-2"
           >
             <Award className="w-4 h-4 text-[#65F58A]" />
             <span>Verify Institutional Credentials</span>
