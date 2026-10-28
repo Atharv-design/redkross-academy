@@ -52,7 +52,7 @@ export default function SupportTicketModal({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-lg rounded-2xl glass-modal p-6 sm:p-8 shadow-2xl">
+      <div className="relative w-full max-w-lg rounded-2xl glass-card border border-[#263440] shadow-2xl p-6 sm:p-8">
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -68,7 +68,7 @@ export default function SupportTicketModal({ isOpen, onClose }) {
               <CheckCircle2 className="w-8 h-8" />
             </div>
             <h3 className="font-royal text-xl font-bold text-white">Ticket Dispatched Successfully</h3>
-            <div className="p-3 bg-[#101923]/70 backdrop-blur-md border border-[#263440] rounded-xl text-xs font-mono text-[#94A3B8]">
+            <div className="p-3 bg-[#071018] border border-[#263440] rounded-xl text-xs font-mono text-[#94A3B8]">
               Ticket Reference: <span className="text-[#65F58A] font-bold">{submittedTicket.id}</span>
             </div>
             <p className="text-xs text-[#94A3B8] max-w-sm mx-auto leading-relaxed">
@@ -84,7 +84,7 @@ export default function SupportTicketModal({ isOpen, onClose }) {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="flex items-center space-x-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center text-[#65F58A] shadow-[0_0_12px_rgba(101,245,138,0.25)]">
+              <div className="w-10 h-10 rounded-xl bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center text-[#65F58A]">
                 <LifeBuoy className="w-5 h-5" />
               </div>
               <div>
@@ -102,7 +102,7 @@ export default function SupportTicketModal({ isOpen, onClose }) {
                     placeholder="Operator Name"
                     value={guestName}
                     onChange={(e) => setGuestName(e.target.value)}
-                    className="w-full px-3 py-2 glass-input rounded-xl text-xs text-white placeholder-[#64748B] font-mono focus:outline-none"
+                    className="w-full px-3 py-2 bg-[#071018] border border-[#263440] rounded-xl text-xs text-white placeholder-[#64748B] font-mono focus:border-[#65F58A]"
                   />
                 </div>
                 <div>
@@ -113,7 +113,7 @@ export default function SupportTicketModal({ isOpen, onClose }) {
                     placeholder="operator@domain.com"
                     value={guestEmail}
                     onChange={(e) => setGuestEmail(e.target.value)}
-                    className="w-full px-3 py-2 glass-input rounded-xl text-xs text-white placeholder-[#64748B] font-mono focus:outline-none"
+                    className="w-full px-3 py-2 bg-[#071018] border border-[#263440] rounded-xl text-xs text-white placeholder-[#64748B] font-mono focus:border-[#65F58A]"
                   />
                 </div>
               </div>
@@ -125,13 +125,13 @@ export default function SupportTicketModal({ isOpen, onClose }) {
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-3 py-2 glass-input rounded-xl text-xs text-white font-mono focus:outline-none"
+                  className="w-full px-3 py-2 bg-[#071018] border border-[#263440] rounded-xl text-xs text-white font-mono focus:border-[#65F58A]"
                 >
-                  <option value="Exam Reset Appeal" className="bg-[#101923] text-white">Exam Reset Appeal</option>
-                  <option value="Certificate Verification" className="bg-[#101923] text-white">Credential Verification</option>
-                  <option value="Course Inquiry" className="bg-[#101923] text-white">Course & Curriculum Query</option>
-                  <option value="Payment & Tokens" className="bg-[#101923] text-white">Token Rewards & Payment</option>
-                  <option value="General Inquiry" className="bg-[#101923] text-white">General Operational Support</option>
+                  <option value="Exam Reset Appeal">Exam Reset Appeal</option>
+                  <option value="Certificate Verification">Credential Verification</option>
+                  <option value="Course Inquiry">Course & Curriculum Query</option>
+                  <option value="Payment & Tokens">Token Rewards & Payment</option>
+                  <option value="General Inquiry">General Operational Support</option>
                 </select>
               </div>
               <div>
@@ -139,12 +139,12 @@ export default function SupportTicketModal({ isOpen, onClose }) {
                 <select
                   value={priority}
                   onChange={(e) => setPriority(e.target.value)}
-                  className="w-full px-3 py-2 glass-input rounded-xl text-xs text-white font-mono focus:outline-none"
+                  className="w-full px-3 py-2 bg-[#071018] border border-[#263440] rounded-xl text-xs text-white font-mono focus:border-[#65F58A]"
                 >
-                  <option value="Low" className="bg-[#101923] text-white">Low</option>
-                  <option value="Medium" className="bg-[#101923] text-white">Medium</option>
-                  <option value="High" className="bg-[#101923] text-white">High</option>
-                  <option value="Urgent" className="bg-[#101923] text-white">Urgent</option>
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                  <option value="Urgent">Urgent</option>
                 </select>
               </div>
             </div>
@@ -157,7 +157,7 @@ export default function SupportTicketModal({ isOpen, onClose }) {
                 placeholder="e.g. Inadvertent blur strike during SOC Module 2 assessment"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
-                className="w-full px-3 py-2 glass-input rounded-xl text-xs text-white placeholder-[#64748B] font-mono focus:outline-none"
+                className="w-full px-3 py-2 bg-[#071018] border border-[#263440] rounded-xl text-xs text-white placeholder-[#64748B] font-mono focus:border-[#65F58A]"
               />
             </div>
 
@@ -169,7 +169,7 @@ export default function SupportTicketModal({ isOpen, onClose }) {
                 placeholder="Describe your inquiry with relevant context..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full px-3 py-2 glass-input rounded-xl text-xs text-white placeholder-[#64748B] font-mono focus:outline-none"
+                className="w-full px-3 py-2 bg-[#071018] border border-[#263440] rounded-xl text-xs text-white placeholder-[#64748B] font-mono focus:border-[#65F58A]"
               />
             </div>
 

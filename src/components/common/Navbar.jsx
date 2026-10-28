@@ -98,8 +98,8 @@ export default function Navbar() {
           <div
             className={`max-w-7xl mx-auto rounded-full px-4 sm:px-6 py-2.5 flex items-center justify-between transition-all duration-300 pointer-events-auto ${
               scrolled
-                ? 'bg-[#0B121B]/80 backdrop-blur-2xl border border-[#65F58A]/35 shadow-[inset_0_1px_1px_rgba(255,255,255,0.12),_0_16px_40px_rgba(0,0,0,0.85)]'
-                : 'bg-[#101923]/75 backdrop-blur-2xl border border-[#263440] shadow-[inset_0_1px_1px_rgba(255,255,255,0.08),_0_8px_32px_rgba(0,0,0,0.45)]'
+                ? 'bg-[#0B121B]/95 backdrop-blur-2xl border border-[#65F58A]/35 shadow-[0_12px_40px_rgba(0,0,0,0.85)]'
+                : 'bg-[#101923]/80 backdrop-blur-xl border border-[#263440] shadow-xl'
             }`}
           >
             {/* Brand Logo & Royal Title */}
@@ -254,7 +254,7 @@ export default function Navbar() {
                   </button>
 
                   {showProfileMenu && (
-                    <div className="absolute right-0 mt-2 w-64 rounded-2xl glass-modal py-2 z-50 divide-y divide-[#263440]/60 ring-1 ring-white/10">
+                    <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-[#101923] border border-[#263440] shadow-2xl py-2 z-50 divide-y divide-[#263440]">
                       <div className="px-4 py-3">
                         <div className="font-royal font-bold text-sm text-white truncate">
                           {currentUser.full_name}
@@ -334,7 +334,7 @@ export default function Navbar() {
 
       {/* Mobile Drawer Navigation */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-[#071018]/85 backdrop-blur-2xl lg:hidden pt-28 px-6 pb-8 flex flex-col justify-between overflow-y-auto">
+        <div className="fixed inset-0 z-40 bg-black/80 backdrop-blur-xl lg:hidden pt-28 px-6 pb-8 flex flex-col justify-between overflow-y-auto">
           <div className="space-y-6">
             <div className="text-xs font-mono text-[#94A3B8] uppercase tracking-wider border-b border-[#263440] pb-2">
               Navigation Menu

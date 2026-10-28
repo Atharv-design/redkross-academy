@@ -351,23 +351,20 @@ export default function CourseCardVariant({ course, variantId, variantIndex = 0,
 
   return (
     <div
-      className={`group relative flex flex-col justify-between p-6 sm:p-7 bg-[#101923]/65 backdrop-blur-2xl border transition-all duration-400 ${
+      className={`group relative flex flex-col justify-between p-6 sm:p-7 bg-[#101923]/80 backdrop-blur-xl border transition-all duration-400 ${
         isAmber
-          ? 'border-[#263440] hover:border-[#F59E0B]/60 hover:bg-[#1B2530]/80 shadow-[inset_0_1px_1px_rgba(255,255,255,0.08),_0_8px_32px_rgba(0,0,0,0.45)] hover:shadow-[inset_0_1px_2px_rgba(255,255,255,0.18),_0_16px_44px_rgba(245,158,11,0.2)]'
-          : 'border-[#263440] hover:border-[#65F58A]/60 hover:bg-[#1B2530]/80 shadow-[inset_0_1px_1px_rgba(255,255,255,0.08),_0_8px_32px_rgba(0,0,0,0.45)] hover:shadow-[inset_0_1px_2px_rgba(255,255,255,0.18),_0_16px_44px_rgba(0,255,163,0.18)]'
+          ? 'border-[#263440] hover:border-[#F59E0B]/60 hover:shadow-[0_12px_40px_rgba(245,158,11,0.18)]'
+          : 'border-[#263440] hover:border-[#65F58A]/60 hover:shadow-[0_12px_40px_rgba(101,245,138,0.18)]'
       } ${getClipClass()} hover:-translate-y-1.5`}
     >
-      {/* Specular Light Reflection Sheen */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] via-transparent to-transparent pointer-events-none" />
-
       {/* Top Header Row */}
-      <div className="relative z-10">
+      <div>
         <div className="flex items-center justify-between mb-4">
           <span
-            className={`px-3 py-1 rounded-full text-[11px] font-mono font-semibold uppercase tracking-wider border backdrop-blur-md ${
+            className={`px-3 py-1 rounded-full text-[11px] font-mono font-semibold uppercase tracking-wider border ${
               isAmber
-                ? 'bg-[#F59E0B]/10 border-[#F59E0B]/35 text-[#F59E0B] shadow-[0_0_10px_rgba(245,158,11,0.15)]'
-                : 'bg-[#65F58A]/10 border-[#65F58A]/35 text-[#65F58A] shadow-[0_0_10px_rgba(101,245,138,0.15)]'
+                ? 'bg-[#F59E0B]/10 border-[#F59E0B]/35 text-[#F59E0B]'
+                : 'bg-[#65F58A]/10 border-[#65F58A]/35 text-[#65F58A]'
             }`}
           >
             {course.difficulty || 'Intermediate'}
@@ -399,7 +396,7 @@ export default function CourseCardVariant({ course, variantId, variantIndex = 0,
             {skills.map((skill, idx) => (
               <div
                 key={idx}
-                className="px-2.5 py-1.5 rounded-lg bg-[#1B2530]/50 backdrop-blur-md border border-white/5 text-[11px] font-mono text-slate-300 truncate shadow-sm"
+                className="px-2.5 py-1.5 rounded-lg bg-[#1B2530]/60 border border-[#263440] text-[11px] font-mono text-slate-300 truncate"
                 title={skill}
               >
                 {skill}
@@ -410,7 +407,7 @@ export default function CourseCardVariant({ course, variantId, variantIndex = 0,
       </div>
 
       {/* Bottom Milestone Credential Row */}
-      <div className="mt-6 pt-4 border-t border-[#263440]/80 flex items-center justify-between relative z-10">
+      <div className="mt-6 pt-4 border-t border-[#263440] flex items-center justify-between">
         <div>
           <div className="text-[9px] font-mono uppercase tracking-wider text-[#94A3B8]">
             MILESTONE CREDENTIAL

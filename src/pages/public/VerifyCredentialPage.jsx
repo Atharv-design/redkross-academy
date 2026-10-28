@@ -74,7 +74,7 @@ export default function VerifyCredentialPage() {
                 placeholder="Enter Credential ID (e.g. RK-SOC-89421)"
                 value={searchId}
                 onChange={(e) => setSearchId(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-xl glass-input text-xs sm:text-sm text-white placeholder-[#64748B] font-mono focus:outline-none uppercase tracking-wider transition-colors"
+                className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#101923]/90 border border-[#263440] text-xs sm:text-sm text-white placeholder-[#64748B] font-mono focus:outline-none focus:border-[#65F58A] uppercase tracking-wider transition-colors"
               />
             </div>
             <button

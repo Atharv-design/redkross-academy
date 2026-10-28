@@ -370,7 +370,7 @@ export type CrewKind = "yeti" | "kid" | "bird" | "cat" | "ghost" | "mushroom"
 
 export type DoodleKind = "flame" | "sandwich" | "star" | "heart" | "bolt" | "sparkle" | "spiral" | "plane"
 
-export type DoodleCrewPreset = "academy" | "auto" | "paper" | "night" | "riso" | "sunny"
+export type DoodleCrewPreset = "auto" | "paper" | "night" | "riso" | "sunny"
 
 
 
@@ -528,12 +528,17 @@ export interface DoodleCrewFooterProps {
 
 
 const PRESETS = {
-  academy: { background: "transparent", ink: "#65F58A", accent: "#00FFA3" },
-  auto: { background: "transparent", ink: "#65F58A", accent: "#00FFA3" },
-  paper: { background: "#071018", ink: "#65F58A", accent: "#00FFA3" },
-  night: { background: "#071018", ink: "#65F58A", accent: "#00FFA3" },
-  riso: { background: "#071018", ink: "#35E6B5", accent: "#65F58A" },
-  sunny: { background: "#071018", ink: "#65F58A", accent: "#F59E0B" },
+
+  auto: { background: "var(--color-background, #ffffff)", ink: "var(--color-foreground, #0d0d0d)", accent: "#ff6b2c" },
+
+  paper: { background: "#ffffff", ink: "#0d0d0d", accent: "#ff6b2c" },
+
+  night: { background: "#0e0e10", ink: "#f4f1ea", accent: "#ff8a3d" },
+
+  riso: { background: "#f4f2ff", ink: "#2433c9", accent: "#ff4f8b" },
+
+  sunny: { background: "#ffd94a", ink: "#141414", accent: "#e8402a" },
+
 }
 
 
@@ -584,7 +589,7 @@ const DEFAULT_DOODLES: DoodleKind[] = ["flame", "sandwich", "star", "flame", "he
 
 
 
-const ACCENT = { flame: "#65F58A", flameCore: "#00FFA3", gold: "#F59E0B", heart: "#35E6B5", bread: "#101923", crumb: "#65F58A", leaf: "#35E6B5", beak: "#F59E0B", cap: "#65F58A" }
+const ACCENT = { flame: "#ff7a1a", flameCore: "#ffd23f", gold: "#ffd23f", heart: "#ff5c7a", bread: "#f2c48d", crumb: "#fff1d6", leaf: "#5fb247", beak: "#ff9f1c", cap: "#ff4d4d" }
 
 
 
@@ -1018,7 +1023,7 @@ const Doodle = ({ kind }: { kind: DoodleKind }) => {
 
     case "sparkle":
 
-      return <path fill="#00FFA3" d="M0 -13 C1 -4 4 -1 13 0 C4 1 1 4 0 13 C-1 4 -4 1 -13 0 C-4 -1 -1 -4 0 -13 Z" />
+      return <path fill="#8fdcff" d="M0 -13 C1 -4 4 -1 13 0 C4 1 1 4 0 13 C-1 4 -4 1 -13 0 C-4 -1 -1 -4 0 -13 Z" />
 
     case "spiral":
 
@@ -1063,24 +1068,30 @@ type Metrics = { advances: number[]; cap: number }
 
 
 const REDKROSS_PALETTE = [
-  "#65F58A", // R - Neon Green
-  "#35E6B5", // E - Mint Green
-  "#00FFA3", // D - Glow Green
-  "#45F5A1", // K - Emerald
-  "#65F58A", // R - Neon Green
-  "#35E6B5", // O - Mint Green
-  "#00FFA3", // S - Glow Green
-  "#65F58A", // S - Neon Green
+  "#00F0FF", // R - Electric Neon Cyan
+  "#38BDF8", // E - Sky Cyber Blue
+  "#0EA5E9", // D - Electric Azure
+  "#0284C7", // K - Deep Blue
+  "#2563EB", // R - Vivid Cobalt
+  "#0FB7B7", // O - Radiant Teal
+  "#38BDF8", // S - Sky Blue
+  "#00F0FF", // S - Electric Neon Cyan
 ]
 
 const REDKROSS_SUB_PALETTE = [
-  "#65F58A", // A
-  "#35E6B5", // C
-  "#00FFA3", // A
-  "#45F5A1", // D
-  "#65F58A", // E
-  "#35E6B5", // M
-  "#F59E0B", // Y - Amber Accent
+  "#00F0FF", // C - Cyan
+  "#38BDF8", // Y - Sky
+  "#0EA5E9", // B - Azure
+  "#2563EB", // E - Cobalt
+  "#0FB7B7", // R - Teal
+  "#00F0FF", // S - Cyan
+  "#38BDF8", // E - Sky
+  "#0EA5E9", // C - Azure
+  "#2563EB", // U - Cobalt
+  "#0FB7B7", // R - Teal
+  "#38BDF8", // I - Sky
+  "#00F0FF", // T - Cyan
+  "#FFA439", // Y - Radiant Amber
 ]
 
 const FONT_SIZE = 200
@@ -2638,7 +2649,7 @@ const CSS =
 
   ".dcf-svg{display:block;width:100%;height:auto;user-select:none;-webkit-user-select:none}" +
 
-  ".dcf-svg text{font-weight:900;paint-order:stroke fill}" + "\n  .dcf-glyph{filter:drop-shadow(0 0 24px rgba(101,245,138,.45)) drop-shadow(0 0 45px rgba(0,255,163,.3))}" +
+  ".dcf-svg text{font-weight:900;paint-order:stroke fill}" + "\n  .dcf-glyph{filter:drop-shadow(0 0 20px rgba(0,240,255,.35)) drop-shadow(0 0 35px rgba(37,99,235,.25))}" +
 
   ".dcf-art{fill:var(--dcf-bg);stroke:var(--dcf-ink);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}" +
 
@@ -2650,13 +2661,13 @@ const CSS =
 
   ".dcf-art .dcf-shadow{fill:var(--dcf-ink);stroke:none;opacity:.14}" +
 
-  ".dcf-ground path{fill:none;stroke:var(--dcf-accent,#65F58A);stroke-width:2.4;stroke-linecap:round;filter:drop-shadow(0 0 12px rgba(101,245,138,.6))}" +
+  ".dcf-ground path{fill:none;stroke:var(--dcf-accent,#00F0FF);stroke-width:2.4;stroke-linecap:round;filter:drop-shadow(0 0 10px rgba(0,240,255,.5))}" +
 
   ".dcf-ground .dcf-tufts{stroke-width:1.8}" +
 
-  ".dcf-pebble{fill:var(--dcf-bg);stroke:var(--dcf-accent,#65F58A)!important;stroke-width:1.6}" +
+  ".dcf-pebble{fill:var(--dcf-bg);stroke:var(--dcf-accent,#00F0FF)!important;stroke-width:1.6}" +
 
-  ".dcf-dust{fill:none;stroke:var(--dcf-accent,#65F58A);stroke-width:3;stroke-linecap:round;opacity:0}" +
+  ".dcf-dust{fill:none;stroke:var(--dcf-accent,#00F0FF);stroke-width:3;stroke-linecap:round;opacity:0}" +
 
   ".dcf-hit{fill:transparent;stroke:none;cursor:pointer;outline:none}" +
 
@@ -2720,9 +2731,9 @@ const CSS =
 
   ".dcf-btn{display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 20px 0 16px;border-radius:999px;border:2px solid var(--dcf-ink);font-size:14.5px;font-weight:750;letter-spacing:-.01em;box-shadow:0 3px 0 var(--dcf-ink);transition:transform .18s cubic-bezier(.3,1.4,.5,1),box-shadow .18s cubic-bezier(.3,1.4,.5,1)}" +
 
-  ".dcf-btn.is-outline{background:rgba(16,25,35,.7);color:#F1F5F9;border:1.5px solid rgba(101,245,138,.4);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:inset 0 1px 1px rgba(255,255,255,.1)}" +
+  ".dcf-btn.is-outline{background:rgba(14,14,22,.85);color:#f9fafb;border:2px solid rgba(229,122,0,.5);backdrop-filter:blur(8px)}" +
 
-  ".dcf-btn.is-solid{background:linear-gradient(135deg,#65F58A 0%,#35E6B5 100%);color:#071018;border:1.5px solid #00FFA3;box-shadow:0 4px 20px rgba(0,255,163,.45);font-weight:700}" +
+  ".dcf-btn.is-solid{background:linear-gradient(135deg,#0284C7 0%,#00F0FF 100%);color:#03060A;border:2px solid #00F0FF;box-shadow:0 4px 18px rgba(0,240,255,.4);font-weight:700}" +
 
   ".dcf-btn.is-solid .dcf-icon{stroke:var(--dcf-bg)}" +
 

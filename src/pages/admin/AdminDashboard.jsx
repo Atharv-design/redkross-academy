@@ -148,10 +148,10 @@ export default function AdminDashboard() {
       </div>
 
       {/* Phase 3.3 Catalog Release Controller Banner */}
-      <div className={`p-6 rounded-2xl glass-card transition-all ${
+      <div className={`p-6 rounded-2xl border transition-all ${
         isCatalogEnabled
-          ? 'border-[#65F58A]/50 shadow-[0_0_30px_rgba(101,245,138,0.15)]'
-          : 'border-[#263440]'
+          ? 'bg-[#101923] border-[#65F58A]/50 shadow-[0_0_30px_rgba(101,245,138,0.12)]'
+          : 'bg-[#101923] border-[#263440]'
       }`}>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2 max-w-2xl">
@@ -250,7 +250,7 @@ export default function AdminDashboard() {
           <div className="space-y-3">
             {violations.length > 0 ? (
               violations.map((v) => (
-                <div key={v.id} className="p-3.5 rounded-xl bg-[#101923]/60 backdrop-blur-md border border-[#263440] flex items-center justify-between text-xs">
+                <div key={v.id} className="p-3.5 rounded-xl bg-[#071018] border border-[#263440] flex items-center justify-between text-xs">
                   <div>
                     <div className="text-white font-semibold font-mono">{v.student_name || 'Anonymous Cadet'}</div>
                     <div className="text-[11px] text-rose-400 font-mono mt-0.5">{v.reason} (Strike {v.strike_count}/3)</div>

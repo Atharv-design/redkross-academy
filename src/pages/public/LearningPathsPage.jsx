@@ -73,9 +73,9 @@ export default function LearningPathsPage() {
 
         {/* Educational Framework Pillars (Informative without leaking course cards) */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 max-w-2xl mx-auto text-left">
-          <div className="glass-card rounded-2xl p-5 space-y-2 hover:border-[#65F58A]/50 transition-all">
-            <div className="w-8 h-8 rounded-xl bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center shadow-[0_0_12px_rgba(101,245,138,0.2)]">
-              <Terminal className="w-4 h-4 text-[#65F58A]" />
+          <div className="p-4 rounded-xl bg-[#101923] border border-[#263440] space-y-1.5">
+            <div className="w-7 h-7 rounded-lg bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center">
+              <Terminal className="w-3.5 h-3.5 text-[#65F58A]" />
             </div>
             <div className="font-royal text-xs font-bold text-white">Hands-on Telemetry</div>
             <p className="text-[11px] text-[#94A3B8] leading-relaxed">
@@ -83,9 +83,9 @@ export default function LearningPathsPage() {
             </p>
           </div>
 
-          <div className="glass-card rounded-2xl p-5 space-y-2 hover:border-[#35E6B5]/50 transition-all">
-            <div className="w-8 h-8 rounded-xl bg-[#35E6B5]/10 border border-[#35E6B5]/30 flex items-center justify-center shadow-[0_0_12px_rgba(53,230,181,0.2)]">
-              <Shield className="w-4 h-4 text-[#35E6B5]" />
+          <div className="p-4 rounded-xl bg-[#101923] border border-[#263440] space-y-1.5">
+            <div className="w-7 h-7 rounded-lg bg-[#35E6B5]/10 border border-[#35E6B5]/30 flex items-center justify-center">
+              <Shield className="w-3.5 h-3.5 text-[#35E6B5]" />
             </div>
             <div className="font-royal text-xs font-bold text-white">Adversary Mapping</div>
             <p className="text-[11px] text-[#94A3B8] leading-relaxed">
@@ -93,9 +93,9 @@ export default function LearningPathsPage() {
             </p>
           </div>
 
-          <div className="glass-card rounded-2xl p-5 space-y-2 hover:border-[#65F58A]/50 transition-all">
-            <div className="w-8 h-8 rounded-xl bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center shadow-[0_0_12px_rgba(101,245,138,0.2)]">
-              <Award className="w-4 h-4 text-[#65F58A]" />
+          <div className="p-4 rounded-xl bg-[#101923] border border-[#263440] space-y-1.5">
+            <div className="w-7 h-7 rounded-lg bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center">
+              <Award className="w-3.5 h-3.5 text-[#65F58A]" />
             </div>
             <div className="font-royal text-xs font-bold text-white">Tamper-Proof Proofs</div>
             <p className="text-[11px] text-[#94A3B8] leading-relaxed">
@@ -108,7 +108,7 @@ export default function LearningPathsPage() {
         <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             to="/verify"
-            className="w-full sm:w-auto px-6 py-3 rounded-full glass-card hover:bg-[#1B2530] border border-[#263440] text-xs font-mono text-[#94A3B8] hover:text-white transition-all flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-6 py-3 rounded-full bg-[#101923] hover:bg-[#1B2530] border border-[#263440] text-xs font-mono text-[#94A3B8] hover:text-white transition-all flex items-center justify-center gap-2"
           >
             <Award className="w-4 h-4 text-[#65F58A]" />
             <span>Verify Institutional Credentials</span>
