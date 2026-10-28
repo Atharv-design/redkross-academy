@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
+import CyberBackgroundWatermark from './components/common/CyberBackgroundWatermark';
 import HomePage from './pages/public/HomePage';
 import LearningPathsPage from './pages/public/LearningPathsPage';
 import CourseCatalogPage from './pages/public/CourseCatalogPage';
@@ -20,9 +21,12 @@ import AuditLogsPage from './pages/admin/AuditLogsPage';
 
 function Layout() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen relative bg-[#071018] text-[#F1F5F9] overflow-x-hidden">
+      {/* Centered Ambient RedKross Cyber Background Watermark */}
+      <CyberBackgroundWatermark />
+
       <Navbar />
-      <main className="flex-1">
+      <main className="flex-1 pt-24 sm:pt-28 relative z-10">
         <Outlet />
       </main>
       <Footer />

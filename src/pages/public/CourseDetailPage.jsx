@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   BookOpen,
@@ -16,27 +16,40 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { mockEngine } from '../../services/db/mockEngine';
+import { apiClient } from '../../services/apiClient';
 import { useAuth } from '../../services/auth/authContext';
 
 export default function CourseDetailPage() {
   const { slug } = useParams();
   const navigate = useNavigate();
-  const { currentUser } = useAuth();
-  const course = mockEngine.getCourseBySlug(slug);
+  const { currentUser, refreshBalance } = useAuth();
+  const [course, setCourse] = useState(mockEngine.getCourseBySlug(slug) || mockEngine.getCourseById(slug));
 
   const [expandedModules, setExpandedModules] = useState({ 0: true, 1: true });
   const [showGrantModal, setShowGrantModal] = useState(false);
   const [couponCode, setCouponCode] = useState('');
   const [grantSuccess, setGrantSuccess] = useState(false);
   const [grantError, setGrantError] = useState('');
+  const [enrolling, setEnrolling] = useState(false);
+
+  useEffect(() => {
+    if (slug) {
+      apiClient.getCourseBySlug(slug).then((c) => {
+        if (c) setCourse(c);
+      }).catch(() => {
+        const local = mockEngine.getCourseBySlug(slug) || mockEngine.getCourseById(slug);
+        if (local) setCourse(local);
+      });
+    }
+  }, [slug]);
 
   if (!course) {
     return (
-      <div className="min-h-screen bg-[#090D16] py-24 text-center">
-        <h2 className="text-2xl font-bold text-white mb-2">Course Not Found</h2>
-        <p className="text-slate-400 text-sm mb-6">The requested course does not exist in our catalog.</p>
-        <Link to="/courses" className="px-4 py-2 bg-redkross-600 rounded text-white text-xs font-semibold">
-          Return to Catalogue
+      <div className="min-h-screen py-24 text-center relative z-10">
+        <h2 className="font-royal text-2xl font-bold text-white mb-2">Course Not Found</h2>
+        <p className="text-[#94A3B8] text-sm mb-6">The requested course does not exist in our catalog.</p>
+        <Link to="/courses" className="px-5 py-2.5 glass-button-primary font-royal font-bold text-xs rounded-xl inline-flex items-center gap-2">
+          <span>Return to Catalogue</span>
         </Link>
       </div>
     );
@@ -50,22 +63,33 @@ export default function CourseDetailPage() {
     setExpandedModules((prev) => ({ ...prev, [idx]: !prev[idx] }));
   };
 
-  const handleEnrol = () => {
+  const handleEnrol = async () => {
     if (!currentUser) {
       alert('Please sign in or select a simulated user to enrol.');
       return;
     }
-    mockEngine.enrolStudent(currentUser.id, course.id);
-    navigate('/student');
+    setEnrolling(true);
+    try {
+      await apiClient.enrol(currentUser.id, course.id);
+      refreshBalance();
+      navigate('/student');
+    } catch (err) {
+      console.error('Enrolment error:', err);
+      mockEngine.enrolStudent(currentUser.id, course.id);
+      navigate('/student');
+    } finally {
+      setEnrolling(false);
+    }
   };
 
-  const handleApplyCoupon = (e) => {
+  const handleApplyCoupon = async (e) => {
     e.preventDefault();
     if (couponCode.trim().toUpperCase() === 'GRANT100' || couponCode.trim().toUpperCase() === 'REDKROSS2026') {
       setGrantSuccess(true);
       setGrantError('');
       if (currentUser) {
-        mockEngine.enrolStudent(currentUser.id, course.id);
+        await apiClient.enrol(currentUser.id, course.id);
+        refreshBalance();
       }
       setTimeout(() => {
         setShowGrantModal(false);
@@ -77,151 +101,124 @@ export default function CourseDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#090D16] py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-12 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         {/* Breadcrumb */}
-        <div className="flex items-center space-x-2 text-xs font-mono text-slate-400 mb-6">
+        <div className="flex items-center space-x-2 text-xs font-mono text-[#94A3B8]">
           <Link to="/courses" className="hover:text-white transition-colors">Courses</Link>
           <span>/</span>
-          <span className="text-redkross-400">{course.category}</span>
+          <span className="text-[#65F58A]">{course.category}</span>
           <span>/</span>
-          <span className="text-slate-200">{course.title}</span>
+          <span className="text-slate-200 truncate">{course.title}</span>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10">
           {/* Main Course Content (Left 2 Columns) */}
           <div className="lg:col-span-2 space-y-10">
             {/* Header */}
             <div>
-              <div className="flex items-center space-x-3 mb-4">
-                <span className="text-xs font-mono px-2.5 py-1 rounded bg-redkross-600/10 text-redkross-400 border border-redkross-600/30 font-semibold">
+              <div className="flex flex-wrap items-center gap-2.5 mb-4">
+                <span className="text-xs font-mono px-3 py-1 rounded-full bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30 font-semibold">
                   {course.category}
                 </span>
-                <span className="text-xs font-mono px-2 py-0.5 rounded bg-surface-100 text-slate-300 border border-surface-border">
+                <span className="text-xs font-mono px-2.5 py-0.5 rounded-full bg-[#1B2530] text-slate-300 border border-[#263440]">
                   Version {course.version}
                 </span>
-                <span className="text-xs font-mono px-2 py-0.5 rounded bg-surface-100 text-slate-300 border border-surface-border">
+                <span className="text-xs font-mono px-2.5 py-0.5 rounded-full bg-[#1B2530] text-slate-300 border border-[#263440]">
                   {course.difficulty}
                 </span>
               </div>
 
-              <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-4">
+              <h1 className="font-royal text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight mb-4">
                 {course.title}
               </h1>
 
-              <p className="text-slate-300 text-base leading-relaxed mb-6">
+              <p className="text-[#94A3B8] text-sm sm:text-base leading-relaxed mb-6">
                 {course.overview}
               </p>
 
               {/* Author bio pill */}
-              <div className="flex items-center space-x-3 p-3.5 rounded-lg bg-surface-card border border-surface-border">
+              <div className="flex items-center space-x-4 p-4 rounded-2xl glass-card">
                 <img
-                  src={course.lead_author.avatar}
-                  alt={course.lead_author.name}
-                  className="w-12 h-12 rounded-full border border-slate-600 object-cover"
+                  src={course.lead_author?.avatar || 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=256&q=80'}
+                  alt={course.lead_author?.name}
+                  className="w-12 h-12 rounded-full border border-[#65F58A]/40 object-cover"
                 />
                 <div>
-                  <div className="text-sm font-semibold text-white">{course.lead_author.name}</div>
-                  <div className="text-xs text-slate-400">{course.lead_author.title}</div>
+                  <div className="font-royal text-sm font-bold text-white">{course.lead_author?.name}</div>
+                  <div className="text-xs text-[#94A3B8] font-mono">{course.lead_author?.title}</div>
                 </div>
               </div>
             </div>
 
             {/* Learning Objectives */}
-            <div className="bg-surface-card border border-surface-border rounded-xl p-6 space-y-4">
-              <h2 className="text-lg font-bold text-white flex items-center space-x-2">
-                <Sparkles className="w-4 h-4 text-amber-400" />
-                <span>What You Will Master</span>
+            <div className="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+              <h2 className="font-royal text-xl font-bold text-white flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-[#65F58A]" />
+                <span>Core Competencies & Objectives</span>
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {course.learning_objectives.map((obj, i) => (
-                  <div key={i} className="flex items-start space-x-2.5 text-xs text-slate-300">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+              <ul className="space-y-3">
+                {(course.learning_objectives || []).map((obj, idx) => (
+                  <li key={idx} className="flex items-start gap-3 text-xs sm:text-sm text-slate-200">
+                    <CheckCircle2 className="w-4 h-4 text-[#65F58A] flex-shrink-0 mt-0.5" />
                     <span>{obj}</span>
-                  </div>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </div>
 
-            {/* Prerequisites */}
-            <div className="space-y-2">
-              <h3 className="text-xs font-mono uppercase tracking-wider text-slate-400">Prerequisites</h3>
-              <div className="flex flex-wrap gap-2">
-                {course.prerequisites.map((pre, idx) => (
-                  <span key={idx} className="px-3 py-1 rounded bg-surface-100 border border-surface-border text-xs text-slate-300 font-mono">
-                    {pre}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Detailed Syllabus Accordion */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-white flex items-center space-x-2">
-                  <BookOpen className="w-5 h-5 text-redkross-500" />
-                  <span>Curriculum & Chapter Evaluations</span>
+            {/* Course Curriculum & Syllabus Accordion */}
+            <div className="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+              <div className="flex items-center justify-between pb-4 border-b border-[#263440]">
+                <h2 className="font-royal text-xl font-bold text-white">
+                  Curriculum Breakdown
                 </h2>
-                <span className="text-xs font-mono text-slate-400">
-                  {course.modules.length} Modules • {course.estimated_duration}
+                <span className="text-xs font-mono text-[#94A3B8]">
+                  {(course.modules || []).length} Modules
                 </span>
               </div>
 
               <div className="space-y-4">
-                {course.modules.map((mod, idx) => (
-                  <div key={mod.id} className="bg-surface-card border border-surface-border rounded-xl overflow-hidden">
+                {(course.modules || []).map((module, modIdx) => (
+                  <div key={module.id || modIdx} className="rounded-xl border border-[#263440] bg-[#14202C]/60 overflow-hidden">
                     <button
-                      onClick={() => toggleModule(idx)}
-                      className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-surface-50 transition-colors"
+                      onClick={() => toggleModule(modIdx)}
+                      className="w-full p-4 text-left flex items-center justify-between hover:bg-[#1B2530] transition-colors"
                     >
-                      <div>
-                        <div className="text-sm font-bold text-white mb-0.5">{mod.title}</div>
-                        <div className="text-xs text-slate-400 font-mono">
-                          {mod.lessons.length} Mandatory Lessons {mod.quiz ? '• Evaluated Quiz (+100 Tokens)' : ''}
-                        </div>
+                      <div className="flex items-center gap-3">
+                        <span className="w-6 h-6 rounded-full bg-[#1B2530] text-[#65F58A] border border-[#65F58A]/30 flex items-center justify-center text-xs font-mono font-bold">
+                          {modIdx + 1}
+                        </span>
+                        <span className="font-royal font-bold text-sm text-white">{module.title}</span>
                       </div>
-                      {expandedModules[idx] ? (
-                        <ChevronUp className="w-5 h-5 text-slate-400" />
+                      {expandedModules[modIdx] ? (
+                        <ChevronUp className="w-4 h-4 text-[#94A3B8]" />
                       ) : (
-                        <ChevronDown className="w-5 h-5 text-slate-400" />
+                        <ChevronDown className="w-4 h-4 text-[#94A3B8]" />
                       )}
                     </button>
 
-                    {expandedModules[idx] && (
-                      <div className="px-6 pb-6 pt-2 border-t border-surface-border/60 space-y-3 bg-[#0A0F1D]">
-                        {mod.lessons.map((les) => (
+                    {expandedModules[modIdx] && (
+                      <div className="p-4 border-t border-[#263440] space-y-2.5 bg-[#0D151F]">
+                        {(module.lessons || []).map((lesson, lIdx) => (
                           <div
-                            key={les.id}
-                            className="p-3 rounded-lg bg-surface-100/50 border border-surface-border/80 flex items-center justify-between text-xs"
+                            key={lesson.id || lIdx}
+                            className="p-3 rounded-lg bg-[#14202C] border border-[#263440] flex items-center justify-between text-xs"
                           >
-                            <div className="flex items-center space-x-3">
-                              <span className="w-2 h-2 rounded-full bg-redkross-500" />
-                              <div>
-                                <div className="font-semibold text-slate-200">{les.title}</div>
-                                <div className="text-[11px] text-slate-400">{les.summary}</div>
-                              </div>
+                            <div className="flex items-center gap-2.5 truncate">
+                              <BookOpen className="w-4 h-4 text-[#35E6B5] flex-shrink-0" />
+                              <span className="text-slate-200 truncate">{lesson.title}</span>
+                              {lesson.is_mandatory && (
+                                <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30 flex-shrink-0">
+                                  MANDATORY
+                                </span>
+                              )}
                             </div>
-                            <span className="text-[11px] font-mono text-slate-400 flex items-center space-x-1">
-                              <Clock className="w-3 h-3" />
-                              <span>{les.duration}</span>
+                            <span className="text-[11px] font-mono text-[#94A3B8] flex-shrink-0 pl-2">
+                              {lesson.duration}
                             </span>
                           </div>
                         ))}
-
-                        {mod.quiz && (
-                          <div className="p-3.5 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-between text-xs">
-                            <div className="flex items-center space-x-2 text-amber-300 font-semibold">
-                              <Award className="w-4 h-4 text-amber-400" />
-                              <span>{mod.quiz.title}</span>
-                            </div>
-                            <div className="flex items-center space-x-2 text-[11px] font-mono text-amber-400">
-                              <span>Passing: {mod.quiz.passing_score}%</span>
-                              <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">
-                                +{mod.quiz.token_bounty} Tokens
-                              </span>
-                            </div>
-                          </div>
-                        )}
                       </div>
                     )}
                   </div>
@@ -230,135 +227,110 @@ export default function CourseDetailPage() {
             </div>
           </div>
 
-          {/* Sticky Enrollment Card (Right Column) */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-24 bg-surface-card border border-surface-border rounded-xl p-6 shadow-2xl space-y-6">
-              <div>
-                <div className="text-xs font-mono uppercase text-slate-400 mb-1">Access Tier</div>
-                <div className="flex items-baseline space-x-2">
-                  <span className="text-3xl font-extrabold text-white">
-                    {course.price === 0 ? 'Free' : `₹${course.price}`}
+          {/* Sidebar CTA Card (Right Column) */}
+          <div className="space-y-6">
+            <div className="glass-card rounded-2xl p-6 sm:p-7 space-y-6 sticky top-28">
+              <div className="space-y-2">
+                <div className="text-[10px] font-mono uppercase tracking-wider text-[#94A3B8]">Enrollment Status</div>
+                <div className="flex items-baseline gap-2">
+                  <span className="font-royal text-3xl font-extrabold text-white">
+                    {course.price === 0 ? 'Free Access' : `₹${course.price?.toLocaleString('en-IN')}`}
                   </span>
-                  <span className="text-xs text-slate-400">Self-Paced Courseware</span>
+                  {course.price === 0 && (
+                    <span className="text-xs font-mono text-[#65F58A]">Full Curriculum</span>
+                  )}
                 </div>
+                <p className="text-xs text-[#94A3B8] leading-relaxed">
+                  Start learning immediately. Certificate exam can be challenged upon 100% completion of mandatory lessons and token milestones.
+                </p>
               </div>
 
-              {/* Action Button */}
               {isEnrolled ? (
                 <Link
                   to="/student"
-                  className="w-full text-center block py-3.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm transition-all shadow-lg flex items-center justify-center space-x-2"
+                  className="w-full py-3.5 rounded-xl glass-button-primary font-royal font-bold text-xs tracking-wider flex items-center justify-center gap-2 shadow-lg"
                 >
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Enrolled — Open Classroom</span>
+                  <BookOpen className="w-4 h-4" />
+                  <span>Continue in Classroom</span>
                 </Link>
               ) : (
-                <div className="space-y-3">
-                  <button
-                    onClick={handleEnrol}
-                    className="w-full py-3.5 rounded-lg bg-redkross-600 hover:bg-redkross-700 text-white font-semibold text-sm transition-all shadow-lg hover:cyber-glow-red flex items-center justify-center space-x-2"
-                  >
-                    <BookOpen className="w-4 h-4" />
-                    <span>Enrol Now (Free Access)</span>
-                  </button>
-
-                  <button
-                    onClick={() => setShowGrantModal(true)}
-                    className="w-full py-2.5 rounded-lg bg-surface-100 hover:bg-surface-200 border border-surface-border text-slate-300 text-xs font-medium transition-colors flex items-center justify-center space-x-1.5"
-                  >
-                    <Gift className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Apply Scholarship / Voucher Code</span>
-                  </button>
-                </div>
+                <button
+                  onClick={handleEnrol}
+                  disabled={enrolling}
+                  className="w-full py-3.5 rounded-xl glass-button-primary font-royal font-bold text-xs tracking-wider flex items-center justify-center gap-2 shadow-lg"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>{enrolling ? 'Enrolling...' : 'Enrol in Course (Immediate)'}</span>
+                </button>
               )}
 
-              {/* Course Meta Specs */}
-              <div className="space-y-3 pt-4 border-t border-surface-border text-xs text-slate-300 font-mono">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-400">Total Reward Bounty:</span>
-                  <span className="text-amber-400 font-semibold flex items-center space-x-1">
-                    <Coins className="w-3.5 h-3.5" />
-                    <span>+{course.total_tokens_reward} Tokens</span>
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-400">Independent Cert Exam:</span>
-                  <span className="text-white">Included on Course Completion</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-400">Evaluation Retries:</span>
-                  <span className="text-white">3 Attempts / 24h Window</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-400">Proctoring Standard:</span>
-                  <span className="text-emerald-400">3-Strike Focus Tracking</span>
-                </div>
-              </div>
+              {/* Scholar Grant Button */}
+              <button
+                onClick={() => setShowGrantModal(true)}
+                className="w-full py-2.5 rounded-xl bg-[#1B2530] hover:bg-[#263440] border border-[#263440] text-xs font-mono text-[#65F58A] flex items-center justify-center gap-2 transition-colors"
+              >
+                <Gift className="w-4 h-4" />
+                <span>Apply Grant / Sponsor Code</span>
+              </button>
 
-              {/* Academic Safeguards Banner */}
-              <div className="p-3 rounded-lg bg-surface-100 border border-surface-border text-[11px] text-slate-400 space-y-1">
-                <div className="font-semibold text-slate-300 flex items-center space-x-1">
-                  <Shield className="w-3.5 h-3.5 text-redkross-500" />
-                  <span>Institutional Credential Guarantee</span>
+              {/* Course Meta Specs */}
+              <div className="pt-4 border-t border-[#263440] space-y-3 text-xs font-mono">
+                <div className="flex justify-between text-[#94A3B8]">
+                  <span>Estimated Study Time</span>
+                  <span className="text-white font-semibold">{course.estimated_duration}</span>
                 </div>
-                <p>Completion of this course requires 100% lesson progress, all module quizzes passed, and &ge;80% final exam score.</p>
+                <div className="flex justify-between text-[#94A3B8]">
+                  <span>Token Bounty</span>
+                  <span className="text-[#F59E0B] font-bold">+{course.total_tokens_reward} Tokens</span>
+                </div>
+                <div className="flex justify-between text-[#94A3B8]">
+                  <span>Evaluation Format</span>
+                  <span className="text-white">Proctored Final Exam</span>
+                </div>
+                <div className="flex justify-between text-[#94A3B8]">
+                  <span>Prerequisites</span>
+                  <span className="text-white">{course.prerequisites?.length || 0} Listed</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Scholarship / Voucher Modal */}
+      {/* Grant / Coupon Modal */}
       {showGrantModal && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-surface-card border border-surface-border rounded-xl p-6 max-w-md w-full shadow-2xl relative">
-            <h3 className="text-lg font-bold text-white mb-2 flex items-center space-x-2">
-              <Gift className="w-5 h-5 text-amber-400" />
-              <span>RedKross Scholarship & Grant Code</span>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+          <div className="glass-card rounded-2xl p-6 sm:p-8 max-w-md w-full space-y-4">
+            <h3 className="font-royal text-lg font-bold text-white flex items-center gap-2">
+              <Gift className="w-5 h-5 text-[#65F58A]" />
+              <span>Apply Academic Grant / Coupon</span>
             </h3>
-            <p className="text-xs text-slate-400 mb-4">
-              Enter an institutional voucher, employer grant, or scholarship code to activate full certification entitlements.
+            <p className="text-xs text-[#94A3B8]">
+              Enter your student sponsorship token or promotional coupon code to activate immediate sponsored enrollment.
             </p>
-
             <form onSubmit={handleApplyCoupon} className="space-y-4">
-              <div>
-                <input
-                  type="text"
-                  placeholder="e.g. GRANT100"
-                  value={couponCode}
-                  onChange={(e) => setCouponCode(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-surface-100 border border-surface-border rounded-lg text-sm text-white uppercase font-mono tracking-wider focus:outline-none focus:border-redkross-500"
-                />
-                <div className="text-[10px] text-slate-400 font-mono mt-1">Hint: Try using "GRANT100" for 100% grant entitlement.</div>
-              </div>
-
-              {grantError && (
-                <div className="text-xs text-rose-400 flex items-center space-x-1.5">
-                  <AlertCircle className="w-3.5 h-3.5" />
-                  <span>{grantError}</span>
-                </div>
-              )}
-
-              {grantSuccess && (
-                <div className="text-xs text-emerald-400 flex items-center space-x-1.5 font-semibold">
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Grant verified! Enrolling in course...</span>
-                </div>
-              )}
-
-              <div className="flex items-center justify-end space-x-3 pt-2">
+              <input
+                type="text"
+                placeholder="Enter Code (e.g. GRANT100)"
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl bg-[#071018] border border-[#263440] text-sm text-white font-mono uppercase focus:outline-none focus:border-[#65F58A]"
+              />
+              {grantError && <div className="text-xs text-rose-400 font-mono">{grantError}</div>}
+              {grantSuccess && <div className="text-xs text-[#65F58A] font-mono">Grant Verified! Enrolling...</div>}
+              <div className="flex justify-end gap-2 pt-2">
                 <button
                   type="button"
                   onClick={() => setShowGrantModal(false)}
-                  className="px-4 py-2 rounded-lg text-xs font-mono text-slate-400 hover:text-white"
+                  className="px-4 py-2 rounded-xl bg-[#1B2530] text-xs font-mono text-slate-300"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-lg bg-redkross-600 hover:bg-redkross-700 text-white text-xs font-semibold shadow"
+                  className="px-5 py-2 rounded-xl glass-button-primary font-royal font-bold text-xs"
                 >
-                  Validate & Redeem
+                  Redeem
                 </button>
               </div>
             </form>
