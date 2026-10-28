@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Shield, Award, Terminal, ArrowRight, CheckCircle2, Lock, Zap, BookOpen, Layers, Users, Sparkles, Coins, Flame, Clock, ShieldCheck, Activity } from 'lucide-react';
+import { Shield, Award, Terminal, CheckCircle2, Lock, Zap, BookOpen, Layers, Users, Sparkles, Coins, Flame, Clock, ShieldCheck, Activity } from 'lucide-react';
 import { mockEngine } from '../../services/db/mockEngine';
 import { apiClient } from '../../services/apiClient';
 import CourseCardVariant from '../../components/cards/CourseCardVariant';
@@ -57,7 +57,6 @@ export default function HomePage() {
               >
                 <BookOpen className="w-4 h-4" />
                 <span>Explore Course Catalogue</span>
-                <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 to="/paths"
@@ -138,10 +137,9 @@ export default function HomePage() {
 
                 <Link
                   to="/courses"
-                  className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#65F58A] hover:underline"
+                  className="inline-flex items-center text-xs font-mono font-bold text-[#65F58A] hover:underline"
                 >
-                  <span>View All Courses</span>
-                  <ArrowRight className="w-4 h-4" />
+                  View All Courses
                 </Link>
               </div>
 
@@ -206,10 +204,9 @@ export default function HomePage() {
 
             <Link
               to="/paths"
-              className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#65F58A] hover:underline"
+              className="inline-flex items-center text-xs font-mono font-bold text-[#65F58A] hover:underline"
             >
-              <span>Explore All Pathways</span>
-              <ArrowRight className="w-4 h-4" />
+              Explore All Pathways
             </Link>
           </div>
 
@@ -243,46 +240,68 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {/* Safeguard Card 1 */}
-            <div className="relative rounded-3xl overflow-hidden border border-[#263440] bg-[#101923] p-6 sm:p-7 flex flex-col justify-between min-h-[380px] transition-all duration-300 hover:border-[#65F58A]/50 hover:shadow-[0_16px_40px_rgba(0,255,163,0.12)] group">
-              {/* Layer 1: Background Cyber Artwork */}
-              <div className="absolute inset-y-0 right-0 w-1/2 pointer-events-none overflow-hidden z-0">
+            <div className="relative rounded-3xl overflow-hidden border border-[#263440] bg-[#071018] p-6 sm:p-7 flex flex-col justify-between min-h-[390px] transition-all duration-300 hover:border-[#65F58A]/60 hover:shadow-[0_16px_40px_rgba(0,255,163,0.2)] group">
+              {/* BASE LAYER: Full Card Cyber Artwork */}
+              <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
                 <img
-                  src="/assets/cards/card-07-clean.png"
+                  src="/assets/cards/card-07.png"
                   alt=""
-                  className="w-full h-full object-cover object-right opacity-30 group-hover:opacity-50 group-hover:scale-105 transition-all duration-500 select-none"
+                  className="w-full h-full object-cover object-center sm:object-right opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500 select-none"
                   loading="lazy"
                 />
               </div>
 
-              {/* Layer 2: Directional Dark Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-r from-[#101923] via-[#101923]/95 via-50% to-transparent z-10 pointer-events-none" />
+              {/* BLENDING LAYER: Soft Organic Curved Black Blend */}
+              <svg
+                className="absolute inset-0 w-full h-full z-10 pointer-events-none"
+                preserveAspectRatio="none"
+                viewBox="0 0 100 100"
+              >
+                <defs>
+                  <linearGradient id="curve-safeguard-1" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#071018" stopOpacity="1" />
+                    <stop offset="42%" stopColor="#071018" stopOpacity="0.96" />
+                    <stop offset="65%" stopColor="#071018" stopOpacity="0.75" />
+                    <stop offset="85%" stopColor="#071018" stopOpacity="0.30" />
+                    <stop offset="100%" stopColor="#071018" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+                <path d="M 0,0 L 40,0 C 20,30 26,60 68,100 L 0,100 Z" fill="url(#curve-safeguard-1)" />
+              </svg>
+              <div
+                className="absolute inset-0 z-10 pointer-events-none"
+                style={{
+                  background:
+                    'radial-gradient(ellipse 80% 95% at 0% 50%, #071018 0%, #071018 36%, rgba(7, 16, 24, 0.85) 54%, rgba(7, 16, 24, 0.35) 72%, transparent 100%)',
+                }}
+              />
 
-              {/* Layer 3: Foreground Stacking Content */}
+              {/* FOREGROUND MAIN LAYER: Content */}
               <div className="relative z-20 flex flex-col justify-between h-full space-y-4">
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-4">
-                    <span className="px-2.5 py-1 rounded-full bg-[#65F58A]/10 border border-[#65F58A]/30 text-[#65F58A] text-[10px] font-mono font-semibold uppercase">
+                    <span className="px-2.5 py-1 rounded-full bg-[#65F58A]/15 border border-[#65F58A]/40 text-[#65F58A] text-[10px] font-mono font-semibold uppercase backdrop-blur-md">
                       PROCTORING TELEMETRY
                     </span>
-                    <span className="text-[10px] font-mono text-[#94A3B8]">
+                    <span className="text-[10px] font-mono text-[#94A3B8] backdrop-blur-md">
                       PRD §13.1
                     </span>
                   </div>
 
-                  <div className="w-10 h-10 rounded-xl bg-[#0B121B] border border-[#263440] flex items-center justify-center text-[#65F58A] mb-3 group-hover:border-[#65F58A]/40 transition-colors">
+                  <div className="w-10 h-10 rounded-xl bg-[#071018]/90 border border-[#263440] flex items-center justify-center text-[#65F58A] mb-3 group-hover:border-[#65F58A]/40 transition-colors shadow-md">
                     <Zap className="w-5 h-5" />
                   </div>
 
-                  <h3 className="font-royal text-lg sm:text-xl font-bold text-white mb-2 leading-tight group-hover:text-[#65F58A] transition-colors">
+                  <h3 className="font-royal text-lg sm:text-xl font-bold text-white mb-2 leading-tight group-hover:text-[#65F58A] transition-colors drop-shadow-[0_2px_10px_rgba(7,16,24,1)]">
                     3-Strike Exam Focus Tracking
                   </h3>
 
-                  <p className="text-xs text-[#94A3B8] leading-relaxed">
+                  <p className="text-xs text-[#94A3B8] leading-relaxed drop-shadow-[0_2px_6px_rgba(7,16,24,1)]">
                     During evaluated assessments, client tab switches and window blur events are tracked in real-time. Strike 1 warns the operator; Strike 2 docks 50 RedKross Tokens; Strike 3 immediately terminates the attempt and locks the evaluation window.
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-[#263440]/80 flex items-center justify-between text-[11px] font-mono text-[#65F58A]">
+                <div className="pt-4 border-t border-[#263440]/80 flex items-center justify-between text-[11px] font-mono text-[#65F58A] backdrop-blur-md">
                   <span className="truncate">Window Blur & Tab Switch Hooks</span>
                   <span className="text-[#64748B] text-[10px]">ENFORCED</span>
                 </div>
@@ -290,46 +309,68 @@ export default function HomePage() {
             </div>
 
             {/* Safeguard Card 2 */}
-            <div className="relative rounded-3xl overflow-hidden border border-[#263440] bg-[#101923] p-6 sm:p-7 flex flex-col justify-between min-h-[380px] transition-all duration-300 hover:border-[#35E6B5]/50 hover:shadow-[0_16px_40px_rgba(53,230,181,0.12)] group">
-              {/* Layer 1: Background Cyber Artwork */}
-              <div className="absolute inset-y-0 right-0 w-1/2 pointer-events-none overflow-hidden z-0">
+            <div className="relative rounded-3xl overflow-hidden border border-[#263440] bg-[#071018] p-6 sm:p-7 flex flex-col justify-between min-h-[390px] transition-all duration-300 hover:border-[#35E6B5]/60 hover:shadow-[0_16px_40px_rgba(53,230,181,0.2)] group">
+              {/* BASE LAYER: Full Card Cyber Artwork */}
+              <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
                 <img
-                  src="/assets/cards/card-05-clean.png"
+                  src="/assets/cards/card-05.png"
                   alt=""
-                  className="w-full h-full object-cover object-right opacity-30 group-hover:opacity-50 group-hover:scale-105 transition-all duration-500 select-none"
+                  className="w-full h-full object-cover object-center sm:object-right opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500 select-none"
                   loading="lazy"
                 />
               </div>
 
-              {/* Layer 2: Directional Dark Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-r from-[#101923] via-[#101923]/95 via-50% to-transparent z-10 pointer-events-none" />
+              {/* BLENDING LAYER: Soft Organic Curved Black Blend */}
+              <svg
+                className="absolute inset-0 w-full h-full z-10 pointer-events-none"
+                preserveAspectRatio="none"
+                viewBox="0 0 100 100"
+              >
+                <defs>
+                  <linearGradient id="curve-safeguard-2" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#071018" stopOpacity="1" />
+                    <stop offset="42%" stopColor="#071018" stopOpacity="0.96" />
+                    <stop offset="65%" stopColor="#071018" stopOpacity="0.75" />
+                    <stop offset="85%" stopColor="#071018" stopOpacity="0.30" />
+                    <stop offset="100%" stopColor="#071018" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+                <path d="M 0,0 L 40,0 C 20,30 26,60 68,100 L 0,100 Z" fill="url(#curve-safeguard-2)" />
+              </svg>
+              <div
+                className="absolute inset-0 z-10 pointer-events-none"
+                style={{
+                  background:
+                    'radial-gradient(ellipse 80% 95% at 0% 50%, #071018 0%, #071018 36%, rgba(7, 16, 24, 0.85) 54%, rgba(7, 16, 24, 0.35) 72%, transparent 100%)',
+                }}
+              />
 
-              {/* Layer 3: Foreground Stacking Content */}
+              {/* FOREGROUND MAIN LAYER: Content */}
               <div className="relative z-20 flex flex-col justify-between h-full space-y-4">
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-4">
-                    <span className="px-2.5 py-1 rounded-full bg-[#35E6B5]/10 border border-[#35E6B5]/30 text-[#35E6B5] text-[10px] font-mono font-semibold uppercase">
+                    <span className="px-2.5 py-1 rounded-full bg-[#35E6B5]/15 border border-[#35E6B5]/40 text-[#35E6B5] text-[10px] font-mono font-semibold uppercase backdrop-blur-md">
                       COOLDOWN PROTOCOL
                     </span>
-                    <span className="text-[10px] font-mono text-[#94A3B8]">
+                    <span className="text-[10px] font-mono text-[#94A3B8] backdrop-blur-md">
                       PRD §13.2
                     </span>
                   </div>
 
-                  <div className="w-10 h-10 rounded-xl bg-[#0B121B] border border-[#263440] flex items-center justify-center text-[#35E6B5] mb-3 group-hover:border-[#35E6B5]/40 transition-colors">
+                  <div className="w-10 h-10 rounded-xl bg-[#071018]/90 border border-[#263440] flex items-center justify-center text-[#35E6B5] mb-3 group-hover:border-[#35E6B5]/40 transition-colors shadow-md">
                     <Clock className="w-5 h-5" />
                   </div>
 
-                  <h3 className="font-royal text-lg sm:text-xl font-bold text-white mb-2 leading-tight group-hover:text-[#35E6B5] transition-colors">
+                  <h3 className="font-royal text-lg sm:text-xl font-bold text-white mb-2 leading-tight group-hover:text-[#35E6B5] transition-colors drop-shadow-[0_2px_10px_rgba(7,16,24,1)]">
                     24-Hour Mandatory Cooldown
                   </h3>
 
-                  <p className="text-xs text-[#94A3B8] leading-relaxed">
+                  <p className="text-xs text-[#94A3B8] leading-relaxed drop-shadow-[0_2px_6px_rgba(7,16,24,1)]">
                     Exhausting 3 failed attempts or incurring a Strike 3 proctoring violation immediately activates a server-enforced 24-hour lockout timer to require structured remediation before an operator may re-attempt.
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-[#263440]/80 flex items-center justify-between text-[11px] font-mono text-[#35E6B5]">
+                <div className="pt-4 border-t border-[#263440]/80 flex items-center justify-between text-[11px] font-mono text-[#35E6B5] backdrop-blur-md">
                   <span className="truncate">Automated Lockout Cooldown</span>
                   <span className="text-[#64748B] text-[10px]">ZERO BYPASS</span>
                 </div>
@@ -337,46 +378,68 @@ export default function HomePage() {
             </div>
 
             {/* Safeguard Card 3 */}
-            <div className="relative rounded-3xl overflow-hidden border border-[#263440] bg-[#101923] p-6 sm:p-7 flex flex-col justify-between min-h-[380px] transition-all duration-300 hover:border-[#65F58A]/50 hover:shadow-[0_16px_40px_rgba(0,255,163,0.12)] group">
-              {/* Layer 1: Background Cyber Artwork */}
-              <div className="absolute inset-y-0 right-0 w-1/2 pointer-events-none overflow-hidden z-0">
+            <div className="relative rounded-3xl overflow-hidden border border-[#263440] bg-[#071018] p-6 sm:p-7 flex flex-col justify-between min-h-[390px] transition-all duration-300 hover:border-[#65F58A]/60 hover:shadow-[0_16px_40px_rgba(0,255,163,0.2)] group">
+              {/* BASE LAYER: Full Card Cyber Artwork */}
+              <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
                 <img
-                  src="/assets/cards/card-06-clean.png"
+                  src="/assets/cards/card-06.png"
                   alt=""
-                  className="w-full h-full object-cover object-right opacity-30 group-hover:opacity-50 group-hover:scale-105 transition-all duration-500 select-none"
+                  className="w-full h-full object-cover object-center sm:object-right opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500 select-none"
                   loading="lazy"
                 />
               </div>
 
-              {/* Layer 2: Directional Dark Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-r from-[#101923] via-[#101923]/95 via-50% to-transparent z-10 pointer-events-none" />
+              {/* BLENDING LAYER: Soft Organic Curved Black Blend */}
+              <svg
+                className="absolute inset-0 w-full h-full z-10 pointer-events-none"
+                preserveAspectRatio="none"
+                viewBox="0 0 100 100"
+              >
+                <defs>
+                  <linearGradient id="curve-safeguard-3" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#071018" stopOpacity="1" />
+                    <stop offset="42%" stopColor="#071018" stopOpacity="0.96" />
+                    <stop offset="65%" stopColor="#071018" stopOpacity="0.75" />
+                    <stop offset="85%" stopColor="#071018" stopOpacity="0.30" />
+                    <stop offset="100%" stopColor="#071018" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+                <path d="M 0,0 L 40,0 C 20,30 26,60 68,100 L 0,100 Z" fill="url(#curve-safeguard-3)" />
+              </svg>
+              <div
+                className="absolute inset-0 z-10 pointer-events-none"
+                style={{
+                  background:
+                    'radial-gradient(ellipse 80% 95% at 0% 50%, #071018 0%, #071018 36%, rgba(7, 16, 24, 0.85) 54%, rgba(7, 16, 24, 0.35) 72%, transparent 100%)',
+                }}
+              />
 
-              {/* Layer 3: Foreground Stacking Content */}
+              {/* FOREGROUND MAIN LAYER: Content */}
               <div className="relative z-20 flex flex-col justify-between h-full space-y-4">
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-4">
-                    <span className="px-2.5 py-1 rounded-full bg-[#65F58A]/10 border border-[#65F58A]/30 text-[#65F58A] text-[10px] font-mono font-semibold uppercase">
+                    <span className="px-2.5 py-1 rounded-full bg-[#65F58A]/15 border border-[#65F58A]/40 text-[#65F58A] text-[10px] font-mono font-semibold uppercase backdrop-blur-md">
                       TAMPER-PROOF AUDIT
                     </span>
-                    <span className="text-[10px] font-mono text-[#94A3B8]">
+                    <span className="text-[10px] font-mono text-[#94A3B8] backdrop-blur-md">
                       PRD §13.3
                     </span>
                   </div>
 
-                  <div className="w-10 h-10 rounded-xl bg-[#0B121B] border border-[#263440] flex items-center justify-center text-[#65F58A] mb-3 group-hover:border-[#65F58A]/40 transition-colors">
+                  <div className="w-10 h-10 rounded-xl bg-[#071018]/90 border border-[#263440] flex items-center justify-center text-[#65F58A] mb-3 group-hover:border-[#65F58A]/40 transition-colors shadow-md">
                     <Shield className="w-5 h-5" />
                   </div>
 
-                  <h3 className="font-royal text-lg sm:text-xl font-bold text-white mb-2 leading-tight group-hover:text-[#65F58A] transition-colors">
+                  <h3 className="font-royal text-lg sm:text-xl font-bold text-white mb-2 leading-tight group-hover:text-[#65F58A] transition-colors drop-shadow-[0_2px_10px_rgba(7,16,24,1)]">
                     Cryptographic Verification
                   </h3>
 
-                  <p className="text-xs text-[#94A3B8] leading-relaxed">
+                  <p className="text-xs text-[#94A3B8] leading-relaxed drop-shadow-[0_2px_6px_rgba(7,16,24,1)]">
                     Every earned certificate generates an immutable hexadecimal digital signature and public verification ledger link with QR code, directly verifiable by enterprise blue team hiring managers.
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-[#263440]/80 flex items-center justify-between text-[11px] font-mono text-[#65F58A]">
+                <div className="pt-4 border-t border-[#263440]/80 flex items-center justify-between text-[11px] font-mono text-[#65F58A] backdrop-blur-md">
                   <span className="truncate">SHA-256 Digital Signature</span>
                   <span className="text-[#64748B] text-[10px]">VERIFIABLE</span>
                 </div>
