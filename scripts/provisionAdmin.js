@@ -55,7 +55,7 @@ async function provision() {
 
   // Write to audit log
   await sql`
-    INSERT INTO audit_logs (id, admin_id, action, target_type, target_id, details)
+    INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
     VALUES (
       ${'audit_' + Date.now()},
       'SYSTEM_CLI_PROVISIONER',
@@ -67,7 +67,8 @@ async function provision() {
         previous_role: user.role,
         new_role: 'super_admin',
         timestamp: new Date().toISOString()
-      })}
+      })},
+      NOW()
     )
   `;
 

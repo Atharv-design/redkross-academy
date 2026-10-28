@@ -24,8 +24,8 @@ export default async function handler(req, res) {
 
       // Log ticket creation in audit logs
       await sql`
-        INSERT INTO audit_logs (id, admin_id, action, target_type, target_id, details, created_at)
-        VALUES (${`log_${Date.now()}`}, ${user_id || 'anonymous'}, 'SUPPORT_TICKET_CREATED', 'support_ticket', ${id}, ${subject}, NOW())
+        INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
+        VALUES (${`log_${Date.now()}`}, ${user_id || user_email || 'anonymous'}, 'SUPPORT_TICKET_CREATED', 'support_ticket', ${id}, ${subject}, NOW())
       `;
 
       // Immediate Resend Email Dispatch to Administrator
