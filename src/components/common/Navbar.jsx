@@ -19,9 +19,11 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../services/auth/authContext';
 import SupportTicketModal from './SupportTicketModal';
+import { getEcosystemLinks } from '../../utils/ecosystemLinks';
 
 export default function Navbar() {
   const { currentUser, tokenBalance, logout } = useAuth();
+  const ecosystem = getEcosystemLinks();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [supportModalOpen, setSupportModalOpen] = useState(false);
@@ -57,7 +59,7 @@ export default function Navbar() {
         <div className="bg-[#050B11]/92 border-b border-[#263440] py-1.5 px-4 sm:px-8 text-[11px] font-mono text-[#94A3B8] flex items-center justify-between backdrop-blur-md pointer-events-auto">
           <div className="flex items-center gap-3 sm:gap-4 truncate">
             <a 
-              href="https://redkross.org.in"
+              href={ecosystem.foundation}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-slate-300 hover:text-[#65F58A] transition-colors truncate"
@@ -67,17 +69,17 @@ export default function Navbar() {
             </a>
             <span className="text-slate-600">|</span>
             <a 
-              href="https://cyber.redkross.org.in"
+              href={ecosystem.cybersecurity}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-slate-400 hover:text-cyan-400 transition-colors hidden sm:flex"
             >
-              <span>Cybersecurity Labs</span>
+              <span>Cybersecurity Platform</span>
               <ExternalLink className="w-3 h-3 opacity-60" />
             </a>
             <span className="text-slate-600 hidden sm:inline">|</span>
             <a 
-              href="https://psychology.redkross.org.in"
+              href={ecosystem.psychology}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-slate-400 hover:text-[#FFA439] transition-colors hidden md:flex"

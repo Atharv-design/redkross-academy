@@ -2,8 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Shield, Award, Lock, ExternalLink, ArrowUpRight, LifeBuoy } from 'lucide-react';
 import DoodleCrewFooter from '../ui/doodle-crew-footer-academy';
+import { getEcosystemLinks } from '../../utils/ecosystemLinks';
 
 export default function Footer() {
+  const ecosystem = getEcosystemLinks();
   return (
     <footer className="bg-[#050B11] border-t border-[#263440] text-[#94A3B8] font-sans relative overflow-hidden select-none">
       {/* Subtle Neon Radial Ambient Glow */}
@@ -24,7 +26,7 @@ export default function Footer() {
             </div>
             
             <p className="text-xs text-[#94A3B8] leading-relaxed font-sans max-w-sm">
-              The professional defensive cybersecurity education & credentialing division of <a href="https://redkross.org.in" target="_blank" rel="noopener noreferrer" className="text-white hover:text-[#65F58A] underline">RedKross Research Foundation</a>. Hands-on SOC operations, adversary simulation defense, and cryptographically signed credentials.
+              The professional defensive cybersecurity education & credentialing division of <a href={ecosystem.foundation} target="_blank" rel="noopener noreferrer" className="text-white hover:text-[#65F58A] underline">RedKross Research Foundation</a>. Hands-on SOC operations, adversary simulation defense, and cryptographically signed credentials.
             </p>
 
             <div className="text-[11px] font-mono text-slate-500 space-y-1">
@@ -65,7 +67,7 @@ export default function Footer() {
             <h4 className="text-xs font-mono uppercase tracking-widest text-[#65F58A] font-semibold">Connected Ecosystem</h4>
             <div className="space-y-2.5">
               <a 
-                href="https://redkross.org.in"
+                href={ecosystem.foundation}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between text-xs text-gray-300 hover:border-[#65F58A]/40 hover:bg-white/10 transition-all group"
@@ -78,20 +80,20 @@ export default function Footer() {
               </a>
 
               <a 
-                href="https://cyber.redkross.org.in"
+                href={ecosystem.cybersecurity}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between text-xs text-gray-300 hover:border-cyan-400/40 hover:bg-white/10 transition-all group"
               >
                 <div>
-                  <span className="text-[10px] text-gray-500 font-mono block">CYBERSECURITY LABS</span>
-                  <span className="font-semibold text-white group-hover:text-cyan-400">cyber.redkross.org.in</span>
+                  <span className="text-[10px] text-gray-500 font-mono block">CYBERSECURITY PLATFORM</span>
+                  <span className="font-semibold text-white group-hover:text-cyan-400">cybersecurity.redkross.org.in</span>
                 </div>
                 <ArrowUpRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-cyan-400" />
               </a>
 
               <a 
-                href="https://psychology.redkross.org.in"
+                href={ecosystem.psychology}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between text-xs text-gray-300 hover:border-[#FFA439]/40 hover:bg-white/10 transition-all group"
@@ -151,7 +153,7 @@ export default function Footer() {
             <span>&bull;</span>
             <a href="mailto:academy@redkross.org.in" className="hover:text-[#65F58A]">academy@redkross.org.in</a>
             <span>&bull;</span>
-            <a href="https://cyber.redkross.org.in" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">Cybersecurity Lab</a>
+            <a href={ecosystem.cybersecurity} target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">Cybersecurity Platform</a>
           </div>
         </div>
       </div>

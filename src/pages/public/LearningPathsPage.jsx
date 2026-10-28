@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Shield, Sparkles, Award, ArrowRight, BookOpen, Terminal, CheckCircle2 } from 'lucide-react';
+import { getEcosystemLinks } from '../../utils/ecosystemLinks';
 
 /**
  * Learning Paths Page (Phase 3: Strict Empty-State Requirement)
@@ -12,6 +13,7 @@ import { Shield, Sparkles, Award, ArrowRight, BookOpen, Terminal, CheckCircle2 }
  * - Refined cybersecurity visual with subtle neon-green (#65F58A) & mint (#35E6B5) accents.
  */
 export default function LearningPathsPage() {
+  const ecosystem = getEcosystemLinks();
   return (
     <div className="min-h-[82vh] flex items-center justify-center py-16 px-4 sm:px-6 lg:px-8 relative z-10">
       <div className="max-w-3xl w-full text-center space-y-8">
@@ -114,7 +116,7 @@ export default function LearningPathsPage() {
             <span>Verify Institutional Credentials</span>
           </Link>
           <a
-            href="https://cyber.redkross.org.in"
+            href={ecosystem.cybersecurity}
             target="_blank"
             rel="noopener noreferrer"
             className="w-full sm:w-auto px-6 py-3 rounded-full glass-button-primary font-royal font-bold text-xs tracking-wider transition-all flex items-center justify-center gap-2"
