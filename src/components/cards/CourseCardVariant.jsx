@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Award, Shield, Clock, BookOpen, CheckCircle2, Coins } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Award, Shield, Clock, BookOpen, CheckCircle2, Coins } from 'lucide-react';
 
 /**
  * 10 Distinct Cyber Course Card Designs
@@ -417,17 +417,17 @@ export default function CourseCardVariant({ course, variantId, variantIndex = 0,
           </div>
         </div>
 
-        {/* Action Button - Clean Tactile Pill (Arrow Removed) */}
+        {/* Circular Action Arrow */}
         <Link
           to={`/courses/${course.id}`}
-          className={`px-4 py-2 rounded-full border font-royal font-bold text-xs tracking-wider transition-all shadow-sm ${
+          className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all ${
             isAmber
-              ? 'border-[#35E6B5]/50 bg-[#1B2530] text-[#35E6B5] hover:bg-[#35E6B5] hover:text-[#071018]'
-              : 'border-[#65F58A]/50 bg-[#1B2530] text-[#65F58A] hover:bg-[#65F58A] hover:text-[#071018]'
+              ? 'border-[#35E6B5]/50 bg-[#35E6B5]/10 text-[#35E6B5] group-hover:bg-[#35E6B5] group-hover:text-black group-hover:scale-110 shadow-[0_0_15px_rgba(53,230,181,0.3)]'
+              : 'border-[#65F58A]/50 bg-[#65F58A]/10 text-[#65F58A] group-hover:bg-[#65F58A] group-hover:text-black group-hover:scale-110 shadow-[0_0_15px_rgba(101,245,138,0.3)]'
           }`}
           aria-label={`View syllabus for ${course.title}`}
         >
-          View Course
+          <ArrowRight className="w-5 h-5" />
         </Link>
       </div>
     </div>
