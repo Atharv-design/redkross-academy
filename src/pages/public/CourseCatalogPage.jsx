@@ -192,11 +192,12 @@ export default function CourseCatalogPage() {
         {/* 10 Unique Distinct Course Cards Display using their stored card_variant */}
         {filteredCourses.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {filteredCourses.map((course) => (
+            {filteredCourses.map((course, idx) => (
               <CourseCardVariant
                 key={course.id}
                 course={course}
-                variantId={course.card_variant}
+                variantId={course.card_variant || `variant-${String(idx + 1).padStart(2, '0')}`}
+                className={course.card_variant === 'variant-06' ? 'lg:col-span-2' : ''}
               />
             ))}
           </div>

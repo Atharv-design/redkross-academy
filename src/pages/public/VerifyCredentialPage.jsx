@@ -90,7 +90,7 @@ export default function VerifyCredentialPage() {
 
         {/* Verification Result Display */}
         {hasSearched && credential ? (
-          <div className="glass-card rounded-2xl p-6 sm:p-8 space-y-6 relative overflow-hidden">
+          <div className="bg-[#101923]/95 backdrop-blur-xl border border-[#35E6B5]/40 hover:border-[#65F58A] cyber-clip-diagonal-both rounded-2xl p-6 sm:p-8 space-y-6 relative overflow-hidden shadow-[0_12px_40px_rgba(53,230,181,0.18)] transition-all">
             {/* Top Security Banner */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-[#263440] gap-4">
               <div className="flex items-center space-x-4">

@@ -227,9 +227,9 @@ export default function CourseDetailPage() {
             </div>
           </div>
 
-          {/* Sidebar CTA Card (Right Column) */}
+          {/* Sidebar CTA Card (Right Column) with Dicto Cyber Card Styling */}
           <div className="space-y-6">
-            <div className="glass-card rounded-2xl p-6 sm:p-7 space-y-6 sticky top-28">
+            <div className="bg-[#101923]/95 backdrop-blur-xl border border-[#35E6B5]/40 hover:border-[#65F58A] cyber-clip-corner-top-right rounded-2xl p-6 sm:p-7 space-y-6 sticky top-28 shadow-[0_12px_40px_rgba(53,230,181,0.15)] transition-all">
               <div className="space-y-2">
                 <div className="text-[10px] font-mono uppercase tracking-wider text-[#94A3B8]">Enrollment Status</div>
                 <div className="flex items-baseline gap-2">

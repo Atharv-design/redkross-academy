@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Shield, Sparkles, Award, ArrowRight, BookOpen, Terminal, CheckCircle2 } from 'lucide-react';
+import DictoCyberCard from '../../components/cards/DictoCyberCard';
 
 /**
  * Learning Paths Page (Phase 3: Strict Empty-State Requirement)
@@ -71,37 +72,40 @@ export default function LearningPathsPage() {
           </p>
         </div>
 
-        {/* Educational Framework Pillars (Informative without leaking course cards) */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 max-w-2xl mx-auto text-left">
-          <div className="p-4 rounded-xl bg-[#101923] border border-[#263440] space-y-1.5">
-            <div className="w-7 h-7 rounded-lg bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center">
-              <Terminal className="w-3.5 h-3.5 text-[#65F58A]" />
-            </div>
-            <div className="font-royal text-xs font-bold text-white">Hands-on Telemetry</div>
-            <p className="text-[11px] text-[#94A3B8] leading-relaxed">
-              Real-world log correlation across SIEM and defensive monitoring stacks.
-            </p>
-          </div>
+        {/* Educational Framework Pillars with Dicto Cyber Card Designs */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 max-w-5xl mx-auto text-left">
+          {/* Pillar 1: Card 5 (Cyber Grimoire & Neural Brain) */}
+          <DictoCyberCard
+            variant={5}
+            tag="HANDS-ON TELEMETRY"
+            title="Hands-on Telemetry & SIEM Labs"
+            description="Real-world log correlation across SIEM and defensive monitoring stacks with live telemetry ingestion."
+            badges={['Elastic Common Schema', 'Sysmon Auditd']}
+            actionHref="/verify"
+            actionText="Explore Framework"
+          />
 
-          <div className="p-4 rounded-xl bg-[#101923] border border-[#263440] space-y-1.5">
-            <div className="w-7 h-7 rounded-lg bg-[#35E6B5]/10 border border-[#35E6B5]/30 flex items-center justify-center">
-              <Shield className="w-3.5 h-3.5 text-[#35E6B5]" />
-            </div>
-            <div className="font-royal text-xs font-bold text-white">Adversary Mapping</div>
-            <p className="text-[11px] text-[#94A3B8] leading-relaxed">
-              Curricula aligned strictly with MITRE ATT&CK defensive methodologies.
-            </p>
-          </div>
+          {/* Pillar 2: Card 9 (Hooded Operator Command Matrix) */}
+          <DictoCyberCard
+            variant={9}
+            tag="ADVERSARY MAPPING"
+            title="MITRE ATT&CK Alignment"
+            description="Curricula aligned strictly with MITRE ATT&CK defensive methodologies, mapping adversary TTPs to defensive detections."
+            badges={['Enterprise Matrix', 'TTP Correlation']}
+            actionHref="/verify"
+            actionText="View Mappings"
+          />
 
-          <div className="p-4 rounded-xl bg-[#101923] border border-[#263440] space-y-1.5">
-            <div className="w-7 h-7 rounded-lg bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center">
-              <Award className="w-3.5 h-3.5 text-[#65F58A]" />
-            </div>
-            <div className="font-royal text-xs font-bold text-white">Tamper-Proof Proofs</div>
-            <p className="text-[11px] text-[#94A3B8] leading-relaxed">
-              Cryptographically verified credentials on the public registry.
-            </p>
-          </div>
+          {/* Pillar 3: Card 10 (Star Medal Trophy & Milestone Sockets) */}
+          <DictoCyberCard
+            variant={10}
+            tag="INSTITUTIONAL RIGOR"
+            title="Tamper-Proof Proofs"
+            description="Cryptographically signed credentials published to the public registry with immutable verification proofs."
+            sockets={4}
+            actionHref="/verify"
+            actionText="Verify Proofs"
+          />
         </div>
 
         {/* Action Links */}

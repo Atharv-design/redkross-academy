@@ -97,6 +97,7 @@ export const INITIAL_COURSES = [
     estimated_duration: '14 Hours',
     rating: 4.9,
     enrolled_count: 1420,
+    card_variant: 'variant-01',
     lead_author: {
       name: 'Sarah Chen, CISSP',
       title: 'Principal Incident Handler, RedKross Lab',
@@ -818,6 +819,31 @@ sha256sum /mnt/forensics/workstation_04_ram.raw > workstation_04_ram.sha256
     learning_objectives: ['Build an ISO 27001 Statement of Applicability', 'Perform third-party vendor risk scoring', 'Draft institutional security policies'],
     prerequisites: ['Cybersecurity fundamentals'],
     total_tokens_reward: 350,
+    card_variant: 'variant-09',
+    modules: []
+  },
+  {
+    id: 'crs_threat_hunting',
+    slug: 'advanced-threat-hunting-adversary-emulation',
+    title: 'Advanced Threat Hunting & Adversary Emulation',
+    version: '1.0',
+    category: 'Threat Defense',
+    difficulty: 'Advanced',
+    price: 4999,
+    cert_price: 4999,
+    estimated_duration: '16 Hours',
+    rating: 4.95,
+    enrolled_count: 820,
+    lead_author: {
+      name: 'Sarah Chen, CISSP',
+      title: 'Principal Incident Handler, RedKross Lab',
+      avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=256&q=80'
+    },
+    overview: 'Proactive adversary hunting across live telemetry: memory dumps, YARA rules, Volatility 3 analysis, kernel tracing, and MITRE ATT&CK adversary emulation.',
+    learning_objectives: ['Memory forensics with Volatility 3', 'Author high-precision YARA and Sigma rules', 'Simulate adversary TTPs and trace kernel events'],
+    prerequisites: ['Operating system fundamentals', 'SOC Triage Experience'],
+    total_tokens_reward: 500,
+    card_variant: 'variant-10',
     modules: []
   }
 ];

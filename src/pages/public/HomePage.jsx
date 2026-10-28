@@ -4,6 +4,7 @@ import { Shield, Award, Terminal, ArrowRight, CheckCircle2, Lock, Zap, BookOpen,
 import { mockEngine } from '../../services/db/mockEngine';
 import { apiClient } from '../../services/apiClient';
 import CourseCardVariant from '../../components/cards/CourseCardVariant';
+import DictoCyberCard from '../../components/cards/DictoCyberCard';
 
 export default function HomePage() {
   const [courses, setCourses] = useState([]);
@@ -125,13 +126,14 @@ export default function HomePage() {
                 </Link>
               </div>
 
-              {/* Cards Grid Rendering the Unique 10 Visual Variants */}
+              {/* Cards Grid Rendering all 10 Distinct Visual Card Variants */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                {courses.slice(0, 6).map((course) => (
+                {courses.map((course, idx) => (
                   <CourseCardVariant
                     key={course.id}
                     course={course}
-                    variantId={course.card_variant}
+                    variantId={course.card_variant || `variant-${String(idx + 1).padStart(2, '0')}`}
+                    className={course.card_variant === 'variant-06' ? 'lg:col-span-2' : ''}
                   />
                 ))}
               </div>
@@ -179,58 +181,45 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {learningPaths.map((path) => (
-              <div
-                key={path.id}
-                className="glass-card glass-card-hover rounded-2xl p-6 sm:p-7 flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold uppercase tracking-wider bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30">
-                      {path.difficulty}
-                    </span>
-                    <span className="text-xs font-mono text-[#94A3B8]">
-                      {path.estimated_weeks} Weeks • {path.total_hours}h
-                    </span>
-                  </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Track 1: Ultra-Wide Mountain Summit Banner (Card 6) */}
+            <div className="lg:col-span-3">
+              <DictoCyberCard
+                variant={6}
+                tag="CAREER ASCENT TRACK"
+                title="Tier-1 to Tier-2 SOC Analyst Career Track"
+                description="Comprehensive 12-week training for 24/7 security operations centres: log analysis, alert triage, SIEM correlation, and rapid defensive response."
+                meta={['1,420 Enrolled Defenders', '12 Weeks • 48 Hours', 'CRSS Credential']}
+                actionHref="/paths"
+                actionText="Explore Track Syllabus"
+              />
+            </div>
 
-                  <h3 className="font-royal text-xl font-bold text-white mb-2 leading-snug">
-                    {path.title}
-                  </h3>
-                  <p className="text-xs text-[#94A3B8] leading-relaxed mb-4">
-                    {path.short_desc}
-                  </p>
+            {/* Track 2: Holographic Wireframe Globe (Card 2) */}
+            <div className="lg:col-span-2">
+              <DictoCyberCard
+                variant={2}
+                tag="FORENSIC INVESTIGATION"
+                title="Threat Hunting & Digital Forensics Specialist"
+                description="Proactive adversary detection, memory forensics, network packet reassembly, and threat intelligence synthesis across multi-cloud environments."
+                meta={['820 Enrolled Defenders', '100% Volatility 3 Hands-on Labs', 'CTDH Milestone Credential']}
+                actionHref="/paths"
+                actionText="View Specialist Track"
+              />
+            </div>
 
-                  <div className="space-y-1.5 mb-6">
-                    <div className="text-[10px] font-mono text-[#94A3B8] uppercase tracking-wider font-semibold">
-                      Skills Validated
-                    </div>
-                    <div className="flex flex-wrap gap-1.5">
-                      {path.skills.map((skill, idx) => (
-                        <span key={idx} className="text-[10px] px-2 py-0.5 rounded bg-[#1B2530] text-slate-300 font-mono border border-[#263440]">
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-[#263440] flex items-center justify-between">
-                  <div>
-                    <div className="text-[9px] text-[#94A3B8] font-mono uppercase">Milestone Credential</div>
-                    <div className="text-xs font-royal font-bold text-[#65F58A]">{path.milestone_cert}</div>
-                  </div>
-                  <Link
-                    to="/paths"
-                    className="w-9 h-9 rounded-full bg-[#1B2530] hover:bg-[#65F58A] text-white hover:text-black flex items-center justify-center transition-all shadow"
-                    aria-label={`View track ${path.title}`}
-                  >
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </div>
-              </div>
-            ))}
+            {/* Track 3: 3D Isometric Cyber Vault Cube (Card 8) */}
+            <div className="lg:col-span-1">
+              <DictoCyberCard
+                variant={8}
+                tag="CLOUD & INFRASTRUCTURE"
+                title="Defensive Infrastructure & Cloud Security Architect"
+                description="Harden enterprise endpoints, configure zero-trust perimeters, and master cloud workload defense in AWS & GCP."
+                meta={['AWS & GCP IAM', 'Zero-Trust Bastion', 'CDSA Signed']}
+                actionHref="/paths"
+                actionText="Inspect Track"
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -252,35 +241,37 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="glass-card rounded-2xl p-6 sm:p-7 space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center text-[#65F58A]">
-                <Zap className="w-5 h-5" />
-              </div>
-              <h3 className="font-royal text-base font-bold text-white">3-Strike Exam Focus Tracking</h3>
-              <p className="text-xs text-[#94A3B8] leading-relaxed">
-                During evaluated assessments, client tab switches and window blur events are actively tracked. Strike 1 warns the student; Strike 2 deducts 50 RedKross Tokens; Strike 3 immediately aborts the exam and locks the evaluation window.
-              </p>
-            </div>
+            {/* Safeguard 1: Card 4 (Crimson Red Alert Terminal) */}
+            <DictoCyberCard
+              variant={4}
+              tag="CRITICAL PROCTORING SENTINEL"
+              title="3-Strike Exam Focus Tracking"
+              description="Active window blur and tab-switching surveillance. Strike 1 warns the candidate; Strike 2 deducts 50 RedKross tokens; Strike 3 terminates the exam immediately with an automated violation incident report."
+              actionHref="/verify"
+              actionText="View Verification Standard"
+            />
 
-            <div className="glass-card rounded-2xl p-6 sm:p-7 space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center text-[#F59E0B]">
-                <Clock className="w-5 h-5" />
-              </div>
-              <h3 className="font-royal text-base font-bold text-white">24-Hour Mandatory Retake Lockout</h3>
-              <p className="text-xs text-[#94A3B8] leading-relaxed">
-                Exhausting 3 failed attempts or suffering a Strike 3 violation triggers an automated 24-hour server cooldown period to enforce structured material remediation before re-attempting.
-              </p>
-            </div>
+            {/* Safeguard 2: Card 7 (Radar HUD with Checkmark & Progress Bar) */}
+            <DictoCyberCard
+              variant={7}
+              tag="REMEDIATION COOLDOWN"
+              title="24-Hour Mandatory Retake Lockout"
+              description="Exhausting 3 failed attempts or suffering a Strike 3 violation locks the candidate out for 24 hours server-side to enforce rigorous review of curriculum materials before re-attempting."
+              progress={100}
+              actionHref="/verify"
+              actionText="Read Cooldown Policy"
+            />
 
-            <div className="glass-card rounded-2xl p-6 sm:p-7 space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-[#35E6B5]/10 border border-[#35E6B5]/30 flex items-center justify-center text-[#35E6B5]">
-                <Shield className="w-5 h-5" />
-              </div>
-              <h3 className="font-royal text-base font-bold text-white">Cryptographic Verification</h3>
-              <p className="text-xs text-[#94A3B8] leading-relaxed">
-                Every earned certificate generates an immutable hexadecimal digital signature and public verification URL with QR code, directly verifiable by prospective employers.
-              </p>
-            </div>
+            {/* Safeguard 3: Card 3 (Bastion Glass Shield with Padlock) */}
+            <DictoCyberCard
+              variant={3}
+              tag="CRYPTOGRAPHIC INTEGRITY"
+              title="Cryptographic Proof & Public Resolver"
+              description="Every earned certificate produces an immutable SHA-256 digital signature, tamper-proof QR code, and instant verification URL verifiable by hiring managers."
+              badges={['SHA-256 Hash', 'Tamper-Proof', 'Live QR Scan']}
+              actionHref="/verify"
+              actionText="Test Live Resolver"
+            />
           </div>
         </div>
       </section>
