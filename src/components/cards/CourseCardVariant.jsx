@@ -3,7 +3,7 @@ import DictoCyberCard from './DictoCyberCard';
 
 /**
  * CourseCardVariant — Adapts raw course objects to the 10 DICTO CYBER CARD DESIGNS
- * Directly matching media_1793206746529_8131fa77.jpg
+ * Directly matching media_1793207789795_b38b0335.png aesthetic and media_1793206746529_8131fa77.jpg motifs.
  */
 export default function CourseCardVariant({
   course,
@@ -32,12 +32,12 @@ export default function CourseCardVariant({
 
   const variantNum = resolveVariantNumber();
 
-  // Extract skills/badges for Card 3, 5, 9
+  // Extract skills/badges
   const extractBadges = () => {
     if (course.learning_objectives && course.learning_objectives.length > 0) {
       return course.learning_objectives
         .slice(0, 3)
-        .map((s) => s.split(':')[0].trim().substring(0, 18));
+        .map((s) => s.split(':')[0].trim().substring(0, 22));
     }
     return ['Threat Triage', 'Log Correlation', 'Incident Action'];
   };
@@ -47,36 +47,30 @@ export default function CourseCardVariant({
     : '14 Hours';
 
   const enrolledStr = course.enrolled_count
-    ? `${course.enrolled_count.toLocaleString()} Defenders`
-    : '1,420 Defenders';
-
-  const rewardStr = course.total_tokens_reward
-    ? `+${course.total_tokens_reward} Bounty`
-    : '+450 Tokens';
+    ? `${course.enrolled_count.toLocaleString()} Enrolled Defenders`
+    : '1,420 Enrolled Defenders';
 
   const tagLabel = course.category
     ? course.category.toUpperCase()
     : (course.difficulty ? `${course.difficulty.toUpperCase()} TRACK` : 'DEFENSIVE SPECIALIST');
 
-  // Specific metadata mappings per card requirements
-  const metaList = [
-    durationStr,
-    enrolledStr,
-    rewardStr
-  ];
+  const pathwayLabel = course.difficulty
+    ? `${course.difficulty} • ${durationStr}`
+    : `Cohort 2026 • ${durationStr}`;
 
   return (
     <DictoCyberCard
       variant={variantNum}
       tag={tagLabel}
+      pathwayTag={pathwayLabel}
       title={course.title}
       description={course.overview}
-      meta={metaList}
-      badges={extractBadges()}
+      tags={extractBadges()}
+      meta1={enrolledStr}
+      meta2={`${durationStr} • ${course.price === 0 ? 'Free Curriculum Access' : `₹${course.price?.toLocaleString('en-IN')} Certification`}`}
       actionHref={`/courses/${course.slug || course.id}`}
       actionText="Inspect Syllabus & Lab"
-      progress={course.progress || 78}
-      sockets={course.modules?.length || 4}
+      progress={course.progress || null}
       className={className}
     />
   );

@@ -89,8 +89,12 @@ export default function StudentDashboard() {
             <DictoCyberCard
               variant={7}
               tag="RESUME ACTIVE PROGRAMME"
+              pathwayTag={`${primaryProgress.percentage}% Completed`}
               title={primaryCourse.title}
               description={primaryCourse.overview}
+              tags={['Mandatory Lesson Progress', 'Active Evaluation', 'Token Bounty Active']}
+              meta1={`${primaryProgress.completed} of ${primaryProgress.total} Lessons Completed`}
+              meta2={`${primaryCourse.estimated_duration || '14 Hours'} • Interactive Browser Lab`}
               progress={primaryProgress.percentage}
               actionHref={`/student/learn/${primaryEnrolment.id}`}
               actionText="Enter Active Classroom"

@@ -181,17 +181,20 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
             {/* Track 1: Ultra-Wide Mountain Summit Banner (Card 6) */}
             <div className="lg:col-span-3">
               <DictoCyberCard
                 variant={6}
                 tag="CAREER ASCENT TRACK"
+                pathwayTag="Flagship Track 01"
                 title="Tier-1 to Tier-2 SOC Analyst Career Track"
-                description="Comprehensive 12-week training for 24/7 security operations centres: log analysis, alert triage, SIEM correlation, and rapid defensive response."
-                meta={['1,420 Enrolled Defenders', '12 Weeks • 48 Hours', 'CRSS Credential']}
+                description="Comprehensive 12-week training for 24/7 security operations centres: alert triage, SIEM correlation, network forensics, and rapid defensive containment under NIST SP 800-61."
+                tags={['SIEM / Splunk / Elastic', 'MITRE ATT&CK', 'Packet Inspection', 'Incident Handling']}
+                meta1="1,420 Enrolled Defenders in 2026 Cohort"
+                meta2="12 Weeks • 48 Hours Comprehensive Curriculum • CRSS Credential"
                 actionHref="/paths"
-                actionText="Explore Track Syllabus"
+                actionText="Explore Track Syllabus & Labs"
               />
             </div>
 
@@ -200,9 +203,12 @@ export default function HomePage() {
               <DictoCyberCard
                 variant={2}
                 tag="FORENSIC INVESTIGATION"
+                pathwayTag="Specialist Track 02"
                 title="Threat Hunting & Digital Forensics Specialist"
-                description="Proactive adversary detection, memory forensics, network packet reassembly, and threat intelligence synthesis across multi-cloud environments."
-                meta={['820 Enrolled Defenders', '100% Volatility 3 Hands-on Labs', 'CTDH Milestone Credential']}
+                description="Proactive adversary detection, memory volatility forensics, network packet reassembly, and threat intelligence synthesis across multi-cloud enterprise environments."
+                tags={['Memory Volatility 3', 'YARA & Sigma Rules', 'Adversary Emulation', 'PCAP Forensics']}
+                meta1="820 Active Forensic Analysts"
+                meta2="14 Weeks • 56 Hours Hands-On Labs • CTDH Credential"
                 actionHref="/paths"
                 actionText="View Specialist Track"
               />
@@ -213,11 +219,14 @@ export default function HomePage() {
               <DictoCyberCard
                 variant={8}
                 tag="CLOUD & INFRASTRUCTURE"
-                title="Defensive Infrastructure & Cloud Security Architect"
-                description="Harden enterprise endpoints, configure zero-trust perimeters, and master cloud workload defense in AWS & GCP."
-                meta={['AWS & GCP IAM', 'Zero-Trust Bastion', 'CDSA Signed']}
+                pathwayTag="Architect Track 03"
+                title="Defensive Infrastructure Architect"
+                description="Harden enterprise endpoints, configure zero-trust perimeters, and master cloud workload defense across AWS and GCP."
+                tags={['Cloud IAM Hardening', 'Zero Trust Architecture', 'Kubernetes Security']}
+                meta1="AWS & GCP Cloud Workload Defense"
+                meta2="16 Weeks • 64 Hours • CDSA Credential"
                 actionHref="/paths"
-                actionText="Inspect Track"
+                actionText="Inspect Track Details"
               />
             </div>
           </div>
@@ -240,23 +249,31 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {/* Safeguard 1: Card 4 (Crimson Red Alert Terminal) */}
             <DictoCyberCard
               variant={4}
               tag="CRITICAL PROCTORING SENTINEL"
+              pathwayTag="3-Strike Anti-Cheat"
               title="3-Strike Exam Focus Tracking"
               description="Active window blur and tab-switching surveillance. Strike 1 warns the candidate; Strike 2 deducts 50 RedKross tokens; Strike 3 terminates the exam immediately with an automated violation incident report."
+              tags={['Client Blur Tracking', 'Token Penalty', 'Automated Exam Abort']}
+              meta1="Real-Time Proctoring Telemetry Active"
+              meta2="Immutable Incident Audit Queue Logging"
               actionHref="/verify"
-              actionText="View Verification Standard"
+              actionText="View Proctoring Standards"
             />
 
             {/* Safeguard 2: Card 7 (Radar HUD with Checkmark & Progress Bar) */}
             <DictoCyberCard
               variant={7}
               tag="REMEDIATION COOLDOWN"
+              pathwayTag="24h Mandatory Cooldown"
               title="24-Hour Mandatory Retake Lockout"
-              description="Exhausting 3 failed attempts or suffering a Strike 3 violation locks the candidate out for 24 hours server-side to enforce rigorous review of curriculum materials before re-attempting."
+              description="Exhausting 3 failed attempts or suffering a Strike 3 violation locks the candidate out for 24 hours server-side to enforce structured review of curriculum materials before re-attempting."
+              tags={['Attempt Threshold', '24-Hour Cooldown', 'Structured Remediation']}
+              meta1="Server-Enforced Cooldown Protocol"
+              meta2="Mandatory Material Review Verification"
               progress={100}
               actionHref="/verify"
               actionText="Read Cooldown Policy"
@@ -266,9 +283,12 @@ export default function HomePage() {
             <DictoCyberCard
               variant={3}
               tag="CRYPTOGRAPHIC INTEGRITY"
+              pathwayTag="Public Resolver"
               title="Cryptographic Proof & Public Resolver"
-              description="Every earned certificate produces an immutable SHA-256 digital signature, tamper-proof QR code, and instant verification URL verifiable by hiring managers."
-              badges={['SHA-256 Hash', 'Tamper-Proof', 'Live QR Scan']}
+              description="Every earned certificate produces an immutable SHA-256 digital signature, tamper-proof QR code, and instant verification URL directly verifiable by prospective employers."
+              tags={['SHA-256 Hash', 'Tamper-Proof Proofs', 'Live QR Scan']}
+              meta1="Public Key Escrow Ledger Integration"
+              meta2="Instant Employer QR Code Verification"
               actionHref="/verify"
               actionText="Test Live Resolver"
             />

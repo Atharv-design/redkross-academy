@@ -73,14 +73,17 @@ export default function LearningPathsPage() {
         </div>
 
         {/* Educational Framework Pillars with Dicto Cyber Card Designs */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 max-w-5xl mx-auto text-left">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 max-w-6xl mx-auto text-left">
           {/* Pillar 1: Card 5 (Cyber Grimoire & Neural Brain) */}
           <DictoCyberCard
             variant={5}
             tag="HANDS-ON TELEMETRY"
-            title="Hands-on Telemetry & SIEM Labs"
-            description="Real-world log correlation across SIEM and defensive monitoring stacks with live telemetry ingestion."
-            badges={['Elastic Common Schema', 'Sysmon Auditd']}
+            pathwayTag="Framework 01"
+            title="Telemetry & Live SIEM Labs"
+            description="Real-world log correlation across SIEM and defensive monitoring stacks with automated telemetry ingestion pipelines."
+            tags={['Elastic Common Schema', 'Sysmon Ingestion', 'Linux Auditd']}
+            meta1="Live Virtual Machine Sandbox Labs"
+            meta2="Continuous Defensive Signal Correlation"
             actionHref="/verify"
             actionText="Explore Framework"
           />
@@ -89,9 +92,12 @@ export default function LearningPathsPage() {
           <DictoCyberCard
             variant={9}
             tag="ADVERSARY MAPPING"
-            title="MITRE ATT&CK Alignment"
+            pathwayTag="Framework 02"
+            title="MITRE ATT&CK Methodology"
             description="Curricula aligned strictly with MITRE ATT&CK defensive methodologies, mapping adversary TTPs to defensive detections."
-            badges={['Enterprise Matrix', 'TTP Correlation']}
+            tags={['Enterprise Matrix', 'TTP Correlation', 'Sigma Rules']}
+            meta1="Standardized Defense-in-Depth Models"
+            meta2="Adversary Emulation Telemetry"
             actionHref="/verify"
             actionText="View Mappings"
           />
@@ -100,9 +106,12 @@ export default function LearningPathsPage() {
           <DictoCyberCard
             variant={10}
             tag="INSTITUTIONAL RIGOR"
-            title="Tamper-Proof Proofs"
-            description="Cryptographically signed credentials published to the public registry with immutable verification proofs."
-            sockets={4}
+            pathwayTag="Framework 03"
+            title="Tamper-Proof Verification"
+            description="Cryptographically signed credentials published to the public registry with immutable verification proofs and QR resolver."
+            tags={['SHA-256 Digest', 'Public Registry', 'Live QR Scan']}
+            meta1="Verified Employer Lookup Protocol"
+            meta2="Tamper-Evident Institutional Diploma"
             actionHref="/verify"
             actionText="Verify Proofs"
           />
