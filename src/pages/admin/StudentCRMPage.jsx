@@ -74,7 +74,7 @@ export default function StudentCRMPage() {
               type="text"
               placeholder="Search candidate..."
               value={search}
-              onChange={(e) => setSearch}
+              onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-9 pr-4 py-2 bg-surface-card border border-surface-border rounded-lg text-xs text-white placeholder-slate-400 font-mono focus:outline-none focus:border-redkross-500"
             />
           </div>
