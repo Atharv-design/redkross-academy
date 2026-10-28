@@ -21,7 +21,7 @@ export const INITIAL_USERS = [
     full_name: 'Sarah Chen, CISSP',
     avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=256&q=80',
     headline: 'Director of Defensive Cybersecurity Education',
-    role: 'super_admin',
+    role: 'student', // Strict Phase 4.2: NO initial Super Admin user created or seeded
     created_at: '2026-09-01T08:00:00Z',
     streak_days: 34,
     timezone: 'Asia/Kolkata',

@@ -17,11 +17,23 @@ import { ArrowRight, ArrowUpRight, Award, Shield, Clock, BookOpen, CheckCircle2,
  * - Card 9: Amber Graduation Terminal (Cap & Certificate Workstation)
  */
 
-export default function CourseCardVariant({ course, variantIndex = 0, shape = 'auto' }) {
+export default function CourseCardVariant({ course, variantId, variantIndex = 0, shape = 'auto' }) {
   if (!course) return null;
 
-  // Modulo 10 ensures every course maps cleanly to one of the 10 designs
-  const variant = (variantIndex % 10);
+  // Resolve stable variant index (0-9) from variantId ('variant-01' ... 'variant-10') or persistent card_variant
+  const resolveVariantIndex = () => {
+    const raw = variantId || course.card_variant;
+    if (typeof raw === 'string') {
+      const match = raw.match(/variant-?(\d+)/i);
+      if (match) {
+        const num = parseInt(match[1], 10);
+        return ((num - 1) % 10 + 10) % 10;
+      }
+    }
+    return (variantIndex % 10 + 10) % 10;
+  };
+
+  const variant = resolveVariantIndex();
   const isAmber = [1, 4, 6, 9].includes(variant);
 
   // Fallback defaults

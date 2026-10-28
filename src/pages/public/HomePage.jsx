@@ -6,15 +6,17 @@ import { apiClient } from '../../services/apiClient';
 import CourseCardVariant from '../../components/cards/CourseCardVariant';
 
 export default function HomePage() {
-  const [courses, setCourses] = useState(mockEngine.getCourses());
-  const [learningPaths, setLearningPaths] = useState(mockEngine.getLearningPaths());
+  const [courses, setCourses] = useState([]);
+  const [catalogEnabled, setCatalogEnabled] = useState(false);
+  const [learningPaths, setLearningPaths] = useState([]);
 
   useEffect(() => {
     apiClient.getCourses().then((data) => {
-      if (data && data.length > 0) setCourses(data);
+      setCourses(data.courses || []);
+      setCatalogEnabled(Boolean(data.public_catalog_enabled));
     });
-    apiClient.getLearningPaths().then((paths) => {
-      if (paths && paths.length > 0) setLearningPaths(paths);
+    apiClient.getLearningPaths().then((data) => {
+      setLearningPaths(data.learning_paths || []);
     });
   }, []);
 
@@ -95,42 +97,73 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Featured Courses Preview Grid — The 10 Unique Designs */}
+      {/* Featured Courses Showcase / Embargo Banner */}
       <section className="py-20 border-b border-[#263440]/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-            <div>
-              <div className="inline-flex items-center space-x-2 text-xs font-mono text-[#65F58A] font-semibold px-2.5 py-1 rounded-full bg-[#65F58A]/10 border border-[#65F58A]/30 mb-3">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>CURRICULUM SHOWCASE</span>
+          {catalogEnabled && courses.length > 0 ? (
+            <>
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                <div>
+                  <div className="inline-flex items-center space-x-2 text-xs font-mono text-[#65F58A] font-semibold px-2.5 py-1 rounded-full bg-[#65F58A]/10 border border-[#65F58A]/30 mb-3">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>CURRICULUM SHOWCASE</span>
+                  </div>
+                  <h2 className="font-royal text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+                    Defensive Operator Courseware
+                  </h2>
+                  <p className="text-[#94A3B8] text-xs sm:text-sm mt-1 max-w-xl">
+                    Explore our distinct specialized modules crafted for blue team defenders, forensics analysts, and incident responders.
+                  </p>
+                </div>
+
+                <Link
+                  to="/courses"
+                  className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#65F58A] hover:underline"
+                >
+                  <span>View All Courses</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
               </div>
-              <h2 className="font-royal text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
-                Defensive Operator Courseware
+
+              {/* Cards Grid Rendering the Unique 10 Visual Variants */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                {courses.slice(0, 6).map((course) => (
+                  <CourseCardVariant
+                    key={course.id}
+                    course={course}
+                    variantId={course.card_variant}
+                  />
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="glass-card rounded-2xl p-8 sm:p-12 text-center max-w-3xl mx-auto space-y-6">
+              <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#101923] border border-[#263440] text-xs font-mono">
+                <Lock className="w-3.5 h-3.5 text-[#35E6B5]" />
+                <span className="text-[#94A3B8]">CURRICULUM PREPARATION ACTIVE</span>
+              </div>
+              <h2 className="font-royal text-3xl sm:text-4xl font-extrabold text-white tracking-tight title-shading-neon">
+                Courses will be out soon
               </h2>
-              <p className="text-[#94A3B8] text-xs sm:text-sm mt-1 max-w-xl">
-                Explore our distinct specialized modules crafted for blue team defenders, forensics analysts, and incident responders.
+              <p className="text-sm text-[#94A3B8] max-w-xl mx-auto leading-relaxed">
+                We're preparing structured cybersecurity learning paths to help you build practical skills, strengthen your knowledge, and progress toward your goals. Stay tuned for upcoming releases.
               </p>
+              <div className="pt-2 flex flex-wrap justify-center gap-4">
+                <Link
+                  to="/paths"
+                  className="px-6 py-2.5 rounded-full bg-[#1B2530] hover:bg-[#263440] border border-[#263440] text-xs font-mono text-white transition-colors"
+                >
+                  Check Learning Paths
+                </Link>
+                <Link
+                  to="/verify"
+                  className="px-6 py-2.5 rounded-full glass-button-primary font-royal font-bold text-xs"
+                >
+                  Verify Credentials
+                </Link>
+              </div>
             </div>
-
-            <Link
-              to="/courses"
-              className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#65F58A] hover:underline"
-            >
-              <span>View All 10 Courses</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-
-          {/* Cards Grid Rendering the Unique 10 Visual Variants */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {courses.slice(0, 6).map((course, idx) => (
-              <CourseCardVariant
-                key={course.id || idx}
-                course={course}
-                variantIndex={idx}
-              />
-            ))}
-          </div>
+          )}
         </div>
       </section>
 

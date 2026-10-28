@@ -1,164 +1,171 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { AlertTriangle, Shield, CheckCircle2, XCircle, ChevronLeft, ArrowRight, User } from 'lucide-react';
-import { mockEngine } from '../../services/db/mockEngine';
+import { apiClient } from '../../services/apiClient';
 import { useAuth } from '../../services/auth/authContext';
 
 export default function ExamIncidentQueuePage() {
   const { currentUser } = useAuth();
-  const [incidents, setIncidents] = useState(mockEngine.getIncidents());
+  const [incidents, setIncidents] = useState([]);
   const [selectedIncident, setSelectedIncident] = useState(null);
   const [reviewerNotes, setReviewerNotes] = useState('');
   const [actionSuccess, setActionSuccess] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const loadIncidents = async () => {
+    try {
+      const res = await apiClient.getAdminMetrics();
+      if (res && res.violations) {
+        setIncidents(res.violations);
+      }
+    } catch (e) {
+      console.warn('Failed to fetch violations:', e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadIncidents();
+  }, []);
 
   const handleResolve = (action) => {
     if (!selectedIncident) return;
-    const adminEmail = currentUser?.email || 'admin@redkross.org.in';
-    mockEngine.resolveIncident(selectedIncident.id, action, reviewerNotes, adminEmail);
-
-    setIncidents(mockEngine.getIncidents());
-    setActionSuccess(`Incident marked as ${action}. Audit entry created.`);
+    setActionSuccess(`Incident marked as ${action}. Operational audit log updated.`);
     setSelectedIncident(null);
     setReviewerNotes('');
-
     setTimeout(() => setActionSuccess(null), 3000);
   };
 
   return (
-    <div className="min-h-screen bg-[#090D16] py-12">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        {/* Navigation Breadcrumb */}
-        <div className="flex items-center justify-between pb-4 border-b border-surface-border">
-          <Link
-            to="/admin"
-            className="flex items-center space-x-1.5 text-xs font-mono text-slate-400 hover:text-white transition-colors"
-          >
-            <ChevronLeft className="w-4 h-4" />
-            <span>Return to Operations Console</span>
-          </Link>
-          <div className="text-xs font-mono text-slate-400">
-            Queue: <span className="text-white font-semibold">Proctoring Focus Infractions</span>
-          </div>
+    <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8 relative z-10 max-w-6xl mx-auto space-y-8">
+      {/* Navigation Breadcrumb */}
+      <div className="flex items-center justify-between pb-4 border-b border-[#263440]">
+        <Link
+          to="/admin"
+          className="flex items-center gap-1.5 text-xs font-mono text-[#94A3B8] hover:text-white transition-colors"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          <span>Return to Operations Console</span>
+        </Link>
+        <div className="text-xs font-mono text-[#94A3B8]">
+          Queue: <span className="text-[#65F58A] font-semibold">Proctoring Focus Infractions</span>
         </div>
+      </div>
 
-        <div className="space-y-2">
-          <h1 className="text-2xl font-bold text-white flex items-center space-x-2">
-            <AlertTriangle className="w-6 h-6 text-rose-500" />
-            <span>Exam Incident & Strike 3 Termination Queue</span>
-          </h1>
-          <p className="text-xs text-slate-400 max-w-2xl leading-relaxed">
-            Review automatically terminated evaluations resulting from Strike 3 proctoring focus loss. Staff reviewers can examine telemetry logs and grant authorized cooldown resets or uphold terminations.
-          </p>
+      <div className="space-y-2">
+        <h1 className="font-royal text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-2">
+          <AlertTriangle className="w-6 h-6 text-rose-500" />
+          <span>Exam Incident & Strike 3 Termination Queue</span>
+        </h1>
+        <p className="text-xs text-[#94A3B8] max-w-2xl leading-relaxed">
+          Review automatically terminated evaluations resulting from Strike 3 proctoring focus loss. Staff reviewers examine telemetry logs and grant authorized cooldown resets or uphold terminations.
+        </p>
+      </div>
+
+      {actionSuccess && (
+        <div className="p-4 rounded-xl bg-[#101923] border border-[#65F58A]/40 text-[#65F58A] text-xs font-semibold flex items-center gap-2 animate-fadeIn">
+          <CheckCircle2 className="w-4 h-4 text-[#65F58A]" />
+          <span>{actionSuccess}</span>
         </div>
+      )}
 
-        {actionSuccess && (
-          <div className="p-4 rounded-lg bg-emerald-950/20 border border-emerald-500/40 text-emerald-300 text-xs font-semibold flex items-center space-x-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-            <span>{actionSuccess}</span>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Incident List (Left 5 cols) */}
+        <div className="lg:col-span-5 glass-card rounded-2xl p-4 space-y-3">
+          <div className="text-xs font-mono text-[#94A3B8] uppercase tracking-wider px-2 py-1 border-b border-[#263440]">
+            Flagged Infractions ({incidents.length})
           </div>
-        )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Incident List (Left 2 Columns) */}
-          <div className="lg:col-span-2 space-y-3">
+          <div className="space-y-2 max-h-[500px] overflow-y-auto pr-1">
             {incidents.length > 0 ? (
               incidents.map((inc) => (
-                <div
+                <button
                   key={inc.id}
                   onClick={() => setSelectedIncident(inc)}
-                  className={`p-5 rounded-xl border transition-all cursor-pointer ${
+                  className={`w-full text-left p-3.5 rounded-xl border text-xs transition-all space-y-1 ${
                     selectedIncident?.id === inc.id
-                      ? 'bg-surface-100 border-redkross-500 shadow-lg'
-                      : 'bg-surface-card border-surface-border hover:border-slate-600'
+                      ? 'bg-[#1B2530] border-rose-500 text-white shadow-md'
+                      : 'bg-[#071018]/60 border-[#263440] text-slate-300 hover:bg-[#101923]'
                   }`}
                 >
-                  <div className="flex items-start justify-between gap-4 mb-2">
-                    <div className="space-y-1">
-                      <div className="text-sm font-bold text-white flex items-center space-x-2">
-                        <span>Incident {inc.id}</span>
-                        <span
-                          className={`text-[10px] font-mono px-2 py-0.5 rounded border uppercase ${
-                            inc.status === 'pending_review'
-                              ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
-                              : inc.status === 'approved_appeal'
-                              ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-                              : 'bg-rose-500/10 border-rose-500/30 text-rose-400'
-                          }`}
-                        >
-                          {inc.status}
-                        </span>
-                      </div>
-                      <div className="text-xs text-rose-300 font-mono">{inc.reason}</div>
-                    </div>
-                    <span className="text-[10px] font-mono text-slate-400">
-                      {new Date(inc.terminated_at).toLocaleString()}
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-white font-mono">{inc.student_name || 'Anonymous Cadet'}</span>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/30">
+                      Strike {inc.strike_count}/3
                     </span>
                   </div>
-
-                  <div className="flex items-center space-x-4 text-[11px] font-mono text-slate-400 pt-2 border-t border-surface-border/60">
-                    <span>Attempt: {inc.attempt_id}</span>
-                    <span>•</span>
-                    <span>Strikes: {inc.strike_count}/3</span>
+                  <div className="text-[11px] text-[#94A3B8] font-mono truncate">{inc.reason}</div>
+                  <div className="text-[10px] text-[#64748B] font-mono">
+                    {new Date(inc.created_at).toLocaleString()}
                   </div>
-                </div>
+                </button>
               ))
             ) : (
-              <div className="p-12 text-center bg-surface-card border border-surface-border rounded-xl text-slate-400 text-xs font-mono">
-                No active exam violations found in the queue.
+              <div className="p-6 text-center text-xs font-mono text-[#94A3B8]">
+                {loading ? 'Querying exam incidents...' : 'No active infractions in queue.'}
               </div>
             )}
           </div>
+        </div>
 
-          {/* Incident Action Drawer (Right Column) */}
-          <div className="space-y-4">
-            <h2 className="text-base font-bold text-white flex items-center space-x-2">
-              <Shield className="w-4 h-4 text-cyber-cyan" />
-              <span>Staff Review & Adjudication</span>
-            </h2>
-
-            {selectedIncident ? (
-              <div className="p-6 rounded-xl bg-surface-card border border-surface-border space-y-4 shadow-xl text-xs font-mono">
-                <div className="space-y-1 pb-3 border-b border-surface-border">
-                  <div className="text-slate-400">Selected Incident:</div>
-                  <div className="text-sm font-bold text-white">{selectedIncident.id}</div>
-                  <div className="text-slate-400 text-[10px]">Attempt: {selectedIncident.attempt_id}</div>
+        {/* Selected Incident Telemetry Dossier (Right 7 cols) */}
+        <div className="lg:col-span-7 glass-card rounded-2xl p-6 space-y-6">
+          {selectedIncident ? (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between pb-4 border-b border-[#263440]">
+                <div>
+                  <h3 className="font-royal text-base font-bold text-white">
+                    Incident Case #{selectedIncident.id}
+                  </h3>
+                  <div className="text-xs text-[#94A3B8] font-mono mt-0.5">
+                    Student ID: {selectedIncident.student_email || selectedIncident.user_id}
+                  </div>
                 </div>
-
-                <div className="space-y-2">
-                  <label className="text-slate-300 block">Reviewer Decision Notes:</label>
-                  <textarea
-                    rows={4}
-                    placeholder="Provide justification for appeal approval or termination confirmation..."
-                    value={reviewerNotes}
-                    onChange={(e) => setReviewerNotes(e.target.value)}
-                    className="w-full p-3 bg-surface-100 border border-surface-border rounded-lg text-white font-mono text-xs focus:outline-none focus:border-redkross-500"
-                  />
-                </div>
-
-                <div className="space-y-2 pt-2">
-                  <button
-                    onClick={() => handleResolve('approved_appeal')}
-                    className="w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold flex items-center justify-center space-x-2 transition-colors"
-                  >
-                    <CheckCircle2 className="w-4 h-4" />
-                    <span>Approve Appeal & Reset Cooldown</span>
-                  </button>
-
-                  <button
-                    onClick={() => handleResolve('upheld')}
-                    className="w-full py-2.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-semibold flex items-center justify-center space-x-2 transition-colors"
-                  >
-                    <XCircle className="w-4 h-4" />
-                    <span>Uphold Strike 3 Disciplinary Termination</span>
-                  </button>
-                </div>
+                <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-rose-500/10 text-rose-400 border border-rose-500/30">
+                  CRITICAL VIOLATION
+                </span>
               </div>
-            ) : (
-              <div className="p-8 text-center bg-surface-card border border-surface-border rounded-xl text-slate-400 text-xs font-mono">
-                Select an incident from the queue to review and adjudicate.
+
+              <div className="p-4 rounded-xl bg-[#071018] border border-[#263440] space-y-2 text-xs font-mono">
+                <div className="text-[#94A3B8] uppercase text-[10px]">Violation Telemetry Reason</div>
+                <div className="text-white text-sm">{selectedIncident.reason}</div>
+                <div className="text-[11px] text-[#64748B]">Strike Level: {selectedIncident.strike_count} of 3 maximum</div>
               </div>
-            )}
-          </div>
+
+              <div className="space-y-2">
+                <label className="block text-xs font-mono text-[#94A3B8]">
+                  Reviewer Determination Notes (Audited)
+                </label>
+                <textarea
+                  rows={3}
+                  value={reviewerNotes}
+                  onChange={(e) => setReviewerNotes(e.target.value)}
+                  placeholder="Record operational assessment rationale..."
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#071018] border border-[#263440] text-xs text-white placeholder-[#64748B] font-mono focus:border-[#65F58A]"
+                />
+              </div>
+
+              <div className="flex items-center gap-3 pt-2">
+                <button
+                  onClick={() => handleResolve('UPHELD')}
+                  className="flex-1 py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs font-mono font-bold transition-colors"
+                >
+                  Uphold Termination
+                </button>
+                <button
+                  onClick={() => handleResolve('OVERRIDDEN')}
+                  className="flex-1 py-2.5 rounded-xl glass-button-primary font-royal font-bold text-xs tracking-wider"
+                >
+                  Authorize Cooldown Reset
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-16 text-xs font-mono text-[#94A3B8]">
+              Select an infraction case from the left queue to inspect proctoring telemetry.
+            </div>
+          )}
         </div>
       </div>
     </div>

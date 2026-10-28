@@ -3,16 +3,22 @@ import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
 import CyberBackgroundWatermark from './components/common/CyberBackgroundWatermark';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import AdminRoute from './components/auth/AdminRoute';
+
 import HomePage from './pages/public/HomePage';
 import LearningPathsPage from './pages/public/LearningPathsPage';
 import CourseCatalogPage from './pages/public/CourseCatalogPage';
 import CourseDetailPage from './pages/public/CourseDetailPage';
 import VerifyCredentialPage from './pages/public/VerifyCredentialPage';
+import LoginPage from './pages/public/LoginPage';
+
 import StudentDashboard from './pages/student/StudentDashboard';
 import LessonPlayerPage from './pages/student/LessonPlayerPage';
 import QuizAssessmentPage from './pages/student/QuizAssessmentPage';
 import TokenWalletPage from './pages/student/TokenWalletPage';
 import FinalCertificationPage from './pages/student/FinalCertificationPage';
+
 import AdminDashboard from './pages/admin/AdminDashboard';
 import StudentCRMPage from './pages/admin/StudentCRMPage';
 import ExamIncidentQueuePage from './pages/admin/ExamIncidentQueuePage';
@@ -46,23 +52,94 @@ export default function App() {
           <Route path="courses/:slug" element={<CourseDetailPage />} />
           <Route path="verify" element={<VerifyCredentialPage />} />
           <Route path="verify/:id" element={<VerifyCredentialPage />} />
+          <Route path="login" element={<LoginPage />} />
 
-          {/* Student Portal Routes */}
-          <Route path="student" element={<StudentDashboard />} />
-          <Route path="student/tokens" element={<TokenWalletPage />} />
-          <Route path="student/final-exam/:enrolmentId" element={<FinalCertificationPage />} />
+          {/* Student Portal Routes (Phase 2 Mandatory Authentication) */}
+          <Route
+            path="student"
+            element={
+              <ProtectedRoute>
+                <StudentDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="student/tokens"
+            element={
+              <ProtectedRoute>
+                <TokenWalletPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="student/final-exam/:enrolmentId"
+            element={
+              <ProtectedRoute>
+                <FinalCertificationPage />
+              </ProtectedRoute>
+            }
+          />
 
-          {/* Admin Operations Routes */}
-          <Route path="admin" element={<AdminDashboard />} />
-          <Route path="admin/crm" element={<StudentCRMPage />} />
-          <Route path="admin/incidents" element={<ExamIncidentQueuePage />} />
-          <Route path="admin/builder" element={<CourseBuilderPage />} />
-          <Route path="admin/audit" element={<AuditLogsPage />} />
+          {/* Admin Operations Routes (Phase 4 & 5 RBAC: Super Admin Only) */}
+          <Route
+            path="admin"
+            element={
+              <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="admin/crm"
+            element={
+              <AdminRoute>
+                <StudentCRMPage />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="admin/incidents"
+            element={
+              <AdminRoute>
+                <ExamIncidentQueuePage />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="admin/builder"
+            element={
+              <AdminRoute>
+                <CourseBuilderPage />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="admin/audit"
+            element={
+              <AdminRoute>
+                <AuditLogsPage />
+              </AdminRoute>
+            }
+          />
         </Route>
 
-        {/* Full-Screen Focus Modes (No Navbar/Footer Clutter) */}
-        <Route path="student/learn/:enrolmentId" element={<LessonPlayerPage />} />
-        <Route path="student/quiz/:enrolmentId/:quizId" element={<QuizAssessmentPage />} />
+        {/* Full-Screen Focus Modes (Phase 2 Mandatory Authentication) */}
+        <Route
+          path="student/learn/:enrolmentId"
+          element={
+            <ProtectedRoute>
+              <LessonPlayerPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="student/quiz/:enrolmentId/:quizId"
+          element={
+            <ProtectedRoute>
+              <QuizAssessmentPage />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Shield,
   Coins,
@@ -13,20 +13,21 @@ import {
   Menu,
   X,
   LifeBuoy,
-  ArrowUpRight
+  LogOut,
+  Lock,
+  ArrowRight
 } from 'lucide-react';
 import { useAuth } from '../../services/auth/authContext';
-import { mockEngine } from '../../services/db/mockEngine';
 import SupportTicketModal from './SupportTicketModal';
 
 export default function Navbar() {
-  const { currentUser, tokenBalance, switchUser, loginWithGoogle } = useAuth();
-  const [showRoleMenu, setShowRoleMenu] = useState(false);
+  const { currentUser, tokenBalance, logout } = useAuth();
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [supportModalOpen, setSupportModalOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
-  const allUsers = mockEngine.getUsers();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -42,6 +43,12 @@ export default function Navbar() {
   };
 
   const closeMobileMenu = () => setMobileMenuOpen(false);
+
+  const handleSignOut = async () => {
+    setShowProfileMenu(false);
+    await logout();
+    navigate('/');
+  };
 
   return (
     <>
@@ -98,57 +105,105 @@ export default function Navbar() {
             {/* Brand Logo & Royal Title */}
             <Link to="/" onClick={closeMobileMenu} className="flex items-center gap-3 group">
               <div className="relative w-8 h-8 rounded-full overflow-hidden bg-black border border-[#65F58A]/50 flex items-center justify-center shadow-[0_0_15px_rgba(101,245,138,0.3)] group-hover:scale-105 transition-transform flex-shrink-0">
-                <img 
-                  src="/assets/crest-clean-circle.png" 
-                  alt="RedKross Logo" 
-                  className="w-full h-full object-cover" 
+                <img
+                  src="/assets/logo-full-circle.png"
+                  alt="RedKross Crest"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
                 />
+                <Shield className="w-4 h-4 text-[#65F58A] absolute inset-0 m-auto" />
               </div>
               <div className="flex flex-col">
-                <span className="font-royal font-bold text-sm sm:text-base tracking-wider text-white leading-tight">
-                  RedKross <span className="text-[#65F58A]">Academy</span>
-                </span>
-                <span className="text-[9px] font-mono tracking-widest text-[#94A3B8] uppercase -mt-0.5">
-                  Defensive Education &bull; Certifications
+                <div className="font-royal text-base sm:text-lg font-bold tracking-wider text-white group-hover:text-[#65F58A] transition-colors flex items-center gap-1.5 leading-none">
+                  <span>REDKROSS</span>
+                  <span className="text-[10px] font-mono text-[#35E6B5] border border-[#35E6B5]/30 px-1.5 py-0.2 rounded-full uppercase">
+                    Academy
+                  </span>
+                </div>
+                <span className="text-[9px] font-mono text-[#94A3B8] tracking-widest uppercase">
+                  Institutional Defense
                 </span>
               </div>
             </Link>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-5 xl:gap-6">
+            {/* Desktop Navigation Links */}
+            <nav className="hidden lg:flex items-center gap-1 font-royal text-xs font-semibold tracking-wide">
+              <Link
+                to="/"
+                className={`px-3 py-1.5 rounded-full transition-all flex items-center gap-1.5 ${
+                  isCurrent('/') && location.pathname === '/'
+                    ? 'bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/40 shadow-[0_0_15px_rgba(101,245,138,0.2)]'
+                    : 'text-[#94A3B8] hover:text-white hover:bg-[#1B2530]/50'
+                }`}
+              >
+                <span>Home</span>
+              </Link>
+
               <Link
                 to="/paths"
-                className={`text-xs font-mono font-medium transition-colors relative py-1 ${
-                  isCurrent('/paths') ? 'text-[#65F58A] font-bold' : 'text-[#94A3B8] hover:text-white'
+                className={`px-3 py-1.5 rounded-full transition-all flex items-center gap-1.5 ${
+                  isCurrent('/paths')
+                    ? 'bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/40 shadow-[0_0_15px_rgba(101,245,138,0.2)]'
+                    : 'text-[#94A3B8] hover:text-white hover:bg-[#1B2530]/50'
                 }`}
               >
+                <Layers className="w-3.5 h-3.5" />
                 <span>Learning Paths</span>
-                {isCurrent('/paths') && (
-                  <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-gradient-to-r from-[#65F58A] to-[#35E6B5] rounded-full shadow-[0_0_8px_rgba(101,245,138,0.8)]" />
-                )}
               </Link>
+
               <Link
                 to="/courses"
-                className={`text-xs font-mono font-medium transition-colors relative py-1 ${
-                  isCurrent('/courses') ? 'text-[#65F58A] font-bold' : 'text-[#94A3B8] hover:text-white'
+                className={`px-3 py-1.5 rounded-full transition-all flex items-center gap-1.5 ${
+                  isCurrent('/courses')
+                    ? 'bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/40 shadow-[0_0_15px_rgba(101,245,138,0.2)]'
+                    : 'text-[#94A3B8] hover:text-white hover:bg-[#1B2530]/50'
                 }`}
               >
-                <span>Curriculum Catalogue</span>
-                {isCurrent('/courses') && (
-                  <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-gradient-to-r from-[#65F58A] to-[#35E6B5] rounded-full shadow-[0_0_8px_rgba(101,245,138,0.8)]" />
-                )}
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>Course Directory</span>
               </Link>
+
               <Link
                 to="/verify"
-                className={`text-xs font-mono font-medium transition-colors relative py-1 ${
-                  location.pathname.startsWith('/verify') ? 'text-[#65F58A] font-bold' : 'text-[#94A3B8] hover:text-white'
+                className={`px-3 py-1.5 rounded-full transition-all flex items-center gap-1.5 ${
+                  isCurrent('/verify')
+                    ? 'bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/40 shadow-[0_0_15px_rgba(101,245,138,0.2)]'
+                    : 'text-[#94A3B8] hover:text-white hover:bg-[#1B2530]/50'
                 }`}
               >
+                <Award className="w-3.5 h-3.5" />
                 <span>Verify Credential</span>
-                {location.pathname.startsWith('/verify') && (
-                  <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-gradient-to-r from-[#65F58A] to-[#35E6B5] rounded-full shadow-[0_0_8px_rgba(101,245,138,0.8)]" />
-                )}
               </Link>
+
+              {currentUser && (
+                <Link
+                  to="/student"
+                  className={`px-3 py-1.5 rounded-full transition-all flex items-center gap-1.5 ${
+                    isCurrent('/student')
+                      ? 'bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/40 shadow-[0_0_15px_rgba(101,245,138,0.2)]'
+                      : 'text-[#94A3B8] hover:text-white hover:bg-[#1B2530]/50'
+                  }`}
+                >
+                  <User className="w-3.5 h-3.5" />
+                  <span>Student Portal</span>
+                </Link>
+              )}
+
+              {currentUser?.role === 'super_admin' && (
+                <Link
+                  to="/admin"
+                  className={`px-3 py-1.5 rounded-full transition-all flex items-center gap-1.5 ${
+                    isCurrent('/admin')
+                      ? 'bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/40 shadow-[0_0_15px_rgba(245,158,11,0.2)]'
+                      : 'text-[#F59E0B] hover:text-white hover:bg-[#1B2530]/50'
+                  }`}
+                >
+                  <Shield className="w-3.5 h-3.5" />
+                  <span>Super Admin</span>
+                </Link>
+              )}
             </nav>
 
             {/* Right Actions & Auth */}
@@ -163,7 +218,7 @@ export default function Navbar() {
                 <span className="hidden xl:inline">Support</span>
               </button>
 
-              {/* Live Token Wallet Counter */}
+              {/* Live Token Wallet Counter (for authenticated student) */}
               {currentUser && (
                 <Link
                   to="/student/tokens"
@@ -176,71 +231,92 @@ export default function Navbar() {
                 </Link>
               )}
 
-              {/* Role Switcher for PRD Verification */}
-              <div className="relative hidden md:block">
-                <button
-                  onClick={() => setShowRoleMenu(!showRoleMenu)}
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-[#1B2530]/70 border border-[#263440] hover:border-slate-500 text-xs text-slate-300 transition-colors"
-                  title="Switch active role for PRD verification"
-                >
-                  <div className={`w-2 h-2 rounded-full ${currentUser?.role === 'super_admin' ? 'bg-[#F59E0B]' : currentUser?.role === 'student_support' ? 'bg-[#35E6B5]' : 'bg-[#65F58A]'}`} />
-                  <span className="capitalize font-mono text-[11px]">{currentUser?.role?.replace('_', ' ') || 'Guest'}</span>
-                  <ChevronDown className="w-3 h-3 text-slate-400" />
-                </button>
-
-                {showRoleMenu && (
-                  <div className="absolute right-0 mt-2 w-56 rounded-xl bg-[#101923] border border-[#263440] shadow-2xl py-1 z-50">
-                    <div className="px-3 py-2 border-b border-[#263440] text-[10px] text-[#94A3B8] uppercase font-mono">
-                      Simulate Role (PRD Verification)
-                    </div>
-                    {allUsers.map((u) => (
-                      <button
-                        key={u.id}
-                        onClick={() => {
-                          switchUser(u.id);
-                          setShowRoleMenu(false);
-                        }}
-                        className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-[#1B2530] ${
-                          currentUser?.id === u.id ? 'text-[#65F58A] font-semibold bg-[#65F58A]/10' : 'text-slate-300'
-                        }`}
-                      >
-                        <div>
-                          <div className="font-medium text-white">{u.full_name}</div>
-                          <div className="text-[10px] text-slate-400 font-mono capitalize">{u.role.replace('_', ' ')}</div>
-                        </div>
-                        {currentUser?.id === u.id && <CheckCircle2 className="w-4 h-4 text-[#65F58A]" />}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Portal CTA Button */}
+              {/* User Profile Dropdown or Sign In */}
               {currentUser ? (
-                currentUser.role === 'super_admin' ? (
-                  <Link
-                    to="/admin"
-                    className="px-4 py-1.5 rounded-full bg-[#F59E0B] hover:bg-[#FBBF24] text-black text-xs font-royal font-bold tracking-wider transition-all shadow-[0_0_15px_rgba(245,158,11,0.3)] hidden sm:flex items-center gap-1.5"
+                <div className="relative">
+                  <button
+                    onClick={() => setShowProfileMenu(!showProfileMenu)}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#1B2530] hover:bg-[#263440] border border-[#263440] text-xs text-white transition-all"
                   >
-                    <Shield className="w-3.5 h-3.5" />
-                    <span>Admin</span>
-                  </Link>
-                ) : (
-                  <Link
-                    to="/student"
-                    className="px-4 py-1.5 rounded-full bg-[#65F58A] hover:bg-[#00FFA3] text-black text-xs font-royal font-bold tracking-wider transition-all shadow-[0_0_15px_rgba(101,245,138,0.35)] hidden sm:flex items-center gap-1.5 hover:scale-105"
-                  >
-                    <User className="w-3.5 h-3.5" />
-                    <span>Operator Portal</span>
-                  </Link>
-                )
+                    <div className="w-6 h-6 rounded-full overflow-hidden bg-[#101923] border border-[#65F58A]/40 flex items-center justify-center flex-shrink-0">
+                      {currentUser.avatar ? (
+                        <img src={currentUser.avatar} alt={currentUser.full_name} className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-[10px] font-mono text-[#65F58A]">
+                          {currentUser.full_name?.charAt(0) || 'O'}
+                        </span>
+                      )}
+                    </div>
+                    <span className="max-w-[100px] truncate text-xs font-mono hidden sm:inline">
+                      {currentUser.full_name || currentUser.email?.split('@')[0]}
+                    </span>
+                    <ChevronDown className="w-3 h-3 text-[#94A3B8]" />
+                  </button>
+
+                  {showProfileMenu && (
+                    <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-[#101923] border border-[#263440] shadow-2xl py-2 z-50 divide-y divide-[#263440]">
+                      <div className="px-4 py-3">
+                        <div className="font-royal font-bold text-sm text-white truncate">
+                          {currentUser.full_name}
+                        </div>
+                        <div className="text-xs text-[#94A3B8] font-mono truncate">
+                          {currentUser.email}
+                        </div>
+                        <div className="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono uppercase bg-[#65F58A]/10 border border-[#65F58A]/30 text-[#65F58A]">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#65F58A]" />
+                          <span>Role: {currentUser.role?.replace('_', ' ')}</span>
+                        </div>
+                      </div>
+
+                      <div className="py-1 text-xs font-mono">
+                        <Link
+                          to="/student"
+                          onClick={() => setShowProfileMenu(false)}
+                          className="flex items-center gap-2 px-4 py-2 text-slate-300 hover:text-white hover:bg-[#1B2530] transition-colors"
+                        >
+                          <User className="w-4 h-4 text-[#35E6B5]" />
+                          <span>Student Portal</span>
+                        </Link>
+                        <Link
+                          to="/student/tokens"
+                          onClick={() => setShowProfileMenu(false)}
+                          className="flex items-center gap-2 px-4 py-2 text-slate-300 hover:text-white hover:bg-[#1B2530] transition-colors"
+                        >
+                          <Coins className="w-4 h-4 text-[#F59E0B]" />
+                          <span>Token Ledger</span>
+                        </Link>
+                        {currentUser.role === 'super_admin' && (
+                          <Link
+                            to="/admin"
+                            onClick={() => setShowProfileMenu(false)}
+                            className="flex items-center gap-2 px-4 py-2 text-[#F59E0B] hover:bg-[#1B2530] transition-colors font-semibold"
+                          >
+                            <Shield className="w-4 h-4" />
+                            <span>Super Admin Area</span>
+                          </Link>
+                        )}
+                      </div>
+
+                      <div className="py-1">
+                        <button
+                          onClick={handleSignOut}
+                          className="w-full flex items-center gap-2 px-4 py-2 text-xs font-mono text-red-400 hover:bg-red-500/10 transition-colors text-left"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          <span>Sign Out</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               ) : (
-                <button
-                  onClick={loginWithGoogle}
-                  className="px-4 py-1.5 rounded-full bg-white hover:bg-slate-100 text-black text-xs font-royal font-bold tracking-wider transition-all hidden sm:block"
+                <Link
+                  to="/login"
+                  className="px-4 py-1.5 rounded-full glass-button-primary font-royal font-bold text-xs tracking-wider transition-all flex items-center gap-1.5 shadow-[0_0_15px_rgba(101,245,138,0.25)]"
                 >
-                  Sign In
-                </button>
+                  <Lock className="w-3 h-3" />
+                  <span>Operator Login</span>
+                </Link>
               )}
 
               {/* Mobile Hamburger Button */}
@@ -249,149 +325,104 @@ export default function Navbar() {
                 className="lg:hidden p-2 rounded-full bg-[#1B2530] border border-[#263440] text-slate-300 hover:text-white transition-colors"
                 aria-label="Toggle navigation menu"
               >
-                {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
             </div>
           </div>
         </div>
+      </header>
 
-        {/* Mobile Slide-Out Glass Drawer */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-[#263440] bg-[#071018]/98 backdrop-blur-2xl px-5 pt-4 pb-6 space-y-4 animate-fade-in shadow-2xl pointer-events-auto mt-2 mx-4 rounded-2xl border">
-            {/* Primary Mobile Navigation */}
-            <nav className="space-y-1">
+      {/* Mobile Drawer Navigation */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-40 bg-black/80 backdrop-blur-xl lg:hidden pt-28 px-6 pb-8 flex flex-col justify-between overflow-y-auto">
+          <div className="space-y-6">
+            <div className="text-xs font-mono text-[#94A3B8] uppercase tracking-wider border-b border-[#263440] pb-2">
+              Navigation Menu
+            </div>
+            <nav className="flex flex-col space-y-3 font-royal text-base">
+              <Link
+                to="/"
+                onClick={closeMobileMenu}
+                className="text-white hover:text-[#65F58A] transition-colors py-2 border-b border-[#263440]/40 flex items-center justify-between"
+              >
+                <span>Home</span>
+                <ArrowRight className="w-4 h-4 text-[#94A3B8]" />
+              </Link>
               <Link
                 to="/paths"
                 onClick={closeMobileMenu}
-                className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  isCurrent('/paths') ? 'text-[#65F58A] bg-[#101923] border border-[#65F58A]/30' : 'text-slate-300 hover:bg-[#1B2530]'
-                }`}
+                className="text-white hover:text-[#65F58A] transition-colors py-2 border-b border-[#263440]/40 flex items-center justify-between"
               >
-                <Layers className="w-5 h-5 text-[#35E6B5]" />
-                <span className="font-royal font-semibold">Learning Paths</span>
+                <span>Learning Paths</span>
+                <ArrowRight className="w-4 h-4 text-[#94A3B8]" />
               </Link>
               <Link
                 to="/courses"
                 onClick={closeMobileMenu}
-                className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  isCurrent('/courses') ? 'text-[#65F58A] bg-[#101923] border border-[#65F58A]/30' : 'text-slate-300 hover:bg-[#1B2530]'
-                }`}
+                className="text-white hover:text-[#65F58A] transition-colors py-2 border-b border-[#263440]/40 flex items-center justify-between"
               >
-                <BookOpen className="w-5 h-5 text-[#65F58A]" />
-                <span className="font-royal font-semibold">Curriculum Catalogue</span>
+                <span>Course Directory</span>
+                <ArrowRight className="w-4 h-4 text-[#94A3B8]" />
               </Link>
               <Link
                 to="/verify"
                 onClick={closeMobileMenu}
-                className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  location.pathname.startsWith('/verify') ? 'text-[#65F58A] bg-[#101923] border border-[#65F58A]/30' : 'text-slate-300 hover:bg-[#1B2530]'
-                }`}
+                className="text-white hover:text-[#65F58A] transition-colors py-2 border-b border-[#263440]/40 flex items-center justify-between"
               >
-                <Award className="w-5 h-5 text-[#35E6B5]" />
-                <span className="font-royal font-semibold">Verify Credential</span>
+                <span>Verify Credential</span>
+                <ArrowRight className="w-4 h-4 text-[#94A3B8]" />
               </Link>
               {currentUser && (
                 <Link
-                  to="/student/tokens"
+                  to="/student"
                   onClick={closeMobileMenu}
-                  className="flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium bg-[#F59E0B]/10 border border-[#F59E0B]/25 text-[#F59E0B]"
+                  className="text-[#65F58A] font-semibold py-2 border-b border-[#263440]/40 flex items-center justify-between"
                 >
-                  <div className="flex items-center space-x-3">
-                    <Coins className="w-5 h-5 text-[#F59E0B]" />
-                    <span className="font-royal font-semibold">Token Wallet</span>
-                  </div>
-                  <span className="font-mono font-bold">{tokenBalance} Tokens</span>
+                  <span>Student Portal</span>
+                  <ArrowRight className="w-4 h-4 text-[#65F58A]" />
+                </Link>
+              )}
+              {currentUser?.role === 'super_admin' && (
+                <Link
+                  to="/admin"
+                  onClick={closeMobileMenu}
+                  className="text-[#F59E0B] font-semibold py-2 border-b border-[#263440]/40 flex items-center justify-between"
+                >
+                  <span>Super Admin Operations</span>
+                  <ArrowRight className="w-4 h-4 text-[#F59E0B]" />
                 </Link>
               )}
             </nav>
-
-            {/* Portal Action for Mobile */}
-            <div className="pt-2 border-t border-[#263440]">
-              {currentUser ? (
-                currentUser.role === 'super_admin' ? (
-                  <Link
-                    to="/admin"
-                    onClick={closeMobileMenu}
-                    className="w-full py-2.5 rounded-xl bg-[#F59E0B] text-black text-xs font-royal font-bold flex items-center justify-center space-x-2 shadow-lg"
-                  >
-                    <Shield className="w-4 h-4" />
-                    <span>Open Admin Console</span>
-                  </Link>
-                ) : (
-                  <Link
-                    to="/student"
-                    onClick={closeMobileMenu}
-                    className="w-full py-2.5 rounded-xl bg-[#65F58A] text-black text-xs font-royal font-bold flex items-center justify-center space-x-2 shadow-lg"
-                  >
-                    <User className="w-4 h-4" />
-                    <span>Open Operator Portal</span>
-                  </Link>
-                )
-              ) : (
-                <button
-                  onClick={() => {
-                    loginWithGoogle();
-                    closeMobileMenu();
-                  }}
-                  className="w-full py-2.5 rounded-xl bg-white text-black text-xs font-royal font-bold flex items-center justify-center space-x-2"
-                >
-                  <span>Sign In with Google</span>
-                </button>
-              )}
-            </div>
-
-            {/* Mobile Role Switcher */}
-            <div className="pt-2 border-t border-[#263440]">
-              <div className="text-[10px] font-mono text-[#94A3B8] uppercase mb-2">Switch Active Identity</div>
-              <div className="grid grid-cols-3 gap-2">
-                {allUsers.map((u) => (
-                  <button
-                    key={u.id}
-                    onClick={() => {
-                      switchUser(u.id);
-                      closeMobileMenu();
-                    }}
-                    className={`p-2 rounded-lg text-center border text-[11px] font-medium transition-colors ${
-                      currentUser?.id === u.id
-                        ? 'border-[#65F58A] bg-[#65F58A]/10 text-[#65F58A] font-bold'
-                        : 'border-[#263440] bg-[#101923] text-slate-300'
-                    }`}
-                  >
-                    <div className="truncate font-royal">{u.full_name.split(' ')[0]}</div>
-                    <div className="text-[9px] text-[#94A3B8] capitalize">{u.role.replace('_', ' ')}</div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Support and External Links */}
-            <div className="pt-2 border-t border-[#263440] flex items-center justify-between text-xs">
-              <button
-                onClick={() => {
-                  closeMobileMenu();
-                  setSupportModalOpen(true);
-                }}
-                className="flex items-center space-x-1.5 text-[#35E6B5] hover:underline"
-              >
-                <LifeBuoy className="w-4 h-4" />
-                <span>Support Desk</span>
-              </button>
-              <a
-                href="https://cyber.redkross.org.in"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center space-x-1 text-[#94A3B8] hover:text-white"
-              >
-                <span>Cybersecurity Labs</span>
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
-            </div>
           </div>
-        )}
-      </header>
 
-      {/* Support Ticket Modal */}
-      <SupportTicketModal isOpen={supportModalOpen} onClose={() => setSupportModalOpen(false)} />
+          <div className="pt-6 border-t border-[#263440] space-y-3">
+            {currentUser ? (
+              <button
+                onClick={handleSignOut}
+                className="w-full py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 font-mono text-xs flex items-center justify-center gap-2"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Sign Out ({currentUser.email})</span>
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                onClick={closeMobileMenu}
+                className="w-full py-3 rounded-xl glass-button-primary font-royal font-bold text-xs flex items-center justify-center gap-2"
+              >
+                <Lock className="w-4 h-4" />
+                <span>Sign In to Operator Portal</span>
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Institutional Support Ticket Modal */}
+      <SupportTicketModal
+        isOpen={supportModalOpen}
+        onClose={() => setSupportModalOpen(false)}
+      />
     </>
   );
 }

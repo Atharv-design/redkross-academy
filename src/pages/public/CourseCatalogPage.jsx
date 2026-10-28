@@ -1,23 +1,40 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, BookOpen, Clock, Award, Star, Filter, ArrowRight, Coins, Sparkles, Shield } from 'lucide-react';
-import { mockEngine } from '../../services/db/mockEngine';
+import { Search, BookOpen, Clock, Award, Star, Filter, ArrowRight, Coins, Sparkles, Shield, Lock } from 'lucide-react';
 import { apiClient } from '../../services/apiClient';
+import { useAuth } from '../../services/auth/authContext';
 import CourseCardVariant from '../../components/cards/CourseCardVariant';
 
+/**
+ * Course Catalog Directory (Phase 3 & Phase 7)
+ * Respects centralized `publicCourseCatalogEnabled` setting.
+ * When catalog is disabled (default), renders the official "Courses will be out soon" empty state.
+ */
 export default function CourseCatalogPage() {
-  const [courses, setCourses] = useState(mockEngine.getCourses());
+  const { currentUser } = useAuth();
+  const isAdmin = currentUser?.role === 'super_admin';
+
+  const [courses, setCourses] = useState([]);
+  const [catalogEnabled, setCatalogEnabled] = useState(false);
+  const [loading, setLoading] = useState(true);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDifficulty, setSelectedDifficulty] = useState('All');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedPricing, setSelectedPricing] = useState('All');
 
   useEffect(() => {
-    // Load live courses from Neon PostgreSQL
-    apiClient.getCourses().then((data) => {
-      if (data && data.length > 0) setCourses(data);
+    // Fetch courses with authorization header
+    apiClient.getCourses(isAdmin).then((data) => {
+      setCourses(data.courses || []);
+      setCatalogEnabled(Boolean(data.public_catalog_enabled) || isAdmin);
+      setLoading(false);
+    }).catch(() => {
+      setCourses([]);
+      setCatalogEnabled(false);
+      setLoading(false);
     });
-  }, []);
+  }, [isAdmin]);
 
   const filteredCourses = useMemo(() => {
     return courses.filter((course) => {
@@ -41,6 +58,66 @@ export default function CourseCatalogPage() {
     });
   }, [courses, searchQuery, selectedDifficulty, selectedCategory, selectedPricing]);
 
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center">
+        <div className="flex flex-col items-center space-y-4">
+          <BookOpen className="w-10 h-10 text-[#65F58A] animate-pulse" />
+          <div className="text-xs font-mono text-[#94A3B8] uppercase tracking-wider">
+            Loading Catalog Status...
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Strict Phase 3.1 & 3.3: Empty-State when Catalog is Disabled
+  if (!catalogEnabled) {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center py-16 px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="max-w-2xl w-full text-center space-y-8">
+          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#101923] border border-[#263440] text-xs font-mono">
+            <Lock className="w-3.5 h-3.5 text-[#35E6B5]" />
+            <span className="text-[#94A3B8]">CATALOG STATUS: EMBARGO / UPCOMING</span>
+          </div>
+
+          <div className="relative w-40 h-40 mx-auto flex items-center justify-center">
+            <div className="absolute inset-0 rounded-full bg-[#65F58A]/10 blur-xl" />
+            <div className="w-24 h-24 rounded-2xl bg-[#101923] border border-[#263440] flex items-center justify-center shadow-xl relative z-10">
+              <BookOpen className="w-12 h-12 text-[#65F58A]" />
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h1 className="font-royal text-3xl sm:text-5xl font-extrabold text-white tracking-tight title-shading-neon">
+              Courses will be out soon
+            </h1>
+            <p className="text-sm sm:text-base text-[#94A3B8] leading-relaxed max-w-lg mx-auto">
+              We're preparing structured cybersecurity learning paths to help you build practical skills, strengthen your knowledge, and progress toward your goals. Stay tuned for upcoming releases.
+            </p>
+          </div>
+
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              to="/paths"
+              className="w-full sm:w-auto px-6 py-3 rounded-full bg-[#1B2530] hover:bg-[#263440] border border-[#263440] text-xs font-mono text-white transition-colors"
+            >
+              View Learning Paths Status
+            </Link>
+            <Link
+              to="/verify"
+              className="w-full sm:w-auto px-6 py-3 rounded-full glass-button-primary font-royal font-bold text-xs"
+            >
+              Verify Credentials
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Active Catalog View (when explicitly enabled by Super Admin)
   return (
     <div className="min-h-screen py-12 relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
@@ -54,11 +131,11 @@ export default function CourseCatalogPage() {
             Defensive Security Course Directory
           </h1>
           <p className="text-[#94A3B8] text-sm sm:text-base leading-relaxed">
-            Explore 10 modular, rigorous courses built to take you from foundational networking and operating system telemetry to specialized incident response and threat hunting operations.
+            Explore modular, rigorous courses built to take you from foundational telemetry to specialized incident response and threat hunting operations.
           </p>
         </div>
 
-        {/* Filter Controls Bar (Glassmorphic) */}
+        {/* Filter Controls Bar */}
         <div className="glass-card rounded-2xl p-4 sm:p-6 space-y-4">
           <div className="flex flex-col md:flex-row gap-4">
             {/* Search Input */}
@@ -75,7 +152,6 @@ export default function CourseCatalogPage() {
 
             {/* Quick Filters */}
             <div className="flex flex-wrap items-center gap-2">
-              {/* Difficulty Dropdown */}
               <select
                 value={selectedDifficulty}
                 onChange={(e) => setSelectedDifficulty(e.target.value)}
@@ -87,7 +163,6 @@ export default function CourseCatalogPage() {
                 <option value="Advanced">Advanced</option>
               </select>
 
-              {/* Pricing Filter */}
               <select
                 value={selectedPricing}
                 onChange={(e) => setSelectedPricing(e.target.value)}
@@ -98,7 +173,6 @@ export default function CourseCatalogPage() {
                 <option value="Paid">Certification Tracks</option>
               </select>
 
-              {/* Reset Button */}
               {(searchQuery || selectedDifficulty !== 'All' || selectedPricing !== 'All') && (
                 <button
                   onClick={() => {
@@ -115,14 +189,14 @@ export default function CourseCatalogPage() {
           </div>
         </div>
 
-        {/* 10 Unique Distinct Course Cards Display */}
+        {/* 10 Unique Distinct Course Cards Display using their stored card_variant */}
         {filteredCourses.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {filteredCourses.map((course, idx) => (
+            {filteredCourses.map((course) => (
               <CourseCardVariant
-                key={course.id || idx}
+                key={course.id}
                 course={course}
-                variantIndex={idx}
+                variantId={course.card_variant}
               />
             ))}
           </div>
@@ -131,7 +205,7 @@ export default function CourseCatalogPage() {
             <BookOpen className="w-12 h-12 text-[#94A3B8] mx-auto opacity-50" />
             <h3 className="font-royal text-xl font-bold text-white">No Courses Found</h3>
             <p className="text-xs text-[#94A3B8] max-w-sm mx-auto">
-              No defensive courses match your current search filters. Try resetting the filters or searching for terms like "SOC", "Linux", or "Incident".
+              No defensive courses match your current search filters.
             </p>
           </div>
         )}

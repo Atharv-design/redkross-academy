@@ -1,104 +1,127 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { Layers, ArrowRight, BookOpen, Award, CheckCircle, Clock, Shield, Sparkles } from 'lucide-react';
-import { mockEngine } from '../../services/db/mockEngine';
-import { apiClient } from '../../services/apiClient';
-import CourseCardVariant from '../../components/cards/CourseCardVariant';
+import { Shield, Sparkles, Award, ArrowRight, BookOpen, Terminal, CheckCircle2 } from 'lucide-react';
 
+/**
+ * Learning Paths Page (Phase 3: Strict Empty-State Requirement)
+ * 
+ * Strict Compliance:
+ * - Primary Headline: "Courses will be out soon"
+ * - Exact Supporting Copy: "We're preparing structured cybersecurity learning paths to help you build practical skills, strengthen your knowledge, and progress toward your goals. Stay tuned for upcoming releases."
+ * - Zero course cards, titles, counts, descriptions, or prices displayed publicly.
+ * - Refined cybersecurity visual with subtle neon-green (#65F58A) & mint (#35E6B5) accents.
+ */
 export default function LearningPathsPage() {
-  const [paths, setPaths] = useState(mockEngine.getLearningPaths());
-  const [courses, setCourses] = useState(mockEngine.getCourses());
-
-  useEffect(() => {
-    apiClient.getLearningPaths().then((p) => {
-      if (p && p.length > 0) setPaths(p);
-    });
-    apiClient.getCourses().then((c) => {
-      if (c && c.length > 0) setCourses(c);
-    });
-  }, []);
-
   return (
-    <div className="min-h-screen py-12 relative z-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-        {/* Header */}
-        <div className="max-w-3xl">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#35E6B5]/10 border border-[#35E6B5]/30 text-[#35E6B5] text-xs font-mono mb-4">
-            <Layers className="w-3.5 h-3.5" />
-            <span>PROGRESSIVE CAREER PATHWAYS</span>
-          </div>
-          <h1 className="font-royal text-3xl sm:text-4xl lg:text-5xl font-extrabold title-shading-neon tracking-tight mb-4">
-            Defensive Security Specialization Tracks
+    <div className="min-h-[82vh] flex items-center justify-center py-16 px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-3xl w-full text-center space-y-8">
+        {/* Subtle Cyber Status Badge */}
+        <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-[#101923] border border-[#263440] text-xs font-mono shadow-md backdrop-blur-md">
+          <span className="w-2 h-2 rounded-full bg-[#35E6B5] animate-pulse" />
+          <span className="text-[#94A3B8]">CURRICULUM PREPARATION IN PROGRESS</span>
+          <span className="text-slate-600">•</span>
+          <span className="text-[#65F58A] font-semibold">REDKROSS ACADEMY</span>
+        </div>
+
+        {/* Refined Cyber Visual Illustration (Geometric Security Node) */}
+        <div className="relative w-48 h-48 sm:w-56 sm:h-56 mx-auto flex items-center justify-center my-4">
+          {/* Subtle Ambient Glow */}
+          <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#65F58A]/10 via-[#35E6B5]/10 to-transparent blur-2xl" />
+
+          <svg viewBox="0 0 200 200" className="w-full h-full relative z-10 drop-shadow-[0_0_25px_rgba(101,245,138,0.25)]">
+            {/* Concentric Coordinate Rings */}
+            <circle cx="100" cy="100" r="88" fill="none" stroke="#263440" strokeWidth="1" strokeDasharray="3 3" />
+            <circle cx="100" cy="100" r="70" fill="none" stroke="#35E6B5" strokeWidth="1" strokeOpacity="0.4" />
+            <circle cx="100" cy="100" r="50" fill="#101923" stroke="#65F58A" strokeWidth="1.5" />
+
+            {/* Orbital Cyber Nodes */}
+            <circle cx="100" cy="12" r="4" fill="#65F58A" />
+            <circle cx="100" cy="188" r="4" fill="#65F58A" />
+            <circle cx="12" cy="100" r="4" fill="#35E6B5" />
+            <circle cx="188" cy="100" r="4" fill="#35E6B5" />
+
+            {/* Connecting Cross-hair gridlines */}
+            <line x1="100" y1="20" x2="100" y2="50" stroke="#65F58A" strokeWidth="1.2" strokeOpacity="0.6" />
+            <line x1="100" y1="150" x2="100" y2="180" stroke="#65F58A" strokeWidth="1.2" strokeOpacity="0.6" />
+            <line x1="20" y1="100" x2="50" y2="100" stroke="#35E6B5" strokeWidth="1.2" strokeOpacity="0.6" />
+            <line x1="150" y1="100" x2="180" y2="100" stroke="#35E6B5" strokeWidth="1.2" strokeOpacity="0.6" />
+
+            {/* Central Shield Icon Graphic */}
+            <path
+              d="M 100 70 L 122 80 V 98 C 122 114 100 126 100 126 C 100 126 78 114 78 98 V 80 Z"
+              fill="#1B2530"
+              stroke="#65F58A"
+              strokeWidth="2"
+              strokeLinejoin="round"
+            />
+            {/* Center Lock / Keyhole */}
+            <circle cx="100" cy="94" r="4" fill="#35E6B5" />
+            <line x1="100" y1="98" x2="100" y2="105" stroke="#35E6B5" strokeWidth="2.5" strokeLinecap="round" />
+          </svg>
+        </div>
+
+        {/* Exact Primary Message & Supporting Copy (Phase 3.1 & 3.2) */}
+        <div className="space-y-4 max-w-2xl mx-auto">
+          <h1 className="font-royal text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight title-shading-neon">
+            Courses will be out soon
           </h1>
-          <p className="text-[#94A3B8] text-sm sm:text-base leading-relaxed">
-            Our learning paths are carefully structured by senior incident handlers to take candidates from foundational systems knowledge to autonomous defensive operations.
+
+          <p className="text-sm sm:text-base text-[#94A3B8] leading-relaxed max-w-xl mx-auto">
+            We're preparing structured cybersecurity learning paths to help you build practical skills, strengthen your knowledge, and progress toward your goals. Stay tuned for upcoming releases.
           </p>
         </div>
 
-        {/* Pathways Stack */}
-        <div className="space-y-12">
-          {paths.map((path, idx) => {
-            const pathCourses = (path.course_ids || [])
-              .map((id) => courses.find((c) => c.id === id))
-              .filter(Boolean);
+        {/* Educational Framework Pillars (Informative without leaking course cards) */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 max-w-2xl mx-auto text-left">
+          <div className="p-4 rounded-xl bg-[#101923] border border-[#263440] space-y-1.5">
+            <div className="w-7 h-7 rounded-lg bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center">
+              <Terminal className="w-3.5 h-3.5 text-[#65F58A]" />
+            </div>
+            <div className="font-royal text-xs font-bold text-white">Hands-on Telemetry</div>
+            <p className="text-[11px] text-[#94A3B8] leading-relaxed">
+              Real-world log correlation across SIEM and defensive monitoring stacks.
+            </p>
+          </div>
 
-            return (
-              <div
-                key={path.id}
-                className="glass-card rounded-2xl p-6 sm:p-8 space-y-6"
-              >
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-[#263440]">
-                  <div>
-                    <div className="flex flex-wrap items-center gap-3 mb-2">
-                      <span className="text-xs font-mono px-3 py-0.5 rounded-full bg-[#1B2530] text-slate-300 border border-[#263440] font-medium">
-                        Track {idx + 1} of {paths.length}
-                      </span>
-                      <span className="text-xs font-mono text-[#94A3B8]">
-                        {path.difficulty}
-                      </span>
-                      <span className="text-slate-600">•</span>
-                      <span className="text-xs font-mono text-[#94A3B8] flex items-center space-x-1">
-                        <Clock className="w-3.5 h-3.5" />
-                        <span>{path.estimated_weeks} Weeks ({path.total_hours} Hours)</span>
-                      </span>
-                    </div>
+          <div className="p-4 rounded-xl bg-[#101923] border border-[#263440] space-y-1.5">
+            <div className="w-7 h-7 rounded-lg bg-[#35E6B5]/10 border border-[#35E6B5]/30 flex items-center justify-center">
+              <Shield className="w-3.5 h-3.5 text-[#35E6B5]" />
+            </div>
+            <div className="font-royal text-xs font-bold text-white">Adversary Mapping</div>
+            <p className="text-[11px] text-[#94A3B8] leading-relaxed">
+              Curricula aligned strictly with MITRE ATT&CK defensive methodologies.
+            </p>
+          </div>
 
-                    <h2 className="font-royal text-2xl sm:text-3xl font-extrabold text-white mb-2">
-                      {path.title}
-                    </h2>
-                    <p className="text-xs sm:text-sm text-[#94A3B8] max-w-3xl leading-relaxed">
-                      {path.short_desc}
-                    </p>
-                  </div>
+          <div className="p-4 rounded-xl bg-[#101923] border border-[#263440] space-y-1.5">
+            <div className="w-7 h-7 rounded-lg bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center">
+              <Award className="w-3.5 h-3.5 text-[#65F58A]" />
+            </div>
+            <div className="font-royal text-xs font-bold text-white">Tamper-Proof Proofs</div>
+            <p className="text-[11px] text-[#94A3B8] leading-relaxed">
+              Cryptographically verified credentials on the public registry.
+            </p>
+          </div>
+        </div>
 
-                  <div className="flex-shrink-0 p-4 rounded-xl bg-[#1B2530]/60 border border-[#263440] space-y-1 text-right sm:text-left lg:text-right">
-                    <div className="text-[10px] text-[#94A3B8] font-mono uppercase">Milestone Credential</div>
-                    <div className="font-royal text-sm font-bold text-[#65F58A] flex items-center gap-1.5 lg:justify-end">
-                      <Award className="w-4 h-4 text-[#65F58A]" />
-                      <span>{path.milestone_cert}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Courses included in this pathway using the 10 distinct card designs */}
-                <div>
-                  <h3 className="text-xs font-mono uppercase tracking-wider text-[#94A3B8] font-semibold mb-4">
-                    Sequential Curriculum Modules ({pathCourses.length} Courses)
-                  </h3>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {pathCourses.map((c, cIdx) => (
-                      <CourseCardVariant
-                        key={c.id || cIdx}
-                        course={c}
-                        variantIndex={idx * 3 + cIdx}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+        {/* Action Links */}
+        <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Link
+            to="/verify"
+            className="w-full sm:w-auto px-6 py-3 rounded-full bg-[#101923] hover:bg-[#1B2530] border border-[#263440] text-xs font-mono text-[#94A3B8] hover:text-white transition-all flex items-center justify-center gap-2"
+          >
+            <Award className="w-4 h-4 text-[#65F58A]" />
+            <span>Verify Institutional Credentials</span>
+          </Link>
+          <a
+            href="https://cyber.redkross.org.in"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full sm:w-auto px-6 py-3 rounded-full glass-button-primary font-royal font-bold text-xs tracking-wider transition-all flex items-center justify-center gap-2"
+          >
+            <span>Explore Cyber Intelligence</span>
+            <ArrowRight className="w-4 h-4" />
+          </a>
         </div>
       </div>
     </div>

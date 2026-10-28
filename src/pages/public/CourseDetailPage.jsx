@@ -65,7 +65,7 @@ export default function CourseDetailPage() {
 
   const handleEnrol = async () => {
     if (!currentUser) {
-      alert('Please sign in or select a simulated user to enrol.');
+      navigate('/login', { state: { from: { pathname: `/courses/${slug}` } } });
       return;
     }
     setEnrolling(true);
