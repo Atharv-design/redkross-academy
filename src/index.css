@@ -22,24 +22,59 @@ html {
   scroll-behavior: smooth;
 }
 
+@layer utilities {
+  .font-royal {
+    font-family: 'Inter', sans-serif !important;
+  }
+  .font-lora {
+    font-family: 'Lora', serif !important;
+  }
+  .font-mono {
+    font-family: 'Space Mono', monospace !important;
+  }
+  .mono {
+    font-family: 'Space Mono', monospace !important;
+  }
+}
+
 @layer base {
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Cinzel', serif;
+    font-family: 'Inter', sans-serif;
     letter-spacing: -0.01em;
+  }
+  .font-royal {
+    font-family: 'Inter', sans-serif !important;
+  }
+  .font-lora {
+    font-family: 'Lora', serif !important;
+  }
+  .font-mono {
+    font-family: 'Space Mono', monospace !important;
   }
 }
 
 body {
   margin: 0;
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', sans-serif;
   background-color: #071018;
   color: #F1F5F9;
   overflow-x: hidden;
-  background-image: 
+  background-image:
     radial-gradient(circle at 18% 15%, rgba(101, 245, 138, 0.05) 0%, transparent 52%),
     radial-gradient(circle at 82% 80%, rgba(53, 230, 181, 0.04) 0%, transparent 55%),
     radial-gradient(circle at 50% 50%, rgba(0, 255, 163, 0.025) 0%, transparent 60%);
   background-attachment: fixed;
+
+  /* Custom font stack for monospace elements */
+  .mono {
+    font-family: 'Space Mono', monospace !important;
+  }
+  .font-mono {
+    font-family: 'Space Mono', monospace !important;
+  }
+  .font-royal {
+    font-family: 'Inter', sans-serif !important;
+  }
 }
 
 /* Glassmorphism System for RedKross Academy */

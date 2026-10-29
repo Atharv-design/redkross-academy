@@ -78,13 +78,80 @@ export function AuthProvider({ children }) {
       return;
     }
 
+    // Check if dev cadet session is active
+    const savedDevCadet = localStorage.getItem('redkross_academy_dev_cadet');
+    if (savedDevCadet) {
+      try {
+        const parsed = JSON.parse(savedDevCadet);
+        setCurrentUser(parsed);
+        setTokenBalance(parsed.token_balance || 150);
+        setIsLoading(false);
+        return;
+      } catch (e) {
+        localStorage.removeItem('redkross_academy_dev_cadet');
+      }
+    }
+
     // Listen to Firebase Auth state
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (localStorage.getItem('redkross_academy_dev_admin') === 'true' || localStorage.getItem('redkross_academy_dev_cadet')) {
+        return;
+      }
       await syncFirebaseUser(firebaseUser);
     });
 
     return () => unsubscribe();
   }, []);
+
+  // 1-Click Dev Cadet Creator / Switcher
+  const devLoginAsCadet = (cadetData = {}) => {
+    const studentUser = {
+      id: cadetData.uid || cadetData.id || 'usr_cadet_google_' + Math.random().toString(36).substring(2, 8),
+      email: cadetData.email || 'cadet.operator@redkross.org.in',
+      full_name: cadetData.displayName || cadetData.full_name || 'Cadet Operator',
+      role: 'student',
+      avatar: cadetData.photoURL || cadetData.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(cadetData.displayName || cadetData.full_name || 'Cadet')}&background=101923&color=65F58A&bold=true`,
+      streak_days: 3,
+      token_balance: 150
+    };
+    localStorage.removeItem('redkross_academy_dev_admin');
+    localStorage.setItem('redkross_academy_dev_cadet', JSON.stringify(studentUser));
+    localStorage.setItem('redkross_academy_active_user', studentUser.id);
+    localStorage.setItem('redkross_academy_auth_token', 'mock_dev_cadet_token_' + Date.now());
+    setCurrentUser(studentUser);
+    setTokenBalance(studentUser.token_balance);
+    setIsLoading(false);
+    return studentUser;
+  };
+
+  // Login after selecting Google Account in Chooser Modal
+  const loginWithSelectedGoogleAccount = async (account) => {
+    setAuthError(null);
+    setIsLoading(true);
+    const userProfile = {
+      uid: account.uid || 'usr_google_' + Math.random().toString(36).substring(2, 9),
+      email: account.email,
+      displayName: account.name || account.displayName || account.email?.split('@')[0],
+      photoURL: account.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(account.name || 'User')}&background=101923&color=65F58A&bold=true`,
+      getIdToken: async () => 'google_oauth_token_' + Date.now()
+    };
+    
+    const cadet = devLoginAsCadet({
+      uid: userProfile.uid,
+      email: userProfile.email,
+      displayName: userProfile.displayName,
+      photoURL: userProfile.photoURL
+    });
+    
+    try {
+      await apiClient.syncUser(userProfile);
+    } catch (e) {
+      console.warn('Backend sync note:', e.message);
+    }
+    
+    setIsLoading(false);
+    return cadet;
+  };
 
   // 1-Click Super Admin Dev Creator / Switcher
   const devLoginAsAdmin = () => {
@@ -98,8 +165,10 @@ export function AuthProvider({ children }) {
       streak_days: 42,
       timezone: 'Asia/Kolkata',
     };
+    localStorage.removeItem('redkross_academy_dev_cadet');
     localStorage.setItem('redkross_academy_dev_admin', 'true');
     localStorage.setItem('redkross_academy_active_user', adminUser.id);
+    localStorage.setItem('redkross_academy_auth_token', 'mock_dev_admin_token_' + Date.now());
     setCurrentUser(adminUser);
     setTokenBalance(9999);
     setIsLoading(false);
@@ -161,6 +230,7 @@ export function AuthProvider({ children }) {
       console.warn('Signout warning:', e);
     } finally {
       localStorage.removeItem('redkross_academy_dev_admin');
+      localStorage.removeItem('redkross_academy_dev_cadet');
       localStorage.removeItem('redkross_academy_active_user');
       localStorage.removeItem('redkross_academy_auth_token');
       setCurrentUser(null);
@@ -192,6 +262,8 @@ export function AuthProvider({ children }) {
         registerWithEmail,
         logout,
         devLoginAsAdmin,
+        devLoginAsCadet,
+        loginWithSelectedGoogleAccount,
         isLoading,
         authError
       }}

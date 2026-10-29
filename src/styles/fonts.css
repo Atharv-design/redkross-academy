@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+/* Font Stack for RedKross Academy */
+
+:root {
+  /* Main Font - Inter (Modern Sans) */
+  font-family: 'Inter', sans-serif;
+
+  /* Monospace Font - Space Mono (For Code, Terminal, and Technical Content) */
+  font-family: 'Space Mono', monospace;
+
+  /* Custom Font Families */
+  font-family: 'royal', 'Inter', sans-serif;
+  font-family: 'mono', 'Space Mono', monospace;
+}
+
+/* Font Classes for Tailwind */
+
+.font-royal {
+  font-family: 'royal', 'Inter', sans-serif !important;
+}
+
+.font-mono {
+  font-family: 'mono', 'Space Mono', monospace !important;
+}
+
+/* Font Weights */
+
+.font-thin {
+  font-weight: 300;
+}
+
+.font-light {
+  font-weight: 400;
+}
+
+.font-regular {
+  font-weight: 400;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+/* Font Sizes */
+
+.text-xs {
+  font-size: 0.75rem;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.text-base {
+  font-size: 1rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+}
+
+.text-4xl {
+  font-size: 2.25rem;
+}
+
+.text-5xl {
+  font-size: 3rem;
+}
+
+.text-6xl {
+  font-size: 3.75rem;
+}
+
+.text-7xl {
+  font-size: 4.5rem;
+}
+
+/* Font Families for Specific Use Cases */
+
+.royal {
+  font-family: 'royal', 'Inter', sans-serif !important;
+}
+
+.mono {
+  font-family: 'mono', 'Space Mono', monospace !important;
+}

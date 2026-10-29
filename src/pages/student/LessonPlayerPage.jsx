@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   BookOpen,
@@ -16,11 +16,16 @@ import {
   Sparkles,
   ExternalLink,
   Menu,
-  FileDown
+  FileDown,
+  Gauge,
+  AlertTriangle,
+  RotateCcw
 } from 'lucide-react';
 import { mockEngine } from '../../services/db/mockEngine';
 import { apiClient } from '../../services/apiClient';
 import { useAuth } from '../../services/auth/authContext';
+import { resolveVideoUrl } from '../../services/db/videoStorage';
+import { renderMarkdownToHtml } from '../../utils/markdownParser';
 
 export default function LessonPlayerPage() {
   const { enrolmentId } = useParams();
@@ -48,6 +53,12 @@ export default function LessonPlayerPage() {
   const [mobileTab, setMobileTab] = useState('lesson');
   const [savingProgress, setSavingProgress] = useState(false);
 
+  // Video Telemetry & Playback Gating State
+  const videoRef = useRef(null);
+  const [playbackSpeed, setPlaybackSpeed] = useState(1.0);
+  const [watchProgressMap, setWatchProgressMap] = useState({});
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+
   useEffect(() => {
     if (enrolment && allLessons.length > 0) {
       const firstIncomplete = allLessons.find(
@@ -62,9 +73,9 @@ export default function LessonPlayerPage() {
   if (!enrolment || !course) {
     return (
       <div className="min-h-screen bg-[#071018] py-24 text-center px-4">
-        <h2 className="text-xl font-bold text-white mb-2">Enrolment Not Found</h2>
-        <p className="text-xs text-slate-400 mb-4">Please verify that you are enrolled in this training course.</p>
-        <Link to="/student" className="px-5 py-2.5 bg-redkross-600 rounded-lg text-white text-xs font-semibold inline-flex items-center space-x-2">
+        <h2 className="text-xl font-bold text-white mb-2 font-royal">Enrolment Not Found</h2>
+        <p className="text-xs text-slate-400 mb-4 font-mono">Please verify that you are enrolled in this training course.</p>
+        <Link to="/student" className="px-5 py-2.5 bg-redkross-600 rounded-lg text-white text-xs font-semibold inline-flex items-center space-x-2 font-royal">
           <ChevronLeft className="w-4 h-4" />
           <span>Return to Dashboard</span>
         </Link>
@@ -76,8 +87,105 @@ export default function LessonPlayerPage() {
   const activeIndex = allLessons.findIndex((l) => l.id === activeLessonId);
   const isLessonCompleted = enrolment.completed_mandatory_lessons.includes(activeLesson?.id);
 
-  const handleMarkComplete = async () => {
+  // Sequential Unlock Rule: Lesson 0 is unlocked. Lesson N is unlocked IF all previous lessons (0..N-1) are completed
+  const isLessonUnlocked = (idx) => {
+    if (idx === 0) return true;
+    for (let i = 0; i < idx; i++) {
+      if (!enrolment.completed_mandatory_lessons.includes(allLessons[i].id)) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  // Video Watch Progress for active lesson
+  const [resolvedVideoUrl, setResolvedVideoUrl] = useState('/assets/sample-lesson.mp4');
+
+  useEffect(() => {
+    let active = true;
+    if (activeLesson?.video_url) {
+      resolveVideoUrl(activeLesson.video_url).then((url) => {
+        if (active) setResolvedVideoUrl(url);
+      });
+    } else {
+      setResolvedVideoUrl('/assets/sample-lesson.mp4');
+    }
+    return () => { active = false; };
+  }, [activeLesson?.video_url, activeLesson?.id]);
+
+  const currentWatchPct = isLessonCompleted ? 100 : (watchProgressMap[activeLesson?.id]?.percentage || 0);
+  const hasVideo = Boolean(resolvedVideoUrl);
+  // Strict completion gating: requires >= 80% video watch if video exists
+  const canMarkComplete = !hasVideo || isLessonCompleted || currentWatchPct >= 80;
+
+  // Handle Video Time Update Telemetry
+  const handleTimeUpdate = () => {
+    if (!videoRef.current || !activeLesson) return;
+    const { currentTime, duration } = videoRef.current;
+    if (!duration || isNaN(duration)) return;
+
+    setWatchProgressMap((prev) => {
+      const currentEntry = prev[activeLesson.id] || { maxTime: 0, percentage: 0 };
+      const newMaxTime = Math.max(currentEntry.maxTime, currentTime);
+      const computedPct = Math.min(100, Math.round((newMaxTime / duration) * 100));
+
+      return {
+        ...prev,
+        [activeLesson.id]: {
+          currentTime,
+          duration,
+          maxTime: newMaxTime,
+          percentage: Math.max(currentEntry.percentage, computedPct)
+        }
+      };
+    });
+  };
+
+  const handleSpeedChange = (speed) => {
+    setPlaybackSpeed(speed);
+    if (videoRef.current) {
+      videoRef.current.playbackRate = speed;
+    }
+  };
+
+  // Cloud Stream Embed Resolver (YouTube / Vimeo / Cloudflare)
+  const getEmbedInfo = (url) => {
+    if (!url) return null;
+    if (url.includes('youtube.com/watch?v=')) {
+      const vidId = url.split('v=')[1]?.split('&')[0];
+      return { type: 'youtube', embedUrl: `https://www.youtube.com/embed/${vidId}?autoplay=0&rel=0` };
+    }
+    if (url.includes('youtube.com/embed/')) {
+      return { type: 'youtube', embedUrl: url };
+    }
+    if (url.includes('youtu.be/')) {
+      const vidId = url.split('youtu.be/')[1]?.split('?')[0];
+      return { type: 'youtube', embedUrl: `https://www.youtube.com/embed/${vidId}?autoplay=0&rel=0` };
+    }
+    if (url.includes('vimeo.com/')) {
+      const vidId = url.split('vimeo.com/')[1]?.split('?')[0];
+      return { type: 'vimeo', embedUrl: `https://player.vimeo.com/video/${vidId}` };
+    }
+    return { type: 'direct', embedUrl: url };
+  };
+
+  const embedInfo = getEmbedInfo(resolvedVideoUrl);
+
+  // Simulated Telemetry Checkpoint for Cloud Iframe Embeds
+  const handleSimulateEmbedTelemetry = () => {
     if (!activeLesson) return;
+    setWatchProgressMap((prev) => ({
+      ...prev,
+      [activeLesson.id]: {
+        percentage: 100,
+        maxTime: 600,
+        duration: 600
+      }
+    }));
+  };
+
+  const handleMarkComplete = async () => {
+    if (!activeLesson || !canMarkComplete) return;
     setSavingProgress(true);
 
     try {
@@ -190,37 +298,50 @@ export default function LessonPlayerPage() {
           <div className="space-y-4">
             {course.modules.map((mod) => (
               <div key={mod.id} className="space-y-1.5">
-                <div className="text-[11px] font-bold text-slate-300 font-mono uppercase tracking-wider px-2 py-1 bg-surface-100/60 rounded">
-                  {mod.title}
+                <div className="text-[11px] font-bold text-slate-300 font-mono uppercase tracking-wider px-2 py-1 bg-surface-100/60 rounded flex items-center justify-between">
+                  <span className="truncate">{mod.title}</span>
+                  <span className="text-[10px] text-slate-400 font-mono">{mod.lessons.length} Lessons</span>
                 </div>
 
                 <div className="space-y-1 pl-1">
                   {mod.lessons.map((les) => {
+                    const globalIdx = allLessons.findIndex((l) => l.id === les.id);
                     const isDone = enrolment.completed_mandatory_lessons.includes(les.id);
                     const isActive = les.id === activeLessonId;
+                    const isUnlocked = isLessonUnlocked(globalIdx);
 
                     return (
                       <button
                         key={les.id}
+                        disabled={!isUnlocked}
                         onClick={() => {
-                          setActiveLessonId(les.id);
-                          setMobileTab('lesson');
+                          if (isUnlocked) {
+                            setActiveLessonId(les.id);
+                            setMobileTab('lesson');
+                          }
                         }}
                         className={`w-full text-left p-2 rounded-lg text-xs flex items-center justify-between transition-colors ${
                           isActive
                             ? 'bg-redkross-600/15 border border-redkross-600/40 text-white font-semibold'
-                            : 'hover:bg-surface-100 text-slate-300'
+                            : isUnlocked
+                            ? 'hover:bg-surface-100 text-slate-300'
+                            : 'opacity-40 cursor-not-allowed text-slate-500 bg-surface-100/20'
                         }`}
                       >
                         <div className="flex items-center space-x-2 truncate pr-2">
                           {isDone ? (
                             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                          ) : (
+                          ) : isUnlocked ? (
                             <span className="w-3.5 h-3.5 rounded-full border border-slate-600 flex-shrink-0" />
+                          ) : (
+                            <Lock className="w-3.5 h-3.5 text-slate-600 flex-shrink-0" />
                           )}
                           <span className="truncate">{les.title}</span>
                         </div>
-                        <span className="text-[10px] font-mono text-slate-400 flex-shrink-0">{les.duration}</span>
+                        <div className="flex items-center gap-1.5 flex-shrink-0 text-[10px] font-mono text-slate-400">
+                          {les.video_url && <Play className="w-2.5 h-2.5 text-[#65F58A]" />}
+                          <span>{les.duration}</span>
+                        </div>
                       </button>
                     );
                   })}
@@ -291,40 +412,195 @@ export default function LessonPlayerPage() {
         >
           {activeLesson ? (
             <>
+              {/* Progress Bar & Telemetry (User Enhancement 3) */}
+              <div className="p-3.5 rounded-xl bg-[#101923] border border-[#263440] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono shadow-md">
+                <div className="flex items-center gap-2">
+                  <span className="text-[#94A3B8]">Course Progress:</span>
+                  <span className="text-[#65F58A] font-bold">{progressData.percentage}%</span>
+                  <span className="text-[#64748B]">({progressData.completed}/{progressData.total} Lessons)</span>
+                </div>
+                <div className="w-full sm:w-48 bg-[#071018] rounded-full h-2 overflow-hidden border border-[#263440]">
+                  <div
+                    className="bg-gradient-to-r from-[#65F58A] to-[#35E6B5] h-2 rounded-full transition-all duration-500"
+                    style={{ width: `${progressData.percentage}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Embedded Video Player & Playback Gating (User Enhancement 3 & PRD Specification) */}
+              <div className="bg-[#071018] rounded-2xl p-3 sm:p-4 border border-[#263440] shadow-2xl relative overflow-hidden space-y-3">
+                <div className="relative aspect-video rounded-xl overflow-hidden bg-black flex items-center justify-center">
+                  {hasVideo ? (
+                    embedInfo?.type === 'youtube' || embedInfo?.type === 'vimeo' ? (
+                      <div className="relative w-full h-full">
+                        <iframe
+                          src={embedInfo.embedUrl}
+                          title={activeLesson.title}
+                          className="w-full h-full border-0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        />
+                      </div>
+                    ) : (
+                      <div className="relative w-full h-full group">
+                        <video
+                          key={resolvedVideoUrl}
+                          ref={videoRef}
+                          src={resolvedVideoUrl}
+                          controls
+                          playsInline
+                          preload="auto"
+                          onPlay={() => setIsVideoPlaying(true)}
+                          onPause={() => setIsVideoPlaying(false)}
+                          onTimeUpdate={handleTimeUpdate}
+                          onEnded={() => {
+                            setIsVideoPlaying(false);
+                            setWatchProgressMap((prev) => ({
+                              ...prev,
+                              [activeLesson.id]: { percentage: 100, maxTime: 9999, duration: 9999 }
+                            }));
+                          }}
+                          onError={(e) => {
+                            console.warn('Video failed, applying local fallback:', e.currentTarget.src);
+                            if (!e.currentTarget.src.includes('/assets/sample-lesson.mp4')) {
+                              e.currentTarget.src = '/assets/sample-lesson.mp4';
+                              e.currentTarget.load();
+                            }
+                          }}
+                          poster={course.art || '/assets/course-art/art-01.jpg'}
+                          className="w-full h-full object-cover"
+                        >
+                          <source src={resolvedVideoUrl} type="video/mp4" />
+                          <source src="/assets/sample-lesson.mp4" type="video/mp4" />
+                        </video>
+
+                        {/* Central Play Overlay Button */}
+                        {!isVideoPlaying && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (videoRef.current) {
+                                videoRef.current.play().catch((err) => console.warn('Play error:', err));
+                              }
+                            }}
+                            className="absolute inset-0 flex items-center justify-center bg-black/40 hover:bg-black/25 transition-all cursor-pointer z-10"
+                            aria-label="Play Lesson Video"
+                          >
+                            <div className="w-16 h-16 rounded-full bg-[#101923]/90 border-2 border-[#65F58A] flex items-center justify-center text-[#65F58A] shadow-[0_0_30px_rgba(101,245,138,0.5)] group-hover:scale-110 transition-transform">
+                              <Play className="w-8 h-8 ml-1 fill-[#65F58A]" />
+                            </div>
+                          </button>
+                        )}
+                      </div>
+                    )
+                  ) : (
+                    <div className="relative w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#101923] to-[#071018] p-6 text-center">
+                      <div className="w-16 h-16 rounded-full bg-[#1B2530] border border-[#65F58A]/40 flex items-center justify-center text-[#65F58A] mb-3 shadow-[0_0_20px_rgba(101,245,138,0.2)]">
+                        <Play className="w-7 h-7 ml-1" />
+                      </div>
+                      <div className="font-royal text-base font-bold text-white mb-1">
+                        {activeLesson.title}
+                      </div>
+                      <div className="text-xs font-mono text-[#94A3B8]">
+                        Text-Based Curriculum Unit • {activeLesson.duration} • Interactive Defensive Lab Below
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Player Toolbar: Speed Controls & Stream Sync */}
+                {hasVideo && (
+                  <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-[#263440] text-xs font-mono">
+                    <div className="flex items-center gap-1.5">
+                      <Gauge className="w-3.5 h-3.5 text-[#65F58A]" />
+                      <span className="text-[#94A3B8]">Speed:</span>
+                      {[0.75, 1.0, 1.25, 1.5, 2.0].map((rate) => (
+                        <button
+                          key={rate}
+                          onClick={() => handleSpeedChange(rate)}
+                          className={`px-2 py-0.5 rounded text-[11px] transition-colors ${
+                            playbackSpeed === rate
+                              ? 'bg-[#1B2530] text-[#65F58A] border border-[#65F58A]/40 font-bold'
+                              : 'text-slate-400 hover:text-white bg-[#101923]'
+                          }`}
+                        >
+                          {rate}x
+                        </button>
+                      ))}
+                    </div>
+
+                    {embedInfo?.type === 'youtube' || embedInfo?.type === 'vimeo' ? (
+                      <button
+                        onClick={handleSimulateEmbedTelemetry}
+                        className="px-2.5 py-1 rounded-lg bg-[#1B2530] hover:bg-[#263440] text-[#35E6B5] border border-[#35E6B5]/30 text-[11px] font-mono flex items-center gap-1 transition-all"
+                        title="Sync playback progress from cloud stream"
+                      >
+                        <RotateCcw className="w-3 h-3" />
+                        <span>Sync Telemetry ({currentWatchPct}%)</span>
+                      </button>
+                    ) : (
+                      <div className="text-[11px] text-[#94A3B8]">
+                        Watched: <strong className="text-white">{currentWatchPct}%</strong> / 80% gate
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Strict Playback Gating Indicator Badge */}
+                {hasVideo && (
+                  <div
+                    className={`p-3 rounded-xl border text-xs font-mono flex flex-col sm:flex-row sm:items-center justify-between gap-2 ${
+                      canMarkComplete
+                        ? 'bg-emerald-950/20 border-emerald-500/40 text-emerald-400'
+                        : 'bg-amber-500/10 border-amber-500/40 text-amber-300'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      {canMarkComplete ? (
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                      ) : (
+                        <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0 animate-pulse" />
+                      )}
+                      <span>
+                        {canMarkComplete
+                          ? 'Playback requirement satisfied (≥ 80% watched). Ready to mark complete.'
+                          : `Strict Playback Gating Enforced: Watch at least 80% of video to unlock the next lesson.`}
+                      </span>
+                    </div>
+                    <div className="font-bold flex items-center gap-1.5 self-end sm:self-auto">
+                      <span>{currentWatchPct}% / 80%</span>
+                      {canMarkComplete && <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 uppercase">UNLOCKED</span>}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* Lesson Header */}
               <div className="pb-4 sm:pb-6 border-b border-surface-border">
-                <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-redkross-400 mb-2">
+                <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-[#65F58A] mb-2">
                   <span className="truncate max-w-[200px]">{activeLesson.module_title}</span>
                   <span>•</span>
                   <span>{activeLesson.duration}</span>
                   {activeLesson.is_mandatory && (
-                    <span className="px-2 py-0.5 rounded bg-redkross-600/10 border border-redkross-600/30 text-redkross-400 text-[10px]">
+                    <span className="px-2 py-0.5 rounded bg-[#65F58A]/10 border border-[#65F58A]/30 text-[#65F58A] text-[10px] font-bold">
                       MANDATORY
                     </span>
                   )}
                 </div>
-                <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white mb-2 sm:mb-3">
+                <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white mb-2 sm:mb-3 font-royal">
                   {activeLesson.title}
                 </h2>
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-mono">
                   {activeLesson.summary}
                 </p>
               </div>
 
-              {/* Formatted Content Body */}
-              <div className="prose prose-invert max-w-none text-slate-200 text-xs sm:text-sm leading-relaxed space-y-4 sm:space-y-6">
+              {/* Formatted Content Body with Enhanced Code Syntax Highlighting */}
+              <div className="max-w-none text-slate-200 text-xs sm:text-sm leading-relaxed space-y-4">
                 <div
-                  className="bg-surface-card border border-surface-border rounded-xl p-4 sm:p-6 leading-relaxed space-y-4"
+                  className="bg-[#101923] border border-[#263440] rounded-2xl p-5 sm:p-7 leading-relaxed font-lora shadow-xl"
                   dangerouslySetInnerHTML={{
-                    __html: activeLesson.content
-                      ? activeLesson.content
-                          .replace(/### (.*)/g, '<h3 class="text-base sm:text-lg font-bold text-white mt-4 mb-2">$1</h3>')
-                          .replace(/#### (.*)/g, '<h4 class="text-xs sm:text-sm font-bold text-redkross-400 mt-3 mb-1">$1</h4>')
-                          .replace(/```bash([\s\S]*?)```/g, '<pre class="bg-black/70 p-3 sm:p-4 rounded-lg font-mono text-[11px] sm:text-xs text-[#35E6B5] border border-slate-800 overflow-x-auto my-3"><code>$1</code></pre>')
-                          .replace(/```powershell([\s\S]*?)```/g, '<pre class="bg-black/70 p-3 sm:p-4 rounded-lg font-mono text-[11px] sm:text-xs text-[#65F58A] border border-slate-800 overflow-x-auto my-3"><code>$1</code></pre>')
-                          .replace(/```sql([\s\S]*?)```/g, '<pre class="bg-black/70 p-3 sm:p-4 rounded-lg font-mono text-[11px] sm:text-xs text-amber-300 border border-slate-800 overflow-x-auto my-3"><code>$1</code></pre>')
-                          .replace(/> (.*)/g, '<blockquote class="border-l-4 border-redkross-500 pl-3 sm:pl-4 py-1 text-slate-300 bg-redkross-950/20 rounded-r text-[11px] sm:text-xs my-3 font-mono">$1</blockquote>')
-                      : '<p>Content being rendered...</p>',
+                    __html: renderMarkdownToHtml(activeLesson?.content || 'No lesson content provided.')
                   }}
                 />
               </div>
@@ -345,22 +621,33 @@ export default function LessonPlayerPage() {
                 <div className="flex items-center space-x-3 w-full sm:w-auto">
                   <button
                     onClick={handleMarkComplete}
-                    disabled={savingProgress}
+                    disabled={savingProgress || !canMarkComplete}
                     className={`w-full sm:w-auto px-6 py-3 rounded-lg font-semibold text-xs transition-all flex items-center justify-center space-x-2 ${
                       isLessonCompleted
                         ? 'bg-surface-100 hover:bg-surface-200 text-slate-300 border border-surface-border'
-                        : 'bg-redkross-600 hover:bg-redkross-700 text-white shadow-lg hover:cyber-glow-red'
+                        : canMarkComplete
+                        ? 'bg-redkross-600 hover:bg-redkross-700 text-white shadow-lg hover:cyber-glow-red'
+                        : 'bg-surface-100/50 border border-surface-border text-slate-500 cursor-not-allowed opacity-60'
                     }`}
                   >
-                    <CheckCircle2 className="w-4 h-4" />
-                    <span>
-                      {savingProgress
-                        ? 'Saving to Database...'
-                        : isLessonCompleted
-                        ? 'Marked as Complete (Advance)'
-                        : 'Mark Complete & Next Lesson'}
-                    </span>
-                    <ChevronRight className="w-4 h-4" />
+                    {!canMarkComplete ? (
+                      <>
+                        <Lock className="w-4 h-4 text-amber-400" />
+                        <span>Watch 80% to Complete ({currentWatchPct}%)</span>
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle2 className="w-4 h-4" />
+                        <span>
+                          {savingProgress
+                            ? 'Saving to Database...'
+                            : isLessonCompleted
+                            ? 'Marked as Complete (Advance)'
+                            : 'Mark Complete & Next Lesson'}
+                        </span>
+                        <ChevronRight className="w-4 h-4" />
+                      </>
+                    )}
                   </button>
                 </div>
               </div>

@@ -84,6 +84,11 @@ export default function CourseDetailPage() {
 
   const handleApplyCoupon = async (e) => {
     e.preventDefault();
+    if (!currentUser) {
+      setShowGrantModal(false);
+      navigate('/login', { state: { from: { pathname: `/courses/${slug}` } } });
+      return;
+    }
     if (couponCode.trim().toUpperCase() === 'GRANT100' || couponCode.trim().toUpperCase() === 'REDKROSS2026') {
       setGrantSuccess(true);
       setGrantError('');
@@ -203,20 +208,44 @@ export default function CourseDetailPage() {
                         {(module.lessons || []).map((lesson, lIdx) => (
                           <div
                             key={lesson.id || lIdx}
-                            className="p-3 rounded-lg bg-[#14202C] border border-[#263440] flex items-center justify-between text-xs"
+                            onClick={() => {
+                              if (!currentUser) {
+                                navigate('/login', { state: { from: { pathname: `/courses/${slug}` } } });
+                              } else if (isEnrolled) {
+                                navigate('/student');
+                              } else {
+                                handleEnrol();
+                              }
+                            }}
+                            className="p-3 rounded-lg bg-[#14202C] border border-[#263440] flex items-center justify-between text-xs cursor-pointer hover:border-[#65F58A]/50 transition-colors group"
                           >
                             <div className="flex items-center gap-2.5 truncate">
-                              <BookOpen className="w-4 h-4 text-[#35E6B5] flex-shrink-0" />
-                              <span className="text-slate-200 truncate">{lesson.title}</span>
+                              {!currentUser ? (
+                                <Lock className="w-4 h-4 text-[#64748B] flex-shrink-0 group-hover:text-amber-400 transition-colors" />
+                              ) : (
+                                <BookOpen className="w-4 h-4 text-[#35E6B5] flex-shrink-0" />
+                              )}
+                              <span className="text-slate-200 truncate group-hover:text-white transition-colors">
+                                {lesson.title}
+                              </span>
                               {lesson.is_mandatory && (
                                 <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30 flex-shrink-0">
                                   MANDATORY
                                 </span>
                               )}
                             </div>
-                            <span className="text-[11px] font-mono text-[#94A3B8] flex-shrink-0 pl-2">
-                              {lesson.duration}
-                            </span>
+                            <div className="flex items-center gap-2 flex-shrink-0 pl-2">
+                              {!currentUser ? (
+                                <span className="text-[10px] font-mono text-amber-400 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded flex items-center gap-1">
+                                  <Lock className="w-3 h-3" />
+                                  <span>Sign In Required</span>
+                                </span>
+                              ) : (
+                                <span className="text-[11px] font-mono text-[#94A3B8]">
+                                  {lesson.duration}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -245,7 +274,21 @@ export default function CourseDetailPage() {
                 </p>
               </div>
 
-              {isEnrolled ? (
+              {!currentUser ? (
+                <div className="space-y-3">
+                  <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-start gap-2.5">
+                    <Lock className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+                    <span className="leading-relaxed">Sign in with your Google account to enroll, access interactive modules, and unlock exam milestones.</span>
+                  </div>
+                  <button
+                    onClick={() => navigate('/login', { state: { from: { pathname: `/courses/${slug}` } } })}
+                    className="w-full py-3.5 rounded-xl bg-[#65F58A] hover:bg-[#00FFA3] active:scale-[0.99] text-black font-royal font-bold text-xs tracking-wider flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(101,245,138,0.25)] transition-all"
+                  >
+                    <Lock className="w-4 h-4" />
+                    <span>Sign In with Google to Enrol</span>
+                  </button>
+                </div>
+              ) : isEnrolled ? (
                 <Link
                   to="/student"
                   className="w-full py-3.5 rounded-xl glass-button-primary font-royal font-bold text-xs tracking-wider flex items-center justify-center gap-2 shadow-lg"
@@ -266,7 +309,13 @@ export default function CourseDetailPage() {
 
               {/* Scholar Grant Button */}
               <button
-                onClick={() => setShowGrantModal(true)}
+                onClick={() => {
+                  if (!currentUser) {
+                    navigate('/login', { state: { from: { pathname: `/courses/${slug}` } } });
+                  } else {
+                    setShowGrantModal(true);
+                  }
+                }}
                 className="w-full py-2.5 rounded-xl bg-[#1B2530] hover:bg-[#263440] border border-[#263440] text-xs font-mono text-[#65F58A] flex items-center justify-center gap-2 transition-colors"
               >
                 <Gift className="w-4 h-4" />

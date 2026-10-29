@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ark-ui/react": "^5.39.3",
     "@neondatabase/serverless": "^1.2.0",
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",

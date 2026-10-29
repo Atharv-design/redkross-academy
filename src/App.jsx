@@ -19,7 +19,7 @@ import QuizAssessmentPage from './pages/student/QuizAssessmentPage';
 import TokenWalletPage from './pages/student/TokenWalletPage';
 import FinalCertificationPage from './pages/student/FinalCertificationPage';
 
-import AdminDashboard from './pages/admin/AdminDashboard';
+import SuperAdminDashboard from './pages/admin/SuperAdminDashboard.jsx';
 import StudentCRMPage from './pages/admin/StudentCRMPage';
 import ExamIncidentQueuePage from './pages/admin/ExamIncidentQueuePage';
 import CourseBuilderPage from './pages/admin/CourseBuilderPage';
@@ -85,7 +85,7 @@ export default function App() {
             path="admin"
             element={
               <AdminRoute>
-                <AdminDashboard />
+                <SuperAdminDashboard />
               </AdminRoute>
             }
           />

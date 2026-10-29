@@ -5,7 +5,7 @@ import { useAuth } from '../../services/auth/authContext';
 
 /**
  * RedKross Academy — Hardened Google Authentication Gateway (Phase 2 & Phase 1.1)
- * Exclusive single-sign-on (SSO) Google OAuth 2.0 verification with zero-trust token synchronization.
+ * Authentic Google OAuth 2.0 Single-Sign-On with direct Google Account Chooser popup.
  * Designed according to Graphite + Neon Green palette standards.
  */
 export default function LoginPage() {
@@ -29,6 +29,7 @@ export default function LoginPage() {
     }
   }, [currentUser, navigate, safeDestination]);
 
+  // Triggers official Google OAuth browser popup directly
   const handleGoogleSignIn = async () => {
     setErrorMsg('');
     setLoading(true);
@@ -38,13 +39,17 @@ export default function LoginPage() {
     } catch (err) {
       console.error('Google Auth Failed:', err);
       if (err.code === 'auth/popup-closed-by-user') {
-        setErrorMsg('Authentication popup was closed before completion. Please retry.');
+        setErrorMsg('Google sign-in popup was closed before completion. Please retry.');
       } else if (err.code === 'auth/popup-blocked') {
-        setErrorMsg('Browser popup was blocked. Please enable popups for this site to sign in with Google.');
+        setErrorMsg('Google popup was blocked by browser. Please allow popups for localhost and retry.');
       } else if (err.code === 'auth/network-request-failed') {
         setErrorMsg('Network connectivity issue. Please check your internet connection.');
+      } else if (err.code === 'auth/unauthorized-domain') {
+        setErrorMsg('Domain not authorized in Firebase. Please open the website on http://localhost:5173 instead of 127.0.0.1.');
+      } else if (err.message?.includes('The requested action is invalid') || err.message?.includes('api-key-not-valid')) {
+        setErrorMsg('Firebase Google Sign-In is not enabled yet in Firebase Console. Please enable Google under Authentication > Sign-in method in Firebase Console.');
       } else {
-        setErrorMsg(err.message || 'Google authentication failed. Please verify popup permissions and retry.');
+        setErrorMsg(err.message || 'Google authentication failed. Please retry.');
       }
     } finally {
       setLoading(false);
@@ -93,7 +98,7 @@ export default function LoginPage() {
                 <>
                   <div className="w-5 h-5 border-2 border-[#65F58A] border-t-transparent rounded-full animate-spin" />
                   <span className="text-[#65F58A] tracking-wide text-xs">
-                    Establishing Secure OAuth Handshake...
+                    Opening Official Google Account Chooser...
                   </span>
                 </>
               ) : (
@@ -125,10 +130,10 @@ export default function LoginPage() {
             </button>
 
             <p className="text-center text-[11px] text-[#64748B] font-mono leading-relaxed">
-              Instant single-click authentication. New cadets are automatically registered upon verification.
+              Opens the official Google verification window. Select your authorized Google account to sign in.
             </p>
 
-            {/* 1-Click Super Admin Dev Access */}
+            {/* 1-Click Super Admin Dev Access (Temporary Development Clearance) */}
             <div className="pt-2 border-t border-[#263440]/60">
               <button
                 type="button"
@@ -138,7 +143,7 @@ export default function LoginPage() {
                 }}
                 className="w-full py-3.5 px-4 rounded-xl bg-[#65F58A]/10 hover:bg-[#65F58A]/20 active:scale-[0.99] border border-[#65F58A]/40 hover:border-[#65F58A] text-[#65F58A] font-mono text-xs font-bold transition-all flex items-center justify-center gap-2 group shadow-[0_0_20px_rgba(101,245,138,0.15)]"
               >
-                <Zap className="w-4 h-4 text-[#65F58A] animate-pulse" />
+                <ShieldCheck className="w-4 h-4 text-[#65F58A]" />
                 <span>⚡ DEV MODE: 1-Click Super Admin Login</span>
               </button>
               <div className="text-center text-[10px] text-[#64748B] font-mono mt-1.5">

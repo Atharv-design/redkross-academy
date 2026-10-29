@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Shield, Award, Terminal, ArrowRight, CheckCircle2, Lock, Zap, BookOpen, Layers, Users, Sparkles, Coins, Flame, Clock } from 'lucide-react';
+import { Shield, Award, Terminal, ArrowRight, CheckCircle2, Lock, Zap, BookOpen, Layers, Users, Sparkles, Coins, Flame, Clock, ShieldCheck } from 'lucide-react';
 import { mockEngine } from '../../services/db/mockEngine';
 import { apiClient } from '../../services/apiClient';
 import CourseCardVariant from '../../components/cards/CourseCardVariant';
 import DefensivePathwayCard from '../../components/cards/DefensivePathwayCard';
+import AcademicSafeguardCard from '../../components/cards/AcademicSafeguardCard';
 
 export default function HomePage() {
   const [courses, setCourses] = useState([]);
@@ -20,6 +21,30 @@ export default function HomePage() {
       setLearningPaths(data.learning_paths || []);
     });
   }, []);
+
+  // Exactly 3 Flagship Benchmark Courses for Home (Admin newly added courses go to /courses without displacing Home)
+  const homeFeaturedCourses = useMemo(() => {
+    if (!courses || courses.length === 0) return [];
+
+    const flagshipIds = [
+      'course-soc-101',
+      'course-threat-hunt-201',
+      'course-malware-rev-301'
+    ];
+
+    const flagships = courses.filter((c) =>
+      flagshipIds.includes(c.id) ||
+      ['soc-fundamentals-incident-response', 'threat-hunting-active-defense', 'malware-analysis-reverse-engineering'].includes(c.slug)
+    );
+
+    if (flagships.length >= 3) {
+      return flagships.slice(0, 3);
+    }
+
+    // Fallback: exclude dynamically created courses starting with 'crs_'
+    const nonDynamic = courses.filter((c) => !c.id.startsWith('crs_'));
+    return (nonDynamic.length >= 3 ? nonDynamic : courses).slice(0, 3);
+  }, [courses]);
 
   const featuredCourse = courses.find((c) => c.slug === 'soc-fundamentals-incident-response') || courses[0];
 
@@ -119,22 +144,35 @@ export default function HomePage() {
 
                 <Link
                   to="/courses"
-                  className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#65F58A] hover:underline"
+                  className="hidden sm:inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#65F58A] hover:underline"
                 >
-                  <span>View All Courses</span>
+                  <span>Explore Full Catalog ({courses.length})</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
 
-              {/* Cards Grid Rendering the Unique 10 Visual Variants */}
+              {/* Cards Grid: Strictly 3 Flagship Courses on Home Page */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                {courses.slice(0, 6).map((course) => (
+                {homeFeaturedCourses.map((course, idx) => (
                   <CourseCardVariant
                     key={course.id}
                     course={course}
                     variantId={course.card_variant}
+                    index={idx}
                   />
                 ))}
+              </div>
+
+              {/* Dedicated High-Craft Button for All Courses */}
+              <div className="pt-4 flex flex-col sm:flex-row items-center justify-center">
+                <Link
+                  to="/courses"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl bg-[#65F58A] hover:bg-[#00FFA3] active:scale-[0.99] text-black font-royal font-bold text-xs sm:text-sm tracking-wider uppercase transition-all shadow-[0_0_25px_rgba(101,245,138,0.25)] hover:shadow-[0_0_35px_rgba(101,245,138,0.4)] group"
+                >
+                  <BookOpen className="w-4 h-4 text-black" />
+                  <span>View All Courses & Full Curriculum ({courses.length})</span>
+                  <ArrowRight className="w-4 h-4 text-black group-hover:translate-x-1.5 transition-transform" />
+                </Link>
               </div>
             </>
           ) : (
@@ -208,36 +246,31 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="glass-card rounded-2xl p-6 sm:p-7 space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center text-[#65F58A]">
-                <Zap className="w-5 h-5" />
-              </div>
-              <h3 className="font-royal text-base font-bold text-white">3-Strike Exam Focus Tracking</h3>
-              <p className="text-xs text-[#94A3B8] leading-relaxed">
-                During evaluated assessments, client tab switches and window blur events are actively tracked. Strike 1 warns the student; Strike 2 deducts 50 RedKross Tokens; Strike 3 immediately aborts the exam and locks the evaluation window.
-              </p>
-            </div>
-
-            <div className="glass-card rounded-2xl p-6 sm:p-7 space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-[#35E6B5]/10 border border-[#35E6B5]/30 flex items-center justify-center text-[#65F58A]">
-                <Clock className="w-5 h-5" />
-              </div>
-              <h3 className="font-royal text-base font-bold text-white">24-Hour Mandatory Retake Lockout</h3>
-              <p className="text-xs text-[#94A3B8] leading-relaxed">
-                Exhausting 3 failed attempts or suffering a Strike 3 violation triggers an automated 24-hour server cooldown period to enforce structured material remediation before re-attempting.
-              </p>
-            </div>
-
-            <div className="glass-card rounded-2xl p-6 sm:p-7 space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-[#35E6B5]/10 border border-[#35E6B5]/30 flex items-center justify-center text-[#35E6B5]">
-                <Shield className="w-5 h-5" />
-              </div>
-              <h3 className="font-royal text-base font-bold text-white">Cryptographic Verification</h3>
-              <p className="text-xs text-[#94A3B8] leading-relaxed">
-                Every earned certificate generates an immutable hexadecimal digital signature and public verification URL with QR code, directly verifiable by prospective employers.
-              </p>
-            </div>
+          {/* 3D Cyber Academic Safeguards Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 items-stretch">
+            {[
+              {
+                title: '3-Strike Exam Focus Tracking',
+                description: 'During evaluated assessments, client tab switches and window blur events are actively tracked. Strike 1 warns the student; Strike 2 deducts 50 RedKross Tokens; Strike 3 immediately aborts the exam and locks the evaluation window.',
+                icon: Zap
+              },
+              {
+                title: '24-Hour Mandatory Retake Lockout',
+                description: 'Exhausting 3 failed attempts or suffering a Strike 3 violation triggers an automated 24-hour server cooldown period to enforce structured material remediation before re-attempting.',
+                icon: Clock
+              },
+              {
+                title: 'Cryptographic Verification',
+                description: 'Every earned certificate generates an immutable hexadecimal digital signature and public verification URL with QR code, directly verifiable by prospective employers.',
+                icon: ShieldCheck
+              }
+            ].map((safeguard, idx) => (
+              <AcademicSafeguardCard
+                key={safeguard.title}
+                safeguard={safeguard}
+                index={idx}
+              />
+            ))}
           </div>
         </div>
       </section>

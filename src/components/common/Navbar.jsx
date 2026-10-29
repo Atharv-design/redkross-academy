@@ -67,11 +67,11 @@ export default function Navbar() {
   ];
 
   if (currentUser) {
-    navLinks.push({ label: "Student Portal", path: "/student" });
-  }
-
-  if (currentUser?.role === 'super_admin') {
-    navLinks.push({ label: "Super Admin", path: "/admin" });
+    if (currentUser.role === 'super_admin') {
+      navLinks.push({ label: "Super Admin", path: "/admin" });
+    } else {
+      navLinks.push({ label: "Student Portal", path: "/student" });
+    }
   }
 
   return (
@@ -146,7 +146,7 @@ export default function Navbar() {
             </Link>
 
             {/* Desktop Horizontal Navigation (Identical clean layout to Main Website) */}
-            <nav className="hidden lg:flex items-center gap-5 xl:gap-6">
+            <nav className="hidden lg:flex items-center gap-3.5 xl:gap-5 flex-shrink min-w-0">
               {navLinks.map((link) => {
                 const active = isActive(link.path);
                 return (
@@ -167,60 +167,50 @@ export default function Navbar() {
             </nav>
 
             {/* Right Action & Auth Elements */}
-            <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="flex items-center gap-2 sm:gap-2.5 flex-shrink-0">
               {/* Support Desk Trigger */}
               <button
                 onClick={() => setSupportModalOpen(true)}
-                className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1B2530]/70 hover:bg-[#1B2530] border border-[#263440] text-xs font-mono text-[#94A3B8] hover:text-white transition-colors"
+                className="hidden 2xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1B2530]/70 hover:bg-[#1B2530] border border-[#263440] text-xs font-mono text-[#94A3B8] hover:text-white transition-colors flex-shrink-0"
                 title="Open Academy Support Desk"
               >
                 <LifeBuoy className="w-3.5 h-3.5 text-[#35E6B5]" />
                 <span>Support</span>
               </button>
 
-              {/* Student Live Token Wallet Counter (for authenticated student) */}
+              {/* Live Token Counter */}
               {currentUser && (
                 <Link
                   to="/student/tokens"
-                  className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#65F58A]/10 border border-[#65F58A]/30 text-[#65F58A] hover:bg-[#65F58A]/20 transition-all text-xs font-mono font-medium"
+                  className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#65F58A]/10 border border-[#65F58A]/30 text-[#65F58A] hover:bg-[#65F58A]/20 transition-all text-xs font-mono font-medium flex-shrink-0"
                   title="RedKross Reward Tokens"
                 >
                   <Coins className="w-3.5 h-3.5 text-[#65F58A] animate-pulse" />
                   <span className="tabular-nums font-bold">{tokenBalance}</span>
-                  <span className="hidden sm:inline text-[10px] text-[#35E6B5] uppercase">Tokens</span>
+                  <span className="hidden md:inline text-[10px] text-[#35E6B5] uppercase">Tokens</span>
                 </Link>
               )}
 
-              {/* Dev Mode 1-Click Admin Access */}
-              {currentUser?.role !== 'super_admin' ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    devLoginAsAdmin();
-                    navigate('/admin');
-                  }}
-                  className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#65F58A]/10 hover:bg-[#65F58A]/25 border border-[#65F58A]/40 text-[#65F58A] transition-all text-xs font-mono font-bold shadow-[0_0_15px_rgba(101,245,138,0.2)]"
-                  title="Dev Mode: Click to instantly access Super Admin studio"
-                >
-                  <Zap className="w-3.5 h-3.5 text-[#65F58A] animate-pulse" />
-                  <span>1-Click Admin</span>
-                </button>
-              ) : (
-                <Link
-                  to="/admin"
-                  className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#65F58A]/20 border border-[#65F58A] text-[#65F58A] text-xs font-mono font-bold shadow-[0_0_15px_rgba(101,245,138,0.3)] hover:scale-105 transition-all"
-                >
-                  <Shield className="w-3.5 h-3.5" />
-                  <span>ADMIN CONSOLE</span>
-                </Link>
-              )}
+              {/* 1-Click Admin Access */}
+              <button
+                type="button"
+                onClick={() => {
+                  devLoginAsAdmin();
+                  navigate('/admin');
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-[#65F58A]/15 to-[#35E6B5]/15 hover:from-[#65F58A]/25 hover:to-[#35E6B5]/25 border border-[#65F58A]/40 text-[#65F58A] transition-all text-xs font-mono font-bold shadow-[0_0_15px_rgba(101,245,138,0.2)] flex-shrink-0"
+                title="1-Click Super Admin Console"
+              >
+                <Zap className="w-3.5 h-3.5 text-[#65F58A] animate-pulse" />
+                <span>Admin</span>
+              </button>
 
               {/* User Profile Dropdown or Slim Pill CTA Button */}
               {currentUser ? (
-                <div className="relative">
+                <div className="relative flex-shrink-0">
                   <button
                     onClick={() => setShowProfileMenu(!showProfileMenu)}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#1B2530] hover:bg-[#263440] border border-[#263440] text-xs text-white transition-all"
+                    className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#1B2530] hover:bg-[#263440] border border-[#263440] text-xs text-white transition-all"
                   >
                     <div className="w-6 h-6 rounded-full overflow-hidden bg-[#101923] border border-[#65F58A]/40 flex items-center justify-center flex-shrink-0">
                       {currentUser.avatar ? (
@@ -231,9 +221,14 @@ export default function Navbar() {
                         </span>
                       )}
                     </div>
-                    <span className="max-w-[100px] truncate text-xs font-mono hidden sm:inline">
-                      {currentUser.full_name || currentUser.email?.split('@')[0]}
+                    <span className="max-w-[75px] md:max-w-[100px] truncate text-xs font-mono hidden sm:inline">
+                      {currentUser.full_name?.split(' ')[0] || currentUser.email?.split('@')[0]}
                     </span>
+                    {currentUser.role === 'super_admin' && (
+                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#65F58A]/20 text-[#65F58A] border border-[#65F58A]/40 hidden lg:inline font-bold">
+                        ADMIN
+                      </span>
+                    )}
                     <ChevronDown className="w-3 h-3 text-[#94A3B8]" />
                   </button>
 
@@ -342,6 +337,17 @@ export default function Navbar() {
                 })}
 
                 <div className="pt-3 border-t border-[#263440] flex flex-col gap-2">
+                  {currentUser?.role === 'super_admin' && (
+                    <Link
+                      to="/student"
+                      onClick={closeMobileMenu}
+                      className="flex items-center justify-between py-2 px-3 rounded-xl bg-[#1B2530] text-[#35E6B5] hover:text-white border border-[#263440] text-xs font-mono"
+                    >
+                      <span>View Student Classroom</span>
+                      <ArrowRight className="w-3.5 h-3.5 opacity-60" />
+                    </Link>
+                  )}
+
                   <button
                     onClick={() => {
                       closeMobileMenu();

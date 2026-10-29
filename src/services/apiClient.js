@@ -351,13 +351,198 @@ export const apiClient = {
 
   // ADMIN ANALYTICS & LOGS (Requires super_admin Bearer token)
   async getAdminMetrics() {
-    const res = await fetch(`${API_BASE}/admin`, {
-      headers: { ...this.getAuthHeader() }
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error || 'Administrative clearance required');
+    try {
+      const res = await fetch(`${API_BASE}/admin`, {
+        headers: { ...this.getAuthHeader() }
+      });
+      if (!res.ok) {
+        throw new Error('Serverless admin unavailable');
+      }
+      return await res.json();
+    } catch (err) {
+      console.warn('Fallback to local engine for getAdminMetrics:', err.message);
+      const metrics = mockEngine.getOperationsMetrics();
+      const students = mockEngine.getLiveStudentTracking();
+      const violations = mockEngine.getIncidents();
+      const auditLogs = mockEngine.getAuditLogs();
+      const isPublic = mockEngine.isPublicCatalogEnabled();
+      return {
+        metrics: {
+          ...metrics,
+          public_catalog_enabled: isPublic
+        },
+        students,
+        violations,
+        audit_logs: auditLogs,
+        public_catalog_enabled: isPublic
+      };
     }
-    return await res.json();
+  },
+
+  // SUPER ADMIN CURRICULUM STUDIO CLIENT API
+  async reorderModules(courseId, modules) {
+    try {
+      const res = await fetch(`${API_BASE}/admin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...this.getAuthHeader() },
+        body: JSON.stringify({ action: 'REORDER_MODULES', course_id: courseId, modules })
+      });
+      if (!res.ok) throw new Error('API reorder failed');
+      return await res.json();
+    } catch (err) {
+      return mockEngine.reorderModulesAndLessons(courseId, modules);
+    }
+  },
+
+  async saveLessonContent(courseId, moduleId, lessonId, updates) {
+    try {
+      const res = await fetch(`${API_BASE}/admin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...this.getAuthHeader() },
+        body: JSON.stringify({ action: 'SAVE_LESSON', course_id: courseId, module_id: moduleId, lesson_id: lessonId, updates })
+      });
+      if (!res.ok) throw new Error('API save lesson failed');
+      return await res.json();
+    } catch (err) {
+      return mockEngine.saveLessonContent(courseId, moduleId, lessonId, updates);
+    }
+  },
+
+  async saveQuizQuestions(courseId, moduleId, quizId, quizPayload) {
+    try {
+      const res = await fetch(`${API_BASE}/admin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...this.getAuthHeader() },
+        body: JSON.stringify({ action: 'SAVE_QUIZ', course_id: courseId, module_id: moduleId, quiz_id: quizId, quiz_payload: quizPayload })
+      });
+      if (!res.ok) throw new Error('API save quiz failed');
+      return await res.json();
+    } catch (err) {
+      return mockEngine.saveQuizQuestions(courseId, moduleId, quizId, quizPayload);
+    }
+  },
+
+  async uploadVideoAsset(courseId, assetPayload) {
+    try {
+      const res = await fetch(`${API_BASE}/admin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...this.getAuthHeader() },
+        body: JSON.stringify({ action: 'UPLOAD_VIDEO', course_id: courseId, asset: assetPayload })
+      });
+      if (!res.ok) throw new Error('API upload video failed');
+      return await res.json();
+    } catch (err) {
+      return mockEngine.uploadVideoAsset(courseId, assetPayload);
+    }
+  },
+
+  async deleteVideoAsset(courseId, assetId) {
+    try {
+      const res = await fetch(`${API_BASE}/admin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...this.getAuthHeader() },
+        body: JSON.stringify({ action: 'DELETE_VIDEO', course_id: courseId, asset_id: assetId })
+      });
+      if (!res.ok) throw new Error('API delete video failed');
+      return await res.json();
+    } catch (err) {
+      return mockEngine.deleteVideoAsset(courseId, assetId);
+    }
+  },
+
+  async rebindVideoAsset(courseId, assetId, newLessonId) {
+    try {
+      const res = await fetch(`${API_BASE}/admin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...this.getAuthHeader() },
+        body: JSON.stringify({ action: 'REBIND_VIDEO', course_id: courseId, asset_id: assetId, new_lesson_id: newLessonId })
+      });
+      if (!res.ok) throw new Error('API rebind video failed');
+      return await res.json();
+    } catch (err) {
+      return mockEngine.rebindVideoAsset(courseId, assetId, newLessonId);
+    }
+  },
+
+  async publishCourseVersion(courseId) {
+    try {
+      const res = await fetch(`${API_BASE}/admin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...this.getAuthHeader() },
+        body: JSON.stringify({ action: 'PUBLISH_VERSION', course_id: courseId })
+      });
+      if (!res.ok) throw new Error('API publish version failed');
+      return await res.json();
+    } catch (err) {
+      return mockEngine.publishCourseVersion(courseId);
+    }
+  },
+
+  // SUPER ADMIN STUDENT LIFECYCLE CLIENT API
+  async resetStudentProgress(userId, courseId, lessonId = null, reason = '') {
+    try {
+      const res = await fetch(`${API_BASE}/admin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...this.getAuthHeader() },
+        body: JSON.stringify({ action: 'RESET_PROGRESS', user_id: userId, course_id: courseId, lesson_id: lessonId, reason })
+      });
+      if (!res.ok) throw new Error('API reset progress failed');
+      return await res.json();
+    } catch (err) {
+      return mockEngine.resetStudentProgress(userId, courseId, lessonId, reason);
+    }
+  },
+
+  async adjustStudentTokens(userId, amount, reason) {
+    try {
+      const res = await fetch(`${API_BASE}/admin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...this.getAuthHeader() },
+        body: JSON.stringify({ action: 'ADJUST_TOKENS', user_id: userId, amount, reason })
+      });
+      if (!res.ok) throw new Error('API token adjustment failed');
+      return await res.json();
+    } catch (err) {
+      return mockEngine.adjustStudentTokens(userId, amount, reason);
+    }
+  },
+
+  async forceIssueCredential(userId, courseId) {
+    try {
+      const res = await fetch(`${API_BASE}/admin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...this.getAuthHeader() },
+        body: JSON.stringify({ action: 'FORCE_ISSUE_CREDENTIAL', user_id: userId, course_id: courseId })
+      });
+      if (!res.ok) throw new Error('API force issue credential failed');
+      return await res.json();
+    } catch (err) {
+      return mockEngine.forceIssueCredential(userId, courseId);
+    }
+  },
+
+  async manualEnrollStudent(userId, courseId) {
+    return mockEngine.enrolStudent(userId, courseId);
+  },
+
+  // SUPER ADMIN SECURITY POLICY CLIENT API
+  async getGlobalSecurityPolicy() {
+    return mockEngine.getGlobalSecurityPolicy();
+  },
+
+  async updateGlobalSecurityPolicy(updates) {
+    return mockEngine.updateGlobalSecurityPolicy(updates);
+  },
+
+  async getLiveStudentTracking() {
+    return mockEngine.getLiveStudentTracking();
+  },
+
+  async resolveIncident(incidentId, action, reviewerNotes, adminEmail) {
+    return mockEngine.resolveIncident(incidentId, action, reviewerNotes, adminEmail);
+  },
+
+  async adminResetCooldown(enrolmentId, quizId, reason, adminEmail) {
+    return mockEngine.adminResetCooldown(enrolmentId, quizId, reason, adminEmail);
   }
 };

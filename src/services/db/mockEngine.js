@@ -46,6 +46,32 @@ class MockEngine {
         this.initDatabase(true);
         parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
       }
+
+      // Ensure all course lessons have a playable video_url (repair missing, BigBuckBunny 403, or expired blob URLs)
+      let modified = false;
+      if (parsed && parsed.courses) {
+        for (const course of parsed.courses) {
+          if (course.modules) {
+            for (const mod of course.modules) {
+              if (mod.lessons) {
+                for (const les of mod.lessons) {
+                  // Only replace if totally empty or pointing to the broken BigBuckBunny link
+                  if (!les.video_url || les.video_url.includes('BigBuckBunny')) {
+                    les.video_url = '/assets/sample-lesson.mp4';
+                    les.video_title = les.video_title || les.title;
+                    les.video_duration = les.video_duration || les.duration || '15:00';
+                    modified = true;
+                  }
+                }
+              }
+            }
+          }
+        }
+        if (modified) {
+          this.saveDb(parsed);
+        }
+      }
+
       return parsed;
     } catch (e) {
       console.error('Failed to parse database, resetting...', e);
@@ -93,7 +119,7 @@ class MockEngine {
     if (typeof db.public_catalog_enabled === 'boolean') {
       return db.public_catalog_enabled;
     }
-    return true; // Enabled by default
+    return false; // Embargoed by default: renders "Courses will be out soon"
   }
 
   setPublicCatalogEnabled(enabled) {
@@ -738,6 +764,506 @@ class MockEngine {
 
   getAuditLogs() {
     return this.getDb().audit_logs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  }
+
+  // ==========================================
+  // SUPER ADMIN CURRICULUM STUDIO MUTATIONS
+  // ==========================================
+  reorderModulesAndLessons(courseId, modulesPayload, adminEmail = 'usr_admin') {
+    const db = this.getDb();
+    const course = db.courses.find((c) => c.id === courseId);
+    if (!course) return null;
+
+    course.modules = modulesPayload;
+    course.updated_at = new Date().toISOString();
+
+    db.audit_logs.unshift({
+      id: `aud_${Date.now()}`,
+      actor_id: adminEmail,
+      action: 'CURRICULUM_REORDERED',
+      entity_type: 'courses',
+      entity_id: courseId,
+      details: `Reordered hierarchy for course ${course.title} (${modulesPayload.length} modules)`,
+      created_at: new Date().toISOString(),
+    });
+
+    this.saveDb(db);
+    return course;
+  }
+
+  saveLessonContent(courseId, moduleId, lessonId, updates, adminEmail = 'usr_admin') {
+    const db = this.getDb();
+    const course = db.courses.find((c) => c.id === courseId);
+    if (!course) return null;
+
+    const mod = (course.modules || []).find((m) => m.id === moduleId);
+    if (!mod) return null;
+
+    const lessonIdx = (mod.lessons || []).findIndex((l) => l.id === lessonId);
+    if (lessonIdx === -1) return null;
+
+    mod.lessons[lessonIdx] = { ...mod.lessons[lessonIdx], ...updates };
+    course.updated_at = new Date().toISOString();
+
+    db.audit_logs.unshift({
+      id: `aud_${Date.now()}`,
+      actor_id: adminEmail,
+      action: 'LESSON_CONTENT_UPDATED',
+      entity_type: 'lessons',
+      entity_id: lessonId,
+      details: `Updated lesson ${mod.lessons[lessonIdx].title} content in ${course.title}`,
+      created_at: new Date().toISOString(),
+    });
+
+    this.saveDb(db);
+    return mod.lessons[lessonIdx];
+  }
+
+  saveQuizQuestions(courseId, moduleId, quizId, quizPayload, adminEmail = 'usr_admin') {
+    const db = this.getDb();
+    const course = db.courses.find((c) => c.id === courseId);
+    if (!course) return null;
+
+    const mod = (course.modules || []).find((m) => m.id === moduleId);
+    if (!mod) return null;
+
+    if (!mod.quiz) {
+      mod.quiz = { id: quizId || `q_${Date.now()}`, title: 'Module Assessment', questions: [] };
+    }
+    mod.quiz = { ...mod.quiz, ...quizPayload };
+    course.updated_at = new Date().toISOString();
+
+    db.audit_logs.unshift({
+      id: `aud_${Date.now()}`,
+      actor_id: adminEmail,
+      action: 'QUIZ_CONFIGURED',
+      entity_type: 'quizzes',
+      entity_id: mod.quiz.id,
+      details: `Updated quiz questions and scoring parameters for ${course.title}`,
+      created_at: new Date().toISOString(),
+    });
+
+    this.saveDb(db);
+    return mod.quiz;
+  }
+
+  uploadVideoAsset(courseId, assetPayload, adminEmail = 'usr_admin') {
+    const db = this.getDb();
+    const course = db.courses.find((c) => c.id === courseId);
+    if (!course) return null;
+
+    if (!course.video_assets) {
+      course.video_assets = [];
+    }
+
+    const newAsset = {
+      id: assetPayload.id || `vid_${Date.now()}`,
+      title: assetPayload.title || 'Untitled Video Lesson',
+      duration: assetPayload.duration || '15:00',
+      file_name: assetPayload.file_name || 'lesson-video.mp4',
+      file_size: assetPayload.file_size || '45 MB',
+      lesson_id: assetPayload.lesson_id || null,
+      lesson_title: assetPayload.lesson_title || 'Unassigned',
+      visibility: assetPayload.visibility || 'Enrolled Only',
+      thumbnail: assetPayload.thumbnail || course.art || '/assets/course-art/art-01.jpg',
+      url: assetPayload.url || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      uploaded_at: new Date().toISOString(),
+    };
+
+    // If associated with a lesson, also attach it to that lesson object directly
+    if (newAsset.lesson_id && course.modules) {
+      for (const m of course.modules) {
+        const targetLesson = (m.lessons || []).find((l) => l.id === newAsset.lesson_id);
+        if (targetLesson) {
+          targetLesson.video_url = newAsset.url;
+          targetLesson.video_title = newAsset.title;
+          targetLesson.video_duration = newAsset.duration;
+          targetLesson.video_asset_id = newAsset.id;
+          break;
+        }
+      }
+    }
+
+    course.video_assets.unshift(newAsset);
+
+    db.audit_logs.unshift({
+      id: `aud_${Date.now()}`,
+      actor_id: adminEmail,
+      action: 'VIDEO_ASSET_UPLOADED',
+      entity_type: 'courses',
+      entity_id: courseId,
+      details: `Uploaded video "${newAsset.title}" attached to ${newAsset.lesson_title}`,
+      created_at: new Date().toISOString(),
+    });
+
+    this.saveDb(db);
+    return newAsset;
+  }
+
+  deleteVideoAsset(courseId, assetId, adminEmail = 'usr_admin') {
+    const db = this.getDb();
+    const course = db.courses.find((c) => c.id === courseId);
+    if (!course || !course.video_assets) return false;
+
+    course.video_assets = course.video_assets.filter((a) => a.id !== assetId);
+
+    // Unlink from lessons if bound
+    if (course.modules) {
+      for (const m of course.modules) {
+        for (const l of m.lessons || []) {
+          if (l.video_asset_id === assetId) {
+            delete l.video_url;
+            delete l.video_title;
+            delete l.video_duration;
+            delete l.video_asset_id;
+          }
+        }
+      }
+    }
+
+    db.audit_logs.unshift({
+      id: `aud_${Date.now()}`,
+      actor_id: adminEmail,
+      action: 'VIDEO_ASSET_DELETED',
+      entity_type: 'courses',
+      entity_id: courseId,
+      details: `Deleted video asset ${assetId} from ${course.title}`,
+      created_at: new Date().toISOString(),
+    });
+
+    this.saveDb(db);
+    return true;
+  }
+
+  rebindVideoAsset(courseId, assetId, newLessonId, adminEmail = 'usr_admin') {
+    const db = this.getDb();
+    const course = db.courses.find((c) => c.id === courseId);
+    if (!course || !course.video_assets) return null;
+
+    const asset = course.video_assets.find((a) => a.id === assetId);
+    if (!asset) return null;
+
+    // Unbind from previous lesson
+    if (course.modules) {
+      for (const m of course.modules) {
+        for (const l of m.lessons || []) {
+          if (l.video_asset_id === assetId) {
+            delete l.video_url;
+            delete l.video_title;
+            delete l.video_duration;
+            delete l.video_asset_id;
+          }
+        }
+      }
+    }
+
+    asset.lesson_id = newLessonId || null;
+    let targetLessonName = 'Unassigned';
+
+    // Bind to new target lesson
+    if (newLessonId && course.modules) {
+      for (const m of course.modules) {
+        const targetLesson = (m.lessons || []).find((l) => l.id === newLessonId);
+        if (targetLesson) {
+          targetLesson.video_url = asset.url;
+          targetLesson.video_title = asset.title;
+          targetLesson.video_duration = asset.duration;
+          targetLesson.video_asset_id = asset.id;
+          targetLessonName = targetLesson.title;
+          break;
+        }
+      }
+    }
+
+    asset.lesson_title = targetLessonName;
+    db.audit_logs.unshift({
+      id: `aud_${Date.now()}`,
+      actor_id: adminEmail,
+      action: 'VIDEO_ASSET_REATTACHED',
+      entity_type: 'courses',
+      entity_id: courseId,
+      details: `Rebound video "${asset.title}" to lesson "${targetLessonName}"`,
+      created_at: new Date().toISOString(),
+    });
+
+    this.saveDb(db);
+    return asset;
+  }
+
+  publishCourseVersion(courseId, adminEmail = 'usr_admin') {
+    const db = this.getDb();
+    const course = db.courses.find((c) => c.id === courseId);
+    if (!course) return null;
+
+    // Bump version: 1.0 -> 1.1, 1.1 -> 1.2
+    const currentVer = parseFloat(course.version || '1.0');
+    const newVer = (currentVer + 0.1).toFixed(1);
+    course.version = newVer;
+    course.is_published = true;
+    course.published_at = new Date().toISOString();
+
+    if (!course.version_history) course.version_history = [];
+    course.version_history.unshift({
+      version: newVer,
+      published_at: course.published_at,
+      published_by: adminEmail,
+      notes: 'Live Curriculum Publication & Reorder Sync',
+    });
+
+    db.audit_logs.unshift({
+      id: `aud_${Date.now()}`,
+      actor_id: adminEmail,
+      action: 'COURSE_VERSION_PUBLISHED',
+      entity_type: 'courses',
+      entity_id: courseId,
+      details: `Published live course version ${newVer} for ${course.title}`,
+      created_at: new Date().toISOString(),
+    });
+
+    this.saveDb(db);
+    return course;
+  }
+
+  // ==========================================
+  // SUPER ADMIN STUDENT LIFECYCLE MANAGEMENT
+  // ==========================================
+  resetStudentProgress(userId, courseId, lessonId = null, reason = '', adminEmail = 'usr_admin') {
+    const db = this.getDb();
+    const enrolment = db.enrolments.find((e) => e.user_id === userId && e.course_id === courseId);
+    if (!enrolment) return false;
+
+    if (lessonId) {
+      // Reset specific lesson
+      enrolment.completed_mandatory_lessons = (enrolment.completed_mandatory_lessons || []).filter(
+        (id) => id !== lessonId
+      );
+    } else {
+      // Full course progress reset
+      enrolment.completed_mandatory_lessons = [];
+      enrolment.passed_quizzes = [];
+      enrolment.final_assessment_attempt_id = null;
+    }
+
+    db.audit_logs.unshift({
+      id: `aud_${Date.now()}`,
+      actor_id: adminEmail,
+      action: 'STUDENT_PROGRESS_RESET',
+      entity_type: 'enrolments',
+      entity_id: enrolment.id,
+      details: `Progress reset for student ${userId} in course ${courseId}. Scope: ${lessonId || 'Full Course'}. Reason: ${reason || 'Technical Override'}`,
+      created_at: new Date().toISOString(),
+    });
+
+    this.saveDb(db);
+    return true;
+  }
+
+  rebindVideoAsset(courseId, assetId, newLessonId, adminEmail = 'usr_admin') {
+    const db = this.getDb();
+    const course = db.courses.find((c) => c.id === courseId);
+    if (!course || !course.video_assets) return null;
+
+    const asset = course.video_assets.find((a) => a.id === assetId);
+    if (!asset) return null;
+
+    // Unbind from previous lesson
+    if (course.modules) {
+      for (const m of course.modules) {
+        for (const l of m.lessons || []) {
+          if (l.video_asset_id === assetId) {
+            delete l.video_url;
+            delete l.video_title;
+            delete l.video_duration;
+            delete l.video_asset_id;
+          }
+        }
+      }
+    }
+
+    asset.lesson_id = newLessonId || null;
+    let targetLessonName = 'Unassigned';
+
+    // Bind to new target lesson
+    if (newLessonId && course.modules) {
+      for (const m of course.modules) {
+        const targetLesson = (m.lessons || []).find((l) => l.id === newLessonId);
+        if (targetLesson) {
+          targetLesson.video_url = asset.url;
+          targetLesson.video_title = asset.title;
+          targetLesson.video_duration = asset.duration;
+          targetLesson.video_asset_id = asset.id;
+          targetLessonName = targetLesson.title;
+          break;
+        }
+      }
+    }
+
+    asset.lesson_title = targetLessonName;
+    db.audit_logs.unshift({
+      id: `aud_${Date.now()}`,
+      actor_id: adminEmail,
+      action: 'VIDEO_ASSET_REATTACHED',
+      entity_type: 'courses',
+      entity_id: courseId,
+      details: `Rebound video "${asset.title}" to lesson "${targetLessonName}"`,
+      created_at: new Date().toISOString(),
+    });
+
+    this.saveDb(db);
+    return asset;
+  }
+
+  adjustStudentTokens(userId, amount, reason, adminEmail = 'usr_admin') {
+    const db = this.getDb();
+    const user = db.users.find((u) => u.id === userId);
+    if (!user) return null;
+
+    const numAmount = parseInt(amount, 10);
+    const tx = {
+      id: `tx_${Date.now()}`,
+      user_id: userId,
+      amount: numAmount,
+      type: numAmount >= 0 ? 'admin_credit' : 'admin_debit',
+      description: `Manual adjustment by Super Admin: ${reason}`,
+      created_at: new Date().toISOString(),
+    };
+
+    db.reward_ledger.unshift(tx);
+
+    db.audit_logs.unshift({
+      id: `aud_${Date.now()}`,
+      actor_id: adminEmail,
+      action: 'TOKEN_ADJUSTMENT',
+      entity_type: 'reward_ledger',
+      entity_id: tx.id,
+      details: `${numAmount >= 0 ? 'Credited' : 'Debited'} ${Math.abs(numAmount)} tokens for ${user.full_name}. Reason: ${reason}`,
+      created_at: new Date().toISOString(),
+    });
+
+    this.saveDb(db);
+    return tx;
+  }
+
+  forceIssueCredential(userId, courseId, adminEmail = 'usr_admin') {
+    const db = this.getDb();
+    const user = db.users.find((u) => u.id === userId);
+    const course = db.courses.find((c) => c.id === courseId);
+    if (!user || !course) return null;
+
+    let enrolment = db.enrolments.find((e) => e.user_id === userId && e.course_id === courseId);
+    if (!enrolment) {
+      enrolment = this.enrolStudent(userId, courseId);
+    }
+
+    const verificationId = `RK-${Math.random().toString(36).substr(2, 4).toUpperCase()}-${Math.random().toString(36).substr(2, 4).toUpperCase()}`;
+    const issueDate = new Date().toISOString().split('T')[0];
+    const expDate = new Date();
+    expDate.setFullYear(expDate.getFullYear() + 2);
+
+    const credential = {
+      id: `cred_${Date.now()}`,
+      verification_id: verificationId,
+      student_name: user.full_name,
+      user_id: user.id,
+      course_id: course.id,
+      course_title: course.title,
+      credential_title: course.milestone_cert || `Certified ${course.title.split(' ')[0]} Specialist`,
+      type: 'Executive Certification (Admin Issued)',
+      issue_date: issueDate,
+      expiration_date: expDate.toISOString().split('T')[0],
+      grade_percentage: 100,
+      status: 'Active',
+      digital_signature: `0x${Math.random().toString(16).substr(2)}${Math.random().toString(16).substr(2)}`,
+      verification_url: `https://academy.redkross.org.in/verify/${verificationId}`,
+      skills_validated: course.skills || ['Administrative Command Clearance', 'Enterprise Defense'],
+    };
+
+    db.credentials.unshift(credential);
+    enrolment.credential_id = credential.id;
+
+    db.audit_logs.unshift({
+      id: `aud_${Date.now()}`,
+      actor_id: adminEmail,
+      action: 'CREDENTIAL_FORCE_ISSUED',
+      entity_type: 'credentials',
+      entity_id: credential.id,
+      details: `Force-issued verified credential ${verificationId} to ${user.full_name} for ${course.title}`,
+      created_at: new Date().toISOString(),
+    });
+
+    this.saveDb(db);
+    return credential;
+  }
+
+  // ==========================================
+  // GLOBAL SECURITY POLICY & TRACKING
+  // ==========================================
+  getGlobalSecurityPolicy() {
+    const db = this.getDb();
+    return db.security_policy || {
+      strike_threshold: 3,
+      lockout_duration_hours: 24,
+      strike2_token_penalty: 50,
+      auto_kill_on_blur: true,
+      last_updated: new Date().toISOString(),
+    };
+  }
+
+  updateGlobalSecurityPolicy(updates, adminEmail = 'usr_admin') {
+    const db = this.getDb();
+    db.security_policy = {
+      ...(db.security_policy || {}),
+      ...updates,
+      last_updated: new Date().toISOString(),
+    };
+
+    db.audit_logs.unshift({
+      id: `aud_${Date.now()}`,
+      actor_id: adminEmail,
+      action: 'SECURITY_POLICY_UPDATED',
+      entity_type: 'settings',
+      entity_id: 'global_security_policy',
+      details: `Updated security thresholds: Strikes=${db.security_policy.strike_threshold}, Lockout=${db.security_policy.lockout_duration_hours}h`,
+      created_at: new Date().toISOString(),
+    });
+
+    this.saveDb(db);
+    return db.security_policy;
+  }
+
+  getLiveStudentTracking() {
+    const db = this.getDb();
+    const students = db.users.filter((u) => u.role === 'student');
+
+    return students.map((s) => {
+      // Check if student has an active strike-3 lockout
+      let isLockedOut = false;
+      let lockoutUntil = null;
+      for (const [key, windowData] of Object.entries(db.quiz_retry_windows || {})) {
+        if (key.startsWith(s.id) && windowData.locked_until) {
+          if (new Date(windowData.locked_until) > new Date()) {
+            isLockedOut = true;
+            lockoutUntil = windowData.locked_until;
+            break;
+          }
+        }
+      }
+
+      // Check if student has in-progress quiz attempts
+      const inExam = (db.quiz_attempts || []).some(
+        (a) => a.user_id === s.id && a.state === 'in_progress'
+      );
+
+      let operationalStatus = 'active_learner';
+      if (isLockedOut) operationalStatus = 'locked_out';
+      else if (inExam) operationalStatus = 'in_exam';
+
+      return {
+        ...s,
+        operational_status: operationalStatus,
+        lockout_until: lockoutUntil,
+      };
+    });
   }
 }
 
