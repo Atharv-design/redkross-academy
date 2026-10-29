@@ -136,10 +136,13 @@ export default function AdminStudentsPage() {
   };
 
   const filteredStudents = students.filter((s) => {
+    const q = searchQuery.toLowerCase();
     const matchesSearch =
-      s.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.id?.toLowerCase().includes(searchQuery.toLowerCase());
+      s.name?.toLowerCase().includes(q) ||
+      s.full_name?.toLowerCase().includes(q) ||
+      s.email?.toLowerCase().includes(q) ||
+      s.cadet_id?.toLowerCase().includes(q) ||
+      s.id?.toLowerCase().includes(q);
     const matchesStatus =
       statusFilter === 'ALL' ||
       (statusFilter === 'ACTIVE' && s.status !== 'SUSPENDED') ||
@@ -204,6 +207,7 @@ export default function AdminStudentsPage() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-[#1B2530] bg-[#071018] text-[10px] font-mono text-[#8BA2B5]">
+                  <th className="p-3">CADET ID</th>
                   <th className="p-3">STUDENT</th>
                   <th className="p-3">ACCOUNT STATUS</th>
                   <th className="p-3">TOKEN BALANCE</th>
@@ -225,12 +229,18 @@ export default function AdminStudentsPage() {
                       }`}
                     >
                       <td className="p-3">
+                        <span className="font-mono text-xs font-bold text-[#65F58A] bg-[#101923] px-2 py-0.5 rounded border border-[#65F58A]/30">
+                          {st.cadet_id || 'RK-89421'}
+                        </span>
+                      </td>
+
+                      <td className="p-3">
                         <div className="flex items-center space-x-2.5">
                           <div className="w-8 h-8 rounded-full bg-[#1B2530] border border-[#263440] flex items-center justify-center font-bold text-white text-xs">
-                            {st.name?.charAt(0) || 'U'}
+                            {st.name?.charAt(0) || st.full_name?.charAt(0) || 'U'}
                           </div>
                           <div>
-                            <div className="text-white font-sans font-medium">{st.name}</div>
+                            <div className="text-white font-sans font-medium">{st.name || st.full_name}</div>
                             <div className="text-[10px] text-[#8BA2B5]">{st.email}</div>
                           </div>
                         </div>
@@ -301,8 +311,19 @@ export default function AdminStudentsPage() {
                 </div>
 
                 <div className="flex items-center justify-between text-xs font-mono pt-2 border-t border-[#1B2530]">
-                  <span className="text-[#8BA2B5]">USER ID: {selectedStudent.id}</span>
-                  <span className="text-[#65F58A]">ROLE: {selectedStudent.role?.toUpperCase()}</span>
+                  <span className="text-[#65F58A] font-bold">
+                    CADET ID: {selectedStudent.cadet_id || 'RK-89421'}
+                  </span>
+                  <a
+                    href={`/verify/${selectedStudent.cadet_id || 'RK-89421'}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center space-x-1 text-[#38BDF8] hover:underline"
+                    title="Open Cadet's Public Verification Dossier"
+                  >
+                    <span>Public Dossier</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
                 </div>
               </div>
 

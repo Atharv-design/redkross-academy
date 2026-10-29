@@ -73,6 +73,9 @@ export default function StudentDashboard() {
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-redkross-600/20 text-redkross-400 border border-redkross-600/30 uppercase">
                   Operator Portal
                 </span>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/30 font-bold">
+                  CADET ID: {currentUser.cadet_id || 'RK-89421'}
+                </span>
               </div>
               <p className="text-xs text-slate-400 font-mono mt-0.5">{currentUser.headline}</p>
             </div>
@@ -80,6 +83,16 @@ export default function StudentDashboard() {
 
           {/* Quick Metrics Pills */}
           <div className="flex flex-wrap items-center gap-3">
+            {/* Public Verification Dossier Pill */}
+            <Link
+              to={`/verify/${currentUser.cadet_id || 'RK-89421'}`}
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-[#65F58A]/10 border border-[#65F58A]/30 text-[#65F58A] hover:bg-[#65F58A]/20 transition-all text-xs font-mono font-medium"
+              title="Open Public Verification Dossier"
+            >
+              <Award className="w-4 h-4 text-[#65F58A]" />
+              <span>Public Dossier</span>
+            </Link>
+
             {/* Learning Streak */}
             <div className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-surface-card border border-surface-border text-xs font-mono">
               <Flame className="w-4 h-4 text-rose-500 fill-rose-500" />

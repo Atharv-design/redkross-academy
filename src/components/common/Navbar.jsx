@@ -224,6 +224,11 @@ export default function Navbar() {
                     <span className="max-w-[75px] md:max-w-[100px] truncate text-xs font-mono hidden sm:inline">
                       {currentUser.full_name?.split(' ')[0] || currentUser.email?.split('@')[0]}
                     </span>
+                    {currentUser.cadet_id && (
+                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/30 hidden md:inline font-bold">
+                        {currentUser.cadet_id}
+                      </span>
+                    )}
                     {currentUser.role === 'super_admin' && (
                       <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#65F58A]/20 text-[#65F58A] border border-[#65F58A]/40 hidden lg:inline font-bold">
                         ADMIN
@@ -241,6 +246,11 @@ export default function Navbar() {
                         <div className="text-xs text-[#94A3B8] font-mono truncate">
                           {currentUser.email}
                         </div>
+                        {currentUser.cadet_id && (
+                          <div className="mt-1 text-[11px] font-mono text-[#65F58A] font-bold">
+                            CADET: {currentUser.cadet_id}
+                          </div>
+                        )}
                         <div className="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono uppercase bg-[#65F58A]/10 border border-[#65F58A]/30 text-[#65F58A]">
                           <span className="w-1.5 h-1.5 rounded-full bg-[#65F58A]" />
                           <span>Role: {currentUser.role?.replace('_', ' ')}</span>
@@ -256,6 +266,16 @@ export default function Navbar() {
                           <User className="w-4 h-4 text-[#35E6B5]" />
                           <span>Student Portal</span>
                         </Link>
+                        {currentUser.cadet_id && (
+                          <Link
+                            to={`/verify/${currentUser.cadet_id}`}
+                            onClick={() => setShowProfileMenu(false)}
+                            className="flex items-center gap-2 px-4 py-2 text-slate-300 hover:text-white hover:bg-[#1B2530] transition-colors"
+                          >
+                            <Award className="w-4 h-4 text-[#65F58A]" />
+                            <span>My Verified Dossier</span>
+                          </Link>
+                        )}
                         <Link
                           to="/student/tokens"
                           onClick={() => setShowProfileMenu(false)}

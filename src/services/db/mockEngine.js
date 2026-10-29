@@ -16,6 +16,34 @@ import {
 const STORAGE_KEY = 'redkross_academy_db_v1';
 const BROADCAST_BUS_CHANNEL = 'redkross_academy_bus';
 
+export function generateDeterministicCadetId(email = '', uid = '', existingUsers = []) {
+  const seedString = `${(email || '').trim().toLowerCase()}::${(uid || '').trim()}`;
+
+  let hash = 2166136261;
+  for (let i = 0; i < seedString.length; i++) {
+    hash ^= seedString.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+
+  const baseNumber = (Math.abs(hash) % 90000) + 10000; // 10000 to 99999 (5 digits)
+
+  const takenIds = new Set(
+    existingUsers
+      .filter((u) => u && u.cadet_id && u.email?.toLowerCase() !== email?.toLowerCase() && u.id !== uid)
+      .map((u) => u.cadet_id)
+  );
+
+  let candidate = `RK-${baseNumber}`;
+  let offset = 0;
+  while (takenIds.has(candidate) && offset < 90000) {
+    offset++;
+    const nextNumber = ((baseNumber - 10000 + offset) % 90000) + 10000;
+    candidate = `RK-${nextNumber}`;
+  }
+
+  return candidate;
+}
+
 let globalBroadcastChannel = null;
 if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
   try {
@@ -127,7 +155,6 @@ class MockEngine {
             for (const mod of course.modules) {
               if (mod.lessons) {
                 for (const les of mod.lessons) {
-                  // Only replace if totally empty or pointing to the broken BigBuckBunny link
                   if (!les.video_url || les.video_url.includes('BigBuckBunny')) {
                     les.video_url = '/assets/sample-lesson.mp4';
                     les.video_title = les.video_title || les.title;
@@ -139,9 +166,20 @@ class MockEngine {
             }
           }
         }
-        if (modified) {
-          this.saveDb(parsed);
+      }
+
+      // Ensure all users have a deterministic, collision-proof Cadet ID (RK-XXXXX)
+      if (parsed && parsed.users) {
+        for (const user of parsed.users) {
+          if (!user.cadet_id) {
+            user.cadet_id = generateDeterministicCadetId(user.email, user.id, parsed.users);
+            modified = true;
+          }
         }
+      }
+
+      if (modified) {
+        this.saveDb(parsed);
       }
 
       return parsed;
@@ -251,14 +289,145 @@ class MockEngine {
   }
 
   // ==========================================
-  // USERS & IDENTITY
+  // USERS & CADET IDENTITY
   // ==========================================
   getUsers() {
     return this.getDb().users;
   }
 
   getUserById(id) {
-    return this.getDb().users.find((u) => u.id === id);
+    if (!id) return null;
+    const cleanId = String(id).trim().toUpperCase();
+    return this.getDb().users.find(
+      (u) =>
+        u.id === id ||
+        (u.cadet_id && u.cadet_id.toUpperCase() === cleanId) ||
+        (u.email && u.email.toUpperCase() === cleanId)
+    );
+  }
+
+  getOrCreateCadetUser(userData = {}) {
+    const db = this.getDb();
+    if (!db.users) db.users = [];
+
+    const email = (userData.email || '').trim().toLowerCase();
+    const uid = userData.uid || userData.id;
+
+    // Check if user already exists
+    let existing = db.users.find((u) =>
+      (uid && u.id === uid) ||
+      (email && u.email?.toLowerCase() === email)
+    );
+
+    if (existing) {
+      if (!existing.cadet_id) {
+        existing.cadet_id = generateDeterministicCadetId(existing.email, existing.id, db.users);
+        this.saveDb(db, { type: 'USER_UPDATED', payload: { user: existing } });
+      }
+      return existing;
+    }
+
+    // Create new cadet user with deterministic collision-proof ID
+    const cadetId = generateDeterministicCadetId(email, uid, db.users);
+    const newUser = {
+      id: uid || `usr_${Date.now()}`,
+      cadet_id: cadetId,
+      email: userData.email,
+      full_name: userData.full_name || userData.displayName || (email.split('@')[0]) || 'Cadet Operator',
+      avatar: userData.avatar || userData.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.full_name || userData.displayName || 'Cadet')}&background=101923&color=65F58A&bold=true`,
+      role: 'student',
+      status: 'ACTIVE',
+      token_balance: 150,
+      streak_days: 1,
+      headline: 'Certified Cyber Defense Cadet',
+      created_at: new Date().toISOString()
+    };
+
+    db.users.push(newUser);
+
+    // Auto-enroll cadet in initial foundation course
+    if (db.courses && db.courses.length > 0) {
+      if (!db.enrolments) db.enrolments = [];
+      const primaryCourse = db.courses[0];
+      const newEnrolment = {
+        id: `enr_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+        user_id: newUser.id,
+        cadet_id: cadetId,
+        course_id: primaryCourse.id,
+        status: 'in_progress',
+        progress: 0,
+        completed_mandatory_lessons: [],
+        current_lesson_id: primaryCourse.modules?.[0]?.lessons?.[0]?.id || null,
+        enrolled_at: new Date().toISOString()
+      };
+      db.enrolments.push(newEnrolment);
+    }
+
+    this.saveDb(db, {
+      type: 'USER_CREATED',
+      payload: { user: newUser }
+    });
+
+    return newUser;
+  }
+
+  getCadetDossier(identifier) {
+    if (!identifier) return null;
+    const cleanId = String(identifier).trim().toUpperCase();
+    const db = this.getDb();
+
+    // Find cadet by cadet_id, email, or user id
+    const cadet = (db.users || []).find((u) =>
+      (u.cadet_id && u.cadet_id.toUpperCase() === cleanId) ||
+      (u.email && u.email.toUpperCase() === cleanId) ||
+      (u.id && u.id.toUpperCase() === cleanId)
+    );
+
+    if (!cadet) return null;
+
+    // Get all enrollments for this cadet
+    const enrolments = (db.enrolments || []).filter((e) => e.user_id === cadet.id);
+    const enrichedEnrolments = enrolments.map((enr) => {
+      const course = (db.courses || []).find((c) => c.id === enr.course_id);
+      const progress = this.getCourseProgress(enr.id);
+      return {
+        ...enr,
+        course_title: course?.title || 'Defensive Cyber Operations Track',
+        course_category: course?.category || 'Specialist Training',
+        progress_percentage: progress.percentage || 0,
+        completed: progress.percentage >= 100
+      };
+    });
+
+    // Get all credentials / certificates issued to this cadet
+    const credentials = (db.credentials || []).filter((c) =>
+      c.student_email?.toLowerCase() === cadet.email?.toLowerCase() ||
+      c.student_name?.toLowerCase() === cadet.full_name?.toLowerCase() ||
+      c.student_name?.toLowerCase() === cadet.name?.toLowerCase() ||
+      c.cadet_id === cadet.cadet_id
+    );
+
+    return {
+      cadet: {
+        id: cadet.id,
+        cadet_id: cadet.cadet_id || 'RK-89421',
+        full_name: cadet.full_name || cadet.name || 'Cadet Operator',
+        email: cadet.email,
+        avatar: cadet.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(cadet.full_name || 'Cadet')}&background=101923&color=65F58A&bold=true`,
+        headline: cadet.headline || 'Verified Cyber Defense Specialist',
+        status: cadet.is_suspended ? 'SUSPENDED' : 'ACTIVE_VERIFIED',
+        token_balance: cadet.token_balance || 150,
+        created_at: cadet.created_at || '2026-10-01',
+      },
+      enrolments: enrichedEnrolments,
+      credentials,
+      metrics: {
+        totalEnrolled: enrichedEnrolments.length,
+        totalCompleted: enrichedEnrolments.filter((e) => e.completed).length,
+        totalCredentials: credentials.filter((c) => !c.revoked).length,
+        tokensEarned: cadet.token_balance || 150
+      }
+    };
   }
 
   updateUserProfile(id, updates) {

@@ -35,27 +35,27 @@ export function AuthProvider({ children }) {
       localStorage.setItem('redkross_academy_auth_token', token);
       localStorage.setItem('redkross_academy_active_user', firebaseUser.uid);
 
-      const dbUser = await apiClient.syncUser({
+      // Deterministic Cadet identity generation and synchronization
+      const cadetUser = mockEngine.getOrCreateCadetUser({
         uid: firebaseUser.uid,
         email: firebaseUser.email,
         full_name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Cadet Operator',
         avatar: firebaseUser.photoURL || null
       });
 
-      setCurrentUser(dbUser);
-      setTokenBalance(dbUser.token_balance || 100);
+      setCurrentUser(cadetUser);
+      setTokenBalance(cadetUser.token_balance || 150);
     } catch (err) {
       console.error('Failed to sync user session:', err);
-      // Fallback local student profile
-      setCurrentUser({
-        id: firebaseUser.uid,
+      // Fallback local student profile with deterministic cadet ID
+      const fallbackUser = mockEngine.getOrCreateCadetUser({
+        uid: firebaseUser.uid,
         email: firebaseUser.email,
         full_name: firebaseUser.displayName || 'Cadet Operator',
-        avatar: firebaseUser.photoURL,
-        role: 'student',
-        streak_days: 1
+        avatar: firebaseUser.photoURL
       });
-      setTokenBalance(100);
+      setCurrentUser(fallbackUser);
+      setTokenBalance(fallbackUser.token_balance || 150);
     } finally {
       setIsLoading(false);
     }
@@ -135,21 +135,21 @@ export function AuthProvider({ children }) {
 
   // 1-Click Dev Cadet Creator / Switcher
   const devLoginAsCadet = (cadetData = {}) => {
-    const studentUser = {
-      id: cadetData.uid || cadetData.id || 'usr_cadet_google_' + Math.random().toString(36).substring(2, 8),
-      email: cadetData.email || 'cadet.operator@redkross.org.in',
-      full_name: cadetData.displayName || cadetData.full_name || 'Cadet Operator',
-      role: 'student',
-      avatar: cadetData.photoURL || cadetData.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(cadetData.displayName || cadetData.full_name || 'Cadet')}&background=101923&color=65F58A&bold=true`,
-      streak_days: 3,
-      token_balance: 150
-    };
+    const email = cadetData.email || 'student@redkross.org.in';
+    const uid = cadetData.uid || cadetData.id || 'usr_student_01';
+    const studentUser = mockEngine.getOrCreateCadetUser({
+      uid,
+      email,
+      full_name: cadetData.displayName || cadetData.full_name || 'Atharv Sharma',
+      avatar: cadetData.photoURL || cadetData.avatar
+    });
+
     localStorage.removeItem('redkross_academy_dev_admin');
     localStorage.setItem('redkross_academy_dev_cadet', JSON.stringify(studentUser));
     localStorage.setItem('redkross_academy_active_user', studentUser.id);
     localStorage.setItem('redkross_academy_auth_token', 'mock_dev_cadet_token_' + Date.now());
     setCurrentUser(studentUser);
-    setTokenBalance(studentUser.token_balance);
+    setTokenBalance(studentUser.token_balance || 150);
     setIsLoading(false);
     return studentUser;
   };

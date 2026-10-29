@@ -6,6 +6,7 @@
 export const INITIAL_USERS = [
   {
     id: 'usr_student_01',
+    cadet_id: 'RK-89421',
     email: 'student@redkross.org.in',
     full_name: 'Atharv Sharma',
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80',
