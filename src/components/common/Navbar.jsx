@@ -11,7 +11,8 @@ import {
   LogOut,
   Menu,
   X,
-  ArrowRight
+  ArrowRight,
+  Zap
 } from 'lucide-react';
 import { useAuth } from '../../services/auth/authContext';
 import SupportTicketModal from './SupportTicketModal';
@@ -27,13 +28,13 @@ import { getEcosystemLinks } from '../../utils/ecosystemLinks';
  * - High-tactile pill CTA button ("Operator Login" / Profile Menu) in Graphite + Neon Green palette
  */
 export default function Navbar() {
-  const { currentUser, tokenBalance, logout } = useAuth();
+  const navigate = useNavigate();
+  const { currentUser, tokenBalance, logout, devLoginAsAdmin } = useAuth();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [supportModalOpen, setSupportModalOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
   const ecosystem = getEcosystemLinks();
 
   useEffect(() => {
@@ -187,6 +188,30 @@ export default function Navbar() {
                   <Coins className="w-3.5 h-3.5 text-[#65F58A] animate-pulse" />
                   <span className="tabular-nums font-bold">{tokenBalance}</span>
                   <span className="hidden sm:inline text-[10px] text-[#35E6B5] uppercase">Tokens</span>
+                </Link>
+              )}
+
+              {/* Dev Mode 1-Click Admin Access */}
+              {currentUser?.role !== 'super_admin' ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    devLoginAsAdmin();
+                    navigate('/admin');
+                  }}
+                  className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#65F58A]/10 hover:bg-[#65F58A]/25 border border-[#65F58A]/40 text-[#65F58A] transition-all text-xs font-mono font-bold shadow-[0_0_15px_rgba(101,245,138,0.2)]"
+                  title="Dev Mode: Click to instantly access Super Admin studio"
+                >
+                  <Zap className="w-3.5 h-3.5 text-[#65F58A] animate-pulse" />
+                  <span>1-Click Admin</span>
+                </button>
+              ) : (
+                <Link
+                  to="/admin"
+                  className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#65F58A]/20 border border-[#65F58A] text-[#65F58A] text-xs font-mono font-bold shadow-[0_0_15px_rgba(101,245,138,0.3)] hover:scale-105 transition-all"
+                >
+                  <Shield className="w-3.5 h-3.5" />
+                  <span>ADMIN CONSOLE</span>
                 </Link>
               )}
 

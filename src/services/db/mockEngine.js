@@ -41,7 +41,12 @@ class MockEngine {
   getDb() {
     try {
       const data = localStorage.getItem(STORAGE_KEY);
-      return data ? JSON.parse(data) : null;
+      let parsed = data ? JSON.parse(data) : null;
+      if (!parsed || !parsed.courses || parsed.courses.length === 0) {
+        this.initDatabase(true);
+        parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      }
+      return parsed;
     } catch (e) {
       console.error('Failed to parse database, resetting...', e);
       this.initDatabase(true);
@@ -83,6 +88,21 @@ class MockEngine {
   // ==========================================
   // CATALOGUE & LEARNING PATHS
   // ==========================================
+  isPublicCatalogEnabled() {
+    const db = this.getDb();
+    if (typeof db.public_catalog_enabled === 'boolean') {
+      return db.public_catalog_enabled;
+    }
+    return true; // Enabled by default
+  }
+
+  setPublicCatalogEnabled(enabled) {
+    const db = this.getDb();
+    db.public_catalog_enabled = Boolean(enabled);
+    this.saveDb(db);
+    return db.public_catalog_enabled;
+  }
+
   getLearningPaths() {
     return this.getDb().learning_paths;
   }
@@ -97,6 +117,82 @@ class MockEngine {
 
   getCourseById(id) {
     return this.getDb().courses.find((c) => c.id === id);
+  }
+
+  createCourse(coursePayload) {
+    const db = this.getDb();
+    const variantNum = Math.floor(Math.random() * 10) + 1;
+    const variantId = `variant-${String(variantNum).padStart(2, '0')}`;
+    const defaultPreset = {
+      art: `/assets/course-art/art-${String(variantNum).padStart(2, '0')}.jpg`,
+      artPos: '75% 30%',
+    };
+
+    const newCourse = {
+      id: coursePayload.id || `crs_${Date.now()}`,
+      slug: coursePayload.slug || coursePayload.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      title: coursePayload.title,
+      version: coursePayload.version || '1.0',
+      category: coursePayload.category || 'Specialist Operations',
+      difficulty: coursePayload.difficulty || 'Intermediate',
+      price: typeof coursePayload.price === 'number' ? coursePayload.price : 0,
+      cert_price: typeof coursePayload.cert_price === 'number' ? coursePayload.cert_price : 2999,
+      estimated_duration: coursePayload.estimated_duration || '12 Hours',
+      estimated_weeks: coursePayload.estimated_weeks || 8,
+      rating: 5.0,
+      enrolled_count: 0,
+      card_variant: coursePayload.card_variant || variantId,
+      art: coursePayload.art || defaultPreset.art,
+      artPos: coursePayload.artPos || defaultPreset.artPos,
+      milestone_cert: coursePayload.milestone_cert || `Certified ${coursePayload.title.split(' ')[0]} Specialist`,
+      skills: coursePayload.skills && coursePayload.skills.length > 0
+        ? coursePayload.skills
+        : (coursePayload.learning_objectives && coursePayload.learning_objectives.length > 0
+            ? coursePayload.learning_objectives.slice(0, 4)
+            : ['Defensive Operations', 'Threat Triage', 'Log Inspection']),
+      overview: coursePayload.overview || `Comprehensive curriculum designed by RedKross Academy for ${coursePayload.title}.`,
+      learning_objectives: coursePayload.learning_objectives || [],
+      lead_author: coursePayload.lead_author || {
+        name: 'Sarah Chen, CISSP',
+        title: 'Principal Incident Handler, RedKross Lab',
+        avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=256&q=80'
+      },
+      prerequisites: coursePayload.prerequisites || ['Basic Cybersecurity Fundamentals'],
+      total_tokens_reward: coursePayload.total_tokens_reward || 350,
+      modules: coursePayload.modules || [
+        {
+          id: `mod_${Date.now()}_1`,
+          title: 'Module 1: Architecture & Defensive Fundamentals',
+          order: 1,
+          lessons: [
+            {
+              id: `les_${Date.now()}_1_1`,
+              title: '1.1 System Initialization & Telemetry',
+              duration: '20 mins',
+              is_mandatory: true,
+              summary: 'Core foundational architecture and telemetry pipelines.',
+              content: `### Telemetry Ingestion & Core Objectives\n\nDefensive operators must maintain 100% visibility over host and network telemetry.\n\n\`\`\`bash\n# Inspect listening telemetry sockets\nss -tulpn\n\`\`\``
+            }
+          ]
+        }
+      ],
+      created_at: new Date().toISOString(),
+    };
+
+    db.courses.unshift(newCourse);
+
+    db.audit_logs.unshift({
+      id: `aud_${Date.now()}`,
+      actor_id: 'usr_admin',
+      action: 'COURSE_PUBLISHED',
+      entity_type: 'courses',
+      entity_id: newCourse.id,
+      details: `Published Course: ${newCourse.title} with 3D design ${newCourse.card_variant}`,
+      created_at: new Date().toISOString(),
+    });
+
+    this.saveDb(db);
+    return newCourse;
   }
 
   // ==========================================

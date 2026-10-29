@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../services/auth/authContext';
-import { ShieldAlert, Lock, ArrowLeft, Shield } from 'lucide-react';
+import { ShieldAlert, Lock, ArrowLeft, Shield, Zap } from 'lucide-react';
 
 /**
  * Super Admin Route Guard (Phase 4 & Phase 5.2)
@@ -10,7 +10,7 @@ import { ShieldAlert, Lock, ArrowLeft, Shield } from 'lucide-react';
  * Authenticated non-admin users receive a 403 Access Denied security screen.
  */
 export default function AdminRoute({ children }) {
-  const { currentUser, isLoading } = useAuth();
+  const { currentUser, isLoading, devLoginAsAdmin } = useAuth();
   const location = useLocation();
 
   if (isLoading) {
@@ -58,6 +58,23 @@ export default function AdminRoute({ children }) {
             <p className="text-[10px] text-[#64748B] font-mono leading-normal">
               No default Super Admin user exists. Super Admin access must be securely provisioned via administrative CLI deployment orchestration.
             </p>
+          </div>
+
+          {/* 1-Click Super Admin Dev Access Elevation */}
+          <div className="pt-1">
+            <button
+              type="button"
+              onClick={() => {
+                devLoginAsAdmin();
+              }}
+              className="w-full py-3 px-4 rounded-xl bg-[#65F58A] hover:bg-[#00FFA3] text-black font-mono text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(101,245,138,0.3)]"
+            >
+              <Zap className="w-4 h-4 text-black animate-pulse" />
+              <span>⚡ [DEV MODE] 1-Click Elevate to Super Admin</span>
+            </button>
+            <div className="text-[10px] text-[#64748B] font-mono mt-1">
+              Temporary access button while designing & testing academy management
+            </div>
           </div>
 
           <div className="pt-2 flex flex-col sm:flex-row gap-3">

@@ -37,6 +37,9 @@ export default function CourseBuilderPage() {
   const [newDifficulty, setNewDifficulty] = useState('Intermediate');
   const [newDuration, setNewDuration] = useState('16 Hours');
   const [newOverview, setNewOverview] = useState('');
+  const [newMilestoneCert, setNewMilestoneCert] = useState('');
+  const [newSkills, setNewSkills] = useState('');
+  const [newArtPreset, setNewArtPreset] = useState('auto');
   const [creating, setCreating] = useState(false);
   const [createNotice, setCreateNotice] = useState('');
 
@@ -67,26 +70,51 @@ export default function CourseBuilderPage() {
     setCreateNotice('');
 
     try {
+      const presets = [
+        { id: 'variant-01', art: '/assets/course-art/art-01.jpg', artPos: '72% 30%' },
+        { id: 'variant-02', art: '/assets/course-art/art-02.jpg', artPos: '74% 28%' },
+        { id: 'variant-03', art: '/assets/course-art/art-03.jpg', artPos: '75% 30%' },
+        { id: 'variant-04', art: '/assets/course-art/art-04.jpg', artPos: '75% 35%' },
+        { id: 'variant-05', art: '/assets/course-art/art-05.jpg', artPos: '75% 32%' },
+        { id: 'variant-06', art: '/assets/course-art/art-06.jpg', artPos: '80% 25%' },
+        { id: 'variant-07', art: '/assets/course-art/art-07.jpg', artPos: '78% 28%' },
+        { id: 'variant-08', art: '/assets/course-art/art-08.jpg', artPos: '80% 25%' },
+        { id: 'variant-09', art: '/assets/course-art/art-09.jpg', artPos: '76% 30%' },
+        { id: 'variant-10', art: '/assets/course-art/art-10.jpg', artPos: '76% 25%' },
+      ];
+
+      const chosenPreset = newArtPreset !== 'auto'
+        ? (presets.find((p) => p.id === newArtPreset) || presets[0])
+        : presets[Math.floor(Math.random() * presets.length)];
+
+      const parsedSkills = newSkills.trim()
+        ? newSkills.split(',').map((s) => s.trim()).filter(Boolean)
+        : ['Threat Detection', 'Incident Containment', 'Defensive Hardening', 'Telemetry Analysis'];
+
       const result = await apiClient.createCourse({
         title: newTitle,
         slug: newSlug.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
         category: newCategory,
         difficulty: newDifficulty,
         estimated_duration: newDuration,
-        overview: newOverview,
-        learning_objectives: [
-          'Master defensive incident response workflows',
-          'Analyze malicious packet captures and host telemetry',
-          'Correlate adversary activity with MITRE ATT&CK'
-        ]
+        overview: newOverview || `Enterprise defensive curriculum designed by RedKross Academy for ${newTitle}.`,
+        card_variant: chosenPreset.id,
+        art: chosenPreset.art,
+        artPos: chosenPreset.artPos,
+        milestone_cert: newMilestoneCert.trim() || `Certified ${newTitle.split(' ')[0]} Specialist`,
+        skills: parsedSkills,
+        learning_objectives: parsedSkills.map((s) => `Master ${s} in defensive scenarios`)
       });
 
-      setCreateNotice(`✅ Course created! Persistent assigned design: ${result.card_variant}`);
+      setCreateNotice(`✅ Course created! Applied 3D design: ${result.card_variant || chosenPreset.id}`);
       await loadCourses();
       setShowCreateModal(false);
       setNewTitle('');
       setNewSlug('');
       setNewOverview('');
+      setNewMilestoneCert('');
+      setNewSkills('');
+      setNewArtPreset('auto');
       setTimeout(() => setCreateNotice(''), 5000);
     } catch (err) {
       console.error('Failed to create course:', err);
@@ -311,7 +339,7 @@ export default function CourseBuilderPage() {
               <div>
                 <label className="block text-xs font-mono text-[#94A3B8] mb-1">Overview Description</label>
                 <textarea
-                  rows={3}
+                  rows={2}
                   placeholder="Comprehensive hands-on training for forensic triage and host interrogation..."
                   value={newOverview}
                   onChange={(e) => setNewOverview(e.target.value)}
@@ -319,9 +347,53 @@ export default function CourseBuilderPage() {
                 />
               </div>
 
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-mono text-[#94A3B8] mb-1">Milestone Credential</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Certified SOC Analyst"
+                    value={newMilestoneCert}
+                    onChange={(e) => setNewMilestoneCert(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#071018] border border-[#263440] text-xs text-white placeholder-[#64748B] font-mono focus:border-[#65F58A]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-mono text-[#94A3B8] mb-1">Skills Validated (comma-separated)</label>
+                  <input
+                    type="text"
+                    placeholder="SIEM, Log Triage, Wireshark, Volatility"
+                    value={newSkills}
+                    onChange={(e) => setNewSkills(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#071018] border border-[#263440] text-xs text-white placeholder-[#64748B] font-mono focus:border-[#65F58A]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-mono text-[#94A3B8] mb-1">3D Cyber Artwork Design</label>
+                <select
+                  value={newArtPreset}
+                  onChange={(e) => setNewArtPreset(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#071018] border border-[#263440] text-xs text-white font-mono focus:border-[#65F58A]"
+                >
+                  <option value="auto">🎲 Auto-Randomize (Choose from 10 3D Cyber Artworks)</option>
+                  <option value="variant-01">Art 01 — 24/7 SOC Command Center (Analyst, Globe & Screens)</option>
+                  <option value="variant-02">Art 02 — Cloud Security Fortress (Padlock & Server Racks)</option>
+                  <option value="variant-03">Art 03 — Defensive Architecture Shield (Geometric Panels)</option>
+                  <option value="variant-04">Art 04 — Threat Incident Target (Globe & Bug Reticle)</option>
+                  <option value="variant-05">Art 05 — Linux Security Terminal (Laptop with Padlock)</option>
+                  <option value="variant-06">Art 06 — Digital Forensics (Biometric Fingerprint & Lens)</option>
+                  <option value="variant-07">Art 07 — AI & Cognitive Security (Brain Neural Profile)</option>
+                  <option value="variant-08">Art 08 — Network Telemetry (World Map with Nodes)</option>
+                  <option value="variant-09">Art 09 — DevSecOps Pipeline (Infinity Nodes Loop)</option>
+                  <option value="variant-10">Art 10 — Threat Defense Brain (Cyber Shield & Padlock)</option>
+                </select>
+              </div>
+
               <div className="p-3 rounded-xl bg-[#071018] border border-[#263440] text-[11px] font-mono text-[#94A3B8] flex items-center gap-2">
                 <Shuffle className="w-4 h-4 text-[#65F58A] flex-shrink-0" />
-                <span>A random variant (variant-01 through variant-10) will be automatically assigned and persisted server-side.</span>
+                <span>The assigned artwork, skills, and credential will instantly render on the course card with full glassmorphism and animations.</span>
               </div>
 
               <div className="flex items-center justify-end gap-3 pt-2">

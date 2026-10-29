@@ -46,7 +46,10 @@ export const apiClient = {
       const res = await fetch(url, {
         headers: { ...this.getAuthHeader() }
       });
-      if (!res.ok) throw new Error('API fetch failed');
+      const contentType = res.headers.get('content-type') || '';
+      if (!res.ok || !contentType.includes('application/json')) {
+        throw new Error('API serverless unavailable or returned non-JSON');
+      }
       const data = await res.json();
       return {
         courses: data.courses || [],
@@ -55,9 +58,10 @@ export const apiClient = {
       };
     } catch (err) {
       console.warn('Fallback to local engine for getCourses:', err.message);
+      const isPublic = mockEngine.isPublicCatalogEnabled();
       return {
-        courses: [], // Strict Phase 3: No public courses if API fails or catalog disabled
-        public_catalog_enabled: false,
+        courses: preview || isPublic ? mockEngine.getCourses() : [],
+        public_catalog_enabled: isPublic,
         message: 'Courses will be out soon'
       };
     }
@@ -93,39 +97,49 @@ export const apiClient = {
 
   // CREATE COURSE (Phase 4 & Phase 7.4 Random Variant Assignment)
   async createCourse(coursePayload) {
-    const res = await fetch(`${API_BASE}/courses`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...this.getAuthHeader()
-      },
-      body: JSON.stringify(coursePayload)
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error || 'Failed to create course');
+    try {
+      const res = await fetch(`${API_BASE}/courses`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...this.getAuthHeader()
+        },
+        body: JSON.stringify(coursePayload)
+      });
+      const contentType = res.headers.get('content-type') || '';
+      if (!res.ok || !contentType.includes('application/json')) {
+        throw new Error('API serverless unavailable or returned non-JSON');
+      }
+      return await res.json();
+    } catch (err) {
+      console.warn('Fallback to local engine for createCourse:', err.message);
+      return mockEngine.createCourse(coursePayload);
     }
-    return await res.json();
   },
 
   // CATALOG VISIBILITY TOGGLE (Phase 3.3 & Phase 4.1)
   async toggleCatalogVisibility(enabled) {
-    const res = await fetch(`${API_BASE}/courses`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        ...this.getAuthHeader()
-      },
-      body: JSON.stringify({
-        action: 'TOGGLE_CATALOG_VISIBILITY',
-        public_catalog_enabled: enabled
-      })
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error || 'Failed to update catalog visibility');
+    try {
+      const res = await fetch(`${API_BASE}/courses`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...this.getAuthHeader()
+        },
+        body: JSON.stringify({
+          action: 'TOGGLE_CATALOG_VISIBILITY',
+          public_catalog_enabled: enabled
+        })
+      });
+      const contentType = res.headers.get('content-type') || '';
+      if (!res.ok || !contentType.includes('application/json')) {
+        throw new Error('Serverless unavailable');
+      }
+      return await res.json();
+    } catch (err) {
+      console.warn('Fallback local catalog toggle:', err.message);
+      return { success: true, public_catalog_enabled: mockEngine.setPublicCatalogEnabled(enabled) };
     }
-    return await res.json();
   },
 
   // LEARNING PATHS (Phase 3.2)

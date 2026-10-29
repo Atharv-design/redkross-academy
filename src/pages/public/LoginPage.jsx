@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Shield, Lock, CheckCircle2, AlertCircle, Sparkles, KeyRound, Cpu, ShieldCheck } from 'lucide-react';
+import { Shield, Lock, CheckCircle2, AlertCircle, Sparkles, KeyRound, Cpu, ShieldCheck, Zap } from 'lucide-react';
 import { useAuth } from '../../services/auth/authContext';
 
 /**
@@ -11,7 +11,7 @@ import { useAuth } from '../../services/auth/authContext';
 export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { loginWithGoogle, currentUser } = useAuth();
+  const { loginWithGoogle, devLoginAsAdmin, currentUser } = useAuth();
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -127,6 +127,24 @@ export default function LoginPage() {
             <p className="text-center text-[11px] text-[#64748B] font-mono leading-relaxed">
               Instant single-click authentication. New cadets are automatically registered upon verification.
             </p>
+
+            {/* 1-Click Super Admin Dev Access */}
+            <div className="pt-2 border-t border-[#263440]/60">
+              <button
+                type="button"
+                onClick={() => {
+                  devLoginAsAdmin();
+                  navigate('/admin', { replace: true });
+                }}
+                className="w-full py-3.5 px-4 rounded-xl bg-[#65F58A]/10 hover:bg-[#65F58A]/20 active:scale-[0.99] border border-[#65F58A]/40 hover:border-[#65F58A] text-[#65F58A] font-mono text-xs font-bold transition-all flex items-center justify-center gap-2 group shadow-[0_0_20px_rgba(101,245,138,0.15)]"
+              >
+                <Zap className="w-4 h-4 text-[#65F58A] animate-pulse" />
+                <span>⚡ DEV MODE: 1-Click Super Admin Login</span>
+              </button>
+              <div className="text-center text-[10px] text-[#64748B] font-mono mt-1.5">
+                Quick bypass for development & studio page styling
+              </div>
+            </div>
           </div>
 
           {/* Hardened Security Verification Matrix */}

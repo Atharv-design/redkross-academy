@@ -114,6 +114,14 @@ export default function App() {
             }
           />
           <Route
+            path="admin/courses"
+            element={
+              <AdminRoute>
+                <CourseBuilderPage />
+              </AdminRoute>
+            }
+          />
+          <Route
             path="admin/audit"
             element={
               <AdminRoute>
