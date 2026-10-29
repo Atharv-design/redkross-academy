@@ -98,6 +98,11 @@ export const INITIAL_COURSES = [
     rating: 4.9,
     enrolled_count: 1420,
     card_variant: 'variant-01',
+    art: '/assets/course-art/art-01.jpg',
+    artPos: '72% 30%',
+    estimated_weeks: 8,
+    milestone_cert: 'SOC Analyst Certificate',
+    skills: ['SIEM', 'Log Analysis', 'Incident Triage', 'Threat Intel'],
     lead_author: {
       name: 'Sarah Chen, CISSP',
       title: 'Principal Incident Handler, RedKross Lab',

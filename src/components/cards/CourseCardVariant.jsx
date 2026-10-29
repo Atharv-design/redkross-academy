@@ -1,3 +1,4 @@
+import AcademicKitCard from './AcademicKitCard';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight, Award, Shield, Clock, BookOpen, CheckCircle2, Coins } from 'lucide-react';
@@ -34,6 +35,19 @@ export default function CourseCardVariant({ course, variantId, variantIndex = 0,
   };
 
   const variant = resolveVariantIndex();
+
+  // Check if this is the first prototype card from academic-card-kit
+  if (variant === 0 || course.id === 'crs_soc_fundamentals' || course.card_variant === 'variant-01') {
+    return (
+      <AcademicKitCard
+        course={course}
+        index={variantIndex}
+        art={course.art || '/assets/course-art/art-01.jpg'}
+        artPos={course.artPos || '72% 30%'}
+      />
+    );
+  }
+
   const isAmber = [1, 4, 6, 9].includes(variant);
 
   // Fallback defaults

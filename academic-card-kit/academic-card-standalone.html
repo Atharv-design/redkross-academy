@@ -1,0 +1,280 @@
+<title>Academic Card Prototype</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: one artwork-backed course card, centered on the cyber dark surface. Art is a full-bleed layer; gradients carry the text. */
+:root {
+  --bg: #071018;
+  --card: #101923;
+  --surface-2: #1B2530;
+  --nav: #0B121B;
+  --accent: #65F58A;
+  --accent-2: #35E6B5;
+  --glow: #00FFA3;
+  --text: #F1F5F9;
+  --text-2: #94A3B8;
+  --border: #263440;
+  --muted: #64748B;
+  --progress: #45F5A1;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  padding-block: 40px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+.note {
+  margin: 0;
+  max-width: 400px;
+  width: 100%;
+  font-size: 12px;
+  letter-spacing: .04em;
+  color: var(--muted);
+}
+
+/* ---------- Academic card ---------- */
+.acad-card {
+  --art: none;
+  --art-pos: 72% 30%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 400px;
+  min-height: 460px;
+  padding: 22px;
+  gap: 14px;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  text-decoration: none;
+  transition: transform .35s cubic-bezier(.2,.7,.2,1), border-color .35s, box-shadow .35s;
+}
+/* artwork layer: edge to edge, no image box */
+.acad-card__art {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-image: var(--art);
+  background-size: cover;
+  background-position: var(--art-pos);
+  background-repeat: no-repeat;
+  transform: scale(1.03);
+  transition: transform .7s cubic-bezier(.2,.7,.2,1), background-position .7s cubic-bezier(.2,.7,.2,1);
+  will-change: transform;
+}
+/* readability layers: strong dark on the left fading right, plus top and bottom protection */
+.acad-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(0deg, rgba(7,16,24,.96) 0%, rgba(7,16,24,.78) 20%, rgba(7,16,24,0) 46%),
+    linear-gradient(180deg, rgba(7,16,24,.55) 0%, rgba(7,16,24,0) 22%),
+    linear-gradient(90deg, rgba(7,16,24,.97) 0%, rgba(7,16,24,.90) 34%, rgba(7,16,24,.55) 58%, rgba(7,16,24,.08) 100%);
+}
+/* neon edge highlight, hidden until hover/focus */
+.acad-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(101,245,138,0), inset 0 0 28px rgba(0,255,163,0);
+  transition: box-shadow .35s;
+}
+.acad-card:hover,
+.acad-card:focus-visible {
+  transform: translateY(-4px);
+  border-color: rgba(101,245,138,.55);
+  box-shadow: 0 14px 34px rgba(0,0,0,.5), 0 0 22px rgba(0,255,163,.10);
+  outline: none;
+}
+.acad-card:hover::after,
+.acad-card:focus-visible::after {
+  box-shadow: inset 0 0 0 1px rgba(101,245,138,.35), inset 0 0 28px rgba(0,255,163,.08);
+}
+.acad-card:hover .acad-card__art,
+.acad-card:focus-visible .acad-card__art {
+  transform: scale(1.07) translate(-1.2%, -1%);
+}
+
+/* top row */
+.acad-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.acad-badge {
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: rgba(101,245,138,.10);
+  border: 1px solid rgba(101,245,138,.35);
+}
+.acad-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 8px rgba(7,16,24,.9);
+}
+.acad-meta i { width: 3px; height: 3px; border-radius: 50%; background: var(--muted); }
+
+/* title + description */
+.acad-card__title {
+  margin: 10px 0 0;
+  max-width: 78%;
+  font-size: 24px;
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  text-wrap: balance;
+}
+.acad-card__desc {
+  margin: 0;
+  max-width: 76%;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+
+/* skills */
+.acad-skills {
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-width: 88%;
+}
+.acad-skill {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  color: var(--text);
+  background: rgba(27,37,48,.78);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(4px);
+}
+
+/* bottom row: credential left, arrow right. No CTA button. */
+.acad-card__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(38,52,64,.8);
+}
+.acad-cred { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.acad-cred svg { flex: none; width: 22px; height: 22px; color: var(--accent-2); }
+.acad-cred small { display: block; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.acad-cred strong { display: block; font-size: 13px; font-weight: 600; color: var(--text); }
+.acad-go {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: var(--accent);
+  border: 1px solid var(--border);
+  background: rgba(11,18,27,.7);
+  transition: transform .3s, border-color .3s, background .3s;
+}
+.acad-go svg { width: 16px; height: 16px; }
+.acad-card:hover .acad-go,
+.acad-card:focus-visible .acad-go {
+  transform: translateX(2px);
+  border-color: rgba(101,245,138,.6);
+  background: rgba(101,245,138,.12);
+}
+
+/* staggered entry, runs once */
+.acad-card.reveal { opacity: 0; transform: translateY(14px); }
+.acad-card.reveal.is-in {
+  opacity: 1;
+  transform: none;
+  transition: opacity .6s ease calc(var(--i, 0) * 90ms), transform .6s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * 90ms), border-color .35s, box-shadow .35s;
+}
+.acad-card.reveal.is-in:hover,
+.acad-card.reveal.is-in:focus-visible { transform: translateY(-4px); transition-delay: 0s; }
+
+@media (max-width: 420px) {
+  .acad-card { min-height: 480px; padding: 18px; }
+  .acad-card__title { font-size: 22px; max-width: 85%; }
+  .acad-card__desc { max-width: 85%; }
+  .acad-skills { max-width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .acad-card, .acad-card__art, .acad-card::after, .acad-go { transition: none !important; }
+  .acad-card.reveal { opacity: 1; transform: none; }
+  .acad-card:hover, .acad-card:focus-visible { transform: none; }
+  .acad-card:hover .acad-card__art, .acad-card:focus-visible .acad-card__art { transform: scale(1.03); }
+}
+</style>
+
+<p class="note">PROTOTYPE 1 OF 10 &middot; SOC ANALYST &middot; sample text, swap in your real course data</p>
+
+<a class="acad-card reveal" href="#soc-analyst" style="--art: url('art-01.jpg'); --art-pos: 72% 30%; --i: 0">
+  <div class="acad-card__art" aria-hidden="true"></div>
+
+  <div class="acad-card__top">
+    <span class="acad-badge">Intermediate</span>
+    <span class="acad-meta">8 weeks <i></i> 64 hrs</span>
+  </div>
+
+  <h3 class="acad-card__title">SOC Analyst</h3>
+  <p class="acad-card__desc">Monitor alerts, triage incidents and investigate activity across logs in a live security operations workflow.</p>
+
+  <div class="acad-skills">
+    <span class="acad-skill">SIEM</span>
+    <span class="acad-skill">Log Analysis</span>
+    <span class="acad-skill">Incident Triage</span>
+    <span class="acad-skill">Threat Intel</span>
+  </div>
+
+  <div class="acad-card__foot">
+    <div class="acad-cred">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6l7-3z"/><path d="M9 12l2.2 2.2L15.5 10"/></svg>
+      <div><small>Milestone credential</small><strong>SOC Analyst Certificate</strong></div>
+    </div>
+    <span class="acad-go" aria-label="Open course">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </span>
+  </div>
+</a>
+
+<script>
+(function () {
+  var cards = document.querySelectorAll('.acad-card.reveal');
+  function show(el) { el.classList.add('is-in'); }
+  if (!('IntersectionObserver' in window)) { cards.forEach(show); return; }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { show(e.target); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.15 });
+  cards.forEach(function (c) { io.observe(c); });
+  setTimeout(function () { cards.forEach(show); }, 900);
+})();
+</script>
