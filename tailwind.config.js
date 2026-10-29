@@ -56,6 +56,7 @@ export default {
       fontFamily: {
         sans: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
         royal: ['"Inter"', 'sans-serif'],
+        lora: ['"Lora"', 'Georgia', 'serif'],
         mono: ['"Space Mono"', 'monospace'],
       },
       animation: {

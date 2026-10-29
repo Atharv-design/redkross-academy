@@ -1,0 +1,940 @@
+import React, { useState, useEffect } from 'react';
+import {
+  BookOpen, Plus, Search, Filter, Edit3, Trash2, Eye, EyeOff,
+  ChevronDown, ChevronRight, Video, FileText, CheckCircle2,
+  AlertTriangle, GripVertical, Clock, Sparkles, Layers,
+  ExternalLink, ArrowUpRight, ShieldCheck, PlayCircle
+} from 'lucide-react';
+import { mockEngine } from '../../services/db/mockEngine';
+import { COURSE_CARD_STYLES, getCardStyleByIndex } from '../../utils/courseCardStyles';
+
+export default function AdminCoursesPage() {
+  const [courses, setCourses] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('ALL');
+  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [activeTab, setActiveTab] = useState('curriculum'); // curriculum | settings | preview
+  const [expandedModules, setExpandedModules] = useState({});
+  const [isEditingCourse, setIsEditingCourse] = useState(false);
+  const [courseFormData, setCourseFormData] = useState({
+    title: '',
+    slug: '',
+    level: 'Intermediate',
+    category: 'Cyber Threat Intelligence',
+    description: '',
+    duration: '6 Weeks',
+    xp_reward: 1200,
+    status: 'DRAFT',
+    modules: []
+  });
+
+  // Modal states for Module & Lesson
+  const [moduleModalOpen, setModuleModalOpen] = useState(false);
+  const [editingModule, setEditingModule] = useState(null);
+  const [moduleForm, setModuleForm] = useState({
+    title: '',
+    drip_days: 0,
+    lessons: []
+  });
+
+  const [lessonModalOpen, setLessonModalOpen] = useState(false);
+  const [editingLesson, setEditingLesson] = useState(null);
+  const [activeModuleId, setActiveModuleId] = useState(null);
+  const [lessonForm, setLessonForm] = useState({
+    title: '',
+    duration: '15 mins',
+    type: 'video',
+    video_url: '',
+    is_preview: false,
+    content: ''
+  });
+
+  // Load courses from mockEngine
+  const loadCourses = () => {
+    try {
+      const db = mockEngine.getDb();
+      if (db && db.courses) {
+        setCourses(db.courses);
+        if (db.courses.length > 0 && !selectedCourse) {
+          setSelectedCourse(db.courses[0]);
+        }
+      }
+    } catch (e) {
+      console.error('Error loading courses:', e);
+    }
+  };
+
+  useEffect(() => {
+    loadCourses();
+  }, []);
+
+  // Save courses back to mockEngine
+  const persistCourses = (updatedCourses) => {
+    try {
+      const db = mockEngine.getDb();
+      db.courses = updatedCourses;
+      mockEngine.saveDb(db);
+      setCourses(updatedCourses);
+      if (selectedCourse) {
+        const refreshed = updatedCourses.find((c) => c.id === selectedCourse.id);
+        if (refreshed) setSelectedCourse(refreshed);
+      }
+      // Add audit log
+      mockEngine.logAction({
+        action: 'COURSE_MUTATION',
+        category: 'COURSE_MUTATION',
+        details: 'Admin updated course curriculum and saved to registry.',
+        severity: 'INFO'
+      });
+    } catch (e) {
+      console.error('Failed to persist course changes:', e);
+    }
+  };
+
+  // Pre-flight validation before publishing
+  const validateCourseForPublish = (course) => {
+    const issues = [];
+    if (!course.title || course.title.length < 5) issues.push('Course title must be at least 5 characters');
+    if (!course.modules || course.modules.length === 0) issues.push('Course must have at least one module');
+    const totalLessons = (course.modules || []).reduce((acc, m) => acc + (m.lessons || []).length, 0);
+    if (totalLessons === 0) issues.push('Course must contain at least one lesson with content or video');
+    return issues;
+  };
+
+  const handleTogglePublish = (course) => {
+    const nextStatus = course.status === 'PUBLISHED' ? 'DRAFT' : 'PUBLISHED';
+    if (nextStatus === 'PUBLISHED') {
+      const issues = validateCourseForPublish(course);
+      if (issues.length > 0) {
+        alert('Cannot publish course due to pre-flight check failure:\n• ' + issues.join('\n• '));
+        return;
+      }
+    }
+    const updated = courses.map((c) => (c.id === course.id ? { ...c, status: nextStatus } : c));
+    persistCourses(updated);
+  };
+
+  const handleSaveCourse = (e) => {
+    e.preventDefault();
+    if (!courseFormData.title) return;
+
+    if (isEditingCourse && selectedCourse) {
+      const updated = courses.map((c) =>
+        c.id === selectedCourse.id ? { ...c, ...courseFormData } : c
+      );
+      persistCourses(updated);
+      setIsEditingCourse(false);
+    } else {
+      const newCourse = {
+        id: 'CRS-' + Date.now().toString(36).toUpperCase(),
+        ...courseFormData,
+        modules: courseFormData.modules.length > 0 ? courseFormData.modules : [
+          {
+            id: 'MOD-1',
+            title: 'Foundational Theory & Environment Setup',
+            drip_days: 0,
+            lessons: [
+              {
+                id: 'LES-101',
+                title: 'Welcome & Curriculum Overview',
+                duration: '10 mins',
+                type: 'video',
+                video_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+                is_preview: true,
+                content: '# Welcome to the Course\nThis initial session introduces key concepts.'
+              }
+            ]
+          }
+        ]
+      };
+      const updated = [newCourse, ...courses];
+      persistCourses(updated);
+      setSelectedCourse(newCourse);
+      setIsEditingCourse(false);
+    }
+  };
+
+  const handleDeleteCourse = (courseId) => {
+    if (confirm('Are you sure you want to permanently delete this course? This action will immediately cascade to all student progress.')) {
+      const updated = courses.filter((c) => c.id !== courseId);
+      persistCourses(updated);
+      setSelectedCourse(updated[0] || null);
+    }
+  };
+
+  // Module actions
+  const handleOpenModuleModal = (module = null) => {
+    if (module) {
+      setEditingModule(module);
+      setModuleForm({ title: module.title, drip_days: module.drip_days || 0, lessons: module.lessons || [] });
+    } else {
+      setEditingModule(null);
+      setModuleForm({ title: '', drip_days: 0, lessons: [] });
+    }
+    setModuleModalOpen(true);
+  };
+
+  const handleSaveModule = () => {
+    if (!moduleForm.title || !selectedCourse) return;
+    const currentModules = selectedCourse.modules || [];
+    let updatedModules;
+
+    if (editingModule) {
+      updatedModules = currentModules.map((m) =>
+        m.id === editingModule.id ? { ...m, title: moduleForm.title, drip_days: parseInt(moduleForm.drip_days) || 0 } : m
+      );
+    } else {
+      const newMod = {
+        id: 'MOD-' + Date.now().toString(36).toUpperCase(),
+        title: moduleForm.title,
+        drip_days: parseInt(moduleForm.drip_days) || 0,
+        lessons: []
+      };
+      updatedModules = [...currentModules, newMod];
+    }
+
+    const updatedCourses = courses.map((c) =>
+      c.id === selectedCourse.id ? { ...c, modules: updatedModules } : c
+    );
+    persistCourses(updatedCourses);
+    setModuleModalOpen(false);
+  };
+
+  const handleDeleteModule = (moduleId) => {
+    if (!confirm('Delete this module and all its lessons?')) return;
+    const updatedModules = (selectedCourse.modules || []).filter((m) => m.id !== moduleId);
+    const updatedCourses = courses.map((c) =>
+      c.id === selectedCourse.id ? { ...c, modules: updatedModules } : c
+    );
+    persistCourses(updatedCourses);
+  };
+
+  // Lesson actions
+  const handleOpenLessonModal = (moduleId, lesson = null) => {
+    setActiveModuleId(moduleId);
+    if (lesson) {
+      setEditingLesson(lesson);
+      setLessonForm({
+        title: lesson.title,
+        duration: lesson.duration || '15 mins',
+        type: lesson.type || 'video',
+        video_url: lesson.video_url || '',
+        is_preview: !!lesson.is_preview,
+        content: lesson.content || ''
+      });
+    } else {
+      setEditingLesson(null);
+      setLessonForm({
+        title: '',
+        duration: '15 mins',
+        type: 'video',
+        video_url: '',
+        is_preview: false,
+        content: ''
+      });
+    }
+    setLessonModalOpen(true);
+  };
+
+  const handleSaveLesson = () => {
+    if (!lessonForm.title || !selectedCourse || !activeModuleId) return;
+
+    const updatedModules = (selectedCourse.modules || []).map((mod) => {
+      if (mod.id !== activeModuleId) return mod;
+      const currentLessons = mod.lessons || [];
+      let nextLessons;
+
+      if (editingLesson) {
+        nextLessons = currentLessons.map((l) =>
+          l.id === editingLesson.id ? { ...l, ...lessonForm } : l
+        );
+      } else {
+        const newLesson = {
+          id: 'LES-' + Date.now().toString(36).toUpperCase(),
+          ...lessonForm
+        };
+        nextLessons = [...currentLessons, newLesson];
+      }
+      return { ...mod, lessons: nextLessons };
+    });
+
+    const updatedCourses = courses.map((c) =>
+      c.id === selectedCourse.id ? { ...c, modules: updatedModules } : c
+    );
+    persistCourses(updatedCourses);
+    setLessonModalOpen(false);
+  };
+
+  const handleDeleteLesson = (moduleId, lessonId) => {
+    if (!confirm('Delete this lesson?')) return;
+    const updatedModules = (selectedCourse.modules || []).map((m) => {
+      if (m.id !== moduleId) return m;
+      return { ...m, lessons: (m.lessons || []).filter((l) => l.id !== lessonId) };
+    });
+    const updatedCourses = courses.map((c) =>
+      c.id === selectedCourse.id ? { ...c, modules: updatedModules } : c
+    );
+    persistCourses(updatedCourses);
+  };
+
+  // Filtered courses
+  const filteredCourses = courses.filter((c) => {
+    const matchesSearch = c.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          c.category?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === 'ALL' || c.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  return (
+    <div className="space-y-6">
+      {/* Top Action Bar */}
+      <div className="flex items-center justify-between bg-[#0F1720] border border-[#1B2530] p-4 rounded-xl">
+        <div className="flex items-center space-x-3">
+          <div className="relative w-72">
+            <Search className="w-4 h-4 text-[#8BA2B5] absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="Search courses by title or topic..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-[#071018] border border-[#1B2530] text-xs text-[#F1F5F9] pl-9 pr-3 py-2 rounded-lg focus:outline-none focus:border-[#65F58A]"
+            />
+          </div>
+
+          <div className="flex items-center space-x-1.5 bg-[#071018] border border-[#1B2530] p-1 rounded-lg">
+            {['ALL', 'PUBLISHED', 'DRAFT'].map((status) => (
+              <button
+                key={status}
+                onClick={() => setStatusFilter(status)}
+                className={`px-3 py-1 text-xs font-mono rounded transition-colors ${
+                  statusFilter === status
+                    ? 'bg-[#1B2530] text-[#65F58A] font-semibold'
+                    : 'text-[#8BA2B5] hover:text-[#F1F5F9]'
+                }`}
+              >
+                {status}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <button
+          onClick={() => {
+            setIsEditingCourse(false);
+            setCourseFormData({
+              title: '',
+              slug: '',
+              level: 'Intermediate',
+              category: 'Cyber Threat Intelligence',
+              description: '',
+              duration: '4 Weeks',
+              xp_reward: 1000,
+              status: 'DRAFT',
+              modules: []
+            });
+            setSelectedCourse(null);
+          }}
+          className="flex items-center space-x-2 px-4 py-2 bg-[#65F58A] text-[#071018] font-bold text-xs rounded-lg hover:bg-[#52d674] transition-all shadow-sm"
+        >
+          <Plus className="w-4 h-4" />
+          <span>New Course</span>
+        </button>
+      </div>
+
+      {/* Main Dual-Pane Course Studio */}
+      <div className="grid grid-cols-12 gap-6 min-h-[700px]">
+        {/* Left Column: 10 Visual Style Cards List */}
+        <div className="col-span-5 space-y-4 overflow-y-auto max-h-[820px] pr-2">
+          <div className="flex items-center justify-between text-xs font-mono text-[#8BA2B5] px-1">
+            <span>CURRICULUM REPOSITORY ({filteredCourses.length})</span>
+            <span className="text-[10px] text-[#65F58A]">10 Distinct Card Styles</span>
+          </div>
+
+          {filteredCourses.map((course, idx) => {
+            const cardStyle = getCardStyleByIndex(idx);
+            const isSelected = selectedCourse?.id === course.id;
+            const moduleCount = course.modules?.length || 0;
+            const lessonCount = (course.modules || []).reduce((acc, m) => acc + (m.lessons?.length || 0), 0);
+
+            return (
+              <div
+                key={course.id || idx}
+                onClick={() => {
+                  setSelectedCourse(course);
+                  setIsEditingCourse(false);
+                }}
+                className={`relative p-5 rounded-xl border transition-all cursor-pointer ${cardStyle.wrapperClass} ${
+                  isSelected ? 'ring-2 ring-white/40 shadow-lg scale-[1.01]' : 'opacity-90 hover:opacity-100'
+                }`}
+              >
+                {/* Visual style badge & status */}
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center space-x-2">
+                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full border ${cardStyle.badgeClass}`}>
+                      {cardStyle.name}
+                    </span>
+                    <span className="text-[10px] font-mono text-[#8BA2B5] bg-[#071018]/60 px-2 py-0.5 rounded border border-[#1B2530]">
+                      {course.level || 'Beginner'}
+                    </span>
+                  </div>
+
+                  <span
+                    className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${
+                      course.status === 'PUBLISHED'
+                        ? 'bg-[#65F58A]/10 text-[#65F58A] border-[#65F58A]/30'
+                        : 'bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/30'
+                    }`}
+                  >
+                    {course.status || 'DRAFT'}
+                  </span>
+                </div>
+
+                <h3 className="text-base font-bold text-white mb-1.5 leading-snug line-clamp-1">
+                  {course.title}
+                </h3>
+                <p className="text-xs text-[#8BA2B5] line-clamp-2 mb-4">
+                  {course.description || 'Comprehensive offensive and defensive cybersecurity training path.'}
+                </p>
+
+                {/* Card Footer Metrics */}
+                <div className="flex items-center justify-between text-[11px] font-mono pt-3 border-t border-white/10 text-[#CBD5E1]">
+                  <div className="flex items-center space-x-3">
+                    <span className="flex items-center space-x-1">
+                      <Layers className="w-3.5 h-3.5 text-[#8BA2B5]" />
+                      <span>{moduleCount} Modules</span>
+                    </span>
+                    <span className="flex items-center space-x-1">
+                      <Video className="w-3.5 h-3.5 text-[#8BA2B5]" />
+                      <span>{lessonCount} Lessons</span>
+                    </span>
+                  </div>
+                  <span className={cardStyle.accentText}>{course.duration || '4 Weeks'}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Right Column: Workstation Editor (Course -> Module -> Lesson Hierarchy) */}
+        <div className="col-span-7 bg-[#0F1720] border border-[#1B2530] rounded-xl flex flex-col overflow-hidden">
+          {selectedCourse || !isEditingCourse ? (
+            selectedCourse ? (
+              <>
+                {/* Course Header Bar */}
+                <div className="p-5 border-b border-[#1B2530] bg-[#071018] flex items-center justify-between">
+                  <div>
+                    <div className="flex items-center space-x-2 mb-1">
+                      <span className="text-[11px] font-mono text-[#8BA2B5]">{selectedCourse.id}</span>
+                      <span className="text-[10px] font-mono bg-[#1B2530] text-[#65F58A] px-2 py-0.5 rounded">
+                        {selectedCourse.category || 'Curriculum'}
+                      </span>
+                    </div>
+                    <h2 className="text-lg font-bold text-white font-lora">{selectedCourse.title}</h2>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => handleTogglePublish(selectedCourse)}
+                      className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold border transition-colors ${
+                        selectedCourse.status === 'PUBLISHED'
+                          ? 'bg-[#1B2530] text-[#CBD5E1] border-[#263440] hover:text-[#EF4444]'
+                          : 'bg-[#65F58A]/10 text-[#65F58A] border-[#65F58A]/40 hover:bg-[#65F58A]/20'
+                      }`}
+                    >
+                      {selectedCourse.status === 'PUBLISHED' ? (
+                        <>
+                          <EyeOff className="w-3.5 h-3.5" />
+                          <span>Unpublish</span>
+                        </>
+                      ) : (
+                        <>
+                          <Eye className="w-3.5 h-3.5" />
+                          <span>Publish Live</span>
+                        </>
+                      )}
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setIsEditingCourse(true);
+                        setCourseFormData(selectedCourse);
+                      }}
+                      className="p-1.5 rounded-lg bg-[#1B2530] text-[#CBD5E1] hover:text-white border border-[#263440]"
+                      title="Edit Course Settings"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                    </button>
+
+                    <button
+                      onClick={() => handleDeleteCourse(selectedCourse.id)}
+                      className="p-1.5 rounded-lg bg-[#1B2530] text-[#EF4444] hover:bg-[#EF4444]/20 border border-[#263440]"
+                      title="Delete Course"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Sub-Tabs: Curriculum Builder vs Details */}
+                <div className="flex border-b border-[#1B2530] bg-[#0A121A] px-5">
+                  <button
+                    onClick={() => setActiveTab('curriculum')}
+                    className={`py-3 px-4 text-xs font-mono border-b-2 transition-all ${
+                      activeTab === 'curriculum'
+                        ? 'border-[#65F58A] text-[#65F58A] font-bold'
+                        : 'border-transparent text-[#8BA2B5] hover:text-white'
+                    }`}
+                  >
+                    4-TIER CURRICULUM ARCHITECTURE
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('settings')}
+                    className={`py-3 px-4 text-xs font-mono border-b-2 transition-all ${
+                      activeTab === 'settings'
+                        ? 'border-[#65F58A] text-[#65F58A] font-bold'
+                        : 'border-transparent text-[#8BA2B5] hover:text-white'
+                    }`}
+                  >
+                    METADATA & ACCESS RULES
+                  </button>
+                </div>
+
+                {/* Tab Content */}
+                <div className="p-5 flex-1 overflow-y-auto max-h-[640px] space-y-4">
+                  {activeTab === 'curriculum' ? (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-mono text-[#8BA2B5]">
+                          MODULES & SEQUENTIAL LESSONS
+                        </span>
+                        <button
+                          onClick={() => handleOpenModuleModal()}
+                          className="flex items-center space-x-1.5 px-3 py-1 bg-[#1B2530] text-[#65F58A] border border-[#263440] hover:border-[#65F58A]/50 rounded text-xs font-mono font-bold"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>Add Module</span>
+                        </button>
+                      </div>
+
+                      {(!selectedCourse.modules || selectedCourse.modules.length === 0) ? (
+                        <div className="text-center py-12 border border-dashed border-[#1B2530] rounded-xl">
+                          <BookOpen className="w-8 h-8 text-[#8BA2B5] mx-auto mb-2 opacity-50" />
+                          <p className="text-xs text-[#8BA2B5]">No modules created yet.</p>
+                          <button
+                            onClick={() => handleOpenModuleModal()}
+                            className="mt-3 text-xs text-[#65F58A] underline font-mono"
+                          >
+                            Create Module 1
+                          </button>
+                        </div>
+                      ) : (
+                        selectedCourse.modules.map((mod, modIdx) => {
+                          const isExpanded = expandedModules[mod.id] !== false; // default expanded
+
+                          return (
+                            <div
+                              key={mod.id || modIdx}
+                              className="border border-[#1B2530] bg-[#071018] rounded-xl overflow-hidden"
+                            >
+                              {/* Module Header Bar */}
+                              <div className="p-3.5 bg-[#0C1520] flex items-center justify-between border-b border-[#1B2530]">
+                                <div
+                                  className="flex items-center space-x-3 cursor-pointer flex-1"
+                                  onClick={() =>
+                                    setExpandedModules((prev) => ({
+                                      ...prev,
+                                      [mod.id]: !isExpanded
+                                    }))
+                                  }
+                                >
+                                  {isExpanded ? (
+                                    <ChevronDown className="w-4 h-4 text-[#8BA2B5]" />
+                                  ) : (
+                                    <ChevronRight className="w-4 h-4 text-[#8BA2B5]" />
+                                  )}
+                                  <span className="text-xs font-mono font-bold text-[#65F58A]">
+                                    MODULE {modIdx + 1}:
+                                  </span>
+                                  <span className="text-sm font-semibold text-white">{mod.title}</span>
+                                  {mod.drip_days > 0 && (
+                                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/30 flex items-center space-x-1">
+                                      <Clock className="w-3 h-3" />
+                                      <span>Drip: Day {mod.drip_days}</span>
+                                    </span>
+                                  )}
+                                </div>
+
+                                <div className="flex items-center space-x-2">
+                                  <button
+                                    onClick={() => handleOpenLessonModal(mod.id)}
+                                    className="px-2.5 py-1 text-[11px] font-mono bg-[#1B2530] text-[#CBD5E1] hover:text-[#65F58A] rounded border border-[#263440] flex items-center space-x-1"
+                                  >
+                                    <Plus className="w-3 h-3" />
+                                    <span>Lesson</span>
+                                  </button>
+                                  <button
+                                    onClick={() => handleOpenModuleModal(mod)}
+                                    className="p-1 text-[#8BA2B5] hover:text-white"
+                                  >
+                                    <Edit3 className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteModule(mod.id)}
+                                    className="p-1 text-[#8BA2B5] hover:text-[#EF4444]"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              </div>
+
+                              {/* Lessons List within Module */}
+                              {isExpanded && (
+                                <div className="p-2 space-y-1.5 bg-[#071018]">
+                                  {(!mod.lessons || mod.lessons.length === 0) ? (
+                                    <p className="text-[11px] text-[#8BA2B5] italic px-4 py-3">
+                                      No lessons inside this module. Click "+ Lesson" to add content or videos.
+                                    </p>
+                                  ) : (
+                                    mod.lessons.map((lesson, lesIdx) => (
+                                      <div
+                                        key={lesson.id || lesIdx}
+                                        className="flex items-center justify-between p-2.5 rounded-lg bg-[#0D1622] border border-[#182330] hover:border-[#263440] transition-colors"
+                                      >
+                                        <div className="flex items-center space-x-3">
+                                          <GripVertical className="w-3.5 h-3.5 text-[#8BA2B5] opacity-40 cursor-grab" />
+                                          {lesson.type === 'video' ? (
+                                            <PlayCircle className="w-4 h-4 text-[#38BDF8]" />
+                                          ) : (
+                                            <FileText className="w-4 h-4 text-[#A855F7]" />
+                                          )}
+                                          <div>
+                                            <div className="flex items-center space-x-2">
+                                              <span className="text-xs font-medium text-white">
+                                                {lesson.title}
+                                              </span>
+                                              {lesson.is_preview && (
+                                                <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30">
+                                                  FREE PREVIEW
+                                                </span>
+                                              )}
+                                            </div>
+                                            <span className="text-[10px] font-mono text-[#8BA2B5]">
+                                              {lesson.duration || '10 mins'} • {lesson.type?.toUpperCase()}
+                                            </span>
+                                          </div>
+                                        </div>
+
+                                        <div className="flex items-center space-x-2">
+                                          <button
+                                            onClick={() => handleOpenLessonModal(mod.id, lesson)}
+                                            className="p-1 text-[#8BA2B5] hover:text-[#65F58A]"
+                                            title="Edit Lesson"
+                                          >
+                                            <Edit3 className="w-3.5 h-3.5" />
+                                          </button>
+                                          <button
+                                            onClick={() => handleDeleteLesson(mod.id, lesson.id)}
+                                            className="p-1 text-[#8BA2B5] hover:text-[#EF4444]"
+                                            title="Delete Lesson"
+                                          >
+                                            <Trash2 className="w-3.5 h-3.5" />
+                                          </button>
+                                        </div>
+                                      </div>
+                                    ))
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+                  ) : (
+                    /* Metadata & Settings Tab */
+                    <div className="space-y-4 text-xs font-mono">
+                      <div className="p-4 bg-[#071018] border border-[#1B2530] rounded-lg space-y-3">
+                        <div className="flex justify-between py-1 border-b border-[#1B2530]">
+                          <span className="text-[#8BA2B5]">Course ID</span>
+                          <span className="text-white">{selectedCourse.id}</span>
+                        </div>
+                        <div className="flex justify-between py-1 border-b border-[#1B2530]">
+                          <span className="text-[#8BA2B5]">Target Audience Level</span>
+                          <span className="text-white">{selectedCourse.level}</span>
+                        </div>
+                        <div className="flex justify-between py-1 border-b border-[#1B2530]">
+                          <span className="text-[#8BA2B5]">Category / Track</span>
+                          <span className="text-white">{selectedCourse.category}</span>
+                        </div>
+                        <div className="flex justify-between py-1 border-b border-[#1B2530]">
+                          <span className="text-[#8BA2B5]">XP Completion Bounty</span>
+                          <span className="text-[#65F58A]">+{selectedCourse.xp_reward || 1000} XP</span>
+                        </div>
+                        <div className="flex justify-between py-1 border-b border-[#1B2530]">
+                          <span className="text-[#8BA2B5]">Public Student Visibility</span>
+                          <span className={selectedCourse.status === 'PUBLISHED' ? 'text-[#65F58A]' : 'text-[#F59E0B]'}>
+                            {selectedCourse.status === 'PUBLISHED' ? 'Active on Student Portal' : 'Embargoed / Staged'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : null
+          ) : (
+            /* Create / Edit Course Form */
+            <form onSubmit={handleSaveCourse} className="p-6 space-y-4">
+              <h3 className="text-base font-bold text-white font-lora">
+                {isEditingCourse ? 'Edit Course Parameters' : 'Create New Master Course'}
+              </h3>
+
+              <div className="space-y-1">
+                <label className="text-xs font-mono text-[#8BA2B5]">Course Title *</label>
+                <input
+                  type="text"
+                  required
+                  value={courseFormData.title}
+                  onChange={(e) => setCourseFormData({ ...courseFormData, title: e.target.value })}
+                  placeholder="e.g. Advanced Network Defense & Packet Inspection"
+                  className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#65F58A]"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-mono text-[#8BA2B5]">Difficulty Level</label>
+                  <select
+                    value={courseFormData.level}
+                    onChange={(e) => setCourseFormData({ ...courseFormData, level: e.target.value })}
+                    className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#65F58A]"
+                  >
+                    <option value="Beginner">Beginner</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Advanced">Advanced</option>
+                    <option value="Expert">Expert</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-mono text-[#8BA2B5]">Category Track</label>
+                  <input
+                    type="text"
+                    value={courseFormData.category}
+                    onChange={(e) => setCourseFormData({ ...courseFormData, category: e.target.value })}
+                    className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#65F58A]"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-mono text-[#8BA2B5]">Course Summary Description</label>
+                <textarea
+                  rows={3}
+                  value={courseFormData.description}
+                  onChange={(e) => setCourseFormData({ ...courseFormData, description: e.target.value })}
+                  placeholder="Outline competencies, practical lab environments, and prerequisites."
+                  className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#65F58A]"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-mono text-[#8BA2B5]">Estimated Duration</label>
+                  <input
+                    type="text"
+                    value={courseFormData.duration}
+                    onChange={(e) => setCourseFormData({ ...courseFormData, duration: e.target.value })}
+                    className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2.5 text-xs text-white"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-mono text-[#8BA2B5]">XP Reward Bounty</label>
+                  <input
+                    type="number"
+                    value={courseFormData.xp_reward}
+                    onChange={(e) => setCourseFormData({ ...courseFormData, xp_reward: parseInt(e.target.value) || 0 })}
+                    className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2.5 text-xs text-white"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-[#1B2530]">
+                <button
+                  type="button"
+                  onClick={() => setIsEditingCourse(false)}
+                  className="px-4 py-2 bg-[#1B2530] text-[#CBD5E1] text-xs font-mono rounded-lg hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-[#65F58A] text-[#071018] text-xs font-bold rounded-lg hover:bg-[#52d674]"
+                >
+                  Save Course Architecture
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
+      </div>
+
+      {/* Module Modal */}
+      {moduleModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+          <div className="w-[500px] bg-[#0F1720] border border-[#1B2530] rounded-xl p-6 shadow-2xl">
+            <h3 className="text-base font-bold text-white mb-4 font-lora">
+              {editingModule ? 'Edit Module' : 'Add Curriculum Module'}
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs font-mono text-[#8BA2B5] block mb-1">Module Title *</label>
+                <input
+                  type="text"
+                  value={moduleForm.title}
+                  onChange={(e) => setModuleForm({ ...moduleForm, title: e.target.value })}
+                  placeholder="e.g. Exploitation Vectors & Metasploit Labs"
+                  className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#65F58A]"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-mono text-[#8BA2B5] block mb-1">
+                  Drip Schedule (Days from Enrollment)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={moduleForm.drip_days}
+                  onChange={(e) => setModuleForm({ ...moduleForm, drip_days: e.target.value })}
+                  className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2 text-xs text-white"
+                />
+                <p className="text-[10px] text-[#8BA2B5] mt-1">
+                  0 = Immediate access upon course enrollment.
+                </p>
+              </div>
+
+              <div className="flex justify-end space-x-2 pt-4 border-t border-[#1B2530]">
+                <button
+                  onClick={() => setModuleModalOpen(false)}
+                  className="px-3 py-1.5 bg-[#1B2530] text-[#CBD5E1] text-xs font-mono rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveModule}
+                  className="px-4 py-1.5 bg-[#65F58A] text-[#071018] text-xs font-bold rounded hover:bg-[#52d674]"
+                >
+                  Save Module
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Lesson Modal */}
+      {lessonModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+          <div className="w-[600px] bg-[#0F1720] border border-[#1B2530] rounded-xl p-6 shadow-2xl">
+            <h3 className="text-base font-bold text-white mb-4 font-lora">
+              {editingLesson ? 'Edit Lesson Parameters' : 'Create New Lesson'}
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs font-mono text-[#8BA2B5] block mb-1">Lesson Title *</label>
+                <input
+                  type="text"
+                  value={lessonForm.title}
+                  onChange={(e) => setLessonForm({ ...lessonForm, title: e.target.value })}
+                  placeholder="e.g. Analyzing Memory Dumps with Volatility"
+                  className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#65F58A]"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-mono text-[#8BA2B5] block mb-1">Lesson Type</label>
+                  <select
+                    value={lessonForm.type}
+                    onChange={(e) => setLessonForm({ ...lessonForm, type: e.target.value })}
+                    className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2 text-xs text-white"
+                  >
+                    <option value="video">Video Lecture (HLS/MP4/YouTube)</option>
+                    <option value="reading">Technical Reading & Lab Brief</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-xs font-mono text-[#8BA2B5] block mb-1">Duration</label>
+                  <input
+                    type="text"
+                    value={lessonForm.duration}
+                    onChange={(e) => setLessonForm({ ...lessonForm, duration: e.target.value })}
+                    placeholder="e.g. 18 mins"
+                    className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2 text-xs text-white"
+                  />
+                </div>
+              </div>
+
+              {lessonForm.type === 'video' && (
+                <div>
+                  <label className="text-xs font-mono text-[#8BA2B5] block mb-1">Video Stream URL</label>
+                  <input
+                    type="text"
+                    value={lessonForm.video_url}
+                    onChange={(e) => setLessonForm({ ...lessonForm, video_url: e.target.value })}
+                    placeholder="https://commondatastorage.googleapis.com/... or https://youtube.com/..."
+                    className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2 text-xs text-white font-mono"
+                  />
+                </div>
+              )}
+
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="previewCheckbox"
+                  checked={lessonForm.is_preview}
+                  onChange={(e) => setLessonForm({ ...lessonForm, is_preview: e.target.checked })}
+                  className="rounded border-[#1B2530] text-[#65F58A] focus:ring-0"
+                />
+                <label htmlFor="previewCheckbox" className="text-xs text-[#CBD5E1] cursor-pointer">
+                  Public Preview Lesson (Accessible without full course enrollment)
+                </label>
+              </div>
+
+              <div>
+                <label className="text-xs font-mono text-[#8BA2B5] block mb-1">
+                  Lesson Notes & Markdown Content
+                </label>
+                <textarea
+                  rows={4}
+                  value={lessonForm.content}
+                  onChange={(e) => setLessonForm({ ...lessonForm, content: e.target.value })}
+                  placeholder="# Lesson Overview&#10;Include operational notes and terminal commands."
+                  className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2 text-xs text-white font-mono"
+                />
+              </div>
+
+              <div className="flex justify-end space-x-2 pt-4 border-t border-[#1B2530]">
+                <button
+                  onClick={() => setLessonModalOpen(false)}
+                  className="px-3 py-1.5 bg-[#1B2530] text-[#CBD5E1] text-xs font-mono rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveLesson}
+                  className="px-4 py-1.5 bg-[#65F58A] text-[#071018] text-xs font-bold rounded hover:bg-[#52d674]"
+                >
+                  Save Lesson
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
