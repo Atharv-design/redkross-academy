@@ -1,11 +1,49 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { BookOpen, Award, Clock, ArrowRight, CheckCircle2, Coins, Flame, Shield, Play, Lock, AlertCircle } from 'lucide-react';
+import { BookOpen, Award, Clock, ArrowRight, CheckCircle2, Coins, Flame, Shield, Play, Lock, AlertCircle, ShieldAlert } from 'lucide-react';
 import { useAuth } from '../../services/auth/authContext';
 import { mockEngine } from '../../services/db/mockEngine';
 
 export default function StudentDashboard() {
-  const { currentUser, tokenBalance } = useAuth();
+  const { currentUser, tokenBalance, isSuspended } = useAuth();
+
+  const [dashboardData, setDashboardData] = useState({
+    enrolments: [],
+    allCourses: [],
+    primaryEnrolment: null,
+    primaryCourse: null,
+    primaryProgress: { percentage: 0 },
+    avgProgress: 0
+  });
+
+  const loadData = () => {
+    if (!currentUser) return;
+    const enrs = mockEngine.getEnrolmentsForUser(currentUser.id);
+    const crss = mockEngine.getCourses();
+    const primaryEnr = enrs[0] || null;
+    const primaryCrs = primaryEnr ? mockEngine.getCourseById(primaryEnr.course_id) : null;
+    const primaryProg = primaryEnr ? mockEngine.getCourseProgress(primaryEnr.id) : { percentage: 0 };
+    const avgProg = enrs.length > 0
+      ? Math.round(enrs.reduce((sum, e) => sum + mockEngine.getCourseProgress(e.id).percentage, 0) / enrs.length)
+      : 0;
+
+    setDashboardData({
+      enrolments: enrs,
+      allCourses: crss,
+      primaryEnrolment: primaryEnr,
+      primaryCourse: primaryCrs,
+      primaryProgress: primaryProg,
+      avgProgress: avgProg
+    });
+  };
+
+  useEffect(() => {
+    loadData();
+    const unsubscribe = mockEngine.subscribe(() => {
+      loadData();
+    });
+    return () => unsubscribe();
+  }, [currentUser?.id]);
 
   if (!currentUser) {
     return (
@@ -16,18 +54,7 @@ export default function StudentDashboard() {
     );
   }
 
-  const enrolments = mockEngine.getEnrolmentsForUser(currentUser.id);
-  const allCourses = mockEngine.getCourses();
-
-  // Primary active enrolment (SOC Fundamentals if available)
-  const primaryEnrolment = enrolments[0];
-  const primaryCourse = primaryEnrolment ? mockEngine.getCourseById(primaryEnrolment.course_id) : null;
-  const primaryProgress = primaryEnrolment ? mockEngine.getCourseProgress(primaryEnrolment.id) : { percentage: 0 };
-
-  // Calculate cumulative average progress
-  const avgProgress = enrolments.length > 0
-    ? Math.round(enrolments.reduce((sum, e) => sum + mockEngine.getCourseProgress(e.id).percentage, 0) / enrolments.length)
-    : 0;
+  const { enrolments, allCourses, primaryEnrolment, primaryCourse, primaryProgress, avgProgress } = dashboardData;
 
   return (
     <div className="min-h-screen bg-[#071018] py-12">
@@ -71,6 +98,21 @@ export default function StudentDashboard() {
             </Link>
           </div>
         </div>
+
+        {/* Security Suspension Notice */}
+        {isSuspended && (
+          <div className="p-4 bg-red-950/40 border border-red-500/50 rounded-xl flex items-center space-x-3 text-red-200">
+            <ShieldAlert className="w-6 h-6 text-red-400 shrink-0" />
+            <div className="text-xs">
+              <span className="font-bold font-mono text-red-400 block mb-0.5">
+                OPERATIONAL ACCESS RESTRICTED (ACCOUNT SUSPENDED)
+              </span>
+              <span>
+                Your cadet profile has been temporarily suspended by an Academy Super Admin. Certification examination and token redemptions are locked. Contact security@redkross.org.in for review.
+              </span>
+            </div>
+          </div>
+        )}
 
         {/* Continue Learning Hero Card */}
         {primaryCourse && primaryEnrolment && (

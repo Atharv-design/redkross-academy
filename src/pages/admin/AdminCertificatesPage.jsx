@@ -42,6 +42,14 @@ export default function AdminCertificatesPage() {
 
   useEffect(() => {
     loadCredentials();
+
+    const unsubscribe = mockEngine.subscribe((event) => {
+      if (event.type === 'CREDENTIAL_MUTATED' || event.type === 'DB_MUTATED') {
+        loadCredentials();
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const handleRevokeCredential = () => {
@@ -58,7 +66,10 @@ export default function AdminCertificatesPage() {
             }
           : c
       );
-      mockEngine.saveDb(db);
+      mockEngine.saveDb(db, {
+        type: 'CREDENTIAL_MUTATED',
+        payload: { credentialId: selectedCred.id, status: 'REVOKED' }
+      });
       setCredentials(db.credentials);
 
       mockEngine.logAction({
@@ -95,7 +106,10 @@ export default function AdminCertificatesPage() {
       };
 
       db.credentials = [newCred, ...(db.credentials || [])];
-      mockEngine.saveDb(db);
+      mockEngine.saveDb(db, {
+        type: 'CREDENTIAL_MUTATED',
+        payload: { credentialId: newCredId, status: 'ISSUED' }
+      });
       setCredentials(db.credentials);
 
       mockEngine.logAction({

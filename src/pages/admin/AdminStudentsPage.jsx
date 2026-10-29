@@ -34,13 +34,24 @@ export default function AdminStudentsPage() {
 
   useEffect(() => {
     loadStudents();
+
+    const unsubscribe = mockEngine.subscribe((event) => {
+      if (event.type === 'USER_STATUS_MUTATED' || event.type === 'TOKEN_MUTATED' || event.type === 'DB_MUTATED') {
+        loadStudents();
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const persistStudents = (updatedUsers) => {
     try {
       const db = mockEngine.getDb();
       db.users = updatedUsers;
-      mockEngine.saveDb(db);
+      mockEngine.saveDb(db, {
+        type: 'USER_UPDATED',
+        payload: { users: updatedUsers }
+      });
       setStudents(updatedUsers.filter((u) => u.role === 'student' || !u.role));
       if (selectedStudent) {
         const refreshed = updatedUsers.find((u) => u.id === selectedStudent.id);
@@ -57,18 +68,8 @@ export default function AdminStudentsPage() {
     const nextStatus = isSuspended ? 'ACTIVE' : 'SUSPENDED';
 
     try {
-      const db = mockEngine.getDb();
-      const updated = db.users.map((u) =>
-        u.id === student.id ? { ...u, status: nextStatus, is_suspended: !isSuspended } : u
-      );
-      persistStudents(updated);
-
-      mockEngine.logAction({
-        action: 'STUDENT_ACCOUNT_STATUS_CHANGE',
-        category: 'STUDENT_ADMIN',
-        details: `Admin changed student ${student.email} status to ${nextStatus}`,
-        severity: nextStatus === 'SUSPENDED' ? 'WARN' : 'INFO'
-      });
+      mockEngine.setUserAccountStatus(student.id, nextStatus, `Admin toggled status to ${nextStatus}`);
+      loadStudents();
     } catch (e) {
       console.error(e);
     }
@@ -80,21 +81,8 @@ export default function AdminStudentsPage() {
     const delta = tokenAction === 'GRANT' ? parseInt(tokenAmount) : -parseInt(tokenAmount);
 
     try {
-      const db = mockEngine.getDb();
-      const currentBalance = selectedStudent.token_balance || 0;
-      const newBalance = Math.max(0, currentBalance + delta);
-
-      const updated = db.users.map((u) =>
-        u.id === selectedStudent.id ? { ...u, token_balance: newBalance } : u
-      );
-      persistStudents(updated);
-
-      mockEngine.logAction({
-        action: 'TOKEN_GRANT_MANUAL',
-        category: 'STUDENT_ADMIN',
-        details: `Admin ${tokenAction}ed ${Math.abs(delta)} tokens to ${selectedStudent.email}. Reason: ${tokenReason}. New Balance: ${newBalance}`,
-        severity: 'INFO'
-      });
+      mockEngine.grantTokens(selectedStudent.id, delta, tokenReason);
+      loadStudents();
 
       setTokenModalOpen(false);
       setTokenAmount(100);

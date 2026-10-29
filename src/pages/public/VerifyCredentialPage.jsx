@@ -17,6 +17,14 @@ export default function VerifyCredentialPage() {
     const targetId = id || 'RK-SOC-89421';
     setSearchId(targetId);
     lookupCredential(targetId);
+
+    const unsubscribe = mockEngine.subscribe((event) => {
+      if (event.type === 'CREDENTIAL_MUTATED' || event.type === 'DB_MUTATED') {
+        lookupCredential(targetId);
+      }
+    });
+
+    return () => unsubscribe();
   }, [id]);
 
   const lookupCredential = async (targetId) => {

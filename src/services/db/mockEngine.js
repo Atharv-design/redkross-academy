@@ -14,10 +14,82 @@ import {
 } from './seedData';
 
 const STORAGE_KEY = 'redkross_academy_db_v1';
+const BROADCAST_BUS_CHANNEL = 'redkross_academy_bus';
+
+let globalBroadcastChannel = null;
+if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+  try {
+    globalBroadcastChannel = new BroadcastChannel(BROADCAST_BUS_CHANNEL);
+  } catch (e) {
+    console.warn('BroadcastChannel not supported in this runtime environment:', e);
+  }
+}
 
 class MockEngine {
   constructor() {
+    this.listeners = new Set();
     this.initDatabase();
+    this.initBusListener();
+  }
+
+  initBusListener() {
+    if (globalBroadcastChannel) {
+      globalBroadcastChannel.onmessage = (event) => {
+        if (event.data && event.data.type) {
+          this.notifyListeners(event.data.type, event.data.payload);
+        }
+      };
+    }
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('storage', (event) => {
+        if (event.key === STORAGE_KEY) {
+          this.notifyListeners('STORAGE_SYNC', { newValue: event.newValue });
+        }
+      });
+    }
+  }
+
+  subscribe(callback) {
+    if (typeof callback === 'function') {
+      this.listeners.add(callback);
+      return () => this.listeners.delete(callback);
+    }
+    return () => {};
+  }
+
+  emit(type, payload = {}) {
+    this.notifyListeners(type, payload);
+
+    if (globalBroadcastChannel) {
+      try {
+        globalBroadcastChannel.postMessage({ type, payload, timestamp: Date.now() });
+      } catch (err) {
+        console.warn('Failed to broadcast event:', err);
+      }
+    }
+
+    if (typeof window !== 'undefined') {
+      try {
+        window.dispatchEvent(
+          new CustomEvent('redkross:db_updated', {
+            detail: { type, payload, timestamp: Date.now() }
+          })
+        );
+      } catch (err) {
+        console.warn('Failed to dispatch CustomEvent:', err);
+      }
+    }
+  }
+
+  notifyListeners(type, payload) {
+    this.listeners.forEach((fn) => {
+      try {
+        fn({ type, payload });
+      } catch (e) {
+        console.error('Error in mockEngine listener:', e);
+      }
+    });
   }
 
   initDatabase(forceReset = false) {
@@ -80,8 +152,97 @@ class MockEngine {
     }
   }
 
-  saveDb(db) {
+  saveDb(db, eventMetadata = { type: 'DB_MUTATED', payload: {} }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+    this.emit(eventMetadata.type || 'DB_MUTATED', eventMetadata.payload || {});
+  }
+
+  // ==========================================
+  // ATOMIC BUSINESS LOGIC METHODS
+  // ==========================================
+  grantTokens(userId, amount, reason = 'Administrative grant') {
+    const db = this.getDb();
+    const user = (db.users || []).find((u) => u.id === userId);
+    if (!user) return null;
+
+    const currentBalance = user.token_balance || 0;
+    const newBalance = Math.max(0, currentBalance + parseInt(amount));
+    user.token_balance = newBalance;
+
+    // Record in reward ledger
+    if (!db.reward_ledger) db.reward_ledger = [];
+    const ledgerEntry = {
+      id: `led_${Date.now()}`,
+      user_id: userId,
+      event_type: amount >= 0 ? 'BONUS_REWARD' : 'ADMIN_DEDUCTION',
+      amount: parseInt(amount),
+      reason,
+      created_at: new Date().toISOString()
+    };
+    db.reward_ledger.unshift(ledgerEntry);
+
+    // Record audit log
+    if (!db.audit_logs) db.audit_logs = [];
+    db.audit_logs.unshift({
+      id: `aud_${Date.now()}`,
+      action: 'TOKEN_ADJUSTMENT',
+      category: 'STUDENT_ADMIN',
+      user_email: user.email,
+      details: `Admin adjusted balance by ${amount > 0 ? '+' : ''}${amount} tokens. Reason: ${reason}. New balance: ${newBalance}`,
+      severity: 'INFO',
+      timestamp: new Date().toISOString()
+    });
+
+    this.saveDb(db, {
+      type: 'TOKEN_MUTATED',
+      payload: { userId, amount, newBalance, ledgerEntry }
+    });
+    return user;
+  }
+
+  setUserAccountStatus(userId, status, reason = 'Administrative intervention') {
+    const db = this.getDb();
+    const user = (db.users || []).find((u) => u.id === userId);
+    if (!user) return null;
+
+    user.status = status;
+    user.is_suspended = status === 'SUSPENDED';
+
+    if (!db.audit_logs) db.audit_logs = [];
+    db.audit_logs.unshift({
+      id: `aud_${Date.now()}`,
+      action: 'USER_ACCOUNT_STATUS_CHANGE',
+      category: 'STUDENT_ADMIN',
+      user_email: user.email,
+      details: `User account status set to ${status}. Reason: ${reason}`,
+      severity: status === 'SUSPENDED' ? 'WARN' : 'INFO',
+      timestamp: new Date().toISOString()
+    });
+
+    this.saveDb(db, {
+      type: 'USER_STATUS_MUTATED',
+      payload: { userId, status, is_suspended: user.is_suspended, reason }
+    });
+    return user;
+  }
+
+  updateCourseCurriculum(courseId, curriculumData) {
+    const db = this.getDb();
+    const idx = (db.courses || []).findIndex((c) => c.id === courseId);
+    if (idx !== -1) {
+      db.courses[idx] = { ...db.courses[idx], ...curriculumData };
+      this.saveDb(db, {
+        type: 'CURRICULUM_MUTATED',
+        payload: { courseId, course: db.courses[idx] }
+      });
+      return db.courses[idx];
+    }
+    return null;
+  }
+
+  isUserSuspended(userId) {
+    const user = this.getUserById(userId);
+    return user ? Boolean(user.is_suspended || user.status === 'SUSPENDED') : false;
   }
 
   resetToSeed() {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Coins, ArrowUpRight, ArrowDownLeft, Shield, Sparkles, Award, Lock, CheckCircle2, ChevronLeft, Gift } from 'lucide-react';
 import { useAuth } from '../../services/auth/authContext';
@@ -7,6 +7,25 @@ import { mockEngine } from '../../services/db/mockEngine';
 export default function TokenWalletPage() {
   const { currentUser, tokenBalance, refreshBalance } = useAuth();
   const [redemptionSuccess, setRedemptionSuccess] = useState(null);
+  const [transactions, setTransactions] = useState([]);
+
+  const loadTransactions = () => {
+    if (!currentUser) return;
+    const txs = mockEngine.getTokenTransactions(currentUser.id);
+    setTransactions(txs);
+  };
+
+  useEffect(() => {
+    loadTransactions();
+
+    const unsubscribe = mockEngine.subscribe((event) => {
+      if (event.type === 'TOKEN_MUTATED' || event.type === 'DB_MUTATED') {
+        loadTransactions();
+      }
+    });
+
+    return () => unsubscribe();
+  }, [currentUser?.id]);
 
   if (!currentUser) {
     return (
@@ -15,8 +34,6 @@ export default function TokenWalletPage() {
       </div>
     );
   }
-
-  const transactions = mockEngine.getTokenTransactions(currentUser.id);
 
   // Compute metrics
   const totalEarned = transactions

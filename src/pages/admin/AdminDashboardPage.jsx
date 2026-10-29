@@ -70,6 +70,12 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     loadDashboardData();
+
+    const unsubscribe = mockEngine.subscribe(() => {
+      loadDashboardData();
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const handleToggleCatalogEmbargo = async () => {

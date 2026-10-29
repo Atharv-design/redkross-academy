@@ -9,6 +9,7 @@ import {
 } from 'firebase/auth';
 import { auth, googleProvider } from './firebase';
 import { apiClient } from '../apiClient';
+import { mockEngine } from '../db/mockEngine';
 
 const AuthContext = createContext(null);
 
@@ -102,6 +103,35 @@ export function AuthProvider({ children }) {
 
     return () => unsubscribe();
   }, []);
+
+  // Live Event Bus subscription for instant cross-tab and cross-page sync
+  useEffect(() => {
+    const unsubscribe = mockEngine.subscribe((event) => {
+      if (!currentUser) return;
+
+      if (event.type === 'TOKEN_MUTATED') {
+        if (!event.payload?.userId || event.payload.userId === currentUser.id) {
+          if (typeof event.payload.newBalance === 'number') {
+            setTokenBalance(event.payload.newBalance);
+          }
+        }
+      }
+
+      if (event.type === 'USER_STATUS_MUTATED') {
+        if (!event.payload?.userId || event.payload.userId === currentUser.id) {
+          setCurrentUser((prev) =>
+            prev ? { ...prev, status: event.payload.status, is_suspended: event.payload.is_suspended } : prev
+          );
+        }
+      }
+
+      if (event.type === 'USER_UPDATED' || event.type === 'DB_MUTATED') {
+        refreshBalance();
+      }
+    });
+
+    return () => unsubscribe();
+  }, [currentUser]);
 
   // 1-Click Dev Cadet Creator / Switcher
   const devLoginAsCadet = (cadetData = {}) => {
@@ -251,10 +281,13 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const isSuspended = Boolean(currentUser?.is_suspended || currentUser?.status === 'SUSPENDED');
+
   return (
     <AuthContext.Provider
       value={{
         currentUser,
+        isSuspended,
         tokenBalance,
         refreshBalance,
         loginWithGoogle,

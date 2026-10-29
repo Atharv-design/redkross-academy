@@ -43,7 +43,7 @@ export default function AdminLayout() {
   });
 
   // Calculate live badge counts from mockEngine database
-  useEffect(() => {
+  const refreshLiveCounts = () => {
     try {
       const db = mockEngine.getDb();
       if (db) {
@@ -63,6 +63,14 @@ export default function AdminLayout() {
     } catch (e) {
       console.warn('Could not load dynamic badge counts:', e);
     }
+  };
+
+  useEffect(() => {
+    refreshLiveCounts();
+    const unsubscribe = mockEngine.subscribe(() => {
+      refreshLiveCounts();
+    });
+    return () => unsubscribe();
   }, [location.pathname]);
 
   // Global Cmd/Ctrl + K command palette listener

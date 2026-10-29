@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   BookOpen, Plus, Search, Filter, Edit3, Trash2, Eye, EyeOff,
   ChevronDown, ChevronRight, Video, FileText, CheckCircle2,
   AlertTriangle, GripVertical, Clock, Sparkles, Layers,
-  ExternalLink, ArrowUpRight, ShieldCheck, PlayCircle
+  ExternalLink, ArrowUpRight, ShieldCheck, PlayCircle,
+  UploadCloud, Film, HardDrive, Loader2
 } from 'lucide-react';
 import { mockEngine } from '../../services/db/mockEngine';
 import { COURSE_CARD_STYLES, getCardStyleByIndex } from '../../utils/courseCardStyles';
+import { saveVideoBlob, resolveVideoUrl } from '../../services/db/videoStorage';
 
 export default function AdminCoursesPage() {
   const [courses, setCourses] = useState([]);
@@ -49,6 +51,69 @@ export default function AdminCoursesPage() {
     content: ''
   });
 
+  // Local Video Upload State
+  const [videoSourceType, setVideoSourceType] = useState('upload'); // 'upload' | 'url'
+  const [uploadingVideo, setUploadingVideo] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [videoPreviewUrl, setVideoPreviewUrl] = useState('');
+  const [uploadedFileInfo, setUploadedFileInfo] = useState(null);
+  const fileInputRef = useRef(null);
+
+  // Handle local video file upload (MP4, WebM, MOV, MKV) to IndexedDB
+  const handleLocalVideoUpload = async (file) => {
+    if (!file) return;
+
+    setUploadingVideo(true);
+    setUploadProgress(15);
+
+    try {
+      // Calculate duration dynamically using an offscreen video element
+      const tempUrl = URL.createObjectURL(file);
+      const tempVideo = document.createElement('video');
+      tempVideo.preload = 'metadata';
+      tempVideo.src = tempUrl;
+
+      await new Promise((resolve) => {
+        tempVideo.onloadedmetadata = () => {
+          const totalSec = Math.floor(tempVideo.duration) || 0;
+          const mins = Math.floor(totalSec / 60);
+          const secs = totalSec % 60;
+          const formattedDuration = `${mins}:${secs < 10 ? '0' : ''}${secs} mins`;
+          setLessonForm((prev) => ({ ...prev, duration: formattedDuration }));
+          resolve();
+        };
+        tempVideo.onerror = () => resolve();
+      });
+
+      setUploadProgress(50);
+
+      // Save to IndexedDB persistent storage
+      const assetId = `video_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+      setUploadProgress(80);
+
+      const idbUrl = await saveVideoBlob(assetId, file);
+      setUploadProgress(100);
+
+      // Generate preview URL
+      const preview = await resolveVideoUrl(idbUrl);
+      setVideoPreviewUrl(preview);
+
+      const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
+      setUploadedFileInfo({
+        name: file.name,
+        size: `${sizeMb} MB`,
+        assetId
+      });
+
+      setLessonForm((prev) => ({ ...prev, video_url: idbUrl }));
+    } catch (err) {
+      console.error('Error handling local video file upload:', err);
+      alert('Failed to process video file. Please check browser IndexedDB storage.');
+    } finally {
+      setUploadingVideo(false);
+    }
+  };
+
   // Load courses from mockEngine
   const loadCourses = () => {
     try {
@@ -66,14 +131,25 @@ export default function AdminCoursesPage() {
 
   useEffect(() => {
     loadCourses();
+
+    // Subscribe to external db updates
+    const unsubscribe = mockEngine.subscribe((event) => {
+      if (event.type === 'CURRICULUM_MUTATED' || event.type === 'DB_MUTATED') {
+        loadCourses();
+      }
+    });
+    return () => unsubscribe();
   }, []);
 
-  // Save courses back to mockEngine
+  // Save courses back to mockEngine with reactive broadcast
   const persistCourses = (updatedCourses) => {
     try {
       const db = mockEngine.getDb();
       db.courses = updatedCourses;
-      mockEngine.saveDb(db);
+      mockEngine.saveDb(db, {
+        type: 'CURRICULUM_MUTATED',
+        payload: { courseId: selectedCourse?.id, courses: updatedCourses }
+      });
       setCourses(updatedCourses);
       if (selectedCourse) {
         const refreshed = updatedCourses.find((c) => c.id === selectedCourse.id);
@@ -210,10 +286,16 @@ export default function AdminCoursesPage() {
   };
 
   // Lesson actions
-  const handleOpenLessonModal = (moduleId, lesson = null) => {
+  const handleOpenLessonModal = async (moduleId, lesson = null) => {
     setActiveModuleId(moduleId);
+    setUploadingVideo(false);
+    setUploadProgress(0);
+    setUploadedFileInfo(null);
+
     if (lesson) {
       setEditingLesson(lesson);
+      const isIdb = lesson.video_url?.startsWith('idb://');
+      setVideoSourceType(isIdb ? 'upload' : 'url');
       setLessonForm({
         title: lesson.title,
         duration: lesson.duration || '15 mins',
@@ -222,8 +304,28 @@ export default function AdminCoursesPage() {
         is_preview: !!lesson.is_preview,
         content: lesson.content || ''
       });
+
+      if (lesson.video_url) {
+        try {
+          const resolved = await resolveVideoUrl(lesson.video_url);
+          setVideoPreviewUrl(resolved);
+          if (isIdb) {
+            setUploadedFileInfo({
+              name: `${lesson.title} (IndexedDB Persistent Video)`,
+              size: 'Local High-Speed Cache',
+              assetId: lesson.video_url.replace('idb://', '')
+            });
+          }
+        } catch (e) {
+          console.warn('Could not resolve initial video URL:', e);
+        }
+      } else {
+        setVideoPreviewUrl('');
+      }
     } else {
       setEditingLesson(null);
+      setVideoSourceType('upload');
+      setVideoPreviewUrl('');
       setLessonForm({
         title: '',
         duration: '15 mins',
@@ -879,15 +981,164 @@ export default function AdminCoursesPage() {
               </div>
 
               {lessonForm.type === 'video' && (
-                <div>
-                  <label className="text-xs font-mono text-[#8BA2B5] block mb-1">Video Stream URL</label>
-                  <input
-                    type="text"
-                    value={lessonForm.video_url}
-                    onChange={(e) => setLessonForm({ ...lessonForm, video_url: e.target.value })}
-                    placeholder="https://commondatastorage.googleapis.com/... or https://youtube.com/..."
-                    className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2 text-xs text-white font-mono"
-                  />
+                <div className="space-y-3 p-3 bg-[#071018] border border-[#1B2530] rounded-xl">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-mono text-[#8BA2B5] flex items-center space-x-1.5">
+                      <Film className="w-3.5 h-3.5 text-[#65F58A]" />
+                      <span>LESSON VIDEO SOURCE</span>
+                    </label>
+
+                    {/* Source Switcher */}
+                    <div className="flex items-center space-x-1 bg-[#0D1622] p-1 rounded-lg border border-[#1B2530]">
+                      <button
+                        type="button"
+                        onClick={() => setVideoSourceType('upload')}
+                        className={`px-2.5 py-1 text-[10px] font-mono rounded font-bold transition-all ${
+                          videoSourceType === 'upload'
+                            ? 'bg-[#1B2530] text-[#65F58A] shadow-sm'
+                            : 'text-[#8BA2B5] hover:text-white'
+                        }`}
+                      >
+                        📁 Local File Upload
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setVideoSourceType('url')}
+                        className={`px-2.5 py-1 text-[10px] font-mono rounded font-bold transition-all ${
+                          videoSourceType === 'url'
+                            ? 'bg-[#1B2530] text-[#65F58A] shadow-sm'
+                            : 'text-[#8BA2B5] hover:text-white'
+                        }`}
+                      >
+                        🌐 Direct URL
+                      </button>
+                    </div>
+                  </div>
+
+                  {videoSourceType === 'upload' ? (
+                    <div className="space-y-3">
+                      {/* Hidden File Input */}
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        accept="video/mp4,video/webm,video/quicktime,video/x-matroska,.mp4,.webm,.mov,.mkv"
+                        onChange={(e) => {
+                          if (e.target.files && e.target.files[0]) {
+                            handleLocalVideoUpload(e.target.files[0]);
+                          }
+                        }}
+                        className="hidden"
+                      />
+
+                      {/* Dropzone Container */}
+                      <div
+                        onClick={() => fileInputRef.current?.click()}
+                        onDragOver={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                        }}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                            handleLocalVideoUpload(e.dataTransfer.files[0]);
+                          }
+                        }}
+                        className="border-2 border-dashed border-[#1B2530] hover:border-[#65F58A]/50 bg-[#0B131C] hover:bg-[#0E1824] transition-all p-5 rounded-xl text-center cursor-pointer flex flex-col items-center justify-center space-y-2 group"
+                      >
+                        <div className="w-10 h-10 rounded-full bg-[#1B2530] group-hover:bg-[#65F58A]/10 flex items-center justify-center transition-colors">
+                          <UploadCloud className="w-5 h-5 text-[#8BA2B5] group-hover:text-[#65F58A]" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-white">
+                            Click to Browse or Drag & Drop Video
+                          </p>
+                          <p className="text-[10px] text-[#8BA2B5] font-mono mt-0.5">
+                            Supports MP4, WebM, MOV, MKV • Auto-persisted into IndexedDB
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Upload Progress Bar */}
+                      {uploadingVideo && (
+                        <div className="space-y-1.5 p-3 bg-[#0B131C] border border-[#1B2530] rounded-lg">
+                          <div className="flex justify-between text-xs font-mono">
+                            <span className="text-[#38BDF8] flex items-center space-x-1.5">
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              <span>Storing to High-Speed IndexedDB Cache...</span>
+                            </span>
+                            <span className="text-white font-bold">{uploadProgress}%</span>
+                          </div>
+                          <div className="w-full bg-[#1B2530] h-1.5 rounded-full overflow-hidden">
+                            <div
+                              className="bg-[#65F58A] h-full rounded-full transition-all duration-300"
+                              style={{ width: `${uploadProgress}%` }}
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {/* File Details Badge */}
+                      {uploadedFileInfo && !uploadingVideo && (
+                        <div className="flex items-center justify-between p-2.5 bg-[#0B131C] border border-[#65F58A]/30 rounded-lg text-xs font-mono">
+                          <div className="flex items-center space-x-2">
+                            <HardDrive className="w-4 h-4 text-[#65F58A]" />
+                            <div>
+                              <span className="text-white font-bold block">{uploadedFileInfo.name}</span>
+                              <span className="text-[10px] text-[#8BA2B5]">
+                                {uploadedFileInfo.size} • URI: {lessonForm.video_url}
+                              </span>
+                            </div>
+                          </div>
+                          <span className="text-[10px] px-2 py-0.5 rounded bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30">
+                            INDEXEDDB READY
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Interactive In-Modal Preview Player */}
+                      {videoPreviewUrl && (
+                        <div className="space-y-1 pt-1">
+                          <span className="text-[10px] font-mono text-[#8BA2B5] block">
+                            VIDEO PLAYBACK PREVIEW:
+                          </span>
+                          <div className="rounded-lg overflow-hidden border border-[#1B2530] bg-black max-h-48 flex items-center justify-center">
+                            <video
+                              src={videoPreviewUrl}
+                              controls
+                              className="w-full max-h-48 rounded"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div>
+                      <label className="text-[10px] font-mono text-[#8BA2B5] block mb-1">
+                        Direct Video Stream URL (HLS / MP4 / YouTube CDN)
+                      </label>
+                      <input
+                        type="text"
+                        value={lessonForm.video_url}
+                        onChange={async (e) => {
+                          const url = e.target.value;
+                          setLessonForm({ ...lessonForm, video_url: url });
+                          if (url) {
+                            try {
+                              const resolved = await resolveVideoUrl(url);
+                              setVideoPreviewUrl(resolved);
+                            } catch (err) {
+                              setVideoPreviewUrl(url);
+                            }
+                          } else {
+                            setVideoPreviewUrl('');
+                          }
+                        }}
+                        placeholder="https://commondatastorage.googleapis.com/... or https://..."
+                        className="w-full bg-[#0B131C] border border-[#1B2530] rounded-lg p-2 text-xs text-white font-mono focus:outline-none focus:border-[#65F58A]"
+                      />
+                    </div>
+                  )}
                 </div>
               )}
 

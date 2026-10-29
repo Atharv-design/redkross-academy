@@ -68,6 +68,15 @@ export default function LessonPlayerPage() {
       setProgressData(mockEngine.getCourseProgress(enrolmentId));
       setUnlockedFinal(mockEngine.checkFinalAssessmentUnlock(enrolmentId));
     }
+
+    const unsubscribe = mockEngine.subscribe((event) => {
+      if (event.type === 'CURRICULUM_MUTATED' || event.type === 'DB_MUTATED') {
+        setProgressData(mockEngine.getCourseProgress(enrolmentId));
+        setUnlockedFinal(mockEngine.checkFinalAssessmentUnlock(enrolmentId));
+      }
+    });
+
+    return () => unsubscribe();
   }, [enrolmentId]);
 
   if (!enrolment || !course) {
