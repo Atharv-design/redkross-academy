@@ -79,7 +79,7 @@ export default function AdminSettingsPage() {
   return (
     <form onSubmit={handleSaveSettings} className="space-y-6 max-w-4xl">
       {/* Top Banner */}
-      <div className="flex items-center justify-between bg-[#0F1720] border border-[#1B2530] p-4 rounded-xl">
+      <div className="flex items-center justify-between cyber-glass-panel p-4 rounded-xl">
         <div>
           <h3 className="text-sm font-bold text-white font-lora">
             Platform Infrastructure & Global Policies
@@ -106,7 +106,7 @@ export default function AdminSettingsPage() {
       )}
 
       {/* Catalog Embargo Master Card */}
-      <div className="p-5 bg-[#0F1720] border border-[#1B2530] rounded-xl flex items-center justify-between">
+      <div className="p-5 cyber-glass-panel rounded-xl flex items-center justify-between">
         <div>
           <div className="flex items-center space-x-2 mb-1">
             <span
@@ -149,7 +149,7 @@ export default function AdminSettingsPage() {
       </div>
 
       {/* Cloud Storage & Media Delivery */}
-      <div className="p-5 bg-[#0F1720] border border-[#1B2530] rounded-xl space-y-4">
+      <div className="p-5 cyber-glass-panel rounded-xl space-y-4">
         <div className="flex items-center space-x-2 text-white font-lora font-bold text-sm">
           <Database className="w-4 h-4 text-[#38BDF8]" />
           <span>Cloud Storage & Video Delivery Network</span>
@@ -164,7 +164,7 @@ export default function AdminSettingsPage() {
               type="text"
               value={settings.storage_provider}
               onChange={(e) => setSettings({ ...settings, storage_provider: e.target.value })}
-              className="w-full bg-[#071018] border border-[#1B2530] rounded p-2 text-xs text-white"
+              className="w-full cyber-glass-card rounded p-2 text-xs text-white"
             />
           </div>
 
@@ -176,7 +176,7 @@ export default function AdminSettingsPage() {
               type="text"
               value={settings.storage_bucket}
               onChange={(e) => setSettings({ ...settings, storage_bucket: e.target.value })}
-              className="w-full bg-[#071018] border border-[#1B2530] rounded p-2 text-xs text-white font-mono"
+              className="w-full cyber-glass-card rounded p-2 text-xs text-white font-mono"
             />
           </div>
         </div>
@@ -189,13 +189,13 @@ export default function AdminSettingsPage() {
             type="text"
             value={settings.storage_cdn_url}
             onChange={(e) => setSettings({ ...settings, storage_cdn_url: e.target.value })}
-            className="w-full bg-[#071018] border border-[#1B2530] rounded p-2 text-xs text-white font-mono"
+            className="w-full cyber-glass-card rounded p-2 text-xs text-white font-mono"
           />
         </div>
       </div>
 
       {/* Webhook & Notification Triggers */}
-      <div className="p-5 bg-[#0F1720] border border-[#1B2530] rounded-xl space-y-4">
+      <div className="p-5 cyber-glass-panel rounded-xl space-y-4">
         <div className="flex items-center space-x-2 text-white font-lora font-bold text-sm">
           <Bell className="w-4 h-4 text-[#A855F7]" />
           <span>Incident & Proctoring Alert Webhooks</span>
@@ -209,7 +209,7 @@ export default function AdminSettingsPage() {
             type="text"
             value={settings.slack_webhook_url}
             onChange={(e) => setSettings({ ...settings, slack_webhook_url: e.target.value })}
-            className="w-full bg-[#071018] border border-[#1B2530] rounded p-2 text-xs text-white font-mono"
+            className="w-full cyber-glass-card rounded p-2 text-xs text-white font-mono"
           />
           <span className="text-[10px] text-[#8BA2B5] mt-1 block">
             Automated alerts are dispatched when 2+ tab switches occur during final certification exams.
@@ -219,3 +219,4 @@ export default function AdminSettingsPage() {
     </form>
   );
 }
+

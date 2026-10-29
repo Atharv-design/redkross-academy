@@ -225,7 +225,7 @@ export default function StudentDashboard() {
                     {/* Passed Quizzes count */}
                     <div className="text-[11px] font-mono text-slate-400 flex items-center space-x-1.5">
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>{enr.passed_quizzes.length} Chapter Evaluations Passed</span>
+                      <span>{(enr.passed_quizzes || []).length} Chapter Evaluations Passed</span>
                     </div>
                   </div>
 

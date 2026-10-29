@@ -243,7 +243,7 @@ export default function AdminQuizzesPage() {
   return (
     <div className="space-y-6">
       {/* Top Banner & Quiz Switcher */}
-      <div className="flex items-center justify-between bg-[#0F1720] border border-[#1B2530] p-4 rounded-xl">
+      <div className="flex items-center justify-between cyber-glass-panel p-4 rounded-xl">
         <div className="flex items-center space-x-3">
           <label className="text-xs font-mono text-[#8BA2B5]">ACTIVE QUIZ CONTEXT:</label>
           <select
@@ -252,7 +252,7 @@ export default function AdminQuizzesPage() {
               const q = quizzes.find((x) => x.id === e.target.value);
               if (q) setSelectedQuiz(q);
             }}
-            className="bg-[#071018] border border-[#1B2530] text-xs font-bold text-white px-3 py-1.5 rounded-lg focus:outline-none focus:border-[#65F58A]"
+            className="cyber-glass-card text-xs font-bold text-white px-3 py-1.5 rounded-lg focus:outline-none focus:border-[#65F58A]"
           >
             {quizzes.map((q) => (
               <option key={q.id} value={q.id}>
@@ -263,7 +263,7 @@ export default function AdminQuizzesPage() {
         </div>
 
         <div className="flex items-center space-x-3">
-          <div className="flex items-center space-x-1 bg-[#071018] border border-[#1B2530] p-1 rounded-lg">
+          <div className="flex items-center space-x-1 cyber-glass-card p-1 rounded-lg">
             <button
               onClick={() => setViewMode('questions')}
               className={`px-3 py-1 text-xs font-mono rounded transition-colors ${
@@ -301,7 +301,7 @@ export default function AdminQuizzesPage() {
         <div className="grid grid-cols-12 gap-6">
           {/* Left Column: Question Rules & Proctoring Parameters */}
           <div className="col-span-4 space-y-4">
-            <div className="bg-[#0F1720] border border-[#1B2530] rounded-xl p-5 space-y-4">
+            <div className="cyber-glass-panel rounded-xl p-5 space-y-4">
               <h3 className="text-sm font-bold text-white font-lora">Integrity & Passing Policy</h3>
 
               <div className="space-y-3 text-xs font-mono">
@@ -323,7 +323,7 @@ export default function AdminQuizzesPage() {
                 </div>
               </div>
 
-              <div className="p-3 bg-[#071018] border border-[#1B2530] rounded-lg">
+              <div className="p-3 cyber-glass-card rounded-lg">
                 <div className="flex items-center space-x-2 text-[#F59E0B] text-xs font-bold mb-1">
                   <ShieldAlert className="w-4 h-4" />
                   <span>Proctoring Lockdown Active</span>
@@ -340,7 +340,7 @@ export default function AdminQuizzesPage() {
             {selectedQuiz?.questions?.map((q, idx) => (
               <div
                 key={q.id || idx}
-                className="bg-[#0F1720] border border-[#1B2530] hover:border-[#263440] p-4 rounded-xl transition-all"
+                className="cyber-glass-panel hover:border-[#263440] p-4 rounded-xl transition-all"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-start space-x-3">
@@ -411,7 +411,7 @@ export default function AdminQuizzesPage() {
         </div>
       ) : (
         /* Attempts Hub with Proctoring Review and Override */
-        <div className="bg-[#0F1720] border border-[#1B2530] rounded-xl overflow-hidden">
+        <div className="cyber-glass-panel rounded-xl overflow-hidden">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-[#1B2530] bg-[#0A121A] text-[11px] font-mono text-[#8BA2B5]">
@@ -487,7 +487,7 @@ export default function AdminQuizzesPage() {
       {/* Question Editor Modal */}
       {questionModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-          <div className="w-[650px] bg-[#0F1720] border border-[#1B2530] rounded-xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="w-[650px] cyber-glass-panel rounded-xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             <h3 className="text-base font-bold text-white mb-4 font-lora">
               {editingQuestion ? 'Edit Question Formulation' : 'Create Question'}
             </h3>
@@ -502,7 +502,7 @@ export default function AdminQuizzesPage() {
                   value={questionForm.prompt}
                   onChange={(e) => setQuestionForm({ ...questionForm, prompt: e.target.value })}
                   placeholder="Formulate the assessment question..."
-                  className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#65F58A]"
+                  className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#65F58A]"
                 />
               </div>
 
@@ -514,7 +514,7 @@ export default function AdminQuizzesPage() {
                   <select
                     value={questionForm.type}
                     onChange={(e) => setQuestionForm({ ...questionForm, type: e.target.value })}
-                    className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2.5 text-xs text-white"
+                    className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white"
                   >
                     <option value="single_choice">Single Choice (Radio)</option>
                     <option value="multiple_choice">Multiple Choice (Checkboxes)</option>
@@ -530,7 +530,7 @@ export default function AdminQuizzesPage() {
                     type="number"
                     value={questionForm.points}
                     onChange={(e) => setQuestionForm({ ...questionForm, points: parseInt(e.target.value) || 10 })}
-                    className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2.5 text-xs text-white"
+                    className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white"
                   />
                 </div>
               </div>
@@ -548,7 +548,7 @@ export default function AdminQuizzesPage() {
                           nextOpts[i] = e.target.value;
                           setQuestionForm({ ...questionForm, options: nextOpts });
                         }}
-                        className="flex-1 bg-[#071018] border border-[#1B2530] rounded p-2 text-xs text-white"
+                        className="flex-1 cyber-glass-card rounded p-2 text-xs text-white"
                       />
                     </div>
                   ))}
@@ -560,7 +560,7 @@ export default function AdminQuizzesPage() {
                       type="text"
                       value={questionForm.correct_answer}
                       onChange={(e) => setQuestionForm({ ...questionForm, correct_answer: e.target.value })}
-                      className="w-full bg-[#071018] border border-[#1B2530] rounded p-2 text-xs text-white font-mono"
+                      className="w-full cyber-glass-card rounded p-2 text-xs text-white font-mono"
                     />
                   </div>
                 </div>
@@ -575,7 +575,7 @@ export default function AdminQuizzesPage() {
                   value={questionForm.explanation}
                   onChange={(e) => setQuestionForm({ ...questionForm, explanation: e.target.value })}
                   placeholder="Provide reference RFC, CVE or architecture note."
-                  className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2.5 text-xs text-white font-mono"
+                  className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white font-mono"
                 />
               </div>
 
@@ -601,7 +601,7 @@ export default function AdminQuizzesPage() {
       {/* Manual Score Override Modal */}
       {overrideModalOpen && selectedAttempt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-          <div className="w-[480px] bg-[#0F1720] border border-[#1B2530] rounded-xl p-6 shadow-2xl">
+          <div className="w-[480px] cyber-glass-panel rounded-xl p-6 shadow-2xl">
             <h3 className="text-base font-bold text-white mb-2 font-lora">Manual Score Override</h3>
             <p className="text-xs text-[#8BA2B5] mb-4">
               Overriding student score for attempt <strong className="text-white">{selectedAttempt.id}</strong> ({selectedAttempt.student_name}).
@@ -618,7 +618,7 @@ export default function AdminQuizzesPage() {
                   max="100"
                   value={overrideScore}
                   onChange={(e) => setOverrideScore(e.target.value)}
-                  className="w-full bg-[#071018] border border-[#1B2530] rounded p-2 text-xs text-white font-mono"
+                  className="w-full cyber-glass-card rounded p-2 text-xs text-white font-mono"
                 />
               </div>
 
@@ -632,7 +632,7 @@ export default function AdminQuizzesPage() {
                   value={overrideReason}
                   onChange={(e) => setOverrideReason(e.target.value)}
                   placeholder="e.g. Student provided valid manual packet dissection in offline appeals."
-                  className="w-full bg-[#071018] border border-[#1B2530] rounded p-2 text-xs text-white"
+                  className="w-full cyber-glass-card rounded p-2 text-xs text-white"
                 />
               </div>
 
@@ -657,3 +657,4 @@ export default function AdminQuizzesPage() {
     </div>
   );
 }
+

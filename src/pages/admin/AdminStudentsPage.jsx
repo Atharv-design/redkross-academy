@@ -153,7 +153,7 @@ export default function AdminStudentsPage() {
   return (
     <div className="space-y-6">
       {/* Top Filter and Actions */}
-      <div className="flex items-center justify-between bg-[#0F1720] border border-[#1B2530] p-4 rounded-xl">
+      <div className="flex items-center justify-between cyber-glass-panel p-4 rounded-xl">
         <div className="flex items-center space-x-3">
           <div className="relative w-80">
             <Search className="w-4 h-4 text-[#8BA2B5] absolute left-3 top-1/2 -translate-y-1/2" />
@@ -162,11 +162,11 @@ export default function AdminStudentsPage() {
               placeholder="Search students by name, email, or ID..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#071018] border border-[#1B2530] text-xs text-[#F1F5F9] pl-9 pr-3 py-2 rounded-lg focus:outline-none focus:border-[#65F58A]"
+              className="w-full cyber-glass-card text-xs text-[#F1F5F9] pl-9 pr-3 py-2 rounded-lg focus:outline-none focus:border-[#65F58A]"
             />
           </div>
 
-          <div className="flex items-center space-x-1 bg-[#071018] border border-[#1B2530] p-1 rounded-lg">
+          <div className="flex items-center space-x-1 cyber-glass-card p-1 rounded-lg">
             {['ALL', 'ACTIVE', 'SUSPENDED'].map((st) => (
               <button
                 key={st}
@@ -195,7 +195,7 @@ export default function AdminStudentsPage() {
       {/* Main Dual-Pane Roster & Inspector */}
       <div className="grid grid-cols-12 gap-6 min-h-[650px]">
         {/* Left Column: Student Directory Table */}
-        <div className="col-span-8 bg-[#0F1720] border border-[#1B2530] rounded-xl overflow-hidden flex flex-col">
+        <div className="col-span-8 cyber-glass-panel rounded-xl overflow-hidden flex flex-col">
           <div className="p-3.5 bg-[#0A121A] border-b border-[#1B2530] flex items-center justify-between">
             <span className="text-xs font-mono text-[#8BA2B5]">
               STUDENT DIRECTORY ROSTER ({filteredStudents.length})
@@ -236,7 +236,7 @@ export default function AdminStudentsPage() {
 
                       <td className="p-3">
                         <div className="flex items-center space-x-2.5">
-                          <div className="w-8 h-8 rounded-full bg-[#1B2530] border border-[#263440] flex items-center justify-center font-bold text-white text-xs">
+                          <div className="w-8 h-8 rounded-full cyber-glass-card flex items-center justify-center font-bold text-white text-xs">
                             {st.name?.charAt(0) || st.full_name?.charAt(0) || 'U'}
                           </div>
                           <div>
@@ -292,7 +292,7 @@ export default function AdminStudentsPage() {
         </div>
 
         {/* Right Column: Detailed Student Inspector Drawer */}
-        <div className="col-span-4 bg-[#0F1720] border border-[#1B2530] rounded-xl flex flex-col overflow-hidden">
+        <div className="col-span-4 cyber-glass-panel rounded-xl flex flex-col overflow-hidden">
           {selectedStudent ? (
             <>
               <div className="p-5 border-b border-[#1B2530] bg-[#071018]">
@@ -329,7 +329,7 @@ export default function AdminStudentsPage() {
 
               <div className="p-5 flex-1 overflow-y-auto space-y-5 text-xs font-mono">
                 {/* Token Balance Card */}
-                <div className="p-4 bg-[#071018] border border-[#1B2530] rounded-xl flex items-center justify-between">
+                <div className="p-4 cyber-glass-card rounded-xl flex items-center justify-between">
                   <div>
                     <span className="text-[10px] text-[#8BA2B5] block">ACADEMIC UTILITY TOKENS</span>
                     <span className="text-xl font-bold text-[#38BDF8] mt-0.5 block">
@@ -349,7 +349,7 @@ export default function AdminStudentsPage() {
                   <span className="text-xs font-bold text-[#8BA2B5] block">
                     ACTIVE CURRICULUM ENROLLMENT
                   </span>
-                  <div className="p-3 bg-[#071018] border border-[#1B2530] rounded-lg space-y-2">
+                  <div className="p-3 cyber-glass-card rounded-lg space-y-2">
                     <div className="flex justify-between">
                       <span className="text-white font-sans font-medium">SOC Analyst L1 & L2</span>
                       <span className="text-[#65F58A]">75% Done</span>
@@ -359,7 +359,7 @@ export default function AdminStudentsPage() {
                     </div>
                   </div>
 
-                  <div className="p-3 bg-[#071018] border border-[#1B2530] rounded-lg space-y-2">
+                  <div className="p-3 cyber-glass-card rounded-lg space-y-2">
                     <div className="flex justify-between">
                       <span className="text-white font-sans font-medium">Offensive Exploitation AD</span>
                       <span className="text-[#38BDF8]">40% Done</span>
@@ -417,7 +417,7 @@ export default function AdminStudentsPage() {
       {/* Token Adjustment Modal */}
       {tokenModalOpen && selectedStudent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-          <div className="w-[450px] bg-[#0F1720] border border-[#1B2530] rounded-xl p-6 shadow-2xl">
+          <div className="w-[450px] cyber-glass-panel rounded-xl p-6 shadow-2xl">
             <h3 className="text-base font-bold text-white mb-2 font-lora">
               Adjust Token Balance
             </h3>
@@ -460,7 +460,7 @@ export default function AdminStudentsPage() {
                   min="1"
                   value={tokenAmount}
                   onChange={(e) => setTokenAmount(e.target.value)}
-                  className="w-full bg-[#071018] border border-[#1B2530] rounded p-2 text-xs text-white font-mono"
+                  className="w-full cyber-glass-card rounded p-2 text-xs text-white font-mono"
                 />
               </div>
 
@@ -473,7 +473,7 @@ export default function AdminStudentsPage() {
                   value={tokenReason}
                   onChange={(e) => setTokenReason(e.target.value)}
                   placeholder="e.g. Merit bounty for lab excellence"
-                  className="w-full bg-[#071018] border border-[#1B2530] rounded p-2 text-xs text-white"
+                  className="w-full cyber-glass-card rounded p-2 text-xs text-white"
                 />
               </div>
 
@@ -498,3 +498,4 @@ export default function AdminStudentsPage() {
     </div>
   );
 }
+

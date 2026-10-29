@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, useLocation, useNavigate, Link } from 'react-router-dom';
 import {
   LayoutDashboard,
   BookOpen,
@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../services/auth/authContext';
 import { mockEngine } from '../../services/db/mockEngine';
+import { TreeNav } from '../../components/ui/tree-nav';
 
 export default function AdminLayout() {
   const location = useLocation();
@@ -105,248 +106,230 @@ export default function AdminLayout() {
     return 'Executive Overview Dashboard';
   };
 
-  const navSections = [
+  // Canonical admin tree items with live counts
+  const treeNavItems = [
     {
-      title: 'OVERVIEW',
-      items: [
-        {
-          name: 'Dashboard',
-          path: '/admin/dashboard',
-          alias: '/admin',
-          icon: LayoutDashboard,
-          badge: <span className="flex h-2 w-2 rounded-full bg-[#65F58A] animate-pulse" title="Live Telemetry" />
-        }
-      ]
+      label: 'Overview',
+      href: '/admin/dashboard',
+      icon: LayoutDashboard,
+      badge: 'Live'
     },
     {
-      title: 'ACADEMIC',
-      items: [
-        {
-          name: 'Courses',
-          path: '/admin/courses',
-          icon: BookOpen,
-          badge: <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-[#1B2530] text-[#65F58A] border border-[#263440]">{counts.activeCourses}</span>
-        },
-        {
-          name: 'Quizzes & Tests',
-          path: '/admin/quizzes',
-          icon: HelpCircle,
-          badge: <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-amber-400/10 text-amber-400 border border-amber-400/30">{counts.pendingQuizzes} rev</span>
-        },
-        {
-          name: 'Assignments',
-          path: '/admin/assignments',
-          icon: FileCheck2,
-          badge: <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-purple-400/10 text-purple-300 border border-purple-400/30">{counts.pendingGrading} queue</span>
-        },
-        {
-          name: 'Certificates',
-          path: '/admin/certificates',
-          icon: Award,
-          badge: <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-[#35E6B5]/10 text-[#35E6B5] border border-[#35E6B5]/30">{counts.issuedCerts} issued</span>
-        }
-      ]
+      label: 'Courses',
+      href: '/admin/courses',
+      icon: BookOpen,
+      badge: counts.activeCourses ? String(counts.activeCourses) : undefined
     },
     {
-      title: 'USERS',
-      items: [
-        {
-          name: 'Students',
-          path: '/admin/students',
-          icon: Users,
-          badge: <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-[#1B2530] text-white border border-[#263440]">{counts.activeStudents} active</span>
-        },
-        {
-          name: 'Enrollments',
-          path: '/admin/enrollments',
-          icon: GraduationCap,
-          badge: <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-amber-400/10 text-amber-400 border border-amber-400/30">{counts.expiringEnrollments} exp</span>
-        }
-      ]
+      label: 'Quizzes & Tests',
+      href: '/admin/quizzes',
+      icon: HelpCircle,
+      badge: '3 rev'
     },
     {
-      title: 'INSIGHTS',
-      items: [
-        {
-          name: 'Analytics',
-          path: '/admin/analytics',
-          icon: LineChart,
-          badge: <span className="px-1.5 py-0.5 rounded text-[10px] font-mono text-[#65F58A] bg-[#65F58A]/10">↑ 14%</span>
-        },
-        {
-          name: 'Audit Logs',
-          path: '/admin/audit-logs',
-          icon: ShieldAlert,
-          badge: <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-rose-500/20 text-rose-400 border border-rose-500/30">{counts.securityAlerts} alert</span>
-        }
-      ]
+      label: 'Assignments',
+      href: '/admin/assignments',
+      icon: FileCheck2,
+      badge: 'queue'
     },
     {
-      title: 'SYSTEM',
-      items: [
-        {
-          name: 'Settings',
-          path: '/admin/settings',
-          icon: Settings,
-          badge: <span className="h-1.5 w-1.5 rounded-full bg-[#35E6B5]" title="Config Ready" />
-        },
-        {
-          name: 'My Account',
-          path: '/admin/profile',
-          icon: UserCheck,
-          badge: <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-[#65F58A]/10 text-[#65F58A]">2FA ON</span>
-        }
-      ]
+      label: 'Certificates',
+      href: '/admin/certificates',
+      icon: Award,
+      badge: counts.issuedCerts ? String(counts.issuedCerts) : 'Master'
+    },
+    {
+      label: 'Students CRM',
+      href: '/admin/students',
+      icon: Users,
+      badge: counts.activeStudents ? String(counts.activeStudents) : undefined
+    },
+    {
+      label: 'Enrollments',
+      href: '/admin/enrollments',
+      icon: GraduationCap,
+      badge: 'cohort'
+    },
+    {
+      label: 'Analytics',
+      href: '/admin/analytics',
+      icon: LineChart,
+      badge: 'realtime'
+    },
+    {
+      label: 'Security Audits',
+      href: '/admin/audit-logs',
+      icon: ShieldAlert,
+      badge: counts.securityAlerts ? `${counts.securityAlerts} alert` : undefined
+    },
+    {
+      label: 'Platform Settings',
+      href: '/admin/settings',
+      icon: Settings
+    },
+    {
+      label: 'My Account',
+      href: '/admin/profile',
+      icon: UserCheck
     }
   ];
 
+  // Resolve active path for TreeNav
+  const currentActivePath =
+    location.pathname === '/admin' ? '/admin/dashboard' : location.pathname;
+
   return (
-    <div className="min-w-[1280px] w-full min-h-screen bg-[#071018] text-[#F1F5F9] font-sans flex antialiased selection:bg-[#65F58A]/30 selection:text-white overflow-x-auto">
-      {/* 1. FIXED LEFT SIDEBAR (Width: 260px) */}
-      <aside className="w-[260px] shrink-0 min-h-screen bg-[#0B1118] border-r border-[#263440] flex flex-col justify-between sticky top-0 h-screen overflow-y-auto">
+    <div className="flex h-screen bg-[#050C14] text-[#F1F5F9] font-sans overflow-hidden select-none relative">
+      {/* Dynamic RedKross Cyber Ambient Gradient Mesh (Color Blending Through Transparent Glass) */}
+      <div
+        className="absolute -top-40 -left-40 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-[#65F58A]/22 to-[#35E6B5]/16 blur-[120px] pointer-events-none z-0 animate-pulse"
+        style={{ animationDuration: '8s' }}
+      />
+      <div
+        className="absolute top-1/4 -right-20 w-[650px] h-[650px] rounded-full bg-gradient-to-bl from-[#38BDF8]/22 to-[#35E6B5]/16 blur-[140px] pointer-events-none z-0 animate-pulse"
+        style={{ animationDuration: '10s' }}
+      />
+      <div className="absolute -bottom-32 left-1/4 w-[800px] h-[600px] rounded-full bg-gradient-to-tr from-[#65F58A]/16 to-[#38BDF8]/16 blur-[150px] pointer-events-none z-0" />
+      <div className="absolute bottom-10 -right-20 w-[500px] h-[500px] rounded-full bg-gradient-to-tl from-[#E06A26]/14 to-[#65F58A]/12 blur-[140px] pointer-events-none z-0" />
+
+      {/* Cyber Grid Texture */}
+      <div className="absolute inset-0 bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none z-0 opacity-80" />
+
+      {/* LEFT ULTRA-GLASS SIDEBAR WITH CYBER TREE-NAV */}
+      <aside className="w-72 cyber-glass-panel border-r border-white/[0.08] flex flex-col justify-between flex-shrink-0 z-30 relative">
+        {/* Top Brand Header */}
         <div>
-          {/* Logo Brand Header */}
-          <div className="h-16 px-5 border-b border-[#263440] flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-[#101923] border border-[#65F58A]/40 flex items-center justify-center shadow-[0_0_12px_rgba(101,245,138,0.25)]">
-                <Shield className="w-4 h-4 text-[#65F58A]" />
+          <div className="h-20 flex items-center gap-3 px-6 border-b border-white/[0.08]">
+            <div className="relative">
+              <div className="w-10 h-10 rounded-xl cyber-glass-card flex items-center justify-center border border-[#65F58A]/40 shadow-[0_0_15px_rgba(101,245,138,0.25)]">
+                <Shield className="w-5 h-5 text-[#65F58A]" />
               </div>
-              <div>
-                <span className="font-mono text-xs font-black tracking-wider text-white">
-                  REDKROSS <span className="text-[#65F58A]">LMS</span>
-                </span>
-                <p className="text-[10px] font-mono text-[#94A3B8]">Central Admin Console</p>
-              </div>
+              <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#65F58A] ring-2 ring-[#060B11] animate-pulse" />
             </div>
-            <span className="flex h-2 w-2 rounded-full bg-[#65F58A]" title="Server Online" />
+            <div>
+              <span className="font-bold tracking-wider text-sm font-sans block text-white flex items-center gap-1.5">
+                <span>REDKROSS</span>
+                <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/30 font-bold">
+                  ADMIN
+                </span>
+              </span>
+              <span className="text-[10px] font-mono text-[#94A3B8] tracking-widest block uppercase">
+                CYBER WORKSTATION
+              </span>
+            </div>
           </div>
 
-          {/* Sidebar Sections */}
-          <nav className="p-3 space-y-6">
-            {navSections.map((sec) => (
-              <div key={sec.title} className="space-y-1">
-                <p className="px-3 text-[11px] font-mono font-semibold uppercase tracking-[0.05em] text-[#94A3B8]/70">
-                  {sec.title}
-                </p>
-                <div className="space-y-0.5 pt-1">
-                  {sec.items.map((item) => {
-                    const Icon = item.icon;
-                    const isActive =
-                      location.pathname === item.path ||
-                      (item.alias && location.pathname === item.alias);
+          {/* TreeNav Section */}
+          <div className="p-4 overflow-y-auto max-h-[calc(100vh-170px)] scrollbar-thin">
+            <div className="mb-2 px-3 text-[10px] font-mono uppercase tracking-widest text-[#94A3B8]/80 font-bold flex items-center justify-between">
+              <span>WORKSTATION DIRECTORY</span>
+              <span className="text-[9px] text-[#65F58A] font-semibold">11 SECTIONS</span>
+            </div>
 
-                    return (
-                      <NavLink
-                        key={item.path}
-                        to={item.path}
-                        className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-mono transition-all group ${
-                          isActive
-                            ? 'bg-[#14202C] text-[#65F58A] font-semibold border-r-2 border-[#65F58A] shadow-[inset_0_0_12px_rgba(101,245,138,0.06)]'
-                            : 'text-[#94A3B8] hover:text-white hover:bg-[#101923]'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2.5 truncate">
-                          <Icon
-                            className={`w-4 h-4 shrink-0 transition-colors ${
-                              isActive ? 'text-[#65F58A]' : 'text-[#94A3B8] group-hover:text-white'
-                            }`}
-                          />
-                          <span className="truncate">{item.name}</span>
-                        </div>
-                        {item.badge && <div className="shrink-0">{item.badge}</div>}
-                      </NavLink>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </nav>
+            {/* High-Craft Cyber Glass TreeNav */}
+            <TreeNav
+              items={treeNavItems}
+              activeHref={currentActivePath}
+              linkComponent={Link}
+              className="py-1"
+            />
+          </div>
         </div>
 
-        {/* Sidebar Footer Link to Public Academy Portal */}
-        <div className="p-3 border-t border-[#263440] bg-[#071018]/50">
-          <a
-            href="/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-between p-2.5 rounded-xl text-xs font-mono text-[#94A3B8] hover:text-[#65F58A] hover:bg-[#101923] border border-transparent hover:border-[#263440] transition-all"
-          >
-            <span className="flex items-center gap-2">
-              <ExternalLink className="w-3.5 h-3.5" />
-              <span>Public Student Portal</span>
+        {/* Bottom User Clearance Strip & Back to Academy */}
+        <div className="p-4 border-t border-white/[0.08] cyber-glass-nav">
+          <div className="cyber-glass-card rounded-xl p-3 flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2 text-xs font-mono">
+              <span className="w-2 h-2 rounded-full bg-[#65F58A] animate-ping" />
+              <span className="text-[#94A3B8] text-[11px]">Security Clearance:</span>
+            </div>
+            <span className="text-[10px] font-mono font-bold text-[#65F58A] px-2 py-0.5 rounded-md bg-[#65F58A]/10 border border-[#65F58A]/30">
+              LEVEL 5 SEC
             </span>
-            <span className="text-[10px] text-[#35E6B5]">Live ↗</span>
-          </a>
+          </div>
+
+          <Link
+            to="/"
+            className="flex items-center justify-center gap-2 w-full py-2 px-3 rounded-xl cyber-glass-card text-xs font-mono text-slate-300 hover:text-[#65F58A] transition-all"
+          >
+            <ExternalLink className="w-3.5 h-3.5" />
+            <span>Public Academy Portal</span>
+          </Link>
         </div>
       </aside>
 
-      {/* 2. MAIN DESKTOP WORKSPACE */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* TOP HEADER (Fixed Height: 64px) */}
-        <header className="h-16 px-6 border-b border-[#263440] bg-[#0A1118]/90 backdrop-blur-md sticky top-0 z-30 flex items-center justify-between gap-6">
-          {/* Left: Prominent Page Title in Lora Serif */}
-          <div className="flex items-center gap-3">
-            <h1 className="font-lora text-lg font-semibold text-white tracking-tight">
-              {getPageTitle()}
+      {/* RIGHT CONTENT WORKSPACE */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto relative z-10">
+        {/* TOP ULTRA-GLASS NAVBAR */}
+        <header className="h-20 border-b border-white/[0.08] cyber-glass-nav sticky top-0 z-40 px-8 flex items-center justify-between flex-shrink-0">
+          <div>
+            <h1 className="text-xl font-bold font-lora text-white flex items-center gap-2">
+              <span>{getPageTitle()}</span>
             </h1>
+            <p className="text-xs text-[#94A3B8] font-mono flex items-center gap-2 mt-0.5">
+              <span>Host: academy.redkross.org.in</span>
+              <span className="text-slate-600">•</span>
+              <span className="text-[#65F58A] flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#65F58A] animate-pulse" />
+                <span>Live Synchronized Engine</span>
+              </span>
+            </p>
           </div>
 
-          {/* Center: Command Palette Search Bar (Cmd/Ctrl + K) */}
-          <div className="flex-1 max-w-md mx-auto">
+          {/* Right Header Operations */}
+          <div className="flex items-center gap-4">
+            {/* Quick Cmd+K Global Search Trigger */}
             <button
               onClick={() => setCommandPaletteOpen(true)}
-              className="w-full flex items-center justify-between px-3.5 py-1.5 rounded-xl bg-[#101923] border border-[#263440] text-xs font-mono text-[#94A3B8] hover:border-[#65F58A]/50 transition-colors shadow-inner"
+              className="flex items-center gap-3 px-3 py-1.5 rounded-xl cyber-glass-input text-xs font-mono text-[#94A3B8] hover:text-white transition-all shadow-inner"
             >
-              <div className="flex items-center gap-2">
-                <Search className="w-3.5 h-3.5 text-[#94A3B8]" />
-                <span>Search courses, students, quizzes...</span>
-              </div>
-              <kbd className="px-1.5 py-0.5 rounded bg-[#071018] border border-[#263440] text-[10px] font-mono text-white">
+              <Search className="w-3.5 h-3.5 text-[#65F58A]" />
+              <span className="hidden sm:inline">Search Workstation...</span>
+              <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] rounded bg-white/[0.08] border border-white/[0.1] text-slate-300">
                 ⌘K
               </kbd>
             </button>
-          </div>
 
-          {/* Right: Notifications Bell & Admin Profile Dropdown */}
-          <div className="flex items-center gap-4 relative">
-            <button
-              onClick={() => navigate('/admin/audit-logs')}
-              className="p-2 rounded-xl text-[#94A3B8] hover:text-white hover:bg-[#101923] relative transition-colors border border-transparent hover:border-[#263440]"
-              title="Security Alerts & Audit Stream"
-            >
-              <Bell className="w-4 h-4" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500" />
-            </button>
+            {/* Notification Bell */}
+            <div className="relative">
+              <button
+                type="button"
+                className="p-2 rounded-xl cyber-glass-card text-slate-300 hover:text-white relative"
+                aria-label="Audit alerts"
+              >
+                <Bell className="w-4 h-4" />
+                {counts.securityAlerts > 0 && (
+                  <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500 animate-pulse shadow-[0_0_8px_rgba(244,63,94,0.8)]" />
+                )}
+              </button>
+            </div>
 
-            {/* Admin Avatar Dropdown */}
+            {/* Admin Profile Dropdown */}
             <div className="relative">
               <button
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                className="flex items-center gap-2.5 p-1.5 pr-2.5 rounded-xl bg-[#101923] hover:bg-[#152230] border border-[#263440] transition-colors"
+                className="flex items-center gap-2.5 p-1.5 pr-3 rounded-full cyber-glass-card hover:border-[#65F58A]/40 text-xs text-white transition-all"
               >
-                <div className="w-7 h-7 rounded-lg bg-[#65F58A]/20 border border-[#65F58A]/40 flex items-center justify-center font-mono text-xs font-bold text-[#65F58A]">
-                  SA
+                <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#65F58A] to-[#35E6B5] flex items-center justify-center font-bold text-[#071018] text-xs shadow-md">
+                  A
                 </div>
-                <div className="text-left leading-tight hidden xl:block">
-                  <p className="text-xs font-mono font-semibold text-white">Super Admin</p>
-                  <p className="text-[10px] font-mono text-[#94A3B8] truncate max-w-[120px]">
-                    {currentUser?.email || 'admin@redkross.org.in'}
-                  </p>
+                <div className="text-left font-mono hidden md:block">
+                  <span className="block text-xs font-bold leading-none text-white">Super Admin</span>
+                  <span className="text-[10px] text-[#65F58A] font-semibold leading-none">Verified</span>
                 </div>
-                <ChevronDown className="w-3.5 h-3.5 text-[#94A3B8]" />
+                <ChevronDown className="w-3 h-3 text-[#94A3B8]" />
               </button>
 
-              {/* Dropdown Menu */}
               {profileDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-56 rounded-2xl bg-[#101923] border border-[#263440] shadow-2xl p-2 z-50 animate-fadeIn font-mono text-xs">
-                  <div className="p-2.5 border-b border-[#263440] mb-1">
+                <div className="absolute right-0 mt-2 w-60 rounded-2xl cyber-glass-panel shadow-2xl p-2 z-50 animate-fadeIn font-mono text-xs border border-white/[0.12]">
+                  <div className="p-2.5 border-b border-white/[0.08] mb-1">
                     <p className="text-white font-semibold">Administrator Access</p>
                     <p className="text-[10px] text-[#94A3B8] truncate">{currentUser?.email || 'admin@redkross.org.in'}</p>
                   </div>
                   <NavLink
                     to="/admin/profile"
                     onClick={() => setProfileDropdownOpen(false)}
-                    className="flex items-center gap-2 p-2 rounded-lg text-[#94A3B8] hover:text-white hover:bg-[#1B2530]"
+                    className="flex items-center gap-2 p-2 rounded-lg text-[#94A3B8] hover:text-white hover:bg-white/[0.08] transition-colors"
                   >
                     <UserCheck className="w-3.5 h-3.5 text-[#35E6B5]" />
                     <span>My Account & 2FA</span>
@@ -354,19 +337,19 @@ export default function AdminLayout() {
                   <NavLink
                     to="/admin/settings"
                     onClick={() => setProfileDropdownOpen(false)}
-                    className="flex items-center gap-2 p-2 rounded-lg text-[#94A3B8] hover:text-white hover:bg-[#1B2530]"
+                    className="flex items-center gap-2 p-2 rounded-lg text-[#94A3B8] hover:text-white hover:bg-white/[0.08] transition-colors"
                   >
                     <Settings className="w-3.5 h-3.5 text-[#65F58A]" />
                     <span>Platform Settings</span>
                   </NavLink>
-                  <div className="my-1 border-t border-[#263440]" />
+                  <div className="my-1 border-t border-white/[0.08]" />
                   <button
                     onClick={() => {
                       setProfileDropdownOpen(false);
                       if (logout) logout();
                       navigate('/login');
                     }}
-                    className="w-full flex items-center gap-2 p-2 rounded-lg text-rose-400 hover:bg-rose-500/10 text-left"
+                    className="w-full flex items-center gap-2 p-2 rounded-lg text-rose-400 hover:bg-rose-500/15 transition-colors text-left"
                   >
                     <LogOut className="w-3.5 h-3.5" />
                     <span>Sign Out</span>
@@ -377,7 +360,7 @@ export default function AdminLayout() {
           </div>
         </header>
 
-        {/* MAIN OUTLET CONTAINER */}
+        {/* MAIN OUTLET WORKSPACE CONTAINER */}
         <main className="p-8 flex-1">
           <Outlet />
         </main>
@@ -385,9 +368,9 @@ export default function AdminLayout() {
 
       {/* QUICK JUMP COMMAND PALETTE MODAL (Cmd/Ctrl + K) */}
       {commandPaletteOpen && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center pt-24 p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
-          <div className="w-full max-w-xl bg-[#0B131B] border border-[#263440] rounded-2xl shadow-2xl overflow-hidden font-mono text-xs">
-            <div className="p-4 border-b border-[#263440] flex items-center gap-3 bg-[#101923]">
+        <div className="fixed inset-0 z-50 flex items-start justify-center pt-24 p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
+          <div className="w-full max-w-xl cyber-glass-panel rounded-2xl shadow-2xl overflow-hidden font-mono text-xs border border-white/[0.15]">
+            <div className="p-4 border-b border-white/[0.08] flex items-center gap-3 bg-white/[0.03]">
               <Search className="w-4 h-4 text-[#65F58A]" />
               <input
                 type="text"
@@ -397,7 +380,7 @@ export default function AdminLayout() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-transparent text-white placeholder-[#94A3B8] focus:outline-none"
               />
-              <span className="text-[10px] text-[#94A3B8] border border-[#263440] px-1.5 py-0.5 rounded">
+              <span className="text-[10px] text-[#94A3B8] border border-white/[0.1] px-1.5 py-0.5 rounded">
                 ESC to close
               </span>
             </div>
@@ -414,7 +397,8 @@ export default function AdminLayout() {
                 { name: 'Enrollments & Cohorts', path: '/admin/enrollments' },
                 { name: 'Learning Analytics', path: '/admin/analytics' },
                 { name: 'Security Audit Logs', path: '/admin/audit-logs' },
-                { name: 'Platform Settings', path: '/admin/settings' }
+                { name: 'Platform Settings', path: '/admin/settings' },
+                { name: 'My Account & Profile', path: '/admin/profile' }
               ]
                 .filter((r) => r.name.toLowerCase().includes(searchQuery.toLowerCase()))
                 .map((r) => (
@@ -425,10 +409,10 @@ export default function AdminLayout() {
                       setCommandPaletteOpen(false);
                       setSearchQuery('');
                     }}
-                    className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-[#14202C] text-[#94A3B8] hover:text-[#65F58A] transition-colors text-left"
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-white/[0.08] text-[#94A3B8] hover:text-[#65F58A] transition-colors text-left"
                   >
                     <span>{r.name}</span>
-                    <span className="text-[10px] text-[#263440]">{r.path}</span>
+                    <span className="text-[10px] text-slate-500">{r.path}</span>
                   </button>
                 ))}
             </div>

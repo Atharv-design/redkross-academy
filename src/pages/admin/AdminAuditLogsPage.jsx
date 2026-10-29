@@ -61,7 +61,7 @@ export default function AdminAuditLogsPage() {
   return (
     <div className="space-y-6">
       {/* Top Filter and Search */}
-      <div className="flex items-center justify-between bg-[#0F1720] border border-[#1B2530] p-4 rounded-xl">
+      <div className="flex items-center justify-between cyber-glass-panel p-4 rounded-xl">
         <div className="flex items-center space-x-3">
           <div className="relative w-72">
             <Search className="w-4 h-4 text-[#8BA2B5] absolute left-3 top-1/2 -translate-y-1/2" />
@@ -70,7 +70,7 @@ export default function AdminAuditLogsPage() {
               placeholder="Search audit trail by operator or action..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#071018] border border-[#1B2530] text-xs text-[#F1F5F9] pl-9 pr-3 py-2 rounded-lg focus:outline-none focus:border-[#65F58A]"
+              className="w-full cyber-glass-card text-xs text-[#F1F5F9] pl-9 pr-3 py-2 rounded-lg focus:outline-none focus:border-[#65F58A]"
             />
           </div>
 
@@ -78,7 +78,7 @@ export default function AdminAuditLogsPage() {
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="bg-[#071018] border border-[#1B2530] text-xs font-mono text-[#CBD5E1] px-3 py-2 rounded-lg focus:outline-none focus:border-[#65F58A]"
+            className="cyber-glass-card text-xs font-mono text-[#CBD5E1] px-3 py-2 rounded-lg focus:outline-none focus:border-[#65F58A]"
           >
             <option value="ALL">ALL CATEGORIES</option>
             <option value="AUTH">AUTH & ACCESS</option>
@@ -91,7 +91,7 @@ export default function AdminAuditLogsPage() {
           <select
             value={severityFilter}
             onChange={(e) => setSeverityFilter(e.target.value)}
-            className="bg-[#071018] border border-[#1B2530] text-xs font-mono text-[#CBD5E1] px-3 py-2 rounded-lg focus:outline-none focus:border-[#65F58A]"
+            className="cyber-glass-card text-xs font-mono text-[#CBD5E1] px-3 py-2 rounded-lg focus:outline-none focus:border-[#65F58A]"
           >
             <option value="ALL">ALL SEVERITIES</option>
             <option value="CRITICAL">CRITICAL</option>
@@ -112,7 +112,7 @@ export default function AdminAuditLogsPage() {
       {/* Main Dual-Pane Logs View */}
       <div className="grid grid-cols-12 gap-6 min-h-[650px]">
         {/* Left Column: Chronological Audit Stream */}
-        <div className="col-span-8 bg-[#0F1720] border border-[#1B2530] rounded-xl overflow-hidden flex flex-col">
+        <div className="col-span-8 cyber-glass-panel rounded-xl overflow-hidden flex flex-col">
           <div className="p-3.5 bg-[#0A121A] border-b border-[#1B2530] flex items-center justify-between">
             <span className="text-xs font-mono text-[#8BA2B5]">
               TAMPER-EVIDENT AUDIT TRAIL ({filteredLogs.length})
@@ -179,7 +179,7 @@ export default function AdminAuditLogsPage() {
         </div>
 
         {/* Right Column: Log Event Inspector */}
-        <div className="col-span-4 bg-[#0F1720] border border-[#1B2530] rounded-xl flex flex-col overflow-hidden">
+        <div className="col-span-4 cyber-glass-panel rounded-xl flex flex-col overflow-hidden">
           {selectedLog ? (
             <>
               <div className="p-5 border-b border-[#1B2530] bg-[#071018]">
@@ -196,7 +196,7 @@ export default function AdminAuditLogsPage() {
                   <span className="text-[10px] text-[#8BA2B5] block uppercase">
                     Execution Metadata
                   </span>
-                  <div className="p-3 bg-[#071018] border border-[#1B2530] rounded-lg space-y-1.5">
+                  <div className="p-3 cyber-glass-card rounded-lg space-y-1.5">
                     <div className="flex justify-between">
                       <span className="text-[#8BA2B5]">Operator:</span>
                       <span className="text-white">{selectedLog.user_email || 'admin@redkross.org.in'}</span>
@@ -220,7 +220,7 @@ export default function AdminAuditLogsPage() {
                   <span className="text-[10px] text-[#8BA2B5] block uppercase">
                     Event Narrative & Audit Details
                   </span>
-                  <div className="p-3.5 bg-[#071018] border border-[#1B2530] rounded-lg text-[#CBD5E1] leading-relaxed">
+                  <div className="p-3.5 cyber-glass-card rounded-lg text-[#CBD5E1] leading-relaxed">
                     {selectedLog.details || 'Standard administrative operation completed.'}
                   </div>
                 </div>
@@ -236,3 +236,4 @@ export default function AdminAuditLogsPage() {
     </div>
   );
 }
+

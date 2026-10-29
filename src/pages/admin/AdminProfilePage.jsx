@@ -52,7 +52,7 @@ export default function AdminProfilePage() {
   return (
     <div className="space-y-6 max-w-4xl">
       {/* Top Banner */}
-      <div className="bg-[#0F1720] border border-[#1B2530] p-5 rounded-xl flex items-center justify-between">
+      <div className="cyber-glass-panel p-5 rounded-xl flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <div className="w-14 h-14 rounded-full bg-[#1B2530] border border-[#65F58A] flex items-center justify-center font-bold text-xl text-white">
             {currentUser?.name?.charAt(0) || 'A'}
@@ -82,7 +82,7 @@ export default function AdminProfilePage() {
       </div>
 
       {/* Two-Factor Authentication Status */}
-      <div className="p-5 bg-[#0F1720] border border-[#1B2530] rounded-xl space-y-4">
+      <div className="p-5 cyber-glass-panel rounded-xl space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <Smartphone className="w-5 h-5 text-[#65F58A]" />
@@ -105,7 +105,7 @@ export default function AdminProfilePage() {
       {/* Change Password Form */}
       <form
         onSubmit={handlePasswordChange}
-        className="p-5 bg-[#0F1720] border border-[#1B2530] rounded-xl space-y-4"
+        className="p-5 cyber-glass-panel rounded-xl space-y-4"
       >
         <div className="flex items-center space-x-2 text-white font-lora font-bold text-sm">
           <KeyRound className="w-4 h-4 text-[#38BDF8]" />
@@ -129,7 +129,7 @@ export default function AdminProfilePage() {
               required
               value={passwordForm.newPassword}
               onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
-              className="w-full bg-[#071018] border border-[#1B2530] rounded p-2 text-xs text-white"
+              className="w-full cyber-glass-card rounded p-2 text-xs text-white"
             />
           </div>
 
@@ -142,7 +142,7 @@ export default function AdminProfilePage() {
               required
               value={passwordForm.confirmPassword}
               onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
-              className="w-full bg-[#071018] border border-[#1B2530] rounded p-2 text-xs text-white"
+              className="w-full cyber-glass-card rounded p-2 text-xs text-white"
             />
           </div>
         </div>
@@ -158,9 +158,9 @@ export default function AdminProfilePage() {
       </form>
 
       {/* Active Sessions Telemetry */}
-      <div className="p-5 bg-[#0F1720] border border-[#1B2530] rounded-xl space-y-3">
+      <div className="p-5 cyber-glass-panel rounded-xl space-y-3">
         <h4 className="text-sm font-bold text-white font-lora">Active Workstation Sessions</h4>
-        <div className="p-3 bg-[#071018] border border-[#1B2530] rounded-lg flex items-center justify-between text-xs font-mono">
+        <div className="p-3 cyber-glass-card rounded-lg flex items-center justify-between text-xs font-mono">
           <div>
             <div className="flex items-center space-x-2">
               <span className="text-white font-bold">Chrome 130 on Windows (This Machine)</span>
@@ -180,3 +180,4 @@ export default function AdminProfilePage() {
     </div>
   );
 }
+

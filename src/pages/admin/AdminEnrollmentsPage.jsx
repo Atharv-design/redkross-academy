@@ -85,7 +85,7 @@ export default function AdminEnrollmentsPage() {
   return (
     <div className="space-y-6">
       {/* Top Action Bar */}
-      <div className="flex items-center justify-between bg-[#0F1720] border border-[#1B2530] p-4 rounded-xl">
+      <div className="flex items-center justify-between cyber-glass-panel p-4 rounded-xl">
         <div>
           <h3 className="text-sm font-bold text-white font-lora">
             Cohort Management & Timed Access
@@ -109,7 +109,7 @@ export default function AdminEnrollmentsPage() {
         {cohorts.map((cohort) => (
           <div
             key={cohort.id}
-            className="p-5 bg-[#0F1720] border border-[#1B2530] hover:border-[#263440] rounded-xl space-y-4"
+            className="p-5 cyber-glass-panel hover:border-[#263440] rounded-xl space-y-4"
           >
             <div className="flex items-start justify-between">
               <div>
@@ -126,7 +126,7 @@ export default function AdminEnrollmentsPage() {
             </div>
 
             {/* Metrics */}
-            <div className="grid grid-cols-3 gap-3 p-3 bg-[#071018] border border-[#1B2530] rounded-lg text-xs font-mono">
+            <div className="grid grid-cols-3 gap-3 p-3 cyber-glass-card rounded-lg text-xs font-mono">
               <div>
                 <span className="text-[#8BA2B5] text-[10px] block">MEMBERS</span>
                 <span className="text-white font-bold">{cohort.member_count} Students</span>
@@ -161,7 +161,7 @@ export default function AdminEnrollmentsPage() {
       {/* Cohort Modal */}
       {cohortModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-          <div className="w-[500px] bg-[#0F1720] border border-[#1B2530] rounded-xl p-6 shadow-2xl">
+          <div className="w-[500px] cyber-glass-panel rounded-xl p-6 shadow-2xl">
             <h3 className="text-base font-bold text-white mb-4 font-lora">
               Provision New Cohort Batch
             </h3>
@@ -176,7 +176,7 @@ export default function AdminEnrollmentsPage() {
                   value={cohortForm.name}
                   onChange={(e) => setCohortForm({ ...cohortForm, name: e.target.value })}
                   placeholder="e.g. Enterprise Incident Responders Batch 4"
-                  className="w-full bg-[#071018] border border-[#1B2530] rounded p-2 text-xs text-white"
+                  className="w-full cyber-glass-card rounded p-2 text-xs text-white"
                 />
               </div>
 
@@ -188,7 +188,7 @@ export default function AdminEnrollmentsPage() {
                   type="text"
                   value={cohortForm.course_title}
                   onChange={(e) => setCohortForm({ ...cohortForm, course_title: e.target.value })}
-                  className="w-full bg-[#071018] border border-[#1B2530] rounded p-2 text-xs text-white"
+                  className="w-full cyber-glass-card rounded p-2 text-xs text-white"
                 />
               </div>
 
@@ -200,7 +200,7 @@ export default function AdminEnrollmentsPage() {
                   type="date"
                   value={cohortForm.expiry_date}
                   onChange={(e) => setCohortForm({ ...cohortForm, expiry_date: e.target.value })}
-                  className="w-full bg-[#071018] border border-[#1B2530] rounded p-2 text-xs text-white"
+                  className="w-full cyber-glass-card rounded p-2 text-xs text-white"
                 />
               </div>
 
@@ -226,3 +226,4 @@ export default function AdminEnrollmentsPage() {
     </div>
   );
 }
+

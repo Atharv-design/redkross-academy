@@ -39,7 +39,7 @@ export default function AdminAnalyticsPage() {
   return (
     <div className="space-y-6">
       {/* Top Bar */}
-      <div className="flex items-center justify-between bg-[#0F1720] border border-[#1B2530] p-4 rounded-xl">
+      <div className="flex items-center justify-between cyber-glass-panel p-4 rounded-xl">
         <div>
           <h3 className="text-sm font-bold text-white font-lora">
             Executive Academic Telemetry & Retention
@@ -50,7 +50,7 @@ export default function AdminAnalyticsPage() {
         </div>
 
         <div className="flex items-center space-x-3">
-          <div className="flex items-center space-x-1 bg-[#071018] border border-[#1B2530] p-1 rounded-lg">
+          <div className="flex items-center space-x-1 cyber-glass-card p-1 rounded-lg">
             {['7D', '30D', '90D', 'ALL'].map((range) => (
               <button
                 key={range}
@@ -78,25 +78,25 @@ export default function AdminAnalyticsPage() {
 
       {/* Top 4 KPI Metrics */}
       <div className="grid grid-cols-4 gap-4">
-        <div className="p-4 bg-[#0F1720] border border-[#1B2530] rounded-xl">
+        <div className="p-4 cyber-glass-panel rounded-xl">
           <span className="text-[10px] font-mono text-[#8BA2B5] block">AGGREGATE COMPLETION RATE</span>
           <span className="text-2xl font-bold font-mono text-[#65F58A] mt-1 block">47.6%</span>
           <span className="text-[10px] text-[#8BA2B5] mt-1 block">+8.2% vs industry standard</span>
         </div>
 
-        <div className="p-4 bg-[#0F1720] border border-[#1B2530] rounded-xl">
+        <div className="p-4 cyber-glass-panel rounded-xl">
           <span className="text-[10px] font-mono text-[#8BA2B5] block">MEDIAN TIME TO CERTIFICATION</span>
           <span className="text-2xl font-bold font-mono text-[#38BDF8] mt-1 block">22.4 Days</span>
           <span className="text-[10px] text-[#8BA2B5] mt-1 block">Across all active tracks</span>
         </div>
 
-        <div className="p-4 bg-[#0F1720] border border-[#1B2530] rounded-xl">
+        <div className="p-4 cyber-glass-panel rounded-xl">
           <span className="text-[10px] font-mono text-[#8BA2B5] block">EXAM FIRST-ATTEMPT PASS</span>
           <span className="text-2xl font-bold font-mono text-[#F59E0B] mt-1 block">82.1%</span>
           <span className="text-[10px] text-[#8BA2B5] mt-1 block">Passing threshold ≥ 75%</span>
         </div>
 
-        <div className="p-4 bg-[#0F1720] border border-[#1B2530] rounded-xl">
+        <div className="p-4 cyber-glass-panel rounded-xl">
           <span className="text-[10px] font-mono text-[#8BA2B5] block">TOKEN CIRCULATION VELOCITY</span>
           <span className="text-2xl font-bold font-mono text-[#A855F7] mt-1 block">4,280 ⚡</span>
           <span className="text-[10px] text-[#8BA2B5] mt-1 block">Bounties awarded this cycle</span>
@@ -104,7 +104,7 @@ export default function AdminAnalyticsPage() {
       </div>
 
       {/* Retention Waterfall Funnel */}
-      <div className="p-6 bg-[#0F1720] border border-[#1B2530] rounded-xl space-y-4">
+      <div className="p-6 cyber-glass-panel rounded-xl space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h4 className="text-sm font-bold text-white font-lora">
@@ -148,7 +148,7 @@ export default function AdminAnalyticsPage() {
 
       {/* Score Histograms & Assessment Distribution */}
       <div className="grid grid-cols-2 gap-6">
-        <div className="p-5 bg-[#0F1720] border border-[#1B2530] rounded-xl space-y-4">
+        <div className="p-5 cyber-glass-panel rounded-xl space-y-4">
           <h4 className="text-sm font-bold text-white font-lora">
             Final Exam Score Distribution
           </h4>
@@ -173,11 +173,11 @@ export default function AdminAnalyticsPage() {
           </div>
         </div>
 
-        <div className="p-5 bg-[#0F1720] border border-[#1B2530] rounded-xl space-y-4">
+        <div className="p-5 cyber-glass-panel rounded-xl space-y-4">
           <h4 className="text-sm font-bold text-white font-lora">
             Proctoring Integrity Audit Telemetry
           </h4>
-          <div className="p-4 bg-[#071018] border border-[#1B2530] rounded-lg space-y-2 text-xs font-mono">
+          <div className="p-4 cyber-glass-card rounded-lg space-y-2 text-xs font-mono">
             <div className="flex justify-between py-1 border-b border-[#1B2530]">
               <span className="text-[#8BA2B5]">Total Exams Administered</span>
               <span className="text-white font-bold">620 Sessions</span>
@@ -200,3 +200,4 @@ export default function AdminAnalyticsPage() {
     </div>
   );
 }
+

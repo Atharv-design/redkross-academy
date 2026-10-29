@@ -121,7 +121,7 @@ export default function AdminAssignmentsPage() {
         {assignments.map((asn) => (
           <div
             key={asn.id}
-            className="p-4 bg-[#0F1720] border border-[#1B2530] rounded-xl flex items-center justify-between"
+            className="p-4 cyber-glass-panel rounded-xl flex items-center justify-between"
           >
             <div>
               <div className="flex items-center space-x-2 mb-1">
@@ -149,7 +149,7 @@ export default function AdminAssignmentsPage() {
       {/* Split Screen Grading Studio */}
       <div className="grid grid-cols-12 gap-6 min-h-[640px]">
         {/* Left Submissions Column (List + Details) */}
-        <div className="col-span-6 bg-[#0F1720] border border-[#1B2530] rounded-xl flex flex-col overflow-hidden">
+        <div className="col-span-6 cyber-glass-panel rounded-xl flex flex-col overflow-hidden">
           {/* Submissions List Header */}
           <div className="p-4 bg-[#0A121A] border-b border-[#1B2530] flex items-center justify-between">
             <span className="text-xs font-mono text-[#8BA2B5]">
@@ -226,7 +226,7 @@ export default function AdminAssignmentsPage() {
         </div>
 
         {/* Right Split Screen: Rubric Grading & Publication */}
-        <div className="col-span-6 bg-[#0F1720] border border-[#1B2530] rounded-xl flex flex-col overflow-hidden">
+        <div className="col-span-6 cyber-glass-panel rounded-xl flex flex-col overflow-hidden">
           <div className="p-4 bg-[#0A121A] border-b border-[#1B2530]">
             <h3 className="text-sm font-bold text-white font-lora">
               Rubric Assessment & Grade Certification
@@ -301,7 +301,7 @@ export default function AdminAssignmentsPage() {
             </div>
 
             {/* Total Calculated Grade */}
-            <div className="p-3 bg-[#071018] border border-[#1B2530] rounded-lg flex items-center justify-between">
+            <div className="p-3 cyber-glass-card rounded-lg flex items-center justify-between">
               <span className="text-xs font-mono text-[#8BA2B5]">AGGREGATE RUBRIC SCORE:</span>
               <span className="text-xl font-bold font-mono text-[#65F58A]">
                 {(parseInt(rubricScores.correctness) || 0) +
@@ -352,7 +352,7 @@ export default function AdminAssignmentsPage() {
                 value={adminFeedback}
                 onChange={(e) => setAdminFeedback(e.target.value)}
                 placeholder="Provide constructive feedback for student portal visibility..."
-                className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2.5 text-xs text-white"
+                className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white"
               />
             </div>
           </div>
@@ -375,3 +375,4 @@ export default function AdminAssignmentsPage() {
     </div>
   );
 }
+

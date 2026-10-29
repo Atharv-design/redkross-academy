@@ -178,6 +178,20 @@ class MockEngine {
         }
       }
 
+      // Ensure all enrolments have required array properties
+      if (parsed && parsed.enrolments) {
+        for (const enr of parsed.enrolments) {
+          if (!Array.isArray(enr.passed_quizzes)) {
+            enr.passed_quizzes = [];
+            modified = true;
+          }
+          if (!Array.isArray(enr.completed_mandatory_lessons)) {
+            enr.completed_mandatory_lessons = [];
+            modified = true;
+          }
+        }
+      }
+
       if (modified) {
         this.saveDb(parsed);
       }
@@ -357,6 +371,7 @@ class MockEngine {
         status: 'in_progress',
         progress: 0,
         completed_mandatory_lessons: [],
+        passed_quizzes: [],
         current_lesson_id: primaryCourse.modules?.[0]?.lessons?.[0]?.id || null,
         enrolled_at: new Date().toISOString()
       };

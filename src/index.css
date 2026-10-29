@@ -518,3 +518,57 @@ body {
     transform: scale(1.03);
   }
 }
+
+/* TRUE TRANSPARENT GLASSMORPHISM WITH REDKROSS COLOR BLENDING */
+@layer utilities {
+  .cyber-glass-panel {
+    background: rgba(8, 18, 28, 0.35) !important;
+    backdrop-filter: blur(24px) saturate(190%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    box-shadow: 0 16px 45px 0 rgba(0, 0, 0, 0.45), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.22) !important;
+  }
+  .cyber-glass-card {
+    background: rgba(10, 22, 34, 0.32) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 10px 35px 0 rgba(0, 0, 0, 0.35), inset 0 1px 1px 0 rgba(255, 255, 255, 0.18) !important;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+  .cyber-glass-card:hover {
+    background: rgba(16, 32, 48, 0.45) !important;
+    border-color: rgba(101, 245, 138, 0.45) !important;
+    box-shadow: 0 16px 45px 0 rgba(0, 0, 0, 0.5), 0 0 30px rgba(101, 245, 138, 0.18), inset 0 1px 2px rgba(255, 255, 255, 0.3) !important;
+    transform: translateY(-2px);
+  }
+  .cyber-glass-nav {
+    background: rgba(6, 14, 23, 0.45) !important;
+    backdrop-filter: blur(28px) saturate(200%) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 10px 35px 0 rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.18) !important;
+  }
+  .cyber-glass-input {
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.3) !important;
+    transition: all 0.2s ease !important;
+  }
+  .cyber-glass-input:focus {
+    background: rgba(255, 255, 255, 0.09) !important;
+    border-color: rgba(101, 245, 138, 0.7) !important;
+    box-shadow: 0 0 25px rgba(101, 245, 138, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+    outline: none !important;
+  }
+  .cyber-glass-pill {
+    background: rgba(255, 255, 255, 0.06) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.18) !important;
+  }
+}
+

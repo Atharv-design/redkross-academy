@@ -101,9 +101,9 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-8 font-sans">
-      {/* 1. TOP MACRO KPI ROW */}
+      {/* 1. TOP MACRO KPI ROW (Frosted Cyber Glass Cards) */}
       <div className="grid grid-cols-4 gap-5">
-        <div className="p-5 rounded-2xl bg-[#101923] border border-[#263440] space-y-2 relative overflow-hidden">
+        <div className="p-5 rounded-2xl cyber-glass-card space-y-2 relative overflow-hidden group">
           <div className="flex items-center justify-between text-xs font-mono text-[#94A3B8]">
             <span className="uppercase tracking-wider">Total Active Students</span>
             <Users className="w-4 h-4 text-[#65F58A]" />
@@ -113,12 +113,12 @@ export default function AdminDashboardPage() {
           </div>
           <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#65F58A]">
             <TrendingUp className="w-3 h-3" />
-            <span>+12 this week · 100% ID verified</span>
+            <span>+12 this week • 100% ID verified</span>
           </div>
-          <div className="absolute top-0 right-0 w-24 h-24 bg-[#65F58A]/5 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute top-0 right-0 w-28 h-28 bg-[#65F58A]/10 rounded-full blur-2xl pointer-events-none group-hover:bg-[#65F58A]/15 transition-all" />
         </div>
 
-        <div className="p-5 rounded-2xl bg-[#101923] border border-[#263440] space-y-2 relative overflow-hidden">
+        <div className="p-5 rounded-2xl cyber-glass-card space-y-2 relative overflow-hidden group">
           <div className="flex items-center justify-between text-xs font-mono text-[#94A3B8]">
             <span className="uppercase tracking-wider">Active Curriculum</span>
             <BookOpen className="w-4 h-4 text-[#35E6B5]" />
@@ -129,10 +129,10 @@ export default function AdminDashboardPage() {
           <div className="text-[11px] font-mono text-[#94A3B8]">
             Across 2 Core Specialization Tracks
           </div>
-          <div className="absolute top-0 right-0 w-24 h-24 bg-[#35E6B5]/5 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute top-0 right-0 w-28 h-28 bg-[#35E6B5]/10 rounded-full blur-2xl pointer-events-none group-hover:bg-[#35E6B5]/15 transition-all" />
         </div>
 
-        <div className="p-5 rounded-2xl bg-[#101923] border border-[#263440] space-y-2 relative overflow-hidden">
+        <div className="p-5 rounded-2xl cyber-glass-card space-y-2 relative overflow-hidden group">
           <div className="flex items-center justify-between text-xs font-mono text-[#94A3B8]">
             <span className="uppercase tracking-wider">Credentials Minted</span>
             <Award className="w-4 h-4 text-[#65F58A]" />
@@ -141,90 +141,88 @@ export default function AdminDashboardPage() {
             {metrics.issuedCerts}
           </div>
           <div className="text-[11px] font-mono text-[#94A3B8]">
-            Cryptographically Signed on Ledger
+            Cryptographically Anchored & Public
           </div>
-          <div className="absolute top-0 right-0 w-24 h-24 bg-[#65F58A]/5 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute top-0 right-0 w-28 h-28 bg-[#65F58A]/10 rounded-full blur-2xl pointer-events-none group-hover:bg-[#65F58A]/15 transition-all" />
         </div>
 
-        <div className="p-5 rounded-2xl bg-[#101923] border border-[#263440] space-y-2 relative overflow-hidden">
+        <div className="p-5 rounded-2xl cyber-glass-card space-y-2 relative overflow-hidden group">
           <div className="flex items-center justify-between text-xs font-mono text-[#94A3B8]">
             <span className="uppercase tracking-wider">Token Circulation</span>
             <Coins className="w-4 h-4 text-amber-400" />
           </div>
           <div className="text-3xl font-extrabold font-mono text-amber-400 tabular-nums">
-            {metrics.tokensCirculated.toLocaleString()} RK
+            {metrics.tokensCirculated.toLocaleString()}
           </div>
           <div className="text-[11px] font-mono text-[#94A3B8]">
-            Academic Non-Monetary Credit Pool
+            Non-Monetary Reward Incentive Ledger
           </div>
-          <div className="absolute top-0 right-0 w-24 h-24 bg-amber-400/5 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute top-0 right-0 w-28 h-28 bg-amber-400/10 rounded-full blur-2xl pointer-events-none group-hover:bg-amber-400/15 transition-all" />
         </div>
       </div>
 
-      {/* 2. CATALOG EMBARGO CONTROLLER BANNER */}
-      <div
-        className={`p-6 rounded-2xl border transition-all ${
-          metrics.publicCatalogEnabled
-            ? 'bg-[#101923] border-[#65F58A]/40 shadow-[0_0_25px_rgba(101,245,138,0.12)]'
-            : 'bg-[#101923] border-amber-400/40 shadow-[0_0_25px_rgba(245,158,11,0.12)]'
-        }`}
-      >
-        <div className="flex items-center justify-between gap-6">
-          <div className="space-y-1.5 max-w-2xl">
-            <div className="flex items-center gap-2.5">
-              <span
-                className={`w-2.5 h-2.5 rounded-full ${
-                  metrics.publicCatalogEnabled ? 'bg-[#65F58A] animate-pulse' : 'bg-amber-400'
-                }`}
-              />
-              <span className="font-mono text-xs uppercase font-extrabold tracking-wider text-white">
-                Public Course Catalog Release Status
-              </span>
-              <span
-                className={`px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase font-bold border ${
+      {/* 2. CATALOG RELEASE EMBARGO MASTER SWITCH BANNER (Cyber Glass Panel) */}
+      <div className="p-6 rounded-2xl cyber-glass-panel relative overflow-hidden">
+        <div className="flex items-center justify-between">
+          <div className="space-y-1 z-10 max-w-2xl">
+            <div className="flex items-center gap-2">
+              <span className={`w-2.5 h-2.5 rounded-full ${metrics.publicCatalogEnabled ? 'bg-[#65F58A] animate-pulse' : 'bg-amber-400'}`} />
+              <h3 className="font-lora text-base font-bold text-white flex items-center gap-2">
+                <span>Public Course Catalog Release Status</span>
+                <span className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded border ${
                   metrics.publicCatalogEnabled
                     ? 'bg-[#65F58A]/10 text-[#65F58A] border-[#65F58A]/30'
                     : 'bg-amber-400/10 text-amber-400 border-amber-400/30'
-                }`}
-              >
-                {metrics.publicCatalogEnabled ? 'RELEASED (Publicly Visible)' : 'EMBARGOED (Hidden From Public)'}
-              </span>
+                }`}>
+                  {metrics.publicCatalogEnabled ? 'PUBLIC LIVE RELEASE' : 'EMBARGOED (COURSES WILL BE OUT SOON)'}
+                </span>
+              </h3>
             </div>
-            <p className="text-xs text-[#94A3B8] leading-relaxed font-sans">
+            <p className="text-xs text-[#94A3B8] font-mono leading-relaxed">
               {metrics.publicCatalogEnabled
-                ? 'The public catalog is live. Prospective learners and visitors can browse courses, module structures, and learning paths.'
-                : 'Security embargo is active. Visitors on Learning Paths and Courses will see "Courses will be out soon". Content remains safely stored in local database.'}
+                ? 'Public students can explore all courses and learning paths directly. All published courses are open.'
+                : 'Catalog is currently in pre-launch security embargo. Public visitors will see "Courses will be out soon".'}
             </p>
+            {embargoNotice && (
+              <p className="text-xs font-mono font-bold text-[#65F58A] mt-2 animate-fadeIn flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>{embargoNotice}</span>
+              </p>
+            )}
           </div>
 
-          <button
-            onClick={handleToggleCatalogEmbargo}
-            disabled={embargoToggling}
-            className={`px-5 py-2.5 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 border shadow-lg shrink-0 ${
-              metrics.publicCatalogEnabled
-                ? 'bg-[#1B2530] text-amber-400 border-amber-400/40 hover:bg-amber-400/10'
-                : 'bg-[#65F58A] text-[#071018] border-[#65F58A] hover:bg-[#52db74]'
-            }`}
-          >
-            {metrics.publicCatalogEnabled ? <Lock className="w-4 h-4" /> : <Radio className="w-4 h-4" />}
-            <span>{embargoToggling ? 'Syncing...' : metrics.publicCatalogEnabled ? 'Embargo Catalog' : 'Release Publicly'}</span>
-          </button>
+          <div className="z-10 flex items-center gap-3">
+            <button
+              onClick={handleToggleCatalogEmbargo}
+              disabled={embargoToggling}
+              className={`px-5 py-2.5 rounded-xl font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all shadow-lg ${
+                metrics.publicCatalogEnabled
+                  ? 'bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.2)]'
+                  : 'bg-gradient-to-r from-[#65F58A] to-[#35E6B5] hover:from-[#52d674] hover:to-[#2bc59b] text-[#071018] shadow-[0_0_25px_rgba(101,245,138,0.4)]'
+              }`}
+            >
+              {metrics.publicCatalogEnabled ? (
+                <>
+                  <Lock className="w-3.5 h-3.5" />
+                  <span>Embargo Catalog</span>
+                </>
+              ) : (
+                <>
+                  <Radio className="w-3.5 h-3.5 animate-pulse" />
+                  <span>Release Catalog Publicly</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
-
-        {embargoNotice && (
-          <div className="mt-4 p-3 rounded-xl bg-[#071018] border border-[#263440] text-xs font-mono text-[#65F58A] flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-[#65F58A] shrink-0" />
-            <span>{embargoNotice}</span>
-          </div>
-        )}
       </div>
 
-      {/* 3. TWO-COLUMN OPERATIONAL PULSE */}
+      {/* 3. LOWER SPLIT WORKSPACE: INFRASTRUCTURE & RECENT AUDITS */}
       <div className="grid grid-cols-12 gap-6">
-        {/* Left: Platform Health & Quick Navigation (7 cols) */}
-        <div className="col-span-7 space-y-6">
-          <div className="p-6 rounded-2xl bg-[#101923] border border-[#263440] space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-[#263440]">
+        {/* Left: Infrastructure & Subsystems (7 cols) */}
+        <div className="col-span-7">
+          <div className="p-6 rounded-2xl cyber-glass-panel space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
               <div className="flex items-center gap-2">
                 <Activity className="w-4 h-4 text-[#35E6B5]" />
                 <h3 className="font-lora text-base font-semibold text-white">System Infrastructure Telemetry</h3>
@@ -236,17 +234,17 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="grid grid-cols-3 gap-3 font-mono text-xs">
-              <div className="p-3.5 rounded-xl bg-[#071018] border border-[#263440] space-y-1">
+              <div className="p-3.5 rounded-xl cyber-glass-card space-y-1">
                 <p className="text-[10px] text-[#94A3B8] uppercase">Media CDN Edge</p>
-                <p className="font-bold text-white">CloudFront / HLS</p>
-                <p className="text-[10px] text-[#65F58A]">Latency 14ms</p>
+                <p className="font-bold text-white">IndexedDB / HLS</p>
+                <p className="text-[10px] text-[#65F58A]">Local Offline Sync</p>
               </div>
-              <div className="p-3.5 rounded-xl bg-[#071018] border border-[#263440] space-y-1">
+              <div className="p-3.5 rounded-xl cyber-glass-card space-y-1">
                 <p className="text-[10px] text-[#94A3B8] uppercase">Database Sync</p>
-                <p className="font-bold text-white">Neon Serverless</p>
+                <p className="font-bold text-white">MockEngine EventBus</p>
                 <p className="text-[10px] text-[#65F58A]">Sync interval 0s</p>
               </div>
-              <div className="p-3.5 rounded-xl bg-[#071018] border border-[#263440] space-y-1">
+              <div className="p-3.5 rounded-xl cyber-glass-card space-y-1">
                 <p className="text-[10px] text-[#94A3B8] uppercase">Proctor Telemetry</p>
                 <p className="font-bold text-white">Anti-Cheat Tap</p>
                 <p className="text-[10px] text-[#35E6B5]">Active Guard</p>
@@ -257,21 +255,21 @@ export default function AdminDashboardPage() {
             <div className="pt-2 flex items-center gap-3">
               <NavLink
                 to="/admin/courses"
-                className="flex-1 py-2.5 px-4 rounded-xl bg-[#1B2530] hover:bg-[#223240] border border-[#263440] text-xs font-mono text-white flex items-center justify-between transition-colors"
+                className="flex-1 py-2.5 px-4 rounded-xl cyber-glass-card hover:border-[#65F58A]/50 text-xs font-mono text-white flex items-center justify-between transition-all"
               >
                 <span>Curriculum & Lessons</span>
                 <ChevronRight className="w-3.5 h-3.5 text-[#65F58A]" />
               </NavLink>
               <NavLink
                 to="/admin/quizzes"
-                className="flex-1 py-2.5 px-4 rounded-xl bg-[#1B2530] hover:bg-[#223240] border border-[#263440] text-xs font-mono text-white flex items-center justify-between transition-colors"
+                className="flex-1 py-2.5 px-4 rounded-xl cyber-glass-card hover:border-[#35E6B5]/50 text-xs font-mono text-white flex items-center justify-between transition-all"
               >
                 <span>Question Bank & Exams</span>
                 <ChevronRight className="w-3.5 h-3.5 text-[#35E6B5]" />
               </NavLink>
               <NavLink
                 to="/admin/students"
-                className="flex-1 py-2.5 px-4 rounded-xl bg-[#1B2530] hover:bg-[#223240] border border-[#263440] text-xs font-mono text-white flex items-center justify-between transition-colors"
+                className="flex-1 py-2.5 px-4 rounded-xl cyber-glass-card hover:border-amber-400/50 text-xs font-mono text-white flex items-center justify-between transition-all"
               >
                 <span>Cadet Directory</span>
                 <ChevronRight className="w-3.5 h-3.5 text-amber-400" />
@@ -282,8 +280,8 @@ export default function AdminDashboardPage() {
 
         {/* Right: Recent Activity Audit Stream (5 cols) */}
         <div className="col-span-5">
-          <div className="p-6 rounded-2xl bg-[#101923] border border-[#263440] space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-[#263440]">
+          <div className="p-6 rounded-2xl cyber-glass-panel space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-[#65F58A]" />
                 <h3 className="font-lora text-base font-semibold text-white">Recent Admin Activities</h3>
@@ -301,7 +299,7 @@ export default function AdminDashboardPage() {
               {recentActivities.map((log) => (
                 <div
                   key={log.id}
-                  className="p-3 rounded-xl bg-[#071018] border border-[#263440] flex items-center justify-between"
+                  className="p-3 rounded-xl cyber-glass-card flex items-center justify-between"
                 >
                   <div className="min-w-0 pr-3">
                     <p className="text-white font-semibold truncate">{log.action}</p>

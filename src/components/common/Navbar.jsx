@@ -12,7 +12,8 @@ import {
   Menu,
   X,
   ArrowRight,
-  Zap
+  Zap,
+  Award
 } from 'lucide-react';
 import { useAuth } from '../../services/auth/authContext';
 import SupportTicketModal from './SupportTicketModal';

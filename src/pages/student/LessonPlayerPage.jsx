@@ -360,7 +360,7 @@ export default function LessonPlayerPage() {
                     <Link
                       to={`/student/quiz/${enrolmentId}/${mod.quiz.id}`}
                       className={`w-full p-2.5 rounded-lg text-xs flex items-center justify-between transition-all mt-1 ${
-                        enrolment.passed_quizzes.includes(mod.quiz.id)
+                        (enrolment.passed_quizzes || []).includes(mod.quiz.id)
                           ? 'bg-emerald-950/20 border border-emerald-500/30 text-emerald-300'
                           : 'bg-amber-500/10 border border-amber-500/30 text-amber-300 hover:bg-amber-500/20'
                       }`}
@@ -369,7 +369,7 @@ export default function LessonPlayerPage() {
                         <Award className="w-3.5 h-3.5 flex-shrink-0" />
                         <span className="font-semibold truncate">Chapter Quiz: {mod.quiz.title}</span>
                       </div>
-                      {enrolment.passed_quizzes.includes(mod.quiz.id) ? (
+                      {(enrolment.passed_quizzes || []).includes(mod.quiz.id) ? (
                         <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400">PASSED</span>
                       ) : (
                         <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">+100 T</span>

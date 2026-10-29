@@ -390,7 +390,7 @@ export default function AdminCoursesPage() {
   return (
     <div className="space-y-6">
       {/* Top Action Bar */}
-      <div className="flex items-center justify-between bg-[#0F1720] border border-[#1B2530] p-4 rounded-xl">
+      <div className="flex items-center justify-between cyber-glass-panel p-4 rounded-xl">
         <div className="flex items-center space-x-3">
           <div className="relative w-72">
             <Search className="w-4 h-4 text-[#8BA2B5] absolute left-3 top-1/2 -translate-y-1/2" />
@@ -399,11 +399,11 @@ export default function AdminCoursesPage() {
               placeholder="Search courses by title or topic..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#071018] border border-[#1B2530] text-xs text-[#F1F5F9] pl-9 pr-3 py-2 rounded-lg focus:outline-none focus:border-[#65F58A]"
+              className="w-full cyber-glass-card text-xs text-[#F1F5F9] pl-9 pr-3 py-2 rounded-lg focus:outline-none focus:border-[#65F58A]"
             />
           </div>
 
-          <div className="flex items-center space-x-1.5 bg-[#071018] border border-[#1B2530] p-1 rounded-lg">
+          <div className="flex items-center space-x-1.5 cyber-glass-card p-1 rounded-lg">
             {['ALL', 'PUBLISHED', 'DRAFT'].map((status) => (
               <button
                 key={status}
@@ -518,7 +518,7 @@ export default function AdminCoursesPage() {
         </div>
 
         {/* Right Column: Workstation Editor (Course -> Module -> Lesson Hierarchy) */}
-        <div className="col-span-7 bg-[#0F1720] border border-[#1B2530] rounded-xl flex flex-col overflow-hidden">
+        <div className="col-span-7 cyber-glass-panel rounded-xl flex flex-col overflow-hidden">
           {selectedCourse || !isEditingCourse ? (
             selectedCourse ? (
               <>
@@ -755,7 +755,7 @@ export default function AdminCoursesPage() {
                   ) : (
                     /* Metadata & Settings Tab */
                     <div className="space-y-4 text-xs font-mono">
-                      <div className="p-4 bg-[#071018] border border-[#1B2530] rounded-lg space-y-3">
+                      <div className="p-4 cyber-glass-card rounded-lg space-y-3">
                         <div className="flex justify-between py-1 border-b border-[#1B2530]">
                           <span className="text-[#8BA2B5]">Course ID</span>
                           <span className="text-white">{selectedCourse.id}</span>
@@ -799,7 +799,7 @@ export default function AdminCoursesPage() {
                   value={courseFormData.title}
                   onChange={(e) => setCourseFormData({ ...courseFormData, title: e.target.value })}
                   placeholder="e.g. Advanced Network Defense & Packet Inspection"
-                  className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#65F58A]"
+                  className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#65F58A]"
                 />
               </div>
 
@@ -809,7 +809,7 @@ export default function AdminCoursesPage() {
                   <select
                     value={courseFormData.level}
                     onChange={(e) => setCourseFormData({ ...courseFormData, level: e.target.value })}
-                    className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#65F58A]"
+                    className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#65F58A]"
                   >
                     <option value="Beginner">Beginner</option>
                     <option value="Intermediate">Intermediate</option>
@@ -824,7 +824,7 @@ export default function AdminCoursesPage() {
                     type="text"
                     value={courseFormData.category}
                     onChange={(e) => setCourseFormData({ ...courseFormData, category: e.target.value })}
-                    className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#65F58A]"
+                    className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#65F58A]"
                   />
                 </div>
               </div>
@@ -836,7 +836,7 @@ export default function AdminCoursesPage() {
                   value={courseFormData.description}
                   onChange={(e) => setCourseFormData({ ...courseFormData, description: e.target.value })}
                   placeholder="Outline competencies, practical lab environments, and prerequisites."
-                  className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#65F58A]"
+                  className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#65F58A]"
                 />
               </div>
 
@@ -847,7 +847,7 @@ export default function AdminCoursesPage() {
                     type="text"
                     value={courseFormData.duration}
                     onChange={(e) => setCourseFormData({ ...courseFormData, duration: e.target.value })}
-                    className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2.5 text-xs text-white"
+                    className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white"
                   />
                 </div>
 
@@ -857,7 +857,7 @@ export default function AdminCoursesPage() {
                     type="number"
                     value={courseFormData.xp_reward}
                     onChange={(e) => setCourseFormData({ ...courseFormData, xp_reward: parseInt(e.target.value) || 0 })}
-                    className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2.5 text-xs text-white"
+                    className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white"
                   />
                 </div>
               </div>
@@ -885,7 +885,7 @@ export default function AdminCoursesPage() {
       {/* Module Modal */}
       {moduleModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-          <div className="w-[500px] bg-[#0F1720] border border-[#1B2530] rounded-xl p-6 shadow-2xl">
+          <div className="w-[500px] cyber-glass-panel rounded-xl p-6 shadow-2xl">
             <h3 className="text-base font-bold text-white mb-4 font-lora">
               {editingModule ? 'Edit Module' : 'Add Curriculum Module'}
             </h3>
@@ -897,7 +897,7 @@ export default function AdminCoursesPage() {
                   value={moduleForm.title}
                   onChange={(e) => setModuleForm({ ...moduleForm, title: e.target.value })}
                   placeholder="e.g. Exploitation Vectors & Metasploit Labs"
-                  className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#65F58A]"
+                  className="w-full cyber-glass-card rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#65F58A]"
                 />
               </div>
 
@@ -910,7 +910,7 @@ export default function AdminCoursesPage() {
                   min="0"
                   value={moduleForm.drip_days}
                   onChange={(e) => setModuleForm({ ...moduleForm, drip_days: e.target.value })}
-                  className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2 text-xs text-white"
+                  className="w-full cyber-glass-card rounded-lg p-2 text-xs text-white"
                 />
                 <p className="text-[10px] text-[#8BA2B5] mt-1">
                   0 = Immediate access upon course enrollment.
@@ -939,7 +939,7 @@ export default function AdminCoursesPage() {
       {/* Lesson Modal */}
       {lessonModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-          <div className="w-[600px] bg-[#0F1720] border border-[#1B2530] rounded-xl p-6 shadow-2xl">
+          <div className="w-[600px] cyber-glass-panel rounded-xl p-6 shadow-2xl">
             <h3 className="text-base font-bold text-white mb-4 font-lora">
               {editingLesson ? 'Edit Lesson Parameters' : 'Create New Lesson'}
             </h3>
@@ -951,7 +951,7 @@ export default function AdminCoursesPage() {
                   value={lessonForm.title}
                   onChange={(e) => setLessonForm({ ...lessonForm, title: e.target.value })}
                   placeholder="e.g. Analyzing Memory Dumps with Volatility"
-                  className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#65F58A]"
+                  className="w-full cyber-glass-card rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#65F58A]"
                 />
               </div>
 
@@ -961,7 +961,7 @@ export default function AdminCoursesPage() {
                   <select
                     value={lessonForm.type}
                     onChange={(e) => setLessonForm({ ...lessonForm, type: e.target.value })}
-                    className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2 text-xs text-white"
+                    className="w-full cyber-glass-card rounded-lg p-2 text-xs text-white"
                   >
                     <option value="video">Video Lecture (HLS/MP4/YouTube)</option>
                     <option value="reading">Technical Reading & Lab Brief</option>
@@ -975,13 +975,13 @@ export default function AdminCoursesPage() {
                     value={lessonForm.duration}
                     onChange={(e) => setLessonForm({ ...lessonForm, duration: e.target.value })}
                     placeholder="e.g. 18 mins"
-                    className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2 text-xs text-white"
+                    className="w-full cyber-glass-card rounded-lg p-2 text-xs text-white"
                   />
                 </div>
               </div>
 
               {lessonForm.type === 'video' && (
-                <div className="space-y-3 p-3 bg-[#071018] border border-[#1B2530] rounded-xl">
+                <div className="space-y-3 p-3 cyber-glass-card rounded-xl">
                   <div className="flex items-center justify-between">
                     <label className="text-xs font-mono text-[#8BA2B5] flex items-center space-x-1.5">
                       <Film className="w-3.5 h-3.5 text-[#65F58A]" />
@@ -1164,7 +1164,7 @@ export default function AdminCoursesPage() {
                   value={lessonForm.content}
                   onChange={(e) => setLessonForm({ ...lessonForm, content: e.target.value })}
                   placeholder="# Lesson Overview&#10;Include operational notes and terminal commands."
-                  className="w-full bg-[#071018] border border-[#1B2530] rounded-lg p-2 text-xs text-white font-mono"
+                  className="w-full cyber-glass-card rounded-lg p-2 text-xs text-white font-mono"
                 />
               </div>
 
@@ -1189,3 +1189,4 @@ export default function AdminCoursesPage() {
     </div>
   );
 }
+
