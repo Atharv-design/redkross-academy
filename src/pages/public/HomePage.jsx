@@ -4,6 +4,7 @@ import { Shield, Award, Terminal, ArrowRight, CheckCircle2, Lock, Zap, BookOpen,
 import { mockEngine } from '../../services/db/mockEngine';
 import { apiClient } from '../../services/apiClient';
 import CourseCardVariant from '../../components/cards/CourseCardVariant';
+import DefensivePathwayCard from '../../components/cards/DefensivePathwayCard';
 
 export default function HomePage() {
   const [courses, setCourses] = useState([]);
@@ -179,57 +180,13 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {learningPaths.map((path) => (
-              <div
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
+            {learningPaths.map((path, idx) => (
+              <DefensivePathwayCard
                 key={path.id}
-                className="glass-card glass-card-hover rounded-2xl p-6 sm:p-7 flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold uppercase tracking-wider bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30">
-                      {path.difficulty}
-                    </span>
-                    <span className="text-xs font-mono text-[#94A3B8]">
-                      {path.estimated_weeks} Weeks • {path.total_hours}h
-                    </span>
-                  </div>
-
-                  <h3 className="font-royal text-xl font-bold text-white mb-2 leading-snug">
-                    {path.title}
-                  </h3>
-                  <p className="text-xs text-[#94A3B8] leading-relaxed mb-4">
-                    {path.short_desc}
-                  </p>
-
-                  <div className="space-y-1.5 mb-6">
-                    <div className="text-[10px] font-mono text-[#94A3B8] uppercase tracking-wider font-semibold">
-                      Skills Validated
-                    </div>
-                    <div className="flex flex-wrap gap-1.5">
-                      {path.skills.map((skill, idx) => (
-                        <span key={idx} className="text-[10px] px-2 py-0.5 rounded bg-[#1B2530] text-slate-300 font-mono border border-[#263440]">
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-[#263440] flex items-center justify-between">
-                  <div>
-                    <div className="text-[9px] text-[#94A3B8] font-mono uppercase">Milestone Credential</div>
-                    <div className="text-xs font-royal font-bold text-[#65F58A]">{path.milestone_cert}</div>
-                  </div>
-                  <Link
-                    to="/paths"
-                    className="w-9 h-9 rounded-full bg-[#1B2530] hover:bg-[#65F58A] text-white hover:text-black flex items-center justify-center transition-all shadow"
-                    aria-label={`View track ${path.title}`}
-                  >
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </div>
-              </div>
+                path={path}
+                index={idx}
+              />
             ))}
           </div>
         </div>
