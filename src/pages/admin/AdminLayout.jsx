@@ -180,19 +180,8 @@ export default function AdminLayout() {
 
   return (
     <div className="flex h-screen bg-[#050C14] text-[#F1F5F9] font-sans overflow-hidden select-none relative">
-      {/* Dynamic RedKross Cyber Ambient Gradient Mesh (Color Blending Through Transparent Glass) */}
-      <div
-        className="absolute -top-40 -left-40 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-[#65F58A]/22 to-[#35E6B5]/16 blur-[120px] pointer-events-none z-0 animate-pulse"
-        style={{ animationDuration: '8s' }}
-      />
-      <div
-        className="absolute top-1/4 -right-20 w-[650px] h-[650px] rounded-full bg-gradient-to-bl from-[#65F58A]/18 to-[#35E6B5]/18 blur-[140px] pointer-events-none z-0 animate-pulse"
-        style={{ animationDuration: '10s' }}
-      />
-      <div className="absolute -bottom-32 left-1/4 w-[800px] h-[600px] rounded-full bg-gradient-to-tr from-[#65F58A]/18 to-[#35E6B5]/16 blur-[150px] pointer-events-none z-0" />
-      <div className="absolute bottom-10 -right-20 w-[500px] h-[500px] rounded-full bg-gradient-to-tl from-[#E06A26]/14 to-[#65F58A]/12 blur-[140px] pointer-events-none z-0" />
-
       {/* Cyber Grid Texture */}
+      <div className="absolute inset-0 bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none z-0 opacity-40" />
       <div className="absolute inset-0 bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none z-0 opacity-80" />
 
       {/* LEFT ULTRA-GLASS SIDEBAR WITH CYBER TREE-NAV */}

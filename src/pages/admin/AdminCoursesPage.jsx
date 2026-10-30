@@ -4,7 +4,7 @@ import {
   ChevronDown, ChevronRight, Video, FileText, CheckCircle2,
   AlertTriangle, GripVertical, Clock, Sparkles, Layers,
   ExternalLink, ArrowUpRight, ShieldCheck, PlayCircle,
-  UploadCloud, Film, HardDrive, Loader2
+  UploadCloud, Film, HardDrive, Loader2, FileCheck
 } from 'lucide-react';
 import { mockEngine } from '../../services/db/mockEngine';
 import { apiClient } from '../../services/apiClient';
@@ -52,6 +52,51 @@ export default function AdminCoursesPage() {
     is_preview: false,
     content: ''
   });
+
+  // Modal state for Practical Lab Assignment
+  const [assignmentModalOpen, setAssignmentModalOpen] = useState(false);
+  const [assignmentForm, setAssignmentForm] = useState({
+    title: '',
+    duration: '45 mins',
+    points: 100,
+    due_days: 7,
+    instructions: 'Download the lab template, conduct analysis, and submit your PDF investigation report.',
+    template_name: 'Lab_Investigation_Brief.pdf',
+    allowed_file_types: 'PDF (.pdf)'
+  });
+
+  const handleOpenAssignmentModal = (moduleId) => {
+    setActiveModuleId(moduleId);
+    setAssignmentForm({
+      title: 'Practical Investigation & Incident Triage Lab',
+      duration: '45 mins',
+      points: 100,
+      due_days: 7,
+      instructions: 'Download the investigative scenario, examine the security indicators, and submit your PDF report with screenshots and MITRE ATT&CK mapping.',
+      template_name: 'Lab_Investigation_Brief.pdf',
+      allowed_file_types: 'PDF (.pdf)'
+    });
+    setAssignmentModalOpen(true);
+  };
+
+  const handleSaveAssignment = (e) => {
+    e.preventDefault();
+    if (!selectedCourse || !activeModuleId) return;
+
+    const assignmentPayload = {
+      ...assignmentForm,
+      id: `asn_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      type: 'assignment',
+      is_mandatory: true
+    };
+
+    mockEngine.addModuleAssignment(selectedCourse.id, activeModuleId, assignmentPayload);
+    const db = mockEngine.getDb();
+    setCourses([...(db.courses || [])]);
+    const refreshed = db.courses?.find((c) => c.id === selectedCourse.id);
+    if (refreshed) setSelectedCourse(refreshed);
+    setAssignmentModalOpen(false);
+  };
 
   // Local Video Upload State
   const [videoSourceType, setVideoSourceType] = useState('upload'); // 'upload' | 'url'
@@ -229,6 +274,15 @@ export default function AdminCoursesPage() {
         ? courseFormData.slug.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
         : formattedTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
+      // DUPLICATE COURSE GUARD: Ensure no duplicate courses can be created
+      const isDuplicate = courses.some(
+        (c) => c.title?.trim().toLowerCase() === formattedTitle.toLowerCase() || c.slug?.toLowerCase() === generatedSlug
+      );
+      if (isDuplicate) {
+        alert(`Duplicate Course Blocked: A course titled "${formattedTitle}" or with slug "${generatedSlug}" already exists in the catalog. Please choose a unique title.`);
+        return;
+      }
+
       const newCoursePayload = {
         title: formattedTitle,
         slug: generatedSlug,
@@ -264,36 +318,41 @@ export default function AdminCoursesPage() {
         ]
       };
 
-      // 1. Create locally in mockEngine to guarantee immediate display, 3D variant allocation, and full state reactivity
-      const createdCourse = mockEngine.createCourse(newCoursePayload);
-      const db = mockEngine.getDb();
-      setCourses([...(db.courses || [])]);
-      setSelectedCourse(createdCourse);
-      setIsCreatingNew(false);
-      setIsEditingCourse(false);
-
-      // Reset form to blank state
-      setCourseFormData({
-        title: '',
-        slug: '',
-        level: 'Intermediate',
-        category: 'Cyber Threat Intelligence',
-        description: '',
-        duration: '4 Weeks',
-        xp_reward: 1000,
-        status: 'PUBLISHED',
-        modules: []
-      });
-
-      // 2. Dual-persist to serverless API / Neon PostgreSQL in background
       try {
-        await apiClient.createCourse({
-          ...newCoursePayload,
-          id: createdCourse.id,
-          card_variant: createdCourse.card_variant
+        // 1. Create locally in mockEngine to guarantee immediate display, 3D variant allocation, and full state reactivity
+        const createdCourse = mockEngine.createCourse(newCoursePayload);
+        const db = mockEngine.getDb();
+        setCourses([...(db.courses || [])]);
+        setSelectedCourse(createdCourse);
+        setIsCreatingNew(false);
+        setIsEditingCourse(false);
+
+        // Reset form to blank state
+        setCourseFormData({
+          title: '',
+          slug: '',
+          level: 'Intermediate',
+          category: 'Cyber Threat Intelligence',
+          description: '',
+          duration: '4 Weeks',
+          xp_reward: 1000,
+          status: 'PUBLISHED',
+          modules: []
         });
+
+        // 2. Dual-persist to serverless API / Neon PostgreSQL in background
+        try {
+          await apiClient.createCourse({
+            ...newCoursePayload,
+            id: createdCourse.id,
+            card_variant: createdCourse.card_variant
+          });
+        } catch (err) {
+          console.warn('Serverless course sync deferred:', err);
+        }
       } catch (err) {
-        console.warn('Serverless course sync deferred:', err);
+        console.error('Failed to create course:', err);
+        alert(`Course Creation Notice: ${err.message || 'Unable to create course'}`);
       }
     }
   };
@@ -889,6 +948,14 @@ export default function AdminCoursesPage() {
                                     <span>Lesson</span>
                                   </button>
                                   <button
+                                    onClick={() => handleOpenAssignmentModal(mod.id)}
+                                    className="px-2.5 py-1 text-[11px] font-mono bg-[#1B2530] text-[#CBD5E1] hover:text-[#F59E0B] rounded border border-[#263440] flex items-center space-x-1"
+                                    title="Add Practical Lab Assignment to Module"
+                                  >
+                                    <Plus className="w-3 h-3" />
+                                    <span>Assignment</span>
+                                  </button>
+                                  <button
                                     onClick={() => handleOpenModuleModal(mod)}
                                     className="p-1 text-[#8BA2B5] hover:text-white"
                                   >
@@ -908,7 +975,7 @@ export default function AdminCoursesPage() {
                                 <div className="p-2 space-y-1.5 bg-[#071018]">
                                   {(!mod.lessons || mod.lessons.length === 0) ? (
                                     <p className="text-[11px] text-[#8BA2B5] italic px-4 py-3">
-                                      No lessons inside this module. Click "+ Lesson" to add content or videos.
+                                      No lessons or assignments inside this module. Click "+ Lesson" or "+ Assignment" to add curriculum tasks.
                                     </p>
                                   ) : (
                                     mod.lessons.map((lesson, lesIdx) => (
@@ -918,7 +985,9 @@ export default function AdminCoursesPage() {
                                       >
                                         <div className="flex items-center space-x-3">
                                           <GripVertical className="w-3.5 h-3.5 text-[#8BA2B5] opacity-40 cursor-grab" />
-                                          {lesson.type === 'video' ? (
+                                          {lesson.type === 'assignment' ? (
+                                            <FileCheck className="w-4 h-4 text-[#F59E0B]" />
+                                          ) : lesson.type === 'video' ? (
                                             <PlayCircle className="w-4 h-4 text-[#65F58A]" />
                                           ) : (
                                             <FileText className="w-4 h-4 text-[#A855F7]" />
@@ -928,11 +997,15 @@ export default function AdminCoursesPage() {
                                               <span className="text-xs font-medium text-white">
                                                 {lesson.title}
                                               </span>
-                                              {lesson.is_preview && (
+                                              {lesson.type === 'assignment' ? (
+                                                <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                                                  PRACTICAL ASSIGNMENT ({lesson.points || 100} PTS)
+                                                </span>
+                                              ) : lesson.is_preview ? (
                                                 <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30">
                                                   FREE PREVIEW
                                                 </span>
-                                              )}
+                                              ) : null}
                                             </div>
                                             <span className="text-[10px] font-mono text-[#8BA2B5]">
                                               {lesson.duration || '10 mins'} • {lesson.type?.toUpperCase()}
@@ -1330,6 +1403,119 @@ export default function AdminCoursesPage() {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Practical Lab Assignment Creation Modal */}
+      {assignmentModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fadeIn">
+          <div className="w-[520px] ultra-glass-panel rounded-2xl p-6 border border-amber-500/40 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#1B2530]">
+              <div className="flex items-center space-x-2.5">
+                <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+                  <FileCheck className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white font-lora">
+                    Create Practical Lab Assignment
+                  </h3>
+                  <span className="text-[10px] font-mono text-amber-400 uppercase tracking-wider block">
+                    Curriculum Capstone Submission Node
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={() => setAssignmentModalOpen(false)}
+                className="text-xs font-mono text-[#8BA2B5] hover:text-white"
+              >
+                Cancel
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveAssignment} className="space-y-3.5">
+              <div>
+                <label className="text-xs font-mono text-[#8BA2B5] block mb-1">
+                  Assignment Title *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={assignmentForm.title}
+                  onChange={(e) => setAssignmentForm({ ...assignmentForm, title: e.target.value })}
+                  placeholder="e.g. Practical Incident Triage & Memory Forensics Lab"
+                  className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-amber-400 border border-[#263440]"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-mono text-[#8BA2B5] block mb-1">
+                    Token Reward (XP Bounty)
+                  </label>
+                  <input
+                    type="number"
+                    min="10"
+                    value={assignmentForm.points}
+                    onChange={(e) => setAssignmentForm({ ...assignmentForm, points: Number(e.target.value) })}
+                    className="w-full cyber-glass-card rounded-lg p-2 text-xs text-white font-mono border border-[#263440]"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-mono text-[#8BA2B5] block mb-1">
+                    Due Window (Days)
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={assignmentForm.due_days}
+                    onChange={(e) => setAssignmentForm({ ...assignmentForm, due_days: Number(e.target.value) })}
+                    className="w-full cyber-glass-card rounded-lg p-2 text-xs text-white font-mono border border-[#263440]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-mono text-[#8BA2B5] block mb-1">
+                  Downloadable Lab Brief Template (PDF)
+                </label>
+                <input
+                  type="text"
+                  value={assignmentForm.template_name}
+                  onChange={(e) => setAssignmentForm({ ...assignmentForm, template_name: e.target.value })}
+                  className="w-full cyber-glass-card rounded-lg p-2 text-xs text-white font-mono border border-[#263440]"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-mono text-[#8BA2B5] block mb-1">
+                  Assignment Brief & Investigation Instructions (Markdown)
+                </label>
+                <textarea
+                  rows={4}
+                  value={assignmentForm.instructions}
+                  onChange={(e) => setAssignmentForm({ ...assignmentForm, instructions: e.target.value })}
+                  placeholder="Outline the scenario, required toolsets (Wireshark/Volatility), and required sections in the submitted PDF."
+                  className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white font-mono border border-[#263440]"
+                />
+              </div>
+
+              <div className="flex justify-end space-x-2 pt-3 border-t border-[#1B2530]">
+                <button
+                  type="button"
+                  onClick={() => setAssignmentModalOpen(false)}
+                  className="px-3.5 py-1.5 bg-[#1B2530] text-[#CBD5E1] text-xs font-mono rounded-lg border border-[#263440]"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-1.5 bg-amber-500 text-[#071018] text-xs font-bold rounded-lg hover:bg-amber-400 font-mono"
+                >
+                  Save & Attach Assignment
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

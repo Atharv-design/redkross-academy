@@ -167,6 +167,7 @@ class MockEngine {
         exam_violation_events: [],
         assignment_submissions: [],
         certificate_requests: [],
+        banned_emails: [],
       };
       safeStorage.setItem(STORAGE_KEY, JSON.stringify(initialDb));
     }
@@ -195,6 +196,7 @@ class MockEngine {
       parsed.exam_violation_events = parsed.exam_violation_events || [];
       parsed.certificate_requests = parsed.certificate_requests || [];
       parsed.quiz_retry_windows = parsed.quiz_retry_windows || {};
+      parsed.banned_emails = parsed.banned_emails || [];
 
       // Ensure all course lessons have a playable video_url (repair missing, BigBuckBunny 403, or expired blob URLs)
       let modified = false;
@@ -335,6 +337,56 @@ class MockEngine {
     return user;
   }
 
+  isEmailBanned(email) {
+    if (!email) return false;
+    const cleanEmail = email.trim().toLowerCase();
+    const db = this.getDb();
+    return Boolean(db.banned_emails && db.banned_emails.includes(cleanEmail));
+  }
+
+  permanentlyDeleteStudent(userId, email, reason = 'Permanent administrative purge') {
+    const db = this.getDb();
+    const student = (db.users || []).find((u) => u.id === userId || (email && u.email?.toLowerCase() === email.toLowerCase()));
+    const targetEmail = (email || student?.email || '').trim().toLowerCase();
+    const targetName = student?.name || student?.full_name || 'Cadet';
+
+    // 1. Remove user from users array
+    db.users = (db.users || []).filter((u) => u.id !== userId && (targetEmail ? u.email?.toLowerCase() !== targetEmail : true));
+
+    // 2. Cascade delete enrolments
+    db.enrolments = (db.enrolments || []).filter((e) => e.user_id !== userId && (student?.cadet_id ? e.cadet_id !== student.cadet_id : true));
+
+    // 3. Delete or revoke credentials
+    if (db.credentials) {
+      db.credentials = db.credentials.filter((c) => c.student_email?.toLowerCase() !== targetEmail && (student?.cadet_id ? c.cadet_id !== student.cadet_id : true));
+    }
+
+    // 4. Blacklist email permanently so user cannot re-register
+    if (!db.banned_emails) db.banned_emails = [];
+    if (targetEmail && !db.banned_emails.includes(targetEmail)) {
+      db.banned_emails.push(targetEmail);
+    }
+
+    // 5. Audit log
+    if (!db.audit_logs) db.audit_logs = [];
+    db.audit_logs.unshift({
+      id: `aud_${Date.now()}`,
+      action: 'STUDENT_ACCOUNT_PURGED',
+      category: 'STUDENT_ADMIN',
+      user_email: targetEmail,
+      details: `Permanent deletion of cadet ${targetName} (${targetEmail}). Email permanently blacklisted from re-registration. Reason: ${reason}`,
+      severity: 'CRITICAL',
+      timestamp: new Date().toISOString()
+    });
+
+    this.saveDb(db, {
+      type: 'USER_PURGED',
+      payload: { userId, email: targetEmail, studentName: targetName }
+    });
+
+    return { success: true, userId, email: targetEmail, studentName: targetName };
+  }
+
   updateCourseCurriculum(courseId, curriculumData) {
     const db = this.getDb();
     const idx = (db.courses || []).findIndex((c) => c.id === courseId);
@@ -383,6 +435,12 @@ class MockEngine {
 
     const email = (userData.email || '').trim().toLowerCase();
     const uid = userData.uid || userData.id;
+
+    if (email && this.isEmailBanned(email)) {
+      const err = new Error('BANNED_EMAIL / BANNED_ACCOUNT: This email address has been permanently blacklisted and banned from RedKross Academy.');
+      err.code = 'BANNED_EMAIL';
+      throw err;
+    }
 
     // Check if user already exists
     let existing = db.users.find((u) =>
@@ -456,6 +514,27 @@ class MockEngine {
     );
 
     if (!cadet) return null;
+
+    // Check if cadet account is suspended: redact and withhold all personal data and credentials
+    if (cadet.status === 'SUSPENDED' || cadet.is_suspended) {
+      return {
+        isSuspended: true,
+        cadet: {
+          id: cadet.id,
+          cadet_id: cadet.cadet_id || 'RK-89421',
+          status: 'SUSPENDED',
+          message: 'This cadet account is under official administrative suspension by RedKross Academy Administration. All accreditations, diplomas, course progress, and telemetry are withheld and invalid for public verification.'
+        },
+        enrolments: [],
+        credentials: [],
+        metrics: {
+          totalEnrolled: 0,
+          totalCompleted: 0,
+          totalCredentials: 0,
+          tokensEarned: 0
+        }
+      };
+    }
 
     // Get all enrollments for this cadet
     const enrolments = (db.enrolments || []).filter((e) => e.user_id === cadet.id);
@@ -549,6 +628,28 @@ class MockEngine {
 
   createCourse(coursePayload) {
     const db = this.getDb();
+
+    // If course with this exact ID already exists (e.g. from background API sync), return it safely
+    if (coursePayload.id) {
+      const byId = (db.courses || []).find((c) => c.id === coursePayload.id);
+      if (byId) return byId;
+    }
+
+    // DUPLICATE COURSE GUARD: Prevent duplicate course creation
+    const trimmedTitle = (coursePayload.title || '').trim().toLowerCase();
+    const candidateSlug = (coursePayload.slug || (coursePayload.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')).trim().toLowerCase();
+    
+    if (trimmedTitle) {
+      const existing = (db.courses || []).find(
+        (c) => (c.title?.trim().toLowerCase() === trimmedTitle || (candidateSlug && c.slug?.toLowerCase() === candidateSlug)) && c.id !== coursePayload.id
+      );
+      if (existing) {
+        const err = new Error(`DUPLICATE_COURSE: A course titled "${coursePayload.title}" or with slug "${candidateSlug}" already exists in the catalog.`);
+        err.code = 'DUPLICATE_COURSE';
+        throw err;
+      }
+    }
+
     const variantNum = Math.floor(Math.random() * 10) + 1;
     const variantId = `variant-${String(variantNum).padStart(2, '0')}`;
     const defaultPreset = {
@@ -558,8 +659,8 @@ class MockEngine {
 
     const newCourse = {
       id: coursePayload.id || `crs_${Date.now()}`,
-      slug: coursePayload.slug || coursePayload.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-      title: coursePayload.title,
+      slug: coursePayload.slug || candidateSlug || `course-${Date.now()}`,
+      title: coursePayload.title || 'Specialist Cyber Operations Track',
       version: coursePayload.version || '1.0',
       status: coursePayload.status || 'PUBLISHED',
       category: coursePayload.category || 'Specialist Operations',
@@ -575,7 +676,7 @@ class MockEngine {
       card_variant: coursePayload.card_variant || variantId,
       art: coursePayload.art || defaultPreset.art,
       artPos: coursePayload.artPos || defaultPreset.artPos,
-      milestone_cert: coursePayload.milestone_cert || `Certified ${coursePayload.title.split(' ')[0]} Specialist`,
+      milestone_cert: coursePayload.milestone_cert || `Certified ${(coursePayload.title || 'Cyber').split(' ')[0]} Specialist`,
       skills: coursePayload.skills && coursePayload.skills.length > 0
         ? coursePayload.skills
         : (coursePayload.learning_objectives && coursePayload.learning_objectives.length > 0
@@ -592,7 +693,7 @@ class MockEngine {
       prerequisites: coursePayload.prerequisites || ['Basic Cybersecurity Fundamentals'],
       total_tokens_reward: coursePayload.total_tokens_reward || coursePayload.xp_reward || 350,
       xp_reward: coursePayload.xp_reward || coursePayload.total_tokens_reward || 350,
-      modules: coursePayload.modules || [
+      modules: coursePayload.modules && coursePayload.modules.length > 0 ? coursePayload.modules : [
         {
           id: `mod_${Date.now()}_1`,
           title: 'Module 1: Architecture & Defensive Fundamentals',
@@ -612,8 +713,10 @@ class MockEngine {
       created_at: new Date().toISOString(),
     };
 
+    if (!db.courses) db.courses = [];
     db.courses.unshift(newCourse);
 
+    if (!db.audit_logs) db.audit_logs = [];
     db.audit_logs.unshift({
       id: `aud_${Date.now()}`,
       actor_id: 'usr_admin',
@@ -624,8 +727,55 @@ class MockEngine {
       created_at: new Date().toISOString(),
     });
 
-    this.saveDb(db);
+    this.saveDb(db, {
+      type: 'CURRICULUM_MUTATED',
+      payload: { courseId: newCourse.id, course: newCourse, courses: db.courses }
+    });
     return newCourse;
+  }
+
+  addModuleAssignment(courseId, moduleId, assignmentPayload) {
+    const db = this.getDb();
+    const course = (db.courses || []).find((c) => c.id === courseId);
+    if (!course) return null;
+    const mod = (course.modules || []).find((m) => m.id === moduleId);
+    if (!mod) return null;
+
+    if (!mod.lessons) mod.lessons = [];
+    const assignmentItem = {
+      id: assignmentPayload.id || `asn_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      title: assignmentPayload.title || 'Module Capstone Practical Assignment',
+      type: 'assignment',
+      duration: assignmentPayload.duration || '45 mins',
+      points: Number(assignmentPayload.points) || 100,
+      due_days: Number(assignmentPayload.due_days) || 7,
+      instructions: assignmentPayload.instructions || 'Download the lab template, complete your investigation, and upload your PDF submission.',
+      template_name: assignmentPayload.template_name || 'Lab_Investigation_Brief.pdf',
+      allowed_file_types: assignmentPayload.allowed_file_types || 'PDF (.pdf)',
+      is_mandatory: true,
+      created_at: new Date().toISOString()
+    };
+
+    mod.lessons.push(assignmentItem);
+
+    if (!db.audit_logs) db.audit_logs = [];
+    db.audit_logs.unshift({
+      id: `aud_${Date.now()}`,
+      action: 'COURSE_ASSIGNMENT_ADDED',
+      category: 'COURSE_MUTATION',
+      entity_type: 'courses',
+      entity_id: courseId,
+      details: `Added practical assignment "${assignmentItem.title}" to module "${mod.title}"`,
+      severity: 'INFO',
+      timestamp: new Date().toISOString()
+    });
+
+    this.saveDb(db, {
+      type: 'CURRICULUM_MUTATED',
+      payload: { courseId, moduleId, assignment: assignmentItem }
+    });
+
+    return assignmentItem;
   }
 
   // ==========================================
@@ -2139,7 +2289,9 @@ class MockEngine {
     const certRequests = db.certificate_requests || [];
     const violations = db.exam_violation_events || [];
 
-    const realStudents = users.filter((u) => u.role === 'student');
+    // Count only active, non-suspended students for real platform metrics
+    const realActiveStudents = users.filter((u) => (u.role === 'student' || !u.role) && u.status !== 'SUSPENDED' && !u.is_suspended);
+    const suspendedStudents = users.filter((u) => u.status === 'SUSPENDED' || u.is_suspended);
     const validCredentials = credentials.filter((c) => !c.revoked);
     const revokedCredentials = credentials.filter((c) => c.revoked);
     const pendingAssignments = submissions.filter((s) => s.status === 'under_assessment');
@@ -2149,7 +2301,8 @@ class MockEngine {
     );
 
     return {
-      totalStudents: realStudents.length,
+      totalStudents: realActiveStudents.length,
+      totalSuspendedStudents: suspendedStudents.length,
       totalCourses: courses.length,
       totalEnrolments: enrolments.length,
       validCredentialsCount: validCredentials.length,

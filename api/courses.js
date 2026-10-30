@@ -65,6 +65,14 @@ export default async function handler(req, res) {
         return json(res, { error: 'Missing title or slug' }, 400);
       }
 
+      // Check for duplicate course
+      const duplicateCheck = await sql`
+        SELECT id FROM courses WHERE LOWER(title) = LOWER(${title}) OR slug = ${slug} LIMIT 1
+      `;
+      if (duplicateCheck.length > 0) {
+        return json(res, { error: 'DUPLICATE_COURSE', message: `A course with title "${title}" or slug "${slug}" already exists.` }, 409);
+      }
+
       // Random variant selection from the 10 designs (Phase 7.2 & 7.4)
       const variants = [
         'variant-01', 'variant-02', 'variant-03', 'variant-04', 'variant-05',

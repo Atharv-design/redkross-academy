@@ -121,8 +121,43 @@ export default function VerifyCredentialPage() {
 
         {/* 1. CADET VERIFIED ACADEMIC DOSSIER VIEW */}
         {hasSearched && dossier ? (
-          <div className="space-y-6 animate-slide-left stagger-2">
-            {/* Cadet Master Profile Card */}
+          dossier.isSuspended || dossier.cadet?.status === 'SUSPENDED' ? (
+            /* REDACTED SUSPENDED CADET DOSSIER (No other info shown per user rule) */
+            <div className="ultra-glass-card rounded-2xl p-8 border-2 border-red-500/50 text-center space-y-6 animate-slide-left stagger-2">
+              <div className="w-20 h-20 mx-auto rounded-3xl bg-red-500/10 border-2 border-red-500/30 flex items-center justify-center text-red-400">
+                <AlertTriangle className="w-10 h-10 stroke-[2.2]" />
+              </div>
+
+              <div className="space-y-3 max-w-lg mx-auto">
+                <span className="inline-block px-4 py-1.5 rounded-full bg-red-500/20 border border-red-500/40 text-red-400 text-xs font-mono font-black tracking-widest uppercase">
+                  ⛔ CADET ACCOUNT SUSPENDED
+                </span>
+
+                <h2 className="text-2xl sm:text-3xl font-bold text-white font-lora">
+                  Clearance Suspended
+                </h2>
+
+                <div className="inline-block px-3 py-1 rounded bg-[#0B131C] border border-red-500/30 text-red-400 font-mono text-xs font-bold">
+                  CADET ID: {dossier.cadet.cadet_id}
+                </div>
+
+                <p className="text-xs text-[#CBD5E1] font-mono leading-relaxed bg-red-500/10 p-4 rounded-xl border border-red-500/20">
+                  This cadet identity is under official administrative suspension by RedKross Academy Administration. In accordance with institutional integrity protocol, all accreditations, verified diplomas, skill badges, and curriculum progress records have been withheld and invalidated for public verification.
+                </p>
+              </div>
+
+              <div className="pt-2 flex justify-center">
+                <a
+                  href="mailto:contact@redkross.org.in"
+                  className="px-6 py-2.5 rounded-xl font-mono text-xs font-bold text-white bg-[#1B2530] hover:bg-[#263440] border border-[#263440] transition-colors"
+                >
+                  Contact Registry Administration
+                </a>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-6 animate-slide-left stagger-2">
+              {/* Cadet Master Profile Card */}
             <div className="ultra-glass-card rounded-2xl p-6 sm:p-8 relative overflow-hidden border border-[#65F58A]/40 shadow-[0_0_30px_rgba(101,245,138,0.15)]">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-[#263440] gap-4">
                 <div className="flex items-center space-x-4">
@@ -273,7 +308,7 @@ export default function VerifyCredentialPage() {
               </div>
             </div>
           </div>
-        ) : hasSearched && credential ? (
+        ) ) : hasSearched && credential ? (
           /* 2. SPECIFIC CREDENTIAL CERTIFICATE VIEW */
           credential.revoked ? (
             /* REVOKED / CANCELLED NOTICE (PRD & User Specification) */

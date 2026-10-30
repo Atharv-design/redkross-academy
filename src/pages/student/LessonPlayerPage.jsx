@@ -9,6 +9,7 @@ import {
   Download,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Award,
   Coins,
   Shield,
@@ -19,7 +20,14 @@ import {
   FileDown,
   Gauge,
   AlertTriangle,
-  RotateCcw
+  RotateCcw,
+  Search,
+  Check,
+  Clock,
+  FileCheck,
+  UploadCloud,
+  Loader2,
+  ArrowRight
 } from 'lucide-react';
 import { mockEngine } from '../../services/db/mockEngine';
 import { apiClient } from '../../services/apiClient';
@@ -45,13 +53,13 @@ export default function LessonPlayerPage() {
     });
   }
 
-  // Active lesson state (default to first incomplete or first lesson)
+  // Active lesson state
   const [activeLessonId, setActiveLessonId] = useState(null);
   const [progressData, setProgressData] = useState({ percentage: 0, completed: 0, total: 0 });
   const [unlockedFinal, setUnlockedFinal] = useState({ is_unlocked: false, reasons: [] });
-  // Responsive mobile tab switcher ('lesson' | 'syllabus' | 'resources')
-  const [mobileTab, setMobileTab] = useState('lesson');
   const [savingProgress, setSavingProgress] = useState(false);
+  const [activeTab, setActiveTab] = useState('notes'); // 'notes' | 'assignment'
+  const [expandedModules, setExpandedModules] = useState({});
 
   // Video Telemetry & Playback Gating State
   const videoRef = useRef(null);
@@ -59,7 +67,7 @@ export default function LessonPlayerPage() {
   const [watchProgressMap, setWatchProgressMap] = useState({});
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
-  // PDF Assignment Submission State (PRD & User Lifecycle Requirement)
+  // PDF Assignment Submission State
   const [assignmentSubmission, setAssignmentSubmission] = useState(null);
   const [uploadingFileName, setUploadingFileName] = useState('');
   const [uploadingDataUrl, setUploadingDataUrl] = useState('');
@@ -113,8 +121,8 @@ export default function LessonPlayerPage() {
         enrolmentId,
         courseId: course.id,
         moduleId: activeLesson.module_id,
-        assignmentId: `asg_${activeLesson.module_id}`,
-        assignmentTitle: `${activeLesson.module_title} Practical Lab Report`,
+        assignmentId: activeLesson.id || `asg_${activeLesson.module_id}`,
+        assignmentTitle: activeLesson.title || `${activeLesson.module_title} Practical Lab Report`,
         fileName: uploadingFileName,
         fileDataUrl: uploadingDataUrl
       });
@@ -122,7 +130,7 @@ export default function LessonPlayerPage() {
       setUploadingFileName('');
       setUploadingDataUrl('');
       loadAssignmentSubmission();
-      alert('Assignment submitted successfully! Your assignment is under assessment. You may proceed with subsequent modules.');
+      alert('Assignment submitted successfully! Your practical investigation report is under assessment.');
     } catch (e) {
       alert('Submission failed: ' + e.message);
     } finally {
@@ -135,9 +143,16 @@ export default function LessonPlayerPage() {
       const firstIncomplete = allLessons.find(
         (l) => !enrolment.completed_mandatory_lessons.includes(l.id)
       );
-      setActiveLessonId(firstIncomplete ? firstIncomplete.id : allLessons[0].id);
+      const chosenLesson = firstIncomplete ? firstIncomplete.id : allLessons[0].id;
+      setActiveLessonId(chosenLesson);
       setProgressData(mockEngine.getCourseProgress(enrolmentId));
       setUnlockedFinal(mockEngine.checkFinalAssessmentUnlock(enrolmentId));
+
+      // Auto expand module containing active lesson
+      const activeObj = allLessons.find((l) => l.id === chosenLesson);
+      if (activeObj) {
+        setExpandedModules({ [activeObj.module_id]: true });
+      }
     }
 
     const unsubscribe = mockEngine.subscribe((event) => {
@@ -152,26 +167,29 @@ export default function LessonPlayerPage() {
 
   if (!enrolment || !course) {
     return (
-      <div className="min-h-screen bg-[#071018] py-24 text-center px-4">
-        <h2 className="text-xl font-bold text-white mb-2 font-royal">Enrolment Not Found</h2>
-        <p className="text-xs text-slate-400 mb-4 font-mono">Please verify that you are enrolled in this training course.</p>
-        <Link to="/student" className="px-5 py-2.5 bg-redkross-600 rounded-lg text-white text-xs font-semibold inline-flex items-center space-x-2 font-royal">
-          <ChevronLeft className="w-4 h-4" />
-          <span>Return to Dashboard</span>
-        </Link>
+      <div className="min-h-screen bg-[#071018] py-24 text-center px-4 flex items-center justify-center">
+        <div className="max-w-md p-8 rounded-2xl ultra-glass-panel border border-[#263440] space-y-4">
+          <h2 className="text-xl font-bold text-white font-lora">Enrolment Not Found</h2>
+          <p className="text-xs text-[#8BA2B5] font-mono">Please verify that you are enrolled in this training course.</p>
+          <Link to="/student" className="px-5 py-2.5 bg-[#65F58A] rounded-xl text-[#071018] text-xs font-bold font-mono inline-flex items-center space-x-2">
+            <ChevronLeft className="w-4 h-4" />
+            <span>Return to Dashboard</span>
+          </Link>
+        </div>
       </div>
     );
   }
 
   const activeLesson = allLessons.find((l) => l.id === activeLessonId) || allLessons[0];
   const activeIndex = allLessons.findIndex((l) => l.id === activeLessonId);
-  const isLessonCompleted = enrolment.completed_mandatory_lessons.includes(activeLesson?.id);
+  const isLessonCompleted = enrolment.completed_mandatory_lessons?.includes(activeLesson?.id);
+  const isAssignment = activeLesson?.type === 'assignment';
 
-  // Sequential Unlock Rule: Lesson 0 is unlocked. Lesson N is unlocked IF all previous lessons (0..N-1) are completed
+  // Sequential Unlock Rule
   const isLessonUnlocked = (idx) => {
     if (idx === 0) return true;
     for (let i = 0; i < idx; i++) {
-      if (!enrolment.completed_mandatory_lessons.includes(allLessons[i].id)) {
+      if (!enrolment.completed_mandatory_lessons?.includes(allLessons[i].id)) {
         return false;
       }
     }
@@ -194,11 +212,10 @@ export default function LessonPlayerPage() {
   }, [activeLesson?.video_url, activeLesson?.id]);
 
   const currentWatchPct = isLessonCompleted ? 100 : (watchProgressMap[activeLesson?.id]?.percentage || 0);
-  const hasVideo = Boolean(resolvedVideoUrl);
-  // Strict completion gating: requires >= 80% video watch if video exists
-  const canMarkComplete = !hasVideo || isLessonCompleted || currentWatchPct >= 80;
+  const hasVideo = Boolean(resolvedVideoUrl) && !isAssignment;
+  const canMarkComplete = isLessonCompleted || isAssignment || currentWatchPct >= 80;
 
-  // Handle Video Time Update Telemetry
+  // Video Telemetry
   const handleTimeUpdate = () => {
     if (!videoRef.current || !activeLesson) return;
     const { currentTime, duration } = videoRef.current;
@@ -221,14 +238,7 @@ export default function LessonPlayerPage() {
     });
   };
 
-  const handleSpeedChange = (speed) => {
-    setPlaybackSpeed(speed);
-    if (videoRef.current) {
-      videoRef.current.playbackRate = speed;
-    }
-  };
-
-  // Cloud Stream Embed Resolver (YouTube / Vimeo / Cloudflare)
+  // Cloud Stream Embed Resolver
   const getEmbedInfo = (url) => {
     if (!url) return null;
     if (url.includes('youtube.com/watch?v=')) {
@@ -251,40 +261,23 @@ export default function LessonPlayerPage() {
 
   const embedInfo = getEmbedInfo(resolvedVideoUrl);
 
-  // Simulated Telemetry Checkpoint for Cloud Iframe Embeds
-  const handleSimulateEmbedTelemetry = () => {
-    if (!activeLesson) return;
-    setWatchProgressMap((prev) => ({
-      ...prev,
-      [activeLesson.id]: {
-        percentage: 100,
-        maxTime: 600,
-        duration: 600
-      }
-    }));
-  };
-
-  const handleDownloadResource = (res) => {
+  const handleDownloadResource = (name) => {
     const docContent = `# REDKROSS ACADEMY - TECHNICAL STUDY REFERENCE\n` +
-      `============================================================\n\n` +
-      `Asset: ${res.name}\n` +
-      `Course: ${course?.title || 'Defensive Cyber Operations'}\n` +
-      `Module: ${activeLesson?.title || 'Curriculum Module'}\n` +
+      `Asset: ${name}\n` +
+      `Course: ${course.title}\n` +
+      `Module: ${activeLesson?.module_title || 'Core Curriculum'}\n` +
       `Date Generated: ${new Date().toISOString().split('T')[0]}\n\n` +
       `## Standard Operating Procedures & Field Laboratory Reference\n` +
       `1. Telemetry Ingestion Source: Windows Security Log (Event IDs 4624, 4625, 4672, 4720)\n` +
-      `2. Network Volatility: Memory capture before host hibernation or reboot\n` +
+      `2. Network Volatility: Memory capture before host reboot\n` +
       `3. Playbook Alignment: NIST SP 800-61r2 Computer Security Incident Handling Guide\n` +
-      `4. MITRE ATT&CK Matrix: T1059 (Command and Scripting Interpreter), T1078 (Valid Accounts)\n\n` +
-      `============================================================\n` +
-      `Institutional technical document generated for verified operator training.\n` +
-      `Confidential ? RedKross Research Foundation.\n`;
+      `4. MITRE ATT&CK Matrix: T1059 (Command Execution), T1078 (Valid Accounts)\n`;
 
     const blob = new Blob([docContent], { type: 'text/markdown;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = res.name.replace(/[^a-zA-Z0-9._-]/g, '_') + '.md';
+    link.download = name.replace(/[^a-zA-Z0-9._-]/g, '_') + '.md';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -296,17 +289,17 @@ export default function LessonPlayerPage() {
     setSavingProgress(true);
 
     try {
-      // Complete in backend PostgreSQL and local mock engine
       await apiClient.completeLesson(enrolmentId, activeLesson.id);
       const newProgress = mockEngine.getCourseProgress(enrolmentId);
       setProgressData(newProgress);
       refreshBalance();
       setUnlockedFinal(mockEngine.checkFinalAssessmentUnlock(enrolmentId));
 
-      // Auto-advance to next lesson if available
+      // Advance to next lesson if available
       if (activeIndex < allLessons.length - 1) {
-        setActiveLessonId(allLessons[activeIndex + 1].id);
-        setMobileTab('lesson');
+        const nextLes = allLessons[activeIndex + 1];
+        setActiveLessonId(nextLes.id);
+        setExpandedModules((prev) => ({ ...prev, [nextLes.module_id]: true }));
       }
     } catch (err) {
       console.error('Failed to complete lesson:', err);
@@ -315,593 +308,751 @@ export default function LessonPlayerPage() {
     }
   };
 
+  const handleNextLesson = () => {
+    if (activeIndex < allLessons.length - 1) {
+      const nextLes = allLessons[activeIndex + 1];
+      setActiveLessonId(nextLes.id);
+      setExpandedModules((prev) => ({ ...prev, [nextLes.module_id]: true }));
+    }
+  };
+
+  const handlePrevLesson = () => {
+    if (activeIndex > 0) {
+      const prevLes = allLessons[activeIndex - 1];
+      setActiveLessonId(prevLes.id);
+      setExpandedModules((prev) => ({ ...prev, [prevLes.module_id]: true }));
+    }
+  };
+
+  // SVG Circular Gauge calculation
+  const circumference = 2 * Math.PI * 34; // radius 34
+  const strokeDashoffset = circumference - (progressData.percentage / 100) * circumference;
+
   return (
-    <div className="min-h-screen bg-[#071018] flex flex-col">
-      {/* Top Bar Navigation */}
-      <div className="h-14 bg-surface-card border-b border-surface-border px-3 sm:px-6 flex items-center justify-between z-20">
-        <div className="flex items-center space-x-2 sm:space-x-3 truncate">
-          <Link
-            to="/student"
-            className="p-1.5 rounded-lg bg-surface-100 hover:bg-surface-200 text-slate-300 transition-colors flex-shrink-0"
-            title="Back to Dashboard"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </Link>
-          <div className="truncate">
-            <h1 className="text-xs sm:text-sm font-bold text-white truncate max-w-[170px] xs:max-w-xs sm:max-w-md">
-              {course.title}
-            </h1>
-            <div className="text-[10px] text-slate-400 font-mono truncate">
-              {activeIndex + 1}/{allLessons.length} • {activeLesson?.title}
+    <div className="min-h-screen bg-[#071018] text-[#F1F5F9] font-sans pb-12">
+      {/* 1. TOP BREADCRUMB & METRICS HEADER BAR */}
+      <header className="sticky top-0 z-30 bg-[#071018]/90 backdrop-blur-xl border-b border-[#1B2530] px-4 sm:px-8 py-3.5">
+        <div className="max-w-[1720px] mx-auto flex items-center justify-between gap-4">
+          <div className="flex items-center space-x-3 truncate">
+            <Link
+              to="/student"
+              className="p-2 rounded-xl bg-[#0F1722] hover:bg-[#1B2530] text-[#CBD5E1] border border-[#263440] transition-colors flex-shrink-0"
+              title="Return to Student Dashboard"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </Link>
+            <div className="truncate">
+              <div className="flex items-center space-x-2 text-[11px] font-mono text-[#8BA2B5]">
+                <span>{course.category || 'Specialist Training'}</span>
+                <span>/</span>
+                <span className="text-[#65F58A] font-bold">{course.title}</span>
+              </div>
+              <h1 className="text-sm sm:text-base font-bold text-white font-lora truncate">
+                {activeLesson?.title || 'Course Lesson'}
+              </h1>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-3 flex-shrink-0">
+            {/* Quick Completion Button */}
+            <button
+              onClick={handleMarkComplete}
+              disabled={savingProgress || isLessonCompleted || !canMarkComplete}
+              className={`px-4 py-2 rounded-xl text-xs font-mono font-bold flex items-center space-x-2 transition-all border ${
+                isLessonCompleted
+                  ? 'bg-[#65F58A]/15 text-[#65F58A] border-[#65F58A]/40'
+                  : canMarkComplete
+                  ? 'bg-[#65F58A] text-[#071018] border-[#65F58A] hover:bg-[#52d674] shadow-[0_0_15px_rgba(101,245,138,0.3)]'
+                  : 'bg-[#1B2530] text-[#8BA2B5] border-[#263440] opacity-50 cursor-not-allowed'
+              }`}
+            >
+              <Check className="w-3.5 h-3.5 stroke-[3]" />
+              <span>{isLessonCompleted ? 'Completed' : savingProgress ? 'Saving...' : 'Mark Complete'}</span>
+            </button>
+
+            {/* Next Lesson Action */}
+            <button
+              onClick={handleNextLesson}
+              disabled={activeIndex >= allLessons.length - 1}
+              className={`p-2 rounded-xl border font-mono text-xs flex items-center space-x-1 transition-colors ${
+                activeIndex < allLessons.length - 1
+                  ? 'bg-[#0F1722] hover:bg-[#1B2530] text-white border-[#263440]'
+                  : 'bg-[#0A121A] text-[#8BA2B5]/40 border-[#1B2530] cursor-not-allowed'
+              }`}
+              title="Next Lesson"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+
+            {/* Cadet Identity Badge */}
+            <div className="hidden md:flex items-center space-x-2 pl-3 border-l border-[#1B2530]">
+              <div className="w-8 h-8 rounded-full bg-[#101923] border border-[#65F58A]/40 flex items-center justify-center font-bold text-xs text-[#65F58A]">
+                {currentUser?.name?.charAt(0) || 'C'}
+              </div>
+              <div className="text-right">
+                <span className="text-[11px] font-bold text-white block leading-tight">
+                  {currentUser?.name || 'Cadet'}
+                </span>
+                <span className="text-[10px] font-mono text-[#65F58A]">
+                  {progressData.percentage}% Certified
+                </span>
+              </div>
             </div>
           </div>
         </div>
+      </header>
 
-        {/* Progress Pill */}
-        <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
-          <div className="flex items-center space-x-1.5 text-xs font-mono">
-            <span className="hidden sm:inline text-slate-400">Progress:</span>
-            <span className="text-redkross-400 font-bold tabular-nums">{progressData.percentage}%</span>
-          </div>
-          <div className="w-16 sm:w-28 h-2 rounded-full bg-surface-100 overflow-hidden border border-surface-border">
-            <div
-              className="h-full bg-gradient-to-r from-redkross-600 to-rose-400 rounded-full transition-all duration-300"
-              style={{ width: `${progressData.percentage}%` }}
-            />
-          </div>
-        </div>
-      </div>
+      {/* 2. MAIN 12-COLUMN EDUNEX WORKSTATION (ZERO VOIDS, DENSE & CRISP) */}
+      <main className="max-w-[1720px] mx-auto px-4 sm:px-8 pt-6">
+        <div className="grid grid-cols-12 gap-6 items-start">
+          {/* ========================================================= */}
+          {/* LEFT 8 COLUMNS: VIDEO PLAYER + LEARNING PROGRESS + TABS  */}
+          {/* ========================================================= */}
+          <div className="col-span-12 lg:col-span-8 space-y-6">
+            {/* Top Section Header */}
+            <div className="flex items-center justify-between pb-1">
+              <div>
+                <span className="text-[11px] font-mono text-[#8BA2B5] uppercase tracking-wider block">
+                  {activeLesson?.module_title || 'Current Chapter'}
+                </span>
+                <h2 className="text-lg font-bold text-white font-lora">
+                  Online Video Lessons
+                </h2>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="text-xs font-mono px-2.5 py-1 rounded-lg bg-[#0F1722] border border-[#263440] text-[#CBD5E1]">
+                  Lesson {activeIndex + 1} of {allLessons.length}
+                </span>
+              </div>
+            </div>
 
-      {/* Mobile & Tablet Segmented Tab Bar (< lg screens) */}
-      <div className="lg:hidden bg-surface-card/90 border-b border-surface-border px-3 py-2 flex items-center justify-between gap-1.5 sticky top-14 z-10 backdrop-blur-md">
-        <button
-          onClick={() => setMobileTab('lesson')}
-          className={`flex-1 py-1.5 px-2 rounded-md text-[11px] font-mono font-medium flex items-center justify-center space-x-1.5 transition-all ${
-            mobileTab === 'lesson'
-              ? 'bg-redkross-600 text-white font-bold shadow'
-              : 'text-slate-400 hover:text-slate-200 bg-surface-100/50'
-          }`}
-        >
-          <BookOpen className="w-3.5 h-3.5" />
-          <span>Lesson</span>
-        </button>
-        <button
-          onClick={() => setMobileTab('syllabus')}
-          className={`flex-1 py-1.5 px-2 rounded-md text-[11px] font-mono font-medium flex items-center justify-center space-x-1.5 transition-all ${
-            mobileTab === 'syllabus'
-              ? 'bg-redkross-600 text-white font-bold shadow'
-              : 'text-slate-400 hover:text-slate-200 bg-surface-100/50'
-          }`}
-        >
-          <Layers className="w-3.5 h-3.5" />
-          <span>Modules</span>
-        </button>
-        <button
-          onClick={() => setMobileTab('resources')}
-          className={`flex-1 py-1.5 px-2 rounded-md text-[11px] font-mono font-medium flex items-center justify-center space-x-1.5 transition-all ${
-            mobileTab === 'resources'
-              ? 'bg-redkross-600 text-white font-bold shadow'
-              : 'text-slate-400 hover:text-slate-200 bg-surface-100/50'
-          }`}
-        >
-          <Download className="w-3.5 h-3.5" />
-          <span>Resources</span>
-        </button>
-      </div>
-
-      {/* Responsive Workstation Layout */}
-      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden animate-slide-left">
-        {/* Left Column: Curriculum Syllabus Navigation */}
-        <div
-          className={`w-full lg:w-80 ultra-glass-panel border-r border-[#263440] overflow-y-auto p-4 space-y-6 ${
-            mobileTab === 'syllabus' ? 'block' : 'hidden lg:block'
-          } lg:max-h-[calc(100vh-3.5rem)]`}
-        >
-          <div className="text-xs font-mono uppercase tracking-wider text-slate-400 flex items-center justify-between">
-            <span>Course Syllabus</span>
-            <span className="text-slate-500">{course.modules.length} Modules</span>
-          </div>
-
-          <div className="space-y-4">
-            {course.modules.map((mod) => (
-              <div key={mod.id} className="space-y-1.5">
-                <div className="text-[11px] font-bold text-slate-300 font-mono uppercase tracking-wider px-2 py-1 bg-surface-100/60 rounded flex items-center justify-between">
-                  <span className="truncate">{mod.title}</span>
-                  <span className="text-[10px] text-slate-400 font-mono">{mod.lessons.length} Lessons</span>
-                </div>
-
-                <div className="space-y-1 pl-1">
-                  {mod.lessons.map((les) => {
-                    const globalIdx = allLessons.findIndex((l) => l.id === les.id);
-                    const isDone = enrolment.completed_mandatory_lessons.includes(les.id);
-                    const isActive = les.id === activeLessonId;
-                    const isUnlocked = isLessonUnlocked(globalIdx);
-
-                    return (
-                      <button
-                        key={les.id}
-                        disabled={!isUnlocked}
-                        onClick={() => {
-                          if (isUnlocked) {
-                            setActiveLessonId(les.id);
-                            setMobileTab('lesson');
-                          }
-                        }}
-                        className={`w-full text-left p-2 rounded-lg text-xs flex items-center justify-between transition-colors ${
-                          isActive
-                            ? 'bg-redkross-600/15 border border-redkross-600/40 text-white font-semibold'
-                            : isUnlocked
-                            ? 'hover:bg-surface-100 text-slate-300'
-                            : 'opacity-40 cursor-not-allowed text-slate-500 bg-surface-100/20'
-                        }`}
-                      >
-                        <div className="flex items-center space-x-2 truncate pr-2">
-                          {isDone ? (
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                          ) : isUnlocked ? (
-                            <span className="w-3.5 h-3.5 rounded-full border border-slate-600 flex-shrink-0" />
-                          ) : (
-                            <Lock className="w-3.5 h-3.5 text-slate-600 flex-shrink-0" />
-                          )}
-                          <span className="truncate">{les.title}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 flex-shrink-0 text-[10px] font-mono text-slate-400">
-                          {les.video_url && <Play className="w-2.5 h-2.5 text-[#65F58A]" />}
-                          <span>{les.duration}</span>
-                        </div>
-                      </button>
-                    );
-                  })}
-
-                  {/* Chapter Quiz Trigger */}
-                  {mod.quiz && (
-                    <Link
-                      to={`/student/quiz/${enrolmentId}/${mod.quiz.id}`}
-                      className={`w-full p-2.5 rounded-lg text-xs flex items-center justify-between transition-all mt-1 ${
-                        (enrolment.passed_quizzes || []).includes(mod.quiz.id)
-                          ? 'bg-emerald-950/20 border border-emerald-500/30 text-emerald-300'
-                          : 'bg-amber-500/10 border border-amber-500/30 text-amber-300 hover:bg-amber-500/20'
-                      }`}
-                    >
-                      <div className="flex items-center space-x-2 truncate">
-                        <Award className="w-3.5 h-3.5 flex-shrink-0" />
-                        <span className="font-semibold truncate">Chapter Quiz: {mod.quiz.title}</span>
+            {/* Video Player Card / Assignment Viewer */}
+            <div className="ultra-glass-panel rounded-2xl overflow-hidden border border-[#263440] shadow-xl">
+              {isAssignment ? (
+                /* Practical Assignment Stage */
+                <div className="p-8 space-y-6 bg-[#081119]">
+                  <div className="flex items-center justify-between pb-4 border-b border-[#1B2530]">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+                        <FileCheck className="w-6 h-6" />
                       </div>
-                      {(enrolment.passed_quizzes || []).includes(mod.quiz.id) ? (
-                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400">PASSED</span>
-                      ) : (
-                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">+100 T</span>
-                      )}
-                    </Link>
-                  )}
-                </div>
-              </div>
-            ))}
-
-            {/* Final Assessment Gate Trigger */}
-            {course.final_assessment && (
-              <div className="pt-4 border-t border-surface-border">
-                <Link
-                  to={`/student/final-exam/${enrolmentId}`}
-                  className={`w-full p-3 rounded-lg text-xs font-semibold flex items-center justify-between transition-all ${
-                    unlockedFinal.is_unlocked
-                      ? 'bg-redkross-600 hover:bg-redkross-700 text-white shadow-lg cyber-glow-red'
-                      : 'bg-surface-100/60 border border-surface-border text-slate-400 cursor-pointer hover:border-slate-600'
-                  }`}
-                >
-                  <div className="flex items-center space-x-2">
-                    {unlockedFinal.is_unlocked ? (
-                      <Sparkles className="w-4 h-4 text-amber-300" />
-                    ) : (
-                      <Lock className="w-4 h-4 text-slate-400" />
-                    )}
-                    <span>Final Certification Exam</span>
+                      <div>
+                        <span className="text-[10px] font-mono text-amber-400 uppercase tracking-wider block">
+                          Practical Lab Assessment
+                        </span>
+                        <h3 className="text-xl font-bold text-white font-lora">
+                          {activeLesson.title}
+                        </h3>
+                      </div>
+                    </div>
+                    <span className="px-3 py-1 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-300 font-mono text-xs font-bold">
+                      +{activeLesson.points || 100} XP BOUNTY
+                    </span>
                   </div>
-                  <span className="text-[10px] font-mono">
-                    {unlockedFinal.is_unlocked ? 'UNLOCKED' : 'LOCKED'}
-                  </span>
-                </Link>
-                {!unlockedFinal.is_unlocked && (
-                  <div className="text-[10px] text-slate-400 font-mono mt-1.5 leading-tight">
-                    Requires 100% lessons + all quizzes passed + 80% token quota.
+
+                  <div className="space-y-4">
+                    <div className="p-4 rounded-xl bg-[#0B131C] border border-[#1B2530] text-xs font-mono leading-relaxed text-[#CBD5E1] whitespace-pre-wrap">
+                      {activeLesson.instructions || 'Download the lab template, complete your analysis, and submit your PDF investigation report.'}
+                    </div>
+
+                    <div className="flex items-center justify-between p-4 rounded-xl bg-[#0F1722] border border-[#263440]">
+                      <div className="flex items-center space-x-3">
+                        <FileDown className="w-5 h-5 text-[#65F58A]" />
+                        <div>
+                          <span className="text-xs font-bold text-white block">
+                            {activeLesson.template_name || 'Lab_Investigation_Brief.pdf'}
+                          </span>
+                          <span className="text-[10px] text-[#8BA2B5] font-mono">
+                            Mandatory Worksheet Template • PDF Format
+                          </span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => handleDownloadResource(activeLesson.template_name || 'Lab_Brief.pdf')}
+                        className="px-4 py-2 rounded-lg bg-[#1B2530] hover:bg-[#263440] text-[#65F58A] border border-[#65F58A]/30 text-xs font-mono font-bold flex items-center space-x-1.5 transition-colors"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>Download Brief</span>
+                      </button>
+                    </div>
                   </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Center Column: Active Lesson Viewport */}
-        <div
-          className={`flex-1 overflow-y-auto p-4 sm:p-8 lg:p-10 max-w-4xl mx-auto space-y-6 sm:space-y-8 ${
-            mobileTab === 'lesson' ? 'block' : 'hidden lg:block'
-          } lg:max-h-[calc(100vh-3.5rem)]`}
-        >
-          {activeLesson ? (
-            <>
-              {/* Progress Bar & Telemetry (User Enhancement 3) */}
-              <div className="p-3.5 rounded-xl ultra-glass-panel flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono shadow-md animate-slide-left">
-                <div className="flex items-center gap-2">
-                  <span className="text-[#94A3B8]">Course Progress:</span>
-                  <span className="text-[#65F58A] font-bold">{progressData.percentage}%</span>
-                  <span className="text-[#64748B]">({progressData.completed}/{progressData.total} Lessons)</span>
                 </div>
-                <div className="w-full sm:w-48 bg-[#071018] rounded-full h-2 overflow-hidden border border-[#263440]">
-                  <div
-                    className="bg-gradient-to-r from-[#65F58A] to-[#35E6B5] h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${progressData.percentage}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* Embedded Video Player & Playback Gating (User Enhancement 3 & PRD Specification) */}
-              <div className="ultra-glass-panel rounded-2xl p-3 sm:p-4 shadow-2xl relative overflow-hidden space-y-3 animate-slide-left stagger-1">
-                <div className="relative aspect-video rounded-xl overflow-hidden bg-black flex items-center justify-center">
+              ) : (
+                /* Native Video / Cloud Stream Player */
+                <div className="relative aspect-video bg-black flex items-center justify-center">
                   {hasVideo ? (
                     embedInfo?.type === 'youtube' || embedInfo?.type === 'vimeo' ? (
-                      <div className="relative w-full h-full">
-                        <iframe
-                          src={embedInfo.embedUrl}
-                          title={activeLesson.title}
-                          className="w-full h-full border-0"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                        />
-                      </div>
+                      <iframe
+                        src={embedInfo.embedUrl}
+                        title={activeLesson.title}
+                        className="w-full h-full border-0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
                     ) : (
-                      <div className="relative w-full h-full group">
-                        <video
-                          key={resolvedVideoUrl}
-                          ref={videoRef}
-                          src={resolvedVideoUrl}
-                          controls
-                          playsInline
-                          preload="auto"
-                          onPlay={() => setIsVideoPlaying(true)}
-                          onPause={() => setIsVideoPlaying(false)}
-                          onTimeUpdate={handleTimeUpdate}
-                          onEnded={() => {
-                            setIsVideoPlaying(false);
-                            setWatchProgressMap((prev) => ({
-                              ...prev,
-                              [activeLesson.id]: { percentage: 100, maxTime: 9999, duration: 9999 }
-                            }));
-                          }}
-                          onError={(e) => {
-                            console.warn('Video failed, applying local fallback:', e.currentTarget.src);
-                            if (!e.currentTarget.src.includes('/assets/sample-lesson.mp4')) {
-                              e.currentTarget.src = '/assets/sample-lesson.mp4';
-                              e.currentTarget.load();
-                            }
-                          }}
-                          poster={course.art || '/assets/course-art/art-01.jpg'}
-                          className="w-full h-full object-cover"
-                        >
-                          <source src={resolvedVideoUrl} type="video/mp4" />
-                          <source src="/assets/sample-lesson.mp4" type="video/mp4" />
-                        </video>
-
-                        {/* Central Play Overlay Button */}
-                        {!isVideoPlaying && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (videoRef.current) {
-                                videoRef.current.play().catch((err) => console.warn('Play error:', err));
-                              }
-                            }}
-                            className="absolute inset-0 flex items-center justify-center bg-black/40 hover:bg-black/25 transition-all cursor-pointer z-10"
-                            aria-label="Play Lesson Video"
-                          >
-                            <div className="w-16 h-16 rounded-full bg-[#101923]/90 border-2 border-[#65F58A] flex items-center justify-center text-[#65F58A] shadow-[0_0_30px_rgba(101,245,138,0.5)] group-hover:scale-110 transition-transform">
-                              <Play className="w-8 h-8 ml-1 fill-[#65F58A]" />
-                            </div>
-                          </button>
-                        )}
-                      </div>
+                      <video
+                        key={resolvedVideoUrl}
+                        ref={videoRef}
+                        src={resolvedVideoUrl}
+                        controls
+                        playsInline
+                        preload="auto"
+                        onPlay={() => setIsVideoPlaying(true)}
+                        onPause={() => setIsVideoPlaying(false)}
+                        onTimeUpdate={handleTimeUpdate}
+                        onEnded={() => {
+                          setIsVideoPlaying(false);
+                          setWatchProgressMap((prev) => ({
+                            ...prev,
+                            [activeLesson.id]: { percentage: 100, maxTime: 9999, duration: 9999 }
+                          }));
+                        }}
+                        poster={course.art || '/assets/course-art/art-01.jpg'}
+                        className="w-full h-full object-cover"
+                      >
+                        <source src={resolvedVideoUrl} type="video/mp4" />
+                      </video>
                     )
                   ) : (
-                    <div className="relative w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#101923] to-[#071018] p-6 text-center">
-                      <div className="w-16 h-16 rounded-full bg-[#1B2530] border border-[#65F58A]/40 flex items-center justify-center text-[#65F58A] mb-3 shadow-[0_0_20px_rgba(101,245,138,0.2)]">
-                        <Play className="w-7 h-7 ml-1" />
-                      </div>
-                      <div className="font-royal text-base font-bold text-white mb-1">
-                        {activeLesson.title}
-                      </div>
-                      <div className="text-xs font-mono text-[#94A3B8]">
-                        Text-Based Curriculum Unit • {activeLesson.duration} • Interactive Defensive Lab Below
-                      </div>
+                    <div className="p-8 text-center space-y-3">
+                      <BookOpen className="w-12 h-12 text-[#65F58A]/40 mx-auto" />
+                      <h4 className="text-white font-bold text-sm">Interactive Study Document</h4>
+                      <p className="text-xs text-[#8BA2B5]">Review curriculum notes, terminal commands, and protocols below.</p>
                     </div>
                   )}
                 </div>
+              )}
 
-                {/* Player Toolbar: Speed Controls & Stream Sync */}
-                {hasVideo && (
-                  <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-[#263440] text-xs font-mono">
-                    <div className="flex items-center gap-1.5">
-                      <Gauge className="w-3.5 h-3.5 text-[#65F58A]" />
-                      <span className="text-[#94A3B8]">Speed:</span>
-                      {[0.75, 1.0, 1.25, 1.5, 2.0].map((rate) => (
-                        <button
-                          key={rate}
-                          onClick={() => handleSpeedChange(rate)}
-                          className={`px-2 py-0.5 rounded text-[11px] transition-colors ${
-                            playbackSpeed === rate
-                              ? 'bg-[#1B2530] text-[#65F58A] border border-[#65F58A]/40 font-bold'
-                              : 'text-slate-400 hover:text-white bg-[#101923]'
-                          }`}
-                        >
-                          {rate}x
-                        </button>
-                      ))}
-                    </div>
-
-                    {embedInfo?.type === 'youtube' || embedInfo?.type === 'vimeo' ? (
+              {/* Player Bottom Control & Quick Action Bar */}
+              <div className="p-4 bg-[#0A121A] border-t border-[#1B2530] flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-1 text-xs font-mono text-[#8BA2B5]">
+                    <span>Playback Speed:</span>
+                    {[0.75, 1.0, 1.25, 1.5, 2.0].map((spd) => (
                       <button
-                        onClick={handleSimulateEmbedTelemetry}
-                        className="px-2.5 py-1 rounded-lg bg-[#1B2530] hover:bg-[#263440] text-[#35E6B5] border border-[#35E6B5]/30 text-[11px] font-mono flex items-center gap-1 transition-all"
-                        title="Sync playback progress from cloud stream"
+                        key={spd}
+                        onClick={() => {
+                          setPlaybackSpeed(spd);
+                          if (videoRef.current) videoRef.current.playbackRate = spd;
+                        }}
+                        className={`px-2 py-0.5 rounded text-[11px] font-mono transition-colors ${
+                          playbackSpeed === spd
+                            ? 'bg-[#65F58A] text-[#071018] font-bold'
+                            : 'bg-[#141E28] text-[#CBD5E1] hover:text-white border border-[#263440]'
+                        }`}
                       >
-                        <RotateCcw className="w-3 h-3" />
-                        <span>Sync Telemetry ({currentWatchPct}%)</span>
+                        {spd}x
                       </button>
-                    ) : (
-                      <div className="text-[11px] text-[#94A3B8]">
-                        Watched: <strong className="text-white">{currentWatchPct}%</strong> / 80% gate
-                      </div>
-                    )}
+                    ))}
                   </div>
-                )}
 
-                {/* Strict Playback Gating Indicator Badge */}
-                {hasVideo && (
-                  <div
-                    className={`p-3 rounded-xl border text-xs font-mono flex flex-col sm:flex-row sm:items-center justify-between gap-2 ${
-                      canMarkComplete
-                        ? 'bg-emerald-950/20 border-emerald-500/40 text-emerald-400'
-                        : 'bg-amber-500/10 border-amber-500/40 text-amber-300'
+                  <div className="hidden sm:flex items-center space-x-2 pl-3 border-l border-[#1B2530] text-xs font-mono">
+                    <span className="text-[#8BA2B5]">Watched:</span>
+                    <span className="text-[#65F58A] font-bold">{currentWatchPct}%</span>
+                    <span className="text-[#8BA2B5] text-[10px]">(&ge;80% required)</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={handlePrevLesson}
+                    disabled={activeIndex === 0}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-mono flex items-center space-x-1 border ${
+                      activeIndex > 0
+                        ? 'bg-[#141E28] text-white hover:bg-[#1B2530] border-[#263440]'
+                        : 'bg-[#0A121A] text-[#8BA2B5]/40 border-[#1B2530] cursor-not-allowed'
                     }`}
                   >
-                    <div className="flex items-center gap-2">
-                      {canMarkComplete ? (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                      ) : (
-                        <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0 animate-pulse" />
-                      )}
-                      <span>
-                        {canMarkComplete
-                          ? 'Playback requirement satisfied (≥ 80% watched). Ready to mark complete.'
-                          : `Strict Playback Gating Enforced: Watch at least 80% of video to unlock the next lesson.`}
-                      </span>
-                    </div>
-                    <div className="font-bold flex items-center gap-1.5 self-end sm:self-auto">
-                      <span>{currentWatchPct}% / 80%</span>
-                      {canMarkComplete && <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 uppercase">UNLOCKED</span>}
-                    </div>
-                  </div>
-                )}
+                    <ChevronLeft className="w-3.5 h-3.5" />
+                    <span>Prev</span>
+                  </button>
+
+                  <button
+                    onClick={handleNextLesson}
+                    disabled={activeIndex >= allLessons.length - 1}
+                    className={`px-4 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center space-x-1.5 border transition-all ${
+                      activeIndex < allLessons.length - 1
+                        ? 'bg-[#65F58A] text-[#071018] border-[#65F58A] hover:bg-[#52d674] shadow-sm'
+                        : 'bg-[#141E28] text-[#8BA2B5]/40 border-[#263440] cursor-not-allowed'
+                    }`}
+                  >
+                    <span>Next Lesson</span>
+                    <ChevronRight className="w-3.5 h-3.5 stroke-[3]" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* ========================================================================= */}
+            {/* 3. YOUR LEARNING PROGRESS PANEL (Directly Modeled after Image 4 / Edunex) */}
+            {/* ========================================================================= */}
+            <div className="ultra-glass-panel rounded-2xl p-6 border border-[#263440] shadow-xl space-y-4">
+              <div className="flex items-center justify-between pb-2 border-b border-[#1B2530]">
+                <div>
+                  <span className="text-[10px] font-mono text-[#65F58A] uppercase tracking-wider block">
+                    Telemetry Analytics
+                  </span>
+                  <h3 className="text-base font-bold text-white font-lora">
+                    Your Learning Progress
+                  </h3>
+                </div>
+                <div className="flex items-center space-x-2 text-xs font-mono text-[#8BA2B5]">
+                  <span>Track ID: {course.slug || 'DEF-CYB'}</span>
+                </div>
               </div>
 
-              {/* Lesson Header */}
-              <div className="pb-4 sm:pb-6 border-b border-surface-border">
-                <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-[#65F58A] mb-2">
-                  <span className="truncate max-w-[200px]">{activeLesson.module_title}</span>
-                  <span>•</span>
-                  <span>{activeLesson.duration}</span>
-                  {activeLesson.is_mandatory && (
-                    <span className="px-2 py-0.5 rounded bg-[#65F58A]/10 border border-[#65F58A]/30 text-[#65F58A] text-[10px] font-bold">
-                      MANDATORY
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-center">
+                {/* 1. Overall Circular Progress Donut Gauge */}
+                <div className="p-4 rounded-xl bg-[#09121B] border border-[#1B2530] flex items-center space-x-4">
+                  <div className="relative w-20 h-20 flex-shrink-0 flex items-center justify-center">
+                    <svg className="w-20 h-20 -rotate-90">
+                      <circle
+                        cx="40"
+                        cy="40"
+                        r="34"
+                        className="text-[#15202B]"
+                        strokeWidth="7"
+                        stroke="currentColor"
+                        fill="transparent"
+                      />
+                      <circle
+                        cx="40"
+                        cy="40"
+                        r="34"
+                        className="text-[#65F58A] transition-all duration-700 ease-out"
+                        strokeWidth="7"
+                        strokeDasharray={circumference}
+                        strokeDashoffset={strokeDashoffset}
+                        strokeLinecap="round"
+                        stroke="currentColor"
+                        fill="transparent"
+                      />
+                    </svg>
+                    <span className="absolute font-mono text-base font-black text-white">
+                      {progressData.percentage}%
                     </span>
-                  )}
-                </div>
-                <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white mb-2 sm:mb-3 font-royal">
-                  {activeLesson.title}
-                </h2>
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-mono">
-                  {activeLesson.summary}
-                </p>
-              </div>
+                  </div>
 
-              {/* Formatted Content Body with Enhanced Code Syntax Highlighting */}
-              <div className="max-w-none text-slate-200 text-xs sm:text-sm leading-relaxed space-y-4">
-                <div
-                  className="bg-[#101923] border border-[#263440] rounded-2xl p-5 sm:p-7 leading-relaxed font-lora shadow-xl"
-                  dangerouslySetInnerHTML={{
-                    __html: renderMarkdownToHtml(activeLesson?.content || 'No lesson content provided.')
-                  }}
-                />
-              </div>
-
-              {/* Mandatory PDF Assignment Checkpoint (PRD & User Lifecycle Requirement) */}
-              <div className="ultra-glass-panel rounded-2xl p-6 sm:p-7 shadow-xl space-y-4 animate-slide-left stagger-2">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#263440]">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center text-[#65F58A] shrink-0">
-                      <FileDown className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-royal font-bold text-base text-white">Module Technical Assignment</h3>
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/30 font-bold uppercase">
-                          PDF ONLY
-                        </span>
-                      </div>
-                      <p className="text-xs text-[#94A3B8] font-mono mt-0.5">
-                        Submit your hands-on laboratory report or triage brief in strict PDF format for academic evaluation.
-                      </p>
-                    </div>
+                  <div>
+                    <span className="text-[10px] font-mono text-[#8BA2B5] uppercase tracking-wider block">
+                      Overall Completion
+                    </span>
+                    <h4 className="text-sm font-bold text-white mt-0.5">
+                      {progressData.percentage >= 100 ? 'Course Completed' : 'In Active Progress'}
+                    </h4>
+                    <span className="text-[11px] font-mono text-[#65F58A] mt-1 block">
+                      {progressData.completed} of {progressData.total} Lessons Done
+                    </span>
                   </div>
                 </div>
 
-                {/* Status Banners */}
-                {assignmentSubmission?.status === 'under_assessment' && (
-                  <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 space-y-2">
-                    <div className="flex items-center gap-2 text-amber-400 font-mono text-xs font-bold uppercase">
-                      <Clock className="w-4 h-4 animate-spin" />
-                      <span>Your assignment is under assessment</span>
-                    </div>
-                    <p className="text-xs text-slate-300 leading-relaxed">
-                      Your technical report <strong className="text-white">({assignmentSubmission.file_name})</strong> was successfully received and is currently under review by the Academic Board. <span className="text-[#65F58A] font-semibold">You may proceed with subsequent lessons in the meantime.</span> (All mandatory assignments must pass before final certification can be requested.)
-                    </p>
+                {/* 2. Lessons Completed Weekly Activity Bar Chart */}
+                <div className="p-4 rounded-xl bg-[#09121B] border border-[#1B2530] space-y-2">
+                  <div className="flex items-center justify-between text-xs font-mono">
+                    <span className="text-[#8BA2B5]">Lessons Completed:</span>
+                    <span className="text-[#65F58A] font-bold">{progressData.completed}/{progressData.total}</span>
                   </div>
-                )}
 
-                {assignmentSubmission?.status === 'passed' && (
-                  <div className="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/40 space-y-1.5">
-                    <div className="flex items-center justify-between text-xs font-mono">
-                      <span className="flex items-center gap-2 text-emerald-400 font-bold">
-                        <CheckCircle2 className="w-4 h-4" />
-                        <span>Assignment Evaluated & Passed</span>
-                      </span>
-                      <span className="text-white font-bold px-2 py-0.5 rounded bg-emerald-500/20">
-                        Grade: {assignmentSubmission.grade}%
-                      </span>
-                    </div>
-                    {assignmentSubmission.reviewer_notes && (
-                      <p className="text-xs text-slate-300 font-mono">
-                        Evaluator Feedback: {assignmentSubmission.reviewer_notes}
-                      </p>
-                    )}
-                  </div>
-                )}
-
-                {(!assignmentSubmission || assignmentSubmission.status === 'rejected') && (
-                  <div className="space-y-3">
-                    {assignmentSubmission?.status === 'rejected' && (
-                      <div className="p-3.5 rounded-xl bg-red-950/30 border border-red-500/30 text-xs text-red-300 space-y-1">
-                        <span className="font-bold block">Previous Submission Requires Revision:</span>
-                        <span>{assignmentSubmission.reviewer_notes || 'Please review rubrics and re-upload revised report.'}</span>
+                  {/* Dynamic Vertical Bar Chart */}
+                  <div className="h-14 flex items-end justify-between gap-1.5 pt-2 px-1">
+                    {[
+                      { day: 'M', val: 40 },
+                      { day: 'T', val: 70 },
+                      { day: 'W', val: 55 },
+                      { day: 'T', val: 85 },
+                      { day: 'F', val: progressData.percentage || 65 },
+                      { day: 'S', val: 90 },
+                      { day: 'S', val: 45 }
+                    ].map((item, idx) => (
+                      <div key={idx} className="flex-1 flex flex-col items-center gap-1">
+                        <div className="w-full bg-[#15202B] rounded-t h-10 flex items-end overflow-hidden">
+                          <div
+                            className="w-full bg-[#65F58A] rounded-t transition-all duration-500"
+                            style={{ height: `${Math.min(100, item.val)}%` }}
+                          />
+                        </div>
+                        <span className="text-[9px] font-mono text-[#8BA2B5]">{item.day}</span>
                       </div>
-                    )}
-                    <div className="flex flex-col sm:flex-row items-center gap-3">
-                      <label className="flex-1 w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-dashed border-[#263440] hover:border-[#65F58A]/50 bg-[#071018] cursor-pointer text-xs font-mono text-[#94A3B8] hover:text-white transition-all">
-                        <Download className="w-4 h-4 text-[#65F58A]" />
-                        <span>{uploadingFileName || 'Select Assignment Document (.PDF only)'}</span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 3. Module Performance Horizontal Status Bars */}
+                <div className="p-4 rounded-xl bg-[#09121B] border border-[#1B2530] space-y-2.5">
+                  <div className="flex items-center justify-between text-xs font-mono">
+                    <span className="text-[#8BA2B5]">Module Performance</span>
+                    <span className="text-[#35E6B5] font-bold">Passing Pace</span>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    {(course.modules || []).slice(0, 3).map((mod, idx) => {
+                      const modCompleted = mod.lessons?.filter((l) =>
+                        enrolment.completed_mandatory_lessons?.includes(l.id)
+                      ).length || 0;
+                      const modTotal = mod.lessons?.length || 1;
+                      const pct = Math.round((modCompleted / modTotal) * 100);
+
+                      return (
+                        <div key={mod.id || idx} className="space-y-0.5">
+                          <div className="flex justify-between text-[10px] font-mono">
+                            <span className="text-white truncate max-w-[140px]">{mod.title}</span>
+                            <span className="text-[#65F58A]">{pct}%</span>
+                          </div>
+                          <div className="w-full bg-[#15202B] h-1.5 rounded-full overflow-hidden">
+                            <div
+                              className="bg-[#65F58A] h-full rounded-full transition-all duration-500"
+                              style={{ width: `${pct}%` }}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Tabbed Workspace: Lesson Notes vs Practical Assignment Submission */}
+            <div className="ultra-glass-panel rounded-2xl p-6 border border-[#263440] shadow-xl space-y-4">
+              <div className="flex items-center justify-between border-b border-[#1B2530] pb-3">
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => setActiveTab('notes')}
+                    className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all ${
+                      activeTab === 'notes'
+                        ? 'bg-[#65F58A] text-[#071018] shadow-sm'
+                        : 'bg-[#0F1722] text-[#8BA2B5] hover:text-white border border-[#263440]'
+                    }`}
+                  >
+                    Lesson Notes & Terminal Protocols
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('assignment')}
+                    className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center space-x-1.5 ${
+                      activeTab === 'assignment'
+                        ? 'bg-amber-500 text-[#071018] shadow-sm'
+                        : 'bg-[#0F1722] text-[#8BA2B5] hover:text-white border border-[#263440]'
+                    }`}
+                  >
+                    <FileCheck className="w-3.5 h-3.5" />
+                    <span>Practical Assignment Submission</span>
+                  </button>
+                </div>
+              </div>
+
+              {activeTab === 'notes' ? (
+                /* Lesson Notes Markdown View */
+                <div className="space-y-4">
+                  <div
+                    className="prose prose-invert max-w-none text-xs sm:text-sm font-sans leading-relaxed text-[#CBD5E1]"
+                    dangerouslySetInnerHTML={{
+                      __html: renderMarkdownToHtml(
+                        activeLesson?.content ||
+                        `### ${activeLesson?.title}\n\nReview defensive cybersecurity protocols, packet inspection steps, and mitigation strategies.\n\n\`\`\`bash\n# Inspect active operational telemetry\nss -tulpn\n\`\`\``
+                      )
+                    }}
+                  />
+                </div>
+              ) : (
+                /* Practical PDF Assignment Submission Card */
+                <div className="space-y-4">
+                  <div className="p-4 rounded-xl bg-[#09121B] border border-[#1B2530] space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <FileCheck className="w-4 h-4 text-amber-400" />
+                        <h4 className="text-xs font-bold text-white font-mono uppercase">
+                          Upload Investigation Report (PDF Only)
+                        </h4>
+                      </div>
+                      <span className="text-[10px] font-mono text-[#8BA2B5]">
+                        Max Size: 25 MB • Signed PDF
+                      </span>
+                    </div>
+
+                    <div className="border-2 border-dashed border-[#263440] hover:border-amber-400/50 rounded-xl p-6 text-center space-y-2 transition-colors">
+                      <UploadCloud className="w-8 h-8 text-amber-400 mx-auto" />
+                      <div className="text-xs text-white font-medium">
+                        Drag and drop your signed PDF lab submission here
+                      </div>
+                      <p className="text-[10px] text-[#8BA2B5] font-mono">
+                        Supports Wireshark captures, memory analysis screenshots, and MITRE mapping.
+                      </p>
+                      <label className="inline-block px-4 py-2 mt-2 rounded-lg bg-[#1B2530] hover:bg-[#263440] text-amber-400 border border-amber-400/40 text-xs font-mono font-bold cursor-pointer transition-colors">
+                        Browse PDF File
                         <input
                           type="file"
-                          accept=".pdf"
-                          className="hidden"
+                          accept=".pdf,application/pdf"
                           onChange={handlePdfUpload}
+                          className="hidden"
                         />
                       </label>
-                      {uploadingFileName && (
+                    </div>
+
+                    {uploadingFileName && (
+                      <div className="p-3 bg-[#0F1722] border border-amber-500/40 rounded-xl flex items-center justify-between">
+                        <div className="flex items-center space-x-2 text-xs font-mono text-white">
+                          <FileText className="w-4 h-4 text-amber-400" />
+                          <span>{uploadingFileName}</span>
+                        </div>
                         <button
-                          type="button"
                           onClick={confirmAssignmentSubmit}
                           disabled={submittingPdf}
-                          className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-[#65F58A] to-[#35E6B5] text-[#071018] font-royal font-bold text-xs uppercase tracking-wider shadow-lg hover:scale-[1.02] transition-all cursor-pointer"
+                          className="px-4 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-[#071018] font-mono font-bold text-xs transition-colors flex items-center space-x-1"
                         >
-                          {submittingPdf ? 'Submitting...' : 'Upload & Submit PDF'}
+                          {submittingPdf ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
+                          <span>Submit for Review</span>
                         </button>
+                      </div>
+                    )}
+
+                    {assignmentSubmission && (
+                      <div className="p-3.5 rounded-xl bg-[#091712] border border-[#65F58A]/30 flex items-center justify-between text-xs font-mono">
+                        <div className="flex items-center space-x-2">
+                          <CheckCircle2 className="w-4 h-4 text-[#65F58A]" />
+                          <div>
+                            <span className="text-white font-bold block">{assignmentSubmission.file_name}</span>
+                            <span className="text-[10px] text-[#8BA2B5]">
+                              Submitted {assignmentSubmission.submitted_at?.split('T')[0]} • Status: <strong className="text-[#65F58A]">{assignmentSubmission.status?.toUpperCase()}</strong>
+                            </span>
+                          </div>
+                        </div>
+                        <span className="text-[10px] px-2 py-0.5 rounded bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30">
+                          UNDER ASSESSMENT
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* ==================================================================== */}
+          {/* RIGHT 4 COLUMNS: COURSE CURRICULUM ACCORDION + TECHNICAL RESOURCES   */}
+          {/* ==================================================================== */}
+          <div className="col-span-12 lg:col-span-4 space-y-6">
+            {/* Curriculum Accordion Container */}
+            <div className="ultra-glass-panel rounded-2xl p-5 border border-[#263440] shadow-xl space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-[#1B2530]">
+                <div>
+                  <span className="text-[10px] font-mono text-[#8BA2B5] uppercase tracking-wider block">
+                    Course Curriculum
+                  </span>
+                  <h3 className="text-sm font-bold text-white font-lora">
+                    {course.title}
+                  </h3>
+                </div>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#0F1722] border border-[#263440] text-[#65F58A]">
+                  {course.modules?.length || 0} Chapters
+                </span>
+              </div>
+
+              {/* Accordion Chapter Modules */}
+              <div className="space-y-3">
+                {(course.modules || []).map((mod, modIdx) => {
+                  const isExpanded = expandedModules[mod.id] !== false;
+                  const modCompletedCount = (mod.lessons || []).filter((l) =>
+                    enrolment.completed_mandatory_lessons?.includes(l.id)
+                  ).length;
+                  const modTotalCount = mod.lessons?.length || 0;
+                  const isModCompleted = modTotalCount > 0 && modCompletedCount >= modTotalCount;
+                  const isCurrentMod = mod.lessons?.some((l) => l.id === activeLessonId);
+
+                  return (
+                    <div
+                      key={mod.id || modIdx}
+                      className={`border rounded-xl overflow-hidden transition-all ${
+                        isCurrentMod
+                          ? 'border-[#65F58A]/40 bg-[#0A141E]'
+                          : 'border-[#1B2530] bg-[#071018]'
+                      }`}
+                    >
+                      {/* Chapter Accordion Header */}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setExpandedModules((prev) => ({
+                            ...prev,
+                            [mod.id]: !isExpanded
+                          }))
+                        }
+                        className="w-full p-3 flex items-center justify-between text-left hover:bg-[#0D1824] transition-colors"
+                      >
+                        <div className="flex items-center space-x-2.5 truncate">
+                          {isModCompleted ? (
+                            <CheckCircle2 className="w-4 h-4 text-[#65F58A] flex-shrink-0" />
+                          ) : isCurrentMod ? (
+                            <span className="w-2.5 h-2.5 rounded-full bg-[#65F58A] animate-pulse flex-shrink-0" />
+                          ) : (
+                            <span className="w-2.5 h-2.5 rounded-full bg-[#263440] flex-shrink-0" />
+                          )}
+                          <span className="text-xs font-bold text-white truncate font-sans">
+                            {modIdx + 1}. {mod.title}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center space-x-2 flex-shrink-0">
+                          <span className="text-[10px] font-mono text-[#8BA2B5]">
+                            ({modCompletedCount}/{modTotalCount})
+                          </span>
+                          <ChevronDown
+                            className={`w-3.5 h-3.5 text-[#8BA2B5] transition-transform duration-200 ${
+                              isExpanded ? 'rotate-180' : ''
+                            }`}
+                          />
+                        </div>
+                      </button>
+
+                      {/* Chapter Lessons List */}
+                      {isExpanded && (
+                        <div className="p-2 space-y-1 bg-[#050C14] border-t border-[#1B2530]">
+                          {(mod.lessons || []).map((les) => {
+                            const globalIdx = allLessons.findIndex((l) => l.id === les.id);
+                            const isDone = enrolment.completed_mandatory_lessons?.includes(les.id);
+                            const isActive = les.id === activeLessonId;
+                            const isUnlocked = isLessonUnlocked(globalIdx);
+                            const isAsn = les.type === 'assignment';
+
+                            return (
+                              <button
+                                key={les.id}
+                                disabled={!isUnlocked}
+                                onClick={() => {
+                                  if (isUnlocked) {
+                                    setActiveLessonId(les.id);
+                                    if (isAsn) setActiveTab('assignment');
+                                  }
+                                }}
+                                className={`w-full text-left p-2 rounded-lg text-xs flex items-center justify-between transition-all ${
+                                  isActive
+                                    ? 'bg-[#65F58A]/15 border border-[#65F58A]/50 text-white font-bold shadow-sm'
+                                    : isUnlocked
+                                    ? 'hover:bg-[#0D1824] text-[#CBD5E1] border border-transparent'
+                                    : 'opacity-40 cursor-not-allowed text-[#64748B] border border-transparent'
+                                }`}
+                              >
+                                <div className="flex items-center space-x-2 truncate pr-2">
+                                  {isDone ? (
+                                    <CheckCircle2 className="w-3.5 h-3.5 text-[#65F58A] flex-shrink-0" />
+                                  ) : isUnlocked ? (
+                                    isAsn ? (
+                                      <FileCheck className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                                    ) : (
+                                      <Play className="w-3 h-3 text-[#65F58A] flex-shrink-0" />
+                                    )
+                                  ) : (
+                                    <Lock className="w-3.5 h-3.5 text-[#64748B] flex-shrink-0" />
+                                  )}
+                                  <span className="truncate">{les.title}</span>
+                                </div>
+
+                                <div className="flex items-center space-x-1.5 flex-shrink-0 text-[10px] font-mono">
+                                  {isActive ? (
+                                    <span className="text-[#65F58A] font-bold">In Progress</span>
+                                  ) : isDone ? (
+                                    <span className="text-[#65F58A]">Completed</span>
+                                  ) : !isUnlocked ? (
+                                    <span className="text-[#64748B]">Locked</span>
+                                  ) : (
+                                    <span className="text-[#8BA2B5]">{les.duration || '15 mins'}</span>
+                                  )}
+                                </div>
+                              </button>
+                            );
+                          })}
+
+                          {/* Chapter Quiz Node */}
+                          {mod.quiz && (
+                            <Link
+                              to={`/student/quiz/${mod.quiz.id}`}
+                              className={`w-full p-2.5 rounded-lg text-xs flex items-center justify-between transition-all mt-1 ${
+                                (enrolment.passed_quizzes || []).includes(mod.quiz.id)
+                                  ? 'bg-[#65F58A]/10 border border-[#65F58A]/30 text-[#65F58A]'
+                                  : 'bg-amber-500/10 border border-amber-500/30 text-amber-300 hover:bg-amber-500/20'
+                              }`}
+                            >
+                              <div className="flex items-center space-x-2 truncate">
+                                <Award className="w-3.5 h-3.5 flex-shrink-0" />
+                                <span className="font-semibold truncate">Quiz: {mod.quiz.title}</span>
+                              </div>
+                              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-black/40">
+                                {(enrolment.passed_quizzes || []).includes(mod.quiz.id) ? 'PASSED' : '+100 XP'}
+                              </span>
+                            </Link>
+                          )}
+                        </div>
                       )}
                     </div>
+                  );
+                })}
+
+                {/* Final Certification Exam Gate */}
+                {course.final_assessment && (
+                  <div className="pt-2">
+                    <Link
+                      to={`/student/final-exam/${enrolmentId}`}
+                      className={`w-full p-3 rounded-xl text-xs font-mono font-bold flex items-center justify-between transition-all border ${
+                        unlockedFinal.is_unlocked
+                          ? 'bg-[#65F58A] text-[#071018] border-[#65F58A] hover:bg-[#52d674] shadow-[0_0_20px_rgba(101,245,138,0.4)]'
+                          : 'bg-[#0F1722] border-[#263440] text-[#8BA2B5] hover:border-[#65F58A]/40'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-2">
+                        {unlockedFinal.is_unlocked ? (
+                          <Sparkles className="w-4 h-4 text-[#071018]" />
+                        ) : (
+                          <Lock className="w-4 h-4 text-[#8BA2B5]" />
+                        )}
+                        <span>Final Certification Exam</span>
+                      </div>
+                      <span className="text-[10px]">
+                        {unlockedFinal.is_unlocked ? 'UNLOCKED' : 'LOCKED'}
+                      </span>
+                    </Link>
                   </div>
                 )}
               </div>
-
-              {/* Lesson Action Footer */}
-              <div className="pt-6 border-t border-surface-border flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="flex items-center space-x-2 text-xs font-mono text-slate-400">
-                  {isLessonCompleted ? (
-                    <span className="flex items-center space-x-1.5 text-emerald-400">
-                      <CheckCircle2 className="w-4 h-4" />
-                      <span>Completed</span>
-                    </span>
-                  ) : (
-                    <span>Pending Completion</span>
-                  )}
-                </div>
-
-                <div className="flex items-center space-x-3 w-full sm:w-auto">
-                  <button
-                    onClick={handleMarkComplete}
-                    disabled={savingProgress || !canMarkComplete}
-                    className={`w-full sm:w-auto px-6 py-3 rounded-lg font-semibold text-xs transition-all flex items-center justify-center space-x-2 ${
-                      isLessonCompleted
-                        ? 'bg-surface-100 hover:bg-surface-200 text-slate-300 border border-surface-border'
-                        : canMarkComplete
-                        ? 'bg-redkross-600 hover:bg-redkross-700 text-white shadow-lg hover:cyber-glow-red'
-                        : 'bg-surface-100/50 border border-surface-border text-slate-500 cursor-not-allowed opacity-60'
-                    }`}
-                  >
-                    {!canMarkComplete ? (
-                      <>
-                        <Lock className="w-4 h-4 text-amber-400" />
-                        <span>Watch 80% to Complete ({currentWatchPct}%)</span>
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle2 className="w-4 h-4" />
-                        <span>
-                          {savingProgress
-                            ? 'Saving to Database...'
-                            : isLessonCompleted
-                            ? 'Marked as Complete (Advance)'
-                            : 'Mark Complete & Next Lesson'}
-                        </span>
-                        <ChevronRight className="w-4 h-4" />
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="text-center py-20 text-slate-400">Select a lesson to begin.</div>
-          )}
-        </div>
-
-        {/* Right Column: Downloadable Resources & Cheat Sheets */}
-        <div
-          className={`w-full lg:w-72 bg-surface-card border-l border-surface-border p-5 space-y-6 overflow-y-auto ${
-            mobileTab === 'resources' ? 'block' : 'hidden lg:block'
-          } lg:max-h-[calc(100vh-3.5rem)]`}
-        >
-          <div className="text-xs font-mono uppercase tracking-wider text-slate-400 flex items-center space-x-1.5">
-            <Download className="w-3.5 h-3.5 text-[#35E6B5]" />
-            <span>Lesson Resources</span>
-          </div>
-
-          <div className="space-y-3">
-            {(activeLesson?.resources || [
-              { name: 'SOC Triage Standard Operating Procedure (PDF)', size: '1.4 MB' },
-              { name: 'Windows Event ID Reference Matrix', size: '890 KB' }
-            ]).map((res, idx) => (
-              <div
-                key={idx}
-                className="p-3 rounded-lg bg-surface-100/70 border border-surface-border hover:border-slate-600 transition-colors space-y-1.5"
-              >
-                <div className="text-xs font-semibold text-white flex items-start space-x-2">
-                  <FileText className="w-4 h-4 text-redkross-400 flex-shrink-0 mt-0.5" />
-                  <span>{res.name}</span>
-                </div>
-                <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 pl-6">
-                  <span>{res.size}</span>
-                  <button
-                    onClick={() => handleDownloadResource(res)}
-                    className="text-[#35E6B5] hover:text-[#65F58A] hover:underline cursor-pointer flex items-center gap-1 font-mono transition-colors"
-                    title={`Download ${res.name}`}
-                  >
-                    <Download className="w-3 h-3" />
-                    <span>Download</span>
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Token Milestone Notice */}
-          <div className="p-3.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-xs space-y-1.5">
-            <div className="flex items-center space-x-1.5 font-bold text-amber-300">
-              <Coins className="w-4 h-4 text-amber-400" />
-              <span>Token Milestones</span>
             </div>
-            <p className="text-[11px] text-slate-300 leading-snug">
-              Every 20% course progress milestone rewards +50 RedKross Tokens to your wallet!
-            </p>
+
+            {/* Technical Resources Card */}
+            <div className="ultra-glass-panel rounded-2xl p-5 border border-[#263440] shadow-xl space-y-3">
+              <div className="flex items-center space-x-2 pb-2 border-b border-[#1B2530]">
+                <Download className="w-4 h-4 text-[#65F58A]" />
+                <h4 className="text-xs font-bold text-white font-mono uppercase tracking-wider">
+                  Lesson Reference Resources
+                </h4>
+              </div>
+
+              <div className="space-y-2">
+                {[
+                  { name: 'SOC Triage Standard Operating Procedure (PDF)', size: '1.2 MB' },
+                  { name: 'Windows Event ID Forensic Reference Matrix', size: '890 KB' },
+                  { name: 'Network Packet Carving Cheatsheet', size: '540 KB' }
+                ].map((res, i) => (
+                  <div
+                    key={i}
+                    className="p-3 rounded-xl bg-[#08121A] border border-[#1B2530] flex items-center justify-between text-xs"
+                  >
+                    <div className="flex items-center space-x-2.5 truncate pr-2">
+                      <FileDown className="w-4 h-4 text-[#65F58A] flex-shrink-0" />
+                      <div className="truncate">
+                        <span className="text-white font-medium block truncate text-[11px]">{res.name}</span>
+                        <span className="text-[10px] font-mono text-[#8BA2B5]">{res.size}</span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleDownloadResource(res.name)}
+                      className="px-2.5 py-1 rounded bg-[#15202B] hover:bg-[#1B2530] text-[#65F58A] border border-[#263440] text-[10px] font-mono transition-colors flex-shrink-0"
+                    >
+                      Download
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

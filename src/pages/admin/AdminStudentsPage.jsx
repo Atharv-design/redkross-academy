@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Users, Search, Filter, ShieldCheck, ShieldAlert, Coins,
   RotateCcw, Download, Eye, CheckCircle2, XCircle, ArrowUpRight,
-  UserX, UserCheck, Sparkles, ExternalLink
+  UserX, UserCheck, Sparkles, ExternalLink, Trash2
 } from 'lucide-react';
 import { mockEngine } from '../../services/db/mockEngine';
 
@@ -15,6 +15,10 @@ export default function AdminStudentsPage() {
   const [tokenAmount, setTokenAmount] = useState(100);
   const [tokenAction, setTokenAction] = useState('GRANT'); // GRANT | DEDUCT
   const [tokenReason, setTokenReason] = useState('Merit bounty for lab excellence');
+
+  // Permanent Delete Modal State
+  const [studentToDelete, setStudentToDelete] = useState(null);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
   const loadStudents = () => {
     try {
@@ -36,13 +40,38 @@ export default function AdminStudentsPage() {
     loadStudents();
 
     const unsubscribe = mockEngine.subscribe((event) => {
-      if (event.type === 'USER_STATUS_MUTATED' || event.type === 'TOKEN_MUTATED' || event.type === 'DB_MUTATED') {
+      if (
+        event.type === 'USER_STATUS_MUTATED' ||
+        event.type === 'USER_PURGED' ||
+        event.type === 'USER_UPDATED' ||
+        event.type === 'TOKEN_MUTATED' ||
+        event.type === 'DB_MUTATED'
+      ) {
         loadStudents();
       }
     });
 
     return () => unsubscribe();
   }, []);
+
+  // Permanent student deletion with email blacklisting
+  const handleConfirmPermanentDelete = () => {
+    if (!studentToDelete) return;
+    if (deleteConfirmText.trim().toUpperCase() !== 'DELETE') return;
+
+    try {
+      mockEngine.permanentlyDeleteStudent(studentToDelete.id, studentToDelete.email);
+      setStudentToDelete(null);
+      setDeleteConfirmText('');
+      loadStudents();
+      if (selectedStudent?.id === studentToDelete.id) {
+        setSelectedStudent(null);
+      }
+    } catch (e) {
+      console.error('Failed to permanently delete student:', e);
+      alert('Error deleting student account: ' + e.message);
+    }
+  };
 
   const persistStudents = (updatedUsers) => {
     try {
@@ -269,19 +298,32 @@ export default function AdminStudentsPage() {
                       </td>
 
                       <td className="p-3 text-right">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleToggleStatus(st);
-                          }}
-                          className={`px-2 py-1 rounded text-[10px] font-mono border ${
-                            isSuspended
-                              ? 'bg-[#65F58A]/10 text-[#65F58A] border-[#65F58A]/30 hover:bg-[#65F58A]/20'
-                              : 'bg-[#EF4444]/10 text-[#EF4444] border-[#EF4444]/30 hover:bg-[#EF4444]/20'
-                          }`}
-                        >
-                          {isSuspended ? 'Reactivate' : 'Suspend'}
-                        </button>
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleToggleStatus(st);
+                            }}
+                            className={`px-2 py-1 rounded text-[10px] font-mono border transition-colors ${
+                              isSuspended
+                                ? 'bg-[#65F58A]/10 text-[#65F58A] border-[#65F58A]/30 hover:bg-[#65F58A]/20'
+                                : 'bg-[#EF4444]/10 text-[#EF4444] border-[#EF4444]/30 hover:bg-[#EF4444]/20'
+                            }`}
+                          >
+                            {isSuspended ? 'Reactivate' : 'Suspend'}
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setStudentToDelete(st);
+                              setDeleteConfirmText('');
+                            }}
+                            className="p-1 rounded text-[10px] font-mono border bg-red-500/10 text-red-400 border-red-500/30 hover:bg-red-500/25 transition-colors"
+                            title="Permanently Delete Cadet Account"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -383,26 +425,38 @@ export default function AdminStudentsPage() {
                     <span>Reset All Curriculum Progress</span>
                   </button>
 
-                  <button
-                    onClick={() => handleToggleStatus(selectedStudent)}
-                    className={`w-full flex items-center justify-center space-x-2 py-2 rounded-lg border transition-colors ${
-                      selectedStudent.status === 'SUSPENDED'
-                        ? 'bg-[#65F58A]/10 text-[#65F58A] border-[#65F58A]/30 hover:bg-[#65F58A]/20'
-                        : 'bg-[#EF4444]/10 text-[#EF4444] border-[#EF4444]/30 hover:bg-[#EF4444]/20'
-                    }`}
-                  >
-                    {selectedStudent.status === 'SUSPENDED' ? (
-                      <>
-                        <UserCheck className="w-3.5 h-3.5" />
-                        <span>Reactivate Student Access</span>
-                      </>
-                    ) : (
-                      <>
-                        <UserX className="w-3.5 h-3.5" />
-                        <span>Suspend Student Account</span>
-                      </>
-                    )}
-                  </button>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => handleToggleStatus(selectedStudent)}
+                      className={`flex items-center justify-center space-x-1.5 py-2 rounded-lg border text-xs transition-colors ${
+                        selectedStudent.status === 'SUSPENDED'
+                          ? 'bg-[#65F58A]/10 text-[#65F58A] border-[#65F58A]/30 hover:bg-[#65F58A]/20'
+                          : 'bg-[#EF4444]/10 text-[#EF4444] border-[#EF4444]/30 hover:bg-[#EF4444]/20'
+                      }`}
+                    >
+                      {selectedStudent.status === 'SUSPENDED' ? (
+                        <>
+                          <UserCheck className="w-3.5 h-3.5" />
+                          <span>Reactivate</span>
+                        </>
+                      ) : (
+                        <>
+                          <UserX className="w-3.5 h-3.5" />
+                          <span>Suspend</span>
+                        </>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => {
+                        setStudentToDelete(selectedStudent);
+                        setDeleteConfirmText('');
+                      }}
+                      className="flex items-center justify-center space-x-1.5 py-2 rounded-lg border text-xs bg-red-500/15 text-red-400 border-red-500/30 hover:bg-red-500/25 transition-colors"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>Delete</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </>
@@ -491,6 +545,77 @@ export default function AdminStudentsPage() {
                   Confirm Adjustment
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Permanent Student Deletion Modal (Type DELETE to confirm) */}
+      {studentToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fadeIn">
+          <div className="w-full max-w-md ultra-glass-panel rounded-2xl p-6 border border-red-500/40 shadow-2xl space-y-4">
+            <div className="flex items-center space-x-3 text-red-400">
+              <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center justify-center">
+                <Trash2 className="w-5 h-5 stroke-[2.2]" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-white font-lora">
+                  Permanently Delete Cadet Account
+                </h3>
+                <span className="text-[10px] font-mono text-red-400 uppercase tracking-wider block">
+                  Irreversible Security Purge
+                </span>
+              </div>
+            </div>
+
+            <div className="p-3 bg-[#0B131C] border border-[#1B2530] rounded-xl text-xs font-mono space-y-2">
+              <p className="text-[#CBD5E1]">
+                Are you sure you want to permanently delete <strong className="text-white">{studentToDelete.name || studentToDelete.full_name}</strong>?
+              </p>
+              <p className="text-[#8BA2B5] text-[11px]">
+                Email: <span className="text-red-400 font-bold">{studentToDelete.email}</span>
+              </p>
+              <div className="p-2.5 rounded bg-red-500/10 border border-red-500/20 text-red-300 text-[11px] leading-relaxed">
+                ⚠️ This will purge all enrollments, certificates, and scores. This email will be <strong>permanently blacklisted</strong> from creating any future account.
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-mono text-[#8BA2B5] block">
+                Type <strong className="text-red-400">DELETE</strong> to confirm:
+              </label>
+              <input
+                type="text"
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value)}
+                placeholder="Type DELETE"
+                className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white uppercase font-mono tracking-wider focus:outline-none focus:border-red-400 border border-[#263440]"
+              />
+            </div>
+
+            <div className="flex items-center justify-end space-x-3 pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setStudentToDelete(null);
+                  setDeleteConfirmText('');
+                }}
+                className="px-4 py-2 text-xs font-mono text-[#8BA2B5] hover:text-white rounded-lg bg-[#1B2530] border border-[#263440]"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={deleteConfirmText.trim().toUpperCase() !== 'DELETE'}
+                onClick={handleConfirmPermanentDelete}
+                className={`px-4 py-2 text-xs font-mono font-bold rounded-lg border transition-all ${
+                  deleteConfirmText.trim().toUpperCase() === 'DELETE'
+                    ? 'bg-red-500 text-white border-red-600 hover:bg-red-600 shadow-[0_0_15px_rgba(239,68,68,0.4)] cursor-pointer'
+                    : 'bg-red-500/20 text-red-400/40 border-red-500/20 cursor-not-allowed'
+                }`}
+              >
+                Delete Student Permanently
+              </button>
             </div>
           </div>
         </div>

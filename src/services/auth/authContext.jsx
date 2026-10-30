@@ -125,6 +125,13 @@ export function AuthProvider({ children }) {
         }
       }
 
+      if (event.type === 'USER_PURGED') {
+        if (!event.payload?.userId || event.payload.userId === currentUser.id || event.payload.email?.toLowerCase() === currentUser.email?.toLowerCase()) {
+          logout();
+          alert('This cadet account has been permanently purged by RedKross Academy Administration.');
+        }
+      }
+
       if (event.type === 'USER_UPDATED' || event.type === 'DB_MUTATED') {
         refreshBalance();
       }
