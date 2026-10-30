@@ -4,7 +4,7 @@
  * Enforces Phase 2 Authentication, Phase 3 Catalog Protection, and Phase 5 RBAC.
  */
 
-import { mockEngine } from './db/mockEngine';
+import { mockEngine } from './db/mockEngine.js';
 
 const API_BASE = '/api';
 

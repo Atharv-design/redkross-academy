@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   ExternalLink,
@@ -20,13 +20,13 @@ import SupportTicketModal from './SupportTicketModal';
 import { getEcosystemLinks } from '../../utils/ecosystemLinks';
 
 /**
- * RedKross Academy — Navigation Header
+ * RedKross Academy - Navigation Header
  * Harmonized directly with the RedKross Foundation & Cybersecurity flagship navbars:
  * - Clean circular crest (`crest-clean-circle.png`)
  * - Prestigious Cinzel brand typography ("RedKross" + "Academy") with monospace subtitle
- * - Floating glassmorphic rounded-full container with dynamic scroll elevation
+ * - Floating liquid glassmorphic container with dynamic refractive glow
  * - Sleek horizontal text links with active glowing gradient indicator line
- * - High-tactile pill CTA button ("Operator Login" / Profile Menu) in Graphite + Neon Green palette
+ * - High-tactile pill CTA button in Graphite + Neon Green palette
  */
 export default function Navbar() {
   const navigate = useNavigate();
@@ -37,6 +37,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const ecosystem = getEcosystemLinks();
+  const profileMenuRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -44,6 +45,17 @@ export default function Navbar() {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Close profile menu on outside click
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+        setShowProfileMenu(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const isActive = (path) => {
@@ -78,6 +90,10 @@ export default function Navbar() {
       navLinks.push({ label: "Student Portal", path: "/student" });
     }
   }
+
+  const roleDisplay = String(currentUser?.role || 'student').replace('_', ' ').toUpperCase();
+  const cadetId = currentUser?.cadet_id || null;
+  const fullName = currentUser?.full_name || currentUser?.displayName || currentUser?.email || 'Cadet Operator';
 
   return (
     <>
@@ -122,13 +138,13 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Floating Rounded-Full Main Navbar (Aligned with Main Website Architecture) */}
+        {/* Floating Rounded-Full Main Navbar */}
         <div className="px-4 sm:px-8 pt-3">
           <div
-            className={`max-w-7xl mx-auto rounded-full px-5 py-2.5 flex items-center justify-between transition-all duration-300 pointer-events-auto ${
+            className={`max-w-7xl mx-auto rounded-full px-5 py-2.5 flex items-center justify-between transition-all duration-300 pointer-events-auto liquid-glass-nav ${
               scrolled
-                ? 'bg-[#0B121B]/95 backdrop-blur-2xl border border-[#65F58A]/35 shadow-[0_12px_40px_rgba(0,0,0,0.85)]'
-                : 'bg-[#101923]/80 backdrop-blur-xl border border-[#263440] shadow-xl'
+                ? 'shadow-[0_16px_48px_rgba(0,0,0,0.85)] border-[#65F58A]/40'
+                : 'border-[#263440]'
             }`}
           >
             {/* Brand Logo & Prestigious Title */}
@@ -150,7 +166,7 @@ export default function Navbar() {
               </div>
             </Link>
 
-            {/* Desktop Horizontal Navigation (Identical clean layout to Main Website) */}
+            {/* Desktop Horizontal Navigation */}
             <nav className="hidden lg:flex items-center gap-3.5 xl:gap-5 flex-shrink min-w-0">
               {navLinks.map((link) => {
                 const active = isActive(link.path);
@@ -191,7 +207,7 @@ export default function Navbar() {
                   title="RedKross Reward Tokens"
                 >
                   <Coins className="w-3.5 h-3.5 text-[#65F58A] animate-pulse" />
-                  <span className="tabular-nums font-bold">{tokenBalance}</span>
+                  <span className="tabular-nums font-bold">{typeof tokenBalance === 'number' ? tokenBalance : 150}</span>
                   <span className="hidden md:inline text-[10px] text-[#35E6B5] uppercase">Tokens</span>
                 </Link>
               )}
@@ -203,7 +219,7 @@ export default function Navbar() {
                   devLoginAsAdmin();
                   navigate('/admin');
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-[#65F58A]/15 to-[#35E6B5]/15 hover:from-[#65F58A]/25 hover:to-[#35E6B5]/25 border border-[#65F58A]/40 text-[#65F58A] transition-all text-xs font-mono font-bold shadow-[0_0_15px_rgba(101,245,138,0.2)] flex-shrink-0"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full liquid-glass-button text-xs font-mono font-bold shadow-[0_0_15px_rgba(101,245,138,0.2)] flex-shrink-0"
                 title="1-Click Super Admin Console"
               >
                 <Zap className="w-3.5 h-3.5 text-[#65F58A] animate-pulse" />
@@ -212,17 +228,17 @@ export default function Navbar() {
 
               {/* User Profile Dropdown or Slim Pill CTA Button */}
               {currentUser ? (
-                <div className="relative flex-shrink-0">
+                <div className="relative flex-shrink-0" ref={profileMenuRef}>
                   <button
                     type="button"
                     onClick={() => setShowProfileMenu(!showProfileMenu)}
-                    className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#1B2530] hover:bg-[#263440] border border-[#263440] text-xs text-white transition-all cursor-pointer"
+                    className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#1B2530]/80 hover:bg-[#263440] border border-[#263440] hover:border-[#65F58A]/40 text-xs text-white transition-all cursor-pointer shadow-md"
                   >
                     <div className="w-6 h-6 rounded-full overflow-hidden bg-[#101923] border border-[#65F58A]/40 flex items-center justify-center flex-shrink-0">
                       {currentUser.avatar ? (
                         <img
                           src={currentUser.avatar}
-                          alt={currentUser.full_name || 'Cadet'}
+                          alt={fullName}
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             e.target.style.display = 'none';
@@ -230,16 +246,16 @@ export default function Navbar() {
                         />
                       ) : (
                         <span className="text-[10px] font-mono text-[#65F58A]">
-                          {(currentUser.full_name || currentUser.email || 'C').charAt(0).toUpperCase()}
+                          {(fullName || 'C').charAt(0).toUpperCase()}
                         </span>
                       )}
                     </div>
                     <span className="max-w-[75px] md:max-w-[100px] truncate text-xs font-mono hidden sm:inline">
-                      {(currentUser.full_name || currentUser.email || 'Cadet').split(' ')[0]}
+                      {fullName.split(' ')[0]}
                     </span>
-                    {currentUser.cadet_id && (
+                    {cadetId && (
                       <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/30 hidden md:inline font-bold">
-                        {currentUser.cadet_id}
+                        {cadetId}
                       </span>
                     )}
                     {currentUser.role === 'super_admin' && (
@@ -251,22 +267,22 @@ export default function Navbar() {
                   </button>
 
                   {showProfileMenu && (
-                    <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-[#101923] border border-[#263440] shadow-2xl py-2 z-50 divide-y divide-[#263440]">
+                    <div className="absolute right-0 mt-2 w-64 rounded-2xl liquid-glass-dropdown shadow-2xl py-2 z-50 divide-y divide-[#263440]">
                       <div className="px-4 py-3">
                         <div className="font-royal font-bold text-sm text-white truncate">
-                          {currentUser.full_name || 'Cadet Operator'}
+                          {fullName}
                         </div>
                         <div className="text-xs text-[#94A3B8] font-mono truncate">
                           {currentUser.email || 'operator@redkross.org.in'}
                         </div>
-                        {currentUser.cadet_id && (
+                        {cadetId && (
                           <div className="mt-1 text-[11px] font-mono text-[#65F58A] font-bold">
-                            CADET: {currentUser.cadet_id}
+                            CADET: {cadetId}
                           </div>
                         )}
                         <div className="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono uppercase bg-[#65F58A]/10 border border-[#65F58A]/30 text-[#65F58A]">
                           <span className="w-1.5 h-1.5 rounded-full bg-[#65F58A]" />
-                          <span>Role: {(currentUser.role || 'student').replace('_', ' ')}</span>
+                          <span>Role: {roleDisplay}</span>
                         </div>
                       </div>
 
@@ -279,9 +295,9 @@ export default function Navbar() {
                           <User className="w-4 h-4 text-[#35E6B5]" />
                           <span>Student Portal</span>
                         </Link>
-                        {currentUser.cadet_id && (
+                        {cadetId && (
                           <Link
-                            to={`/verify/${currentUser.cadet_id}`}
+                            to={`/verify/${cadetId}`}
                             onClick={() => setShowProfileMenu(false)}
                             className="flex items-center gap-2 px-4 py-2 text-slate-300 hover:text-white hover:bg-[#1B2530] transition-colors"
                           >
@@ -323,7 +339,6 @@ export default function Navbar() {
                   )}
                 </div>
               ) : (
-                /* Sleek CTA Button matching the Main Website's "Partner With Us" button style */
                 <Link
                   to="/login"
                   className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[#071018] text-xs font-royal font-bold tracking-wider shadow-[0_0_20px_rgba(101,245,138,0.35)] hover:scale-105 transition-all cursor-pointer uppercase font-semibold"
@@ -338,90 +353,43 @@ export default function Navbar() {
 
               {/* Mobile Hamburger Button */}
               <button
+                type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="lg:hidden p-2 rounded-full bg-[#1B2530] border border-[#263440] text-slate-300 hover:text-white transition-colors"
-                aria-label="Toggle navigation menu"
+                className="lg:hidden p-2 rounded-full text-[#94A3B8] hover:text-white bg-[#1B2530] border border-[#263440]"
+                aria-label="Toggle menu"
               >
-                {mobileMenuOpen ? <X className="w-5 h-5 text-[#65F58A]" /> : <Menu className="w-5 h-5" />}
+                {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
               </button>
             </div>
           </div>
-
-          {/* Accessible Mobile Menu (Floating panel beneath navbar) */}
-          {mobileMenuOpen && (
-            <div className="lg:hidden mt-3 max-w-7xl mx-auto rounded-3xl bg-[#0B121B]/95 backdrop-blur-2xl border border-[#263440] p-5 shadow-2xl pointer-events-auto">
-              <div className="flex flex-col gap-3 font-mono text-xs">
-                {navLinks.map((link) => {
-                  const active = isActive(link.path);
-                  return (
-                    <Link
-                      key={link.label}
-                      to={link.path}
-                      onClick={closeMobileMenu}
-                      className={`flex items-center justify-between py-2 px-3 rounded-xl transition-colors ${
-                        active
-                          ? 'bg-[#65F58A]/10 text-[#65F58A] font-bold border border-[#65F58A]/30'
-                          : 'text-[#94A3B8] hover:text-white hover:bg-[#1B2530]'
-                      }`}
-                    >
-                      <span>{link.label}</span>
-                      <ArrowRight className="w-3.5 h-3.5 opacity-60" />
-                    </Link>
-                  );
-                })}
-
-                <div className="pt-3 border-t border-[#263440] flex flex-col gap-2">
-                  {currentUser?.role === 'super_admin' && (
-                    <Link
-                      to="/student"
-                      onClick={closeMobileMenu}
-                      className="flex items-center justify-between py-2 px-3 rounded-xl bg-[#1B2530] text-[#35E6B5] hover:text-white border border-[#263440] text-xs font-mono"
-                    >
-                      <span>View Student Classroom</span>
-                      <ArrowRight className="w-3.5 h-3.5 opacity-60" />
-                    </Link>
-                  )}
-
-                  <button
-                    onClick={() => {
-                      closeMobileMenu();
-                      setSupportModalOpen(true);
-                    }}
-                    className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-[#1B2530] text-[#94A3B8] hover:text-white border border-[#263440] text-xs font-mono"
-                  >
-                    <LifeBuoy className="w-3.5 h-3.5 text-[#35E6B5]" />
-                    <span>Academy Support Desk</span>
-                  </button>
-
-                  {currentUser ? (
-                    <button
-                      onClick={handleSignOut}
-                      className="w-full py-2.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 font-mono text-xs flex items-center justify-center gap-2"
-                    >
-                      <LogOut className="w-4 h-4" />
-                      <span>Sign Out</span>
-                    </button>
-                  ) : (
-                    <Link
-                      to="/login"
-                      onClick={closeMobileMenu}
-                      className="inline-flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-xl text-[#071018] text-xs font-royal font-bold tracking-wider shadow-[0_0_20px_rgba(101,245,138,0.35)] uppercase"
-                      style={{
-                        background: 'linear-gradient(135deg, #65F58A, #35E6B5)'
-                      }}
-                    >
-                      <span>Operator Login</span>
-                      <ArrowUpRight className="w-3.5 h-3.5" />
-                    </Link>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
         </div>
+
+        {/* Mobile Navigation Drawer */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden px-4 pt-2 pointer-events-auto">
+            <div className="liquid-glass-dropdown rounded-2xl p-4 space-y-3">
+              <nav className="flex flex-col space-y-1 font-mono text-xs">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.label}
+                    to={link.path}
+                    onClick={closeMobileMenu}
+                    className={`px-3 py-2 rounded-lg transition-colors ${
+                      isActive(link.path)
+                        ? 'bg-[#65F58A]/15 text-[#65F58A] font-bold'
+                        : 'text-slate-300 hover:bg-[#1B2530]'
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
+            </div>
+          </div>
+        )}
       </header>
 
-      {/* Institutional Support Ticket Modal */}
+      {/* Cross-Domain Support Ticket Modal */}
       <SupportTicketModal
         isOpen={supportModalOpen}
         onClose={() => setSupportModalOpen(false)}

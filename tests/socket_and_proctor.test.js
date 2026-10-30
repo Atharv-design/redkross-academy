@@ -3,18 +3,20 @@ import assert from 'node:assert/strict';
 import { mockEngine } from '../src/services/db/mockEngine.js';
 import { socketClient } from '../src/services/socket/socketClient.js';
 
-test('1. Socket.io Client Fallback & Event Bus Emission', (t, done) => {
+test('1. Socket.io Client Fallback & Event Bus Emission', async () => {
   // Test event subscription and emission
   const testPayload = { message: 'SOC Alert', cadetId: 'RK-89421', timestamp: Date.now() };
 
-  const unsub = socketClient.on('test:cyber_event', (payload) => {
-    assert.strictEqual(payload.cadetId, 'RK-89421');
-    assert.strictEqual(payload.message, 'SOC Alert');
-    unsub();
-    done();
+  const received = await new Promise((resolve) => {
+    const unsub = socketClient.on('test:cyber_event', (payload) => {
+      unsub();
+      resolve(payload);
+    });
+    socketClient.emit('test:cyber_event', testPayload);
   });
 
-  socketClient.emit('test:cyber_event', testPayload);
+  assert.strictEqual(received.cadetId, 'RK-89421');
+  assert.strictEqual(received.message, 'SOC Alert');
 });
 
 test('2. Two Consecutive Camera Drops Cause Exam Termination & 24h Lockout', () => {

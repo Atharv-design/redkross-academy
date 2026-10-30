@@ -12,29 +12,42 @@ export default function StudentDashboard() {
     allCourses: [],
     primaryEnrolment: null,
     primaryCourse: null,
-    primaryProgress: { percentage: 0 },
+    primaryProgress: { percentage: 0, completed: 0, total: 0 },
     avgProgress: 0
   });
 
   const loadData = () => {
-    if (!currentUser) return;
-    const enrs = mockEngine.getEnrolmentsForUser(currentUser.id);
-    const crss = mockEngine.getCourses();
-    const primaryEnr = enrs[0] || null;
-    const primaryCrs = primaryEnr ? mockEngine.getCourseById(primaryEnr.course_id) : null;
-    const primaryProg = primaryEnr ? mockEngine.getCourseProgress(primaryEnr.id) : { percentage: 0 };
-    const avgProg = enrs.length > 0
-      ? Math.round(enrs.reduce((sum, e) => sum + mockEngine.getCourseProgress(e.id).percentage, 0) / enrs.length)
-      : 0;
+    if (!currentUser || !currentUser.id) return;
+    try {
+      const enrs = Array.isArray(mockEngine.getEnrolmentsForUser(currentUser.id))
+        ? mockEngine.getEnrolmentsForUser(currentUser.id)
+        : [];
+      const crss = Array.isArray(mockEngine.getCourses()) ? mockEngine.getCourses() : [];
+      const primaryEnr = enrs[0] || null;
+      const primaryCrs = primaryEnr ? mockEngine.getCourseById(primaryEnr.course_id) : null;
+      const primaryProg = primaryEnr
+        ? mockEngine.getCourseProgress(primaryEnr.id)
+        : { percentage: 0, completed: 0, total: 0 };
+      const avgProg = enrs.length > 0
+        ? Math.round(
+            enrs.reduce((sum, e) => {
+              const p = mockEngine.getCourseProgress(e.id);
+              return sum + (p?.percentage || 0);
+            }, 0) / enrs.length
+          )
+        : 0;
 
-    setDashboardData({
-      enrolments: enrs,
-      allCourses: crss,
-      primaryEnrolment: primaryEnr,
-      primaryCourse: primaryCrs,
-      primaryProgress: primaryProg,
-      avgProgress: avgProg
-    });
+      setDashboardData({
+        enrolments: enrs,
+        allCourses: crss,
+        primaryEnrolment: primaryEnr,
+        primaryCourse: primaryCrs,
+        primaryProgress: primaryProg || { percentage: 0, completed: 0, total: 0 },
+        avgProgress: avgProg
+      });
+    } catch (err) {
+      console.warn('Dashboard data load warning:', err);
+    }
   };
 
   useEffect(() => {
@@ -48,39 +61,50 @@ export default function StudentDashboard() {
   if (!currentUser) {
     return (
       <div className="min-h-screen bg-[#071018] py-24 text-center">
-        <h2 className="text-xl font-bold text-white mb-2">Authentication Required</h2>
-        <p className="text-xs text-slate-400 mb-4">Please select a student identity or sign in to access your learning portal.</p>
+        <div className="max-w-md mx-auto liquid-glass-panel rounded-2xl p-8 space-y-4">
+          <Shield className="w-10 h-10 text-[#65F58A] mx-auto animate-pulse" />
+          <h2 className="text-xl font-bold text-white">Authentication Required</h2>
+          <p className="text-xs text-slate-400">Please select a student identity or sign in to access your learning portal.</p>
+          <Link to="/login" className="liquid-glass-button px-5 py-2.5 rounded-xl font-mono text-xs font-bold inline-block">
+            Go to Sign-In
+          </Link>
+        </div>
       </div>
     );
   }
 
   const { enrolments, allCourses, primaryEnrolment, primaryCourse, primaryProgress, avgProgress } = dashboardData;
+  const cadetId = currentUser?.cadet_id || 'RK-89421';
+  const fullName = currentUser?.full_name || currentUser?.displayName || 'Cadet Operator';
 
   return (
     <div className="min-h-screen bg-[#071018] py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         {/* Welcome Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-surface-border gap-4">
+        <div className="liquid-glass-panel rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 border border-[#263440]">
           <div className="flex items-center space-x-4">
-            <img
-              src={currentUser.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.full_name || 'Cadet')}&background=101923&color=65F58A&bold=true`}
-              alt={currentUser.full_name || 'Cadet'}
-              className="w-14 h-14 rounded-xl border-2 border-redkross-600/40 object-cover"
-              onError={(e) => {
-                e.target.src = 'https://ui-avatars.com/api/?name=Cadet&background=101923&color=65F58A&bold=true';
-              }}
-            />
+            <div className="relative">
+              <img
+                src={currentUser.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=101923&color=65F58A&bold=true`}
+                alt={fullName}
+                className="w-16 h-16 rounded-2xl border-2 border-[#65F58A]/50 object-cover shadow-[0_0_20px_rgba(101,245,138,0.25)]"
+                onError={(e) => {
+                  e.target.src = 'https://ui-avatars.com/api/?name=Cadet&background=101923&color=65F58A&bold=true';
+                }}
+              />
+              <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#65F58A] border-2 border-[#071018] shadow-[0_0_8px_#65F58A]" />
+            </div>
             <div>
-              <div className="flex items-center space-x-2">
-                <h1 className="text-2xl font-extrabold text-white">{currentUser.full_name || 'Cadet Operator'}</h1>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-redkross-600/20 text-redkross-400 border border-redkross-600/30 uppercase">
-                  Operator Portal
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="text-2xl font-royal font-bold text-white">{fullName}</h1>
+                <span className="liquid-glass-badge text-[10px] font-mono px-2.5 py-0.5 rounded-full uppercase">
+                  OPERATOR PORTAL
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/30 font-bold">
-                  CADET ID: {currentUser.cadet_id || 'RK-89421'}
+                <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/40 font-bold shadow-[0_0_10px_rgba(101,245,138,0.2)]">
+                  CADET ID: {cadetId}
                 </span>
               </div>
-              <p className="text-xs text-slate-400 font-mono mt-0.5">{currentUser.headline || 'Verified Cyber Defense Operator'}</p>
+              <p className="text-xs text-slate-400 font-mono mt-1">{currentUser.headline || 'Verified Cyber Defense Operator'}</p>
             </div>
           </div>
 
@@ -88,8 +112,8 @@ export default function StudentDashboard() {
           <div className="flex flex-wrap items-center gap-3">
             {/* Public Verification Dossier Pill */}
             <Link
-              to={`/verify/${currentUser.cadet_id || 'RK-89421'}`}
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-[#65F58A]/10 border border-[#65F58A]/30 text-[#65F58A] hover:bg-[#65F58A]/20 transition-all text-xs font-mono font-medium"
+              to={`/verify/${cadetId}`}
+              className="liquid-glass-button px-3.5 py-2 rounded-xl text-xs font-mono font-medium flex items-center gap-2"
               title="Open Public Verification Dossier"
             >
               <Award className="w-4 h-4 text-[#65F58A]" />
@@ -97,7 +121,7 @@ export default function StudentDashboard() {
             </Link>
 
             {/* Learning Streak */}
-            <div className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-surface-card border border-surface-border text-xs font-mono">
+            <div className="liquid-glass-card px-3.5 py-2 rounded-xl text-xs font-mono flex items-center space-x-2">
               <Flame className="w-4 h-4 text-rose-500 fill-rose-500" />
               <span className="text-slate-400">Streak:</span>
               <span className="text-white font-bold tabular-nums">{currentUser.streak_days || 7} Days</span>
@@ -106,18 +130,18 @@ export default function StudentDashboard() {
             {/* Token Wallet */}
             <Link
               to="/student/tokens"
-              className="flex items-center space-x-2 px-3.5 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500/20 transition-all text-xs font-mono font-medium"
+              className="liquid-glass-card hover:border-amber-500/50 px-3.5 py-2 rounded-xl text-amber-400 transition-all text-xs font-mono font-medium flex items-center space-x-2"
             >
-              <Coins className="w-4 h-4 text-amber-400 animate-pulse-subtle" />
+              <Coins className="w-4 h-4 text-amber-400 animate-pulse" />
               <span>Wallet:</span>
-              <span className="text-white font-bold tabular-nums">{tokenBalance} Tokens</span>
+              <span className="text-white font-bold tabular-nums">{typeof tokenBalance === 'number' ? tokenBalance : 150} Tokens</span>
             </Link>
           </div>
         </div>
 
         {/* Security Suspension Notice */}
         {isSuspended && (
-          <div className="p-4 bg-red-950/40 border border-red-500/50 rounded-xl flex items-center space-x-3 text-red-200">
+          <div className="p-4 bg-red-950/40 border border-red-500/50 rounded-2xl flex items-center space-x-3 text-red-200 liquid-glass-panel">
             <ShieldAlert className="w-6 h-6 text-red-400 shrink-0" />
             <div className="text-xs">
               <span className="font-bold font-mono text-red-400 block mb-0.5">
@@ -132,30 +156,30 @@ export default function StudentDashboard() {
 
         {/* Continue Learning Hero Card */}
         {primaryCourse && primaryEnrolment && (
-          <div className="bg-gradient-to-r from-surface-card via-surface-card to-[#1B2530] border border-surface-border rounded-xl p-8 shadow-xl relative overflow-hidden">
+          <div className="liquid-glass-panel rounded-2xl p-8 relative overflow-hidden">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
               <div className="space-y-3 max-w-2xl">
-                <div className="inline-flex items-center space-x-2 text-xs font-mono text-redkross-400 font-semibold px-2.5 py-1 rounded bg-redkross-600/10 border border-redkross-600/30">
-                  <Play className="w-3 h-3 fill-redkross-400" />
+                <div className="inline-flex items-center space-x-2 text-xs font-mono text-[#65F58A] font-semibold px-3 py-1 rounded-full bg-[#65F58A]/10 border border-[#65F58A]/30">
+                  <Play className="w-3 h-3 fill-[#65F58A]" />
                   <span>RESUME ACTIVE PROGRAMME</span>
                 </div>
-                <h2 className="text-2xl font-bold text-white">{primaryCourse.title}</h2>
+                <h2 className="text-2xl font-royal font-bold text-white">{primaryCourse.title}</h2>
                 <p className="text-xs text-slate-300 leading-relaxed">{primaryCourse.overview}</p>
 
                 {/* Progress Bar */}
                 <div className="space-y-1.5 pt-2 max-w-md">
                   <div className="flex items-center justify-between text-xs font-mono">
                     <span className="text-slate-400">Mandatory Course Progress</span>
-                    <span className="text-redkross-400 font-bold tabular-nums">{primaryProgress.percentage}%</span>
+                    <span className="text-[#65F58A] font-bold tabular-nums">{primaryProgress?.percentage || 0}%</span>
                   </div>
                   <div className="w-full h-2.5 rounded-full bg-surface-100 overflow-hidden border border-surface-border">
                     <div
-                      className="h-full bg-gradient-to-r from-redkross-600 to-rose-400 rounded-full transition-all duration-500"
-                      style={{ width: `${primaryProgress.percentage}%` }}
+                      className="h-full bg-gradient-to-r from-[#65F58A] to-[#35E6B5] rounded-full transition-all duration-500 shadow-[0_0_12px_rgba(101,245,138,0.6)]"
+                      style={{ width: `${primaryProgress?.percentage || 0}%` }}
                     />
                   </div>
                   <div className="text-[10px] text-slate-400 font-mono">
-                    {primaryProgress.completed} of {primaryProgress.total} mandatory lessons completed
+                    {primaryProgress?.completed || 0} of {primaryProgress?.total || 0} mandatory lessons completed
                   </div>
                 </div>
               </div>
@@ -163,14 +187,14 @@ export default function StudentDashboard() {
               <div className="flex flex-col gap-3 min-w-[220px]">
                 <Link
                   to={`/student/learn/${primaryEnrolment.id}`}
-                  className="px-6 py-3.5 rounded-lg bg-redkross-600 hover:bg-redkross-700 text-white font-semibold text-sm transition-all shadow-lg hover:cyber-glow-red flex items-center justify-center space-x-2"
+                  className="liquid-glass-button px-6 py-3.5 rounded-xl font-royal font-bold text-sm flex items-center justify-center space-x-2"
                 >
-                  <Play className="w-4 h-4 fill-white" />
+                  <Play className="w-4 h-4 fill-current" />
                   <span>Enter Classroom</span>
                 </Link>
                 <Link
                   to={`/courses/${primaryCourse.slug}`}
-                  className="px-4 py-2.5 rounded-lg bg-surface-100 hover:bg-surface-200 border border-surface-border text-slate-300 text-xs font-mono text-center"
+                  className="liquid-glass-button-secondary px-4 py-2.5 rounded-xl text-xs font-mono text-center"
                 >
                   View Course Details
                 </Link>
@@ -182,11 +206,11 @@ export default function StudentDashboard() {
         {/* Enrolled Courses Grid */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-white flex items-center space-x-2">
-              <BookOpen className="w-5 h-5 text-redkross-500" />
+            <h2 className="text-xl font-royal font-bold text-white flex items-center space-x-2">
+              <BookOpen className="w-5 h-5 text-[#65F58A]" />
               <span>My Enrolments ({enrolments.length})</span>
             </h2>
-            <Link to="/courses" className="text-xs font-mono text-redkross-400 hover:text-redkross-300 flex items-center space-x-1">
+            <Link to="/courses" className="text-xs font-mono text-[#65F58A] hover:text-[#35E6B5] flex items-center space-x-1 transition-colors">
               <span>Browse Catalog</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
@@ -196,47 +220,47 @@ export default function StudentDashboard() {
             {enrolments.map((enr) => {
               const crs = mockEngine.getCourseById(enr.course_id);
               if (!crs) return null;
-              const progress = mockEngine.getCourseProgress(enr.id);
+              const progress = mockEngine.getCourseProgress(enr.id) || { percentage: 0 };
 
               return (
                 <div
                   key={enr.id}
-                  className="bg-surface-card border border-surface-border rounded-xl p-6 shadow-md flex flex-col justify-between space-y-4"
+                  className="liquid-glass-card rounded-2xl p-6 flex flex-col justify-between space-y-4"
                 >
                   <div>
                     <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 mb-2">
-                      <span className="px-2 py-0.5 rounded bg-surface-100 border border-surface-border">{crs.difficulty || 'Specialist'}</span>
-                      <span className="text-emerald-400 font-semibold">{(enr.status || 'ACTIVE').toUpperCase()}</span>
+                      <span className="px-2 py-0.5 rounded-md bg-surface-100 border border-surface-border">{crs.difficulty || 'Specialist'}</span>
+                      <span className="text-[#65F58A] font-semibold">{String(enr.status || 'ACTIVE').toUpperCase()}</span>
                     </div>
 
-                    <h3 className="text-base font-bold text-white mb-2">{crs.title}</h3>
+                    <h3 className="text-base font-royal font-bold text-white mb-2">{crs.title}</h3>
 
                     {/* Progress Bar */}
                     <div className="space-y-1 my-3">
                       <div className="flex justify-between text-[11px] font-mono">
                         <span className="text-slate-400">Progress</span>
-                        <span className="text-white font-bold">{progress.percentage}%</span>
+                        <span className="text-white font-bold tabular-nums">{progress.percentage || 0}%</span>
                       </div>
                       <div className="w-full h-2 rounded-full bg-surface-100 overflow-hidden">
                         <div
-                          className="h-full bg-redkross-600 rounded-full transition-all"
-                          style={{ width: `${progress.percentage}%` }}
+                          className="h-full bg-gradient-to-r from-[#65F58A] to-[#35E6B5] rounded-full transition-all"
+                          style={{ width: `${progress.percentage || 0}%` }}
                         />
                       </div>
                     </div>
 
                     {/* Passed Quizzes count */}
                     <div className="text-[11px] font-mono text-slate-400 flex items-center space-x-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#65F58A]" />
                       <span>{(enr.passed_quizzes || []).length} Chapter Evaluations Passed</span>
                     </div>
                   </div>
 
                   <div className="pt-4 border-t border-surface-border flex items-center justify-between">
-                    <span className="text-xs font-mono text-amber-400">+{crs.total_tokens_reward} Bounty</span>
+                    <span className="text-xs font-mono text-amber-400">+{crs.total_tokens_reward || 350} Bounty</span>
                     <Link
                       to={`/student/learn/${enr.id}`}
-                      className="px-3.5 py-1.5 rounded-lg bg-surface-100 hover:bg-redkross-600 hover:text-white text-xs font-semibold text-slate-200 transition-colors flex items-center space-x-1"
+                      className="liquid-glass-button px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1"
                     >
                       <span>Study</span>
                       <ArrowRight className="w-3.5 h-3.5" />

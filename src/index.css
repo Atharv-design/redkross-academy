@@ -1,3 +1,4 @@
+@import './styles/liquid-glass.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -80,11 +81,21 @@ body {
 /* Glassmorphism System for RedKross Academy */
 @layer components {
   .glass-card {
+    background: linear-gradient(135deg, rgba(22, 33, 44, 0.75) 0%, rgba(13, 20, 28, 0.68) 100%);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(101, 245, 138, 0.18);
+    border-top: 1px solid rgba(101, 245, 138, 0.32);
+    box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.7), inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
+  }
+
+  .cyber-glass-panel, .glass-panel {
     background: rgba(16, 25, 35, 0.72);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
     border: 1px solid rgba(38, 52, 64, 0.85);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+    border-top: 1px solid rgba(101, 245, 138, 0.35);
+    box-shadow: 0 20px 48px -8px rgba(0, 0, 0, 0.78), inset 0 1px 1px 0 rgba(255, 255, 255, 0.12);
   }
 
   .glass-card-hover {

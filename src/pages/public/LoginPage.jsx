@@ -74,7 +74,7 @@ export default function LoginPage() {
         </div>
 
         {/* Main Authentication Card */}
-        <div className="glass-card rounded-2xl p-6 sm:p-8 space-y-6 border border-[#263440] bg-[#101923]/90 shadow-2xl relative overflow-hidden">
+        <div className="liquid-glass-panel rounded-2xl p-6 sm:p-8 space-y-6 border border-[#263440] shadow-2xl relative overflow-hidden">
           {/* Subtle Accent Glow */}
           <div className="absolute -top-12 -right-12 w-32 h-32 bg-[#65F58A]/10 rounded-full blur-2xl pointer-events-none" />
           <div className="absolute -bottom-12 -left-12 w-32 h-32 bg-[#35E6B5]/10 rounded-full blur-2xl pointer-events-none" />
@@ -92,7 +92,7 @@ export default function LoginPage() {
               onClick={handleGoogleSignIn}
               disabled={loading}
               type="button"
-              className="w-full py-4 px-5 rounded-xl bg-[#1B2530] hover:bg-[#22303E] active:scale-[0.99] border-2 border-[#263440] hover:border-[#65F58A] text-white font-mono text-sm font-semibold transition-all flex items-center justify-center gap-3.5 group shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full py-4 px-5 rounded-xl liquid-glass-card hover:border-[#65F58A] active:scale-[0.99] text-white font-mono text-sm font-semibold transition-all flex items-center justify-center gap-3.5 group shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>

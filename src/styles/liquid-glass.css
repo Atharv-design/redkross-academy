@@ -1,0 +1,163 @@
+/* ==========================================================================
+   RedKross Academy - Liquid Glass Dynamic Refractive Design System
+   Pervasive Tactile Glassmorphism Token Architecture
+   Complies with Impeccable Design Standards (WCAG AA Contrast >= 4.5:1)
+   ========================================================================== */
+
+/* 1. Base Variables & Surface Depth */
+:root {
+  --liquid-glass-bg: rgba(16, 25, 35, 0.65);
+  --liquid-glass-border: rgba(101, 245, 138, 0.22);
+  --liquid-glass-border-hover: rgba(101, 245, 138, 0.45);
+  --liquid-glass-shine: rgba(255, 255, 255, 0.08);
+  --liquid-glass-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.7), 0 0 20px -5px rgba(101, 245, 138, 0.12);
+  --liquid-glass-glow: 0 0 25px rgba(101, 245, 138, 0.25);
+}
+
+/* 2. Liquid Glass Navbar */
+.liquid-glass-nav {
+  background: rgba(11, 18, 27, 0.82);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(101, 245, 138, 0.28);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.liquid-glass-nav:hover {
+  border-color: rgba(101, 245, 138, 0.42);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.75), 0 0 24px rgba(101, 245, 138, 0.18), inset 0 1px 0 0 rgba(255, 255, 255, 0.18);
+}
+
+/* 3. Liquid Glass Panel & Workspace Containers */
+.liquid-glass-panel {
+  background: rgba(16, 25, 35, 0.68);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(38, 52, 64, 0.8);
+  border-top: 1px solid rgba(101, 245, 138, 0.3);
+  box-shadow: 0 20px 48px -8px rgba(0, 0, 0, 0.75), inset 0 1px 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.liquid-glass-panel:hover {
+  border-color: rgba(101, 245, 138, 0.35);
+  box-shadow: 0 24px 56px -6px rgba(0, 0, 0, 0.82), 0 0 30px rgba(101, 245, 138, 0.08), inset 0 1px 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+/* 4. Liquid Glass Cards */
+.liquid-glass-card {
+  background: linear-gradient(135deg, rgba(22, 33, 44, 0.72) 0%, rgba(13, 20, 28, 0.65) 100%);
+  backdrop-filter: blur(16px) saturate(170%);
+  -webkit-backdrop-filter: blur(16px) saturate(170%);
+  border: 1px solid rgba(101, 245, 138, 0.16);
+  box-shadow: 0 12px 30px -4px rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s ease, box-shadow 0.22s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(101, 245, 138, 0.06), transparent);
+  transition: left 0.6s ease;
+  pointer-events: none;
+}
+
+.liquid-glass-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(101, 245, 138, 0.38);
+  box-shadow: 0 20px 42px -6px rgba(0, 0, 0, 0.8), 0 0 24px rgba(101, 245, 138, 0.15), inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+}
+
+.liquid-glass-card:hover::before {
+  left: 100%;
+}
+
+/* 5. Liquid Glass Buttons */
+.liquid-glass-button {
+  background: linear-gradient(135deg, rgba(101, 245, 138, 0.22) 0%, rgba(53, 230, 181, 0.14) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(101, 245, 138, 0.45);
+  color: #65F58A;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4), inset 0 1px 0 0 rgba(255, 255, 255, 0.25);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.liquid-glass-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(101, 245, 138, 0.32) 0%, rgba(53, 230, 181, 0.22) 100%);
+  border-color: #65F58A;
+  box-shadow: 0 8px 24px rgba(101, 245, 138, 0.3), inset 0 1px 0 0 rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.liquid-glass-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(101, 245, 138, 0.2);
+}
+
+/* Secondary Neutral Glass Button */
+.liquid-glass-button-secondary {
+  background: rgba(27, 37, 48, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(38, 52, 64, 0.85);
+  color: #E2E8F0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+  transition: all 0.2s ease;
+}
+
+.liquid-glass-button-secondary:hover:not(:disabled) {
+  background: rgba(38, 52, 64, 0.85);
+  border-color: rgba(101, 245, 138, 0.3);
+  color: #FFFFFF;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+
+/* 6. Liquid Glass Input & Filter Bars */
+.liquid-glass-input {
+  background: rgba(11, 18, 27, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(38, 52, 64, 0.85);
+  color: #F1F5F9;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: all 0.2s ease;
+}
+
+.liquid-glass-input:focus {
+  outline: none;
+  border-color: rgba(101, 245, 138, 0.6);
+  box-shadow: 0 0 16px rgba(101, 245, 138, 0.25), inset 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* 7. Liquid Glass Badges & Small Pills */
+.liquid-glass-badge {
+  background: rgba(101, 245, 138, 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(101, 245, 138, 0.32);
+  color: #65F58A;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* 8. Liquid Glass Modal & Dropdown Overlays */
+.liquid-glass-dropdown {
+  background: rgba(13, 21, 31, 0.94);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border: 1px solid rgba(101, 245, 138, 0.25);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), 0 0 30px rgba(101, 245, 138, 0.1), inset 0 1px 0 0 rgba(255, 255, 255, 0.14);
+}

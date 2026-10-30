@@ -3,7 +3,8 @@ import {
   Award, Plus, Search, ShieldCheck, ShieldAlert, ExternalLink,
   Trash2, RefreshCw, Eye, CheckCircle2, Download, QrCode, FileText,
   UserCheck, Send, Check, Sparkles, Building2, Calendar, Clock,
-  FileBadge, CheckCircle, ArrowRight, Upload, Image, X, RotateCcw
+  FileBadge, CheckCircle, ArrowRight, Upload, Image, X, RotateCcw,
+  Sliders, Terminal
 } from 'lucide-react';
 import { mockEngine } from '../../services/db/mockEngine';
 
@@ -25,6 +26,13 @@ export default function AdminCertificatesPage() {
   const [studentSearch, setStudentSearch] = useState('');
   const [selectedStudentId, setSelectedStudentId] = useState('');
 
+  // Template Master Configuration state
+  const [masterConfig, setMasterConfig] = useState({
+    issuing_institution: 'RedKross Defensive Cyber Academy',
+    authorized_signatory: 'Dr. Robert H. Vance, CISSP',
+    signatory_title: 'Director of Cyber Defense Academics'
+  });
+
   // Form state for Certificate Customization (based on RedKross Official Letter Template)
   const [studioForm, setStudioForm] = useState({
     student_name: 'Student Candidate',
@@ -36,10 +44,10 @@ export default function AdminCertificatesPage() {
     training_hours: '120',
     grade: 'A',
     department: 'Information Technology',
-    supervisor_name: 'MR. Ojas Satardekar',
+    supervisor_name: 'Dr. Robert H. Vance, CISSP',
     description: 'has successfully completed the comprehensive training in cybersecurity defense and operational laboratory challenges at REDKROSS Research Foundation.',
-    digital_signature_url: null, // null defaults to /assets/certificate/default_signature.png
-    digital_seal_url: null        // null defaults to /assets/certificate/default_seal.png
+    digital_signature_url: null,
+    digital_seal_url: null
   });
 
   const loadData = () => {
@@ -135,6 +143,17 @@ export default function AdminCertificatesPage() {
     reader.readAsDataURL(file);
   };
 
+  // Resolves dynamic merge tags: {{STUDENT_NAME}}, {{COURSE_NAME}}, etc.
+  const resolveDynamicTags = (text) => {
+    if (!text) return '';
+    return text
+      .replace(/{{STUDENT_NAME}}/g, studioForm.student_name || 'Cadet Operator')
+      .replace(/{{COURSE_NAME}}/g, studioForm.course_title || 'Defensive Cyber Operations')
+      .replace(/{{COMPLETION_DATE}}/g, studioForm.completion_date || new Date().toISOString().split('T')[0])
+      .replace(/{{CREDENTIAL_ID}}/g, 'RK-CERT-PENDING')
+      .replace(/{{VERIFY_URL}}/g, `https://redkross.org.in/verify/${studioForm.cadet_id}`);
+  };
+
   const handleDispatchCertificate = (e) => {
     e.preventDefault();
     if (!studioForm.student_name || !studioForm.student_email) {
@@ -159,8 +178,10 @@ export default function AdminCertificatesPage() {
         training_hours: studioForm.training_hours,
         grade: studioForm.grade,
         department: studioForm.department,
-        description: studioForm.description,
-        supervisor_name: studioForm.supervisor_name,
+        description: resolveDynamicTags(studioForm.description),
+        supervisor_name: masterConfig.authorized_signatory || studioForm.supervisor_name,
+        issuing_institution: masterConfig.issuing_institution,
+        signatory_title: masterConfig.signatory_title,
         digital_signature_url: studioForm.digital_signature_url || '/assets/certificate/default_signature.png',
         digital_seal_url: studioForm.digital_seal_url || '/assets/certificate/default_seal.png',
         verification_hash: verificationHash,
@@ -259,15 +280,15 @@ export default function AdminCertificatesPage() {
   return (
     <div className="space-y-6">
       {/* Top Header Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 cyber-glass-panel p-4 rounded-xl">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 liquid-glass-panel p-5 rounded-2xl">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 rounded-xl bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center">
             <FileBadge className="w-5 h-5 text-[#65F58A]" />
           </div>
           <div>
-            <h2 className="text-base font-bold text-white font-lora flex items-center gap-2">
+            <h2 className="text-base font-bold text-white font-royal flex items-center gap-2">
               <span>Official Certification Center</span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30">
                 REDKROSS MASTER TEMPLATE
               </span>
             </h2>
@@ -281,10 +302,10 @@ export default function AdminCertificatesPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setActiveTab('template_designer')}
-            className={`px-4 py-2 rounded-lg text-xs font-mono font-bold transition-all flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 ${
               activeTab === 'template_designer'
-                ? 'bg-[#65F58A] text-[#071018] shadow-[0_0_15px_rgba(101,245,138,0.3)]'
-                : 'bg-[#1B2530] text-[#CBD5E1] hover:text-white border border-[#263440]'
+                ? 'liquid-glass-button shadow-[0_0_15px_rgba(101,245,138,0.3)]'
+                : 'liquid-glass-button-secondary'
             }`}
           >
             <Sparkles className="w-4 h-4" />
@@ -292,10 +313,10 @@ export default function AdminCertificatesPage() {
           </button>
           <button
             onClick={() => setActiveTab('registry')}
-            className={`px-4 py-2 rounded-lg text-xs font-mono font-bold transition-all flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 ${
               activeTab === 'registry'
-                ? 'bg-[#65F58A] text-[#071018] shadow-[0_0_15px_rgba(101,245,138,0.3)]'
-                : 'bg-[#1B2530] text-[#CBD5E1] hover:text-white border border-[#263440]'
+                ? 'liquid-glass-button shadow-[0_0_15px_rgba(101,245,138,0.3)]'
+                : 'liquid-glass-button-secondary'
             }`}
           >
             <Award className="w-4 h-4" />
@@ -306,7 +327,7 @@ export default function AdminCertificatesPage() {
 
       {/* Dispatch Success Alert Banner */}
       {dispatchSuccess && (
-        <div className="p-4 rounded-xl bg-[#65F58A]/10 border border-[#65F58A]/40 flex items-center justify-between animate-fadeIn text-xs font-mono">
+        <div className="p-4 rounded-2xl bg-[#65F58A]/10 border border-[#65F58A]/40 flex items-center justify-between animate-fadeIn text-xs font-mono liquid-glass-panel">
           <div className="flex items-center gap-3">
             <CheckCircle className="w-5 h-5 text-[#65F58A] flex-shrink-0" />
             <div>
@@ -323,7 +344,7 @@ export default function AdminCertificatesPage() {
               href={`/verify/${dispatchSuccess.id}`}
               target="_blank"
               rel="noreferrer"
-              className="px-3 py-1.5 rounded-lg bg-[#65F58A] text-[#071018] font-bold text-xs flex items-center gap-1.5 hover:bg-[#52d674] transition-all"
+              className="px-3 py-1.5 rounded-xl liquid-glass-button text-xs font-bold flex items-center gap-1.5"
             >
               <span>View Public Dossier</span>
               <ExternalLink className="w-3.5 h-3.5" />
@@ -341,22 +362,29 @@ export default function AdminCertificatesPage() {
               <Search className="w-4 h-4 text-[#8BA2B5] absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="Search credential ID, student name, cadet ID..."
+                placeholder="Search registry by ID, Cadet, Course..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full cyber-glass-panel rounded-lg pl-9 pr-4 py-2 text-xs text-white placeholder-[#8BA2B5] focus:outline-none focus:border-[#65F58A]"
+                className="w-full liquid-glass-input rounded-xl pl-9 pr-4 py-2 text-xs"
               />
             </div>
+            <button
+              onClick={() => setActiveTab('template_designer')}
+              className="liquid-glass-button px-4 py-2 rounded-xl text-xs font-mono font-bold flex items-center gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Issue New Certificate</span>
+            </button>
           </div>
 
-          <div className="cyber-glass-panel rounded-xl overflow-hidden shadow-2xl">
+          <div className="liquid-glass-panel rounded-2xl overflow-hidden border border-[#263440]">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-[#1B2530] text-[11px] font-mono text-[#8BA2B5] bg-[#071018]">
+                <tr className="border-b border-[#1B2530] text-[10px] font-mono text-[#8BA2B5] bg-[#071018]/50 uppercase tracking-wider">
                   <th className="p-3.5">CREDENTIAL ID</th>
-                  <th className="p-3.5">STUDENT & CADET ID</th>
-                  <th className="p-3.5">MASTER CURRICULUM</th>
-                  <th className="p-3.5">COMPLETION DATE</th>
+                  <th className="p-3.5">RECIPIENT & CADET ID</th>
+                  <th className="p-3.5">COURSE / CURRICULUM</th>
+                  <th className="p-3.5">ISSUED DATE</th>
                   <th className="p-3.5">STATUS</th>
                   <th className="p-3.5 text-right">ACTIONS</th>
                 </tr>
@@ -392,12 +420,12 @@ export default function AdminCertificatesPage() {
                       <td className="p-3.5 text-[#8BA2B5]">{cred.completion_date || cred.issued_at}</td>
                       <td className="p-3.5">
                         {cred.revoked ? (
-                          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded text-[10px] font-bold bg-[#EF4444]/10 text-[#EF4444] border border-[#EF4444]/30">
+                          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#EF4444]/10 text-[#EF4444] border border-[#EF4444]/30">
                             <ShieldAlert className="w-3 h-3" />
                             <span>REVOKED</span>
                           </span>
                         ) : (
-                          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded text-[10px] font-bold bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30">
+                          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30">
                             <ShieldCheck className="w-3 h-3" />
                             <span>VALID & VERIFIED</span>
                           </span>
@@ -408,7 +436,7 @@ export default function AdminCertificatesPage() {
                           href={`/verify/${cred.id}`}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center space-x-1 px-2.5 py-1 bg-[#1B2530] text-[#CBD5E1] hover:text-[#65F58A] rounded border border-[#263440] text-[11px]"
+                          className="inline-flex items-center space-x-1 px-2.5 py-1 liquid-glass-button-secondary rounded-lg text-[11px]"
                         >
                           <ExternalLink className="w-3 h-3" />
                           <span>Public Dossier</span>
@@ -421,7 +449,7 @@ export default function AdminCertificatesPage() {
                               setRevokeReason('');
                               setRevokeModalOpen(true);
                             }}
-                            className="px-2.5 py-1 bg-[#1B2530] text-[#EF4444] hover:bg-[#EF4444]/20 rounded border border-[#263440] text-[11px]"
+                            className="px-2.5 py-1 bg-red-950/40 text-[#EF4444] hover:bg-[#EF4444]/20 rounded-lg border border-red-500/30 text-[11px]"
                           >
                             Revoke
                           </button>
@@ -435,16 +463,94 @@ export default function AdminCertificatesPage() {
           </div>
         </div>
       ) : (
-        /* OFFICIAL CERTIFICATE STUDIO: RedKross Official Letterhead & Live Editor */
+        /* OFFICIAL CERTIFICATE STUDIO */
         <div className="grid grid-cols-12 gap-6 items-start">
-          {/* Left Column: Student Selector, Form Controls, Middle Desc & Uploads */}
+          {/* Left Column: Template Master Config, Student Selector & Parameters */}
           <div className="col-span-12 xl:col-span-5 space-y-5">
-            {/* 1. Student Search & Quick Selection Box */}
-            <div className="cyber-glass-panel rounded-xl p-5 space-y-3">
+            {/* 1. Template Master Configuration Card (Exact User Spec) */}
+            <div className="liquid-glass-panel rounded-2xl p-5 space-y-4 border border-[#263440]">
+              <div className="flex items-center justify-between pb-2 border-b border-[#263440]">
+                <h3 className="font-royal text-sm font-bold text-white flex items-center gap-2">
+                  <Sliders className="w-4 h-4 text-[#65F58A]" />
+                  <span>Template Master Configuration</span>
+                </h3>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30">
+                  Global Issuer Policy
+                </span>
+              </div>
+
+              <div>
+                <label className="text-[11px] font-mono text-[#8BA2B5] block mb-1">
+                  Issuing Institution Name
+                </label>
+                <input
+                  type="text"
+                  value={masterConfig.issuing_institution}
+                  onChange={(e) => setMasterConfig({ ...masterConfig, issuing_institution: e.target.value })}
+                  className="w-full liquid-glass-input rounded-xl p-2.5 text-xs text-white font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="text-[11px] font-mono text-[#8BA2B5] block mb-1">
+                  Authorized Signatory Name
+                </label>
+                <input
+                  type="text"
+                  value={masterConfig.authorized_signatory}
+                  onChange={(e) => setMasterConfig({ ...masterConfig, authorized_signatory: e.target.value })}
+                  className="w-full liquid-glass-input rounded-xl p-2.5 text-xs text-white font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="text-[11px] font-mono text-[#8BA2B5] block mb-1">
+                  Signatory Title / Certification
+                </label>
+                <input
+                  type="text"
+                  value={masterConfig.signatory_title}
+                  onChange={(e) => setMasterConfig({ ...masterConfig, signatory_title: e.target.value })}
+                  className="w-full liquid-glass-input rounded-xl p-2.5 text-xs text-white font-mono"
+                />
+              </div>
+
+              {/* Supported Dynamic Merge Tags Infobox (Exact User Spec) */}
+              <div className="p-3.5 rounded-xl bg-[#071018]/80 border border-[#263440] space-y-2">
+                <span className="text-[10px] font-mono font-bold text-[#65F58A] uppercase tracking-wider block">
+                  SUPPORTED DYNAMIC MERGE TAGS:
+                </span>
+                <ul className="text-[11px] font-mono text-[#8BA2B5] space-y-1">
+                  <li className="flex items-center gap-1.5">
+                    <span className="text-[#65F58A]">• &#123;&#123;STUDENT_NAME&#125;&#125;</span>
+                    <span>- Student Full Legal Name</span>
+                  </li>
+                  <li className="flex items-center gap-1.5">
+                    <span className="text-[#65F58A]">• &#123;&#123;COURSE_NAME&#125;&#125;</span>
+                    <span>- Master Curriculum Title</span>
+                  </li>
+                  <li className="flex items-center gap-1.5">
+                    <span className="text-[#65F58A]">• &#123;&#123;COMPLETION_DATE&#125;&#125;</span>
+                    <span>- Timestamp ISO Date</span>
+                  </li>
+                  <li className="flex items-center gap-1.5">
+                    <span className="text-[#65F58A]">• &#123;&#123;CREDENTIAL_ID&#125;&#125;</span>
+                    <span>- Unique RK-CERT Identifier</span>
+                  </li>
+                  <li className="flex items-center gap-1.5">
+                    <span className="text-[#65F58A]">• &#123;&#123;VERIFY_URL&#125;&#125;</span>
+                    <span>- Public Authenticity Destination</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            {/* 2. Student Search & Quick Selection Box */}
+            <div className="liquid-glass-panel rounded-2xl p-5 space-y-3">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-mono font-bold text-[#65F58A] uppercase flex items-center gap-2">
                   <UserCheck className="w-4 h-4 text-[#65F58A]" />
-                  <span>1. Select Student (Live Search)</span>
+                  <span>Select Cadet (Live Search)</span>
                 </label>
                 <span className="text-[10px] font-mono text-[#8BA2B5]">
                   {filteredStudents.length} candidates
@@ -459,15 +565,15 @@ export default function AdminCertificatesPage() {
                   placeholder="Search by student name, email, or RK-XXXXX..."
                   value={studentSearch}
                   onChange={(e) => setStudentSearch(e.target.value)}
-                  className="w-full cyber-glass-card rounded-lg pl-8 pr-3 py-2 text-xs text-white placeholder-[#8BA2B5] focus:outline-none focus:border-[#65F58A]"
+                  className="w-full liquid-glass-input rounded-xl pl-9 pr-3 py-2 text-xs"
                 />
               </div>
 
-              {/* Student Scrollable List */}
-              <div className="max-h-40 overflow-y-auto space-y-1.5 pr-1 border border-[#1B2530] rounded-lg p-2 bg-[#071018]">
+              {/* Quick Select Student List */}
+              <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
                 {filteredStudents.length === 0 ? (
                   <div className="text-center py-4 text-xs font-mono text-[#8BA2B5] italic">
-                    No student found matching query
+                    No matching cadets found
                   </div>
                 ) : (
                   filteredStudents.map((st) => {
@@ -477,10 +583,10 @@ export default function AdminCertificatesPage() {
                         key={st.id}
                         type="button"
                         onClick={() => handleSelectStudent(st)}
-                        className={`w-full flex items-center justify-between p-2 rounded-lg text-left transition-all ${
+                        className={`w-full text-left p-2.5 rounded-xl transition-all flex items-center justify-between ${
                           isSelected
-                            ? 'bg-[#65F58A]/15 border border-[#65F58A]/40 text-white'
-                            : 'bg-[#0F1720] hover:bg-[#1B2530] border border-transparent text-[#CBD5E1]'
+                            ? 'bg-[#65F58A]/15 border border-[#65F58A]/40 text-white shadow-sm'
+                            : 'liquid-glass-card hover:border-[#65F58A]/30 text-[#CBD5E1]'
                         }`}
                       >
                         <div className="flex items-center gap-2.5 truncate">
@@ -498,7 +604,7 @@ export default function AdminCertificatesPage() {
                         </div>
 
                         <div className="flex items-center gap-2 flex-shrink-0 pl-2">
-                          <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30">
+                          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30">
                             {st.cadet_id || 'RK-89421'}
                           </span>
                           {isSelected && <Check className="w-3.5 h-3.5 text-[#65F58A]" />}
@@ -510,11 +616,11 @@ export default function AdminCertificatesPage() {
               </div>
             </div>
 
-            {/* 2. Certificate Content & Middle Section Controls */}
-            <form onSubmit={handleDispatchCertificate} className="cyber-glass-panel rounded-xl p-5 space-y-4">
+            {/* 3. Certificate Content & Middle Section Controls */}
+            <form onSubmit={handleDispatchCertificate} className="liquid-glass-panel rounded-2xl p-5 space-y-4">
               <label className="text-xs font-mono font-bold text-[#35E6B5] uppercase flex items-center gap-2">
                 <FileBadge className="w-4 h-4 text-[#35E6B5]" />
-                <span>2. Certificate Text & Parameters</span>
+                <span>Certificate Text & Parameters</span>
               </label>
 
               <div className="grid grid-cols-2 gap-3">
@@ -527,7 +633,7 @@ export default function AdminCertificatesPage() {
                     required
                     value={studioForm.student_name}
                     onChange={(e) => setStudioForm({ ...studioForm, student_name: e.target.value })}
-                    className="w-full cyber-glass-card rounded p-2 text-xs text-white"
+                    className="w-full liquid-glass-input rounded-xl p-2.5 text-xs text-white"
                   />
                 </div>
                 <div>
@@ -539,7 +645,7 @@ export default function AdminCertificatesPage() {
                     required
                     value={studioForm.cadet_id}
                     onChange={(e) => setStudioForm({ ...studioForm, cadet_id: e.target.value })}
-                    className="w-full cyber-glass-card rounded p-2 text-xs text-[#65F58A] font-mono font-bold"
+                    className="w-full liquid-glass-input rounded-xl p-2.5 text-xs text-[#65F58A] font-mono font-bold"
                   />
                 </div>
               </div>
@@ -553,7 +659,7 @@ export default function AdminCertificatesPage() {
                   required
                   value={studioForm.student_email}
                   onChange={(e) => setStudioForm({ ...studioForm, student_email: e.target.value })}
-                  className="w-full cyber-glass-card rounded p-2 text-xs text-white font-mono"
+                  className="w-full liquid-glass-input rounded-xl p-2.5 text-xs text-white font-mono"
                 />
               </div>
 
@@ -565,10 +671,10 @@ export default function AdminCertificatesPage() {
                   <select
                     value={studioForm.course_title}
                     onChange={(e) => setStudioForm({ ...studioForm, course_title: e.target.value })}
-                    className="w-full cyber-glass-card rounded p-2 text-xs text-white"
+                    className="w-full liquid-glass-input rounded-xl p-2.5 text-xs text-white"
                   >
                     {courses.map((c) => (
-                      <option key={c.id} value={c.title}>
+                      <option key={c.id} value={c.title} className="bg-[#101923] text-white">
                         {c.title}
                       </option>
                     ))}
@@ -578,7 +684,7 @@ export default function AdminCertificatesPage() {
                     type="text"
                     value={studioForm.course_title}
                     onChange={(e) => setStudioForm({ ...studioForm, course_title: e.target.value })}
-                    className="w-full cyber-glass-card rounded p-2 text-xs text-white"
+                    className="w-full liquid-glass-input rounded-xl p-2.5 text-xs text-white"
                   />
                 )}
               </div>
@@ -586,89 +692,59 @@ export default function AdminCertificatesPage() {
               {/* Middle Section Custom Description */}
               <div>
                 <label className="text-[11px] font-mono text-[#65F58A] font-bold block mb-1 flex items-center justify-between">
-                  <span>Middle Section Training Description *</span>
-                  <span className="text-[10px] text-[#8BA2B5] font-normal">Customizable Citation</span>
+                  <span>Middle Section Citation Description *</span>
+                  <span className="text-[10px] text-[#8BA2B5] font-normal">Supports Dynamic Tags</span>
                 </label>
                 <textarea
                   rows={2}
                   value={studioForm.description}
                   onChange={(e) => setStudioForm({ ...studioForm, description: e.target.value })}
-                  placeholder="e.g. has successfully completed the comprehensive training..."
-                  className="w-full cyber-glass-card rounded p-2 text-xs text-white focus:border-[#65F58A] focus:outline-none leading-relaxed"
+                  placeholder="e.g. {{STUDENT_NAME}} has successfully completed {{COURSE_NAME}}..."
+                  className="w-full liquid-glass-input rounded-xl p-2.5 text-xs text-white focus:border-[#65F58A] focus:outline-none leading-relaxed"
                 />
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
+              {/* Performance & Dates */}
+              <div className="grid grid-cols-3 gap-2.5">
                 <div>
-                  <label className="text-[10px] font-mono text-[#8BA2B5] block mb-1">
-                    Completion Date
-                  </label>
-                  <input
-                    type="date"
-                    value={studioForm.completion_date}
-                    onChange={(e) => setStudioForm({ ...studioForm, completion_date: e.target.value })}
-                    className="w-full cyber-glass-card rounded p-1.5 text-xs text-white"
-                  />
-                </div>
-                <div>
-                  <label className="text-[10px] font-mono text-[#8BA2B5] block mb-1">
-                    Training Hours
-                  </label>
+                  <label className="text-[11px] font-mono text-[#8BA2B5] block mb-1">Hours</label>
                   <input
                     type="text"
                     value={studioForm.training_hours}
                     onChange={(e) => setStudioForm({ ...studioForm, training_hours: e.target.value })}
-                    className="w-full cyber-glass-card rounded p-1.5 text-xs text-white"
+                    className="w-full liquid-glass-input rounded-xl p-2 text-xs text-white"
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] font-mono text-[#8BA2B5] block mb-1">
-                    Grade / Score
-                  </label>
+                  <label className="text-[11px] font-mono text-[#8BA2B5] block mb-1">Grade</label>
                   <input
                     type="text"
                     value={studioForm.grade}
                     onChange={(e) => setStudioForm({ ...studioForm, grade: e.target.value })}
-                    className="w-full cyber-glass-card rounded p-1.5 text-xs text-white"
+                    className="w-full liquid-glass-input rounded-xl p-2 text-xs text-white"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] font-mono text-[#8BA2B5] block mb-1">Date</label>
+                  <input
+                    type="date"
+                    value={studioForm.completion_date}
+                    onChange={(e) => setStudioForm({ ...studioForm, completion_date: e.target.value })}
+                    className="w-full liquid-glass-input rounded-xl p-2 text-xs text-white font-mono"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-[11px] font-mono text-[#8BA2B5] block mb-1">
-                    Training Department
-                  </label>
-                  <input
-                    type="text"
-                    value={studioForm.department}
-                    onChange={(e) => setStudioForm({ ...studioForm, department: e.target.value })}
-                    className="w-full cyber-glass-card rounded p-2 text-xs text-white"
-                  />
-                </div>
-                <div>
-                  <label className="text-[11px] font-mono text-[#8BA2B5] block mb-1">
-                    Supervising Officer / Director
-                  </label>
-                  <input
-                    type="text"
-                    value={studioForm.supervisor_name}
-                    onChange={(e) => setStudioForm({ ...studioForm, supervisor_name: e.target.value })}
-                    className="w-full cyber-glass-card rounded p-2 text-xs text-white"
-                  />
-                </div>
-              </div>
-
-              {/* 3. Digital Seal & Signature Uploaders */}
+              {/* 4. Digital Seal & Signature Uploaders */}
               <div className="pt-3 border-t border-[#1B2530] space-y-3">
                 <label className="text-xs font-mono font-bold text-[#65F58A] uppercase flex items-center justify-between">
-                  <span>3. Digital Seal & Digital Signature Uploads</span>
+                  <span>Digital Seal & Digital Signature Uploads</span>
                   <span className="text-[10px] text-[#8BA2B5] font-normal">PNG / JPG / SVG</span>
                 </label>
 
                 <div className="grid grid-cols-2 gap-3">
                   {/* Digital Seal / Stamp Upload */}
-                  <div className="cyber-glass-card rounded-lg p-2.5 flex flex-col justify-between">
+                  <div className="liquid-glass-card rounded-xl p-3 flex flex-col justify-between">
                     <div>
                       <div className="text-[11px] font-mono text-white font-bold mb-1 flex items-center justify-between">
                         <span>Official Seal</span>
@@ -698,7 +774,7 @@ export default function AdminCertificatesPage() {
                         <button
                           type="button"
                           onClick={() => sealInputRef.current?.click()}
-                          className="px-2.5 py-1 text-[10px] font-mono bg-[#1B2530] hover:bg-[#263440] text-slate-300 hover:text-white rounded border border-[#263440] flex items-center gap-1"
+                          className="px-2.5 py-1 text-[10px] font-mono liquid-glass-button-secondary rounded-lg flex items-center gap-1"
                         >
                           <Upload className="w-3 h-3" />
                           <span>Upload New</span>
@@ -715,7 +791,7 @@ export default function AdminCertificatesPage() {
                   </div>
 
                   {/* Digital Signature Upload */}
-                  <div className="cyber-glass-card rounded-lg p-2.5 flex flex-col justify-between">
+                  <div className="liquid-glass-card rounded-xl p-3 flex flex-col justify-between">
                     <div>
                       <div className="text-[11px] font-mono text-white font-bold mb-1 flex items-center justify-between">
                         <span>Digital Signature</span>
@@ -745,7 +821,7 @@ export default function AdminCertificatesPage() {
                         <button
                           type="button"
                           onClick={() => signatureInputRef.current?.click()}
-                          className="px-2.5 py-1 text-[10px] font-mono bg-[#1B2530] hover:bg-[#263440] text-slate-300 hover:text-white rounded border border-[#263440] flex items-center gap-1"
+                          className="px-2.5 py-1 text-[10px] font-mono liquid-glass-button-secondary rounded-lg flex items-center gap-1"
                         >
                           <Upload className="w-3 h-3" />
                           <span>Upload New</span>
@@ -767,7 +843,7 @@ export default function AdminCertificatesPage() {
               <div className="pt-4 border-t border-[#1B2530]">
                 <button
                   type="submit"
-                  className="w-full py-3 rounded-xl bg-gradient-to-r from-[#65F58A] to-[#35E6B5] hover:from-[#52d674] hover:to-[#2bc59b] text-[#071018] font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(101,245,138,0.4)] transition-all transform hover:scale-[1.01]"
+                  className="w-full py-3.5 rounded-xl liquid-glass-button font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(101,245,138,0.4)]"
                 >
                   <Send className="w-4 h-4" />
                   <span>DISPATCH OFFICIAL CERTIFICATE TO STUDENT</span>
@@ -781,7 +857,7 @@ export default function AdminCertificatesPage() {
 
           {/* Right Column: Authentic RedKross Official Letterhead Certificate Canvas */}
           <div className="col-span-12 xl:col-span-7 sticky top-4">
-            <div className="cyber-glass-panel rounded-xl p-3 sm:p-4 shadow-2xl">
+            <div className="liquid-glass-panel rounded-2xl p-4 sm:p-5 shadow-2xl">
               <div className="flex items-center justify-between mb-3 px-2">
                 <span className="text-[11px] font-mono text-[#65F58A] font-bold flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-[#65F58A] animate-pulse" />
@@ -794,7 +870,7 @@ export default function AdminCertificatesPage() {
 
               {/* Exact High-Fidelity Canvas Using Official Stationery Template */}
               <div
-                className="relative w-full rounded-lg shadow-2xl overflow-hidden bg-white text-[#0C2340] select-none"
+                className="relative w-full rounded-xl shadow-2xl overflow-hidden bg-white text-[#0C2340] select-none"
                 style={{
                   aspectRatio: '949 / 1343',
                   backgroundImage: 'url(/assets/certificate/official_certificate_template.png)',
@@ -836,16 +912,16 @@ export default function AdminCertificatesPage() {
                     <strong className="text-[#0C2340] font-bold">
                       {studioForm.course_title}
                     </strong>{' '}
-                    at <strong className="text-[#0C2340]">REDKROSS Research Foundation</strong>, whose Cadet ID is{' '}
+                    at <strong className="text-[#0C2340]">{masterConfig.issuing_institution}</strong>, whose Cadet ID is{' '}
                     <strong className="text-[#0C2340] font-mono underline decoration-dotted">
                       {studioForm.cadet_id || 'RK-89421'}
                     </strong>
                     .
                   </div>
 
-                  {/* Customizable Middle Description Citation */}
+                  {/* Customizable Middle Description Citation with dynamic tags */}
                   <div className="text-[11px] sm:text-xs text-slate-600 italic mt-2.5 max-w-lg mx-auto leading-normal">
-                    {studioForm.description}
+                    {resolveDynamicTags(studioForm.description)}
                   </div>
 
                   {/* Supervision & Dates */}
@@ -856,7 +932,7 @@ export default function AdminCertificatesPage() {
                     </strong>{' '}
                     under the supervision of{' '}
                     <strong className="text-[#0C2340]">
-                      {studioForm.supervisor_name}
+                      {masterConfig.authorized_signatory || studioForm.supervisor_name}
                     </strong>
                     .
                   </div>
@@ -907,12 +983,12 @@ export default function AdminCertificatesPage() {
                   style={{ top: '61.5%' }}
                 >
                   <div className="text-sm sm:text-base font-bold text-[#0C2340]">
-                    For Company
+                    For {masterConfig.issuing_institution}
                   </div>
 
                   {/* Container for Overlapping Stamp and Signature */}
                   <div className="relative h-16 sm:h-20 w-44 sm:w-52 mt-1 ml-auto">
-                    {/* Stamp (Behind or layered) */}
+                    {/* Stamp */}
                     <img
                       src={studioForm.digital_seal_url || '/assets/certificate/default_seal.png'}
                       alt="Official Seal"
@@ -928,7 +1004,10 @@ export default function AdminCertificatesPage() {
                   </div>
 
                   <div className="text-xs sm:text-sm font-bold text-[#0C2340] mt-1">
-                    Authorized Signature
+                    {masterConfig.authorized_signatory}
+                  </div>
+                  <div className="text-[10px] text-slate-600 font-mono">
+                    {masterConfig.signatory_title}
                   </div>
                 </div>
 
@@ -946,57 +1025,57 @@ export default function AdminCertificatesPage() {
 
       {/* Revocation Modal */}
       {revokeModalOpen && selectedCred && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-          <div className="w-[480px] cyber-glass-panel rounded-xl p-6 shadow-2xl">
-            <h3 className="text-base font-bold text-[#EF4444] mb-2 font-lora">
-              Revoke Issued Credential
-            </h3>
-            <p className="text-xs text-[#8BA2B5] mb-4">
-              Revoking credential <strong className="text-white">{selectedCred.id}</strong> issued to{' '}
-              <strong className="text-white">{selectedCred.student_name}</strong>. This immediately sets its public verification status to REVOKED.
-            </p>
-
-            <div className="space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md">
+          <div className="w-[480px] liquid-glass-panel rounded-2xl p-6 shadow-2xl space-y-4 border border-red-500/40">
+            <div className="flex items-center space-x-3 text-red-400">
+              <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center justify-center">
+                <ShieldAlert className="w-5 h-5 text-red-400" />
+              </div>
               <div>
-                <label className="text-xs font-mono text-[#8BA2B5] block mb-1">
-                  Official Revocation Reason *
-                </label>
-                <select
-                  value={revokeReason}
-                  onChange={(e) => setRevokeReason(e.target.value)}
-                  className="w-full cyber-glass-card rounded p-2 text-xs text-white"
-                >
-                  <option value="">-- Select Audit Justification --</option>
-                  <option value="Proctoring violation or unauthorized browser tampering">
-                    Proctoring violation or unauthorized browser tampering
-                  </option>
-                  <option value="Plagiarism or code submission sharing">
-                    Plagiarism or code submission sharing
-                  </option>
-                  <option value="Identity verification failure upon forensic audit">
-                    Identity verification failure upon forensic audit
-                  </option>
-                  <option value="Administrative correction / reissue request">
-                    Administrative correction / reissue request
-                  </option>
-                </select>
+                <h3 className="font-bold text-white text-base">Confirm Credential Revocation</h3>
+                <p className="text-xs text-slate-400 font-mono">Revoke cryptographic validity in public registry</p>
               </div>
+            </div>
 
-              <div className="flex justify-end space-x-2 pt-4 border-t border-[#1B2530]">
-                <button
-                  onClick={() => setRevokeModalOpen(false)}
-                  className="px-3 py-1.5 bg-[#1B2530] text-[#CBD5E1] text-xs font-mono rounded"
-                >
-                  Cancel
-                </button>
-                <button
-                  disabled={!revokeReason}
-                  onClick={handleRevokeCredential}
-                  className="px-4 py-1.5 bg-[#EF4444] text-white text-xs font-bold rounded hover:bg-[#dc2626] disabled:opacity-50"
-                >
-                  Confirm Revocation
-                </button>
-              </div>
+            <div className="p-3.5 bg-red-950/40 border border-red-500/20 rounded-xl text-xs font-mono space-y-1">
+              <div><span className="text-slate-400">ID:</span> <span className="text-white font-bold">{selectedCred.id}</span></div>
+              <div><span className="text-slate-400">Recipient:</span> <span className="text-white">{selectedCred.student_name}</span></div>
+              <div><span className="text-slate-400">Curriculum:</span> <span className="text-white">{selectedCred.course_title}</span></div>
+            </div>
+
+            <div>
+              <label className="text-xs font-mono text-slate-300 block mb-1.5 font-bold">
+                Mandatory Reason for Revocation *
+              </label>
+              <textarea
+                rows={3}
+                required
+                value={revokeReason}
+                onChange={(e) => setRevokeReason(e.target.value)}
+                placeholder="Specify institutional reason (e.g. academic integrity violation, identity misattribution)..."
+                className="w-full liquid-glass-input rounded-xl p-2.5 text-xs text-white"
+              />
+            </div>
+
+            <div className="flex items-center justify-end space-x-3 pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setRevokeModalOpen(false);
+                  setSelectedCred(null);
+                }}
+                className="px-4 py-2 text-xs font-mono liquid-glass-button-secondary rounded-xl"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={!revokeReason.trim()}
+                onClick={handleRevokeCredential}
+                className="px-4 py-2 text-xs font-mono font-bold bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white rounded-xl shadow-lg transition-colors"
+              >
+                Permanently Revoke
+              </button>
             </div>
           </div>
         </div>
@@ -1004,4 +1083,3 @@ export default function AdminCertificatesPage() {
     </div>
   );
 }
-
