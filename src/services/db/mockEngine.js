@@ -151,6 +151,10 @@ class MockEngine {
     });
   }
 
+  notify(type = 'DB_MUTATED', payload = {}) {
+    this.notifyListeners(type, payload);
+  }
+
   initDatabase(forceReset = false) {
     if (forceReset || !safeStorage.getItem(STORAGE_KEY)) {
       const initialDb = {
@@ -1371,6 +1375,52 @@ class MockEngine {
     return this.getDb().audit_logs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   }
 
+  logAction(entry = {}) {
+    const db = this.getDb();
+    if (!db.audit_logs) db.audit_logs = [];
+    const logItem = {
+      id: `aud_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+      timestamp: new Date().toISOString(),
+      created_at: new Date().toISOString(),
+      actor_id: entry.actor_id || entry.operator || 'usr_admin',
+      operator: entry.operator || entry.actor_id || 'usr_admin',
+      action: entry.action || 'SYSTEM_ACTION',
+      category: entry.category || 'SYSTEM',
+      details: entry.details || entry.notes || '',
+      severity: entry.severity || 'INFO',
+      client_ip: entry.client_ip || '127.0.0.1 (Internal Proxy)',
+      ...entry
+    };
+    db.audit_logs.unshift(logItem);
+    this.saveDb(db, { type: 'AUDIT_LOG_ADDED', payload: logItem });
+    return logItem;
+  }
+
+  recordExamViolation(payload) {
+    return this.recordProctorViolation(payload);
+  }
+
+  isModuleUnlocked(enrolmentId, courseId, moduleIndex) {
+    if (moduleIndex === 0) return true;
+    const db = this.getDb();
+    const enrolment = (db.enrolments || []).find((e) => e.id === enrolmentId);
+    if (!enrolment) return false;
+    const course = (db.courses || []).find((c) => c.id === courseId);
+    if (!course || !course.modules || !course.modules[moduleIndex - 1]) return true;
+
+    // Previous module must have all lessons completed AND its quiz passed
+    const prevMod = course.modules[moduleIndex - 1];
+    const prevLessons = prevMod.lessons || [];
+    const allPrevLessonsCompleted = prevLessons.every((l) =>
+      enrolment.completed_mandatory_lessons?.includes(l.id)
+    );
+    const prevQuizPassed = prevMod.quiz
+      ? enrolment.passed_quizzes?.includes(prevMod.quiz.id)
+      : true;
+
+    return allPrevLessonsCompleted && prevQuizPassed;
+  }
+
   // ==========================================
   // SUPER ADMIN CURRICULUM STUDIO MUTATIONS
   // ==========================================
@@ -1874,9 +1924,10 @@ class MockEngine {
   // ==========================================
   // REAL-TIME PROCTORING & STRICT 24-HOUR LOCKOUT ENGINE
   // ==========================================
-  recordProctorViolation({ enrolmentId, quizId, attemptId, cadetId, studentName, violationType, details }) {
+  recordProctorViolation({ enrolmentId, quizId, attemptId, cadetId, studentName, violationType, reason, details }) {
     const db = this.getDb();
     const lockedUntil = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+    const finalViolation = violationType || reason || 'TAB_SWITCH_BLUR';
 
     // 1. Lock retry window for this quiz & enrolment for 24 hours
     const windowKey = `${enrolmentId}_${quizId}`;
@@ -1886,7 +1937,7 @@ class MockEngine {
       quiz_id: quizId,
       locked_until: lockedUntil,
       attempts_used: 3, // Exhaust attempts for current window to prevent bypass
-      reason: `STRICT_PROCTOR_VIOLATION: ${violationType}`,
+      reason: `STRICT_PROCTOR_VIOLATION: ${finalViolation}`,
       last_violation_at: new Date().toISOString()
     };
 
@@ -1895,7 +1946,7 @@ class MockEngine {
     if (enrolment) {
       enrolment.exam_lockout_until = lockedUntil;
       enrolment.last_violation = {
-        violationType,
+        violationType: finalViolation,
         details,
         timestamp: new Date().toISOString()
       };
@@ -1906,7 +1957,7 @@ class MockEngine {
       const attempt = db.quiz_attempts.find((a) => a.id === attemptId);
       if (attempt) {
         attempt.status = 'terminated';
-        attempt.termination_reason = violationType;
+        attempt.termination_reason = finalViolation;
         attempt.terminated_at = new Date().toISOString();
       }
     }
@@ -1920,7 +1971,7 @@ class MockEngine {
       quiz_id: quizId,
       cadet_id: cadetId || 'RK-UNKNOWN',
       student_name: studentName || 'Cadet Operator',
-      violation_type: violationType, // 'CAMERA_DISCONNECT_X2' | 'TAB_SWITCH_BLUR'
+      violation_type: finalViolation, // 'CAMERA_DISCONNECT_X2' | 'TAB_SWITCH_BLUR'
       details: details || 'Proctor security violation during timed assessment.',
       locked_until: lockedUntil,
       status: 'pending_review',
@@ -1935,7 +1986,7 @@ class MockEngine {
       action: 'PROCTOR_VIOLATION_TERMINATION',
       category: 'EXAM_SECURITY',
       user_email: cadetId || studentName,
-      details: `Student terminated in quiz ${quizId}. Reason: ${violationType}. 24-Hour Lockout enforced until ${lockedUntil}.`,
+      details: `Student terminated in quiz ${quizId}. Reason: ${finalViolation}. 24-Hour Lockout enforced until ${lockedUntil}.`,
       severity: 'CRITICAL',
       timestamp: new Date().toISOString()
     });
@@ -1945,7 +1996,15 @@ class MockEngine {
       payload: violationEvent
     });
 
-    return { success: true, lockedUntil, violationEvent };
+    return {
+      success: true,
+      lockedUntil,
+      locked_until: lockedUntil,
+      lockout_until: lockedUntil,
+      lockout_active: true,
+      lockout_hours: 24,
+      violationEvent
+    };
   }
 
   isExamLocked(enrolmentId, quizId) {
@@ -2148,7 +2207,7 @@ class MockEngine {
     if (!enrolment) throw new Error('Enrolment not found');
 
     const completion = this.checkCourseCompletion(enrolmentId);
-    if (!completion.isComplete) {
+    if (!completion.isComplete && !enrolment.final_assessment_passed) {
       throw new Error('PREREQUISITES_INCOMPLETE: All mandatory lessons, chapter evaluations, and PDF assignments must be passed before requesting certification.');
     }
 
@@ -2244,7 +2303,9 @@ class MockEngine {
       revocation_reason: null,
       revoked_at: null,
       verification_url: `/verify/${credentialId}`,
-      verification_hash: `sha256_${Math.random().toString(36).substring(2, 14)}`
+      verification_hash: `sha256_${Math.random().toString(36).substring(2, 14)}`,
+      digital_signature: '0x' + Array.from({ length: 40 }, () => Math.floor(Math.random() * 16).toString(16)).join(''),
+      cryptographic_hash: '0x' + Array.from({ length: 40 }, () => Math.floor(Math.random() * 16).toString(16)).join('')
     };
 
     if (!db.credentials) db.credentials = [];

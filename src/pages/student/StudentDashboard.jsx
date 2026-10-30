@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { BookOpen, Award, Clock, ArrowRight, CheckCircle2, Coins, Flame, Shield, Play, Lock, AlertCircle, ShieldAlert } from 'lucide-react';
+import { BookOpen, Award, Clock, ArrowRight, CheckCircle2, Coins, Flame, Shield, Play, Lock, AlertCircle, ShieldAlert, Download, ExternalLink } from 'lucide-react';
 import { useAuth } from '../../services/auth/authContext';
 import { mockEngine } from '../../services/db/mockEngine';
 
@@ -37,13 +37,22 @@ export default function StudentDashboard() {
           )
         : 0;
 
+      const allCreds = mockEngine.getDb().credentials || [];
+      const userCreds = allCreds.filter(
+        (c) =>
+          !c.revoked &&
+          (c.cadet_id === currentUser.cadet_id ||
+            c.student_email?.toLowerCase() === currentUser.email?.toLowerCase())
+      );
+
       setDashboardData({
         enrolments: enrs,
         allCourses: crss,
         primaryEnrolment: primaryEnr,
         primaryCourse: primaryCrs,
         primaryProgress: primaryProg || { percentage: 0, completed: 0, total: 0 },
-        avgProgress: avgProg
+        avgProgress: avgProg,
+        myCredentials: userCreds
       });
     } catch (err) {
       console.warn('Dashboard data load warning:', err);
@@ -73,9 +82,45 @@ export default function StudentDashboard() {
     );
   }
 
-  const { enrolments, allCourses, primaryEnrolment, primaryCourse, primaryProgress, avgProgress } = dashboardData;
+  const { enrolments, allCourses, primaryEnrolment, primaryCourse, primaryProgress, avgProgress, myCredentials = [] } = dashboardData;
   const cadetId = currentUser?.cadet_id || 'RK-89421';
   const fullName = currentUser?.full_name || currentUser?.displayName || 'Cadet Operator';
+
+  const handleDownloadCertificate = (cred) => {
+    const certText = `========================================================================
+                      REDKROSS CYBER ACADEMY
+                 OFFICIAL INSTITUTIONAL CERTIFICATE
+========================================================================
+
+CADET IDENTITY:    ${cred.student_name || currentUser.full_name || 'Cadet Operator'}
+CADET ID:          ${cred.cadet_id || currentUser.cadet_id || 'RK-89421'}
+COURSE:            ${cred.course_title || cred.credential_title || 'Defensive Cyber Operations'}
+CREDENTIAL:        ${cred.credential_title || 'Certified Cybersecurity Specialist'}
+VERIFICATION ID:   ${cred.verification_id || cred.id}
+ISSUE DATE:        ${new Date(cred.issue_date || Date.now()).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+ASSESSMENT GRADE:  ${cred.grade_percentage || 90}% (Verified Passing)
+STATUS:            ${cred.status || 'Active'}
+
+CRYPTOGRAPHIC SIGNATURE:
+${cred.digital_signature || '0x' + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('')}
+
+OFFICIAL PUBLIC REGISTRY VERIFICATION LINK:
+https://academy.redkross.org.in/verify/${cred.verification_id || cred.id}
+
+========================================================================
+Issued under sovereign cryptographic governance by RedKross Academy.
+========================================================================`;
+
+    const blob = new Blob([certText], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `RedKross_Certificate_${cred.verification_id || cred.id}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="min-h-screen bg-[#071018] py-12">
@@ -270,6 +315,101 @@ export default function StudentDashboard() {
               );
             })}
           </div>
+        </div>
+
+        {/* Verifiable Institutional Credentials & Certificates Section */}
+        <div className="space-y-4 animate-slide-left stagger-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-royal font-bold text-white flex items-center space-x-2">
+              <Award className="w-5 h-5 text-[#65F58A]" />
+              <span>Official Institutional Credentials ({myCredentials.length})</span>
+            </h2>
+            <Link
+              to={`/verify/${cadetId}`}
+              className="text-xs font-mono text-[#65F58A] hover:text-[#35E6B5] flex items-center space-x-1 transition-colors"
+            >
+              <span>Public Cadet Dossier</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          {myCredentials.length === 0 ? (
+            <div className="ultra-glass-card rounded-2xl p-8 text-center border border-[#1b2820] space-y-3">
+              <Award className="w-10 h-10 text-slate-500 mx-auto" />
+              <h3 className="text-base font-royal font-bold text-slate-300">No Institutional Credentials Dispatched Yet</h3>
+              <p className="text-xs text-slate-400 max-w-lg mx-auto leading-relaxed">
+                Complete all course curriculum units, achieve $\ge 80\%$ on all module assessments, and clear the 50-MCQ Final Assessment to request institutional certification from the RedKross Operations Board.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {myCredentials.map((cred) => (
+                <div
+                  key={cred.id || cred.verification_id}
+                  className="ultra-glass-panel rounded-2xl p-6 border border-[#2d4d3a]/60 flex flex-col justify-between space-y-5 bg-gradient-to-br from-[#0c1813]/90 via-[#071018]/90 to-[#0c1a16]/90 shadow-[0_4px_24px_rgba(0,0,0,0.3)]"
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-center space-x-2.5">
+                        <div className="w-9 h-9 rounded-xl bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center text-[#65F58A]">
+                          <Award className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-mono font-bold tracking-wider uppercase text-[#65F58A]">
+                            {cred.type || 'Institutional Certification'}
+                          </span>
+                          <h3 className="text-base font-royal font-bold text-white leading-tight">
+                            {cred.credential_title || cred.course_title || 'Certified Cybersecurity Specialist'}
+                          </h3>
+                        </div>
+                      </div>
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-[#65F58A]/15 border border-[#65F58A]/40 text-[#65F58A]">
+                        {cred.status || 'Active'}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 pt-2 text-[11px] font-mono">
+                      <div className="p-2.5 rounded-lg bg-[#071018]/80 border border-surface-border">
+                        <span className="text-slate-400 block text-[10px]">Verification ID</span>
+                        <span className="text-[#65F58A] font-bold">{cred.verification_id || cred.id}</span>
+                      </div>
+                      <div className="p-2.5 rounded-lg bg-[#071018]/80 border border-surface-border">
+                        <span className="text-slate-400 block text-[10px]">Issue Date</span>
+                        <span className="text-slate-200">
+                          {new Date(cred.issue_date || Date.now()).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                        </span>
+                      </div>
+                    </div>
+
+                    {cred.digital_signature && (
+                      <div className="text-[10px] font-mono text-slate-500 truncate pt-1">
+                        Sig: <span className="text-slate-400">{cred.digital_signature.slice(0, 32)}...</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="pt-4 border-t border-[#1e3327] flex items-center justify-between gap-3">
+                    <Link
+                      to={`/verify/${cred.verification_id || cred.id}`}
+                      className="text-xs font-mono text-[#65F58A] hover:text-[#35E6B5] flex items-center space-x-1 transition-colors"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>Verify Registry</span>
+                    </Link>
+
+                    <button
+                      type="button"
+                      onClick={() => handleDownloadCertificate(cred)}
+                      className="ultra-glass-btn px-4 py-2 rounded-xl text-xs font-mono font-bold flex items-center space-x-1.5 transition-transform hover:scale-[1.02]"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Download Certificate</span>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

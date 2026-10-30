@@ -10,10 +10,11 @@ import { mockEngine } from '../../services/db/mockEngine';
 
 export default function AdminCertificatesPage() {
   const [credentials, setCredentials] = useState([]);
+  const [certRequests, setCertRequests] = useState([]);
   const [students, setStudents] = useState([]);
   const [courses, setCourses] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState('template_designer'); // 'template_designer' | 'registry'
+  const [activeTab, setActiveTab] = useState('template_designer'); // 'template_designer' | 'registry' | 'pending_requests'
   const [revokeModalOpen, setRevokeModalOpen] = useState(false);
   const [selectedCred, setSelectedCred] = useState(null);
   const [revokeReason, setRevokeReason] = useState('');
@@ -55,6 +56,7 @@ export default function AdminCertificatesPage() {
       const db = mockEngine.getDb();
       if (db) {
         if (db.credentials) setCredentials(db.credentials);
+        if (db.certificate_requests) setCertRequests(db.certificate_requests);
         if (db.users) {
           const studentList = db.users.filter((u) => u.role === 'student' || !u.role || u.role === 'cadet');
           setStudents(studentList);
@@ -222,6 +224,72 @@ export default function AdminCertificatesPage() {
     }
   };
 
+  const handleApproveRequest = (req) => {
+    try {
+      const db = mockEngine.getDb();
+      const newCredId = 'RK-CERT-' + Math.floor(100000 + Math.random() * 900000);
+      const verificationHash = '0x' + Array.from({ length: 40 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
+
+      const newCredential = {
+        id: newCredId,
+        verification_id: newCredId,
+        student_name: req.student_name || req.cadet_name || 'Cadet Operator',
+        student_email: req.student_email || `${req.cadet_id?.toLowerCase() || 'cadet'}@redkross.org.in`,
+        cadet_id: req.cadet_id || 'RK-89421',
+        course_title: req.course_title || 'SOC Analyst L1 & L2 Defensive Operations',
+        issued_at: new Date().toISOString().split('T')[0],
+        completion_date: new Date().toISOString().split('T')[0],
+        training_hours: '120',
+        grade: req.score ? (req.score >= 90 ? 'A+' : 'A') : 'A',
+        department: 'Defensive Security Operations',
+        description: `has demonstrated operational excellence and successfully completed the comprehensive certification requirements for ${req.course_title || 'Defensive Cyber Operations'}.`,
+        supervisor_name: masterConfig.authorized_signatory || 'Dr. Robert H. Vance, CISSP',
+        issuing_institution: masterConfig.issuing_institution || 'RedKross Defensive Cyber Academy',
+        signatory_title: masterConfig.signatory_title || 'Director of Cyber Defense Academics',
+        digital_signature_url: '/assets/certificate/default_signature.png',
+        digital_seal_url: '/assets/certificate/default_seal.png',
+        verification_hash: verificationHash,
+        cryptographic_hash: verificationHash,
+        skills_validated: [
+          'SOC Operations & Log Ingestion',
+          'MITRE ATT&CK Behavioral Mapping',
+          'SIEM Correlation & Threat Triage'
+        ],
+        revoked: false
+      };
+
+      db.credentials = [newCredential, ...(db.credentials || [])];
+
+      if (db.certificate_requests) {
+        db.certificate_requests = db.certificate_requests.map((r) =>
+          r.id === req.id ? { ...r, status: 'approved', credential_id: newCredId, dispatched_at: new Date().toISOString() } : r
+        );
+      }
+
+      mockEngine.saveDb(db, {
+        type: 'CREDENTIAL_MUTATED',
+        payload: {
+          credentialId: newCredId,
+          cadetId: newCredential.cadet_id,
+          status: 'DISPATCHED'
+        }
+      });
+
+      mockEngine.logAction({
+        action: 'CREDENTIAL_DISPATCHED',
+        category: 'STUDENT_ADMIN',
+        details: `Approved & dispatched official certificate ${newCredId} to ${newCredential.student_name} (${newCredential.cadet_id})`,
+        severity: 'INFO'
+      });
+
+      loadData();
+      setDispatchSuccess(newCredential);
+      setTimeout(() => setDispatchSuccess(null), 8000);
+    } catch (e) {
+      alert('Failed to approve request: ' + e.message);
+    }
+  };
+
   const handleRevokeCredential = () => {
     if (!selectedCred || !revokeReason) return;
     try {
@@ -312,6 +380,17 @@ export default function AdminCertificatesPage() {
             <span>OFFICIAL CERTIFICATE STUDIO</span>
           </button>
           <button
+            onClick={() => setActiveTab('pending_requests')}
+            className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 ${
+              activeTab === 'pending_requests'
+                ? 'liquid-glass-button shadow-[0_0_15px_rgba(101,245,138,0.3)]'
+                : 'liquid-glass-button-secondary'
+            }`}
+          >
+            <Send className="w-4 h-4" />
+            <span>PENDING REQUESTS ({certRequests.filter((r) => r.status === 'pending_review' || r.status === 'PENDING').length})</span>
+          </button>
+          <button
             onClick={() => setActiveTab('registry')}
             className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 ${
               activeTab === 'registry'
@@ -354,7 +433,82 @@ export default function AdminCertificatesPage() {
       )}
 
       {/* Main Tab Content */}
-      {activeTab === 'registry' ? (
+      {activeTab === 'pending_requests' ? (
+        /* Pending Student Certificate Requests Queue */
+        <div className="space-y-4 font-lora">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-base font-bold text-white">Pending Student Certification Requests</h3>
+              <p className="text-xs font-mono text-[#8BA2B5]">
+                Cadets who successfully cleared the Final Comprehensive Assessment (80%+ threshold).
+              </p>
+            </div>
+            <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30">
+              {certRequests.filter((r) => r.status === 'pending_review' || r.status === 'PENDING').length} Action Items
+            </span>
+          </div>
+
+          <div className="liquid-glass-panel rounded-2xl overflow-hidden border border-[#263440]">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-[#1B2530] text-[10px] font-mono text-[#8BA2B5] bg-[#071018]/50 uppercase tracking-wider">
+                  <th className="p-3.5">REQUEST ID</th>
+                  <th className="p-3.5">CADET CANDIDATE</th>
+                  <th className="p-3.5">TARGET COURSE</th>
+                  <th className="p-3.5">FINAL EXAM SCORE</th>
+                  <th className="p-3.5">REQUEST DATE</th>
+                  <th className="p-3.5 text-right">ACTION</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#1B2530] text-xs font-mono">
+                {certRequests.filter((r) => r.status === 'pending_review' || r.status === 'PENDING').length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="p-10 text-center text-[#8BA2B5] font-lora">
+                      No pending certification requests at this time. All cleared assessments have been certified.
+                    </td>
+                  </tr>
+                ) : (
+                  certRequests
+                    .filter((r) => r.status === 'pending_review' || r.status === 'PENDING')
+                    .map((req) => (
+                      <tr key={req.id} className="hover:bg-[#08121A]/50 transition-colors">
+                        <td className="p-3.5 font-bold text-[#65F58A]">
+                          {req.id}
+                        </td>
+                        <td className="p-3.5">
+                          <div className="font-bold text-white font-lora">
+                            {req.student_name || req.cadet_name || 'Cadet'}
+                          </div>
+                          <div className="text-[10px] text-[#8BA2B5]">{req.cadet_id || 'RK-UNKNOWN'}</div>
+                        </td>
+                        <td className="p-3.5 text-gray-200">
+                          {req.course_title || 'SOC Analyst L1 & L2 Defensive Operations'}
+                        </td>
+                        <td className="p-3.5">
+                          <span className="px-2.5 py-1 rounded bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30 font-bold">
+                            {req.score || 92}% PASSED
+                          </span>
+                        </td>
+                        <td className="p-3.5 text-[#8BA2B5]">
+                          {req.requested_at ? new Date(req.requested_at).toLocaleDateString() : 'Today'}
+                        </td>
+                        <td className="p-3.5 text-right">
+                          <button
+                            type="button"
+                            onClick={() => handleApproveRequest(req)}
+                            className="px-4 py-2 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-bold text-xs font-mono shadow-[0_0_15px_rgba(101,245,138,0.3)] transition-all cursor-pointer"
+                          >
+                            Approve & Dispatch
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ) : activeTab === 'registry' ? (
         /* Registry View */
         <div className="space-y-4">
           <div className="flex items-center justify-between">

