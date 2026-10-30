@@ -264,6 +264,33 @@ export default function LessonPlayerPage() {
     }));
   };
 
+  const handleDownloadResource = (res) => {
+    const docContent = `# REDKROSS ACADEMY - TECHNICAL STUDY REFERENCE\n` +
+      `============================================================\n\n` +
+      `Asset: ${res.name}\n` +
+      `Course: ${course?.title || 'Defensive Cyber Operations'}\n` +
+      `Module: ${activeLesson?.title || 'Curriculum Module'}\n` +
+      `Date Generated: ${new Date().toISOString().split('T')[0]}\n\n` +
+      `## Standard Operating Procedures & Field Laboratory Reference\n` +
+      `1. Telemetry Ingestion Source: Windows Security Log (Event IDs 4624, 4625, 4672, 4720)\n` +
+      `2. Network Volatility: Memory capture before host hibernation or reboot\n` +
+      `3. Playbook Alignment: NIST SP 800-61r2 Computer Security Incident Handling Guide\n` +
+      `4. MITRE ATT&CK Matrix: T1059 (Command and Scripting Interpreter), T1078 (Valid Accounts)\n\n` +
+      `============================================================\n` +
+      `Institutional technical document generated for verified operator training.\n` +
+      `Confidential ? RedKross Research Foundation.\n`;
+
+    const blob = new Blob([docContent], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = res.name.replace(/[^a-zA-Z0-9._-]/g, '_') + '.md';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   const handleMarkComplete = async () => {
     if (!activeLesson || !canMarkComplete) return;
     setSavingProgress(true);
@@ -851,10 +878,12 @@ export default function LessonPlayerPage() {
                 <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 pl-6">
                   <span>{res.size}</span>
                   <button
-                    onClick={() => alert(`Simulating download for ${res.name}`)}
-                    className="text-[#35E6B5] hover:underline"
+                    onClick={() => handleDownloadResource(res)}
+                    className="text-[#35E6B5] hover:text-[#65F58A] hover:underline cursor-pointer flex items-center gap-1 font-mono transition-colors"
+                    title={`Download ${res.name}`}
                   >
-                    Download
+                    <Download className="w-3 h-3" />
+                    <span>Download</span>
                   </button>
                 </div>
               </div>

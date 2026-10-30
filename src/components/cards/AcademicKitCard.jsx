@@ -133,7 +133,7 @@ export default function AcademicKitCard({
     course.credential_name ||
     `Certified ${course.title?.split(' ')[0] || 'Cyber'} Specialist`;
 
-  const courseLink = `/courses/${course.id || course.slug || ''}`;
+  const courseLink = `/courses/${course.slug || course.id || ''}`;
 
   return (
     <Link

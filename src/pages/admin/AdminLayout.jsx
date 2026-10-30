@@ -294,8 +294,10 @@ export default function AdminLayout() {
             <div className="relative">
               <button
                 type="button"
-                className="p-2 rounded-xl cyber-glass-card text-slate-300 hover:text-white relative"
+                onClick={() => navigate('/admin/audit-logs')}
+                className="p-2 rounded-xl cyber-glass-card text-slate-300 hover:text-white relative cursor-pointer"
                 aria-label="Audit alerts"
+                title="View Security Audit Logs"
               >
                 <Bell className="w-4 h-4" />
                 {counts.securityAlerts > 0 && (

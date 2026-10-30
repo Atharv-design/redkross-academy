@@ -1,5 +1,4 @@
 import React from 'react';
-import CyberLightningDischarge from './CyberLightningDischarge';
 
 /**
  * CyberBackgroundWatermark
@@ -7,7 +6,6 @@ import CyberLightningDischarge from './CyberLightningDischarge';
  * Features:
  * - RedKross crest in Neon Green / Amber with pristine legibility
  * - Concentric radar rings (Inner, Middle, Outer reticle)
- * - Faded, ambient 60fps Procedural Cyber Lightning Discharge in Neon Green / Mint
  * - Non-intrusive, WCAG compliant, pointer-events-none.
  */
 export default function CyberBackgroundWatermark() {
@@ -46,10 +44,7 @@ export default function CyberBackgroundWatermark() {
         style={{ transform: 'translateY(340px)' }}
       />
 
-      {/* 7. Ambient Neon Cyber Lightning Discharge */}
-      <CyberLightningDischarge />
-
-      {/* 8. Centered RedKross Cyber Crest Watermark */}
+      {/* 7. Centered RedKross Cyber Crest Watermark */}
       <div className="relative z-10 flex items-center justify-center">
         <img 
           src="/assets/logo-cyber-watermark.png" 

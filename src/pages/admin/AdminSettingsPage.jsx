@@ -24,8 +24,12 @@ export default function AdminSettingsPage() {
   useEffect(() => {
     try {
       const db = mockEngine.getDb();
-      if (db && db.system_settings) {
-        setSettings((prev) => ({ ...prev, ...db.system_settings }));
+      if (db) {
+        setSettings((prev) => ({
+          ...prev,
+          ...(db.system_settings || {}),
+          catalog_embargo: db.public_catalog_enabled === false
+        }));
       }
     } catch (e) {
       console.error(e);
@@ -37,7 +41,11 @@ export default function AdminSettingsPage() {
     try {
       const db = mockEngine.getDb();
       db.system_settings = settings;
-      mockEngine.saveDb(db);
+      db.public_catalog_enabled = !settings.catalog_embargo;
+      mockEngine.saveDb(db, {
+        type: 'SETTINGS_UPDATED',
+        payload: { system_settings: settings, public_catalog_enabled: !settings.catalog_embargo }
+      });
 
       mockEngine.logAction({
         action: 'SYSTEM_SETTINGS_UPDATE',
@@ -54,19 +62,23 @@ export default function AdminSettingsPage() {
   };
 
   const handleToggleEmbargo = () => {
-    const nextState = !settings.catalog_embargo;
-    const updated = { ...settings, catalog_embargo: nextState };
+    const nextEmbargo = !settings.catalog_embargo;
+    const updated = { ...settings, catalog_embargo: nextEmbargo };
     setSettings(updated);
 
     try {
       const db = mockEngine.getDb();
       db.system_settings = updated;
-      mockEngine.saveDb(db);
+      db.public_catalog_enabled = !nextEmbargo;
+      mockEngine.saveDb(db, {
+        type: 'CATALOG_EMBARGO_MUTATED',
+        payload: { public_catalog_enabled: !nextEmbargo, embargo: nextEmbargo }
+      });
 
       mockEngine.logAction({
-        action: nextState ? 'CATALOG_EMBARGO_ENABLED' : 'CATALOG_EMBARGO_RELEASED',
+        action: nextEmbargo ? 'CATALOG_EMBARGO_ENABLED' : 'CATALOG_EMBARGO_RELEASED',
         category: 'SYSTEM_CONFIG',
-        details: nextState
+        details: nextEmbargo
           ? 'Catalog embargo enabled. Public sees "Courses will be out soon".'
           : 'Catalog embargo released. Published courses are live to all public visitors.',
         severity: 'WARN'
