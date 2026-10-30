@@ -203,7 +203,14 @@ class MockEngine {
       if (parsed.courses) {
         for (const course of parsed.courses) {
           if (course.modules) {
-            for (const mod of course.modules) {
+            const freshCourse = INITIAL_COURSES.find((c) => c.id === course.id);
+            for (let mIdx = 0; mIdx < course.modules.length; mIdx++) {
+              const mod = course.modules[mIdx];
+              const freshMod = freshCourse?.modules?.[mIdx];
+              if (freshMod?.quiz && (!mod.quiz || (mod.quiz.questions?.length || 0) < (freshMod.quiz.questions?.length || 0))) {
+                mod.quiz = freshMod.quiz;
+                modified = true;
+              }
               if (mod.lessons) {
                 for (const les of mod.lessons) {
                   if (!les.video_url || les.video_url.includes('BigBuckBunny')) {
@@ -966,6 +973,21 @@ class MockEngine {
     return attempt;
   }
 
+  recordModuleQuizScore(enrolmentId, quizId, scorePercentage, isPassed) {
+    const db = this.getDb();
+    const enr = db.enrolments.find((e) => e.id === enrolmentId);
+    if (enr) {
+      if (!Array.isArray(enr.passed_quizzes)) enr.passed_quizzes = [];
+      if (isPassed && !enr.passed_quizzes.includes(quizId)) {
+        enr.passed_quizzes.push(quizId);
+      }
+      enr.quiz_scores = enr.quiz_scores || {};
+      enr.quiz_scores[quizId] = scorePercentage;
+      this.saveDb(db);
+      this.notify();
+    }
+  }
+
   /**
    * PRD Section 7 & Appendix A.3: Exam Focus Violation Engine (3-Strike System)
    */
@@ -1123,6 +1145,21 @@ class MockEngine {
 
     this.saveDb(db);
     return attempt;
+  }
+
+  recordModuleQuizScore(enrolmentId, quizId, scorePercentage, isPassed) {
+    const db = this.getDb();
+    const enr = db.enrolments.find((e) => e.id === enrolmentId);
+    if (enr) {
+      if (!Array.isArray(enr.passed_quizzes)) enr.passed_quizzes = [];
+      if (isPassed && !enr.passed_quizzes.includes(quizId)) {
+        enr.passed_quizzes.push(quizId);
+      }
+      enr.quiz_scores = enr.quiz_scores || {};
+      enr.quiz_scores[quizId] = scorePercentage;
+      this.saveDb(db);
+      this.notify();
+    }
   }
 
   // ==========================================

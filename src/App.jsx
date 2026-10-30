@@ -19,6 +19,7 @@ import LessonPlayerPage from './pages/student/LessonPlayerPage';
 import QuizAssessmentPage from './pages/student/QuizAssessmentPage';
 import TokenWalletPage from './pages/student/TokenWalletPage';
 import FinalCertificationPage from './pages/student/FinalCertificationPage';
+import CourseHomePage from './pages/student/CourseHomePage';
 
 // Admin Workstation Pages (Strict Functional Specification)
 import AdminLayout from './pages/admin/AdminLayout';
@@ -70,6 +71,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <StudentDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="student/course/:courseId"
+            element={
+              <ProtectedRoute>
+                <CourseHomePage />
               </ProtectedRoute>
             }
           />

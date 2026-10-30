@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   BookOpen,
   CheckCircle2,
@@ -11,23 +11,22 @@ import {
   ChevronRight,
   ChevronDown,
   Award,
-  Coins,
   Shield,
   Layers,
   Sparkles,
-  ExternalLink,
-  Menu,
   FileDown,
-  Gauge,
-  AlertTriangle,
-  RotateCcw,
-  Search,
   Check,
   Clock,
   FileCheck,
   UploadCloud,
   Loader2,
-  ArrowRight
+  Bookmark,
+  CheckSquare,
+  AlertCircle,
+  RotateCcw,
+  Menu,
+  X,
+  HelpCircle
 } from 'lucide-react';
 import { mockEngine } from '../../services/db/mockEngine';
 import { apiClient } from '../../services/apiClient';
@@ -36,37 +35,66 @@ import { resolveVideoUrl, resolvePdfUrl } from '../../services/db/videoStorage';
 import { renderMarkdownToHtml } from '../../utils/markdownParser';
 import PixelBackground from '../../components/ui/PixelBackground';
 
+/**
+ * Open edX-Inspired Courseware & Learning Workspace
+ * Matches Open edX Sequential Unit Layout & Screenshot 2 & 3:
+ * - Collapsible Course Outline Sidebar (toggleable with [ |< ] icon)
+ * - Top Unit Header with [ Bookmark this page ] toggle & Prev/Next arrows
+ * - Rich Unit Area: Video streaming + Notes + Downloads OR 20-Question Knowledge Check
+ * - Module Knowledge Check: 20 MCQs with instant feedback, scoring, and passing grade (>=70%)
+ * - Bottom Sequential Unit Navigation (< Previous and Next >)
+ * - 100% Lora font typography & 0% Blue color guarantee
+ */
 export default function LessonPlayerPage() {
   const { enrolmentId } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const { refreshBalance, currentUser } = useAuth();
 
   const enrolment = mockEngine.getEnrolment(enrolmentId);
   const course = enrolment ? mockEngine.getCourseById(enrolment.course_id) : null;
 
-  // Flatten lessons for navigation
-  const allLessons = [];
+  // Build flattened sequential units (lessons + module quizzes)
+  const allUnits = [];
   if (course && course.modules) {
     course.modules.forEach((mod) => {
       (mod.lessons || []).forEach((les) => {
-        allLessons.push({ ...les, module_id: mod.id, module_title: mod.title, quiz: mod.quiz });
+        allUnits.push({
+          id: les.id,
+          type: 'lesson',
+          lesson: les,
+          moduleId: mod.id,
+          moduleTitle: mod.title
+        });
       });
+      if (mod.quiz) {
+        allUnits.push({
+          id: mod.quiz.id,
+          type: 'quiz',
+          quiz: mod.quiz,
+          moduleId: mod.id,
+          moduleTitle: mod.title
+        });
+      }
     });
   }
 
-  // Active lesson state
-  const [activeLessonId, setActiveLessonId] = useState(null);
+  // Active unit state
+  const queryLessonId = searchParams.get('lessonId');
+  const [activeUnitId, setActiveUnitId] = useState(queryLessonId || allUnits[0]?.id || null);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [expandedModules, setExpandedModules] = useState({});
+  const [bookmarkedUnits, setBookmarkedUnits] = useState({});
   const [progressData, setProgressData] = useState({ percentage: 0, completed: 0, total: 0 });
-  const [unlockedFinal, setUnlockedFinal] = useState({ is_unlocked: false, reasons: [] });
   const [savingProgress, setSavingProgress] = useState(false);
   const [activeTab, setActiveTab] = useState('notes'); // 'notes' | 'assignment'
-  const [expandedModules, setExpandedModules] = useState({});
 
-  // Video Telemetry & Playback Gating State
+  // Video State
   const videoRef = useRef(null);
   const [playbackSpeed, setPlaybackSpeed] = useState(1.0);
   const [watchProgressMap, setWatchProgressMap] = useState({});
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [resolvedVideoUrl, setResolvedVideoUrl] = useState('/assets/sample-lesson.mp4');
 
   // PDF Assignment Submission State
   const [assignmentSubmission, setAssignmentSubmission] = useState(null);
@@ -74,132 +102,72 @@ export default function LessonPlayerPage() {
   const [uploadingDataUrl, setUploadingDataUrl] = useState('');
   const [submittingPdf, setSubmittingPdf] = useState(false);
 
-  const loadAssignmentSubmission = () => {
-    if (!enrolmentId) return;
-    const subs = mockEngine.getAssignmentSubmissions({ enrolment_id: enrolmentId });
-    const currentSub = subs[0] || null;
-    setAssignmentSubmission(currentSub);
-  };
+  // Module Quiz / Knowledge Check State
+  const [quizAnswers, setQuizAnswers] = useState({}); // { [questionId]: optionId }
+  const [quizSubmitted, setQuizSubmitted] = useState(false);
+  const [quizResult, setQuizResult] = useState(null);
 
+  // Initialize and load saved bookmarks from localStorage
   useEffect(() => {
-    loadAssignmentSubmission();
-    const unsub = mockEngine.subscribe(() => {
-      loadAssignmentSubmission();
-    });
-    return () => unsub();
-  }, [enrolmentId, activeLessonId]);
-
-  const handlePdfUpload = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!file.name.toLowerCase().endsWith('.pdf') && file.type !== 'application/pdf') {
-      alert('Strict Security Policy: Only valid PDF documents (.pdf) are permitted.');
-      return;
-    }
-
-    if (file.size > 25 * 1024 * 1024) {
-      alert('File size exceeds 25 MB limit.');
-      return;
-    }
-
-    setUploadingFileName(file.name);
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      setUploadingDataUrl(event.target.result);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const confirmAssignmentSubmit = () => {
-    if (!uploadingDataUrl || !uploadingFileName || !activeLesson) return;
-    setSubmittingPdf(true);
-
     try {
-      mockEngine.submitAssignment({
-        cadetId: currentUser?.cadet_id || 'RK-89421',
-        userId: currentUser?.id || enrolment.user_id,
-        enrolmentId,
-        courseId: course.id,
-        moduleId: activeLesson.module_id,
-        assignmentId: activeLesson.id || `asg_${activeLesson.module_id}`,
-        assignmentTitle: activeLesson.title || `${activeLesson.module_title} Practical Lab Report`,
-        fileName: uploadingFileName,
-        fileDataUrl: uploadingDataUrl
-      });
-
-      setUploadingFileName('');
-      setUploadingDataUrl('');
-      loadAssignmentSubmission();
-      alert('Assignment submitted successfully! Your practical investigation report is under assessment.');
+      const stored = localStorage.getItem(`rk_bookmarks_${enrolmentId}`);
+      if (stored) setBookmarkedUnits(JSON.parse(stored));
     } catch (e) {
-      alert('Submission failed: ' + e.message);
-    } finally {
-      setSubmittingPdf(false);
+      console.warn('Could not read bookmarks:', e);
     }
-  };
-
-  useEffect(() => {
-    if (enrolment && allLessons.length > 0) {
-      const firstIncomplete = allLessons.find(
-        (l) => !enrolment.completed_mandatory_lessons.includes(l.id)
-      );
-      const chosenLesson = firstIncomplete ? firstIncomplete.id : allLessons[0].id;
-      setActiveLessonId(chosenLesson);
-      setProgressData(mockEngine.getCourseProgress(enrolmentId));
-      setUnlockedFinal(mockEngine.checkFinalAssessmentUnlock(enrolmentId));
-
-      // Auto expand module containing active lesson
-      const activeObj = allLessons.find((l) => l.id === chosenLesson);
-      if (activeObj) {
-        setExpandedModules({ [activeObj.module_id]: true });
-      }
-    }
-
-    const unsubscribe = mockEngine.subscribe((event) => {
-      if (event.type === 'CURRICULUM_MUTATED' || event.type === 'DB_MUTATED') {
-        setProgressData(mockEngine.getCourseProgress(enrolmentId));
-        setUnlockedFinal(mockEngine.checkFinalAssessmentUnlock(enrolmentId));
-      }
-    });
-
-    return () => unsubscribe();
   }, [enrolmentId]);
 
-  if (!enrolment || !course) {
-    return (
-      <div className="min-h-screen bg-[#071018] py-24 text-center px-4 flex items-center justify-center">
-        <div className="max-w-md p-8 rounded-2xl ultra-glass-panel border border-[#263440] space-y-4">
-          <h2 className="text-xl font-bold text-white font-lora">Enrolment Not Found</h2>
-          <p className="text-xs text-[#8BA2B5] font-mono">Please verify that you are enrolled in this training course.</p>
-          <Link to="/student" className="px-5 py-2.5 bg-[#65F58A] rounded-xl text-[#071018] text-xs font-bold font-mono inline-flex items-center space-x-2">
-            <ChevronLeft className="w-4 h-4" />
-            <span>Return to Dashboard</span>
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  const activeLesson = allLessons.find((l) => l.id === activeLessonId) || allLessons[0];
-  const activeIndex = allLessons.findIndex((l) => l.id === activeLessonId);
-  const isLessonCompleted = enrolment.completed_mandatory_lessons?.includes(activeLesson?.id);
-  const isAssignment = activeLesson?.type === 'assignment';
-
-  // Sequential Unlock Rule
-  const isLessonUnlocked = (idx) => {
-    if (idx === 0) return true;
-    for (let i = 0; i < idx; i++) {
-      if (!enrolment.completed_mandatory_lessons?.includes(allLessons[i].id)) {
-        return false;
+  const toggleBookmark = (unitId) => {
+    setBookmarkedUnits((prev) => {
+      const updated = { ...prev, [unitId]: !prev[unitId] };
+      try {
+        localStorage.setItem(`rk_bookmarks_${enrolmentId}`, JSON.stringify(updated));
+      } catch (e) {
+        console.warn('Could not save bookmark:', e);
       }
-    }
-    return true;
+      return updated;
+    });
   };
 
-  // Video Watch Progress for active lesson
-  const [resolvedVideoUrl, setResolvedVideoUrl] = useState('/assets/sample-lesson.mp4');
+  // Sync active unit on load or URL param change
+  useEffect(() => {
+    if (queryLessonId && allUnits.some((u) => u.id === queryLessonId)) {
+      setActiveUnitId(queryLessonId);
+    } else if (allUnits.length > 0 && !activeUnitId) {
+      // Pick first uncompleted lesson
+      const firstIncomplete = allUnits.find(
+        (u) => u.type === 'lesson' && !enrolment?.completed_mandatory_lessons?.includes(u.id)
+      );
+      setActiveUnitId(firstIncomplete ? firstIncomplete.id : allUnits[0].id);
+    }
+  }, [queryLessonId, allUnits.length]);
 
+  // Load progress and expand current module
+  useEffect(() => {
+    if (enrolmentId) {
+      setProgressData(mockEngine.getCourseProgress(enrolmentId));
+    }
+    const currentUnit = allUnits.find((u) => u.id === activeUnitId);
+    if (currentUnit) {
+      setExpandedModules((prev) => ({ ...prev, [currentUnit.moduleId]: true }));
+    }
+  }, [enrolmentId, activeUnitId]);
+
+  // Handle active unit resolution
+  const activeUnit = allUnits.find((u) => u.id === activeUnitId) || allUnits[0];
+  const activeIndex = allUnits.findIndex((u) => u.id === activeUnit?.id);
+  const activeLesson = activeUnit?.type === 'lesson' ? activeUnit.lesson : null;
+  const activeQuiz = activeUnit?.type === 'quiz' ? activeUnit.quiz : null;
+
+  const isLessonCompleted = activeLesson
+    ? enrolment?.completed_mandatory_lessons?.includes(activeLesson.id)
+    : false;
+  const isQuizPassed = activeQuiz
+    ? enrolment?.passed_quizzes?.includes(activeQuiz.id)
+    : false;
+  const isAssignment = activeLesson?.type === 'assignment';
+
+  // Resolve video URL when active lesson changes
   useEffect(() => {
     let active = true;
     if (activeLesson?.video_url) {
@@ -209,14 +177,83 @@ export default function LessonPlayerPage() {
     } else {
       setResolvedVideoUrl('/assets/sample-lesson.mp4');
     }
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [activeLesson?.video_url, activeLesson?.id]);
 
-  const currentWatchPct = isLessonCompleted ? 100 : (watchProgressMap[activeLesson?.id]?.percentage || 0);
-  const hasVideo = Boolean(resolvedVideoUrl) && !isAssignment;
-  const canMarkComplete = isLessonCompleted || isAssignment || currentWatchPct >= 80;
+  // Reset or load quiz state when switching to quiz
+  useEffect(() => {
+    if (activeQuiz) {
+      setQuizSubmitted(isQuizPassed);
+      if (isQuizPassed && (!quizResult || quizResult.quizId !== activeQuiz.id)) {
+        setQuizResult({
+          quizId: activeQuiz.id,
+          score: 100,
+          totalQuestions: activeQuiz.questions?.length || 20,
+          correctCount: activeQuiz.questions?.length || 20,
+          isPassed: true
+        });
+      }
+    }
+  }, [activeQuiz?.id, isQuizPassed]);
 
-  // Video Telemetry
+  // Load assignment submissions
+  const loadAssignmentSubmission = () => {
+    if (!enrolmentId) return;
+    const subs = mockEngine.getAssignmentSubmissions({ enrolment_id: enrolmentId });
+    setAssignmentSubmission(subs[0] || null);
+  };
+
+  useEffect(() => {
+    loadAssignmentSubmission();
+  }, [enrolmentId, activeLesson?.id]);
+
+  if (!enrolment || !course) {
+    return (
+      <div className="min-h-screen bg-[#071018] py-24 text-center px-4 flex items-center justify-center font-lora">
+        <div className="max-w-md p-8 rounded-2xl cyber-glass-card border border-[#65F58A]/30 space-y-4">
+          <h2 className="text-xl font-bold text-white">Enrolment Not Found</h2>
+          <p className="text-xs text-[#B8E6CE] font-mono">
+            Please verify that you are actively enrolled in this training course.
+          </p>
+          <Link
+            to="/student"
+            className="px-5 py-2.5 bg-[#65F58A] rounded-xl text-[#071018] text-xs font-bold font-mono inline-flex items-center space-x-2"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            <span>Return to Classroom</span>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Navigation handlers
+  const handleSelectUnit = (unit) => {
+    setActiveUnitId(unit.id);
+    if (unit.type === 'lesson') {
+      setSearchParams({ lessonId: unit.id });
+    } else {
+      setSearchParams({ unitId: unit.id });
+    }
+  };
+
+  const handlePrevUnit = () => {
+    if (activeIndex > 0) {
+      const prev = allUnits[activeIndex - 1];
+      handleSelectUnit(prev);
+    }
+  };
+
+  const handleNextUnit = () => {
+    if (activeIndex < allUnits.length - 1) {
+      const next = allUnits[activeIndex + 1];
+      handleSelectUnit(next);
+    }
+  };
+
+  // Video Time Update & Watch Percentage
   const handleTimeUpdate = () => {
     if (!videoRef.current || !activeLesson) return;
     const { currentTime, duration } = videoRef.current;
@@ -237,6 +274,29 @@ export default function LessonPlayerPage() {
         }
       };
     });
+  };
+
+  const currentWatchPct = isLessonCompleted ? 100 : (watchProgressMap[activeLesson?.id]?.percentage || 0);
+  const canMarkLessonComplete = isLessonCompleted || isAssignment || currentWatchPct >= 80;
+
+  const handleMarkLessonComplete = async () => {
+    if (!activeLesson || !canMarkLessonComplete) return;
+    setSavingProgress(true);
+    try {
+      await apiClient.completeLesson(enrolmentId, activeLesson.id);
+      const newProgress = mockEngine.getCourseProgress(enrolmentId);
+      setProgressData(newProgress);
+      refreshBalance();
+
+      // Auto-advance to next unit if available
+      if (activeIndex < allUnits.length - 1) {
+        handleNextUnit();
+      }
+    } catch (err) {
+      console.error('Failed to complete lesson:', err);
+    } finally {
+      setSavingProgress(false);
+    }
   };
 
   // Cloud Stream Embed Resolver
@@ -262,15 +322,12 @@ export default function LessonPlayerPage() {
 
   const embedInfo = getEmbedInfo(resolvedVideoUrl);
 
+  // Download Chapter Study Notes Document
   const handleDownloadChapterNotes = () => {
     if (!activeLesson) return;
-    const currentModuleName = course?.modules?.find((m) =>
-      (m.lessons || []).some((l) => l.id === activeLesson.id)
-    )?.title || 'Core Module';
-
     const docContent = `# REDKROSS ACADEMY // CHAPTER STUDY NOTES\n\n` +
       `**Course**: ${course?.title || 'Defensive Cyber Operations'}\n` +
-      `**Module**: ${currentModuleName}\n` +
+      `**Module**: ${activeUnit?.moduleTitle || 'Core Module'}\n` +
       `**Lesson**: ${activeLesson.title}\n` +
       `**Duration**: ${activeLesson.duration || '15 mins'}\n` +
       `**Date Exported**: ${new Date().toISOString().split('T')[0]}\n\n` +
@@ -295,6 +352,7 @@ export default function LessonPlayerPage() {
     URL.revokeObjectURL(url);
   };
 
+  // Download Admin-Attached PDF
   const handleDownloadAdminPdf = async (attachment) => {
     if (!attachment?.url) return;
     try {
@@ -307,853 +365,750 @@ export default function LessonPlayerPage() {
         link.click();
         document.body.removeChild(link);
       } else {
-        alert('Could not retrieve attached PDF from local cache.');
+        alert('Could not retrieve attached PDF.');
       }
     } catch (e) {
       console.error('Error downloading attached PDF:', e);
     }
   };
 
-  const handleDownloadResource = (name) => {
-    const docContent = `# REDKROSS ACADEMY - TECHNICAL STUDY REFERENCE\n` +
-      `Asset: ${name}\n` +
-      `Course: ${course.title}\n` +
-      `Module: ${activeLesson?.module_title || 'Core Curriculum'}\n` +
-      `Date Generated: ${new Date().toISOString().split('T')[0]}\n\n` +
-      `## Standard Operating Procedures & Field Laboratory Reference\n` +
-      `1. Telemetry Ingestion Source: Windows Security Log (Event IDs 4624, 4625, 4672, 4720)\n` +
-      `2. Network Volatility: Memory capture before host reboot\n` +
-      `3. Playbook Alignment: NIST SP 800-61r2 Computer Security Incident Handling Guide\n` +
-      `4. MITRE ATT&CK Matrix: T1059 (Command Execution), T1078 (Valid Accounts)\n`;
-
-    const blob = new Blob([docContent], { type: 'text/markdown;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = name.replace(/[^a-zA-Z0-9._-]/g, '_') + '.md';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+  // PDF Lab Upload
+  const handlePdfUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.name.toLowerCase().endsWith('.pdf') && file.type !== 'application/pdf') {
+      alert('Security Notice: Only valid PDF documents (.pdf) are permitted.');
+      return;
+    }
+    if (file.size > 25 * 1024 * 1024) {
+      alert('File size exceeds 25 MB limit.');
+      return;
+    }
+    setUploadingFileName(file.name);
+    const reader = new FileReader();
+    reader.onload = (event) => setUploadingDataUrl(event.target.result);
+    reader.readAsDataURL(file);
   };
 
-  const handleMarkComplete = async () => {
-    if (!activeLesson || !canMarkComplete) return;
-    setSavingProgress(true);
-
+  const confirmAssignmentSubmit = () => {
+    if (!uploadingDataUrl || !uploadingFileName || !activeLesson) return;
+    setSubmittingPdf(true);
     try {
-      await apiClient.completeLesson(enrolmentId, activeLesson.id);
-      const newProgress = mockEngine.getCourseProgress(enrolmentId);
-      setProgressData(newProgress);
-      refreshBalance();
-      setUnlockedFinal(mockEngine.checkFinalAssessmentUnlock(enrolmentId));
-
-      // Advance to next lesson if available
-      if (activeIndex < allLessons.length - 1) {
-        const nextLes = allLessons[activeIndex + 1];
-        setActiveLessonId(nextLes.id);
-        setExpandedModules((prev) => ({ ...prev, [nextLes.module_id]: true }));
-      }
-    } catch (err) {
-      console.error('Failed to complete lesson:', err);
+      mockEngine.submitAssignment({
+        cadetId: currentUser?.cadet_id || 'RK-89421',
+        userId: currentUser?.id || enrolment.user_id,
+        enrolmentId,
+        courseId: course.id,
+        moduleId: activeLesson.module_id,
+        assignmentId: activeLesson.id,
+        assignmentTitle: activeLesson.title,
+        fileName: uploadingFileName,
+        fileDataUrl: uploadingDataUrl
+      });
+      setUploadingFileName('');
+      setUploadingDataUrl('');
+      loadAssignmentSubmission();
+      alert('Investigation report submitted for assessment!');
+    } catch (e) {
+      alert('Submission failed: ' + e.message);
     } finally {
-      setSavingProgress(false);
+      setSubmittingPdf(false);
     }
   };
 
-  const handleNextLesson = () => {
-    if (activeIndex < allLessons.length - 1) {
-      const nextLes = allLessons[activeIndex + 1];
-      setActiveLessonId(nextLes.id);
-      setExpandedModules((prev) => ({ ...prev, [nextLes.module_id]: true }));
-    }
+  // Quiz Handling: 20-Question Module Knowledge Check
+  const handleSelectQuizOption = (questionId, optionId) => {
+    setQuizAnswers((prev) => ({ ...prev, [questionId]: optionId }));
   };
 
-  const handlePrevLesson = () => {
-    if (activeIndex > 0) {
-      const prevLes = allLessons[activeIndex - 1];
-      setActiveLessonId(prevLes.id);
-      setExpandedModules((prev) => ({ ...prev, [prevLes.module_id]: true }));
-    }
+  const handleSubmitQuiz = (e) => {
+    e?.preventDefault();
+    if (!activeQuiz || !activeQuiz.questions?.length) return;
+
+    let correctCount = 0;
+    const questions = activeQuiz.questions;
+    questions.forEach((q) => {
+      const selectedOptId = quizAnswers[q.id];
+      const correctOpt = q.options?.find((opt) => opt.is_correct);
+      if (selectedOptId && correctOpt && selectedOptId === correctOpt.id) {
+        correctCount += 1;
+      }
+    });
+
+    const scorePct = Math.round((correctCount / questions.length) * 100);
+    const passingScore = activeQuiz.passing_score || 70;
+    const isPassed = scorePct >= passingScore;
+
+    setQuizResult({
+      quizId: activeQuiz.id,
+      score: scorePct,
+      correctCount,
+      totalQuestions: questions.length,
+      isPassed
+    });
+    setQuizSubmitted(true);
+
+    // Record score in database
+    mockEngine.recordModuleQuizScore(enrolmentId, activeQuiz.id, scorePct, isPassed);
+    setProgressData(mockEngine.getCourseProgress(enrolmentId));
+    refreshBalance();
   };
 
-  // SVG Circular Gauge calculation
-  const circumference = 2 * Math.PI * 34; // radius 34
-  const strokeDashoffset = circumference - (progressData.percentage / 100) * circumference;
+  const isCurrentUnitBookmarked = Boolean(bookmarkedUnits[activeUnit?.id]);
 
   return (
-    <div className="min-h-screen bg-[#071018] text-[#F1F5F9] font-sans pb-12 relative">
-      {/* Cyber Theme Ambient Shimmer Pixel Grid */}
+    <div className="min-h-screen bg-[#071018] text-[#F1F5F9] font-lora relative flex flex-col">
       <PixelBackground opacity={0.35} gap={22} pixelSize={2} />
-      {/* 1. TOP BREADCRUMB & METRICS HEADER BAR */}
-      <header className="sticky top-0 z-30 bg-[#071018]/90 backdrop-blur-xl border-b border-[#1B2530] px-4 sm:px-8 py-3.5">
-        <div className="max-w-[1720px] mx-auto flex items-center justify-between gap-4">
+
+      {/* ================= 1. OPEN EDX TOP SUB-NAVBAR & TABS ================= */}
+      <header className="sticky top-0 z-30 bg-[#071018]/95 backdrop-blur-xl border-b border-[#65F58A]/20 px-4 sm:px-6 py-3">
+        <div className="max-w-[1800px] mx-auto flex items-center justify-between gap-4">
+          {/* Left: Outline Toggle Button [ |< ] + Breadcrumb */}
           <div className="flex items-center space-x-3 truncate">
+            <button
+              type="button"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="p-2 rounded-xl bg-[#092218]/80 hover:bg-[#0c2a1e] text-[#65F58A] border border-[#65F58A]/30 transition-all flex-shrink-0 cursor-pointer"
+              title={sidebarOpen ? 'Hide Course Outline' : 'Show Course Outline'}
+            >
+              <Menu className="w-4 h-4" />
+            </button>
+
             <Link
-              to="/student"
-              className="p-2 rounded-xl bg-[#0F1722] hover:bg-[#1B2530] text-[#CBD5E1] border border-[#263440] transition-colors flex-shrink-0"
-              title="Return to Student Dashboard"
+              to={`/student/course/${course.id}`}
+              className="text-xs font-mono text-[#72A88E] hover:text-[#65F58A] flex items-center space-x-1 flex-shrink-0"
+              title="Return to Course Home Hub"
             >
               <ChevronLeft className="w-4 h-4" />
+              <span className="hidden sm:inline">Course Hub</span>
             </Link>
+
+            <div className="h-4 w-[1px] bg-[#65F58A]/20 hidden sm:block" />
+
             <div className="truncate">
-              <div className="flex items-center space-x-2 text-[11px] font-mono text-[#8BA2B5]">
-                <span>{course.category || 'Specialist Training'}</span>
-                <span>/</span>
-                <span className="text-[#65F58A] font-bold">{course.title}</span>
-              </div>
-              <h1 className="text-sm sm:text-base font-bold text-white font-lora truncate">
-                {activeLesson?.title || 'Course Lesson'}
+              <span className="text-[11px] font-mono text-[#72A88E] block truncate">
+                {course.title} / {activeUnit?.moduleTitle}
+              </span>
+              <h1 className="text-sm sm:text-base font-bold text-white truncate">
+                {activeLesson ? activeLesson.title : activeQuiz ? activeQuiz.title : 'Unit Learning View'}
               </h1>
             </div>
           </div>
 
-          <div className="flex items-center space-x-3 flex-shrink-0">
-            {/* Quick Completion Button */}
-            <button
-              onClick={handleMarkComplete}
-              disabled={savingProgress || isLessonCompleted || !canMarkComplete}
-              className={`px-4 py-2 rounded-xl text-xs font-mono font-bold flex items-center space-x-2 transition-all border ${
-                isLessonCompleted
-                  ? 'bg-[#65F58A]/15 text-[#65F58A] border-[#65F58A]/40'
-                  : canMarkComplete
-                  ? 'bg-[#65F58A] text-[#071018] border-[#65F58A] hover:bg-[#52d674] shadow-[0_0_15px_rgba(101,245,138,0.3)]'
-                  : 'bg-[#1B2530] text-[#8BA2B5] border-[#263440] opacity-50 cursor-not-allowed'
-              }`}
-            >
-              <Check className="w-3.5 h-3.5 stroke-[3]" />
-              <span>{isLessonCompleted ? 'Completed' : savingProgress ? 'Saving...' : 'Mark Complete'}</span>
-            </button>
+          {/* Right: Two Main Tabs (Course & Progress) & User Info */}
+          <div className="flex items-center space-x-6 flex-shrink-0">
+            <div className="hidden md:flex items-center space-x-6 text-xs font-bold font-mono">
+              <Link
+                to={`/student/course/${course.id}?tab=course`}
+                className="text-[#65F58A] hover:underline"
+              >
+                Course
+              </Link>
+              <Link
+                to={`/student/course/${course.id}?tab=progress`}
+                className="text-[#8BA2B5] hover:text-white transition-colors"
+              >
+                Progress
+              </Link>
+            </div>
 
-            {/* Next Lesson Action */}
-            <button
-              onClick={handleNextLesson}
-              disabled={activeIndex >= allLessons.length - 1}
-              className={`p-2 rounded-xl border font-mono text-xs flex items-center space-x-1 transition-colors ${
-                activeIndex < allLessons.length - 1
-                  ? 'bg-[#0F1722] hover:bg-[#1B2530] text-white border-[#263440]'
-                  : 'bg-[#0A121A] text-[#8BA2B5]/40 border-[#1B2530] cursor-not-allowed'
-              }`}
-              title="Next Lesson"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-
-            {/* Cadet Identity Badge */}
-            <div className="hidden md:flex items-center space-x-2 pl-3 border-l border-[#1B2530]">
-              <div className="w-8 h-8 rounded-full bg-[#101923] border border-[#65F58A]/40 flex items-center justify-center font-bold text-xs text-[#65F58A]">
-                {currentUser?.name?.charAt(0) || 'C'}
-              </div>
-              <div className="text-right">
-                <span className="text-[11px] font-bold text-white block leading-tight">
-                  {currentUser?.name || 'Cadet'}
-                </span>
-                <span className="text-[10px] font-mono text-[#65F58A]">
-                  {progressData.percentage}% Certified
-                </span>
-              </div>
+            {/* Quick Completion / Grade Pill */}
+            <div className="flex items-center space-x-2 pl-3 border-l border-[#65F58A]/20 text-xs font-mono">
+              <span className="text-[#72A88E] hidden sm:inline">Progress:</span>
+              <span className="px-2.5 py-1 rounded-md bg-[#092218] border border-[#65F58A]/30 text-[#65F58A] font-bold">
+                {progressData.percentage}%
+              </span>
             </div>
           </div>
         </div>
       </header>
 
-      {/* 2. MAIN 12-COLUMN EDUNEX WORKSTATION (ZERO VOIDS, DENSE & CRISP) */}
-      <main className="max-w-[1720px] mx-auto px-4 sm:px-8 pt-6">
-        <div className="grid grid-cols-12 gap-6 items-start">
-          {/* ========================================================= */}
-          {/* LEFT 8 COLUMNS: VIDEO PLAYER + LEARNING PROGRESS + TABS  */}
-          {/* ========================================================= */}
-          <div className="col-span-12 lg:col-span-8 space-y-6">
-            {/* Top Section Header */}
-            <div className="flex items-center justify-between pb-1">
-              <div>
-                <span className="text-[11px] font-mono text-[#8BA2B5] uppercase tracking-wider block">
-                  {activeLesson?.module_title || 'Current Chapter'}
-                </span>
-                <h2 className="text-lg font-bold text-white font-lora">
-                  Online Video Lessons
-                </h2>
-              </div>
+      {/* ================= 2. MAIN COURSEWARE WORKSPACE ================= */}
+      <div className="flex-1 flex max-w-[1800px] w-full mx-auto relative">
+        {/* ================= LEFT: COLLAPSIBLE COURSE OUTLINE SIDEBAR ================= */}
+        {sidebarOpen && (
+          <aside className="w-80 sm:w-96 border-r border-[#65F58A]/20 bg-[#061510]/95 backdrop-blur-xl flex flex-col flex-shrink-0 transition-all duration-300 z-20">
+            {/* Sidebar Header */}
+            <div className="p-4 border-b border-[#65F58A]/20 flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <span className="text-xs font-mono px-2.5 py-1 rounded-lg bg-[#0F1722] border border-[#263440] text-[#CBD5E1]">
-                  Lesson {activeIndex + 1} of {allLessons.length}
-                </span>
+                <BookOpen className="w-4 h-4 text-[#65F58A]" />
+                <h3 className="font-bold text-sm text-white">Course outline</h3>
               </div>
+              <button
+                type="button"
+                onClick={() => setSidebarOpen(false)}
+                className="p-1 rounded text-[#72A88E] hover:text-[#65F58A] transition-colors cursor-pointer"
+                title="Collapse outline"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            {/* Video Player Card / Assignment Viewer */}
-            <div className="ultra-glass-panel rounded-2xl overflow-hidden border border-[#65F58A]/30 border-t-white/20 shadow-2xl">
-              {isAssignment ? (
-                /* Practical Assignment Stage */
-                <div className="p-8 space-y-6 bg-emerald-950/20 backdrop-blur-xl">
-                  <div className="flex items-center justify-between pb-4 border-b border-[#65F58A]/20">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
-                        <FileCheck className="w-6 h-6" />
-                      </div>
-                      <div>
-                        <span className="text-[10px] font-mono text-amber-400 uppercase tracking-wider block">
-                          Practical Lab Assessment
+            {/* Outline Modules Accordion */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
+              {(course.modules || []).map((mod, modIdx) => {
+                const isExpanded = expandedModules[mod.id] !== false;
+                const isCurrentMod = activeUnit?.moduleId === mod.id;
+                const modLessons = mod.lessons || [];
+                const completedCount = modLessons.filter((l) =>
+                  enrolment.completed_mandatory_lessons?.includes(l.id)
+                ).length;
+                const isModQuizPassed = mod.quiz && enrolment.passed_quizzes?.includes(mod.quiz.id);
+
+                return (
+                  <div
+                    key={mod.id || modIdx}
+                    className={`rounded-xl border transition-all ${
+                      isCurrentMod
+                        ? 'border-[#65F58A]/40 bg-[#092218]/80 shadow-[0_0_15px_rgba(101,245,138,0.1)]'
+                        : 'border-[#65F58A]/15 bg-[#061510]'
+                    }`}
+                  >
+                    {/* Module Accordion Header */}
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setExpandedModules((prev) => ({
+                          ...prev,
+                          [mod.id]: !isExpanded
+                        }))
+                      }
+                      className="w-full p-3 flex items-center justify-between text-left hover:bg-[#0c2a1e]/50 transition-colors cursor-pointer"
+                    >
+                      <div className="flex items-center space-x-2.5 truncate pr-2">
+                        <span
+                          className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-mono font-bold flex-shrink-0 border ${
+                            completedCount === modLessons.length && (!mod.quiz || isModQuizPassed)
+                              ? 'bg-[#65F58A] text-[#071018] border-[#65F58A]'
+                              : 'bg-[#040e0a] text-[#65F58A] border-[#65F58A]/30'
+                          }`}
+                        >
+                          {completedCount === modLessons.length && (!mod.quiz || isModQuizPassed) ? (
+                            <Check className="w-3 h-3 stroke-[3]" />
+                          ) : (
+                            modIdx + 1
+                          )}
                         </span>
-                        <h3 className="text-xl font-bold text-white font-lora">
-                          {activeLesson.title}
-                        </h3>
+                        <span className="text-xs font-bold text-white truncate font-lora">
+                          {mod.title}
+                        </span>
+                      </div>
+
+                      <ChevronDown
+                        className={`w-3.5 h-3.5 text-[#72A88E] transition-transform duration-200 flex-shrink-0 ${
+                          isExpanded ? 'rotate-180' : ''
+                        }`}
+                      />
+                    </button>
+
+                    {/* Module Child Units */}
+                    {isExpanded && (
+                      <div className="p-2 space-y-1 bg-[#040e0a]/80 border-t border-[#65F58A]/15">
+                        {/* 1. Lessons in Module */}
+                        {modLessons.map((les) => {
+                          const isDone = enrolment.completed_mandatory_lessons?.includes(les.id);
+                          const isActive = activeUnit?.id === les.id;
+
+                          return (
+                            <button
+                              key={les.id}
+                              type="button"
+                              onClick={() => handleSelectUnit({ id: les.id, type: 'lesson', lesson: les })}
+                              className={`w-full text-left p-2 rounded-lg text-xs flex items-center justify-between transition-all cursor-pointer ${
+                                isActive
+                                  ? 'bg-[#65F58A] text-[#071018] font-bold shadow-sm'
+                                  : 'text-[#C9EFE0] hover:bg-[#092218] hover:text-white'
+                              }`}
+                            >
+                              <div className="flex items-center space-x-2 truncate pr-2">
+                                {isDone ? (
+                                  <CheckCircle2
+                                    className={`w-3.5 h-3.5 flex-shrink-0 ${
+                                      isActive ? 'text-[#071018]' : 'text-[#65F58A]'
+                                    }`}
+                                  />
+                                ) : (
+                                  <Play
+                                    className={`w-3 h-3 flex-shrink-0 ${
+                                      isActive ? 'fill-[#071018]' : 'fill-[#65F58A] opacity-70'
+                                    }`}
+                                  />
+                                )}
+                                <span className="truncate">{les.title}</span>
+                              </div>
+                              <span
+                                className={`text-[10px] font-mono flex-shrink-0 ${
+                                  isActive ? 'text-[#071018]' : 'text-[#72A88E]'
+                                }`}
+                              >
+                                {les.duration || '15 mins'}
+                              </span>
+                            </button>
+                          );
+                        })}
+
+                        {/* 2. Module Knowledge Check Unit (20 Questions) */}
+                        {mod.quiz && (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handleSelectUnit({
+                                id: mod.quiz.id,
+                                type: 'quiz',
+                                quiz: mod.quiz,
+                                moduleId: mod.id,
+                                moduleTitle: mod.title
+                              })
+                            }
+                            className={`w-full text-left p-2.5 rounded-lg text-xs flex items-center justify-between transition-all mt-1 cursor-pointer border ${
+                              activeUnit?.id === mod.quiz.id
+                                ? 'bg-[#65F58A] text-[#071018] font-bold border-[#65F58A] shadow-sm'
+                                : isModQuizPassed
+                                ? 'bg-[#092218]/90 text-[#65F58A] border-[#65F58A]/30 hover:bg-[#0c2a1e]'
+                                : 'bg-[#092218]/40 text-amber-300 border-amber-500/30 hover:bg-[#092218]'
+                            }`}
+                          >
+                            <div className="flex items-center space-x-2 truncate pr-2">
+                              <Award
+                                className={`w-3.5 h-3.5 flex-shrink-0 ${
+                                  activeUnit?.id === mod.quiz.id
+                                    ? 'text-[#071018]'
+                                    : isModQuizPassed
+                                    ? 'text-[#65F58A]'
+                                    : 'text-amber-400'
+                                }`}
+                              />
+                              <span className="truncate font-semibold">
+                                Knowledge Check ({mod.quiz.questions?.length || 20} Qs)
+                              </span>
+                            </div>
+                            <span
+                              className={`text-[9px] font-mono px-1.5 py-0.5 rounded ${
+                                activeUnit?.id === mod.quiz.id
+                                  ? 'bg-[#071018] text-[#65F58A]'
+                                  : isModQuizPassed
+                                  ? 'bg-[#65F58A]/15 text-[#65F58A]'
+                                  : 'bg-amber-500/15 text-amber-300'
+                              }`}
+                            >
+                              {isModQuizPassed ? 'PASSED' : 'GRADED'}
+                            </span>
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </aside>
+        )}
+
+        {/* ================= RIGHT: MAIN LEARNING UNIT CONTAINER ================= */}
+        <main className="flex-1 flex flex-col min-w-0 bg-[#071018]/50">
+          {/* Unit Top Bar: Title, Bookmark Action & Top Prev/Next Arrows (Matching Screenshot 2 & 3) */}
+          <div className="p-4 sm:p-6 border-b border-[#65F58A]/15 bg-[#071018]/80 flex items-center justify-between gap-4">
+            <div className="space-y-1">
+              <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight font-lora">
+                {activeLesson ? activeLesson.title : activeQuiz ? 'Knowledge Check' : 'Unit'}
+              </h2>
+              <button
+                type="button"
+                onClick={() => toggleBookmark(activeUnit?.id)}
+                className={`flex items-center space-x-1.5 text-xs font-mono transition-colors cursor-pointer ${
+                  isCurrentUnitBookmarked ? 'text-[#65F58A] font-bold' : 'text-[#72A88E] hover:text-[#C9EFE0]'
+                }`}
+              >
+                <Bookmark className={`w-3.5 h-3.5 ${isCurrentUnitBookmarked ? 'fill-current' : ''}`} />
+                <span>{isCurrentUnitBookmarked ? 'Bookmarked' : 'Bookmark this page'}</span>
+              </button>
+            </div>
+
+            {/* Small Top Arrows */}
+            <div className="flex items-center space-x-2">
+              <button
+                type="button"
+                onClick={handlePrevUnit}
+                disabled={activeIndex <= 0}
+                className={`p-2 rounded-lg border transition-colors ${
+                  activeIndex > 0
+                    ? 'border-[#65F58A]/30 text-white hover:bg-[#092218] cursor-pointer'
+                    : 'border-white/5 text-[#72A88E]/40 cursor-not-allowed'
+                }`}
+                title="Previous Unit"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={handleNextUnit}
+                disabled={activeIndex >= allUnits.length - 1}
+                className={`p-2 rounded-lg border transition-colors ${
+                  activeIndex < allUnits.length - 1
+                    ? 'border-[#65F58A]/30 text-white hover:bg-[#092218] cursor-pointer'
+                    : 'border-white/5 text-[#72A88E]/40 cursor-not-allowed'
+                }`}
+                title="Next Unit"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Unit Body Content Area */}
+          <div className="flex-1 p-4 sm:p-8 space-y-8 max-w-5xl mx-auto w-full">
+            {/* -------------------- 1. LESSON UNIT VIEW -------------------- */}
+            {activeUnit?.type === 'lesson' && activeLesson && (
+              <div className="space-y-6">
+                {/* Media Player Card */}
+                {!isAssignment && (
+                  <div className="cyber-glass-panel rounded-2xl overflow-hidden border border-[#65F58A]/30 shadow-2xl">
+                    <div className="relative aspect-video bg-black flex items-center justify-center">
+                      {embedInfo?.type === 'youtube' || embedInfo?.type === 'vimeo' ? (
+                        <iframe
+                          src={embedInfo.embedUrl}
+                          title={activeLesson.title}
+                          className="w-full h-full border-0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        />
+                      ) : (
+                        <video
+                          key={resolvedVideoUrl}
+                          ref={videoRef}
+                          src={resolvedVideoUrl}
+                          controls
+                          playsInline
+                          preload="auto"
+                          onPlay={() => setIsVideoPlaying(true)}
+                          onPause={() => setIsVideoPlaying(false)}
+                          onTimeUpdate={handleTimeUpdate}
+                          onEnded={() => {
+                            setIsVideoPlaying(false);
+                            setWatchProgressMap((prev) => ({
+                              ...prev,
+                              [activeLesson.id]: { percentage: 100, maxTime: 9999, duration: 9999 }
+                            }));
+                          }}
+                          poster={course.art || '/assets/course-art/art-01.jpg'}
+                          className="w-full h-full object-cover"
+                        >
+                          <source src={resolvedVideoUrl} type="video/mp4" />
+                        </video>
+                      )}
+                    </div>
+
+                    {/* Speed & Watch Bar */}
+                    <div className="p-3.5 bg-[#061510] border-t border-[#65F58A]/20 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-[#72A88E]">Playback Speed:</span>
+                        {[0.75, 1.0, 1.25, 1.5, 2.0].map((spd) => (
+                          <button
+                            key={spd}
+                            type="button"
+                            onClick={() => {
+                              setPlaybackSpeed(spd);
+                              if (videoRef.current) videoRef.current.playbackRate = spd;
+                            }}
+                            className={`px-2 py-0.5 rounded transition-colors cursor-pointer ${
+                              playbackSpeed === spd
+                                ? 'bg-[#65F58A] text-[#071018] font-bold'
+                                : 'bg-[#092218] text-[#C9EFE0] hover:text-white border border-[#65F58A]/25'
+                            }`}
+                          >
+                            {spd}x
+                          </button>
+                        ))}
+                      </div>
+
+                      <div className="flex items-center space-x-2">
+                        <span className="text-[#72A88E]">Completion Gate:</span>
+                        <span className="text-[#65F58A] font-bold">{currentWatchPct}%</span>
+                        <span className="text-[10px] text-[#72A88E]">(&ge;80% required)</span>
                       </div>
                     </div>
-                    <span className="px-3 py-1 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-300 font-mono text-xs font-bold">
-                      +{activeLesson.points || 100} XP BOUNTY
-                    </span>
+                  </div>
+                )}
+
+                {/* Lesson Notes & Protocols (Bounded with Scrollbar as requested) */}
+                <div className="cyber-glass-panel rounded-2xl p-6 sm:p-8 border border-[#65F58A]/30 space-y-4 shadow-xl">
+                  <div className="flex items-center justify-between pb-3 border-b border-[#65F58A]/20">
+                    <h3 className="font-bold text-base text-white flex items-center space-x-2">
+                      <FileText className="w-4 h-4 text-[#65F58A]" />
+                      <span>Instructional Notes & Terminal Protocols</span>
+                    </h3>
+                    <button
+                      type="button"
+                      onClick={handleDownloadChapterNotes}
+                      className="px-3 py-1.5 rounded-lg bg-[#092218] hover:bg-[#0c2a1e] text-[#65F58A] border border-[#65F58A]/30 text-xs font-mono flex items-center space-x-1.5 transition-colors cursor-pointer"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Download Notes</span>
+                    </button>
                   </div>
 
-                  <div className="space-y-4">
-                    <div className="p-4 rounded-xl ultra-glass-card border border-[#65F58A]/25 text-xs font-mono leading-relaxed text-[#C9EFE0] whitespace-pre-wrap">
-                      {activeLesson.instructions || 'Download the lab template, complete your analysis, and submit your PDF investigation report.'}
-                    </div>
+                  {/* Bounded Scrollable Markdown Content */}
+                  <div className="max-h-[500px] overflow-y-auto custom-scrollbar pr-3 space-y-4">
+                    <div
+                      className="prose prose-invert max-w-none text-xs sm:text-sm font-lora leading-relaxed text-[#CBD5E1]"
+                      dangerouslySetInnerHTML={{
+                        __html: renderMarkdownToHtml(
+                          activeLesson?.content ||
+                            `### ${activeLesson.title}\n\nReview defensive cybersecurity protocols, packet inspection steps, and mitigation strategies.\n\n\`\`\`bash\n# Inspect active operational telemetry\nss -tulpn\n\`\`\``
+                        )
+                      }}
+                    />
+                  </div>
 
-                    <div className="flex items-center justify-between p-4 rounded-xl ultra-glass-card border border-[#65F58A]/25">
-                      <div className="flex items-center space-x-3">
-                        <FileDown className="w-5 h-5 text-[#65F58A]" />
-                        <div>
-                          <span className="text-xs font-bold text-white block">
-                            {activeLesson.template_name || 'Lab_Investigation_Brief.pdf'}
+                  {/* Admin PDF Attachment if available */}
+                  {activeLesson?.pdf_attachment && (
+                    <div className="p-4 rounded-xl bg-[#092218]/80 border border-[#35E6B5]/40 flex items-center justify-between text-xs font-mono mt-4">
+                      <div className="flex items-center space-x-3 truncate pr-2">
+                        <FileText className="w-5 h-5 text-[#35E6B5] flex-shrink-0" />
+                        <div className="truncate">
+                          <span className="text-white font-bold block truncate">
+                            {activeLesson.pdf_attachment.name}
                           </span>
-                          <span className="text-[10px] text-[#B8E6CE] font-mono">
-                            Mandatory Worksheet Template • PDF Format
+                          <span className="text-[10px] text-[#35E6B5]">
+                            {activeLesson.pdf_attachment.size} • Attached Instructor Guide
                           </span>
                         </div>
                       </div>
                       <button
-                        onClick={() => handleDownloadResource(activeLesson.template_name || 'Lab_Brief.pdf')}
-                        className="px-4 py-2 rounded-lg bg-[#0A241A] hover:bg-[#123828] text-[#65F58A] border border-[#65F58A]/40 text-xs font-mono font-bold flex items-center space-x-1.5 transition-colors"
+                        type="button"
+                        onClick={() => handleDownloadAdminPdf(activeLesson.pdf_attachment)}
+                        className="px-4 py-2 rounded-lg bg-[#063022] hover:bg-[#09422f] text-[#35E6B5] border border-[#35E6B5]/50 text-xs font-mono font-bold flex items-center space-x-1.5 transition-colors cursor-pointer flex-shrink-0"
                       >
                         <Download className="w-3.5 h-3.5" />
-                        <span>Download Brief</span>
+                        <span>Download PDF</span>
                       </button>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                /* Native Video / Cloud Stream Player */
-                <div className="relative aspect-video bg-black flex items-center justify-center">
-                  {hasVideo ? (
-                    embedInfo?.type === 'youtube' || embedInfo?.type === 'vimeo' ? (
-                      <iframe
-                        src={embedInfo.embedUrl}
-                        title={activeLesson.title}
-                        className="w-full h-full border-0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
-                    ) : (
-                      <video
-                        key={resolvedVideoUrl}
-                        ref={videoRef}
-                        src={resolvedVideoUrl}
-                        controls
-                        playsInline
-                        preload="auto"
-                        onPlay={() => setIsVideoPlaying(true)}
-                        onPause={() => setIsVideoPlaying(false)}
-                        onTimeUpdate={handleTimeUpdate}
-                        onEnded={() => {
-                          setIsVideoPlaying(false);
-                          setWatchProgressMap((prev) => ({
-                            ...prev,
-                            [activeLesson.id]: { percentage: 100, maxTime: 9999, duration: 9999 }
-                          }));
-                        }}
-                        poster={course.art || '/assets/course-art/art-01.jpg'}
-                        className="w-full h-full object-cover"
-                      >
-                        <source src={resolvedVideoUrl} type="video/mp4" />
-                      </video>
-                    )
-                  ) : (
-                    <div className="p-8 text-center space-y-3">
-                      <BookOpen className="w-12 h-12 text-[#65F58A]/40 mx-auto" />
-                      <h4 className="text-white font-bold text-sm">Interactive Study Document</h4>
-                      <p className="text-xs text-[#B8E6CE]">Review curriculum notes, terminal commands, and protocols below.</p>
                     </div>
                   )}
-                </div>
-              )}
 
-              {/* Player Bottom Control & Quick Action Bar */}
-              <div className="p-4 bg-emerald-950/30 backdrop-blur-xl border-t border-[#65F58A]/20 flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center space-x-3">
-                  <div className="flex items-center space-x-1 text-xs font-mono text-[#B8E6CE]">
-                    <span>Playback Speed:</span>
-                    {[0.75, 1.0, 1.25, 1.5, 2.0].map((spd) => (
-                      <button
-                        key={spd}
-                        onClick={() => {
-                          setPlaybackSpeed(spd);
-                          if (videoRef.current) videoRef.current.playbackRate = spd;
-                        }}
-                        className={`px-2 py-0.5 rounded text-[11px] font-mono transition-colors ${
-                          playbackSpeed === spd
-                            ? 'bg-[#65F58A] text-[#071018] font-bold'
-                            : 'bg-[#0A241A] text-[#C9EFE0] hover:text-white border border-[#65F58A]/30'
-                        }`}
-                      >
-                        {spd}x
-                      </button>
-                    ))}
+                  {/* Mark Lesson Complete Action */}
+                  <div className="pt-4 border-t border-[#65F58A]/20 flex items-center justify-between">
+                    <span className="text-xs font-mono text-[#72A88E]">
+                      {isLessonCompleted ? 'Unit completed & verified.' : 'Review materials to unlock progress.'}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleMarkLessonComplete}
+                      disabled={savingProgress || isLessonCompleted || !canMarkLessonComplete}
+                      className={`px-5 py-2.5 rounded-xl text-xs font-mono font-bold flex items-center space-x-2 transition-all cursor-pointer ${
+                        isLessonCompleted
+                          ? 'bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/40'
+                          : canMarkLessonComplete
+                          ? 'bg-[#65F58A] text-[#071018] hover:bg-[#35E6B5] shadow-[0_0_15px_rgba(101,245,138,0.4)]'
+                          : 'bg-[#092218] text-[#72A88E] border border-white/5 opacity-50 cursor-not-allowed'
+                      }`}
+                    >
+                      <Check className="w-4 h-4 stroke-[3]" />
+                      <span>{isLessonCompleted ? 'Unit Completed' : savingProgress ? 'Saving...' : 'Mark Complete'}</span>
+                    </button>
                   </div>
-
-                  <div className="hidden sm:flex items-center space-x-2 pl-3 border-l border-[#65F58A]/20 text-xs font-mono">
-                    <span className="text-[#B8E6CE]">Watched:</span>
-                    <span className="text-[#65F58A] font-bold">{currentWatchPct}%</span>
-                    <span className="text-[#8BA2B5] text-[10px]">(&ge;80% required)</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={handlePrevLesson}
-                    disabled={activeIndex === 0}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-mono flex items-center space-x-1 border ${
-                      activeIndex > 0
-                        ? 'bg-[#141E28] text-white hover:bg-[#1B2530] border-[#263440]'
-                        : 'bg-[#0A121A] text-[#8BA2B5]/40 border-[#1B2530] cursor-not-allowed'
-                    }`}
-                  >
-                    <ChevronLeft className="w-3.5 h-3.5" />
-                    <span>Prev</span>
-                  </button>
-
-                  <button
-                    onClick={handleNextLesson}
-                    disabled={activeIndex >= allLessons.length - 1}
-                    className={`px-4 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center space-x-1.5 border transition-all ${
-                      activeIndex < allLessons.length - 1
-                        ? 'bg-[#65F58A] text-[#071018] border-[#65F58A] hover:bg-[#52d674] shadow-sm'
-                        : 'bg-[#141E28] text-[#8BA2B5]/40 border-[#263440] cursor-not-allowed'
-                    }`}
-                  >
-                    <span>Next Lesson</span>
-                    <ChevronRight className="w-3.5 h-3.5 stroke-[3]" />
-                  </button>
                 </div>
               </div>
-            </div>
+            )}
 
-            {/* ========================================================================= */}
-            {/* 3. YOUR LEARNING PROGRESS PANEL (Directly Modeled after Image 4 / Edunex) */}
-            {/* ========================================================================= */}
-            <div className="ultra-glass-panel rounded-2xl p-6 border border-[#65F58A]/30 border-t-white/20 shadow-xl space-y-4">
-              <div className="flex items-center justify-between pb-2 border-b border-[#65F58A]/20">
-                <div>
-                  <span className="text-[10px] font-mono text-[#65F58A] uppercase tracking-wider block">
-                    Telemetry Analytics
-                  </span>
-                  <h3 className="text-base font-bold text-white font-lora">
-                    Your Learning Progress
-                  </h3>
-                </div>
-                <div className="flex items-center space-x-2 text-xs font-mono text-[#B8E6CE]">
-                  <span>Track ID: {course.slug || 'DEF-CYB'}</span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-center">
-                {/* 1. Overall Circular Progress Donut Gauge */}
-                <div className="p-4 rounded-xl ultra-glass-card border border-[#65F58A]/25 border-t-white/15 flex items-center space-x-4">
-                  <div className="relative w-20 h-20 flex-shrink-0 flex items-center justify-center">
-                    <svg className="w-20 h-20 -rotate-90">
-                      <circle
-                        cx="40"
-                        cy="40"
-                        r="34"
-                        className="text-[#0D2418]"
-                        strokeWidth="7"
-                        stroke="currentColor"
-                        fill="transparent"
-                      />
-                      <circle
-                        cx="40"
-                        cy="40"
-                        r="34"
-                        className="text-[#65F58A] transition-all duration-700 ease-out"
-                        strokeWidth="7"
-                        strokeDasharray={circumference}
-                        strokeDashoffset={strokeDashoffset}
-                        strokeLinecap="round"
-                        stroke="currentColor"
-                        fill="transparent"
-                      />
-                    </svg>
-                    <span className="absolute font-mono text-base font-black text-white">
-                      {progressData.percentage}%
+            {/* -------------------- 2. MODULE KNOWLEDGE CHECK (20 QUESTIONS) -------------------- */}
+            {activeUnit?.type === 'quiz' && activeQuiz && (
+              <div className="space-y-6">
+                {/* Intro Card Matching Screenshot 3 */}
+                <div className="cyber-glass-panel rounded-2xl p-6 sm:p-8 border border-[#65F58A]/30 space-y-4 shadow-xl">
+                  <div className="space-y-2 pb-4 border-b border-[#65F58A]/20">
+                    <span className="text-[11px] font-mono text-[#65F58A] font-bold tracking-widest uppercase block">
+                      GRADED EVALUATION • 20 QUESTIONS
                     </span>
+                    <h3 className="text-2xl font-bold text-white font-lora">
+                      {activeQuiz.title || 'Knowledge Check'}
+                    </h3>
+                    <p className="text-xs text-[#C9EFE0] leading-relaxed max-w-3xl">
+                      Congratulations! You have completed the instructional units of {activeUnit.moduleTitle}. Before advancing to the next module, complete this 20-question evaluation to solidify your understanding and verify your operational readiness.
+                    </p>
                   </div>
 
-                  <div>
-                    <span className="text-[10px] font-mono text-[#B8E6CE] uppercase tracking-wider block">
-                      Overall Completion
-                    </span>
-                    <h4 className="text-sm font-bold text-white mt-0.5">
-                      {progressData.percentage >= 100 ? 'Course Completed' : 'In Active Progress'}
-                    </h4>
-                    <span className="text-[11px] font-mono text-[#65F58A] mt-1 block">
-                      {progressData.completed} of {progressData.total} Lessons Done
-                    </span>
-                  </div>
-                </div>
-
-                {/* 2. Lessons Completed Weekly Activity Bar Chart */}
-                <div className="p-4 rounded-xl ultra-glass-card border border-[#65F58A]/25 border-t-white/15 space-y-2">
-                  <div className="flex items-center justify-between text-xs font-mono">
-                    <span className="text-[#B8E6CE]">Lessons Completed:</span>
-                    <span className="text-[#65F58A] font-bold">{progressData.completed}/{progressData.total}</span>
+                  {/* Evaluation Metrics Bar */}
+                  <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl bg-[#061510] border border-[#65F58A]/20 text-xs font-mono">
+                    <div className="space-y-0.5">
+                      <span className="text-[#72A88E]">Passing Threshold:</span>
+                      <span className="text-[#65F58A] font-bold block">{activeQuiz.passing_score || 70}% (14/20 Correct)</span>
+                    </div>
+                    <div className="space-y-0.5">
+                      <span className="text-[#72A88E]">Grading Method:</span>
+                      <span className="text-white font-bold block">Last Score (Instant Feedback)</span>
+                    </div>
+                    <div className="space-y-0.5">
+                      <span className="text-[#72A88E]">Current Status:</span>
+                      <span className={`font-bold block ${isQuizPassed ? 'text-[#65F58A]' : 'text-amber-400'}`}>
+                        {isQuizPassed ? 'PASSED (Completed)' : 'PENDING EVALUATION'}
+                      </span>
+                    </div>
                   </div>
 
-                  {/* Dynamic Vertical Bar Chart */}
-                  <div className="h-14 flex items-end justify-between gap-1.5 pt-2 px-1">
-                    {[
-                      { day: 'M', val: 40 },
-                      { day: 'T', val: 70 },
-                      { day: 'W', val: 55 },
-                      { day: 'T', val: 85 },
-                      { day: 'F', val: progressData.percentage || 65 },
-                      { day: 'S', val: 90 },
-                      { day: 'S', val: 45 }
-                    ].map((item, idx) => (
-                      <div key={idx} className="flex-1 flex flex-col items-center gap-1">
-                        <div className="w-full bg-[#0D2418] rounded-t h-10 flex items-end overflow-hidden">
-                          <div
-                            className="w-full bg-[#65F58A] rounded-t transition-all duration-500"
-                            style={{ height: `${Math.min(100, item.val)}%` }}
-                          />
+                  {/* Passing Banner if completed */}
+                  {quizSubmitted && quizResult && (
+                    <div
+                      className={`p-5 rounded-xl border flex items-center justify-between ${
+                        quizResult.isPassed
+                          ? 'bg-[#092218] border-[#65F58A]/50 text-[#65F58A]'
+                          : 'bg-[#181105] border-amber-500/40 text-amber-300'
+                      }`}
+                    >
+                      <div className="space-y-1">
+                        <div className="flex items-center space-x-2 font-bold text-sm">
+                          {quizResult.isPassed ? <Check className="w-5 h-5 stroke-[3]" /> : <AlertCircle className="w-5 h-5" />}
+                          <span>{quizResult.isPassed ? 'Knowledge Check Passed!' : 'Threshold Not Met'}</span>
                         </div>
-                        <span className="text-[9px] font-mono text-[#B8E6CE]">{item.day}</span>
+                        <p className="text-xs font-mono">
+                          You scored {quizResult.score}% ({quizResult.correctCount}/{quizResult.totalQuestions} questions correct).
+                          {quizResult.isPassed ? ' Your module progress is officially certified.' : ' Review the explanations below and try again.'}
+                        </p>
                       </div>
-                    ))}
-                  </div>
-                </div>
+                      <span className="text-2xl font-bold font-mono">
+                        {quizResult.score}%
+                      </span>
+                    </div>
+                  )}
 
-                {/* 3. Module Performance Horizontal Status Bars */}
-                <div className="p-4 rounded-xl ultra-glass-card border border-[#65F58A]/25 border-t-white/15 space-y-2.5">
-                  <div className="flex items-center justify-between text-xs font-mono">
-                    <span className="text-[#B8E6CE]">Module Performance</span>
-                    <span className="text-[#35E6B5] font-bold">Passing Pace</span>
-                  </div>
+                  {/* 20 Questions Form */}
+                  <form onSubmit={handleSubmitQuiz} className="space-y-6 pt-4">
+                    <h4 className="font-bold text-sm text-white uppercase tracking-wider font-mono">
+                      Multiple Choice Questions
+                    </h4>
 
-                  <div className="space-y-1.5">
-                    {(course.modules || []).slice(0, 3).map((mod, idx) => {
-                      const modCompleted = mod.lessons?.filter((l) =>
-                        enrolment.completed_mandatory_lessons?.includes(l.id)
-                      ).length || 0;
-                      const modTotal = mod.lessons?.length || 1;
-                      const pct = Math.round((modCompleted / modTotal) * 100);
+                    {(activeQuiz.questions || []).map((q, qIdx) => {
+                      const selectedOptId = quizAnswers[q.id];
+                      const correctOpt = q.options?.find((o) => o.is_correct);
+                      const isQuestionCorrect = selectedOptId && correctOpt && selectedOptId === correctOpt.id;
+                      const hasSubmitted = quizSubmitted;
 
                       return (
-                        <div key={mod.id || idx} className="space-y-0.5">
-                          <div className="flex justify-between text-[10px] font-mono">
-                            <span className="text-white truncate max-w-[140px]">{mod.title}</span>
-                            <span className="text-[#65F58A]">{pct}%</span>
+                        <div
+                          key={q.id || qIdx}
+                          className={`p-5 rounded-xl border space-y-3 transition-all ${
+                            hasSubmitted
+                              ? isQuestionCorrect
+                                ? 'border-[#65F58A]/40 bg-[#061912]/80'
+                                : 'border-amber-500/40 bg-[#161006]/80'
+                              : 'border-[#65F58A]/15 bg-[#061510]'
+                          }`}
+                        >
+                          {/* Question Header & Points indicator (Matching Screenshot 3) */}
+                          <div className="flex items-start justify-between gap-4">
+                            <span className="text-xs font-mono text-[#72A88E]">
+                              {hasSubmitted
+                                ? isQuestionCorrect
+                                  ? '1.0/1.0 point (graded)'
+                                  : '0.0/1.0 point (graded)'
+                                : '0.0/1.0 point (graded)'}
+                            </span>
                           </div>
-                          <div className="w-full bg-[#0D2418] h-1.5 rounded-full overflow-hidden">
+
+                          <div className="font-medium text-sm text-white font-lora">
+                            {qIdx + 1}. {q.text}
+                          </div>
+
+                          {/* Options List */}
+                          <div className="space-y-2 pt-1">
+                            {(q.options || []).map((opt) => {
+                              const isChecked = selectedOptId === opt.id;
+                              return (
+                                <label
+                                  key={opt.id}
+                                  className={`p-3 rounded-lg border text-xs flex items-center space-x-3 cursor-pointer transition-all ${
+                                    isChecked
+                                      ? 'bg-[#092218] border-[#65F58A] text-white shadow-sm'
+                                      : 'bg-[#040e0a] border-white/5 text-[#C9EFE0] hover:border-[#65F58A]/30'
+                                  }`}
+                                >
+                                  <input
+                                    type="radio"
+                                    name={`question_${q.id}`}
+                                    value={opt.id}
+                                    checked={isChecked}
+                                    onChange={() => handleSelectQuizOption(q.id, opt.id)}
+                                    className="accent-[#65F58A] w-4 h-4 cursor-pointer"
+                                  />
+                                  <span className="font-lora">{opt.text}</span>
+                                </label>
+                              );
+                            })}
+                          </div>
+
+                          {/* Instant Explanation on Submission */}
+                          {hasSubmitted && (
                             <div
-                              className="bg-[#65F58A] h-full rounded-full transition-all duration-500"
-                              style={{ width: `${pct}%` }}
-                            />
-                          </div>
+                              className={`p-3 rounded-lg text-xs font-mono space-y-1 mt-2 border ${
+                                isQuestionCorrect
+                                  ? 'bg-[#092218]/90 text-[#65F58A] border-[#65F58A]/30'
+                                  : 'bg-[#181105] text-amber-300 border-amber-500/30'
+                              }`}
+                            >
+                              <div className="font-bold flex items-center space-x-1.5">
+                                {isQuestionCorrect ? <Check className="w-3.5 h-3.5" /> : <AlertCircle className="w-3.5 h-3.5" />}
+                                <span>{isQuestionCorrect ? 'Correct Answer' : 'Incorrect — Review Guidance'}</span>
+                              </div>
+                              <p className="font-lora text-[11px] text-[#C9EFE0]">{q.explanation}</p>
+                            </div>
+                          )}
                         </div>
                       );
                     })}
-                  </div>
-                </div>
-              </div>
-            </div>
 
-            {/* Tabbed Workspace: Lesson Notes vs Practical Assignment Submission */}
-            <div className="ultra-glass-panel rounded-2xl p-6 border border-[#65F58A]/30 border-t-white/20 shadow-xl space-y-4">
-              <div className="flex items-center justify-between border-b border-[#65F58A]/20 pb-3">
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => setActiveTab('notes')}
-                    className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all ${
-                      activeTab === 'notes'
-                        ? 'bg-[#65F58A] text-[#071018] shadow-sm'
-                        : 'bg-[#0A241A] text-[#B8E6CE] hover:text-white border border-[#65F58A]/25'
-                    }`}
-                  >
-                    Lesson Notes & Terminal Protocols
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('assignment')}
-                    className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center space-x-1.5 ${
-                      activeTab === 'assignment'
-                        ? 'bg-amber-500 text-[#071018] shadow-sm'
-                        : 'bg-[#0A241A] text-[#B8E6CE] hover:text-white border border-[#65F58A]/25'
-                    }`}
-                  >
-                    <FileCheck className="w-3.5 h-3.5" />
-                    <span>Practical Assignment Submission</span>
-                  </button>
-                </div>
-              </div>
-
-              {activeTab === 'notes' ? (
-                /* Lesson Notes Markdown View with bounded height and custom scrollbar */
-                <div className="max-h-[460px] overflow-y-auto custom-scrollbar pr-3 space-y-4">
-                  <div
-                    className="prose prose-invert max-w-none text-xs sm:text-sm font-lora leading-relaxed text-[#CBD5E1]"
-                    dangerouslySetInnerHTML={{
-                      __html: renderMarkdownToHtml(
-                        activeLesson?.content ||
-                        `### ${activeLesson?.title}\n\nReview defensive cybersecurity protocols, packet inspection steps, and mitigation strategies.\n\n\`\`\`bash\n# Inspect active operational telemetry\nss -tulpn\n\`\`\``
-                      )
-                    }}
-                  />
-                </div>
-              ) : (
-                /* Practical PDF Assignment Submission Card */
-                <div className="space-y-4">
-                  <div className="p-4 rounded-xl bg-[#09121B] border border-[#1B2530] space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <FileCheck className="w-4 h-4 text-amber-400" />
-                        <h4 className="text-xs font-bold text-white font-mono uppercase">
-                          Upload Investigation Report (PDF Only)
-                        </h4>
-                      </div>
-                      <span className="text-[10px] font-mono text-[#8BA2B5]">
-                        Max Size: 25 MB • Signed PDF
+                    {/* Quiz Submit Button & Grading Note */}
+                    <div className="pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-[#65F58A]/20">
+                      <span className="text-xs font-mono text-[#72A88E]">
+                        Grading method: Last Score • 70% passing threshold
                       </span>
-                    </div>
-
-                    <div className="border-2 border-dashed border-[#263440] hover:border-amber-400/50 rounded-xl p-6 text-center space-y-2 transition-colors">
-                      <UploadCloud className="w-8 h-8 text-amber-400 mx-auto" />
-                      <div className="text-xs text-white font-medium">
-                        Drag and drop your signed PDF lab submission here
-                      </div>
-                      <p className="text-[10px] text-[#8BA2B5] font-mono">
-                        Supports Wireshark captures, memory analysis screenshots, and MITRE mapping.
-                      </p>
-                      <label className="inline-block px-4 py-2 mt-2 rounded-lg bg-[#1B2530] hover:bg-[#263440] text-amber-400 border border-amber-400/40 text-xs font-mono font-bold cursor-pointer transition-colors">
-                        Browse PDF File
-                        <input
-                          type="file"
-                          accept=".pdf,application/pdf"
-                          onChange={handlePdfUpload}
-                          className="hidden"
-                        />
-                      </label>
-                    </div>
-
-                    {uploadingFileName && (
-                      <div className="p-3 bg-[#0F1722] border border-amber-500/40 rounded-xl flex items-center justify-between">
-                        <div className="flex items-center space-x-2 text-xs font-mono text-white">
-                          <FileText className="w-4 h-4 text-amber-400" />
-                          <span>{uploadingFileName}</span>
-                        </div>
-                        <button
-                          onClick={confirmAssignmentSubmit}
-                          disabled={submittingPdf}
-                          className="px-4 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-[#071018] font-mono font-bold text-xs transition-colors flex items-center space-x-1"
-                        >
-                          {submittingPdf ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
-                          <span>Submit for Review</span>
-                        </button>
-                      </div>
-                    )}
-
-                    {assignmentSubmission && (
-                      <div className="p-3.5 rounded-xl bg-[#091712] border border-[#65F58A]/30 flex items-center justify-between text-xs font-mono">
-                        <div className="flex items-center space-x-2">
-                          <CheckCircle2 className="w-4 h-4 text-[#65F58A]" />
-                          <div>
-                            <span className="text-white font-bold block">{assignmentSubmission.file_name}</span>
-                            <span className="text-[10px] text-[#8BA2B5]">
-                              Submitted {assignmentSubmission.submitted_at?.split('T')[0]} • Status: <strong className="text-[#65F58A]">{assignmentSubmission.status?.toUpperCase()}</strong>
-                            </span>
-                          </div>
-                        </div>
-                        <span className="text-[10px] px-2 py-0.5 rounded bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30">
-                          UNDER ASSESSMENT
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* ==================================================================== */}
-          {/* RIGHT 4 COLUMNS: COURSE CURRICULUM ACCORDION + TECHNICAL RESOURCES   */}
-          {/* ==================================================================== */}
-          <div className="col-span-12 lg:col-span-4 space-y-6">
-            {/* Curriculum Accordion Container */}
-            <div className="ultra-glass-panel rounded-2xl p-5 border border-[#65F58A]/25 shadow-xl space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-[#65F58A]/15">
-                <div>
-                  <span className="text-[10px] font-mono text-[#B8E6CE] uppercase tracking-wider block">
-                    Course Curriculum
-                  </span>
-                  <h3 className="text-sm font-bold text-white font-lora">
-                    {course.title}
-                  </h3>
-                </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#092218]/60 border border-[#65F58A]/25 text-[#65F58A]">
-                  {course.modules?.length || 0} Chapters
-                </span>
-              </div>
-
-              {/* Accordion Chapter Modules with bounded height & custom scrollbar */}
-              <div className="space-y-3 max-h-[420px] overflow-y-auto custom-scrollbar pr-1">
-                {(course.modules || []).map((mod, modIdx) => {
-                  const isExpanded = expandedModules[mod.id] !== false;
-                  const modCompletedCount = (mod.lessons || []).filter((l) =>
-                    enrolment.completed_mandatory_lessons?.includes(l.id)
-                  ).length;
-                  const modTotalCount = mod.lessons?.length || 0;
-                  const isModCompleted = modTotalCount > 0 && modCompletedCount >= modTotalCount;
-                  const isCurrentMod = mod.lessons?.some((l) => l.id === activeLessonId);
-
-                  return (
-                    <div
-                      key={mod.id || modIdx}
-                      className={`border rounded-xl overflow-hidden transition-all backdrop-blur-md ${
-                        isCurrentMod
-                          ? 'border-[#65F58A]/45 bg-[#0c2a1e]/60 shadow-[0_0_15px_rgba(101,245,138,0.12)]'
-                          : 'border-[#65F58A]/15 bg-[#071912]/50'
-                      }`}
-                    >
-                      {/* Chapter Accordion Header */}
                       <button
-                        type="button"
-                        onClick={() =>
-                          setExpandedModules((prev) => ({
-                            ...prev,
-                            [mod.id]: !isExpanded
-                          }))
-                        }
-                        className="w-full p-3 flex items-center justify-between text-left hover:bg-[#0e2f22]/50 transition-colors"
+                        type="submit"
+                        className="px-6 py-3 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] active:scale-[0.99] text-[#071018] font-bold text-xs font-mono tracking-wider shadow-[0_0_20px_rgba(101,245,138,0.4)] transition-all cursor-pointer flex-shrink-0"
                       >
-                        <div className="flex items-center space-x-2.5 truncate">
-                          {isModCompleted ? (
-                            <CheckCircle2 className="w-4 h-4 text-[#65F58A] flex-shrink-0" />
-                          ) : isCurrentMod ? (
-                            <span className="w-2.5 h-2.5 rounded-full bg-[#65F58A] animate-pulse flex-shrink-0" />
-                          ) : (
-                            <span className="w-2.5 h-2.5 rounded-full bg-[#65F58A]/30 flex-shrink-0" />
-                          )}
-                          <span className="text-xs font-bold text-white truncate font-lora">
-                            {modIdx + 1}. {mod.title}
-                          </span>
-                        </div>
-
-                        <div className="flex items-center space-x-2 flex-shrink-0">
-                          <span className="text-[10px] font-mono text-[#B8E6CE]">
-                            ({modCompletedCount}/{modTotalCount})
-                          </span>
-                          <ChevronDown
-                            className={`w-3.5 h-3.5 text-[#B8E6CE] transition-transform duration-200 ${
-                              isExpanded ? 'rotate-180' : ''
-                            }`}
-                          />
-                        </div>
+                        Submit Answers (20 Questions)
                       </button>
-
-                      {/* Chapter Lessons List */}
-                      {isExpanded && (
-                        <div className="p-2 space-y-1 bg-[#05130e]/60 border-t border-[#65F58A]/15">
-                          {(mod.lessons || []).map((les) => {
-                            const globalIdx = allLessons.findIndex((l) => l.id === les.id);
-                            const isDone = enrolment.completed_mandatory_lessons?.includes(les.id);
-                            const isActive = les.id === activeLessonId;
-                            const isUnlocked = isLessonUnlocked(globalIdx);
-                            const isAsn = les.type === 'assignment';
-
-                            return (
-                              <button
-                                key={les.id}
-                                disabled={!isUnlocked}
-                                onClick={() => {
-                                  if (isUnlocked) {
-                                    setActiveLessonId(les.id);
-                                    if (isAsn) setActiveTab('assignment');
-                                  }
-                                }}
-                                className={`w-full text-left p-2 rounded-lg text-xs flex items-center justify-between transition-all ${
-                                  isActive
-                                    ? 'bg-[#65F58A]/20 border border-[#65F58A]/50 text-white font-bold shadow-[0_0_12px_rgba(101,245,138,0.18)]'
-                                    : isUnlocked
-                                    ? 'hover:bg-[#0e2f22]/50 text-[#C9EFE0] border border-transparent'
-                                    : 'opacity-40 cursor-not-allowed text-[#72A88E] border border-transparent'
-                                }`}
-                              >
-                                <div className="flex items-center space-x-2 truncate pr-2">
-                                  {isDone ? (
-                                    <CheckCircle2 className="w-3.5 h-3.5 text-[#65F58A] flex-shrink-0" />
-                                  ) : isUnlocked ? (
-                                    isAsn ? (
-                                      <FileCheck className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                                    ) : (
-                                      <Play className="w-3 h-3 text-[#65F58A] flex-shrink-0" />
-                                    )
-                                  ) : (
-                                    <Lock className="w-3.5 h-3.5 text-[#72A88E] flex-shrink-0" />
-                                  )}
-                                  <span className="truncate">{les.title}</span>
-                                </div>
-
-                                <div className="flex items-center space-x-1.5 flex-shrink-0 text-[10px] font-mono">
-                                  {isActive ? (
-                                    <span className="text-[#65F58A] font-bold">In Progress</span>
-                                  ) : isDone ? (
-                                    <span className="text-[#65F58A]">Completed</span>
-                                  ) : !isUnlocked ? (
-                                    <span className="text-[#72A88E]">Locked</span>
-                                  ) : (
-                                    <span className="text-[#B8E6CE]">{les.duration || '15 mins'}</span>
-                                  )}
-                                </div>
-                              </button>
-                            );
-                          })}
-
-                          {/* Chapter Quiz Node */}
-                          {mod.quiz && (
-                            <Link
-                              to={`/student/quiz/${mod.quiz.id}`}
-                              className={`w-full p-2.5 rounded-lg text-xs flex items-center justify-between transition-all mt-1 ${
-                                (enrolment.passed_quizzes || []).includes(mod.quiz.id)
-                                  ? 'bg-[#65F58A]/10 border border-[#65F58A]/30 text-[#65F58A]'
-                                  : 'bg-amber-500/10 border border-amber-500/30 text-amber-300 hover:bg-amber-500/20'
-                              }`}
-                            >
-                              <div className="flex items-center space-x-2 truncate">
-                                <Award className="w-3.5 h-3.5 flex-shrink-0" />
-                                <span className="font-semibold truncate">Quiz: {mod.quiz.title}</span>
-                              </div>
-                              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-black/40">
-                                {(enrolment.passed_quizzes || []).includes(mod.quiz.id) ? 'PASSED' : '+100 XP'}
-                              </span>
-                            </Link>
-                          )}
-                        </div>
-                      )}
                     </div>
-                  );
-                })}
-
-                {/* Final Certification Exam Gate */}
-                {course.final_assessment && (
-                  <div className="pt-2">
-                    <Link
-                      to={`/student/final-exam/${enrolmentId}`}
-                      className={`w-full p-3 rounded-xl text-xs font-mono font-bold flex items-center justify-between transition-all border ${
-                        unlockedFinal.is_unlocked
-                          ? 'bg-[#65F58A] text-[#071018] border-[#65F58A] hover:bg-[#52d674] shadow-[0_0_20px_rgba(101,245,138,0.4)]'
-                          : 'bg-[#081a13]/60 border-[#65F58A]/25 text-[#B8E6CE] hover:border-[#65F58A]/40'
-                      }`}
-                    >
-                      <div className="flex items-center space-x-2">
-                        {unlockedFinal.is_unlocked ? (
-                          <Sparkles className="w-4 h-4 text-[#071018]" />
-                        ) : (
-                          <Lock className="w-4 h-4 text-[#B8E6CE]" />
-                        )}
-                        <span>Final Certification Exam</span>
-                      </div>
-                      <span className="text-[10px]">
-                        {unlockedFinal.is_unlocked ? 'UNLOCKED' : 'LOCKED'}
-                      </span>
-                    </Link>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Technical Resources Card */}
-            <div className="ultra-glass-panel rounded-2xl p-5 border border-[#65F58A]/25 shadow-xl space-y-3">
-              <div className="flex items-center justify-between pb-2 border-b border-[#65F58A]/15">
-                <div className="flex items-center space-x-2">
-                  <Download className="w-4 h-4 text-[#65F58A]" />
-                  <h4 className="text-xs font-bold text-white font-mono uppercase tracking-wider">
-                    Chapter Study Resources
-                  </h4>
-                </div>
-                <span className="text-[10px] font-mono text-[#72A88E]">
-                  Active Lesson Bound
-                </span>
-              </div>
-
-              {/* Scrollable Resources List */}
-              <div className="space-y-2 max-h-[230px] overflow-y-auto custom-scrollbar pr-1">
-                {/* 1. Active Chapter Study Notes Document */}
-                <div className="p-3 rounded-xl bg-[#081a13]/60 border border-[#65F58A]/30 flex items-center justify-between text-xs">
-                  <div className="flex items-center space-x-2.5 truncate pr-2">
-                    <FileDown className="w-4 h-4 text-[#65F58A] flex-shrink-0" />
-                    <div className="truncate">
-                      <span className="text-white font-medium block truncate text-[11px]">
-                        {activeLesson?.title || 'Chapter'}_Notes.md
-                      </span>
-                      <span className="text-[10px] font-mono text-[#B8E6CE]">
-                        {Math.max(4, Math.round((activeLesson?.content?.length || 500) / 100))} KB • Chapter Operational Notes
-                      </span>
-                    </div>
-                  </div>
-                  <button
-                    onClick={handleDownloadChapterNotes}
-                    className="px-2.5 py-1 rounded bg-[#0a261a]/70 hover:bg-[#0f3827] text-[#65F58A] border border-[#65F58A]/30 text-[10px] font-mono transition-colors flex-shrink-0"
-                  >
-                    Download Notes
-                  </button>
-                </div>
-
-                {/* 2. Admin-Attached Custom Chapter PDF (if uploaded) */}
-                {activeLesson?.pdf_attachment && (
-                  <div className="p-3 rounded-xl bg-[#092218]/70 border border-[#35E6B5]/40 flex items-center justify-between text-xs">
-                    <div className="flex items-center space-x-2.5 truncate pr-2">
-                      <FileText className="w-4 h-4 text-[#35E6B5] flex-shrink-0" />
-                      <div className="truncate">
-                        <span className="text-white font-medium block truncate text-[11px]">
-                          {activeLesson.pdf_attachment.name}
-                        </span>
-                        <span className="text-[10px] font-mono text-[#35E6B5]">
-                          {activeLesson.pdf_attachment.size} • Instructor Guide (PDF)
-                        </span>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => handleDownloadAdminPdf(activeLesson.pdf_attachment)}
-                      className="px-2.5 py-1 rounded bg-[#063022] hover:bg-[#09422f] text-[#35E6B5] border border-[#35E6B5]/40 text-[10px] font-mono transition-colors flex-shrink-0 font-bold"
-                    >
-                      Download PDF
-                    </button>
-                  </div>
-                )}
-
-                {/* 3. Companion Telemetry SOP Reference */}
-                <div className="p-3 rounded-xl bg-[#081a13]/50 border border-[#65F58A]/20 flex items-center justify-between text-xs">
-                  <div className="flex items-center space-x-2.5 truncate pr-2">
-                    <FileCheck className="w-4 h-4 text-[#72A88E] flex-shrink-0" />
-                    <div className="truncate">
-                      <span className="text-[#C9EFE0] font-medium block truncate text-[11px]">
-                        SOC_Triage_SOP_Matrix.md
-                      </span>
-                      <span className="text-[10px] font-mono text-[#72A88E]">
-                        NIST SP 800-61r2 Protocol Reference
-                      </span>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => handleDownloadResource('SOC Triage Standard Operating Procedure')}
-                    className="px-2.5 py-1 rounded bg-[#0a261a]/60 hover:bg-[#0f3827] text-[#B8E6CE] border border-[#65F58A]/20 text-[10px] font-mono transition-colors flex-shrink-0"
-                  >
-                    Download
-                  </button>
+                  </form>
                 </div>
               </div>
+            )}
+
+            {/* ================= 3. BOTTOM UNIT NAVIGATION BAR (Matching Screenshot 2 & 3) ================= */}
+            <div className="pt-8 pb-12 border-t border-[#65F58A]/20 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={handlePrevUnit}
+                disabled={activeIndex <= 0}
+                className={`px-5 py-2.5 rounded-xl text-xs font-mono font-bold flex items-center space-x-2 border transition-all ${
+                  activeIndex > 0
+                    ? 'bg-[#092218] hover:bg-[#0c2a1e] text-[#65F58A] border-[#65F58A]/30 cursor-pointer shadow-sm'
+                    : 'bg-[#040e0a] text-[#72A88E]/40 border-white/5 cursor-not-allowed'
+                }`}
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span>Previous</span>
+              </button>
+
+              <span className="text-xs font-mono text-[#72A88E] hidden sm:inline">
+                Unit {activeIndex + 1} of {allUnits.length}
+              </span>
+
+              <button
+                type="button"
+                onClick={handleNextUnit}
+                disabled={activeIndex >= allUnits.length - 1}
+                className={`px-5 py-2.5 rounded-xl text-xs font-mono font-bold flex items-center space-x-2 border transition-all ${
+                  activeIndex < allUnits.length - 1
+                    ? 'bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] border-[#65F58A] cursor-pointer shadow-[0_0_15px_rgba(101,245,138,0.3)]'
+                    : 'bg-[#040e0a] text-[#72A88E]/40 border-white/5 cursor-not-allowed'
+                }`}
+              >
+                <span>Next</span>
+                <ChevronRight className="w-4 h-4 stroke-[3]" />
+              </button>
             </div>
           </div>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }
