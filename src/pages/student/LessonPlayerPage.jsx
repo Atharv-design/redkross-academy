@@ -59,6 +59,77 @@ export default function LessonPlayerPage() {
   const [watchProgressMap, setWatchProgressMap] = useState({});
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
+  // PDF Assignment Submission State (PRD & User Lifecycle Requirement)
+  const [assignmentSubmission, setAssignmentSubmission] = useState(null);
+  const [uploadingFileName, setUploadingFileName] = useState('');
+  const [uploadingDataUrl, setUploadingDataUrl] = useState('');
+  const [submittingPdf, setSubmittingPdf] = useState(false);
+
+  const loadAssignmentSubmission = () => {
+    if (!enrolmentId) return;
+    const subs = mockEngine.getAssignmentSubmissions({ enrolment_id: enrolmentId });
+    const currentSub = subs[0] || null;
+    setAssignmentSubmission(currentSub);
+  };
+
+  useEffect(() => {
+    loadAssignmentSubmission();
+    const unsub = mockEngine.subscribe(() => {
+      loadAssignmentSubmission();
+    });
+    return () => unsub();
+  }, [enrolmentId, activeLessonId]);
+
+  const handlePdfUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.name.toLowerCase().endsWith('.pdf') && file.type !== 'application/pdf') {
+      alert('Strict Security Policy: Only valid PDF documents (.pdf) are permitted.');
+      return;
+    }
+
+    if (file.size > 25 * 1024 * 1024) {
+      alert('File size exceeds 25 MB limit.');
+      return;
+    }
+
+    setUploadingFileName(file.name);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setUploadingDataUrl(event.target.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const confirmAssignmentSubmit = () => {
+    if (!uploadingDataUrl || !uploadingFileName || !activeLesson) return;
+    setSubmittingPdf(true);
+
+    try {
+      mockEngine.submitAssignment({
+        cadetId: currentUser?.cadet_id || 'RK-89421',
+        userId: currentUser?.id || enrolment.user_id,
+        enrolmentId,
+        courseId: course.id,
+        moduleId: activeLesson.module_id,
+        assignmentId: `asg_${activeLesson.module_id}`,
+        assignmentTitle: `${activeLesson.module_title} Practical Lab Report`,
+        fileName: uploadingFileName,
+        fileDataUrl: uploadingDataUrl
+      });
+
+      setUploadingFileName('');
+      setUploadingDataUrl('');
+      loadAssignmentSubmission();
+      alert('Assignment submitted successfully! Your assignment is under assessment. You may proceed with subsequent modules.');
+    } catch (e) {
+      alert('Submission failed: ' + e.message);
+    } finally {
+      setSubmittingPdf(false);
+    }
+  };
+
   useEffect(() => {
     if (enrolment && allLessons.length > 0) {
       const firstIncomplete = allLessons.find(
@@ -612,6 +683,93 @@ export default function LessonPlayerPage() {
                     __html: renderMarkdownToHtml(activeLesson?.content || 'No lesson content provided.')
                   }}
                 />
+              </div>
+
+              {/* Mandatory PDF Assignment Checkpoint (PRD & User Lifecycle Requirement) */}
+              <div className="bg-[#101923] border border-[#263440] rounded-2xl p-6 sm:p-7 shadow-xl space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#263440]">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center text-[#65F58A] shrink-0">
+                      <FileDown className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-royal font-bold text-base text-white">Module Technical Assignment</h3>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/30 font-bold uppercase">
+                          PDF ONLY
+                        </span>
+                      </div>
+                      <p className="text-xs text-[#94A3B8] font-mono mt-0.5">
+                        Submit your hands-on laboratory report or triage brief in strict PDF format for academic evaluation.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Status Banners */}
+                {assignmentSubmission?.status === 'under_assessment' && (
+                  <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 space-y-2">
+                    <div className="flex items-center gap-2 text-amber-400 font-mono text-xs font-bold uppercase">
+                      <Clock className="w-4 h-4 animate-spin" />
+                      <span>Your assignment is under assessment</span>
+                    </div>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      Your technical report <strong className="text-white">({assignmentSubmission.file_name})</strong> was successfully received and is currently under review by the Academic Board. <span className="text-[#65F58A] font-semibold">You may proceed with subsequent lessons in the meantime.</span> (All mandatory assignments must pass before final certification can be requested.)
+                    </p>
+                  </div>
+                )}
+
+                {assignmentSubmission?.status === 'passed' && (
+                  <div className="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/40 space-y-1.5">
+                    <div className="flex items-center justify-between text-xs font-mono">
+                      <span className="flex items-center gap-2 text-emerald-400 font-bold">
+                        <CheckCircle2 className="w-4 h-4" />
+                        <span>Assignment Evaluated & Passed</span>
+                      </span>
+                      <span className="text-white font-bold px-2 py-0.5 rounded bg-emerald-500/20">
+                        Grade: {assignmentSubmission.grade}%
+                      </span>
+                    </div>
+                    {assignmentSubmission.reviewer_notes && (
+                      <p className="text-xs text-slate-300 font-mono">
+                        Evaluator Feedback: {assignmentSubmission.reviewer_notes}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {(!assignmentSubmission || assignmentSubmission.status === 'rejected') && (
+                  <div className="space-y-3">
+                    {assignmentSubmission?.status === 'rejected' && (
+                      <div className="p-3.5 rounded-xl bg-red-950/30 border border-red-500/30 text-xs text-red-300 space-y-1">
+                        <span className="font-bold block">Previous Submission Requires Revision:</span>
+                        <span>{assignmentSubmission.reviewer_notes || 'Please review rubrics and re-upload revised report.'}</span>
+                      </div>
+                    )}
+                    <div className="flex flex-col sm:flex-row items-center gap-3">
+                      <label className="flex-1 w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-dashed border-[#263440] hover:border-[#65F58A]/50 bg-[#071018] cursor-pointer text-xs font-mono text-[#94A3B8] hover:text-white transition-all">
+                        <Download className="w-4 h-4 text-[#65F58A]" />
+                        <span>{uploadingFileName || 'Select Assignment Document (.PDF only)'}</span>
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          className="hidden"
+                          onChange={handlePdfUpload}
+                        />
+                      </label>
+                      {uploadingFileName && (
+                        <button
+                          type="button"
+                          onClick={confirmAssignmentSubmit}
+                          disabled={submittingPdf}
+                          className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-[#65F58A] to-[#35E6B5] text-[#071018] font-royal font-bold text-xs uppercase tracking-wider shadow-lg hover:scale-[1.02] transition-all cursor-pointer"
+                        >
+                          {submittingPdf ? 'Submitting...' : 'Upload & Submit PDF'}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Lesson Action Footer */}

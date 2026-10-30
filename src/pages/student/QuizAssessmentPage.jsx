@@ -12,7 +12,11 @@ import {
   ArrowRight,
   RefreshCw,
   Lock,
-  Sparkles
+  Sparkles,
+  Camera,
+  CameraOff,
+  Eye,
+  ShieldAlert
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { mockEngine } from '../../services/db/mockEngine';
@@ -21,7 +25,7 @@ import { useAuth } from '../../services/auth/authContext';
 export default function QuizAssessmentPage() {
   const { enrolmentId, quizId } = useParams();
   const navigate = useNavigate();
-  const { refreshBalance } = useAuth();
+  const { currentUser, refreshBalance } = useAuth();
 
   const enrolment = mockEngine.getEnrolment(enrolmentId);
   const course = enrolment ? mockEngine.getCourseById(enrolment.course_id) : null;
@@ -37,54 +41,67 @@ export default function QuizAssessmentPage() {
     }
   }
 
-  // Window & Cooldown state
-  const [retryWindow, setRetryWindow] = useState(null);
+  // Pre-exam protocol modal state
+  const [showPreExamModal, setShowPreExamModal] = useState(false);
+  const [cameraWarningModal, setCameraWarningModal] = useState(null); // { message: string }
+  const [cameraDropCount, setCameraDropCount] = useState(0);
+
+  // Exam runtime states
   const [activeAttempt, setActiveAttempt] = useState(null);
   const [userAnswers, setUserAnswers] = useState({});
   const [submissionResult, setSubmissionResult] = useState(null);
   const [examStarted, setExamStarted] = useState(false);
-
-  // Proctoring Focus Loss State (PRD Section 7: 3-Strike System)
-  const [focusStrikeModal, setFocusStrikeModal] = useState(null); // { strike: 1|2|3, message: string }
   const [timerSeconds, setTimerSeconds] = useState(900); // 15 mins
   const [timerPaused, setTimerPaused] = useState(false);
 
-  // Remaining Cooldown String
-  const [cooldownCountdown, setCooldownCountdown] = useState('');
+  // Camera video stream ref
+  const videoRef = useRef(null);
+  const streamRef = useRef(null);
 
-  // Load retry window status
-  const refreshWindowState = () => {
+  // 24-Hour Lockout State
+  const [lockoutState, setLockoutState] = useState({ isLocked: false, remainingHours: 0, remainingMinutes: 0 });
+  const [countdownString, setCountdownString] = useState('');
+
+  // Refresh lockout check
+  const checkLockout = () => {
     if (enrolmentId && quizId) {
-      const windowData = mockEngine.getRetryWindow(enrolmentId, quizId);
-      setRetryWindow(windowData);
+      const lock = mockEngine.isExamLocked(enrolmentId, quizId);
+      setLockoutState(lock);
+      return lock;
     }
+    return { isLocked: false };
   };
 
   useEffect(() => {
-    refreshWindowState();
+    checkLockout();
   }, [enrolmentId, quizId]);
 
-  // Cooldown countdown tick
+  // Live countdown timer for 24-hour lockout
   useEffect(() => {
-    if (!retryWindow || !retryWindow.locked_until) return;
+    if (!lockoutState.isLocked || !lockoutState.lockedUntil) return;
 
     const interval = setInterval(() => {
-      const remainingMs = new Date(retryWindow.locked_until).getTime() - Date.now();
+      const lockTime = new Date(lockoutState.lockedUntil).getTime();
+      const now = Date.now();
+      const remainingMs = lockTime - now;
+
       if (remainingMs <= 0) {
         clearInterval(interval);
-        refreshWindowState();
+        checkLockout();
       } else {
         const hours = Math.floor(remainingMs / (1000 * 60 * 60));
         const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((remainingMs % (1000 * 60)) / 1000);
-        setCooldownCountdown(`${hours}h ${minutes}m ${seconds}s`);
+        setCountdownString(
+          `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+        );
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [retryWindow]);
+  }, [lockoutState]);
 
-  // Exam Timer
+  // Exam Countdown Timer
   useEffect(() => {
     if (!examStarted || timerPaused || submissionResult) return;
 
@@ -102,41 +119,194 @@ export default function QuizAssessmentPage() {
     return () => clearInterval(timer);
   }, [examStarted, timerPaused, submissionResult]);
 
-  // Proctoring: Listen to visibilitychange and window blur during exam
+  // Cleanup camera stream
+  const stopCameraStream = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      stopCameraStream();
+    };
+  }, []);
+
+  // Termination handler for proctor violations
+  const terminateExamWithLockout = (violationType, details) => {
+    setExamStarted(false);
+    stopCameraStream();
+
+    const result = mockEngine.recordProctorViolation({
+      enrolmentId,
+      quizId,
+      attemptId: activeAttempt?.id,
+      cadetId: currentUser?.cadet_id || 'RK-89421',
+      studentName: currentUser?.full_name || 'Cadet Operator',
+      violationType,
+      details
+    });
+
+    setSubmissionResult({
+      score_percentage: 0,
+      is_passed: false,
+      terminated: true,
+      termination_reason: violationType,
+      details
+    });
+
+    checkLockout();
+    refreshBalance();
+  };
+
+  // Rule 2: Strict Tab Switching & Window Blur Enforcement
   useEffect(() => {
     if (!examStarted || submissionResult) return;
 
-    const handleFocusLoss = () => {
-      if (!activeAttempt || timerPaused || submissionResult) return;
+    const handleTabViolation = () => {
+      if (!examStarted || submissionResult) return;
+      terminateExamWithLockout(
+        'TAB_SWITCH_BLUR',
+        'Cadet switched browser tab, minimized the window, or lost focus during proctored assessment. Exam terminated immediately.'
+      );
+    };
 
-      setTimerPaused(true);
-      const violationResult = mockEngine.recordFocusViolation(activeAttempt.id);
-      refreshBalance();
-
-      if (violationResult) {
-        setFocusStrikeModal(violationResult);
-        if (violationResult.strike >= 3) {
-          // Exam terminated
-          setSubmissionResult({
-            score_percentage: 0,
-            is_passed: false,
-            terminated: true,
-            reason: 'Proctoring Strike 3 Violation',
-          });
-          refreshWindowState();
-        }
+    window.addEventListener('blur', handleTabViolation);
+    const handleVisibility = () => {
+      if (document.hidden) {
+        handleTabViolation();
       }
     };
-
-    window.addEventListener('blur', handleFocusLoss);
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) handleFocusLoss();
-    });
+    document.addEventListener('visibilitychange', handleVisibility);
 
     return () => {
-      window.removeEventListener('blur', handleFocusLoss);
+      window.removeEventListener('blur', handleTabViolation);
+      document.removeEventListener('visibilitychange', handleVisibility);
     };
-  }, [examStarted, activeAttempt, timerPaused, submissionResult]);
+  }, [examStarted, submissionResult, activeAttempt]);
+
+  // Rule 1: Camera Disconnect Monitoring (1 warning, second disconnect terminates)
+  const handleCameraInterruption = () => {
+    if (!examStarted || submissionResult) return;
+
+    const nextCount = cameraDropCount + 1;
+    setCameraDropCount(nextCount);
+
+    if (nextCount === 1) {
+      // First disconnect: Warning
+      setTimerPaused(true);
+      setCameraWarningModal({
+        title: 'CAMERA FEED DISCONNECTED — WARNING 1 OF 2',
+        message: 'Your proctored camera stream was interrupted. You must keep your camera ON at all times. If your camera turns off one more time, your exam will be IMMEDIATELY TERMINATED with a mandatory 24-Hour Lockout.'
+      });
+    } else {
+      // Second disconnect: Immediate Termination + 24h Lockout
+      setCameraWarningModal(null);
+      terminateExamWithLockout(
+        'CAMERA_DISCONNECT_X2',
+        'Camera stream was disconnected twice during examination. Session terminated and 24-hour lockout applied.'
+      );
+    }
+  };
+
+  // Start exam and initialize camera stream
+  const initializeCameraAndStart = async () => {
+    setShowPreExamModal(false);
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { width: 320, height: 240, facingMode: 'user' },
+        audio: false
+      });
+
+      streamRef.current = stream;
+
+      // Monitor camera tracks for ending
+      const videoTrack = stream.getVideoTracks()[0];
+      if (videoTrack) {
+        videoTrack.onended = () => {
+          handleCameraInterruption();
+        };
+        videoTrack.onmute = () => {
+          handleCameraInterruption();
+        };
+      }
+
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+
+      // Initialize attempt in state
+      const attempt = mockEngine.startQuizAttempt(enrolmentId, quizId);
+      setActiveAttempt(attempt);
+      setExamStarted(true);
+      setTimerPaused(false);
+      setSubmissionResult(null);
+      setUserAnswers({});
+      setCameraDropCount(0);
+    } catch (err) {
+      console.warn('Webcam permission not granted or device missing:', err);
+      // Fallback: If hardware camera is blocked by browser policy, prompt user
+      alert('Camera access is strictly required to launch this proctored examination. Please grant camera permission.');
+      setShowPreExamModal(true);
+    }
+  };
+
+  const resumeCameraAfterWarning = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { width: 320, height: 240, facingMode: 'user' },
+        audio: false
+      });
+      streamRef.current = stream;
+      const videoTrack = stream.getVideoTracks()[0];
+      if (videoTrack) {
+        videoTrack.onended = () => handleCameraInterruption();
+      }
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+      setCameraWarningModal(null);
+      setTimerPaused(false);
+    } catch (e) {
+      alert('Unable to reactivate camera. Exam will be terminated if camera is not active.');
+      terminateExamWithLockout('CAMERA_DISCONNECT_X2', 'Failed to re-establish camera feed after warning.');
+    }
+  };
+
+  const handleSelectOption = (questionId, optionId) => {
+    setUserAnswers((prev) => ({ ...prev, [questionId]: optionId }));
+  };
+
+  const handleSubmit = () => {
+    if (!activeAttempt) return;
+
+    try {
+      stopCameraStream();
+      const result = mockEngine.submitQuizAttempt(
+        activeAttempt.id,
+        userAnswers,
+        quizMeta.questions,
+        quizMeta.passing_score,
+        quizMeta.token_bounty
+      );
+
+      setSubmissionResult(result);
+      setExamStarted(false);
+      refreshBalance();
+      checkLockout();
+
+      if (result.is_passed) {
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      }
+    } catch (e) {
+      alert(e.message);
+    }
+  };
 
   if (!enrolment || !course || !quizMeta) {
     return (
@@ -149,57 +319,35 @@ export default function QuizAssessmentPage() {
     );
   }
 
-  const isLocked = retryWindow?.locked_until && new Date() < new Date(retryWindow.locked_until);
-
-  const handleStartExam = () => {
-    try {
-      const attempt = mockEngine.startQuizAttempt(enrolmentId, quizId);
-      setActiveAttempt(attempt);
-      setExamStarted(true);
-      setTimerPaused(false);
-      setSubmissionResult(null);
-      setUserAnswers({});
-    } catch (e) {
-      alert(e.message);
-      refreshWindowState();
-    }
-  };
-
-  const handleSelectOption = (questionId, optionId) => {
-    setUserAnswers((prev) => ({ ...prev, [questionId]: optionId }));
-  };
-
-  const handleSubmit = () => {
-    if (!activeAttempt) return;
-
-    try {
-      const result = mockEngine.submitQuizAttempt(
-        activeAttempt.id,
-        userAnswers,
-        quizMeta.questions,
-        quizMeta.passing_score,
-        quizMeta.token_bounty
-      );
-
-      setSubmissionResult(result);
-      refreshBalance();
-      refreshWindowState();
-
-      if (result.is_passed) {
-        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-      }
-    } catch (e) {
-      alert(e.message);
-    }
-  };
-
-  const resumeFromWarning = () => {
-    setFocusStrikeModal(null);
-    setTimerPaused(false);
-  };
-
   return (
-    <div className="min-h-screen bg-[#071018] py-12">
+    <div className="min-h-screen bg-[#071018] py-12 relative">
+      {/* Floating Real-Time Proctoring HUD (Camera Feed) */}
+      {examStarted && !submissionResult && (
+        <div className="fixed top-20 right-6 z-40 flex flex-col items-end space-y-2 pointer-events-none">
+          <div className="relative rounded-2xl overflow-hidden border-2 border-[#65F58A]/50 shadow-[0_0_30px_rgba(101,245,138,0.25)] bg-black w-44 h-32">
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className="w-full h-full object-cover mirror"
+            />
+            <div className="absolute top-2 left-2 flex items-center space-x-1 px-2 py-0.5 rounded-full bg-black/70 backdrop-blur-md border border-[#65F58A]/40 text-[9px] font-mono text-[#65F58A]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#65F58A] animate-ping" />
+              <span>LIVE PROCTOR</span>
+            </div>
+            {cameraDropCount > 0 && (
+              <div className="absolute bottom-1 right-2 px-1.5 py-0.5 rounded bg-amber-500/80 text-black text-[9px] font-mono font-bold">
+                WARNED (1/2)
+              </div>
+            )}
+          </div>
+          <div className="text-[10px] font-mono text-slate-400 bg-[#101923]/90 px-2 py-1 rounded-md border border-[#263440]">
+            DO NOT SWITCH TABS OR COVER CAMERA
+          </div>
+        </div>
+      )}
+
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Top Breadcrumb */}
         <div className="flex items-center justify-between pb-4 border-b border-surface-border">
@@ -216,36 +364,43 @@ export default function QuizAssessmentPage() {
           </div>
         </div>
 
-        {/* 24-HOUR COOLDOWN LOCKOUT BANNER */}
-        {isLocked ? (
-          <div className="bg-surface-card border border-rose-600/50 rounded-xl p-8 shadow-2xl text-center space-y-6">
-            <div className="w-16 h-16 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-500 mx-auto">
-              <Lock className="w-8 h-8" />
+        {/* 24-HOUR STRICT PROCTOR LOCKOUT SCREEN */}
+        {lockoutState.isLocked ? (
+          <div className="bg-surface-card border-2 border-red-500/50 rounded-2xl p-8 shadow-2xl text-center space-y-6">
+            <div className="w-20 h-20 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-500 mx-auto">
+              <Lock className="w-10 h-10 animate-pulse" />
             </div>
 
             <div className="space-y-2">
-              <div className="text-xs font-mono text-rose-400 uppercase font-semibold">
-                PRD MANDATORY EVALUATION LOCKOUT (24-HOUR COOLDOWN)
+              <div className="px-3 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/30 text-[10px] font-mono uppercase font-bold tracking-wider inline-block">
+                EXAM TERMINATED — MANDATORY 24-HOUR LOCKOUT ACTIVE
               </div>
-              <h2 className="text-2xl font-bold text-white">Evaluation Window Locked</h2>
-              <p className="text-xs text-slate-300 max-w-md mx-auto leading-relaxed">
-                You have exhausted all 3 attempts in your current evaluation window. As mandated by the RedKross Academic Integrity Charter, this assessment is locked for 24 hours to enforce remedial study.
+              <h2 className="text-2xl font-royal font-bold text-white">Evaluation Session Suspended</h2>
+              <p className="text-xs text-slate-300 max-w-lg mx-auto leading-relaxed">
+                As mandated by the Academy Charter, an anti-cheat proctor rule violation (such as tab switching or camera disconnect) enforces a strict 24-hour lockout. Even if retake attempts remain, access is completely blocked until the countdown elapses.
               </p>
             </div>
 
-            <div className="p-4 rounded-lg bg-surface-100 max-w-xs mx-auto border border-surface-border">
-              <div className="text-[10px] text-slate-400 font-mono uppercase mb-1">Unlocks In</div>
-              <div className="text-2xl font-bold text-rose-400 font-mono tracking-widest tabular-nums">
-                {cooldownCountdown || 'Calculating...'}
+            <div className="p-5 rounded-xl bg-[#071018] max-w-sm mx-auto border border-red-500/30 space-y-1">
+              <div className="text-[10px] text-slate-400 font-mono uppercase tracking-wider">Unlocks In</div>
+              <div className="text-3xl font-bold text-red-400 font-mono tracking-widest tabular-nums">
+                {countdownString || '23:59:59'}
               </div>
+              <div className="text-[10px] text-slate-500 font-mono">Hours : Minutes : Seconds</div>
             </div>
 
-            <div className="pt-2">
+            <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
               <Link
                 to={`/student/learn/${enrolmentId}`}
-                className="px-6 py-2.5 rounded-lg bg-surface-100 hover:bg-surface-200 border border-surface-border text-slate-200 text-xs font-semibold"
+                className="px-6 py-2.5 rounded-xl bg-surface-100 hover:bg-surface-200 border border-surface-border text-slate-200 text-xs font-semibold"
               >
-                Review Course Modules & Remediate
+                Return to Course Lessons
+              </Link>
+              <Link
+                to="/student"
+                className="px-6 py-2.5 rounded-xl bg-redkross-600/20 hover:bg-redkross-600/30 border border-redkross-500/40 text-redkross-300 text-xs font-semibold"
+              >
+                Student Operator Portal
               </Link>
             </div>
           </div>
@@ -267,14 +422,12 @@ export default function QuizAssessmentPage() {
             {/* Evaluation Window Status */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono">
               <div className="p-3.5 rounded-lg bg-surface-100 border border-surface-border">
-                <div className="text-[10px] text-slate-400 uppercase">Evaluation Window</div>
-                <div className="text-sm font-bold text-white">Window #{retryWindow?.window_number || 1}</div>
+                <div className="text-[10px] text-slate-400 uppercase">Proctor Status</div>
+                <div className="text-sm font-bold text-[#65F58A]">Webcam Enforced</div>
               </div>
               <div className="p-3.5 rounded-lg bg-surface-100 border border-surface-border">
-                <div className="text-[10px] text-slate-400 uppercase">Attempts Consumed</div>
-                <div className="text-sm font-bold text-amber-400 tabular-nums">
-                  {retryWindow?.attempts_used || 0} of 3 Used
-                </div>
+                <div className="text-[10px] text-slate-400 uppercase">Focus Policy</div>
+                <div className="text-sm font-bold text-amber-400">Strict Single-Tab</div>
               </div>
               <div className="p-3.5 rounded-lg bg-surface-100 border border-surface-border">
                 <div className="text-[10px] text-slate-400 uppercase">Reward Bounty</div>
@@ -285,28 +438,12 @@ export default function QuizAssessmentPage() {
               </div>
             </div>
 
-            {/* Anti-Cheat & Proctoring Briefing */}
-            <div className="p-4 rounded-lg bg-redkross-950/20 border border-redkross-600/30 text-xs space-y-2">
-              <div className="font-bold text-redkross-400 flex items-center space-x-1.5">
-                <Shield className="w-4 h-4" />
-                <span>3-Strike Exam Focus Tracking Active</span>
-              </div>
-              <p className="text-[11px] text-slate-300 leading-relaxed">
-                Client tab-switches and window minimizes are actively monitored during this test:
-              </p>
-              <ul className="list-disc pl-4 space-y-1 text-[11px] text-slate-300">
-                <li><strong>Strike 1:</strong> Warning modal pauses exam timer.</li>
-                <li><strong>Strike 2:</strong> Severe alert + <strong>50 RedKross Tokens deducted</strong> from wallet.</li>
-                <li><strong>Strike 3:</strong> Immediate test termination, recorded as failed attempt, and 24-hour lockout applied.</li>
-              </ul>
-            </div>
-
             <button
-              onClick={handleStartExam}
-              className="w-full py-3.5 rounded-lg bg-redkross-600 hover:bg-redkross-700 text-white font-semibold text-sm transition-all shadow-lg hover:cyber-glow-red flex items-center justify-center space-x-2"
+              onClick={() => setShowPreExamModal(true)}
+              className="w-full py-4 rounded-xl bg-gradient-to-r from-redkross-600 to-red-500 hover:from-redkross-700 hover:to-red-600 text-white font-royal font-bold text-sm transition-all shadow-lg hover:cyber-glow-red flex items-center justify-center space-x-2"
             >
-              <Award className="w-4 h-4" />
-              <span>Begin Attempt #{((retryWindow?.attempts_used || 0) + 1)}</span>
+              <Shield className="w-4 h-4" />
+              <span>Review Proctor Rules & Launch Exam</span>
             </button>
           </div>
         ) : submissionResult ? (
@@ -379,18 +516,6 @@ export default function QuizAssessmentPage() {
               >
                 Back to Course Lessons
               </Link>
-
-              {!submissionResult.is_passed && !isLocked && (
-                <button
-                  onClick={() => {
-                    setSubmissionResult(null);
-                    setExamStarted(false);
-                  }}
-                  className="px-6 py-2.5 rounded-lg bg-redkross-600 hover:bg-redkross-700 text-white text-xs font-semibold shadow"
-                >
-                  Retry Evaluation (Attempt #{((retryWindow?.attempts_used || 0) + 1)})
-                </button>
-              )}
             </div>
           </div>
         ) : (
@@ -400,9 +525,9 @@ export default function QuizAssessmentPage() {
             <div className="p-4 rounded-xl bg-surface-card border border-surface-border flex items-center justify-between">
               <div className="flex items-center space-x-2 text-xs font-mono">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-slate-300 font-semibold">Active Attempt #{activeAttempt?.attempt_number}</span>
+                <span className="text-slate-300 font-semibold">Active Assessment</span>
                 <span className="text-slate-500">•</span>
-                <span className="text-slate-400">Window #{activeAttempt?.window_number}</span>
+                <span className="text-[#65F58A] font-bold">Proctored Session</span>
               </div>
 
               {/* Countdown Timer */}
@@ -475,36 +600,120 @@ export default function QuizAssessmentPage() {
           </div>
         )}
 
-        {/* PROCTORING 3-STRIKE WARNING MODAL */}
-        {focusStrikeModal && focusStrikeModal.strike < 3 && (
-          <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-            <div className="bg-surface-card border border-rose-600 rounded-xl p-6 max-w-md w-full shadow-2xl text-center space-y-4">
-              <div className="w-14 h-14 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-500 mx-auto">
-                <AlertTriangle className="w-7 h-7" />
+        {/* ==================================================== */}
+        {/* PRE-EXAM PROTOCOL MODAL (2 RULES + "ALL THE BEST") */}
+        {/* ==================================================== */}
+        {showPreExamModal && (
+          <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl flex items-center justify-center p-4">
+            <div className="glass-card max-w-lg w-full rounded-3xl p-8 border border-[#65F58A]/40 shadow-2xl space-y-6 relative overflow-hidden animate-fade-in">
+              <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-[#65F58A]/10 to-transparent rounded-full blur-2xl -z-10" />
+
+              {/* Header */}
+              <div className="text-center space-y-1.5">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#65F58A]/10 border border-[#65F58A]/30 text-[#65F58A] text-[10px] font-mono uppercase tracking-wider">
+                  <ShieldAlert className="w-3.5 h-3.5" />
+                  <span>Mandatory Examination Proctor Rules</span>
+                </div>
+                <h2 className="text-xl font-royal font-bold text-white tracking-wide">
+                  Academic Integrity Verification
+                </h2>
+              </div>
+
+              {/* 2 Strict Rules */}
+              <div className="space-y-3.5 text-xs">
+                {/* Rule 1: Camera */}
+                <div className="p-4 rounded-2xl bg-[#101923] border border-amber-500/30 flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0 mt-0.5">
+                    <Camera className="w-4 h-4" />
+                  </div>
+                  <div className="space-y-1">
+                    <div className="font-bold font-mono text-amber-400 uppercase tracking-wide">
+                      Rule 1: Camera Open Compulsory
+                    </div>
+                    <p className="text-[#94A3B8] leading-relaxed">
+                      Continuous webcam streaming is strictly mandatory. If your camera turns off, you will receive <strong className="text-white">exactly 1 warning</strong>. A second camera interruption will immediately terminate the exam and enforce a <strong className="text-amber-300">24-hour lockout</strong> with an incident alert dispatched to the Super Admin.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Rule 2: Tab Switch Prohibited */}
+                <div className="p-4 rounded-2xl bg-[#101923] border border-red-500/30 flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 shrink-0 mt-0.5">
+                    <Eye className="w-4 h-4" />
+                  </div>
+                  <div className="space-y-1">
+                    <div className="font-bold font-mono text-red-400 uppercase tracking-wide">
+                      Rule 2: Zero Tab-Switching Tolerance
+                    </div>
+                    <p className="text-[#94A3B8] leading-relaxed">
+                      Switching tabs, minimizing the browser, or changing application focus is <strong className="text-white">strictly forbidden</strong>. Doing so terminates the session immediately. Even if 3 attempts remain, you will be locked out for <strong className="text-red-300">24 hours</strong> without exception.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Center Highlight: "All the best" */}
+              <div className="py-4 text-center border-y border-[#263440]">
+                <div className="font-royal text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#65F58A] via-[#35E6B5] to-emerald-400 drop-shadow-[0_0_20px_rgba(101,245,138,0.5)] tracking-wide">
+                  All the best
+                </div>
+                <p className="text-[11px] text-[#94A3B8] font-mono mt-1">
+                  Demonstrate rigorous operational discipline and clear the threshold.
+                </p>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowPreExamModal(false)}
+                  className="flex-1 py-3 rounded-xl bg-[#1B2530] hover:bg-[#263440] text-xs font-mono text-slate-300 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={initializeCameraAndStart}
+                  className="flex-[2] py-3 rounded-xl bg-gradient-to-r from-[#65F58A] to-[#35E6B5] text-[#071018] font-royal font-bold text-xs uppercase tracking-wider shadow-[0_0_20px_rgba(101,245,138,0.35)] hover:scale-[1.02] transition-all cursor-pointer"
+                >
+                  Enable Camera & Launch Exam
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ==================================================== */}
+        {/* CAMERA DISCONNECT WARNING MODAL (WARNING 1 OF 2) */}
+        {/* ==================================================== */}
+        {cameraWarningModal && (
+          <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex items-center justify-center p-4">
+            <div className="glass-card max-w-md w-full rounded-3xl p-7 border-2 border-amber-500 shadow-2xl text-center space-y-4">
+              <div className="w-16 h-16 rounded-full bg-amber-500/10 border border-amber-500/40 flex items-center justify-center text-amber-400 mx-auto">
+                <CameraOff className="w-8 h-8 animate-pulse" />
               </div>
 
               <div className="space-y-1">
-                <div className="text-xs font-mono text-rose-400 uppercase font-bold tracking-wider">
-                  Proctoring Alert — Strike {focusStrikeModal.strike} of 3
+                <div className="text-[10px] font-mono text-amber-400 uppercase font-bold tracking-wider">
+                  FIRST & FINAL WARNING
                 </div>
-                <h3 className="text-lg font-bold text-white">Browser Window Focus Lost</h3>
+                <h3 className="text-lg font-royal font-bold text-white">{cameraWarningModal.title}</h3>
               </div>
 
               <p className="text-xs text-slate-300 leading-relaxed">
-                {focusStrikeModal.message}
+                {cameraWarningModal.message}
               </p>
 
-              {focusStrikeModal.strike === 2 && (
-                <div className="p-2.5 rounded bg-rose-950/40 border border-rose-600/40 text-xs font-mono text-rose-300 font-bold">
-                  Penalty Applied: -50 RedKross Tokens
-                </div>
-              )}
+              <div className="p-3 rounded-xl bg-amber-950/40 border border-amber-500/30 text-[11px] font-mono text-amber-300">
+                Next Disconnect Result: Immediate 24-Hour Lockout
+              </div>
 
               <button
-                onClick={resumeFromWarning}
-                className="w-full py-2.5 rounded-lg bg-redkross-600 hover:bg-redkross-700 text-white font-semibold text-xs shadow-lg"
+                type="button"
+                onClick={resumeCameraAfterWarning}
+                className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-royal font-bold text-xs uppercase tracking-wider shadow-lg transition-all"
               >
-                Acknowledge & Resume Assessment
+                Re-enable Camera & Resume Exam
               </button>
             </div>
           </div>

@@ -275,6 +275,47 @@ export default function VerifyCredentialPage() {
           </div>
         ) : hasSearched && credential ? (
           /* 2. SPECIFIC CREDENTIAL CERTIFICATE VIEW */
+          credential.revoked ? (
+            /* REVOKED / CANCELLED NOTICE (PRD & User Specification) */
+            <div className="glass-card rounded-2xl p-8 border-2 border-red-500/60 shadow-2xl space-y-6 text-center relative overflow-hidden">
+              <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-500 mx-auto">
+                <AlertTriangle className="w-8 h-8 animate-pulse" />
+              </div>
+
+              <div className="space-y-2">
+                <div className="inline-block px-3 py-1 rounded-full bg-red-500/15 text-red-400 border border-red-500/40 text-xs font-mono font-bold tracking-wider uppercase">
+                  CREDENTIAL REVOKED & NULLIFIED
+                </div>
+                <h2 className="text-2xl font-royal font-bold text-white tracking-wide">
+                  This Certificate Has Been Cancelled
+                </h2>
+                <p className="text-xs text-slate-300 max-w-lg mx-auto leading-relaxed font-mono">
+                  The certificate credential <strong className="text-white font-mono">{credential.id || credential.verification_id}</strong> is officially revoked by RedKross Academy and is not valid for professional authentication.
+                </p>
+              </div>
+
+              {credential.revocation_reason && (
+                <div className="p-4 rounded-xl bg-red-950/40 border border-red-500/40 text-xs font-mono text-red-300 max-w-md mx-auto text-left space-y-1">
+                  <div className="text-[10px] uppercase text-red-400 font-bold tracking-wider">Formal Revocation Reason:</div>
+                  <div className="text-slate-200">{credential.revocation_reason}</div>
+                  {credential.revoked_at && (
+                    <div className="text-[10px] text-slate-400 pt-1">
+                      Revocation Timestamp: {new Date(credential.revoked_at).toLocaleString()}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <div className="pt-2">
+                <Link
+                  to="/verify"
+                  className="px-6 py-2.5 rounded-xl bg-[#1B2530] hover:bg-[#263440] text-xs font-mono text-white transition-colors"
+                >
+                  Verify Another Credential
+                </Link>
+              </div>
+            </div>
+          ) : (
           <div className="glass-card rounded-2xl p-6 sm:p-8 space-y-6 relative overflow-hidden">
             {/* Top Security Banner */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-[#263440] gap-4">
@@ -356,6 +397,7 @@ export default function VerifyCredentialPage() {
               </button>
             </div>
           </div>
+          )
         ) : hasSearched && !loading ? (
           <div className="glass-card rounded-2xl p-12 text-center space-y-4">
             <AlertTriangle className="w-12 h-12 text-[#F59E0B] mx-auto" />

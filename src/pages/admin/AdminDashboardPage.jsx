@@ -28,8 +28,11 @@ export default function AdminDashboardPage() {
     totalStudents: 0,
     activeCourses: 0,
     issuedCerts: 0,
+    revokedCerts: 0,
     enrolmentCount: 0,
-    completionRate: 78.4,
+    pendingAssignments: 0,
+    pendingCertificates: 0,
+    activeLockouts: 0,
     tokensCirculated: 0,
     publicCatalogEnabled: true
   });
@@ -40,29 +43,27 @@ export default function AdminDashboardPage() {
 
   const loadDashboardData = () => {
     try {
+      const stats = mockEngine.getRealDatabaseStats();
       const db = mockEngine.getDb();
-      if (db) {
-        const students = (db.users || []).filter((u) => u.role === 'student' || !u.role);
-        const courses = db.courses || [];
-        const certs = db.credentials || [];
-        const enrolments = db.enrolments || [];
-        const tokens = (db.users || []).reduce((sum, u) => sum + (u.token_balance || 0), 0);
-        const logs = db.audit_logs || [];
+      const tokens = (db?.users || []).reduce((sum, u) => sum + (u.token_balance || 0), 0);
+      const logs = db?.audit_logs || [];
 
-        setMetrics({
-          totalStudents: students.length,
-          activeCourses: courses.filter((c) => c.status === 'PUBLISHED' || !c.status).length,
-          issuedCerts: certs.length,
-          enrolmentCount: enrolments.length,
-          completionRate: 84.2,
-          tokensCirculated: tokens || 3420,
-          publicCatalogEnabled: db.public_catalog_enabled !== false
-        });
+      setMetrics({
+        totalStudents: stats.totalStudents,
+        activeCourses: stats.totalCourses,
+        issuedCerts: stats.validCredentialsCount,
+        revokedCerts: stats.revokedCredentialsCount,
+        enrolmentCount: stats.totalEnrolments,
+        pendingAssignments: stats.pendingAssignmentsCount,
+        pendingCertificates: stats.pendingCertificatesCount,
+        activeLockouts: stats.activeLockoutsCount,
+        tokensCirculated: tokens,
+        publicCatalogEnabled: db?.public_catalog_enabled !== false
+      });
 
-        setRecentActivities(logs.slice(0, 6));
-      }
+      setRecentActivities(logs.slice(0, 6));
     } catch (e) {
-      console.warn('Dashboard telemetry fallback error:', e);
+      console.warn('Dashboard telemetry error:', e);
     } finally {
       setLoading(false);
     }
@@ -105,7 +106,7 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-4 gap-5">
         <div className="p-5 rounded-2xl cyber-glass-card space-y-2 relative overflow-hidden group">
           <div className="flex items-center justify-between text-xs font-mono text-[#94A3B8]">
-            <span className="uppercase tracking-wider">Total Active Students</span>
+            <span className="uppercase tracking-wider">Total Registered Cadets</span>
             <Users className="w-4 h-4 text-[#65F58A]" />
           </div>
           <div className="text-3xl font-extrabold font-mono text-white tabular-nums">
@@ -113,7 +114,7 @@ export default function AdminDashboardPage() {
           </div>
           <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#65F58A]">
             <TrendingUp className="w-3 h-3" />
-            <span>+12 this week • 100% ID verified</span>
+            <span>{metrics.enrolmentCount} active course enrolments</span>
           </div>
           <div className="absolute top-0 right-0 w-28 h-28 bg-[#65F58A]/10 rounded-full blur-2xl pointer-events-none group-hover:bg-[#65F58A]/15 transition-all" />
         </div>
@@ -127,21 +128,21 @@ export default function AdminDashboardPage() {
             {metrics.activeCourses} Courses
           </div>
           <div className="text-[11px] font-mono text-[#94A3B8]">
-            Across 2 Core Specialization Tracks
+            {metrics.pendingAssignments} assignments awaiting review
           </div>
           <div className="absolute top-0 right-0 w-28 h-28 bg-[#35E6B5]/10 rounded-full blur-2xl pointer-events-none group-hover:bg-[#35E6B5]/15 transition-all" />
         </div>
 
         <div className="p-5 rounded-2xl cyber-glass-card space-y-2 relative overflow-hidden group">
           <div className="flex items-center justify-between text-xs font-mono text-[#94A3B8]">
-            <span className="uppercase tracking-wider">Credentials Minted</span>
+            <span className="uppercase tracking-wider">Valid Credentials</span>
             <Award className="w-4 h-4 text-[#65F58A]" />
           </div>
           <div className="text-3xl font-extrabold font-mono text-[#65F58A] tabular-nums">
             {metrics.issuedCerts}
           </div>
           <div className="text-[11px] font-mono text-[#94A3B8]">
-            Cryptographically Anchored & Public
+            {metrics.revokedCerts > 0 ? `${metrics.revokedCerts} revoked` : '0 revoked'} • {metrics.pendingCertificates} pending dispatch
           </div>
           <div className="absolute top-0 right-0 w-28 h-28 bg-[#65F58A]/10 rounded-full blur-2xl pointer-events-none group-hover:bg-[#65F58A]/15 transition-all" />
         </div>
@@ -155,7 +156,7 @@ export default function AdminDashboardPage() {
             {metrics.tokensCirculated.toLocaleString()}
           </div>
           <div className="text-[11px] font-mono text-[#94A3B8]">
-            Non-Monetary Reward Incentive Ledger
+            {metrics.activeLockouts > 0 ? `${metrics.activeLockouts} active 24h exam lockouts` : 'Operational health nominal'}
           </div>
           <div className="absolute top-0 right-0 w-28 h-28 bg-amber-400/10 rounded-full blur-2xl pointer-events-none group-hover:bg-amber-400/15 transition-all" />
         </div>

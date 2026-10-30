@@ -56,8 +56,12 @@ export default function Navbar() {
   const handleSignOut = async () => {
     setShowProfileMenu(false);
     setMobileMenuOpen(false);
-    await logout();
     navigate('/');
+    try {
+      await logout();
+    } catch (e) {
+      console.warn('Sign out note:', e);
+    }
   };
 
   const navLinks = [
@@ -210,20 +214,28 @@ export default function Navbar() {
               {currentUser ? (
                 <div className="relative flex-shrink-0">
                   <button
+                    type="button"
                     onClick={() => setShowProfileMenu(!showProfileMenu)}
-                    className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#1B2530] hover:bg-[#263440] border border-[#263440] text-xs text-white transition-all"
+                    className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#1B2530] hover:bg-[#263440] border border-[#263440] text-xs text-white transition-all cursor-pointer"
                   >
                     <div className="w-6 h-6 rounded-full overflow-hidden bg-[#101923] border border-[#65F58A]/40 flex items-center justify-center flex-shrink-0">
                       {currentUser.avatar ? (
-                        <img src={currentUser.avatar} alt={currentUser.full_name} className="w-full h-full object-cover" />
+                        <img
+                          src={currentUser.avatar}
+                          alt={currentUser.full_name || 'Cadet'}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                          }}
+                        />
                       ) : (
                         <span className="text-[10px] font-mono text-[#65F58A]">
-                          {currentUser.full_name?.charAt(0) || 'O'}
+                          {(currentUser.full_name || currentUser.email || 'C').charAt(0).toUpperCase()}
                         </span>
                       )}
                     </div>
                     <span className="max-w-[75px] md:max-w-[100px] truncate text-xs font-mono hidden sm:inline">
-                      {currentUser.full_name?.split(' ')[0] || currentUser.email?.split('@')[0]}
+                      {(currentUser.full_name || currentUser.email || 'Cadet').split(' ')[0]}
                     </span>
                     {currentUser.cadet_id && (
                       <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/30 hidden md:inline font-bold">
@@ -242,10 +254,10 @@ export default function Navbar() {
                     <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-[#101923] border border-[#263440] shadow-2xl py-2 z-50 divide-y divide-[#263440]">
                       <div className="px-4 py-3">
                         <div className="font-royal font-bold text-sm text-white truncate">
-                          {currentUser.full_name}
+                          {currentUser.full_name || 'Cadet Operator'}
                         </div>
                         <div className="text-xs text-[#94A3B8] font-mono truncate">
-                          {currentUser.email}
+                          {currentUser.email || 'operator@redkross.org.in'}
                         </div>
                         {currentUser.cadet_id && (
                           <div className="mt-1 text-[11px] font-mono text-[#65F58A] font-bold">
@@ -254,7 +266,7 @@ export default function Navbar() {
                         )}
                         <div className="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono uppercase bg-[#65F58A]/10 border border-[#65F58A]/30 text-[#65F58A]">
                           <span className="w-1.5 h-1.5 rounded-full bg-[#65F58A]" />
-                          <span>Role: {currentUser.role?.replace('_', ' ')}</span>
+                          <span>Role: {(currentUser.role || 'student').replace('_', ' ')}</span>
                         </div>
                       </div>
 
@@ -299,8 +311,9 @@ export default function Navbar() {
 
                       <div className="py-1">
                         <button
+                          type="button"
                           onClick={handleSignOut}
-                          className="w-full flex items-center gap-2 px-4 py-2 text-xs font-mono text-red-400 hover:bg-red-500/10 transition-colors text-left"
+                          className="w-full flex items-center gap-2 px-4 py-2 text-xs font-mono text-red-400 hover:bg-red-500/10 transition-colors text-left cursor-pointer"
                         >
                           <LogOut className="w-4 h-4" />
                           <span>Sign Out</span>

@@ -11,10 +11,33 @@ import {
   INITIAL_ENROLMENTS,
   INITIAL_REWARD_LEDGER,
   INITIAL_AUDIT_LOGS,
-} from './seedData';
+} from './seedData.js';
+import { socketClient } from '../socket/socketClient.js';
 
 const STORAGE_KEY = 'redkross_academy_db_v1';
 const BROADCAST_BUS_CHANNEL = 'redkross_academy_bus';
+
+const memoryStore = new Map();
+const safeStorage = {
+  getItem: (key) => {
+    if (typeof localStorage !== 'undefined') {
+      try { return localStorage.getItem(key); } catch (e) { return memoryStore.get(key) || null; }
+    }
+    return memoryStore.get(key) || null;
+  },
+  setItem: (key, val) => {
+    if (typeof localStorage !== 'undefined') {
+      try { localStorage.setItem(key, String(val)); } catch (e) { memoryStore.set(key, String(val)); }
+    }
+    memoryStore.set(key, String(val));
+  },
+  removeItem: (key) => {
+    if (typeof localStorage !== 'undefined') {
+      try { localStorage.removeItem(key); } catch (e) {}
+    }
+    memoryStore.delete(key);
+  }
+};
 
 export function generateDeterministicCadetId(email = '', uid = '', existingUsers = []) {
   const seedString = `${(email || '').trim().toLowerCase()}::${(uid || '').trim()}`;
@@ -89,6 +112,14 @@ class MockEngine {
   emit(type, payload = {}) {
     this.notifyListeners(type, payload);
 
+    if (socketClient) {
+      try {
+        socketClient.emit(type, payload);
+      } catch (err) {
+        // Ignored
+      }
+    }
+
     if (globalBroadcastChannel) {
       try {
         globalBroadcastChannel.postMessage({ type, payload, timestamp: Date.now() });
@@ -121,8 +152,9 @@ class MockEngine {
   }
 
   initDatabase(forceReset = false) {
-    if (forceReset || !localStorage.getItem(STORAGE_KEY)) {
+    if (forceReset || !safeStorage.getItem(STORAGE_KEY)) {
       const initialDb = {
+        _initialized: true,
         users: INITIAL_USERS,
         learning_paths: INITIAL_LEARNING_PATHS,
         courses: INITIAL_COURSES,
@@ -133,23 +165,40 @@ class MockEngine {
         quiz_retry_windows: {}, // { `${enrolmentId}_${quizId}`: { window_num: 1, attempts_used: 1, locked_until: null } }
         quiz_attempts: [],
         exam_violation_events: [],
+        assignment_submissions: [],
+        certificate_requests: [],
       };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(initialDb));
+      safeStorage.setItem(STORAGE_KEY, JSON.stringify(initialDb));
     }
   }
 
   getDb() {
     try {
-      const data = localStorage.getItem(STORAGE_KEY);
+      const data = safeStorage.getItem(STORAGE_KEY);
       let parsed = data ? JSON.parse(data) : null;
-      if (!parsed || !parsed.courses || parsed.courses.length === 0) {
+      // PERMANENT PERSISTENCE FIX: Never re-initialize if courses or users are empty.
+      // An empty array is a valid user mutation (e.g. admin deleted all courses).
+      if (!parsed || !parsed._initialized) {
         this.initDatabase(true);
-        parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        parsed = JSON.parse(safeStorage.getItem(STORAGE_KEY));
       }
+
+      // Ensure all core collections exist as arrays
+      parsed.courses = parsed.courses || [];
+      parsed.users = parsed.users || [];
+      parsed.enrolments = parsed.enrolments || [];
+      parsed.learning_paths = parsed.learning_paths || [];
+      parsed.credentials = parsed.credentials || [];
+      parsed.reward_ledger = parsed.reward_ledger || [];
+      parsed.audit_logs = parsed.audit_logs || [];
+      parsed.assignment_submissions = parsed.assignment_submissions || [];
+      parsed.exam_violation_events = parsed.exam_violation_events || [];
+      parsed.certificate_requests = parsed.certificate_requests || [];
+      parsed.quiz_retry_windows = parsed.quiz_retry_windows || {};
 
       // Ensure all course lessons have a playable video_url (repair missing, BigBuckBunny 403, or expired blob URLs)
       let modified = false;
-      if (parsed && parsed.courses) {
+      if (parsed.courses) {
         for (const course of parsed.courses) {
           if (course.modules) {
             for (const mod of course.modules) {
@@ -169,7 +218,7 @@ class MockEngine {
       }
 
       // Ensure all users have a deterministic, collision-proof Cadet ID (RK-XXXXX)
-      if (parsed && parsed.users) {
+      if (parsed.users) {
         for (const user of parsed.users) {
           if (!user.cadet_id) {
             user.cadet_id = generateDeterministicCadetId(user.email, user.id, parsed.users);
@@ -179,14 +228,22 @@ class MockEngine {
       }
 
       // Ensure all enrolments have required array properties
-      if (parsed && parsed.enrolments) {
+      if (parsed.enrolments) {
         for (const enr of parsed.enrolments) {
+          if (!enr.status) {
+            enr.status = 'active';
+            modified = true;
+          }
           if (!Array.isArray(enr.passed_quizzes)) {
             enr.passed_quizzes = [];
             modified = true;
           }
           if (!Array.isArray(enr.completed_mandatory_lessons)) {
             enr.completed_mandatory_lessons = [];
+            modified = true;
+          }
+          if (!Array.isArray(enr.passed_assignments)) {
+            enr.passed_assignments = [];
             modified = true;
           }
         }
@@ -200,12 +257,12 @@ class MockEngine {
     } catch (e) {
       console.error('Failed to parse database, resetting...', e);
       this.initDatabase(true);
-      return JSON.parse(localStorage.getItem(STORAGE_KEY));
+      return JSON.parse(safeStorage.getItem(STORAGE_KEY));
     }
   }
 
   saveDb(db, eventMetadata = { type: 'DB_MUTATED', payload: {} }) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+    safeStorage.setItem(STORAGE_KEY, JSON.stringify(db));
     this.emit(eventMetadata.type || 'DB_MUTATED', eventMetadata.payload || {});
   }
 
@@ -632,7 +689,10 @@ class MockEngine {
 
     if (totalMandatory === 0) return { percentage: 100, completed: 0, total: 0 };
 
-    const completed = enrolment.completed_mandatory_lessons.length;
+    const completedList = Array.isArray(enrolment.completed_mandatory_lessons)
+      ? enrolment.completed_mandatory_lessons
+      : [];
+    const completed = completedList.length;
     const percentage = Math.min(100, Math.round((completed / totalMandatory) * 100));
 
     return { percentage, completed, total: totalMandatory };
@@ -642,6 +702,10 @@ class MockEngine {
     const db = this.getDb();
     const enrolment = db.enrolments.find((e) => e.id === enrolmentId);
     if (!enrolment) throw new Error('Enrolment not found');
+
+    if (!Array.isArray(enrolment.completed_mandatory_lessons)) {
+      enrolment.completed_mandatory_lessons = [];
+    }
 
     if (!enrolment.completed_mandatory_lessons.includes(lessonId)) {
       const prevProgress = this.getCourseProgress(enrolmentId).percentage;
@@ -1011,10 +1075,14 @@ class MockEngine {
   }
 
   getCredentialByVerificationId(verificationId) {
+    if (!verificationId) return null;
+    const cleanId = String(verificationId).trim().toUpperCase();
     const db = this.getDb();
-    return db.credentials.find(
-      (c) => c.verification_id.toUpperCase() === verificationId.trim().toUpperCase()
-    );
+    return (db.credentials || []).find((c) => {
+      const vId = (c.verification_id || c.id || '').toUpperCase();
+      const cId = (c.id || '').toUpperCase();
+      return vId === cleanId || cId === cleanId;
+    });
   }
 
   // ==========================================
@@ -1609,6 +1677,484 @@ class MockEngine {
         lockout_until: lockoutUntil,
       };
     });
+  }
+
+  // ==========================================
+  // REAL-TIME PROCTORING & STRICT 24-HOUR LOCKOUT ENGINE
+  // ==========================================
+  recordProctorViolation({ enrolmentId, quizId, attemptId, cadetId, studentName, violationType, details }) {
+    const db = this.getDb();
+    const lockedUntil = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+
+    // 1. Lock retry window for this quiz & enrolment for 24 hours
+    const windowKey = `${enrolmentId}_${quizId}`;
+    if (!db.quiz_retry_windows) db.quiz_retry_windows = {};
+    db.quiz_retry_windows[windowKey] = {
+      enrolment_id: enrolmentId,
+      quiz_id: quizId,
+      locked_until: lockedUntil,
+      attempts_used: 3, // Exhaust attempts for current window to prevent bypass
+      reason: `STRICT_PROCTOR_VIOLATION: ${violationType}`,
+      last_violation_at: new Date().toISOString()
+    };
+
+    // 2. Lock enrolment object
+    const enrolment = (db.enrolments || []).find((e) => e.id === enrolmentId);
+    if (enrolment) {
+      enrolment.exam_lockout_until = lockedUntil;
+      enrolment.last_violation = {
+        violationType,
+        details,
+        timestamp: new Date().toISOString()
+      };
+    }
+
+    // 3. Mark attempt as terminated
+    if (attemptId && db.quiz_attempts) {
+      const attempt = db.quiz_attempts.find((a) => a.id === attemptId);
+      if (attempt) {
+        attempt.status = 'terminated';
+        attempt.termination_reason = violationType;
+        attempt.terminated_at = new Date().toISOString();
+      }
+    }
+
+    // 4. Log incident to exam_violation_events
+    if (!db.exam_violation_events) db.exam_violation_events = [];
+    const eventId = `viol_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+    const violationEvent = {
+      id: eventId,
+      enrolment_id: enrolmentId,
+      quiz_id: quizId,
+      cadet_id: cadetId || 'RK-UNKNOWN',
+      student_name: studentName || 'Cadet Operator',
+      violation_type: violationType, // 'CAMERA_DISCONNECT_X2' | 'TAB_SWITCH_BLUR'
+      details: details || 'Proctor security violation during timed assessment.',
+      locked_until: lockedUntil,
+      status: 'pending_review',
+      timestamp: new Date().toISOString()
+    };
+    db.exam_violation_events.unshift(violationEvent);
+
+    // 5. Audit log
+    if (!db.audit_logs) db.audit_logs = [];
+    db.audit_logs.unshift({
+      id: `aud_${Date.now()}`,
+      action: 'PROCTOR_VIOLATION_TERMINATION',
+      category: 'EXAM_SECURITY',
+      user_email: cadetId || studentName,
+      details: `Student terminated in quiz ${quizId}. Reason: ${violationType}. 24-Hour Lockout enforced until ${lockedUntil}.`,
+      severity: 'CRITICAL',
+      timestamp: new Date().toISOString()
+    });
+
+    this.saveDb(db, {
+      type: 'EXAM_VIOLATION',
+      payload: violationEvent
+    });
+
+    return { success: true, lockedUntil, violationEvent };
+  }
+
+  isExamLocked(enrolmentId, quizId) {
+    const db = this.getDb();
+    const windowKey = `${enrolmentId}_${quizId}`;
+    const windowData = db.quiz_retry_windows?.[windowKey];
+    const enrolment = (db.enrolments || []).find((e) => e.id === enrolmentId);
+
+    const lockoutTarget = windowData?.locked_until || enrolment?.exam_lockout_until;
+    if (!lockoutTarget) return { isLocked: false, remainingHours: 0, remainingMinutes: 0, lockedUntil: null };
+
+    const lockDate = new Date(lockoutTarget);
+    const now = new Date();
+    if (now >= lockDate) {
+      return { isLocked: false, remainingHours: 0, remainingMinutes: 0, lockedUntil: null };
+    }
+
+    const diffMs = lockDate.getTime() - now.getTime();
+    const remainingHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const remainingMinutes = Math.ceil((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+    return {
+      isLocked: true,
+      lockedUntil: lockoutTarget,
+      remainingHours,
+      remainingMinutes,
+      diffMs
+    };
+  }
+
+  // ==========================================
+  // MANDATORY PDF ASSIGNMENT SUBMISSION & ASSESSMENT
+  // ==========================================
+  submitAssignment({
+    cadetId,
+    userId,
+    enrolmentId,
+    courseId,
+    moduleId,
+    assignmentId,
+    assignmentTitle,
+    fileName,
+    fileDataUrl
+  }) {
+    const db = this.getDb();
+    if (!db.assignment_submissions) db.assignment_submissions = [];
+
+    const submissionId = `sub_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+    const submission = {
+      id: submissionId,
+      cadet_id: cadetId,
+      user_id: userId,
+      enrolment_id: enrolmentId,
+      course_id: courseId,
+      module_id: moduleId,
+      assignment_id: assignmentId,
+      assignment_title: assignmentTitle || 'Course Technical Assignment',
+      file_name: fileName,
+      file_url: fileDataUrl,
+      status: 'under_assessment', // 'under_assessment' | 'passed' | 'rejected'
+      grade: null,
+      reviewer_notes: null,
+      reviewed_at: null,
+      submitted_at: new Date().toISOString()
+    };
+
+    db.assignment_submissions = db.assignment_submissions.filter(
+      (s) => !(s.enrolment_id === enrolmentId && s.assignment_id === assignmentId && s.status === 'under_assessment')
+    );
+    db.assignment_submissions.unshift(submission);
+
+    if (!db.audit_logs) db.audit_logs = [];
+    db.audit_logs.unshift({
+      id: `aud_${Date.now()}`,
+      action: 'ASSIGNMENT_SUBMISSION',
+      category: 'ACADEMIC',
+      user_email: cadetId || userId,
+      details: `Cadet submitted PDF assignment "${assignmentTitle || assignmentId}" (${fileName}). Status: Under Assessment.`,
+      severity: 'INFO',
+      timestamp: new Date().toISOString()
+    });
+
+    this.saveDb(db, {
+      type: 'ASSIGNMENT_SUBMITTED',
+      payload: submission
+    });
+
+    return submission;
+  }
+
+  getAssignmentSubmissions(filter = {}) {
+    const db = this.getDb();
+    let submissions = db.assignment_submissions || [];
+    if (filter.status) submissions = submissions.filter((s) => s.status === filter.status);
+    if (filter.enrolment_id) submissions = submissions.filter((s) => s.enrolment_id === filter.enrolment_id);
+    if (filter.cadet_id) submissions = submissions.filter((s) => s.cadet_id === filter.cadet_id);
+    return submissions;
+  }
+
+  gradeAssignment({ submissionId, status, grade, reviewerNotes, reviewerEmail = 'admin@redkross.org.in' }) {
+    const db = this.getDb();
+    const submission = (db.assignment_submissions || []).find((s) => s.id === submissionId);
+    if (!submission) throw new Error('Submission not found');
+
+    submission.status = status;
+    submission.grade = grade;
+    submission.reviewer_notes = reviewerNotes;
+    submission.reviewer_email = reviewerEmail;
+    submission.reviewed_at = new Date().toISOString();
+
+    if (status === 'passed' && submission.enrolment_id) {
+      const enrolment = (db.enrolments || []).find((e) => e.id === submission.enrolment_id);
+      if (enrolment) {
+        if (!Array.isArray(enrolment.passed_assignments)) enrolment.passed_assignments = [];
+        if (!enrolment.passed_assignments.includes(submission.assignment_id)) {
+          enrolment.passed_assignments.push(submission.assignment_id);
+        }
+      }
+    }
+
+    if (!db.audit_logs) db.audit_logs = [];
+    db.audit_logs.unshift({
+      id: `aud_${Date.now()}`,
+      action: 'ASSIGNMENT_EVALUATED',
+      category: 'ACADEMIC_GRADING',
+      user_email: reviewerEmail,
+      details: `Graded assignment "${submission.assignment_title}" for cadet ${submission.cadet_id}: ${status.toUpperCase()} (${grade}%). Notes: ${reviewerNotes || 'Approved'}.`,
+      severity: status === 'passed' ? 'INFO' : 'WARN',
+      timestamp: new Date().toISOString()
+    });
+
+    this.saveDb(db, {
+      type: 'ASSIGNMENT_EVALUATED',
+      payload: { submissionId, status, grade, cadetId: submission.cadet_id }
+    });
+
+    return submission;
+  }
+
+  // ==========================================
+  // COMPLETE COURSE COMPLETION & CERTIFICATION LIFECYCLE
+  // ==========================================
+  checkCourseCompletion(enrolmentId) {
+    const enrolment = this.getEnrolment(enrolmentId);
+    if (!enrolment) return { isComplete: false, reason: 'Enrolment not found' };
+
+    const course = this.getCourseById(enrolment.course_id);
+    if (!course) return { isComplete: false, reason: 'Course not found' };
+
+    let mandatoryLessons = [];
+    (course.modules || []).forEach((mod) => {
+      (mod.lessons || []).forEach((les) => {
+        if (les.is_mandatory) mandatoryLessons.push(les.id);
+      });
+    });
+    const completedLessons = enrolment.completed_mandatory_lessons || [];
+    const lessonsComplete = mandatoryLessons.length === 0 || mandatoryLessons.every((id) => completedLessons.includes(id));
+
+    const passedQuizzes = enrolment.passed_quizzes || [];
+    const requiredQuizzes = [];
+    (course.modules || []).forEach((mod) => {
+      if (mod.quiz_id) requiredQuizzes.push(mod.quiz_id);
+      else if (mod.quiz) requiredQuizzes.push(mod.quiz.id || `quiz_${mod.id}`);
+    });
+    const quizzesComplete = requiredQuizzes.length === 0 || requiredQuizzes.every((qId) => passedQuizzes.includes(qId));
+
+    const requiredAssignments = [];
+    (course.modules || []).forEach((mod) => {
+      if (mod.assignment) requiredAssignments.push(mod.assignment.id || `asg_${mod.id}`);
+      (mod.lessons || []).forEach((les) => {
+        if (les.has_assignment) requiredAssignments.push(les.assignment_id || `asg_${les.id}`);
+      });
+    });
+    const passedAssignments = enrolment.passed_assignments || [];
+    const assignmentsComplete = requiredAssignments.length === 0 || requiredAssignments.every((aId) => passedAssignments.includes(aId));
+
+    const isComplete = lessonsComplete && quizzesComplete && assignmentsComplete;
+
+    return {
+      isComplete,
+      lessonsComplete,
+      quizzesComplete,
+      assignmentsComplete,
+      mandatoryLessonsCount: mandatoryLessons.length,
+      completedLessonsCount: completedLessons.length,
+      requiredQuizzesCount: requiredQuizzes.length,
+      passedQuizzesCount: passedQuizzes.length,
+      requiredAssignmentsCount: requiredAssignments.length,
+      passedAssignmentsCount: passedAssignments.length,
+      courseTitle: course.title,
+      enrolmentStatus: enrolment.status,
+      certificateRequestStatus: enrolment.certificate_request_status || 'none',
+      credentialId: enrolment.credential_id || null
+    };
+  }
+
+  requestCertificate(enrolmentId, cadetNotes = '') {
+    const db = this.getDb();
+    const enrolment = db.enrolments.find((e) => e.id === enrolmentId);
+    if (!enrolment) throw new Error('Enrolment not found');
+
+    const completion = this.checkCourseCompletion(enrolmentId);
+    if (!completion.isComplete) {
+      throw new Error('PREREQUISITES_INCOMPLETE: All mandatory lessons, chapter evaluations, and PDF assignments must be passed before requesting certification.');
+    }
+
+    const cadet = db.users.find((u) => u.id === enrolment.user_id);
+    const course = db.courses.find((c) => c.id === enrolment.course_id);
+
+    enrolment.certificate_requested = true;
+    enrolment.certificate_request_status = 'pending_review';
+    enrolment.certificate_requested_at = new Date().toISOString();
+    enrolment.cadet_request_notes = cadetNotes;
+
+    if (!db.certificate_requests) db.certificate_requests = [];
+    const requestId = `req_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+    const certRequest = {
+      id: requestId,
+      enrolment_id: enrolmentId,
+      cadet_id: cadet?.cadet_id || enrolment.cadet_id || 'RK-UNKNOWN',
+      user_id: enrolment.user_id,
+      student_name: cadet?.full_name || 'Cadet Operator',
+      student_email: cadet?.email || 'student@redkross.org.in',
+      course_id: enrolment.course_id,
+      course_title: course?.title || 'Defensive Cyber Operations',
+      cadet_notes: cadetNotes,
+      status: 'pending_review',
+      submitted_at: new Date().toISOString()
+    };
+
+    db.certificate_requests = db.certificate_requests.filter(
+      (r) => !(r.enrolment_id === enrolmentId && r.status === 'pending_review')
+    );
+    db.certificate_requests.unshift(certRequest);
+
+    if (!db.audit_logs) db.audit_logs = [];
+    db.audit_logs.unshift({
+      id: `aud_${Date.now()}`,
+      action: 'CERTIFICATE_REQUESTED',
+      category: 'CERTIFICATION',
+      user_email: cadet?.email || enrolment.user_id,
+      details: `Cadet ${cadet?.full_name} (${cadet?.cadet_id}) requested official certification for "${course?.title}". Queue status: PENDING REVIEW.`,
+      severity: 'INFO',
+      timestamp: new Date().toISOString()
+    });
+
+    this.saveDb(db, {
+      type: 'CERTIFICATE_REQUESTED',
+      payload: certRequest
+    });
+
+    return certRequest;
+  }
+
+  getCertificateRequests() {
+    const db = this.getDb();
+    return db.certificate_requests || [];
+  }
+
+  dispatchCertificate({
+    enrolmentId,
+    studentName,
+    studentEmail,
+    courseId,
+    cadetId,
+    signatoryName = 'Dr. Robert H. Vance, CISSP',
+    signatoryTitle = 'Director of Cyber Defense Academics',
+    issuingOrg = 'RedKross Defensive Cyber Academy'
+  }) {
+    const db = this.getDb();
+    const enrolment = db.enrolments.find((e) => e.id === enrolmentId);
+    const course = db.courses.find((c) => c.id === (courseId || enrolment?.course_id));
+    const user = db.users.find((u) => u.id === enrolment?.user_id || (u.cadet_id && u.cadet_id === cadetId));
+
+    const finalCadetId = cadetId || user?.cadet_id || enrolment?.cadet_id || 'RK-89421';
+    const finalStudentName = studentName || user?.full_name || 'Cadet Operator';
+    const finalEmail = studentEmail || user?.email || 'student@redkross.org.in';
+    const finalCourseTitle = course?.title || 'Certified Defensive Cyber Specialist';
+
+    const randomSerial = Math.floor(10000 + Math.random() * 90000);
+    const credentialId = `RK-CERT-${randomSerial}`;
+    const issueDate = new Date().toISOString();
+
+    const newCredential = {
+      id: credentialId,
+      cadet_id: finalCadetId,
+      student_name: finalStudentName,
+      student_email: finalEmail,
+      course_id: course?.id || courseId,
+      course_title: finalCourseTitle,
+      issue_date: issueDate,
+      issuing_institution: issuingOrg,
+      signatory_name: signatoryName,
+      signatory_title: signatoryTitle,
+      revoked: false,
+      revocation_reason: null,
+      revoked_at: null,
+      verification_url: `/verify/${credentialId}`,
+      verification_hash: `sha256_${Math.random().toString(36).substring(2, 14)}`
+    };
+
+    if (!db.credentials) db.credentials = [];
+    db.credentials.unshift(newCredential);
+
+    if (enrolment) {
+      enrolment.certificate_request_status = 'approved';
+      enrolment.credential_id = credentialId;
+      enrolment.status = 'completed';
+    }
+
+    if (db.certificate_requests) {
+      const req = db.certificate_requests.find((r) => r.enrolment_id === enrolmentId && r.status === 'pending_review');
+      if (req) {
+        req.status = 'approved';
+        req.credential_id = credentialId;
+        req.dispatched_at = issueDate;
+      }
+    }
+
+    if (!db.audit_logs) db.audit_logs = [];
+    db.audit_logs.unshift({
+      id: `aud_${Date.now()}`,
+      action: 'CERTIFICATE_DISPATCHED',
+      category: 'CERTIFICATION',
+      user_email: finalEmail,
+      details: `Official Certificate ${credentialId} dispatched to ${finalStudentName} (${finalCadetId}) for "${finalCourseTitle}".`,
+      severity: 'INFO',
+      timestamp: issueDate
+    });
+
+    this.saveDb(db, {
+      type: 'CERTIFICATE_DISPATCHED',
+      payload: { credential: newCredential, enrolmentId, cadetId: finalCadetId }
+    });
+
+    return newCredential;
+  }
+
+  revokeCertificate(credentialId, reason = 'Academic Integrity Violation / Proctor Audit') {
+    const db = this.getDb();
+    const credential = (db.credentials || []).find((c) => c.id === credentialId);
+    if (!credential) throw new Error('Credential not found');
+
+    const revokedAt = new Date().toISOString();
+    credential.revoked = true;
+    credential.revocation_reason = reason;
+    credential.revoked_at = revokedAt;
+
+    if (!db.audit_logs) db.audit_logs = [];
+    db.audit_logs.unshift({
+      id: `aud_${Date.now()}`,
+      action: 'CERTIFICATE_REVOKED',
+      category: 'CERTIFICATION_SECURITY',
+      user_email: credential.student_email || credential.cadet_id,
+      details: `Official Certificate ${credentialId} has been revoked by Academy Admin. Reason: "${reason}". Public credential invalid.`,
+      severity: 'CRITICAL',
+      timestamp: revokedAt
+    });
+
+    this.saveDb(db, {
+      type: 'CERTIFICATE_REVOKED',
+      payload: { credentialId, revoked: true, reason, revokedAt }
+    });
+
+    return credential;
+  }
+
+  // ==========================================
+  // REAL-TIME DATABASE TELEMETRY & STATS (NO FAKE DATA)
+  // ==========================================
+  getRealDatabaseStats() {
+    const db = this.getDb();
+    const users = db.users || [];
+    const courses = db.courses || [];
+    const enrolments = db.enrolments || [];
+    const credentials = db.credentials || [];
+    const submissions = db.assignment_submissions || [];
+    const certRequests = db.certificate_requests || [];
+    const violations = db.exam_violation_events || [];
+
+    const realStudents = users.filter((u) => u.role === 'student');
+    const validCredentials = credentials.filter((c) => !c.revoked);
+    const revokedCredentials = credentials.filter((c) => c.revoked);
+    const pendingAssignments = submissions.filter((s) => s.status === 'under_assessment');
+    const pendingCertificates = certRequests.filter((r) => r.status === 'pending_review');
+    const activeLockouts = Object.values(db.quiz_retry_windows || {}).filter(
+      (w) => w.locked_until && new Date(w.locked_until) > new Date()
+    );
+
+    return {
+      totalStudents: realStudents.length,
+      totalCourses: courses.length,
+      totalEnrolments: enrolments.length,
+      validCredentialsCount: validCredentials.length,
+      revokedCredentialsCount: revokedCredentials.length,
+      pendingAssignmentsCount: pendingAssignments.length,
+      pendingCertificatesCount: pendingCertificates.length,
+      activeLockoutsCount: activeLockouts.length,
+      proctorViolationsCount: violations.length,
+      lastAuditTimestamp: db.audit_logs?.[0]?.timestamp || new Date().toISOString()
+    };
   }
 }
 

@@ -63,13 +63,16 @@ export default function StudentDashboard() {
         <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-surface-border gap-4">
           <div className="flex items-center space-x-4">
             <img
-              src={currentUser.avatar}
-              alt={currentUser.full_name}
+              src={currentUser.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.full_name || 'Cadet')}&background=101923&color=65F58A&bold=true`}
+              alt={currentUser.full_name || 'Cadet'}
               className="w-14 h-14 rounded-xl border-2 border-redkross-600/40 object-cover"
+              onError={(e) => {
+                e.target.src = 'https://ui-avatars.com/api/?name=Cadet&background=101923&color=65F58A&bold=true';
+              }}
             />
             <div>
               <div className="flex items-center space-x-2">
-                <h1 className="text-2xl font-extrabold text-white">{currentUser.full_name}</h1>
+                <h1 className="text-2xl font-extrabold text-white">{currentUser.full_name || 'Cadet Operator'}</h1>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-redkross-600/20 text-redkross-400 border border-redkross-600/30 uppercase">
                   Operator Portal
                 </span>
@@ -77,7 +80,7 @@ export default function StudentDashboard() {
                   CADET ID: {currentUser.cadet_id || 'RK-89421'}
                 </span>
               </div>
-              <p className="text-xs text-slate-400 font-mono mt-0.5">{currentUser.headline}</p>
+              <p className="text-xs text-slate-400 font-mono mt-0.5">{currentUser.headline || 'Verified Cyber Defense Operator'}</p>
             </div>
           </div>
 
@@ -202,8 +205,8 @@ export default function StudentDashboard() {
                 >
                   <div>
                     <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 mb-2">
-                      <span className="px-2 py-0.5 rounded bg-surface-100 border border-surface-border">{crs.difficulty}</span>
-                      <span className="text-emerald-400 font-semibold">{enr.status.toUpperCase()}</span>
+                      <span className="px-2 py-0.5 rounded bg-surface-100 border border-surface-border">{crs.difficulty || 'Specialist'}</span>
+                      <span className="text-emerald-400 font-semibold">{(enr.status || 'ACTIVE').toUpperCase()}</span>
                     </div>
 
                     <h3 className="text-base font-bold text-white mb-2">{crs.title}</h3>

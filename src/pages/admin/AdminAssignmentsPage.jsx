@@ -13,7 +13,7 @@ export default function AdminAssignmentsPage() {
       title: 'Practical Malware Triage & PCAP Packet Analysis',
       course_title: 'SOC Analyst L1 & L2 Defensive Operations',
       due_date: '2026-11-15',
-      allowed_types: '.pcap, .zip, .pdf',
+      allowed_types: '.pdf only',
       max_size_mb: 25,
       submissions_count: 8,
       pending_review: 2
@@ -23,45 +23,15 @@ export default function AdminAssignmentsPage() {
       title: 'Active Directory Kerberos Ticket Attack Lab Report',
       course_title: 'Offensive Exploitation & Active Directory Attacks',
       due_date: '2026-11-20',
-      allowed_types: '.pdf, .md',
+      allowed_types: '.pdf only',
       max_size_mb: 10,
       submissions_count: 5,
       pending_review: 1
     }
   ]);
 
-  const [submissions, setSubmissions] = useState([
-    {
-      id: 'SUB-101',
-      assignment_id: 'ASN-01',
-      student_name: 'Aditya Rao',
-      student_email: 'aditya.rao@redkross.org.in',
-      submitted_at: '2026-10-28 17:45',
-      file_name: 'infected_host_analysis.pcap.zip',
-      file_size: '14.2 MB',
-      text_summary: 'Identified Cobalt Strike Beacon egress via DNS tunneling on port 53. Extracted C2 domain: bad-actor-node.xyz. Full indicators of compromise included in technical report.',
-      status: 'PENDING_REVIEW', // PENDING_REVIEW | PASSED | NEEDS_REVISION
-      rubric_scores: { correctness: 0, methodology: 0, reporting: 0 },
-      admin_feedback: '',
-      final_grade: null
-    },
-    {
-      id: 'SUB-102',
-      assignment_id: 'ASN-01',
-      student_name: 'Sneha Kulkarni',
-      student_email: 'sneha.k@defsec.org',
-      submitted_at: '2026-10-29 08:30',
-      file_name: 'triage_report_sneha.pdf',
-      file_size: '2.8 MB',
-      text_summary: 'Dissected Wireshark capture. Detected initial Emotet payload dropped via phishing attachment invoice.docm.',
-      status: 'PASSED',
-      rubric_scores: { correctness: 40, methodology: 30, reporting: 25 },
-      admin_feedback: 'Outstanding IOC timeline mapping and remediation playbook.',
-      final_grade: 95
-    }
-  ]);
-
-  const [selectedSub, setSelectedSub] = useState(submissions[0]);
+  const [submissions, setSubmissions] = useState([]);
+  const [selectedSub, setSelectedSub] = useState(null);
   const [rubricScores, setRubricScores] = useState({
     correctness: 35, // max 40
     methodology: 25, // max 30
@@ -69,6 +39,57 @@ export default function AdminAssignmentsPage() {
   });
   const [adminFeedback, setAdminFeedback] = useState('Excellent initial discovery of C2 telemetry.');
   const [gradeStatus, setGradeStatus] = useState('PASSED');
+
+  const loadSubmissions = () => {
+    const realSubs = mockEngine.getAssignmentSubmissions();
+    if (realSubs && realSubs.length > 0) {
+      const mapped = realSubs.map((s) => ({
+        id: s.id,
+        assignment_id: s.assignment_id || 'ASN-01',
+        student_name: s.cadet_id || s.user_id,
+        student_email: s.user_id,
+        submitted_at: s.submitted_at?.replace('T', ' ').substring(0, 16) || 'Just now',
+        file_name: s.file_name,
+        file_size: 'PDF Document',
+        file_url: s.file_url,
+        text_summary: `Technical laboratory analysis report for ${s.assignment_title}.`,
+        status: s.status === 'passed' ? 'PASSED' : s.status === 'rejected' ? 'NEEDS_REVISION' : 'PENDING_REVIEW',
+        rubric_scores: { correctness: s.grade ? Math.round(s.grade * 0.4) : 35, methodology: s.grade ? Math.round(s.grade * 0.3) : 25, reporting: s.grade ? Math.round(s.grade * 0.3) : 25 },
+        admin_feedback: s.reviewer_notes || 'Excellent analytical rigor and technical accuracy.',
+        final_grade: s.grade
+      }));
+      setSubmissions(mapped);
+      setSelectedSub((prev) => prev ? mapped.find((m) => m.id === prev.id) || mapped[0] : mapped[0]);
+    } else {
+      // Default initial mock queue if database has zero submissions yet
+      const fallback = [
+        {
+          id: 'SUB-101',
+          assignment_id: 'ASN-01',
+          student_name: 'Aditya Rao (RK-89421)',
+          student_email: 'aditya.rao@redkross.org.in',
+          submitted_at: '2026-10-28 17:45',
+          file_name: 'infected_host_analysis.pdf',
+          file_size: '4.2 MB',
+          text_summary: 'Identified Cobalt Strike Beacon egress via DNS tunneling on port 53. Extracted C2 domain: bad-actor-node.xyz. Full indicators of compromise included in technical report.',
+          status: 'PENDING_REVIEW',
+          rubric_scores: { correctness: 35, methodology: 25, reporting: 25 },
+          admin_feedback: 'Demonstrates thorough log triage.',
+          final_grade: null
+        }
+      ];
+      setSubmissions(fallback);
+      if (!selectedSub) setSelectedSub(fallback[0]);
+    }
+  };
+
+  useEffect(() => {
+    loadSubmissions();
+    const unsub = mockEngine.subscribe(() => {
+      loadSubmissions();
+    });
+    return () => unsub();
+  }, []);
 
   const handleSelectSubmission = (sub) => {
     setSelectedSub(sub);
@@ -83,35 +104,22 @@ export default function AdminAssignmentsPage() {
                        (parseInt(rubricScores.methodology) || 0) +
                        (parseInt(rubricScores.reporting) || 0);
 
-    const updatedSubmissions = submissions.map((s) =>
-      s.id === selectedSub.id
-        ? {
-            ...s,
-            status: gradeStatus,
-            final_grade: totalScore,
-            rubric_scores: rubricScores,
-            admin_feedback: adminFeedback
-          }
-        : s
-    );
+    const targetStatus = gradeStatus === 'PASSED' ? 'passed' : 'rejected';
 
-    setSubmissions(updatedSubmissions);
-    setSelectedSub({
-      ...selectedSub,
-      status: gradeStatus,
-      final_grade: totalScore,
-      rubric_scores: rubricScores,
-      admin_feedback: adminFeedback
-    });
+    try {
+      mockEngine.gradeAssignment({
+        submissionId: selectedSub.id,
+        status: targetStatus,
+        grade: totalScore,
+        reviewerNotes: adminFeedback,
+        reviewerEmail: 'admin@redkross.org.in'
+      });
+    } catch (e) {
+      console.warn('Grade record note:', e);
+    }
 
-    mockEngine.logAction({
-      action: 'ASSIGNMENT_GRADED',
-      category: 'STUDENT_ADMIN',
-      details: `Admin published grade ${totalScore}/100 (${gradeStatus}) for student submission ${selectedSub.id}`,
-      severity: 'INFO'
-    });
-
-    alert(`Grade published! Student ${selectedSub.student_name} received score: ${totalScore}/100.`);
+    loadSubmissions();
+    alert(`Grade published! Student ${selectedSub.student_name} received score: ${totalScore}/100 (${gradeStatus}).`);
   };
 
   return (
