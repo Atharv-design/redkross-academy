@@ -108,7 +108,7 @@ export default function AdminProfilePage() {
         className="p-5 cyber-glass-panel rounded-xl space-y-4"
       >
         <div className="flex items-center space-x-2 text-white font-lora font-bold text-sm">
-          <KeyRound className="w-4 h-4 text-[#38BDF8]" />
+          <KeyRound className="w-4 h-4 text-[#65F58A]" />
           <span>Rotate Operator Master Credentials</span>
         </div>
 

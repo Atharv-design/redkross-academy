@@ -176,7 +176,7 @@ export default function VerifyCredentialPage() {
                 </div>
                 <div className="p-3 bg-[#0B131C] border border-[#1B2530] rounded-xl">
                   <span className="text-[10px] text-[#8BA2B5] block uppercase">Verified Diplomas</span>
-                  <span className="text-xl font-bold text-[#38BDF8] mt-1 block">
+                  <span className="text-xl font-bold text-[#65F58A] mt-1 block">
                     {dossier.metrics.totalCredentials}
                   </span>
                 </div>

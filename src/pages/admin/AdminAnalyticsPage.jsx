@@ -18,7 +18,7 @@ export default function AdminAnalyticsPage() {
 
   const scoreBuckets = [
     { label: '90 - 100% (High Honors)', count: 320, color: '#65F58A' },
-    { label: '80 - 89% (Passed)', count: 190, color: '#38BDF8' },
+    { label: '80 - 89% (Passed)', count: 190, color: '#35E6B5' },
     { label: '70 - 79% (Borderline)', count: 80, color: '#F59E0B' },
     { label: '< 70% (Remediation)', count: 30, color: '#EF4444' }
   ];
@@ -86,7 +86,7 @@ export default function AdminAnalyticsPage() {
 
         <div className="p-4 cyber-glass-panel rounded-xl">
           <span className="text-[10px] font-mono text-[#8BA2B5] block">MEDIAN TIME TO CERTIFICATION</span>
-          <span className="text-2xl font-bold font-mono text-[#38BDF8] mt-1 block">22.4 Days</span>
+          <span className="text-2xl font-bold font-mono text-[#35E6B5] mt-1 block">22.4 Days</span>
           <span className="text-[10px] text-[#8BA2B5] mt-1 block">Across all active tracks</span>
         </div>
 
@@ -136,7 +136,7 @@ export default function AdminAnalyticsPage() {
 
                 <div className="w-full bg-[#071018] h-3 rounded-full overflow-hidden border border-[#1B2530]">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-[#65F58A] to-[#38BDF8] transition-all"
+                    className="h-full rounded-full bg-gradient-to-r from-[#65F58A] to-[#35E6B5] transition-all"
                     style={{ width: `${widthPct}%` }}
                   />
                 </div>

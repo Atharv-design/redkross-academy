@@ -33,15 +33,15 @@ export const COURSE_CARD_STYLES = [
   },
   {
     id: 'cobalt-radar',
-    name: 'Cobalt Radar',
+    name: 'Emerald Radar',
     theme: 'radar',
-    wrapperClass: 'bg-gradient-to-b from-[#0B1526] to-[#050C17] border-[#38BDF8]/35 hover:border-[#38BDF8]/80 hover:shadow-[0_0_25px_rgba(56,189,248,0.22)]',
-    badgeClass: 'bg-[#38BDF8]/15 text-[#38BDF8] border-[#38BDF8]/40',
-    accentText: 'text-[#38BDF8]',
-    accentBg: 'bg-[#38BDF8]',
-    accentBorder: 'border-[#38BDF8]',
-    glowColor: 'rgba(56, 189, 248, 0.4)',
-    cornerIndicator: '#38BDF8',
+    wrapperClass: 'bg-gradient-to-b from-[#0B1A14] to-[#050F0B] border-[#35E6B5]/35 hover:border-[#35E6B5]/80 hover:shadow-[0_0_25px_rgba(56,189,248,0.22)]',
+    badgeClass: 'bg-[#35E6B5]/15 text-[#35E6B5] border-[#35E6B5]/40',
+    accentText: 'text-[#35E6B5]',
+    accentBg: 'bg-[#35E6B5]',
+    accentBorder: 'border-[#35E6B5]',
+    glowColor: 'rgba(53, 230, 181, 0.4)',
+    cornerIndicator: '#35E6B5',
     pattern: 'radar-rings'
   },
   {

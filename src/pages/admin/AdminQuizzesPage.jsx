@@ -319,7 +319,7 @@ export default function AdminQuizzesPage() {
                 </div>
                 <div className="flex justify-between items-center py-2 border-b border-[#1B2530]">
                   <span className="text-[#8BA2B5]">Proctoring Anti-Cheat</span>
-                  <span className="text-[#38BDF8]">FULL SCREEN LOCK</span>
+                  <span className="text-[#65F58A]">FULL SCREEN LOCK</span>
                 </div>
               </div>
 
@@ -349,7 +349,7 @@ export default function AdminQuizzesPage() {
                     </span>
                     <div>
                       <div className="flex items-center space-x-2 mb-1">
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#38BDF8]/10 text-[#38BDF8] border border-[#38BDF8]/30">
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#35E6B5]/10 text-[#35E6B5] border border-[#35E6B5]/30">
                           {q.type.replace('_', ' ').toUpperCase()}
                         </span>
                         <span className="text-[10px] font-mono text-[#8BA2B5]">

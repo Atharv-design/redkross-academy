@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Settings, Save, Globe, Database, Bell, Shield,
-  CheckCircle2, AlertTriangle, Eye, EyeOff, Radio
+  CheckCircle2, AlertTriangle, Eye, EyeOff, Radio, Lock
 } from 'lucide-react';
 import { mockEngine } from '../../services/db/mockEngine';
 
@@ -137,25 +137,51 @@ export default function AdminSettingsPage() {
           </p>
         </div>
 
+        {/* Interactive Tactical Toggle Button */}
         <button
           type="button"
+          role="switch"
+          aria-checked={!settings.catalog_embargo}
           onClick={handleToggleEmbargo}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-mono font-bold border transition-all ${
-            settings.catalog_embargo
-              ? 'bg-[#65F58A]/10 text-[#65F58A] border-[#65F58A]/40 hover:bg-[#65F58A]/20'
-              : 'bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/40 hover:bg-[#F59E0B]/20'
+          className={`group relative inline-flex items-center justify-between w-36 h-11 px-3 rounded-full transition-all duration-300 font-mono text-xs font-black cursor-pointer select-none ${
+            !settings.catalog_embargo
+              ? 'bg-[#06180E] border-2 border-[#65F58A] shadow-[0_0_25px_rgba(101,245,138,0.55),0_0_50px_rgba(101,245,138,0.25),inset_0_0_15px_rgba(101,245,138,0.2)]'
+              : 'bg-[#121820] border-2 border-amber-500/40 hover:border-amber-500/70 shadow-[0_0_15px_rgba(245,158,11,0.15)]'
           }`}
         >
-          {settings.catalog_embargo ? (
+          {/* Green radiant ring/lights around button when ON */}
+          {!settings.catalog_embargo && (
             <>
-              <Eye className="w-4 h-4" />
-              <span>Release Catalog Live</span>
+              <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-[#65F58A]/40 via-[#35E6B5]/30 to-[#65F58A]/40 blur-md pointer-events-none animate-pulse" />
+              <span className="absolute -inset-2.5 rounded-full bg-[#65F58A]/15 blur-lg pointer-events-none" />
             </>
+          )}
+
+          {!settings.catalog_embargo ? (
+            <div className="relative z-10 w-full flex items-center justify-between">
+              <span className="flex items-center gap-1.5 pl-1.5">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#65F58A] opacity-80" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#65F58A] shadow-[0_0_8px_#65F58A]" />
+                </span>
+                <span className="tracking-widest text-[#65F58A] font-extrabold text-[13px] drop-shadow-[0_0_8px_rgba(101,245,138,0.9)]">
+                  LIVE
+                </span>
+              </span>
+              <span className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#65F58A] to-[#35E6B5] text-[#071018] flex items-center justify-center shadow-[0_0_15px_#65F58A] transition-transform duration-300">
+                <CheckCircle2 className="w-4 h-4 stroke-[3]" />
+              </span>
+            </div>
           ) : (
-            <>
-              <EyeOff className="w-4 h-4" />
-              <span>Engage Embargo</span>
-            </>
+            <div className="relative z-10 w-full flex items-center justify-between">
+              <span className="w-7 h-7 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center transition-transform duration-300">
+                <Lock className="w-3.5 h-3.5" />
+              </span>
+              <span className="flex items-center gap-1.5 pr-2 text-amber-400/90 font-mono text-[12px] font-bold tracking-wider">
+                <span className="w-2 h-2 rounded-full bg-amber-500/70" />
+                <span>HOLD</span>
+              </span>
+            </div>
           )}
         </button>
       </div>
@@ -163,7 +189,7 @@ export default function AdminSettingsPage() {
       {/* Cloud Storage & Media Delivery */}
       <div className="p-5 cyber-glass-panel rounded-xl space-y-4">
         <div className="flex items-center space-x-2 text-white font-lora font-bold text-sm">
-          <Database className="w-4 h-4 text-[#38BDF8]" />
+          <Database className="w-4 h-4 text-[#65F58A]" />
           <span>Cloud Storage & Video Delivery Network</span>
         </div>
 

@@ -919,7 +919,7 @@ export default function AdminCoursesPage() {
                                         <div className="flex items-center space-x-3">
                                           <GripVertical className="w-3.5 h-3.5 text-[#8BA2B5] opacity-40 cursor-grab" />
                                           {lesson.type === 'video' ? (
-                                            <PlayCircle className="w-4 h-4 text-[#38BDF8]" />
+                                            <PlayCircle className="w-4 h-4 text-[#65F58A]" />
                                           ) : (
                                             <FileText className="w-4 h-4 text-[#A855F7]" />
                                           )}
@@ -1210,7 +1210,7 @@ export default function AdminCoursesPage() {
                       {uploadingVideo && (
                         <div className="space-y-1.5 p-3 bg-[#0B131C] border border-[#1B2530] rounded-lg">
                           <div className="flex justify-between text-xs font-mono">
-                            <span className="text-[#38BDF8] flex items-center space-x-1.5">
+                            <span className="text-[#65F58A] flex items-center space-x-1.5">
                               <Loader2 className="w-3.5 h-3.5 animate-spin" />
                               <span>Storing to High-Speed IndexedDB Cache...</span>
                             </span>

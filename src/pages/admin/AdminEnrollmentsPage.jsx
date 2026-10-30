@@ -120,7 +120,7 @@ export default function AdminEnrollmentsPage() {
                 <p className="text-xs text-[#8BA2B5] mt-0.5">{cohort.course_title}</p>
               </div>
 
-              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#38BDF8]/10 text-[#38BDF8] border border-[#38BDF8]/30">
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#35E6B5]/10 text-[#35E6B5] border border-[#35E6B5]/30">
                 {cohort.status}
               </span>
             </div>

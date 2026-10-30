@@ -186,10 +186,10 @@ export default function AdminLayout() {
         style={{ animationDuration: '8s' }}
       />
       <div
-        className="absolute top-1/4 -right-20 w-[650px] h-[650px] rounded-full bg-gradient-to-bl from-[#38BDF8]/22 to-[#35E6B5]/16 blur-[140px] pointer-events-none z-0 animate-pulse"
+        className="absolute top-1/4 -right-20 w-[650px] h-[650px] rounded-full bg-gradient-to-bl from-[#65F58A]/18 to-[#35E6B5]/18 blur-[140px] pointer-events-none z-0 animate-pulse"
         style={{ animationDuration: '10s' }}
       />
-      <div className="absolute -bottom-32 left-1/4 w-[800px] h-[600px] rounded-full bg-gradient-to-tr from-[#65F58A]/16 to-[#38BDF8]/16 blur-[150px] pointer-events-none z-0" />
+      <div className="absolute -bottom-32 left-1/4 w-[800px] h-[600px] rounded-full bg-gradient-to-tr from-[#65F58A]/18 to-[#35E6B5]/16 blur-[150px] pointer-events-none z-0" />
       <div className="absolute bottom-10 -right-20 w-[500px] h-[500px] rounded-full bg-gradient-to-tl from-[#E06A26]/14 to-[#65F58A]/12 blur-[140px] pointer-events-none z-0" />
 
       {/* Cyber Grid Texture */}

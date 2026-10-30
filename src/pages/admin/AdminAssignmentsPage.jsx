@@ -145,7 +145,7 @@ export default function AdminAssignmentsPage() {
             </div>
 
             <div className="text-right">
-              <span className="text-lg font-bold text-[#38BDF8] font-mono">
+              <span className="text-lg font-bold text-[#35E6B5] font-mono">
                 {asn.pending_review}
               </span>
               <span className="block text-[10px] font-mono text-[#8BA2B5]">PENDING REVIEW</span>
@@ -212,7 +212,7 @@ export default function AdminAssignmentsPage() {
               <div className="border border-[#1B2530] bg-[#071018] rounded-lg p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <FileCode className="w-5 h-5 text-[#38BDF8]" />
+                    <FileCode className="w-5 h-5 text-[#35E6B5]" />
                     <span className="text-xs font-mono font-bold text-white">
                       {selectedSub.file_name}
                     </span>
@@ -270,7 +270,7 @@ export default function AdminAssignmentsPage() {
             <div className="space-y-1.5">
               <div className="flex justify-between items-center text-xs font-mono">
                 <span className="text-white font-bold">2. Investigation Methodology</span>
-                <span className="text-[#38BDF8]">{rubricScores.methodology} / 30 Pts</span>
+                <span className="text-[#35E6B5]">{rubricScores.methodology} / 30 Pts</span>
               </div>
               <input
                 type="range"
@@ -280,7 +280,7 @@ export default function AdminAssignmentsPage() {
                 onChange={(e) =>
                   setRubricScores({ ...rubricScores, methodology: parseInt(e.target.value) })
                 }
-                className="w-full accent-[#38BDF8]"
+                className="w-full accent-[#65F58A]"
               />
               <span className="text-[10px] text-[#8BA2B5] block">
                 Evidence of structured Wireshark filtering, carving, and repeatable forensic steps.

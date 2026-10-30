@@ -259,7 +259,7 @@ export default function AdminStudentsPage() {
                       </td>
 
                       <td className="p-3">
-                        <span className="text-[#38BDF8] font-bold">
+                        <span className="text-[#65F58A] font-bold">
                           {st.token_balance || 0} ⚡
                         </span>
                       </td>
@@ -318,7 +318,7 @@ export default function AdminStudentsPage() {
                     href={`/verify/${selectedStudent.cadet_id || 'RK-89421'}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex items-center space-x-1 text-[#38BDF8] hover:underline"
+                    className="flex items-center space-x-1 text-[#65F58A] hover:underline"
                     title="Open Cadet's Public Verification Dossier"
                   >
                     <span>Public Dossier</span>
@@ -332,7 +332,7 @@ export default function AdminStudentsPage() {
                 <div className="p-4 cyber-glass-card rounded-xl flex items-center justify-between">
                   <div>
                     <span className="text-[10px] text-[#8BA2B5] block">ACADEMIC UTILITY TOKENS</span>
-                    <span className="text-xl font-bold text-[#38BDF8] mt-0.5 block">
+                    <span className="text-xl font-bold text-[#65F58A] mt-0.5 block">
                       {selectedStudent.token_balance || 0} TOKENS
                     </span>
                   </div>
@@ -362,10 +362,10 @@ export default function AdminStudentsPage() {
                   <div className="p-3 cyber-glass-card rounded-lg space-y-2">
                     <div className="flex justify-between">
                       <span className="text-white font-sans font-medium">Offensive Exploitation AD</span>
-                      <span className="text-[#38BDF8]">40% Done</span>
+                      <span className="text-[#65F58A]">40% Done</span>
                     </div>
                     <div className="w-full bg-[#1B2530] h-1.5 rounded-full overflow-hidden">
-                      <div className="bg-[#38BDF8] h-full rounded-full" style={{ width: '40%' }} />
+                      <div className="bg-[#65F58A] h-full rounded-full" style={{ width: '40%' }} />
                     </div>
                   </div>
                 </div>

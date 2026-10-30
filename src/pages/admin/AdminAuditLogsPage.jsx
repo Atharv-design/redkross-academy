@@ -163,7 +163,7 @@ export default function AdminAuditLogsPage() {
                         <div className="text-[10px] text-[#8BA2B5]">{log.category || 'SYSTEM'}</div>
                       </td>
 
-                      <td className="p-3 text-[#38BDF8]">
+                      <td className="p-3 text-[#35E6B5]">
                         {log.user_email || 'admin@redkross.org.in'}
                       </td>
 
@@ -211,7 +211,7 @@ export default function AdminAuditLogsPage() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-[#8BA2B5]">Client IP:</span>
-                      <span className="text-[#38BDF8]">127.0.0.1 (Internal Proxy)</span>
+                      <span className="text-[#35E6B5]">127.0.0.1 (Internal Proxy)</span>
                     </div>
                   </div>
                 </div>
