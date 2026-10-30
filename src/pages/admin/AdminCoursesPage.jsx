@@ -18,15 +18,16 @@ export default function AdminCoursesPage() {
   const [activeTab, setActiveTab] = useState('curriculum'); // curriculum | settings | preview
   const [expandedModules, setExpandedModules] = useState({});
   const [isEditingCourse, setIsEditingCourse] = useState(false);
+  const [isCreatingNew, setIsCreatingNew] = useState(false);
   const [courseFormData, setCourseFormData] = useState({
     title: '',
     slug: '',
     level: 'Intermediate',
     category: 'Cyber Threat Intelligence',
     description: '',
-    duration: '6 Weeks',
-    xp_reward: 1200,
-    status: 'DRAFT',
+    duration: '4 Weeks',
+    xp_reward: 1000,
+    status: 'PUBLISHED',
     modules: []
   });
 
@@ -192,40 +193,81 @@ export default function AdminCoursesPage() {
 
   const handleSaveCourse = (e) => {
     e.preventDefault();
-    if (!courseFormData.title) return;
+    if (!courseFormData.title || !courseFormData.title.trim()) {
+      alert('Please enter a valid course title.');
+      return;
+    }
 
     if (isEditingCourse && selectedCourse) {
       const updated = courses.map((c) =>
-        c.id === selectedCourse.id ? { ...c, ...courseFormData } : c
+        c.id === selectedCourse.id
+          ? {
+              ...c,
+              ...courseFormData,
+              title: courseFormData.title.trim(),
+              slug: (courseFormData.slug && courseFormData.slug.trim())
+                ? courseFormData.slug.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
+                : c.slug,
+              difficulty: courseFormData.level || courseFormData.difficulty || c.difficulty,
+              level: courseFormData.level || courseFormData.difficulty || c.level,
+              overview: courseFormData.description || courseFormData.overview || c.overview,
+              description: courseFormData.description || courseFormData.description || c.description,
+              estimated_duration: courseFormData.duration || courseFormData.estimated_duration || c.estimated_duration,
+              duration: courseFormData.duration || c.duration,
+              total_tokens_reward: Number(courseFormData.xp_reward) || c.total_tokens_reward || 350,
+              xp_reward: Number(courseFormData.xp_reward) || c.xp_reward || 350,
+            }
+          : c
       );
       persistCourses(updated);
       setIsEditingCourse(false);
+      setIsCreatingNew(false);
     } else {
-      const newCourse = {
-        id: 'CRS-' + Date.now().toString(36).toUpperCase(),
-        ...courseFormData,
-        modules: courseFormData.modules.length > 0 ? courseFormData.modules : [
+      const formattedTitle = courseFormData.title.trim();
+      const generatedSlug = (courseFormData.slug && courseFormData.slug.trim())
+        ? courseFormData.slug.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
+        : formattedTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+
+      const newCoursePayload = {
+        title: formattedTitle,
+        slug: generatedSlug,
+        difficulty: courseFormData.level || 'Intermediate',
+        level: courseFormData.level || 'Intermediate',
+        category: courseFormData.category || 'Specialist Operations',
+        overview: courseFormData.description || `Comprehensive curriculum designed by RedKross Academy for ${formattedTitle}.`,
+        description: courseFormData.description || `Comprehensive curriculum designed by RedKross Academy for ${formattedTitle}.`,
+        estimated_duration: courseFormData.duration || '4 Weeks',
+        duration: courseFormData.duration || '4 Weeks',
+        total_tokens_reward: Number(courseFormData.xp_reward) || 350,
+        xp_reward: Number(courseFormData.xp_reward) || 350,
+        status: courseFormData.status || 'PUBLISHED',
+        modules: courseFormData.modules && courseFormData.modules.length > 0 ? courseFormData.modules : [
           {
-            id: 'MOD-1',
-            title: 'Foundational Theory & Environment Setup',
+            id: `MOD-${Date.now().toString(36).toUpperCase()}-1`,
+            title: 'Module 1: Architecture & Defensive Fundamentals',
+            order: 1,
             drip_days: 0,
             lessons: [
               {
-                id: 'LES-101',
-                title: 'Welcome & Curriculum Overview',
-                duration: '10 mins',
+                id: `LES-${Date.now().toString(36).toUpperCase()}-101`,
+                title: '1.1 System Initialization & Operations Overview',
+                duration: '15 mins',
                 type: 'video',
                 video_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
                 is_preview: true,
-                content: '# Welcome to the Course\nThis initial session introduces key concepts.'
+                is_mandatory: true,
+                content: `### Welcome to ${formattedTitle}\n\nDefensive operators must maintain 100% visibility over host and network telemetry.\n\n\`\`\`bash\n# Inspect telemetry pipelines\nss -tulpn\n\`\`\``
               }
             ]
           }
         ]
       };
-      const updated = [newCourse, ...courses];
-      persistCourses(updated);
-      setSelectedCourse(newCourse);
+
+      const created = mockEngine.createCourse(newCoursePayload);
+      const db = mockEngine.getDb();
+      setCourses(db.courses || []);
+      setSelectedCourse(created || (db.courses && db.courses[0]) || null);
+      setIsCreatingNew(false);
       setIsEditingCourse(false);
     }
   };
@@ -422,7 +464,9 @@ export default function AdminCoursesPage() {
 
         <button
           onClick={() => {
+            setIsCreatingNew(true);
             setIsEditingCourse(false);
+            setSelectedCourse(null);
             setCourseFormData({
               title: '',
               slug: '',
@@ -431,10 +475,9 @@ export default function AdminCoursesPage() {
               description: '',
               duration: '4 Weeks',
               xp_reward: 1000,
-              status: 'DRAFT',
+              status: 'PUBLISHED',
               modules: []
             });
-            setSelectedCourse(null);
           }}
           className="flex items-center space-x-2 px-4 py-2 bg-[#65F58A] text-[#071018] font-bold text-xs rounded-lg hover:bg-[#52d674] transition-all shadow-sm"
         >
@@ -454,7 +497,7 @@ export default function AdminCoursesPage() {
 
           {filteredCourses.map((course, idx) => {
             const cardStyle = getCardStyleByIndex(idx);
-            const isSelected = selectedCourse?.id === course.id;
+            const isSelected = selectedCourse?.id === course.id && !isCreatingNew;
             const moduleCount = course.modules?.length || 0;
             const lessonCount = (course.modules || []).reduce((acc, m) => acc + (m.lessons?.length || 0), 0);
 
@@ -464,6 +507,7 @@ export default function AdminCoursesPage() {
                 onClick={() => {
                   setSelectedCourse(course);
                   setIsEditingCourse(false);
+                  setIsCreatingNew(false);
                 }}
                 className={`relative p-5 rounded-xl border transition-all cursor-pointer ${cardStyle.wrapperClass} ${
                   isSelected ? 'ring-2 ring-white/40 shadow-lg scale-[1.01]' : 'opacity-90 hover:opacity-100'
@@ -519,51 +563,195 @@ export default function AdminCoursesPage() {
 
         {/* Right Column: Workstation Editor (Course -> Module -> Lesson Hierarchy) */}
         <div className="col-span-7 cyber-glass-panel rounded-xl flex flex-col overflow-hidden">
-          {selectedCourse || !isEditingCourse ? (
-            selectedCourse ? (
-              <>
-                {/* Course Header Bar */}
-                <div className="p-5 border-b border-[#1B2530] bg-[#071018] flex items-center justify-between">
-                  <div>
-                    <div className="flex items-center space-x-2 mb-1">
-                      <span className="text-[11px] font-mono text-[#8BA2B5]">{selectedCourse.id}</span>
-                      <span className="text-[10px] font-mono bg-[#1B2530] text-[#65F58A] px-2 py-0.5 rounded">
-                        {selectedCourse.category || 'Curriculum'}
-                      </span>
-                    </div>
-                    <h2 className="text-lg font-bold text-white font-lora">{selectedCourse.title}</h2>
+          {(isEditingCourse || isCreatingNew) ? (
+            /* Create / Edit Course Form */
+            <form onSubmit={handleSaveCourse} className="p-6 space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-[#1B2530]">
+                <div>
+                  <span className="text-[10px] font-mono text-[#65F58A] uppercase tracking-wider block">
+                    {isEditingCourse && selectedCourse ? 'Master Registry Configuration' : 'New Program Architecture'}
+                  </span>
+                  <h3 className="text-base font-bold text-white font-lora">
+                    {isEditingCourse && selectedCourse ? `Edit: ${selectedCourse.title}` : 'Create New Master Course'}
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsEditingCourse(false);
+                    setIsCreatingNew(false);
+                  }}
+                  className="px-2.5 py-1 text-xs font-mono text-[#8BA2B5] hover:text-white rounded bg-[#1B2530] border border-[#263440]"
+                >
+                  Cancel
+                </button>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-mono text-[#8BA2B5]">Course Title *</label>
+                <input
+                  type="text"
+                  required
+                  value={courseFormData.title}
+                  onChange={(e) => setCourseFormData({ ...courseFormData, title: e.target.value })}
+                  placeholder="e.g. Advanced Network Defense & Packet Inspection"
+                  className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#65F58A]"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-mono text-[#8BA2B5]">URL Slug (Optional)</label>
+                <input
+                  type="text"
+                  value={courseFormData.slug || ''}
+                  onChange={(e) => setCourseFormData({ ...courseFormData, slug: e.target.value })}
+                  placeholder="e.g. advanced-network-defense"
+                  className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#65F58A]"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-mono text-[#8BA2B5]">Difficulty Level</label>
+                  <select
+                    value={courseFormData.level}
+                    onChange={(e) => setCourseFormData({ ...courseFormData, level: e.target.value })}
+                    className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#65F58A] bg-[#071018]"
+                  >
+                    <option value="Beginner">Beginner</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Advanced">Advanced</option>
+                    <option value="Expert">Expert</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-mono text-[#8BA2B5]">Category Track</label>
+                  <input
+                    type="text"
+                    value={courseFormData.category}
+                    onChange={(e) => setCourseFormData({ ...courseFormData, category: e.target.value })}
+                    className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#65F58A]"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-mono text-[#8BA2B5]">Course Summary Description</label>
+                <textarea
+                  rows={3}
+                  value={courseFormData.description}
+                  onChange={(e) => setCourseFormData({ ...courseFormData, description: e.target.value })}
+                  placeholder="Outline competencies, practical lab environments, and prerequisites."
+                  className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#65F58A]"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-mono text-[#8BA2B5]">Estimated Duration</label>
+                  <input
+                    type="text"
+                    value={courseFormData.duration}
+                    onChange={(e) => setCourseFormData({ ...courseFormData, duration: e.target.value })}
+                    className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#65F58A]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-mono text-[#8BA2B5]">XP Reward Bounty</label>
+                  <input
+                    type="number"
+                    value={courseFormData.xp_reward}
+                    onChange={(e) => setCourseFormData({ ...courseFormData, xp_reward: parseInt(e.target.value) || 0 })}
+                    className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#65F58A]"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-mono text-[#8BA2B5]">Initial Publishing Status</label>
+                <select
+                  value={courseFormData.status || 'PUBLISHED'}
+                  onChange={(e) => setCourseFormData({ ...courseFormData, status: e.target.value })}
+                  className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#65F58A] bg-[#071018]"
+                >
+                  <option value="PUBLISHED">PUBLISHED (Live on Student Portal)</option>
+                  <option value="DRAFT">DRAFT (Staged / Under Review)</option>
+                </select>
+              </div>
+
+              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-[#1B2530]">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsEditingCourse(false);
+                    setIsCreatingNew(false);
+                  }}
+                  className="px-4 py-2 bg-[#1B2530] text-[#CBD5E1] text-xs font-mono rounded-lg hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-[#65F58A] text-[#071018] text-xs font-bold rounded-lg hover:bg-[#52d674] shadow-md transition-all"
+                >
+                  {isEditingCourse && selectedCourse ? 'Update Course Parameters' : 'Create & Launch Course'}
+                </button>
+              </div>
+            </form>
+          ) : selectedCourse ? (
+            <>
+              {/* Course Header Bar */}
+              <div className="p-5 border-b border-[#1B2530] bg-[#071018] flex items-center justify-between">
+                <div>
+                  <div className="flex items-center space-x-2 mb-1">
+                    <span className="text-[11px] font-mono text-[#8BA2B5]">{selectedCourse.id}</span>
+                    <span className="text-[10px] font-mono bg-[#1B2530] text-[#65F58A] px-2 py-0.5 rounded">
+                      {selectedCourse.category || 'Curriculum'}
+                    </span>
                   </div>
+                  <h2 className="text-lg font-bold text-white font-lora">{selectedCourse.title}</h2>
+                </div>
 
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => handleTogglePublish(selectedCourse)}
-                      className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold border transition-colors ${
-                        selectedCourse.status === 'PUBLISHED'
-                          ? 'bg-[#1B2530] text-[#CBD5E1] border-[#263440] hover:text-[#EF4444]'
-                          : 'bg-[#65F58A]/10 text-[#65F58A] border-[#65F58A]/40 hover:bg-[#65F58A]/20'
-                      }`}
-                    >
-                      {selectedCourse.status === 'PUBLISHED' ? (
-                        <>
-                          <EyeOff className="w-3.5 h-3.5" />
-                          <span>Unpublish</span>
-                        </>
-                      ) : (
-                        <>
-                          <Eye className="w-3.5 h-3.5" />
-                          <span>Publish Live</span>
-                        </>
-                      )}
-                    </button>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => handleTogglePublish(selectedCourse)}
+                    className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold border transition-colors ${
+                      selectedCourse.status === 'PUBLISHED'
+                        ? 'bg-[#1B2530] text-[#CBD5E1] border-[#263440] hover:text-[#EF4444]'
+                        : 'bg-[#65F58A]/10 text-[#65F58A] border-[#65F58A]/40 hover:bg-[#65F58A]/20'
+                    }`}
+                  >
+                    {selectedCourse.status === 'PUBLISHED' ? (
+                      <>
+                        <EyeOff className="w-3.5 h-3.5" />
+                        <span>Unpublish</span>
+                      </>
+                    ) : (
+                      <>
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>Publish Live</span>
+                      </>
+                    )}
+                  </button>
 
-                    <button
-                      onClick={() => {
-                        setIsEditingCourse(true);
-                        setCourseFormData(selectedCourse);
-                      }}
-                      className="p-1.5 rounded-lg bg-[#1B2530] text-[#CBD5E1] hover:text-white border border-[#263440]"
-                      title="Edit Course Settings"
-                    >
+                  <button
+                    onClick={() => {
+                      setIsEditingCourse(true);
+                      setIsCreatingNew(false);
+                      setCourseFormData({
+                        ...selectedCourse,
+                        level: selectedCourse.difficulty || selectedCourse.level || 'Intermediate',
+                        description: selectedCourse.overview || selectedCourse.description || '',
+                        duration: selectedCourse.estimated_duration || selectedCourse.duration || '4 Weeks',
+                        xp_reward: selectedCourse.total_tokens_reward || selectedCourse.xp_reward || 1000,
+                        status: selectedCourse.status || 'PUBLISHED'
+                      });
+                    }}
+                    className="p-1.5 rounded-lg bg-[#1B2530] text-[#CBD5E1] hover:text-white border border-[#263440]"
+                    title="Edit Course Settings"
+                  >
                       <Edit3 className="w-4 h-4" />
                     </button>
 
@@ -783,101 +971,34 @@ export default function AdminCoursesPage() {
                   )}
                 </div>
               </>
-            ) : null
           ) : (
-            /* Create / Edit Course Form */
-            <form onSubmit={handleSaveCourse} className="p-6 space-y-4">
-              <h3 className="text-base font-bold text-white font-lora">
-                {isEditingCourse ? 'Edit Course Parameters' : 'Create New Master Course'}
-              </h3>
-
-              <div className="space-y-1">
-                <label className="text-xs font-mono text-[#8BA2B5]">Course Title *</label>
-                <input
-                  type="text"
-                  required
-                  value={courseFormData.title}
-                  onChange={(e) => setCourseFormData({ ...courseFormData, title: e.target.value })}
-                  placeholder="e.g. Advanced Network Defense & Packet Inspection"
-                  className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#65F58A]"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-mono text-[#8BA2B5]">Difficulty Level</label>
-                  <select
-                    value={courseFormData.level}
-                    onChange={(e) => setCourseFormData({ ...courseFormData, level: e.target.value })}
-                    className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#65F58A]"
-                  >
-                    <option value="Beginner">Beginner</option>
-                    <option value="Intermediate">Intermediate</option>
-                    <option value="Advanced">Advanced</option>
-                    <option value="Expert">Expert</option>
-                  </select>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-mono text-[#8BA2B5]">Category Track</label>
-                  <input
-                    type="text"
-                    value={courseFormData.category}
-                    onChange={(e) => setCourseFormData({ ...courseFormData, category: e.target.value })}
-                    className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#65F58A]"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-mono text-[#8BA2B5]">Course Summary Description</label>
-                <textarea
-                  rows={3}
-                  value={courseFormData.description}
-                  onChange={(e) => setCourseFormData({ ...courseFormData, description: e.target.value })}
-                  placeholder="Outline competencies, practical lab environments, and prerequisites."
-                  className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#65F58A]"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-mono text-[#8BA2B5]">Estimated Duration</label>
-                  <input
-                    type="text"
-                    value={courseFormData.duration}
-                    onChange={(e) => setCourseFormData({ ...courseFormData, duration: e.target.value })}
-                    className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-mono text-[#8BA2B5]">XP Reward Bounty</label>
-                  <input
-                    type="number"
-                    value={courseFormData.xp_reward}
-                    onChange={(e) => setCourseFormData({ ...courseFormData, xp_reward: parseInt(e.target.value) || 0 })}
-                    className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white"
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-[#1B2530]">
-                <button
-                  type="button"
-                  onClick={() => setIsEditingCourse(false)}
-                  className="px-4 py-2 bg-[#1B2530] text-[#CBD5E1] text-xs font-mono rounded-lg hover:text-white"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 bg-[#65F58A] text-[#071018] text-xs font-bold rounded-lg hover:bg-[#52d674]"
-                >
-                  Save Course Architecture
-                </button>
-              </div>
-            </form>
+            <div className="flex-1 flex flex-col items-center justify-center p-12 text-center text-[#8BA2B5] space-y-4">
+              <BookOpen className="w-12 h-12 text-[#65F58A]/40" />
+              <h3 className="text-base font-royal font-bold text-white">No Course Selected</h3>
+              <p className="text-xs max-w-sm">Select a course from the curriculum catalog to inspect and edit modules, or launch the course builder to create a new program.</p>
+              <button
+                onClick={() => {
+                  setIsCreatingNew(true);
+                  setIsEditingCourse(false);
+                  setSelectedCourse(null);
+                  setCourseFormData({
+                    title: '',
+                    slug: '',
+                    level: 'Intermediate',
+                    category: 'Cyber Threat Intelligence',
+                    description: '',
+                    duration: '4 Weeks',
+                    xp_reward: 1000,
+                    status: 'PUBLISHED',
+                    modules: []
+                  });
+                }}
+                className="px-4 py-2 bg-[#65F58A] text-[#071018] font-bold text-xs rounded-lg hover:bg-[#52d674] flex items-center space-x-2"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Launch Course Builder</span>
+              </button>
+            </div>
           )}
         </div>
       </div>

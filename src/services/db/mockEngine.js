@@ -561,11 +561,14 @@ class MockEngine {
       slug: coursePayload.slug || coursePayload.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
       title: coursePayload.title,
       version: coursePayload.version || '1.0',
+      status: coursePayload.status || 'PUBLISHED',
       category: coursePayload.category || 'Specialist Operations',
-      difficulty: coursePayload.difficulty || 'Intermediate',
+      difficulty: coursePayload.difficulty || coursePayload.level || 'Intermediate',
+      level: coursePayload.level || coursePayload.difficulty || 'Intermediate',
       price: typeof coursePayload.price === 'number' ? coursePayload.price : 0,
       cert_price: typeof coursePayload.cert_price === 'number' ? coursePayload.cert_price : 2999,
-      estimated_duration: coursePayload.estimated_duration || '12 Hours',
+      estimated_duration: coursePayload.estimated_duration || coursePayload.duration || '4 Weeks',
+      duration: coursePayload.duration || coursePayload.estimated_duration || '4 Weeks',
       estimated_weeks: coursePayload.estimated_weeks || 8,
       rating: 5.0,
       enrolled_count: 0,
@@ -578,7 +581,8 @@ class MockEngine {
         : (coursePayload.learning_objectives && coursePayload.learning_objectives.length > 0
             ? coursePayload.learning_objectives.slice(0, 4)
             : ['Defensive Operations', 'Threat Triage', 'Log Inspection']),
-      overview: coursePayload.overview || `Comprehensive curriculum designed by RedKross Academy for ${coursePayload.title}.`,
+      overview: coursePayload.overview || coursePayload.description || `Comprehensive curriculum designed by RedKross Academy for ${coursePayload.title}.`,
+      description: coursePayload.description || coursePayload.overview || `Comprehensive curriculum designed by RedKross Academy for ${coursePayload.title}.`,
       learning_objectives: coursePayload.learning_objectives || [],
       lead_author: coursePayload.lead_author || {
         name: 'Sarah Chen, CISSP',
@@ -586,7 +590,8 @@ class MockEngine {
         avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=256&q=80'
       },
       prerequisites: coursePayload.prerequisites || ['Basic Cybersecurity Fundamentals'],
-      total_tokens_reward: coursePayload.total_tokens_reward || 350,
+      total_tokens_reward: coursePayload.total_tokens_reward || coursePayload.xp_reward || 350,
+      xp_reward: coursePayload.xp_reward || coursePayload.total_tokens_reward || 350,
       modules: coursePayload.modules || [
         {
           id: `mod_${Date.now()}_1`,
