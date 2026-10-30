@@ -34,6 +34,7 @@ import { apiClient } from '../../services/apiClient';
 import { useAuth } from '../../services/auth/authContext';
 import { resolveVideoUrl, resolvePdfUrl } from '../../services/db/videoStorage';
 import { renderMarkdownToHtml } from '../../utils/markdownParser';
+import PixelBackground from '../../components/ui/PixelBackground';
 
 export default function LessonPlayerPage() {
   const { enrolmentId } = useParams();
@@ -381,7 +382,9 @@ export default function LessonPlayerPage() {
   const strokeDashoffset = circumference - (progressData.percentage / 100) * circumference;
 
   return (
-    <div className="min-h-screen bg-[#071018] text-[#F1F5F9] font-sans pb-12">
+    <div className="min-h-screen bg-[#071018] text-[#F1F5F9] font-sans pb-12 relative">
+      {/* Cyber Theme Ambient Shimmer Pixel Grid */}
+      <PixelBackground opacity={0.35} gap={22} pixelSize={2} />
       {/* 1. TOP BREADCRUMB & METRICS HEADER BAR */}
       <header className="sticky top-0 z-30 bg-[#071018]/90 backdrop-blur-xl border-b border-[#1B2530] px-4 sm:px-8 py-3.5">
         <div className="max-w-[1720px] mx-auto flex items-center justify-between gap-4">

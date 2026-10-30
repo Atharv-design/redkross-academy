@@ -1023,7 +1023,7 @@ const Doodle = ({ kind }: { kind: DoodleKind }) => {
 
     case "sparkle":
 
-      return <path fill="#8fdcff" d="M0 -13 C1 -4 4 -1 13 0 C4 1 1 4 0 13 C-1 4 -4 1 -13 0 C-4 -1 -1 -4 0 -13 Z" />
+      return <path fill="#65F58A" d="M0 -13 C1 -4 4 -1 13 0 C4 1 1 4 0 13 C-1 4 -4 1 -13 0 C-4 -1 -1 -4 0 -13 Z" />
 
     case "spiral":
 
@@ -2051,10 +2051,8 @@ export default function DoodleCrewFooter({
 
   return (
 
-    <footer
-
+    <Component
       ref={rootRef}
-
       className={"dcf" + (className ? " " + className : "")}
 
       data-play={play || reduced ? "1" : "0"}
@@ -2583,7 +2581,7 @@ export default function DoodleCrewFooter({
       </div>
       )}
 
-    </footer>
+    </Component>
 
   )
 
@@ -2593,7 +2591,7 @@ export default function DoodleCrewFooter({
 
 const CSS =
 
-  ".dcf{position:relative;isolation:isolate;overflow:hidden;overflow:clip;width:100%;box-sizing:border-box;display:flex;flex-direction:column;background:var(--dcf-bg);color:var(--dcf-ink);font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',Inter,Roboto,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;--dcf-soft:color-mix(in oklab,var(--dcf-ink) 62%,var(--dcf-bg));--dcf-line:color-mix(in oklab,var(--dcf-ink) 14%,var(--dcf-bg));--dcf-pad:clamp(16px,4vw,56px)}" +
+  ".dcf{position:relative;isolation:isolate;overflow:hidden;overflow:clip;width:100%;box-sizing:border-box;display:flex;flex-direction:column;background:var(--dcf-bg);color:var(--dcf-ink);font-family:'Lora',serif !important;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;--dcf-soft:color-mix(in oklab,var(--dcf-ink) 62%,var(--dcf-bg));--dcf-line:color-mix(in oklab,var(--dcf-ink) 14%,var(--dcf-bg));--dcf-pad:clamp(16px,4vw,56px)}" +
 
   ":where(.dcf) *,:where(.dcf) *::before,:where(.dcf) *::after{box-sizing:border-box}" +
 
@@ -2623,7 +2621,7 @@ const CSS =
 
   ".dcf-brandname{font-weight:800;font-size:19px;letter-spacing:-.02em}" +
 
-  ".dcf-blurb{grid-column:1;grid-row:2;font-family:var(--dcf-serif);font-size:15px;line-height:1.55;color:var(--dcf-soft);max-width:34ch}" +
+  ".dcf-blurb{grid-column:1;grid-row:2;font-family:'Lora',serif !important;font-size:15px;line-height:1.55;color:var(--dcf-soft);max-width:34ch}" +
 
   ".dcf-cols{grid-column:2;grid-row:1/span 2;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}" +
 
@@ -2723,7 +2721,7 @@ const CSS =
 
   ".dcf-cta{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;gap:20px;padding:clamp(20px,3vw,34px) 0 clamp(30px,4vw,48px);text-align:center}" +
 
-  ".dcf-tagline{font-family:var(--dcf-serif);font-size:clamp(17px,1.9vw,22px);line-height:1.4;letter-spacing:-.005em;max-width:44ch;text-wrap:balance}" +
+  ".dcf-tagline{font-family:'Lora',serif !important;font-size:clamp(17px,1.9vw,22px);line-height:1.4;letter-spacing:-.005em;max-width:44ch;text-wrap:balance}" +
 
   ".dcf-word{display:inline-block;white-space:pre}" +
 
@@ -2731,7 +2729,7 @@ const CSS =
 
   ".dcf-btn{display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 20px 0 16px;border-radius:999px;border:2px solid var(--dcf-ink);font-size:14.5px;font-weight:750;letter-spacing:-.01em;box-shadow:0 3px 0 var(--dcf-ink);transition:transform .18s cubic-bezier(.3,1.4,.5,1),box-shadow .18s cubic-bezier(.3,1.4,.5,1)}" +
 
-  ".dcf-btn.is-outline{background:rgba(14,14,22,.85);color:#f9fafb;border:2px solid rgba(229,122,0,.5);backdrop-filter:blur(8px)}" +
+  ".dcf-btn.is-outline{background:rgba(14,14,22,.85);color:#f9fafb;border:2px solid rgba(101,245,138,.6);box-shadow:0 0 12px rgba(101,245,138,.2);backdrop-filter:blur(8px)}" +
 
   ".dcf-btn.is-solid{background:linear-gradient(135deg,#65F58A 0%,#35E6B5 100%);color:#03060A;border:2px solid #65F58A;box-shadow:0 4px 18px rgba(0,255,163,.4);font-weight:700}" +
 

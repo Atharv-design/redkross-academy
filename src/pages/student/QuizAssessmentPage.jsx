@@ -21,6 +21,7 @@ import {
 import confetti from 'canvas-confetti';
 import { mockEngine } from '../../services/db/mockEngine';
 import { useAuth } from '../../services/auth/authContext';
+import PixelBackground from '../../components/ui/PixelBackground';
 
 export default function QuizAssessmentPage() {
   const { enrolmentId, quizId } = useParams();
@@ -321,6 +322,8 @@ export default function QuizAssessmentPage() {
 
   return (
     <div className="min-h-screen bg-[#071018] py-12 relative">
+      {/* Cyber Theme Ambient Shimmer Pixel Grid */}
+      <PixelBackground opacity={0.35} gap={22} pixelSize={2} />
       {/* Floating Real-Time Proctoring HUD (Camera Feed) */}
       {examStarted && !submissionResult && (
         <div className="fixed top-20 right-6 z-40 flex flex-col items-end space-y-2 pointer-events-none">

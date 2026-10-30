@@ -25,6 +25,7 @@ import {
 import { useAuth } from '../../services/auth/authContext';
 import { mockEngine } from '../../services/db/mockEngine';
 import { TreeNav } from '../../components/ui/tree-nav';
+import PixelBackground from '../../components/ui/PixelBackground';
 
 export default function AdminLayout() {
   const location = useLocation();
@@ -179,9 +180,11 @@ export default function AdminLayout() {
     location.pathname === '/admin' ? '/admin/dashboard' : location.pathname;
 
   return (
-    <div className="flex h-screen bg-[#050C14] text-[#F1F5F9] font-sans overflow-hidden select-none relative">
+    <div className="flex h-screen bg-[#071018] text-[#F1F5F9] font-sans overflow-hidden select-none relative">
+      {/* Cyber Theme Ambient Shimmer Pixel Grid */}
+      <PixelBackground opacity={0.32} gap={22} pixelSize={2} />
       {/* Cyber Grid Texture */}
-      <div className="absolute inset-0 bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none z-0 opacity-40" />
+      <div className="absolute inset-0 bg-[radial-gradient(#65f58a0a_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none z-0 opacity-40" />
 
       {/* LEFT ULTRA-GLASS SIDEBAR WITH CYBER TREE-NAV */}
       <aside className="w-72 cyber-glass-panel border-r border-[#65F58A]/25 flex flex-col justify-between flex-shrink-0 z-30 relative">

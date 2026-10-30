@@ -108,8 +108,8 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Interactive Hand-Drawn Doodle Crew Brandmark for RedKross Academy */}
-        <div className="my-8 pt-6 border-t border-white/5">
+        {/* Interactive Hand-Drawn Doodle Crew Brandmark for RedKross Academy — Direct on Footer Canvas (No Box Container) */}
+        <div className="my-4">
           <DoodleCrewFooter
             as="div"
             showTop={false}
@@ -120,7 +120,7 @@ export default function Footer() {
             tagline="Empowering Next-Gen Defensive Security Practitioners with Rigorous Curricula and Verifiable Credentials"
             height="520px"
             palette={{
-              background: "#050B11",
+              background: "transparent",
               ink: "#F1F5F9",
               accent: "#65F58A"
             }}

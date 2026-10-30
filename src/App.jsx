@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Outlet, Navigate } from 'react-router-dom
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
 import CyberBackgroundWatermark from './components/common/CyberBackgroundWatermark';
+import PixelBackground from './components/ui/PixelBackground';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import AdminRoute from './components/auth/AdminRoute';
 
@@ -36,8 +37,9 @@ import AdminProfilePage from './pages/admin/AdminProfilePage';
 function PublicLayout() {
   return (
     <div className="flex flex-col min-h-screen relative bg-[#071018] text-[#F1F5F9] overflow-x-hidden">
-      {/* Centered Ambient RedKross Cyber Background Watermark */}
+      {/* Centered Ambient RedKross Cyber Background Watermark & Theme Pixel Grid */}
       <CyberBackgroundWatermark />
+      <PixelBackground opacity={0.4} gap={20} pixelSize={2.2} />
 
       <Navbar />
       <main className="flex-1 pt-24 sm:pt-28 relative z-10">
