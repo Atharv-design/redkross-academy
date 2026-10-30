@@ -7,9 +7,9 @@ import { getEcosystemLinks } from '../../utils/ecosystemLinks';
 export default function Footer() {
   const ecosystem = getEcosystemLinks();
   return (
-    <footer className="bg-[#050B11] border-t border-[#263440] text-[#94A3B8] font-sans relative overflow-hidden select-none">
+    <footer className="bg-[#040e0a] border-t border-[#65F58A]/20 text-[#B8E6CE] relative overflow-hidden select-none">
       {/* Subtle Neon Radial Ambient Glow */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[850px] h-[320px] bg-[#65F58A]/[0.02] rounded-full blur-[160px] pointer-events-none" />
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[850px] h-[320px] bg-[#65F58A]/[0.03] rounded-full blur-[160px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
@@ -25,12 +25,12 @@ export default function Footer() {
               </span>
             </div>
             
-            <p className="text-xs text-[#94A3B8] leading-relaxed font-sans max-w-sm">
+            <p className="text-xs text-[#B8E6CE] leading-relaxed max-w-sm">
               The professional defensive cybersecurity education & credentialing division of <a href={ecosystem.foundation} target="_blank" rel="noopener noreferrer" className="text-white hover:text-[#65F58A] underline">RedKross Research Foundation</a>. Hands-on SOC operations, adversary simulation defense, and cryptographically signed credentials.
             </p>
 
-            <div className="text-[11px] font-mono text-slate-500 space-y-1">
-              <p>CIN: <span className="text-slate-300 font-bold">U85300HR2022NPL107482</span> (RoC Haryana)</p>
+            <div className="text-[11px] font-mono text-[#72A88E] space-y-1">
+              <p>CIN: <span className="text-[#C9EFE0] font-bold">U85300HR2022NPL107482</span> (RoC Haryana)</p>
               <p>Section 8 Non-Profit Research Foundation</p>
             </div>
           </div>
@@ -51,14 +51,14 @@ export default function Footer() {
           <div className="space-y-3">
             <h4 className="text-xs font-mono uppercase tracking-widest text-[#65F58A] font-semibold">Integrity Standards</h4>
             <ul className="space-y-2 text-xs">
-              <li className="flex items-center space-x-1.5 text-slate-300">
+              <li className="flex items-center space-x-1.5 text-[#C9EFE0]">
                 <Lock className="w-3.5 h-3.5 text-[#65F58A]" />
                 <span>Immutable Digital Signatures</span>
               </li>
-              <li><span className="text-slate-400">3-Strike Exam Focus Tracking</span></li>
-              <li><span className="text-slate-400">24-Hour Evaluation Lockout Protocol</span></li>
-              <li><span className="text-slate-400">NIST SP 800-61r2 Aligned Playbooks</span></li>
-              <li><span className="text-slate-400">MITRE ATT&CK Framework Mapping</span></li>
+              <li><span className="text-[#B8E6CE]">3-Strike Exam Focus Tracking</span></li>
+              <li><span className="text-[#B8E6CE]">24-Hour Evaluation Lockout Protocol</span></li>
+              <li><span className="text-[#B8E6CE]">NIST SP 800-61r2 Aligned Playbooks</span></li>
+              <li><span className="text-[#B8E6CE]">MITRE ATT&CK Framework Mapping</span></li>
             </ul>
           </div>
 
@@ -70,39 +70,39 @@ export default function Footer() {
                 href={ecosystem.foundation}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between text-xs text-gray-300 hover:border-[#65F58A]/40 hover:bg-white/10 transition-all group"
+                className="p-2.5 rounded-xl bg-[#092218]/50 border border-[#65F58A]/20 flex items-center justify-between text-xs text-[#C9EFE0] hover:border-[#65F58A]/50 hover:bg-[#0c2d20] transition-all group"
               >
                 <div>
-                  <span className="text-[10px] text-gray-500 font-mono block">PARENT FOUNDATION</span>
+                  <span className="text-[10px] text-[#72A88E] font-mono block">PARENT FOUNDATION</span>
                   <span className="font-semibold text-white group-hover:text-[#65F58A]">redkross.org.in</span>
                 </div>
-                <ArrowUpRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-[#65F58A]" />
+                <ArrowUpRight className="w-3.5 h-3.5 text-[#72A88E] group-hover:text-[#65F58A]" />
               </a>
 
               <a 
                 href={ecosystem.cybersecurity}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between text-xs text-gray-300 hover:border-[#35E6B5]/40 hover:bg-white/10 transition-all group"
+                className="p-2.5 rounded-xl bg-[#092218]/50 border border-[#65F58A]/20 flex items-center justify-between text-xs text-[#C9EFE0] hover:border-[#35E6B5]/50 hover:bg-[#0c2d20] transition-all group"
               >
                 <div>
-                  <span className="text-[10px] text-gray-500 font-mono block">CYBERSECURITY PLATFORM</span>
+                  <span className="text-[10px] text-[#72A88E] font-mono block">CYBERSECURITY PLATFORM</span>
                   <span className="font-semibold text-white group-hover:text-[#35E6B5]">cybersecurity.redkross.org.in</span>
                 </div>
-                <ArrowUpRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-[#35E6B5]" />
+                <ArrowUpRight className="w-3.5 h-3.5 text-[#72A88E] group-hover:text-[#35E6B5]" />
               </a>
 
               <a 
                 href={ecosystem.psychology}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between text-xs text-gray-300 hover:border-[#65F58A]/40 hover:bg-white/10 transition-all group"
+                className="p-2.5 rounded-xl bg-[#092218]/50 border border-[#65F58A]/20 flex items-center justify-between text-xs text-[#C9EFE0] hover:border-[#65F58A]/50 hover:bg-[#0c2d20] transition-all group"
               >
                 <div>
-                  <span className="text-[10px] text-gray-500 font-mono block">PSYCHOLOGY & WELLBEING</span>
+                  <span className="text-[10px] text-[#72A88E] font-mono block">PSYCHOLOGY & WELLBEING</span>
                   <span className="font-semibold text-white group-hover:text-[#65F58A]">psychology.redkross.org.in</span>
                 </div>
-                <ArrowUpRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-[#65F58A]" />
+                <ArrowUpRight className="w-3.5 h-3.5 text-[#72A88E] group-hover:text-[#65F58A]" />
               </a>
             </div>
           </div>

@@ -102,10 +102,10 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-8 font-sans animate-slide-left">
-      {/* 1. TOP MACRO KPI ROW (Frosted Liquid Glass Cards) */}
+      {/* 1. TOP MACRO KPI ROW (Frosted Emerald Liquid Glass Cards) */}
       <div className="grid grid-cols-4 gap-5">
-        <div className="p-5 rounded-2xl ultra-glass-card space-y-2 relative overflow-hidden group animate-slide-left stagger-1">
-          <div className="flex items-center justify-between text-xs font-mono text-[#94A3B8]">
+        <div className="p-5 rounded-2xl ultra-glass-card space-y-2 relative overflow-hidden group animate-slide-left stagger-1 border border-[#65F58A]/30 border-t-white/20">
+          <div className="flex items-center justify-between text-xs font-mono text-[#B8E6CE]">
             <span className="uppercase tracking-wider">Total Registered Cadets</span>
             <Users className="w-4 h-4 text-[#65F58A]" />
           </div>
@@ -119,43 +119,43 @@ export default function AdminDashboardPage() {
           <div className="absolute top-0 right-0 w-28 h-28 bg-[#65F58A]/10 rounded-full blur-2xl pointer-events-none group-hover:bg-[#65F58A]/15 transition-all" />
         </div>
 
-        <div className="p-5 rounded-2xl ultra-glass-card space-y-2 relative overflow-hidden group animate-slide-left stagger-2">
-          <div className="flex items-center justify-between text-xs font-mono text-[#94A3B8]">
+        <div className="p-5 rounded-2xl ultra-glass-card space-y-2 relative overflow-hidden group animate-slide-left stagger-2 border border-[#35E6B5]/30 border-t-white/20">
+          <div className="flex items-center justify-between text-xs font-mono text-[#B8E6CE]">
             <span className="uppercase tracking-wider">Active Curriculum</span>
             <BookOpen className="w-4 h-4 text-[#35E6B5]" />
           </div>
           <div className="text-3xl font-extrabold font-mono text-[#35E6B5] tabular-nums">
             {metrics.activeCourses} Courses
           </div>
-          <div className="text-[11px] font-mono text-[#94A3B8]">
+          <div className="text-[11px] font-mono text-[#C9EFE0]">
             {metrics.pendingAssignments} assignments awaiting review
           </div>
           <div className="absolute top-0 right-0 w-28 h-28 bg-[#35E6B5]/10 rounded-full blur-2xl pointer-events-none group-hover:bg-[#35E6B5]/15 transition-all" />
         </div>
 
-        <div className="p-5 rounded-2xl ultra-glass-card space-y-2 relative overflow-hidden group animate-slide-left stagger-3">
-          <div className="flex items-center justify-between text-xs font-mono text-[#94A3B8]">
+        <div className="p-5 rounded-2xl ultra-glass-card space-y-2 relative overflow-hidden group animate-slide-left stagger-3 border border-[#65F58A]/30 border-t-white/20">
+          <div className="flex items-center justify-between text-xs font-mono text-[#B8E6CE]">
             <span className="uppercase tracking-wider">Valid Credentials</span>
             <Award className="w-4 h-4 text-[#65F58A]" />
           </div>
           <div className="text-3xl font-extrabold font-mono text-[#65F58A] tabular-nums">
             {metrics.issuedCerts}
           </div>
-          <div className="text-[11px] font-mono text-[#94A3B8]">
+          <div className="text-[11px] font-mono text-[#C9EFE0]">
             {metrics.revokedCerts > 0 ? `${metrics.revokedCerts} revoked` : '0 revoked'} • {metrics.pendingCertificates} pending dispatch
           </div>
           <div className="absolute top-0 right-0 w-28 h-28 bg-[#65F58A]/10 rounded-full blur-2xl pointer-events-none group-hover:bg-[#65F58A]/15 transition-all" />
         </div>
 
-        <div className="p-5 rounded-2xl ultra-glass-card space-y-2 relative overflow-hidden group animate-slide-left stagger-4">
-          <div className="flex items-center justify-between text-xs font-mono text-[#94A3B8]">
+        <div className="p-5 rounded-2xl ultra-glass-card space-y-2 relative overflow-hidden group animate-slide-left stagger-4 border border-amber-400/30 border-t-white/20">
+          <div className="flex items-center justify-between text-xs font-mono text-[#B8E6CE]">
             <span className="uppercase tracking-wider">Token Circulation</span>
             <Coins className="w-4 h-4 text-amber-400" />
           </div>
           <div className="text-3xl font-extrabold font-mono text-amber-400 tabular-nums">
             {metrics.tokensCirculated.toLocaleString()}
           </div>
-          <div className="text-[11px] font-mono text-[#94A3B8]">
+          <div className="text-[11px] font-mono text-[#C9EFE0]">
             {metrics.activeLockouts > 0 ? `${metrics.activeLockouts} active 24h exam lockouts` : 'Operational health nominal'}
           </div>
           <div className="absolute top-0 right-0 w-28 h-28 bg-amber-400/10 rounded-full blur-2xl pointer-events-none group-hover:bg-amber-400/15 transition-all" />
@@ -163,7 +163,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* 2. CATALOG RELEASE EMBARGO MASTER SWITCH BANNER (Liquid Glass Panel) */}
-      <div className="p-6 rounded-2xl ultra-glass-panel relative overflow-hidden shimmer-lr animate-slide-left stagger-2">
+      <div className="p-6 rounded-2xl ultra-glass-panel relative overflow-hidden shimmer-lr animate-slide-left stagger-2 border border-[#65F58A]/30 border-t-white/25">
         <div className="flex items-center justify-between">
           <div className="space-y-1 z-10 max-w-2xl">
             <div className="flex items-center gap-2">
@@ -172,14 +172,14 @@ export default function AdminDashboardPage() {
                 <span>Public Course Catalog Release Status</span>
                 <span className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded border ${
                   metrics.publicCatalogEnabled
-                    ? 'bg-[#65F58A]/10 text-[#65F58A] border-[#65F58A]/30'
-                    : 'bg-amber-400/10 text-amber-400 border-amber-400/30'
+                    ? 'bg-[#65F58A]/15 text-[#65F58A] border-[#65F58A]/40'
+                    : 'bg-amber-400/15 text-amber-400 border-amber-400/40'
                 }`}>
                   {metrics.publicCatalogEnabled ? 'PUBLIC LIVE RELEASE' : 'EMBARGOED (COURSES WILL BE OUT SOON)'}
                 </span>
               </h3>
             </div>
-            <p className="text-xs text-[#94A3B8] font-mono leading-relaxed">
+            <p className="text-xs text-[#B8E6CE] font-mono leading-relaxed">
               {metrics.publicCatalogEnabled
                 ? 'Public students can explore all courses and learning paths directly. All published courses are open.'
                 : 'Catalog is currently in pre-launch security embargo. Public visitors will see "Courses will be out soon".'}
@@ -249,31 +249,31 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-12 gap-6">
         {/* Left: Infrastructure & Subsystems (7 cols) */}
         <div className="col-span-7">
-          <div className="p-6 rounded-2xl cyber-glass-panel space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
+          <div className="p-6 rounded-2xl cyber-glass-panel space-y-4 border border-[#65F58A]/30 border-t-white/20">
+            <div className="flex items-center justify-between pb-3 border-b border-[#65F58A]/20">
               <div className="flex items-center gap-2">
                 <Activity className="w-4 h-4 text-[#35E6B5]" />
                 <h3 className="font-lora text-base font-semibold text-white">System Infrastructure Telemetry</h3>
               </div>
-              <span className="text-[11px] font-mono text-[#65F58A] flex items-center gap-1.5">
+              <span className="text-[11px] font-mono text-[#65F58A] flex items-center gap-1.5 font-bold">
                 <span className="w-2 h-2 rounded-full bg-[#65F58A] animate-pulse" />
                 <span>ALL SUBSYSTEMS NOMINAL</span>
               </span>
             </div>
 
             <div className="grid grid-cols-3 gap-3 font-mono text-xs">
-              <div className="p-3.5 rounded-xl cyber-glass-card space-y-1">
-                <p className="text-[10px] text-[#94A3B8] uppercase">Media CDN Edge</p>
+              <div className="p-3.5 rounded-xl cyber-glass-card space-y-1 border border-[#65F58A]/25 border-t-white/15">
+                <p className="text-[10px] text-[#B8E6CE] uppercase font-bold tracking-wider">Media CDN Edge</p>
                 <p className="font-bold text-white">IndexedDB / HLS</p>
                 <p className="text-[10px] text-[#65F58A]">Local Offline Sync</p>
               </div>
-              <div className="p-3.5 rounded-xl cyber-glass-card space-y-1">
-                <p className="text-[10px] text-[#94A3B8] uppercase">Database Sync</p>
+              <div className="p-3.5 rounded-xl cyber-glass-card space-y-1 border border-[#65F58A]/25 border-t-white/15">
+                <p className="text-[10px] text-[#B8E6CE] uppercase font-bold tracking-wider">Database Sync</p>
                 <p className="font-bold text-white">MockEngine EventBus</p>
                 <p className="text-[10px] text-[#65F58A]">Sync interval 0s</p>
               </div>
-              <div className="p-3.5 rounded-xl cyber-glass-card space-y-1">
-                <p className="text-[10px] text-[#94A3B8] uppercase">Proctor Telemetry</p>
+              <div className="p-3.5 rounded-xl cyber-glass-card space-y-1 border border-[#35E6B5]/25 border-t-white/15">
+                <p className="text-[10px] text-[#B8E6CE] uppercase font-bold tracking-wider">Proctor Telemetry</p>
                 <p className="font-bold text-white">Anti-Cheat Tap</p>
                 <p className="text-[10px] text-[#35E6B5]">Active Guard</p>
               </div>
@@ -283,21 +283,21 @@ export default function AdminDashboardPage() {
             <div className="pt-2 flex items-center gap-3">
               <NavLink
                 to="/admin/courses"
-                className="flex-1 py-2.5 px-4 rounded-xl cyber-glass-card hover:border-[#65F58A]/50 text-xs font-mono text-white flex items-center justify-between transition-all"
+                className="flex-1 py-2.5 px-4 rounded-xl cyber-glass-card border border-[#65F58A]/25 hover:border-[#65F58A]/60 text-xs font-mono text-white flex items-center justify-between transition-all"
               >
                 <span>Curriculum & Lessons</span>
                 <ChevronRight className="w-3.5 h-3.5 text-[#65F58A]" />
               </NavLink>
               <NavLink
                 to="/admin/quizzes"
-                className="flex-1 py-2.5 px-4 rounded-xl cyber-glass-card hover:border-[#35E6B5]/50 text-xs font-mono text-white flex items-center justify-between transition-all"
+                className="flex-1 py-2.5 px-4 rounded-xl cyber-glass-card border border-[#35E6B5]/25 hover:border-[#35E6B5]/60 text-xs font-mono text-white flex items-center justify-between transition-all"
               >
                 <span>Question Bank & Exams</span>
                 <ChevronRight className="w-3.5 h-3.5 text-[#35E6B5]" />
               </NavLink>
               <NavLink
                 to="/admin/students"
-                className="flex-1 py-2.5 px-4 rounded-xl cyber-glass-card hover:border-amber-400/50 text-xs font-mono text-white flex items-center justify-between transition-all"
+                className="flex-1 py-2.5 px-4 rounded-xl cyber-glass-card border border-amber-400/25 hover:border-amber-400/60 text-xs font-mono text-white flex items-center justify-between transition-all"
               >
                 <span>Cadet Directory</span>
                 <ChevronRight className="w-3.5 h-3.5 text-amber-400" />
@@ -308,15 +308,15 @@ export default function AdminDashboardPage() {
 
         {/* Right: Recent Activity Audit Stream (5 cols) */}
         <div className="col-span-5">
-          <div className="p-6 rounded-2xl cyber-glass-panel space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
+          <div className="p-6 rounded-2xl cyber-glass-panel space-y-4 border border-[#65F58A]/30 border-t-white/20">
+            <div className="flex items-center justify-between pb-3 border-b border-[#65F58A]/20">
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-[#65F58A]" />
                 <h3 className="font-lora text-base font-semibold text-white">Recent Admin Activities</h3>
               </div>
               <NavLink
                 to="/admin/audit-logs"
-                className="text-xs font-mono text-[#65F58A] hover:underline flex items-center gap-1"
+                className="text-xs font-mono text-[#65F58A] hover:underline flex items-center gap-1 font-bold"
               >
                 <span>View All</span>
                 <ArrowUpRight className="w-3 h-3" />
@@ -327,15 +327,15 @@ export default function AdminDashboardPage() {
               {recentActivities.map((log) => (
                 <div
                   key={log.id}
-                  className="p-3 rounded-xl cyber-glass-card flex items-center justify-between"
+                  className="p-3 rounded-xl cyber-glass-card flex items-center justify-between border border-[#65F58A]/20"
                 >
                   <div className="min-w-0 pr-3">
                     <p className="text-white font-semibold truncate">{log.action}</p>
-                    <p className="text-[10px] text-[#94A3B8] truncate mt-0.5">
+                    <p className="text-[10px] text-[#B8E6CE] truncate mt-0.5">
                       Target: {log.target || log.details || 'System'}
                     </p>
                   </div>
-                  <span className="text-[10px] text-[#35E6B5] shrink-0">{log.timestamp || 'Just now'}</span>
+                  <span className="text-[10px] text-[#35E6B5] shrink-0 font-bold">{log.timestamp || 'Just now'}</span>
                 </div>
               ))}
             </div>

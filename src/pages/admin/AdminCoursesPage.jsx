@@ -575,9 +575,9 @@ export default function AdminCoursesPage() {
       <div className="grid grid-cols-12 gap-6 min-h-[700px]">
         {/* Left Column: 10 Visual Style Cards List */}
         <div className="col-span-5 space-y-4 overflow-y-auto max-h-[820px] pr-2">
-          <div className="flex items-center justify-between text-xs font-mono text-[#8BA2B5] px-1">
+          <div className="flex items-center justify-between text-xs font-mono text-[#B8E6CE] px-1">
             <span>CURRICULUM REPOSITORY ({filteredCourses.length})</span>
-            <span className="text-[10px] text-[#65F58A]">10 Distinct Card Styles</span>
+            <span className="text-[10px] text-[#65F58A]">10 Distinct Transparent Glass Styles</span>
           </div>
 
           {filteredCourses.map((course, idx) => {
@@ -595,7 +595,7 @@ export default function AdminCoursesPage() {
                   setIsCreatingNew(false);
                 }}
                 className={`relative p-5 rounded-xl border transition-all cursor-pointer ${cardStyle.wrapperClass} ${
-                  isSelected ? 'ring-2 ring-white/40 shadow-lg scale-[1.01]' : 'opacity-90 hover:opacity-100'
+                  isSelected ? 'ring-2 ring-[#65F58A] shadow-xl scale-[1.01]' : 'opacity-90 hover:opacity-100'
                 }`}
               >
                 {/* Visual style badge & status */}
@@ -604,7 +604,7 @@ export default function AdminCoursesPage() {
                     <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full border ${cardStyle.badgeClass}`}>
                       {cardStyle.name}
                     </span>
-                    <span className="text-[10px] font-mono text-[#8BA2B5] bg-[#071018]/60 px-2 py-0.5 rounded border border-[#1B2530]">
+                    <span className="text-[10px] font-mono text-[#B8E6CE] bg-[#071018]/60 px-2 py-0.5 rounded border border-[#65F58A]/30">
                       {course.level || 'Beginner'}
                     </span>
                   </div>
@@ -612,8 +612,8 @@ export default function AdminCoursesPage() {
                   <span
                     className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${
                       course.status === 'PUBLISHED'
-                        ? 'bg-[#65F58A]/10 text-[#65F58A] border-[#65F58A]/30'
-                        : 'bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/30'
+                        ? 'bg-[#65F58A]/15 text-[#65F58A] border-[#65F58A]/40'
+                        : 'bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/40'
                     }`}
                   >
                     {course.status || 'DRAFT'}
@@ -623,19 +623,19 @@ export default function AdminCoursesPage() {
                 <h3 className="text-base font-bold text-white mb-1.5 leading-snug line-clamp-1">
                   {course.title}
                 </h3>
-                <p className="text-xs text-[#8BA2B5] line-clamp-2 mb-4">
+                <p className="text-xs text-[#B8E6CE] line-clamp-2 mb-4">
                   {course.description || 'Comprehensive offensive and defensive cybersecurity training path.'}
                 </p>
 
                 {/* Card Footer Metrics */}
-                <div className="flex items-center justify-between text-[11px] font-mono pt-3 border-t border-white/10 text-[#CBD5E1]">
+                <div className="flex items-center justify-between text-[11px] font-mono pt-3 border-t border-[#65F58A]/20 text-[#C9EFE0]">
                   <div className="flex items-center space-x-3">
                     <span className="flex items-center space-x-1">
-                      <Layers className="w-3.5 h-3.5 text-[#8BA2B5]" />
+                      <Layers className="w-3.5 h-3.5 text-[#65F58A]" />
                       <span>{moduleCount} Modules</span>
                     </span>
                     <span className="flex items-center space-x-1">
-                      <Video className="w-3.5 h-3.5 text-[#8BA2B5]" />
+                      <Video className="w-3.5 h-3.5 text-[#35E6B5]" />
                       <span>{lessonCount} Lessons</span>
                     </span>
                   </div>
@@ -647,7 +647,7 @@ export default function AdminCoursesPage() {
         </div>
 
         {/* Right Column: Workstation Editor (Course -> Module -> Lesson Hierarchy) */}
-        <div className="col-span-7 cyber-glass-panel rounded-xl flex flex-col overflow-hidden">
+        <div className="col-span-7 cyber-glass-panel rounded-xl flex flex-col overflow-hidden border border-[#65F58A]/30 border-t-white/20">
           {(isEditingCourse || isCreatingNew) ? (
             /* Create / Edit Course Form */
             <form onSubmit={handleSaveCourse} className="p-6 space-y-4">

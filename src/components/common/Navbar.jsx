@@ -99,33 +99,33 @@ export default function Navbar() {
     <>
       <header className="fixed top-0 inset-x-0 z-50 pointer-events-none select-none">
         {/* Top Cross-Domain Ecosystem Utility Bar */}
-        <div className="bg-[#050B11]/92 border-b border-[#263440] py-1.5 px-4 sm:px-8 text-[11px] font-mono text-[#94A3B8] flex items-center justify-between backdrop-blur-md pointer-events-auto">
+        <div className="bg-[#040e0a]/92 border-b border-[#65F58A]/20 py-1.5 px-4 sm:px-8 text-[11px] font-mono text-[#B8E6CE] flex items-center justify-between backdrop-blur-md pointer-events-auto">
           <div className="flex items-center gap-3 sm:gap-4 truncate">
             <a 
               href={ecosystem.foundation}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-slate-300 hover:text-[#65F58A] transition-colors truncate"
+              className="flex items-center gap-1.5 text-[#C9EFE0] hover:text-[#65F58A] transition-colors truncate"
             >
               <span>&larr; RedKross Foundation</span>
               <ExternalLink className="w-3 h-3 opacity-60" />
             </a>
-            <span className="text-slate-600">|</span>
+            <span className="text-[#65F58A]/30">|</span>
             <a 
               href={ecosystem.cybersecurity}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-slate-400 hover:text-[#35E6B5] transition-colors hidden sm:flex"
+              className="flex items-center gap-1.5 text-[#B8E6CE] hover:text-[#35E6B5] transition-colors hidden sm:flex"
             >
               <span>Cybersecurity Platform</span>
               <ExternalLink className="w-3 h-3 opacity-60" />
             </a>
-            <span className="text-slate-600 hidden sm:inline">|</span>
+            <span className="text-[#65F58A]/30 hidden sm:inline">|</span>
             <a 
               href={ecosystem.psychology}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-slate-400 hover:text-[#65F58A] transition-colors hidden md:flex"
+              className="flex items-center gap-1.5 text-[#B8E6CE] hover:text-[#65F58A] transition-colors hidden md:flex"
             >
               <span>Psychology Platform</span>
               <ExternalLink className="w-3 h-3 opacity-60" />
@@ -144,7 +144,7 @@ export default function Navbar() {
             className={`max-w-7xl mx-auto rounded-full px-5 py-2.5 flex items-center justify-between transition-all duration-300 pointer-events-auto liquid-glass-nav ${
               scrolled
                 ? 'shadow-[0_16px_48px_rgba(0,0,0,0.85)] border-[#65F58A]/40'
-                : 'border-[#263440]'
+                : 'border-[#65F58A]/30'
             }`}
           >
             {/* Brand Logo & Prestigious Title */}
@@ -160,7 +160,7 @@ export default function Navbar() {
                 <span className="font-royal font-bold text-sm sm:text-base tracking-wider text-white leading-tight">
                   RedKross <span className="text-[#65F58A]">Academy</span>
                 </span>
-                <span className="text-[9px] font-mono tracking-widest text-[#94A3B8] uppercase -mt-0.5">
+                <span className="text-[9px] font-mono tracking-widest text-[#B8E6CE] uppercase -mt-0.5">
                   Defensive Cyber &bull; Operator Training
                 </span>
               </div>
@@ -175,7 +175,7 @@ export default function Navbar() {
                     key={link.label}
                     to={link.path}
                     className={`text-xs font-mono font-medium transition-colors duration-200 relative py-1 whitespace-nowrap animate-slide-left stagger-${(idx % 4) + 1} ${
-                      active ? 'text-[#65F58A] font-bold' : 'text-[#94A3B8] hover:text-white'
+                      active ? 'text-[#65F58A] font-bold' : 'text-[#B8E6CE] hover:text-white'
                     }`}
                   >
                     {link.label}
@@ -192,7 +192,7 @@ export default function Navbar() {
               {/* Support Desk Trigger */}
               <button
                 onClick={() => setSupportModalOpen(true)}
-                className="hidden 2xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1B2530]/70 hover:bg-[#1B2530] border border-[#263440] text-xs font-mono text-[#94A3B8] hover:text-white transition-colors flex-shrink-0"
+                className="hidden 2xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0a261a]/70 hover:bg-[#0f3827] border border-[#65F58A]/30 text-xs font-mono text-[#B8E6CE] hover:text-white transition-colors flex-shrink-0"
                 title="Open Academy Support Desk"
               >
                 <LifeBuoy className="w-3.5 h-3.5 text-[#35E6B5]" />

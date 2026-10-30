@@ -427,11 +427,11 @@ export default function LessonPlayerPage() {
             </div>
 
             {/* Video Player Card / Assignment Viewer */}
-            <div className="ultra-glass-panel rounded-2xl overflow-hidden border border-[#263440] shadow-xl">
+            <div className="ultra-glass-panel rounded-2xl overflow-hidden border border-[#65F58A]/30 border-t-white/20 shadow-2xl">
               {isAssignment ? (
                 /* Practical Assignment Stage */
-                <div className="p-8 space-y-6 bg-[#081119]">
-                  <div className="flex items-center justify-between pb-4 border-b border-[#1B2530]">
+                <div className="p-8 space-y-6 bg-emerald-950/20 backdrop-blur-xl">
+                  <div className="flex items-center justify-between pb-4 border-b border-[#65F58A]/20">
                     <div className="flex items-center space-x-3">
                       <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
                         <FileCheck className="w-6 h-6" />
@@ -451,25 +451,25 @@ export default function LessonPlayerPage() {
                   </div>
 
                   <div className="space-y-4">
-                    <div className="p-4 rounded-xl bg-[#0B131C] border border-[#1B2530] text-xs font-mono leading-relaxed text-[#CBD5E1] whitespace-pre-wrap">
+                    <div className="p-4 rounded-xl ultra-glass-card border border-[#65F58A]/25 text-xs font-mono leading-relaxed text-[#C9EFE0] whitespace-pre-wrap">
                       {activeLesson.instructions || 'Download the lab template, complete your analysis, and submit your PDF investigation report.'}
                     </div>
 
-                    <div className="flex items-center justify-between p-4 rounded-xl bg-[#0F1722] border border-[#263440]">
+                    <div className="flex items-center justify-between p-4 rounded-xl ultra-glass-card border border-[#65F58A]/25">
                       <div className="flex items-center space-x-3">
                         <FileDown className="w-5 h-5 text-[#65F58A]" />
                         <div>
                           <span className="text-xs font-bold text-white block">
                             {activeLesson.template_name || 'Lab_Investigation_Brief.pdf'}
                           </span>
-                          <span className="text-[10px] text-[#8BA2B5] font-mono">
+                          <span className="text-[10px] text-[#B8E6CE] font-mono">
                             Mandatory Worksheet Template • PDF Format
                           </span>
                         </div>
                       </div>
                       <button
                         onClick={() => handleDownloadResource(activeLesson.template_name || 'Lab_Brief.pdf')}
-                        className="px-4 py-2 rounded-lg bg-[#1B2530] hover:bg-[#263440] text-[#65F58A] border border-[#65F58A]/30 text-xs font-mono font-bold flex items-center space-x-1.5 transition-colors"
+                        className="px-4 py-2 rounded-lg bg-[#0A241A] hover:bg-[#123828] text-[#65F58A] border border-[#65F58A]/40 text-xs font-mono font-bold flex items-center space-x-1.5 transition-colors"
                       >
                         <Download className="w-3.5 h-3.5" />
                         <span>Download Brief</span>
@@ -517,16 +517,16 @@ export default function LessonPlayerPage() {
                     <div className="p-8 text-center space-y-3">
                       <BookOpen className="w-12 h-12 text-[#65F58A]/40 mx-auto" />
                       <h4 className="text-white font-bold text-sm">Interactive Study Document</h4>
-                      <p className="text-xs text-[#8BA2B5]">Review curriculum notes, terminal commands, and protocols below.</p>
+                      <p className="text-xs text-[#B8E6CE]">Review curriculum notes, terminal commands, and protocols below.</p>
                     </div>
                   )}
                 </div>
               )}
 
               {/* Player Bottom Control & Quick Action Bar */}
-              <div className="p-4 bg-[#0A121A] border-t border-[#1B2530] flex flex-wrap items-center justify-between gap-3">
+              <div className="p-4 bg-emerald-950/30 backdrop-blur-xl border-t border-[#65F58A]/20 flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center space-x-3">
-                  <div className="flex items-center space-x-1 text-xs font-mono text-[#8BA2B5]">
+                  <div className="flex items-center space-x-1 text-xs font-mono text-[#B8E6CE]">
                     <span>Playback Speed:</span>
                     {[0.75, 1.0, 1.25, 1.5, 2.0].map((spd) => (
                       <button
@@ -538,7 +538,7 @@ export default function LessonPlayerPage() {
                         className={`px-2 py-0.5 rounded text-[11px] font-mono transition-colors ${
                           playbackSpeed === spd
                             ? 'bg-[#65F58A] text-[#071018] font-bold'
-                            : 'bg-[#141E28] text-[#CBD5E1] hover:text-white border border-[#263440]'
+                            : 'bg-[#0A241A] text-[#C9EFE0] hover:text-white border border-[#65F58A]/30'
                         }`}
                       >
                         {spd}x
@@ -546,8 +546,8 @@ export default function LessonPlayerPage() {
                     ))}
                   </div>
 
-                  <div className="hidden sm:flex items-center space-x-2 pl-3 border-l border-[#1B2530] text-xs font-mono">
-                    <span className="text-[#8BA2B5]">Watched:</span>
+                  <div className="hidden sm:flex items-center space-x-2 pl-3 border-l border-[#65F58A]/20 text-xs font-mono">
+                    <span className="text-[#B8E6CE]">Watched:</span>
                     <span className="text-[#65F58A] font-bold">{currentWatchPct}%</span>
                     <span className="text-[#8BA2B5] text-[10px]">(&ge;80% required)</span>
                   </div>
@@ -586,8 +586,8 @@ export default function LessonPlayerPage() {
             {/* ========================================================================= */}
             {/* 3. YOUR LEARNING PROGRESS PANEL (Directly Modeled after Image 4 / Edunex) */}
             {/* ========================================================================= */}
-            <div className="ultra-glass-panel rounded-2xl p-6 border border-[#263440] shadow-xl space-y-4">
-              <div className="flex items-center justify-between pb-2 border-b border-[#1B2530]">
+            <div className="ultra-glass-panel rounded-2xl p-6 border border-[#65F58A]/30 border-t-white/20 shadow-xl space-y-4">
+              <div className="flex items-center justify-between pb-2 border-b border-[#65F58A]/20">
                 <div>
                   <span className="text-[10px] font-mono text-[#65F58A] uppercase tracking-wider block">
                     Telemetry Analytics
@@ -596,21 +596,21 @@ export default function LessonPlayerPage() {
                     Your Learning Progress
                   </h3>
                 </div>
-                <div className="flex items-center space-x-2 text-xs font-mono text-[#8BA2B5]">
+                <div className="flex items-center space-x-2 text-xs font-mono text-[#B8E6CE]">
                   <span>Track ID: {course.slug || 'DEF-CYB'}</span>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-center">
                 {/* 1. Overall Circular Progress Donut Gauge */}
-                <div className="p-4 rounded-xl bg-[#09121B] border border-[#1B2530] flex items-center space-x-4">
+                <div className="p-4 rounded-xl ultra-glass-card border border-[#65F58A]/25 border-t-white/15 flex items-center space-x-4">
                   <div className="relative w-20 h-20 flex-shrink-0 flex items-center justify-center">
                     <svg className="w-20 h-20 -rotate-90">
                       <circle
                         cx="40"
                         cy="40"
                         r="34"
-                        className="text-[#15202B]"
+                        className="text-[#0D2418]"
                         strokeWidth="7"
                         stroke="currentColor"
                         fill="transparent"
@@ -634,7 +634,7 @@ export default function LessonPlayerPage() {
                   </div>
 
                   <div>
-                    <span className="text-[10px] font-mono text-[#8BA2B5] uppercase tracking-wider block">
+                    <span className="text-[10px] font-mono text-[#B8E6CE] uppercase tracking-wider block">
                       Overall Completion
                     </span>
                     <h4 className="text-sm font-bold text-white mt-0.5">
@@ -647,9 +647,9 @@ export default function LessonPlayerPage() {
                 </div>
 
                 {/* 2. Lessons Completed Weekly Activity Bar Chart */}
-                <div className="p-4 rounded-xl bg-[#09121B] border border-[#1B2530] space-y-2">
+                <div className="p-4 rounded-xl ultra-glass-card border border-[#65F58A]/25 border-t-white/15 space-y-2">
                   <div className="flex items-center justify-between text-xs font-mono">
-                    <span className="text-[#8BA2B5]">Lessons Completed:</span>
+                    <span className="text-[#B8E6CE]">Lessons Completed:</span>
                     <span className="text-[#65F58A] font-bold">{progressData.completed}/{progressData.total}</span>
                   </div>
 
@@ -665,22 +665,22 @@ export default function LessonPlayerPage() {
                       { day: 'S', val: 45 }
                     ].map((item, idx) => (
                       <div key={idx} className="flex-1 flex flex-col items-center gap-1">
-                        <div className="w-full bg-[#15202B] rounded-t h-10 flex items-end overflow-hidden">
+                        <div className="w-full bg-[#0D2418] rounded-t h-10 flex items-end overflow-hidden">
                           <div
                             className="w-full bg-[#65F58A] rounded-t transition-all duration-500"
                             style={{ height: `${Math.min(100, item.val)}%` }}
                           />
                         </div>
-                        <span className="text-[9px] font-mono text-[#8BA2B5]">{item.day}</span>
+                        <span className="text-[9px] font-mono text-[#B8E6CE]">{item.day}</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
                 {/* 3. Module Performance Horizontal Status Bars */}
-                <div className="p-4 rounded-xl bg-[#09121B] border border-[#1B2530] space-y-2.5">
+                <div className="p-4 rounded-xl ultra-glass-card border border-[#65F58A]/25 border-t-white/15 space-y-2.5">
                   <div className="flex items-center justify-between text-xs font-mono">
-                    <span className="text-[#8BA2B5]">Module Performance</span>
+                    <span className="text-[#B8E6CE]">Module Performance</span>
                     <span className="text-[#35E6B5] font-bold">Passing Pace</span>
                   </div>
 
@@ -698,7 +698,7 @@ export default function LessonPlayerPage() {
                             <span className="text-white truncate max-w-[140px]">{mod.title}</span>
                             <span className="text-[#65F58A]">{pct}%</span>
                           </div>
-                          <div className="w-full bg-[#15202B] h-1.5 rounded-full overflow-hidden">
+                          <div className="w-full bg-[#0D2418] h-1.5 rounded-full overflow-hidden">
                             <div
                               className="bg-[#65F58A] h-full rounded-full transition-all duration-500"
                               style={{ width: `${pct}%` }}
@@ -713,15 +713,15 @@ export default function LessonPlayerPage() {
             </div>
 
             {/* Tabbed Workspace: Lesson Notes vs Practical Assignment Submission */}
-            <div className="ultra-glass-panel rounded-2xl p-6 border border-[#263440] shadow-xl space-y-4">
-              <div className="flex items-center justify-between border-b border-[#1B2530] pb-3">
+            <div className="ultra-glass-panel rounded-2xl p-6 border border-[#65F58A]/30 border-t-white/20 shadow-xl space-y-4">
+              <div className="flex items-center justify-between border-b border-[#65F58A]/20 pb-3">
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => setActiveTab('notes')}
                     className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all ${
                       activeTab === 'notes'
                         ? 'bg-[#65F58A] text-[#071018] shadow-sm'
-                        : 'bg-[#0F1722] text-[#8BA2B5] hover:text-white border border-[#263440]'
+                        : 'bg-[#0A241A] text-[#B8E6CE] hover:text-white border border-[#65F58A]/25'
                     }`}
                   >
                     Lesson Notes & Terminal Protocols
@@ -731,7 +731,7 @@ export default function LessonPlayerPage() {
                     className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center space-x-1.5 ${
                       activeTab === 'assignment'
                         ? 'bg-amber-500 text-[#071018] shadow-sm'
-                        : 'bg-[#0F1722] text-[#8BA2B5] hover:text-white border border-[#263440]'
+                        : 'bg-[#0A241A] text-[#B8E6CE] hover:text-white border border-[#65F58A]/25'
                     }`}
                   >
                     <FileCheck className="w-3.5 h-3.5" />
@@ -832,17 +832,17 @@ export default function LessonPlayerPage() {
           {/* ==================================================================== */}
           <div className="col-span-12 lg:col-span-4 space-y-6">
             {/* Curriculum Accordion Container */}
-            <div className="ultra-glass-panel rounded-2xl p-5 border border-[#263440] shadow-xl space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-[#1B2530]">
+            <div className="ultra-glass-panel rounded-2xl p-5 border border-[#65F58A]/25 shadow-xl space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-[#65F58A]/15">
                 <div>
-                  <span className="text-[10px] font-mono text-[#8BA2B5] uppercase tracking-wider block">
+                  <span className="text-[10px] font-mono text-[#B8E6CE] uppercase tracking-wider block">
                     Course Curriculum
                   </span>
                   <h3 className="text-sm font-bold text-white font-lora">
                     {course.title}
                   </h3>
                 </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#0F1722] border border-[#263440] text-[#65F58A]">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#092218]/60 border border-[#65F58A]/25 text-[#65F58A]">
                   {course.modules?.length || 0} Chapters
                 </span>
               </div>
@@ -861,10 +861,10 @@ export default function LessonPlayerPage() {
                   return (
                     <div
                       key={mod.id || modIdx}
-                      className={`border rounded-xl overflow-hidden transition-all ${
+                      className={`border rounded-xl overflow-hidden transition-all backdrop-blur-md ${
                         isCurrentMod
-                          ? 'border-[#65F58A]/40 bg-[#0A141E]'
-                          : 'border-[#1B2530] bg-[#071018]'
+                          ? 'border-[#65F58A]/45 bg-[#0c2a1e]/60 shadow-[0_0_15px_rgba(101,245,138,0.12)]'
+                          : 'border-[#65F58A]/15 bg-[#071912]/50'
                       }`}
                     >
                       {/* Chapter Accordion Header */}
@@ -876,7 +876,7 @@ export default function LessonPlayerPage() {
                             [mod.id]: !isExpanded
                           }))
                         }
-                        className="w-full p-3 flex items-center justify-between text-left hover:bg-[#0D1824] transition-colors"
+                        className="w-full p-3 flex items-center justify-between text-left hover:bg-[#0e2f22]/50 transition-colors"
                       >
                         <div className="flex items-center space-x-2.5 truncate">
                           {isModCompleted ? (
@@ -884,19 +884,19 @@ export default function LessonPlayerPage() {
                           ) : isCurrentMod ? (
                             <span className="w-2.5 h-2.5 rounded-full bg-[#65F58A] animate-pulse flex-shrink-0" />
                           ) : (
-                            <span className="w-2.5 h-2.5 rounded-full bg-[#263440] flex-shrink-0" />
+                            <span className="w-2.5 h-2.5 rounded-full bg-[#65F58A]/30 flex-shrink-0" />
                           )}
-                          <span className="text-xs font-bold text-white truncate font-sans">
+                          <span className="text-xs font-bold text-white truncate font-lora">
                             {modIdx + 1}. {mod.title}
                           </span>
                         </div>
 
                         <div className="flex items-center space-x-2 flex-shrink-0">
-                          <span className="text-[10px] font-mono text-[#8BA2B5]">
+                          <span className="text-[10px] font-mono text-[#B8E6CE]">
                             ({modCompletedCount}/{modTotalCount})
                           </span>
                           <ChevronDown
-                            className={`w-3.5 h-3.5 text-[#8BA2B5] transition-transform duration-200 ${
+                            className={`w-3.5 h-3.5 text-[#B8E6CE] transition-transform duration-200 ${
                               isExpanded ? 'rotate-180' : ''
                             }`}
                           />
@@ -905,7 +905,7 @@ export default function LessonPlayerPage() {
 
                       {/* Chapter Lessons List */}
                       {isExpanded && (
-                        <div className="p-2 space-y-1 bg-[#050C14] border-t border-[#1B2530]">
+                        <div className="p-2 space-y-1 bg-[#05130e]/60 border-t border-[#65F58A]/15">
                           {(mod.lessons || []).map((les) => {
                             const globalIdx = allLessons.findIndex((l) => l.id === les.id);
                             const isDone = enrolment.completed_mandatory_lessons?.includes(les.id);
@@ -925,10 +925,10 @@ export default function LessonPlayerPage() {
                                 }}
                                 className={`w-full text-left p-2 rounded-lg text-xs flex items-center justify-between transition-all ${
                                   isActive
-                                    ? 'bg-[#65F58A]/15 border border-[#65F58A]/50 text-white font-bold shadow-sm'
+                                    ? 'bg-[#65F58A]/20 border border-[#65F58A]/50 text-white font-bold shadow-[0_0_12px_rgba(101,245,138,0.18)]'
                                     : isUnlocked
-                                    ? 'hover:bg-[#0D1824] text-[#CBD5E1] border border-transparent'
-                                    : 'opacity-40 cursor-not-allowed text-[#64748B] border border-transparent'
+                                    ? 'hover:bg-[#0e2f22]/50 text-[#C9EFE0] border border-transparent'
+                                    : 'opacity-40 cursor-not-allowed text-[#72A88E] border border-transparent'
                                 }`}
                               >
                                 <div className="flex items-center space-x-2 truncate pr-2">
@@ -941,7 +941,7 @@ export default function LessonPlayerPage() {
                                       <Play className="w-3 h-3 text-[#65F58A] flex-shrink-0" />
                                     )
                                   ) : (
-                                    <Lock className="w-3.5 h-3.5 text-[#64748B] flex-shrink-0" />
+                                    <Lock className="w-3.5 h-3.5 text-[#72A88E] flex-shrink-0" />
                                   )}
                                   <span className="truncate">{les.title}</span>
                                 </div>
@@ -952,9 +952,9 @@ export default function LessonPlayerPage() {
                                   ) : isDone ? (
                                     <span className="text-[#65F58A]">Completed</span>
                                   ) : !isUnlocked ? (
-                                    <span className="text-[#64748B]">Locked</span>
+                                    <span className="text-[#72A88E]">Locked</span>
                                   ) : (
-                                    <span className="text-[#8BA2B5]">{les.duration || '15 mins'}</span>
+                                    <span className="text-[#B8E6CE]">{les.duration || '15 mins'}</span>
                                   )}
                                 </div>
                               </button>
@@ -994,14 +994,14 @@ export default function LessonPlayerPage() {
                       className={`w-full p-3 rounded-xl text-xs font-mono font-bold flex items-center justify-between transition-all border ${
                         unlockedFinal.is_unlocked
                           ? 'bg-[#65F58A] text-[#071018] border-[#65F58A] hover:bg-[#52d674] shadow-[0_0_20px_rgba(101,245,138,0.4)]'
-                          : 'bg-[#0F1722] border-[#263440] text-[#8BA2B5] hover:border-[#65F58A]/40'
+                          : 'bg-[#081a13]/60 border-[#65F58A]/25 text-[#B8E6CE] hover:border-[#65F58A]/40'
                       }`}
                     >
                       <div className="flex items-center space-x-2">
                         {unlockedFinal.is_unlocked ? (
                           <Sparkles className="w-4 h-4 text-[#071018]" />
                         ) : (
-                          <Lock className="w-4 h-4 text-[#8BA2B5]" />
+                          <Lock className="w-4 h-4 text-[#B8E6CE]" />
                         )}
                         <span>Final Certification Exam</span>
                       </div>
@@ -1015,8 +1015,8 @@ export default function LessonPlayerPage() {
             </div>
 
             {/* Technical Resources Card */}
-            <div className="ultra-glass-panel rounded-2xl p-5 border border-[#263440] shadow-xl space-y-3">
-              <div className="flex items-center space-x-2 pb-2 border-b border-[#1B2530]">
+            <div className="ultra-glass-panel rounded-2xl p-5 border border-[#65F58A]/25 shadow-xl space-y-3">
+              <div className="flex items-center space-x-2 pb-2 border-b border-[#65F58A]/15">
                 <Download className="w-4 h-4 text-[#65F58A]" />
                 <h4 className="text-xs font-bold text-white font-mono uppercase tracking-wider">
                   Lesson Reference Resources
@@ -1031,18 +1031,18 @@ export default function LessonPlayerPage() {
                 ].map((res, i) => (
                   <div
                     key={i}
-                    className="p-3 rounded-xl bg-[#08121A] border border-[#1B2530] flex items-center justify-between text-xs"
+                    className="p-3 rounded-xl bg-[#081a13]/50 border border-[#65F58A]/20 flex items-center justify-between text-xs"
                   >
                     <div className="flex items-center space-x-2.5 truncate pr-2">
                       <FileDown className="w-4 h-4 text-[#65F58A] flex-shrink-0" />
                       <div className="truncate">
                         <span className="text-white font-medium block truncate text-[11px]">{res.name}</span>
-                        <span className="text-[10px] font-mono text-[#8BA2B5]">{res.size}</span>
+                        <span className="text-[10px] font-mono text-[#B8E6CE]">{res.size}</span>
                       </div>
                     </div>
                     <button
                       onClick={() => handleDownloadResource(res.name)}
-                      className="px-2.5 py-1 rounded bg-[#15202B] hover:bg-[#1B2530] text-[#65F58A] border border-[#263440] text-[10px] font-mono transition-colors flex-shrink-0"
+                      className="px-2.5 py-1 rounded bg-[#0a261a]/70 hover:bg-[#0f3827] text-[#65F58A] border border-[#65F58A]/30 text-[10px] font-mono transition-colors flex-shrink-0"
                     >
                       Download
                     </button>

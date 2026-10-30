@@ -182,10 +182,10 @@ export default function AdminStudentsPage() {
   return (
     <div className="space-y-6 animate-slide-left">
       {/* Top Filter and Actions */}
-      <div className="flex items-center justify-between cyber-glass-panel p-4 rounded-xl">
+      <div className="flex items-center justify-between cyber-glass-panel p-4 rounded-xl border border-[#65F58A]/25 backdrop-blur-xl bg-[#081a13]/60">
         <div className="flex items-center space-x-3">
           <div className="relative w-80">
-            <Search className="w-4 h-4 text-[#8BA2B5] absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-[#B8E6CE] absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search students by name, email, or ID..."
@@ -202,8 +202,8 @@ export default function AdminStudentsPage() {
                 onClick={() => setStatusFilter(st)}
                 className={`px-3 py-1 text-xs font-mono rounded transition-colors ${
                   statusFilter === st
-                    ? 'bg-[#1B2530] text-[#65F58A] font-bold'
-                    : 'text-[#8BA2B5] hover:text-white'
+                    ? 'bg-[#0a261a] text-[#65F58A] font-bold border border-[#65F58A]/30'
+                    : 'text-[#B8E6CE] hover:text-white'
                 }`}
               >
                 {st}
@@ -214,7 +214,7 @@ export default function AdminStudentsPage() {
 
         <button
           onClick={handleExportCSV}
-          className="flex items-center space-x-1.5 px-3.5 py-2 bg-[#1B2530] text-[#CBD5E1] hover:text-[#65F58A] border border-[#263440] font-mono text-xs rounded-lg transition-colors"
+          className="flex items-center space-x-1.5 px-3.5 py-2 bg-[#0a261a]/60 text-[#C9EFE0] hover:text-[#65F58A] border border-[#65F58A]/30 font-mono text-xs rounded-lg transition-colors"
         >
           <Download className="w-4 h-4" />
           <span>Export CSV</span>
@@ -224,9 +224,9 @@ export default function AdminStudentsPage() {
       {/* Main Dual-Pane Roster & Inspector */}
       <div className="grid grid-cols-12 gap-6 min-h-[650px]">
         {/* Left Column: Student Directory Table */}
-        <div className="col-span-8 cyber-glass-panel rounded-xl overflow-hidden flex flex-col">
-          <div className="p-3.5 bg-[#0A121A] border-b border-[#1B2530] flex items-center justify-between">
-            <span className="text-xs font-mono text-[#8BA2B5]">
+        <div className="col-span-8 cyber-glass-panel rounded-xl overflow-hidden flex flex-col border border-[#65F58A]/25 backdrop-blur-xl bg-[#081a13]/60">
+          <div className="p-3.5 bg-[#071912]/80 border-b border-[#65F58A]/20 flex items-center justify-between">
+            <span className="text-xs font-mono text-[#B8E6CE]">
               STUDENT DIRECTORY ROSTER ({filteredStudents.length})
             </span>
             <span className="text-[10px] font-mono text-[#65F58A]">Identity Synchronized</span>
@@ -235,7 +235,7 @@ export default function AdminStudentsPage() {
           <div className="flex-1 overflow-y-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-[#1B2530] bg-[#071018] text-[10px] font-mono text-[#8BA2B5]">
+                <tr className="border-b border-[#65F58A]/20 bg-[#05140e]/60 text-[10px] font-mono text-[#B8E6CE]">
                   <th className="p-3">CADET ID</th>
                   <th className="p-3">STUDENT</th>
                   <th className="p-3">ACCOUNT STATUS</th>
@@ -244,7 +244,7 @@ export default function AdminStudentsPage() {
                   <th className="p-3 text-right">QUICK ACTION</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1B2530] text-xs font-mono">
+              <tbody className="divide-y divide-[#65F58A]/15 text-xs font-mono">
                 {filteredStudents.map((st) => {
                   const isSelected = selectedStudent?.id === st.id;
                   const isSuspended = st.status === 'SUSPENDED';
@@ -254,11 +254,11 @@ export default function AdminStudentsPage() {
                       key={st.id}
                       onClick={() => setSelectedStudent(st)}
                       className={`cursor-pointer transition-colors ${
-                        isSelected ? 'bg-[#182330]' : 'hover:bg-[#071018]/50'
+                        isSelected ? 'bg-[#0c2e1f]/70' : 'hover:bg-[#071912]/40'
                       }`}
                     >
                       <td className="p-3">
-                        <span className="font-mono text-xs font-bold text-[#65F58A] bg-[#101923] px-2 py-0.5 rounded border border-[#65F58A]/30">
+                        <span className="font-mono text-xs font-bold text-[#65F58A] bg-[#081a13] px-2 py-0.5 rounded border border-[#65F58A]/30">
                           {st.cadet_id || 'RK-89421'}
                         </span>
                       </td>
@@ -269,8 +269,8 @@ export default function AdminStudentsPage() {
                             {st.name?.charAt(0) || st.full_name?.charAt(0) || 'U'}
                           </div>
                           <div>
-                            <div className="text-white font-sans font-medium">{st.name || st.full_name}</div>
-                            <div className="text-[10px] text-[#8BA2B5]">{st.email}</div>
+                            <div className="text-white font-lora font-medium">{st.name || st.full_name}</div>
+                            <div className="text-[10px] text-[#B8E6CE]">{st.email}</div>
                           </div>
                         </div>
                       </td>
@@ -293,7 +293,7 @@ export default function AdminStudentsPage() {
                         </span>
                       </td>
 
-                      <td className="p-3 text-[#CBD5E1]">
+                      <td className="p-3 text-[#C9EFE0]">
                         {st.enrolled_count || 2} Tracks
                       </td>
 
@@ -334,25 +334,25 @@ export default function AdminStudentsPage() {
         </div>
 
         {/* Right Column: Detailed Student Inspector Drawer */}
-        <div className="col-span-4 cyber-glass-panel rounded-xl flex flex-col overflow-hidden">
+        <div className="col-span-4 cyber-glass-panel rounded-xl flex flex-col overflow-hidden border border-[#65F58A]/25 backdrop-blur-xl bg-[#081a13]/60">
           {selectedStudent ? (
             <>
-              <div className="p-5 border-b border-[#1B2530] bg-[#071018]">
+              <div className="p-5 border-b border-[#65F58A]/20 bg-[#071912]/80">
                 <div className="flex items-center space-x-3 mb-3">
-                  <div className="w-12 h-12 rounded-full bg-[#1B2530] border border-[#65F58A]/40 flex items-center justify-center text-lg font-bold text-white">
+                  <div className="w-12 h-12 rounded-full bg-[#0a261a] border border-[#65F58A]/40 flex items-center justify-center text-lg font-bold text-white">
                     {selectedStudent.name?.charAt(0) || 'U'}
                   </div>
                   <div>
                     <h3 className="text-base font-bold text-white font-lora">
                       {selectedStudent.name}
                     </h3>
-                    <span className="text-xs font-mono text-[#8BA2B5]">
+                    <span className="text-xs font-mono text-[#B8E6CE]">
                       {selectedStudent.email}
                     </span>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between text-xs font-mono pt-2 border-t border-[#1B2530]">
+                <div className="flex items-center justify-between text-xs font-mono pt-2 border-t border-[#65F58A]/20">
                   <span className="text-[#65F58A] font-bold">
                     CADET ID: {selectedStudent.cadet_id || 'RK-89421'}
                   </span>
@@ -373,14 +373,14 @@ export default function AdminStudentsPage() {
                 {/* Token Balance Card */}
                 <div className="p-4 cyber-glass-card rounded-xl flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] text-[#8BA2B5] block">ACADEMIC UTILITY TOKENS</span>
+                    <span className="text-[10px] text-[#B8E6CE] block">ACADEMIC UTILITY TOKENS</span>
                     <span className="text-xl font-bold text-[#65F58A] mt-0.5 block">
                       {selectedStudent.token_balance || 0} TOKENS
                     </span>
                   </div>
                   <button
                     onClick={() => setTokenModalOpen(true)}
-                    className="px-3 py-1.5 bg-[#1B2530] text-[#65F58A] hover:bg-[#65F58A]/20 border border-[#263440] rounded text-[11px] font-bold"
+                    className="px-3 py-1.5 bg-[#0a261a] text-[#65F58A] hover:bg-[#65F58A]/20 border border-[#65F58A]/30 rounded text-[11px] font-bold"
                   >
                     Adjust Balance
                   </button>
@@ -388,38 +388,38 @@ export default function AdminStudentsPage() {
 
                 {/* Academic Enrollment Progress */}
                 <div className="space-y-3">
-                  <span className="text-xs font-bold text-[#8BA2B5] block">
+                  <span className="text-xs font-bold text-[#B8E6CE] block">
                     ACTIVE CURRICULUM ENROLLMENT
                   </span>
                   <div className="p-3 cyber-glass-card rounded-lg space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-white font-sans font-medium">SOC Analyst L1 & L2</span>
+                      <span className="text-white font-lora font-medium">SOC Analyst L1 & L2</span>
                       <span className="text-[#65F58A]">75% Done</span>
                     </div>
-                    <div className="w-full bg-[#1B2530] h-1.5 rounded-full overflow-hidden">
+                    <div className="w-full bg-[#0a261a] h-1.5 rounded-full overflow-hidden border border-[#65F58A]/20">
                       <div className="bg-[#65F58A] h-full rounded-full" style={{ width: '75%' }} />
                     </div>
                   </div>
 
                   <div className="p-3 cyber-glass-card rounded-lg space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-white font-sans font-medium">Offensive Exploitation AD</span>
+                      <span className="text-white font-lora font-medium">Offensive Exploitation AD</span>
                       <span className="text-[#65F58A]">40% Done</span>
                     </div>
-                    <div className="w-full bg-[#1B2530] h-1.5 rounded-full overflow-hidden">
+                    <div className="w-full bg-[#0a261a] h-1.5 rounded-full overflow-hidden border border-[#65F58A]/20">
                       <div className="bg-[#65F58A] h-full rounded-full" style={{ width: '40%' }} />
                     </div>
                   </div>
                 </div>
 
                 {/* Administrative Interventions */}
-                <div className="space-y-2 pt-2 border-t border-[#1B2530]">
-                  <span className="text-[10px] text-[#8BA2B5] block uppercase">
+                <div className="space-y-2 pt-2 border-t border-[#65F58A]/20">
+                  <span className="text-[10px] text-[#B8E6CE] block uppercase">
                     Administrative Interventions
                   </span>
                   <button
                     onClick={() => handleResetProgress(selectedStudent)}
-                    className="w-full flex items-center justify-center space-x-2 py-2 bg-[#1B2530] text-[#CBD5E1] hover:text-[#EF4444] border border-[#263440] rounded-lg transition-colors"
+                    className="w-full flex items-center justify-center space-x-2 py-2 bg-[#0a261a] text-[#C9EFE0] hover:text-[#EF4444] border border-[#65F58A]/30 rounded-lg transition-colors"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
                     <span>Reset All Curriculum Progress</span>
@@ -461,7 +461,7 @@ export default function AdminStudentsPage() {
               </div>
             </>
           ) : (
-            <div className="p-8 text-center text-[#8BA2B5] text-xs">
+            <div className="p-8 text-center text-[#B8E6CE] text-xs">
               Select a student from the directory to inspect.
             </div>
           )}
@@ -568,11 +568,11 @@ export default function AdminStudentsPage() {
               </div>
             </div>
 
-            <div className="p-3 bg-[#0B131C] border border-[#1B2530] rounded-xl text-xs font-mono space-y-2">
-              <p className="text-[#CBD5E1]">
+            <div className="p-3 bg-[#081a13]/70 border border-[#65F58A]/20 rounded-xl text-xs font-mono space-y-2">
+              <p className="text-[#C9EFE0]">
                 Are you sure you want to permanently delete <strong className="text-white">{studentToDelete.name || studentToDelete.full_name}</strong>?
               </p>
-              <p className="text-[#8BA2B5] text-[11px]">
+              <p className="text-[#B8E6CE] text-[11px]">
                 Email: <span className="text-red-400 font-bold">{studentToDelete.email}</span>
               </p>
               <div className="p-2.5 rounded bg-red-500/10 border border-red-500/20 text-red-300 text-[11px] leading-relaxed">
@@ -581,7 +581,7 @@ export default function AdminStudentsPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-mono text-[#8BA2B5] block">
+              <label className="text-xs font-mono text-[#B8E6CE] block">
                 Type <strong className="text-red-400">DELETE</strong> to confirm:
               </label>
               <input
@@ -589,7 +589,7 @@ export default function AdminStudentsPage() {
                 value={deleteConfirmText}
                 onChange={(e) => setDeleteConfirmText(e.target.value)}
                 placeholder="Type DELETE"
-                className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white uppercase font-mono tracking-wider focus:outline-none focus:border-red-400 border border-[#263440]"
+                className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white uppercase font-mono tracking-wider focus:outline-none focus:border-red-400 border border-[#65F58A]/30"
               />
             </div>
 
@@ -600,7 +600,7 @@ export default function AdminStudentsPage() {
                   setStudentToDelete(null);
                   setDeleteConfirmText('');
                 }}
-                className="px-4 py-2 text-xs font-mono text-[#8BA2B5] hover:text-white rounded-lg bg-[#1B2530] border border-[#263440]"
+                className="px-4 py-2 text-xs font-mono text-[#B8E6CE] hover:text-white rounded-lg bg-[#0a261a] border border-[#65F58A]/30"
               >
                 Cancel
               </button>

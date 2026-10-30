@@ -16,12 +16,12 @@ export default function LearningPathsPage() {
   const ecosystem = getEcosystemLinks();
   return (
     <div className="min-h-[82vh] flex items-center justify-center py-16 px-4 sm:px-6 lg:px-8 relative z-10">
-      <div className="max-w-3xl w-full text-center space-y-8 ultra-glass-card rounded-3xl p-8 sm:p-14 shimmer-lr animate-slide-left">
+      <div className="max-w-3xl w-full text-center space-y-8 ultra-glass-card rounded-3xl p-8 sm:p-14 shimmer-lr animate-slide-left border border-[#65F58A]/35 backdrop-blur-2xl bg-[#081a13]/60 shadow-[0_12px_45px_rgba(0,0,0,0.55)]">
         {/* Subtle Cyber Status Badge */}
-        <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full ultra-glass-pill text-xs font-mono shadow-md backdrop-blur-md">
+        <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full ultra-glass-pill text-xs font-mono shadow-md backdrop-blur-md border border-[#65F58A]/30 bg-[#09241a]/60">
           <span className="w-2 h-2 rounded-full bg-[#35E6B5] animate-pulse" />
-          <span className="text-slate-200">CURRICULUM PREPARATION IN PROGRESS</span>
-          <span className="text-slate-600">•</span>
+          <span className="text-[#C9EFE0]">CURRICULUM PREPARATION IN PROGRESS</span>
+          <span className="text-[#65F58A]/40">•</span>
           <span className="text-[#65F58A] font-semibold">REDKROSS ACADEMY</span>
         </div>
 
@@ -32,9 +32,9 @@ export default function LearningPathsPage() {
 
           <svg viewBox="0 0 200 200" className="w-full h-full relative z-10 drop-shadow-[0_0_25px_rgba(101,245,138,0.25)]">
             {/* Concentric Coordinate Rings */}
-            <circle cx="100" cy="100" r="88" fill="none" stroke="#263440" strokeWidth="1" strokeDasharray="3 3" />
+            <circle cx="100" cy="100" r="88" fill="none" stroke="#65F58A" strokeWidth="1" strokeDasharray="3 3" strokeOpacity="0.25" />
             <circle cx="100" cy="100" r="70" fill="none" stroke="#35E6B5" strokeWidth="1" strokeOpacity="0.4" />
-            <circle cx="100" cy="100" r="50" fill="#101923" stroke="#65F58A" strokeWidth="1.5" />
+            <circle cx="100" cy="100" r="50" fill="#071912" stroke="#65F58A" strokeWidth="1.5" />
 
             {/* Orbital Cyber Nodes */}
             <circle cx="100" cy="12" r="4" fill="#65F58A" />
@@ -51,7 +51,7 @@ export default function LearningPathsPage() {
             {/* Central Shield Icon Graphic */}
             <path
               d="M 100 70 L 122 80 V 98 C 122 114 100 126 100 126 C 100 126 78 114 78 98 V 80 Z"
-              fill="#1B2530"
+              fill="#09261a"
               stroke="#65F58A"
               strokeWidth="2"
               strokeLinejoin="round"
@@ -68,39 +68,39 @@ export default function LearningPathsPage() {
             Courses will be out soon
           </h1>
 
-          <p className="text-sm sm:text-base text-[#94A3B8] leading-relaxed max-w-xl mx-auto">
+          <p className="text-sm sm:text-base text-[#B8E6CE] leading-relaxed max-w-xl mx-auto">
             We're preparing structured cybersecurity learning paths to help you build practical skills, strengthen your knowledge, and progress toward your goals. Stay tuned for upcoming releases.
           </p>
         </div>
 
         {/* Educational Framework Pillars (Informative without leaking course cards) */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 max-w-2xl mx-auto text-left animate-slide-left stagger-2">
-          <div className="p-4 rounded-xl ultra-glass-panel space-y-1.5">
+          <div className="p-4 rounded-xl ultra-glass-panel space-y-1.5 border border-[#65F58A]/25 bg-[#092218]/50 backdrop-blur-md">
             <div className="w-7 h-7 rounded-lg bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center">
               <Terminal className="w-3.5 h-3.5 text-[#65F58A]" />
             </div>
             <div className="font-royal text-xs font-bold text-white">Hands-on Telemetry</div>
-            <p className="text-[11px] text-[#94A3B8] leading-relaxed">
+            <p className="text-[11px] text-[#B8E6CE] leading-relaxed">
               Real-world log correlation across SIEM and defensive monitoring stacks.
             </p>
           </div>
 
-          <div className="p-4 rounded-xl ultra-glass-panel space-y-1.5">
+          <div className="p-4 rounded-xl ultra-glass-panel space-y-1.5 border border-[#35E6B5]/25 bg-[#092218]/50 backdrop-blur-md">
             <div className="w-7 h-7 rounded-lg bg-[#35E6B5]/10 border border-[#35E6B5]/30 flex items-center justify-center">
               <Shield className="w-3.5 h-3.5 text-[#35E6B5]" />
             </div>
             <div className="font-royal text-xs font-bold text-white">Adversary Mapping</div>
-            <p className="text-[11px] text-[#94A3B8] leading-relaxed">
+            <p className="text-[11px] text-[#B8E6CE] leading-relaxed">
               Curricula aligned strictly with MITRE ATT&CK defensive methodologies.
             </p>
           </div>
 
-          <div className="p-4 rounded-xl ultra-glass-panel space-y-1.5">
+          <div className="p-4 rounded-xl ultra-glass-panel space-y-1.5 border border-[#65F58A]/25 bg-[#092218]/50 backdrop-blur-md">
             <div className="w-7 h-7 rounded-lg bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center">
               <Award className="w-3.5 h-3.5 text-[#65F58A]" />
             </div>
             <div className="font-royal text-xs font-bold text-white">Tamper-Proof Proofs</div>
-            <p className="text-[11px] text-[#94A3B8] leading-relaxed">
+            <p className="text-[11px] text-[#B8E6CE] leading-relaxed">
               Cryptographically verified credentials on the public registry.
             </p>
           </div>
@@ -110,7 +110,7 @@ export default function LearningPathsPage() {
         <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-left stagger-3">
           <Link
             to="/verify"
-            className="w-full sm:w-auto px-6 py-3 rounded-full ultra-glass-btn-secondary text-xs font-mono text-slate-200 hover:text-white transition-all flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-6 py-3 rounded-full ultra-glass-btn-secondary text-xs font-mono text-[#C9EFE0] hover:text-white transition-all flex items-center justify-center gap-2 border border-[#65F58A]/30 bg-[#09241a]/60 hover:bg-[#0c3123]"
           >
             <Award className="w-4 h-4 text-[#65F58A]" />
             <span>Verify Institutional Credentials</span>
@@ -119,7 +119,7 @@ export default function LearningPathsPage() {
             href={ecosystem.cybersecurity}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full sm:w-auto px-6 py-3 rounded-full ultra-glass-btn font-royal font-bold text-xs tracking-wider transition-all flex items-center justify-center gap-2 group"
+            className="w-full sm:w-auto px-6 py-3 rounded-full ultra-glass-btn font-royal font-bold text-xs tracking-wider transition-all flex items-center justify-center gap-2 group shadow-[0_0_20px_rgba(101,245,138,0.25)] hover:shadow-[0_0_30px_rgba(101,245,138,0.4)]"
           >
             <span>Explore Cyber Intelligence</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

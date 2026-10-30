@@ -182,13 +182,12 @@ export default function AdminLayout() {
     <div className="flex h-screen bg-[#050C14] text-[#F1F5F9] font-sans overflow-hidden select-none relative">
       {/* Cyber Grid Texture */}
       <div className="absolute inset-0 bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none z-0 opacity-40" />
-      <div className="absolute inset-0 bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none z-0 opacity-80" />
 
       {/* LEFT ULTRA-GLASS SIDEBAR WITH CYBER TREE-NAV */}
-      <aside className="w-72 cyber-glass-panel border-r border-white/[0.08] flex flex-col justify-between flex-shrink-0 z-30 relative">
+      <aside className="w-72 cyber-glass-panel border-r border-[#65F58A]/25 flex flex-col justify-between flex-shrink-0 z-30 relative">
         {/* Top Brand Header */}
         <div>
-          <div className="h-20 flex items-center gap-3 px-6 border-b border-white/[0.08]">
+          <div className="h-20 flex items-center gap-3 px-6 border-b border-[#65F58A]/20">
             <div className="relative">
               <div className="w-10 h-10 rounded-xl cyber-glass-card flex items-center justify-center border border-[#65F58A]/40 shadow-[0_0_15px_rgba(101,245,138,0.25)]">
                 <Shield className="w-5 h-5 text-[#65F58A]" />
@@ -202,7 +201,7 @@ export default function AdminLayout() {
                   ADMIN
                 </span>
               </span>
-              <span className="text-[10px] font-mono text-[#94A3B8] tracking-widest block uppercase">
+              <span className="text-[10px] font-mono text-[#B8E6CE] tracking-widest block uppercase">
                 CYBER WORKSTATION
               </span>
             </div>
@@ -210,7 +209,7 @@ export default function AdminLayout() {
 
           {/* TreeNav Section */}
           <div className="p-4 overflow-y-auto max-h-[calc(100vh-170px)] scrollbar-thin">
-            <div className="mb-2 px-3 text-[10px] font-mono uppercase tracking-widest text-[#94A3B8]/80 font-bold flex items-center justify-between">
+            <div className="mb-2 px-3 text-[10px] font-mono uppercase tracking-widest text-[#B8E6CE]/80 font-bold flex items-center justify-between">
               <span>WORKSTATION DIRECTORY</span>
               <span className="text-[9px] text-[#65F58A] font-semibold">11 SECTIONS</span>
             </div>
@@ -226,20 +225,20 @@ export default function AdminLayout() {
         </div>
 
         {/* Bottom User Clearance Strip & Back to Academy */}
-        <div className="p-4 border-t border-white/[0.08] cyber-glass-nav">
-          <div className="cyber-glass-card rounded-xl p-3 flex items-center justify-between mb-2">
+        <div className="p-4 border-t border-[#65F58A]/20 cyber-glass-nav">
+          <div className="cyber-glass-card rounded-xl p-3 flex items-center justify-between mb-2 border border-[#65F58A]/25">
             <div className="flex items-center gap-2 text-xs font-mono">
               <span className="w-2 h-2 rounded-full bg-[#65F58A] animate-ping" />
-              <span className="text-[#94A3B8] text-[11px]">Security Clearance:</span>
+              <span className="text-[#B8E6CE] text-[11px]">Security Clearance:</span>
             </div>
-            <span className="text-[10px] font-mono font-bold text-[#65F58A] px-2 py-0.5 rounded-md bg-[#65F58A]/10 border border-[#65F58A]/30">
+            <span className="text-[10px] font-mono font-bold text-[#65F58A] px-2 py-0.5 rounded-md bg-[#65F58A]/15 border border-[#65F58A]/40">
               LEVEL 5 SEC
             </span>
           </div>
 
           <Link
             to="/"
-            className="flex items-center justify-center gap-2 w-full py-2 px-3 rounded-xl cyber-glass-card text-xs font-mono text-slate-300 hover:text-[#65F58A] transition-all"
+            className="flex items-center justify-center gap-2 w-full py-2 px-3 rounded-xl cyber-glass-card text-xs font-mono text-[#B8E6CE] hover:text-[#65F58A] transition-all border border-[#65F58A]/20"
           >
             <ExternalLink className="w-3.5 h-3.5" />
             <span>Public Academy Portal</span>
@@ -250,14 +249,14 @@ export default function AdminLayout() {
       {/* RIGHT CONTENT WORKSPACE */}
       <div className="flex-1 flex flex-col min-w-0 overflow-y-auto relative z-10">
         {/* TOP ULTRA-GLASS NAVBAR */}
-        <header className="h-20 border-b border-white/[0.08] cyber-glass-nav sticky top-0 z-40 px-8 flex items-center justify-between flex-shrink-0">
+        <header className="h-20 border-b border-[#65F58A]/25 cyber-glass-nav sticky top-0 z-40 px-8 flex items-center justify-between flex-shrink-0">
           <div>
             <h1 className="text-xl font-bold font-lora text-white flex items-center gap-2">
               <span>{getPageTitle()}</span>
             </h1>
-            <p className="text-xs text-[#94A3B8] font-mono flex items-center gap-2 mt-0.5">
+            <p className="text-xs text-[#B8E6CE] font-mono flex items-center gap-2 mt-0.5">
               <span>Host: academy.redkross.org.in</span>
-              <span className="text-slate-600">•</span>
+              <span className="text-[#65F58A]/40">•</span>
               <span className="text-[#65F58A] flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#65F58A] animate-pulse" />
                 <span>Live Synchronized Engine</span>

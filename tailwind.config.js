@@ -54,10 +54,11 @@ export default {
         }
       },
       fontFamily: {
-        sans: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        royal: ['"Inter"', 'sans-serif'],
+        sans: ['"Lora"', 'Georgia', 'serif'],
+        royal: ['"Lora"', 'Georgia', 'serif'],
         lora: ['"Lora"', 'Georgia', 'serif'],
-        mono: ['"Space Mono"', 'monospace'],
+        mono: ['"Lora"', 'Georgia', 'serif'],
+        serif: ['"Lora"', 'Georgia', 'serif'],
       },
       animation: {
         'pulse-subtle': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
