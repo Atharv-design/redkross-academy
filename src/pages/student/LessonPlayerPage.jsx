@@ -32,7 +32,7 @@ import {
 import { mockEngine } from '../../services/db/mockEngine';
 import { apiClient } from '../../services/apiClient';
 import { useAuth } from '../../services/auth/authContext';
-import { resolveVideoUrl } from '../../services/db/videoStorage';
+import { resolveVideoUrl, resolvePdfUrl } from '../../services/db/videoStorage';
 import { renderMarkdownToHtml } from '../../utils/markdownParser';
 
 export default function LessonPlayerPage() {
@@ -260,6 +260,58 @@ export default function LessonPlayerPage() {
   };
 
   const embedInfo = getEmbedInfo(resolvedVideoUrl);
+
+  const handleDownloadChapterNotes = () => {
+    if (!activeLesson) return;
+    const currentModuleName = course?.modules?.find((m) =>
+      (m.lessons || []).some((l) => l.id === activeLesson.id)
+    )?.title || 'Core Module';
+
+    const docContent = `# REDKROSS ACADEMY // CHAPTER STUDY NOTES\n\n` +
+      `**Course**: ${course?.title || 'Defensive Cyber Operations'}\n` +
+      `**Module**: ${currentModuleName}\n` +
+      `**Lesson**: ${activeLesson.title}\n` +
+      `**Duration**: ${activeLesson.duration || '15 mins'}\n` +
+      `**Date Exported**: ${new Date().toISOString().split('T')[0]}\n\n` +
+      `---\n\n` +
+      `## Chapter Operational Notes & Technical Guidance\n\n` +
+      (activeLesson.content || 'Defensive operators must maintain 100% visibility over host and network telemetry.\n\n```bash\n# Inspect telemetry pipelines\nss -tulpn\n```') +
+      `\n\n---\n\n` +
+      `## Standard Operating Procedures\n` +
+      `1. Log Verification: Ensure event ingestion pipelines are active.\n` +
+      `2. Framework Alignment: MITRE ATT&CK Matrix & NIST SP 800-61r2 Incident Handling.\n` +
+      `3. Cryptographic Verification: All assessments signed by RedKross Academy.\n`;
+
+    const blob = new Blob([docContent], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    const safeTitle = (activeLesson.title || 'Chapter_Notes').replace(/[^a-zA-Z0-9._-]/g, '_');
+    link.download = `${safeTitle}_Study_Notes.md`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleDownloadAdminPdf = async (attachment) => {
+    if (!attachment?.url) return;
+    try {
+      const resolved = await resolvePdfUrl(attachment.url);
+      if (resolved) {
+        const link = document.createElement('a');
+        link.href = resolved;
+        link.download = attachment.name || 'Lesson_Reference_Resource.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        alert('Could not retrieve attached PDF from local cache.');
+      }
+    } catch (e) {
+      console.error('Error downloading attached PDF:', e);
+    }
+  };
 
   const handleDownloadResource = (name) => {
     const docContent = `# REDKROSS ACADEMY - TECHNICAL STUDY REFERENCE\n` +
@@ -741,10 +793,10 @@ export default function LessonPlayerPage() {
               </div>
 
               {activeTab === 'notes' ? (
-                /* Lesson Notes Markdown View */
-                <div className="space-y-4">
+                /* Lesson Notes Markdown View with bounded height and custom scrollbar */
+                <div className="max-h-[460px] overflow-y-auto custom-scrollbar pr-3 space-y-4">
                   <div
-                    className="prose prose-invert max-w-none text-xs sm:text-sm font-sans leading-relaxed text-[#CBD5E1]"
+                    className="prose prose-invert max-w-none text-xs sm:text-sm font-lora leading-relaxed text-[#CBD5E1]"
                     dangerouslySetInnerHTML={{
                       __html: renderMarkdownToHtml(
                         activeLesson?.content ||
@@ -847,8 +899,8 @@ export default function LessonPlayerPage() {
                 </span>
               </div>
 
-              {/* Accordion Chapter Modules */}
-              <div className="space-y-3">
+              {/* Accordion Chapter Modules with bounded height & custom scrollbar */}
+              <div className="space-y-3 max-h-[420px] overflow-y-auto custom-scrollbar pr-1">
                 {(course.modules || []).map((mod, modIdx) => {
                   const isExpanded = expandedModules[mod.id] !== false;
                   const modCompletedCount = (mod.lessons || []).filter((l) =>
@@ -1016,38 +1068,84 @@ export default function LessonPlayerPage() {
 
             {/* Technical Resources Card */}
             <div className="ultra-glass-panel rounded-2xl p-5 border border-[#65F58A]/25 shadow-xl space-y-3">
-              <div className="flex items-center space-x-2 pb-2 border-b border-[#65F58A]/15">
-                <Download className="w-4 h-4 text-[#65F58A]" />
-                <h4 className="text-xs font-bold text-white font-mono uppercase tracking-wider">
-                  Lesson Reference Resources
-                </h4>
+              <div className="flex items-center justify-between pb-2 border-b border-[#65F58A]/15">
+                <div className="flex items-center space-x-2">
+                  <Download className="w-4 h-4 text-[#65F58A]" />
+                  <h4 className="text-xs font-bold text-white font-mono uppercase tracking-wider">
+                    Chapter Study Resources
+                  </h4>
+                </div>
+                <span className="text-[10px] font-mono text-[#72A88E]">
+                  Active Lesson Bound
+                </span>
               </div>
 
-              <div className="space-y-2">
-                {[
-                  { name: 'SOC Triage Standard Operating Procedure (PDF)', size: '1.2 MB' },
-                  { name: 'Windows Event ID Forensic Reference Matrix', size: '890 KB' },
-                  { name: 'Network Packet Carving Cheatsheet', size: '540 KB' }
-                ].map((res, i) => (
-                  <div
-                    key={i}
-                    className="p-3 rounded-xl bg-[#081a13]/50 border border-[#65F58A]/20 flex items-center justify-between text-xs"
+              {/* Scrollable Resources List */}
+              <div className="space-y-2 max-h-[230px] overflow-y-auto custom-scrollbar pr-1">
+                {/* 1. Active Chapter Study Notes Document */}
+                <div className="p-3 rounded-xl bg-[#081a13]/60 border border-[#65F58A]/30 flex items-center justify-between text-xs">
+                  <div className="flex items-center space-x-2.5 truncate pr-2">
+                    <FileDown className="w-4 h-4 text-[#65F58A] flex-shrink-0" />
+                    <div className="truncate">
+                      <span className="text-white font-medium block truncate text-[11px]">
+                        {activeLesson?.title || 'Chapter'}_Notes.md
+                      </span>
+                      <span className="text-[10px] font-mono text-[#B8E6CE]">
+                        {Math.max(4, Math.round((activeLesson?.content?.length || 500) / 100))} KB • Chapter Operational Notes
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleDownloadChapterNotes}
+                    className="px-2.5 py-1 rounded bg-[#0a261a]/70 hover:bg-[#0f3827] text-[#65F58A] border border-[#65F58A]/30 text-[10px] font-mono transition-colors flex-shrink-0"
                   >
+                    Download Notes
+                  </button>
+                </div>
+
+                {/* 2. Admin-Attached Custom Chapter PDF (if uploaded) */}
+                {activeLesson?.pdf_attachment && (
+                  <div className="p-3 rounded-xl bg-[#092218]/70 border border-[#35E6B5]/40 flex items-center justify-between text-xs">
                     <div className="flex items-center space-x-2.5 truncate pr-2">
-                      <FileDown className="w-4 h-4 text-[#65F58A] flex-shrink-0" />
+                      <FileText className="w-4 h-4 text-[#35E6B5] flex-shrink-0" />
                       <div className="truncate">
-                        <span className="text-white font-medium block truncate text-[11px]">{res.name}</span>
-                        <span className="text-[10px] font-mono text-[#B8E6CE]">{res.size}</span>
+                        <span className="text-white font-medium block truncate text-[11px]">
+                          {activeLesson.pdf_attachment.name}
+                        </span>
+                        <span className="text-[10px] font-mono text-[#35E6B5]">
+                          {activeLesson.pdf_attachment.size} • Instructor Guide (PDF)
+                        </span>
                       </div>
                     </div>
                     <button
-                      onClick={() => handleDownloadResource(res.name)}
-                      className="px-2.5 py-1 rounded bg-[#0a261a]/70 hover:bg-[#0f3827] text-[#65F58A] border border-[#65F58A]/30 text-[10px] font-mono transition-colors flex-shrink-0"
+                      onClick={() => handleDownloadAdminPdf(activeLesson.pdf_attachment)}
+                      className="px-2.5 py-1 rounded bg-[#063022] hover:bg-[#09422f] text-[#35E6B5] border border-[#35E6B5]/40 text-[10px] font-mono transition-colors flex-shrink-0 font-bold"
                     >
-                      Download
+                      Download PDF
                     </button>
                   </div>
-                ))}
+                )}
+
+                {/* 3. Companion Telemetry SOP Reference */}
+                <div className="p-3 rounded-xl bg-[#081a13]/50 border border-[#65F58A]/20 flex items-center justify-between text-xs">
+                  <div className="flex items-center space-x-2.5 truncate pr-2">
+                    <FileCheck className="w-4 h-4 text-[#72A88E] flex-shrink-0" />
+                    <div className="truncate">
+                      <span className="text-[#C9EFE0] font-medium block truncate text-[11px]">
+                        SOC_Triage_SOP_Matrix.md
+                      </span>
+                      <span className="text-[10px] font-mono text-[#72A88E]">
+                        NIST SP 800-61r2 Protocol Reference
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleDownloadResource('SOC Triage Standard Operating Procedure')}
+                    className="px-2.5 py-1 rounded bg-[#0a261a]/60 hover:bg-[#0f3827] text-[#B8E6CE] border border-[#65F58A]/20 text-[10px] font-mono transition-colors flex-shrink-0"
+                  >
+                    Download
+                  </button>
+                </div>
               </div>
             </div>
           </div>

@@ -9,7 +9,7 @@ import {
 import { mockEngine } from '../../services/db/mockEngine';
 import { apiClient } from '../../services/apiClient';
 import { COURSE_CARD_STYLES, getCardStyleByIndex } from '../../utils/courseCardStyles';
-import { saveVideoBlob, resolveVideoUrl } from '../../services/db/videoStorage';
+import { saveVideoBlob, resolveVideoUrl, savePdfBlob, resolvePdfUrl } from '../../services/db/videoStorage';
 
 export default function AdminCoursesPage() {
   const [courses, setCourses] = useState([]);
@@ -50,7 +50,8 @@ export default function AdminCoursesPage() {
     type: 'video',
     video_url: '',
     is_preview: false,
-    content: ''
+    content: '',
+    pdf_attachment: null
   });
 
   // Modal state for Practical Lab Assignment
@@ -105,6 +106,41 @@ export default function AdminCoursesPage() {
   const [videoPreviewUrl, setVideoPreviewUrl] = useState('');
   const [uploadedFileInfo, setUploadedFileInfo] = useState(null);
   const fileInputRef = useRef(null);
+
+  // Local Lesson PDF Attachment Upload State
+  const [uploadingPdf, setUploadingPdf] = useState(false);
+  const pdfInputRef = useRef(null);
+
+  const handleLocalPdfUpload = async (file) => {
+    if (!file) return;
+    if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+      alert('Please select a valid PDF file (.pdf).');
+      return;
+    }
+    setUploadingPdf(true);
+    try {
+      const assetId = `pdf_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+      const idbUrl = await savePdfBlob(assetId, file);
+      const sizeFormatted = file.size > 1024 * 1024
+        ? `${(file.size / (1024 * 1024)).toFixed(2)} MB`
+        : `${Math.round(file.size / 1024)} KB`;
+
+      setLessonForm((prev) => ({
+        ...prev,
+        pdf_attachment: {
+          name: file.name,
+          size: sizeFormatted,
+          url: idbUrl,
+          uploaded_at: new Date().toISOString()
+        }
+      }));
+    } catch (err) {
+      console.error('Failed to upload PDF:', err);
+      alert('Failed to upload PDF attachment.');
+    } finally {
+      setUploadingPdf(false);
+    }
+  };
 
   // Handle local video file upload (MP4, WebM, MOV, MKV) to IndexedDB
   const handleLocalVideoUpload = async (file) => {
@@ -429,7 +465,8 @@ export default function AdminCoursesPage() {
         type: lesson.type || 'video',
         video_url: lesson.video_url || '',
         is_preview: !!lesson.is_preview,
-        content: lesson.content || ''
+        content: lesson.content || '',
+        pdf_attachment: lesson.pdf_attachment || null
       });
 
       if (lesson.video_url) {
@@ -459,7 +496,8 @@ export default function AdminCoursesPage() {
         type: 'video',
         video_url: '',
         is_preview: false,
-        content: ''
+        content: '',
+        pdf_attachment: null
       });
     }
     setLessonModalOpen(true);
@@ -1158,8 +1196,8 @@ export default function AdminCoursesPage() {
 
       {/* Lesson Modal */}
       {lessonModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-          <div className="w-[600px] cyber-glass-panel rounded-xl p-6 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fadeIn">
+          <div className="w-[620px] max-h-[90vh] overflow-y-auto custom-scrollbar cyber-glass-panel rounded-xl p-6 shadow-2xl border border-[#65F58A]/30">
             <h3 className="text-base font-bold text-white mb-4 font-lora">
               {editingLesson ? 'Edit Lesson Parameters' : 'Create New Lesson'}
             </h3>
@@ -1386,6 +1424,67 @@ export default function AdminCoursesPage() {
                   placeholder="# Lesson Overview&#10;Include operational notes and terminal commands."
                   className="w-full cyber-glass-card rounded-lg p-2 text-xs text-white font-mono"
                 />
+              </div>
+
+              {/* Attach Reference Study Guide / Chapter Notes (PDF) */}
+              <div className="space-y-1.5 pt-2 border-t border-[#65F58A]/20">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-mono text-[#B8E6CE] block">
+                    Attach Reference Study Guide / Chapter Notes (PDF)
+                  </label>
+                  <span className="text-[10px] font-mono text-[#72A88E]">
+                    Available for student download
+                  </span>
+                </div>
+
+                <input
+                  type="file"
+                  ref={pdfInputRef}
+                  accept=".pdf,application/pdf"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleLocalPdfUpload(file);
+                  }}
+                  className="hidden"
+                />
+
+                {lessonForm.pdf_attachment ? (
+                  <div className="p-3 rounded-xl bg-[#092218]/70 border border-[#65F58A]/35 flex items-center justify-between">
+                    <div className="flex items-center space-x-2.5 truncate pr-2">
+                      <FileText className="w-4 h-4 text-[#65F58A] flex-shrink-0" />
+                      <div className="truncate">
+                        <span className="text-xs font-medium text-white block truncate">
+                          {lessonForm.pdf_attachment.name}
+                        </span>
+                        <span className="text-[10px] font-mono text-[#B8E6CE]">
+                          {lessonForm.pdf_attachment.size} • Attached
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setLessonForm((prev) => ({ ...prev, pdf_attachment: null }))}
+                      className="p-1.5 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 border border-red-500/20 transition-colors"
+                      title="Remove attached PDF"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    disabled={uploadingPdf}
+                    onClick={() => pdfInputRef.current?.click()}
+                    className="w-full py-3 px-4 rounded-xl border border-dashed border-[#65F58A]/30 hover:border-[#65F58A]/60 bg-[#081a13]/50 hover:bg-[#0a241b]/70 text-xs font-mono text-[#B8E6CE] hover:text-white transition-all flex items-center justify-center space-x-2 cursor-pointer"
+                  >
+                    {uploadingPdf ? (
+                      <Loader2 className="w-4 h-4 animate-spin text-[#65F58A]" />
+                    ) : (
+                      <UploadCloud className="w-4 h-4 text-[#65F58A]" />
+                    )}
+                    <span>{uploadingPdf ? 'Uploading PDF...' : 'Click to Upload Chapter PDF / Notes (.pdf)'}</span>
+                  </button>
+                )}
               </div>
 
               <div className="flex justify-end space-x-2 pt-4 border-t border-[#1B2530]">

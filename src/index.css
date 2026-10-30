@@ -262,6 +262,30 @@ body {
   background: rgba(101, 245, 138, 0.5);
 }
 
+/* Explicit Custom Scrollbar Utility */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(101, 245, 138, 0.35) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(101, 245, 138, 0.3);
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(101, 245, 138, 0.6);
+}
+
 /* Accessible Focus Ring */
 :focus-visible {
   outline: 2px solid #65F58A;

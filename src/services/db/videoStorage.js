@@ -99,3 +99,80 @@ export async function resolveVideoUrl(urlOrId) {
 
   return urlOrId;
 }
+
+/**
+ * Saves a PDF Document or Blob to IndexedDB for lesson study resources
+ * @param {string} assetId
+ * @param {Blob|File} file
+ * @returns {Promise<string>} Returns an idb-file:// identifier or Data URL
+ */
+export async function savePdfBlob(assetId, file) {
+  try {
+    const db = await openVideoDB();
+    if (!db) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => resolve(URL.createObjectURL(file));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    return new Promise((resolve) => {
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      const store = tx.objectStore(STORE_NAME);
+      store.put(file, assetId);
+
+      tx.oncomplete = () => {
+        resolve(`idb-file://${assetId}`);
+      };
+      tx.onerror = () => {
+        console.warn('Failed to save PDF to IndexedDB, fallback to Data URL');
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.readAsDataURL(file);
+      };
+    });
+  } catch (err) {
+    console.error('Error saving PDF blob:', err);
+    return URL.createObjectURL(file);
+  }
+}
+
+/**
+ * Resolves an attached PDF URL. If it's an idb-file:// URL, loads the blob from IndexedDB.
+ * @param {string} urlOrId
+ * @returns {Promise<string|null>}
+ */
+export async function resolvePdfUrl(urlOrId) {
+  if (!urlOrId) return null;
+
+  if (urlOrId.startsWith('idb-file://')) {
+    const assetId = urlOrId.replace('idb-file://', '');
+    try {
+      const db = await openVideoDB();
+      if (!db) return null;
+
+      return new Promise((resolve) => {
+        const tx = db.transaction(STORE_NAME, 'readonly');
+        const store = tx.objectStore(STORE_NAME);
+        const req = store.get(assetId);
+
+        req.onsuccess = () => {
+          if (req.result) {
+            const objectUrl = URL.createObjectURL(req.result);
+            resolve(objectUrl);
+          } else {
+            resolve(null);
+          }
+        };
+        req.onerror = () => resolve(null);
+      });
+    } catch (err) {
+      console.error('Error reading PDF from IndexedDB:', err);
+      return null;
+    }
+  }
+
+  return urlOrId;
+}

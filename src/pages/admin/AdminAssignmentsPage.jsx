@@ -157,29 +157,29 @@ export default function AdminAssignmentsPage() {
       {/* Split Screen Grading Studio */}
       <div className="grid grid-cols-12 gap-6 min-h-[640px]">
         {/* Left Submissions Column (List + Details) */}
-        <div className="col-span-6 cyber-glass-panel rounded-xl flex flex-col overflow-hidden">
+        <div className="col-span-6 cyber-glass-panel rounded-xl flex flex-col overflow-hidden border border-[#65F58A]/25 backdrop-blur-xl bg-[#081a13]/60 max-h-[640px]">
           {/* Submissions List Header */}
-          <div className="p-4 bg-[#0A121A] border-b border-[#1B2530] flex items-center justify-between">
-            <span className="text-xs font-mono text-[#8BA2B5]">
+          <div className="p-4 bg-[#071912]/80 border-b border-[#65F58A]/20 flex items-center justify-between">
+            <span className="text-xs font-mono text-[#B8E6CE]">
               STUDENT SUBMISSIONS QUEUE ({submissions.length})
             </span>
             <span className="text-[10px] font-mono text-[#65F58A]">Live Sync</span>
           </div>
 
-          <div className="p-3 border-b border-[#1B2530] space-y-2 max-h-48 overflow-y-auto">
+          <div className="p-3 border-b border-[#65F58A]/15 space-y-2 max-h-56 overflow-y-auto custom-scrollbar">
             {submissions.map((sub) => (
               <div
                 key={sub.id}
                 onClick={() => handleSelectSubmission(sub)}
                 className={`p-3 rounded-lg border cursor-pointer transition-all flex items-center justify-between ${
                   selectedSub?.id === sub.id
-                    ? 'bg-[#182330] border-[#65F58A]/50'
-                    : 'bg-[#071018] border-[#1B2530] hover:border-[#263440]'
+                    ? 'bg-[#0c2e1f]/70 border-[#65F58A]/50'
+                    : 'bg-[#05140e]/60 border-[#65F58A]/20 hover:border-[#65F58A]/40'
                 }`}
               >
                 <div>
                   <div className="flex items-center space-x-2">
-                    <span className="text-xs font-bold text-white">{sub.student_name}</span>
+                    <span className="text-xs font-bold text-white font-lora">{sub.student_name}</span>
                     <span
                       className={`text-[9px] font-mono px-1.5 py-0.2 rounded border ${
                         sub.status === 'PASSED'
@@ -192,7 +192,7 @@ export default function AdminAssignmentsPage() {
                       {sub.status}
                     </span>
                   </div>
-                  <span className="text-[10px] font-mono text-[#8BA2B5]">
+                  <span className="text-[10px] font-mono text-[#B8E6CE]">
                     {sub.file_name} • {sub.submitted_at}
                   </span>
                 </div>
@@ -208,8 +208,8 @@ export default function AdminAssignmentsPage() {
 
           {/* Submission Inspection Preview */}
           {selectedSub && (
-            <div className="p-5 flex-1 overflow-y-auto space-y-4">
-              <div className="border border-[#1B2530] bg-[#071018] rounded-lg p-4 space-y-3">
+            <div className="p-5 flex-1 overflow-y-auto max-h-[340px] custom-scrollbar space-y-4">
+              <div className="border border-[#65F58A]/20 bg-[#05140e]/60 rounded-lg p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <FileCode className="w-5 h-5 text-[#35E6B5]" />
@@ -217,14 +217,14 @@ export default function AdminAssignmentsPage() {
                       {selectedSub.file_name}
                     </span>
                   </div>
-                  <span className="text-xs font-mono text-[#8BA2B5]">{selectedSub.file_size}</span>
+                  <span className="text-xs font-mono text-[#B8E6CE]">{selectedSub.file_size}</span>
                 </div>
 
                 <div className="pt-2">
-                  <label className="text-[10px] font-mono text-[#8BA2B5] block mb-1">
+                  <label className="text-[10px] font-mono text-[#B8E6CE] block mb-1">
                     STUDENT EXECUTIVE SUMMARY & REPORT FINDINGS:
                   </label>
-                  <p className="text-xs text-[#CBD5E1] bg-[#0D1622] p-3 rounded border border-[#182330] leading-relaxed">
+                  <p className="text-xs text-[#C9EFE0] bg-[#081a13]/80 p-3 rounded border border-[#65F58A]/20 leading-relaxed font-lora">
                     {selectedSub.text_summary}
                   </p>
                 </div>
@@ -234,17 +234,17 @@ export default function AdminAssignmentsPage() {
         </div>
 
         {/* Right Split Screen: Rubric Grading & Publication */}
-        <div className="col-span-6 cyber-glass-panel rounded-xl flex flex-col overflow-hidden">
-          <div className="p-4 bg-[#0A121A] border-b border-[#1B2530]">
+        <div className="col-span-6 cyber-glass-panel rounded-xl flex flex-col overflow-hidden border border-[#65F58A]/25 backdrop-blur-xl bg-[#081a13]/60 max-h-[640px]">
+          <div className="p-4 bg-[#071912]/80 border-b border-[#65F58A]/20">
             <h3 className="text-sm font-bold text-white font-lora">
               Rubric Assessment & Grade Certification
             </h3>
-            <span className="text-[11px] font-mono text-[#8BA2B5]">
+            <span className="text-[11px] font-mono text-[#B8E6CE]">
               Grading: {selectedSub?.student_name} ({selectedSub?.id})
             </span>
           </div>
 
-          <div className="p-6 flex-1 overflow-y-auto space-y-5">
+          <div className="p-6 flex-1 overflow-y-auto max-h-[500px] custom-scrollbar space-y-5">
             {/* Criteria 1: Technical Correctness */}
             <div className="space-y-1.5">
               <div className="flex justify-between items-center text-xs font-mono">

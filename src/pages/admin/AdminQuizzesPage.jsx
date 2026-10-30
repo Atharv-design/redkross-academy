@@ -336,7 +336,7 @@ export default function AdminQuizzesPage() {
           </div>
 
           {/* Right Column: Question Bank Cards */}
-          <div className="col-span-8 space-y-3">
+          <div className="col-span-8 space-y-3 max-h-[640px] overflow-y-auto custom-scrollbar pr-1">
             {selectedQuiz?.questions?.map((q, idx) => (
               <div
                 key={q.id || idx}
