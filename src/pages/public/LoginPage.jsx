@@ -60,8 +60,8 @@ export default function LoginPage() {
     <div className="min-h-[85vh] flex items-center justify-center px-4 py-12 relative z-10">
       <div className="max-w-md w-full space-y-6">
         {/* Terminal Header */}
-        <div className="text-center space-y-3">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#65F58A]/10 border border-[#65F58A]/30 text-[#65F58A] text-xs font-mono">
+        <div className="text-center space-y-3 animate-slide-left">
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full ultra-glass-pill text-xs font-mono">
             <ShieldCheck className="w-3.5 h-3.5" />
             <span>ZERO-TRUST ACCESS GATEWAY</span>
           </div>
@@ -74,10 +74,10 @@ export default function LoginPage() {
         </div>
 
         {/* Main Authentication Card */}
-        <div className="liquid-glass-panel rounded-2xl p-6 sm:p-8 space-y-6 border border-[#263440] shadow-2xl relative overflow-hidden">
+        <div className="ultra-glass-panel rounded-2xl p-6 sm:p-8 space-y-6 shadow-2xl relative overflow-hidden animate-slide-left stagger-1">
           {/* Subtle Accent Glow */}
-          <div className="absolute -top-12 -right-12 w-32 h-32 bg-[#65F58A]/10 rounded-full blur-2xl pointer-events-none" />
-          <div className="absolute -bottom-12 -left-12 w-32 h-32 bg-[#35E6B5]/10 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute -top-12 -right-12 w-32 h-32 bg-[#65F58A]/15 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute -bottom-12 -left-12 w-32 h-32 bg-[#35E6B5]/15 rounded-full blur-2xl pointer-events-none" />
 
           {errorMsg && (
             <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 flex items-start gap-2.5 text-xs text-red-400">
@@ -92,7 +92,7 @@ export default function LoginPage() {
               onClick={handleGoogleSignIn}
               disabled={loading}
               type="button"
-              className="w-full py-4 px-5 rounded-xl liquid-glass-card hover:border-[#65F58A] active:scale-[0.99] text-white font-mono text-sm font-semibold transition-all flex items-center justify-center gap-3.5 group shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full py-4 px-5 rounded-xl ultra-glass-card hover:border-[#65F58A] active:scale-[0.99] text-white font-mono text-sm font-semibold transition-all flex items-center justify-center gap-3.5 group shadow-lg disabled:opacity-60 disabled:cursor-not-allowed shimmer-lr"
             >
               {loading ? (
                 <>
@@ -141,7 +141,7 @@ export default function LoginPage() {
                   devLoginAsAdmin();
                   navigate('/admin', { replace: true });
                 }}
-                className="w-full py-3.5 px-4 rounded-xl bg-[#65F58A]/10 hover:bg-[#65F58A]/20 active:scale-[0.99] border border-[#65F58A]/40 hover:border-[#65F58A] text-[#65F58A] font-mono text-xs font-bold transition-all flex items-center justify-center gap-2 group shadow-[0_0_20px_rgba(101,245,138,0.15)]"
+                className="w-full py-3.5 px-4 rounded-xl ultra-glass-btn active:scale-[0.99] font-mono text-xs font-bold transition-all flex items-center justify-center gap-2 group shadow-[0_0_20px_rgba(101,245,138,0.2)]"
               >
                 <ShieldCheck className="w-4 h-4 text-[#65F58A]" />
                 <span>⚡ DEV MODE: 1-Click Super Admin Login</span>
@@ -160,19 +160,19 @@ export default function LoginPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-2 text-[11px] font-mono text-[#94A3B8]">
-              <div className="p-2 rounded-lg bg-[#071018]/60 border border-[#263440] flex items-center gap-2">
+              <div className="p-2 rounded-lg ultra-glass-panel flex items-center gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#35E6B5] flex-shrink-0" />
                 <span className="truncate">OAuth 2.0 + PKCE</span>
               </div>
-              <div className="p-2 rounded-lg bg-[#071018]/60 border border-[#263440] flex items-center gap-2">
+              <div className="p-2 rounded-lg ultra-glass-panel flex items-center gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#35E6B5] flex-shrink-0" />
                 <span className="truncate">256-Bit TLS Cipher</span>
               </div>
-              <div className="p-2 rounded-lg bg-[#071018]/60 border border-[#263440] flex items-center gap-2">
+              <div className="p-2 rounded-lg ultra-glass-panel flex items-center gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#35E6B5] flex-shrink-0" />
                 <span className="truncate">Zero-Trust Tokens</span>
               </div>
-              <div className="p-2 rounded-lg bg-[#071018]/60 border border-[#263440] flex items-center gap-2">
+              <div className="p-2 rounded-lg ultra-glass-panel flex items-center gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#35E6B5] flex-shrink-0" />
                 <span className="truncate">PRD §13 Audit Trail</span>
               </div>
@@ -181,7 +181,7 @@ export default function LoginPage() {
         </div>
 
         {/* Institutional Regulatory Footnote */}
-        <div className="p-4 rounded-xl bg-[#0B121B] border border-[#263440]/60 text-center space-y-1">
+        <div className="p-4 rounded-xl ultra-glass-panel text-center space-y-1 animate-slide-left stagger-2">
           <div className="text-[10px] font-mono text-[#64748B] uppercase tracking-wider flex items-center justify-center gap-1.5">
             <Lock className="w-3.5 h-3.5 text-[#65F58A]" />
             <span>SECURE CADET OPERATING ENVIRONMENT</span>

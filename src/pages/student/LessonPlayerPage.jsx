@@ -390,10 +390,10 @@ export default function LessonPlayerPage() {
       </div>
 
       {/* Responsive Workstation Layout */}
-      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden animate-slide-left">
         {/* Left Column: Curriculum Syllabus Navigation */}
         <div
-          className={`w-full lg:w-80 bg-surface-card border-r border-surface-border overflow-y-auto p-4 space-y-6 ${
+          className={`w-full lg:w-80 ultra-glass-panel border-r border-[#263440] overflow-y-auto p-4 space-y-6 ${
             mobileTab === 'syllabus' ? 'block' : 'hidden lg:block'
           } lg:max-h-[calc(100vh-3.5rem)]`}
         >
@@ -520,7 +520,7 @@ export default function LessonPlayerPage() {
           {activeLesson ? (
             <>
               {/* Progress Bar & Telemetry (User Enhancement 3) */}
-              <div className="p-3.5 rounded-xl bg-[#101923] border border-[#263440] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono shadow-md">
+              <div className="p-3.5 rounded-xl ultra-glass-panel flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono shadow-md animate-slide-left">
                 <div className="flex items-center gap-2">
                   <span className="text-[#94A3B8]">Course Progress:</span>
                   <span className="text-[#65F58A] font-bold">{progressData.percentage}%</span>
@@ -535,7 +535,7 @@ export default function LessonPlayerPage() {
               </div>
 
               {/* Embedded Video Player & Playback Gating (User Enhancement 3 & PRD Specification) */}
-              <div className="bg-[#071018] rounded-2xl p-3 sm:p-4 border border-[#263440] shadow-2xl relative overflow-hidden space-y-3">
+              <div className="ultra-glass-panel rounded-2xl p-3 sm:p-4 shadow-2xl relative overflow-hidden space-y-3 animate-slide-left stagger-1">
                 <div className="relative aspect-video rounded-xl overflow-hidden bg-black flex items-center justify-center">
                   {hasVideo ? (
                     embedInfo?.type === 'youtube' || embedInfo?.type === 'vimeo' ? (
@@ -713,7 +713,7 @@ export default function LessonPlayerPage() {
               </div>
 
               {/* Mandatory PDF Assignment Checkpoint (PRD & User Lifecycle Requirement) */}
-              <div className="bg-[#101923] border border-[#263440] rounded-2xl p-6 sm:p-7 shadow-xl space-y-4">
+              <div className="ultra-glass-panel rounded-2xl p-6 sm:p-7 shadow-xl space-y-4 animate-slide-left stagger-2">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#263440]">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center text-[#65F58A] shrink-0">

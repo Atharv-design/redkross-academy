@@ -278,7 +278,7 @@ export default function AdminCertificatesPage() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-slide-left">
       {/* Top Header Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 liquid-glass-panel p-5 rounded-2xl">
         <div className="flex items-center space-x-3">

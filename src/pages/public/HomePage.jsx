@@ -55,45 +55,45 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-4xl mx-auto space-y-6">
             {/* Status Pill */}
-            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#101923]/90 border border-[#263440] text-xs font-mono shadow-md backdrop-blur-md">
+            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full ultra-glass-card text-xs font-mono shadow-md backdrop-blur-md animate-slide-left shimmer-lr">
               <span className="w-2 h-2 rounded-full bg-[#65F58A] animate-pulse" />
-              <span className="text-slate-300">ACADEMY COHORT 2026 ACTIVE</span>
+              <span className="text-slate-200">ACADEMY COHORT 2026 ACTIVE</span>
               <span className="text-slate-600">•</span>
               <span className="text-[#65F58A] font-semibold">PRD v1.0 DEFENSIVE CERTIFICATIONS</span>
             </div>
 
             {/* Main Headline with Royal Cinzel font & neon shading */}
-            <h1 className="font-royal text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.12]">
+            <h1 className="font-royal text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.12] animate-slide-left stagger-1">
               Institutional Training for <br />
               <span className="title-shading-neon">
                 Defensive Cyber Operators
               </span>
             </h1>
 
-            <p className="text-sm sm:text-base lg:text-lg text-[#94A3B8] max-w-2xl mx-auto leading-relaxed">
+            <p className="text-sm sm:text-base lg:text-lg text-[#94A3B8] max-w-2xl mx-auto leading-relaxed animate-slide-left stagger-2">
               Master 24/7 SOC telemetry analysis, MITRE ATT&CK correlation, and incident triage through structured hands-on curricula and tamper-proof cryptographic credentials.
             </p>
 
             {/* Call To Actions */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-4 animate-slide-left stagger-3">
               <Link
                 to="/courses"
-                className="w-full sm:w-auto px-7 py-3.5 rounded-full glass-button-primary font-royal font-bold text-xs tracking-wider transition-all flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-7 py-3.5 rounded-full ultra-glass-btn font-royal font-bold text-xs tracking-wider transition-all flex items-center justify-center gap-2 group"
               >
                 <BookOpen className="w-4 h-4" />
                 <span>Explore Course Catalogue</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
                 to="/paths"
-                className="w-full sm:w-auto px-6 py-3.5 rounded-full glass-button-secondary font-royal font-semibold text-xs tracking-wider transition-all flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-6 py-3.5 rounded-full ultra-glass-btn-secondary font-royal font-semibold text-xs tracking-wider transition-all flex items-center justify-center gap-2"
               >
                 <Layers className="w-4 h-4 text-[#35E6B5]" />
                 <span>Career Learning Paths</span>
               </Link>
               <Link
                 to="/verify"
-                className="w-full sm:w-auto px-6 py-3.5 rounded-full bg-[#101923]/70 hover:bg-[#1B2530] border border-[#263440] text-[#94A3B8] hover:text-white font-mono text-xs transition-all flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-6 py-3.5 rounded-full ultra-glass-card text-[#94A3B8] hover:text-white font-mono text-xs transition-all flex items-center justify-center gap-2"
               >
                 <Award className="w-4 h-4 text-[#65F58A]" />
                 <span>Verify Credential</span>
@@ -101,20 +101,20 @@ export default function HomePage() {
             </div>
 
             {/* Live Platform Telemetry Bar */}
-            <div className="mt-12 sm:mt-16 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto pt-8 border-t border-[#263440]/60">
-              <div className="p-4 glass-card rounded-xl text-center">
+            <div className="mt-12 sm:mt-16 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto pt-8 border-t border-[#263440]/60 animate-slide-left stagger-4">
+              <div className="p-4 ultra-glass-card rounded-xl text-center">
                 <div className="text-2xl sm:text-3xl font-bold text-white font-mono tabular-nums">1,420+</div>
                 <div className="text-[11px] text-[#94A3B8] font-mono mt-1">Active Operators</div>
               </div>
-              <div className="p-4 glass-card rounded-xl text-center">
+              <div className="p-4 ultra-glass-card rounded-xl text-center">
                 <div className="text-2xl sm:text-3xl font-bold text-[#65F58A] font-mono tabular-nums">10</div>
                 <div className="text-[11px] text-[#94A3B8] font-mono mt-1">Specialized Courses</div>
               </div>
-              <div className="p-4 glass-card rounded-xl text-center">
+              <div className="p-4 ultra-glass-card rounded-xl text-center">
                 <div className="text-2xl sm:text-3xl font-bold text-[#35E6B5] font-mono tabular-nums">98.4%</div>
                 <div className="text-[11px] text-[#94A3B8] font-mono mt-1">Audit Verification</div>
               </div>
-              <div className="p-4 glass-card rounded-xl text-center">
+              <div className="p-4 ultra-glass-card rounded-xl text-center">
                 <div className="text-2xl sm:text-3xl font-bold text-[#65F58A] font-mono tabular-nums">500 T</div>
                 <div className="text-[11px] text-[#94A3B8] font-mono mt-1">Token Bounties</div>
               </div>
@@ -176,8 +176,8 @@ export default function HomePage() {
               </div>
             </>
           ) : (
-            <div className="glass-card rounded-2xl p-8 sm:p-12 text-center max-w-3xl mx-auto space-y-6">
-              <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#101923] border border-[#263440] text-xs font-mono">
+            <div className="ultra-glass-card rounded-2xl p-8 sm:p-12 text-center max-w-3xl mx-auto space-y-6 shimmer-lr animate-slide-left">
+              <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full ultra-glass-panel text-xs font-mono">
                 <Lock className="w-3.5 h-3.5 text-[#35E6B5]" />
                 <span className="text-[#94A3B8]">CURRICULUM PREPARATION ACTIVE</span>
               </div>
@@ -190,13 +190,13 @@ export default function HomePage() {
               <div className="pt-2 flex flex-wrap justify-center gap-4">
                 <Link
                   to="/paths"
-                  className="px-6 py-2.5 rounded-full bg-[#1B2530] hover:bg-[#263440] border border-[#263440] text-xs font-mono text-white transition-colors"
+                  className="px-6 py-2.5 rounded-full ultra-glass-btn-secondary text-xs font-mono text-white transition-colors"
                 >
                   Check Learning Paths
                 </Link>
                 <Link
                   to="/verify"
-                  className="px-6 py-2.5 rounded-full glass-button-primary font-royal font-bold text-xs"
+                  className="px-6 py-2.5 rounded-full ultra-glass-btn font-royal font-bold text-xs"
                 >
                   Verify Credentials
                 </Link>

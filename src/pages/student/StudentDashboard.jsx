@@ -81,7 +81,7 @@ export default function StudentDashboard() {
     <div className="min-h-screen bg-[#071018] py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         {/* Welcome Header */}
-        <div className="liquid-glass-panel rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 border border-[#263440]">
+        <div className="ultra-glass-panel rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 border border-[#263440] animate-slide-left">
           <div className="flex items-center space-x-4">
             <div className="relative">
               <img
@@ -97,7 +97,7 @@ export default function StudentDashboard() {
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-2xl font-royal font-bold text-white">{fullName}</h1>
-                <span className="liquid-glass-badge text-[10px] font-mono px-2.5 py-0.5 rounded-full uppercase">
+                <span className="ultra-glass-pill text-[10px] font-mono px-2.5 py-0.5 rounded-full uppercase">
                   OPERATOR PORTAL
                 </span>
                 <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/40 font-bold shadow-[0_0_10px_rgba(101,245,138,0.2)]">
@@ -113,7 +113,7 @@ export default function StudentDashboard() {
             {/* Public Verification Dossier Pill */}
             <Link
               to={`/verify/${cadetId}`}
-              className="liquid-glass-button px-3.5 py-2 rounded-xl text-xs font-mono font-medium flex items-center gap-2"
+              className="ultra-glass-btn px-3.5 py-2 rounded-xl text-xs font-mono font-medium flex items-center gap-2"
               title="Open Public Verification Dossier"
             >
               <Award className="w-4 h-4 text-[#65F58A]" />
@@ -121,7 +121,7 @@ export default function StudentDashboard() {
             </Link>
 
             {/* Learning Streak */}
-            <div className="liquid-glass-card px-3.5 py-2 rounded-xl text-xs font-mono flex items-center space-x-2">
+            <div className="ultra-glass-card px-3.5 py-2 rounded-xl text-xs font-mono flex items-center space-x-2">
               <Flame className="w-4 h-4 text-rose-500 fill-rose-500" />
               <span className="text-slate-400">Streak:</span>
               <span className="text-white font-bold tabular-nums">{currentUser.streak_days || 7} Days</span>
@@ -130,7 +130,7 @@ export default function StudentDashboard() {
             {/* Token Wallet */}
             <Link
               to="/student/tokens"
-              className="liquid-glass-card hover:border-amber-500/50 px-3.5 py-2 rounded-xl text-amber-400 transition-all text-xs font-mono font-medium flex items-center space-x-2"
+              className="ultra-glass-card hover:border-amber-500/50 px-3.5 py-2 rounded-xl text-amber-400 transition-all text-xs font-mono font-medium flex items-center space-x-2"
             >
               <Coins className="w-4 h-4 text-amber-400 animate-pulse" />
               <span>Wallet:</span>
@@ -141,7 +141,7 @@ export default function StudentDashboard() {
 
         {/* Security Suspension Notice */}
         {isSuspended && (
-          <div className="p-4 bg-red-950/40 border border-red-500/50 rounded-2xl flex items-center space-x-3 text-red-200 liquid-glass-panel">
+          <div className="p-4 bg-red-950/40 border border-red-500/50 rounded-2xl flex items-center space-x-3 text-red-200 ultra-glass-panel">
             <ShieldAlert className="w-6 h-6 text-red-400 shrink-0" />
             <div className="text-xs">
               <span className="font-bold font-mono text-red-400 block mb-0.5">
@@ -156,10 +156,10 @@ export default function StudentDashboard() {
 
         {/* Continue Learning Hero Card */}
         {primaryCourse && primaryEnrolment && (
-          <div className="liquid-glass-panel rounded-2xl p-8 relative overflow-hidden">
+          <div className="ultra-glass-panel rounded-2xl p-8 relative overflow-hidden shimmer-lr animate-slide-left stagger-1">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
               <div className="space-y-3 max-w-2xl">
-                <div className="inline-flex items-center space-x-2 text-xs font-mono text-[#65F58A] font-semibold px-3 py-1 rounded-full bg-[#65F58A]/10 border border-[#65F58A]/30">
+                <div className="inline-flex items-center space-x-2 text-xs font-mono text-[#65F58A] font-semibold px-3 py-1 rounded-full ultra-glass-pill">
                   <Play className="w-3 h-3 fill-[#65F58A]" />
                   <span>RESUME ACTIVE PROGRAMME</span>
                 </div>
@@ -187,14 +187,14 @@ export default function StudentDashboard() {
               <div className="flex flex-col gap-3 min-w-[220px]">
                 <Link
                   to={`/student/learn/${primaryEnrolment.id}`}
-                  className="liquid-glass-button px-6 py-3.5 rounded-xl font-royal font-bold text-sm flex items-center justify-center space-x-2"
+                  className="ultra-glass-btn px-6 py-3.5 rounded-xl font-royal font-bold text-sm flex items-center justify-center space-x-2"
                 >
                   <Play className="w-4 h-4 fill-current" />
                   <span>Enter Classroom</span>
                 </Link>
                 <Link
                   to={`/courses/${primaryCourse.slug}`}
-                  className="liquid-glass-button-secondary px-4 py-2.5 rounded-xl text-xs font-mono text-center"
+                  className="ultra-glass-btn-secondary px-4 py-2.5 rounded-xl text-xs font-mono text-center"
                 >
                   View Course Details
                 </Link>
@@ -204,7 +204,7 @@ export default function StudentDashboard() {
         )}
 
         {/* Enrolled Courses Grid */}
-        <div className="space-y-4">
+        <div className="space-y-4 animate-slide-left stagger-2">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-royal font-bold text-white flex items-center space-x-2">
               <BookOpen className="w-5 h-5 text-[#65F58A]" />
@@ -225,7 +225,7 @@ export default function StudentDashboard() {
               return (
                 <div
                   key={enr.id}
-                  className="liquid-glass-card rounded-2xl p-6 flex flex-col justify-between space-y-4"
+                  className="ultra-glass-card rounded-2xl p-6 flex flex-col justify-between space-y-4"
                 >
                   <div>
                     <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 mb-2">
@@ -260,7 +260,7 @@ export default function StudentDashboard() {
                     <span className="text-xs font-mono text-amber-400">+{crs.total_tokens_reward || 350} Bounty</span>
                     <Link
                       to={`/student/learn/${enr.id}`}
-                      className="liquid-glass-button px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1"
+                      className="ultra-glass-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1"
                     >
                       <span>Study</span>
                       <ArrowRight className="w-3.5 h-3.5" />

@@ -82,8 +82,8 @@ export default function VerifyCredentialPage() {
     <div className="min-h-screen py-12 relative z-10">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         {/* Header */}
-        <div className="text-center max-w-2xl mx-auto">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#65F58A]/10 border border-[#65F58A]/30 text-[#65F58A] text-xs font-mono mb-4">
+        <div className="text-center max-w-2xl mx-auto animate-slide-left">
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full ultra-glass-pill text-xs font-mono mb-4">
             <Award className="w-3.5 h-3.5" />
             <span>INSTITUTIONAL REGISTRY & CADET VERIFICATION</span>
           </div>
@@ -96,7 +96,7 @@ export default function VerifyCredentialPage() {
         </div>
 
         {/* Verification Lookup Input */}
-        <form onSubmit={handleSearch}>
+        <form onSubmit={handleSearch} className="animate-slide-left stagger-1">
           <div className="flex gap-2 max-w-xl mx-auto">
             <div className="relative flex-1">
               <Hash className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#94A3B8]" />
@@ -105,13 +105,13 @@ export default function VerifyCredentialPage() {
                 placeholder="Enter Cadet ID (RK-89421) or Certificate ID"
                 value={searchId}
                 onChange={(e) => setSearchId(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#101923]/90 border border-[#263440] text-xs sm:text-sm text-white placeholder-[#64748B] font-mono focus:outline-none focus:border-[#65F58A] uppercase tracking-wider transition-colors"
+                className="w-full pl-10 pr-4 py-3 rounded-xl ultra-glass-input text-xs sm:text-sm text-white placeholder-[#64748B] font-mono focus:outline-none uppercase tracking-wider"
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-3 rounded-xl glass-button-primary font-royal font-bold text-xs tracking-wider flex items-center space-x-2"
+              className="px-6 py-3 rounded-xl ultra-glass-btn font-royal font-bold text-xs tracking-wider flex items-center space-x-2"
             >
               <Search className="w-4 h-4" />
               <span>{loading ? 'Verifying...' : 'Verify'}</span>
@@ -121,9 +121,9 @@ export default function VerifyCredentialPage() {
 
         {/* 1. CADET VERIFIED ACADEMIC DOSSIER VIEW */}
         {hasSearched && dossier ? (
-          <div className="space-y-6">
+          <div className="space-y-6 animate-slide-left stagger-2">
             {/* Cadet Master Profile Card */}
-            <div className="glass-card rounded-2xl p-6 sm:p-8 relative overflow-hidden border border-[#65F58A]/40 shadow-[0_0_30px_rgba(101,245,138,0.15)]">
+            <div className="ultra-glass-card rounded-2xl p-6 sm:p-8 relative overflow-hidden border border-[#65F58A]/40 shadow-[0_0_30px_rgba(101,245,138,0.15)]">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-[#263440] gap-4">
                 <div className="flex items-center space-x-4">
                   <img
@@ -316,7 +316,7 @@ export default function VerifyCredentialPage() {
               </div>
             </div>
           ) : (
-          <div className="glass-card rounded-2xl p-6 sm:p-8 space-y-6 relative overflow-hidden">
+          <div className="ultra-glass-card rounded-2xl p-6 sm:p-8 space-y-6 relative overflow-hidden animate-slide-left stagger-2">
             {/* Top Security Banner */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-[#263440] gap-4">
               <div className="flex items-center space-x-4">

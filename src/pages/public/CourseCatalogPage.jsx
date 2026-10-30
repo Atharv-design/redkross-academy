@@ -76,15 +76,15 @@ export default function CourseCatalogPage() {
   if (!catalogEnabled) {
     return (
       <div className="min-h-[80vh] flex items-center justify-center py-16 px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="max-w-2xl w-full text-center space-y-8">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#101923] border border-[#263440] text-xs font-mono">
+        <div className="max-w-2xl w-full text-center space-y-8 ultra-glass-card rounded-3xl p-8 sm:p-14 shimmer-lr animate-slide-left">
+          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full ultra-glass-panel text-xs font-mono">
             <Lock className="w-3.5 h-3.5 text-[#35E6B5]" />
             <span className="text-[#94A3B8]">CATALOG STATUS: EMBARGO / UPCOMING</span>
           </div>
 
           <div className="relative w-40 h-40 mx-auto flex items-center justify-center">
-            <div className="absolute inset-0 rounded-full bg-[#65F58A]/10 blur-xl" />
-            <div className="w-24 h-24 rounded-2xl bg-[#101923] border border-[#263440] flex items-center justify-center shadow-xl relative z-10">
+            <div className="absolute inset-0 rounded-full bg-[#65F58A]/15 blur-2xl" />
+            <div className="w-24 h-24 rounded-2xl ultra-glass-panel flex items-center justify-center shadow-2xl relative z-10 border border-[#65F58A]/30">
               <BookOpen className="w-12 h-12 text-[#65F58A]" />
             </div>
           </div>
@@ -101,13 +101,13 @@ export default function CourseCatalogPage() {
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               to="/paths"
-              className="w-full sm:w-auto px-6 py-3 rounded-full bg-[#1B2530] hover:bg-[#263440] border border-[#263440] text-xs font-mono text-white transition-colors"
+              className="w-full sm:w-auto px-6 py-3 rounded-full ultra-glass-btn-secondary text-xs font-mono text-white transition-colors"
             >
               View Learning Paths Status
             </Link>
             <Link
               to="/verify"
-              className="w-full sm:w-auto px-6 py-3 rounded-full glass-button-primary font-royal font-bold text-xs"
+              className="w-full sm:w-auto px-6 py-3 rounded-full ultra-glass-btn font-royal font-bold text-xs"
             >
               Verify Credentials
             </Link>
@@ -122,8 +122,8 @@ export default function CourseCatalogPage() {
     <div className="min-h-screen py-12 relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         {/* Header Section */}
-        <div className="max-w-3xl">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#65F58A]/10 border border-[#65F58A]/30 text-[#65F58A] text-xs font-mono mb-4">
+        <div className="max-w-3xl animate-slide-left">
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full ultra-glass-pill text-xs font-mono mb-4">
             <BookOpen className="w-3.5 h-3.5" />
             <span>OFFICIAL CURRICULUM DIRECTORY</span>
           </div>
@@ -136,7 +136,7 @@ export default function CourseCatalogPage() {
         </div>
 
         {/* Filter Controls Bar */}
-        <div className="glass-card rounded-2xl p-4 sm:p-6 space-y-4">
+        <div className="ultra-glass-panel rounded-2xl p-4 sm:p-6 space-y-4 animate-slide-left stagger-1">
           <div className="flex flex-col md:flex-row gap-4">
             {/* Search Input */}
             <div className="relative flex-1">
@@ -146,7 +146,7 @@ export default function CourseCatalogPage() {
                 placeholder="Search by topic, skill, or framework (e.g. SOC, SIEM, MITRE, Wireshark)..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#071018]/80 border border-[#263440] text-xs sm:text-sm text-white placeholder-[#64748B] font-mono focus:outline-none focus:border-[#65F58A] transition-colors"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl ultra-glass-input text-xs sm:text-sm text-white placeholder-[#64748B] font-mono focus:outline-none"
               />
             </div>
 
@@ -155,7 +155,7 @@ export default function CourseCatalogPage() {
               <select
                 value={selectedDifficulty}
                 onChange={(e) => setSelectedDifficulty(e.target.value)}
-                className="px-3 py-2 rounded-xl bg-[#071018]/80 border border-[#263440] text-xs font-mono text-slate-300 focus:outline-none focus:border-[#65F58A]"
+                className="px-3 py-2 rounded-xl ultra-glass-input text-xs font-mono text-slate-300 focus:outline-none bg-[#0a111a]"
               >
                 <option value="All">All Difficulties</option>
                 <option value="Beginner">Beginner</option>
@@ -166,7 +166,7 @@ export default function CourseCatalogPage() {
               <select
                 value={selectedPricing}
                 onChange={(e) => setSelectedPricing(e.target.value)}
-                className="px-3 py-2 rounded-xl bg-[#071018]/80 border border-[#263440] text-xs font-mono text-slate-300 focus:outline-none focus:border-[#65F58A]"
+                className="px-3 py-2 rounded-xl ultra-glass-input text-xs font-mono text-slate-300 focus:outline-none bg-[#0a111a]"
               >
                 <option value="All">All Access</option>
                 <option value="Free">Free to Learn</option>
@@ -180,7 +180,7 @@ export default function CourseCatalogPage() {
                     setSelectedDifficulty('All');
                     setSelectedPricing('All');
                   }}
-                  className="px-3 py-2 rounded-xl bg-[#1B2530] text-xs font-mono text-[#65F58A] hover:bg-[#263440] transition-colors"
+                  className="px-3 py-2 rounded-xl ultra-glass-btn-secondary text-xs font-mono text-[#65F58A] hover:bg-[#263440] transition-colors"
                 >
                   Reset Filters
                 </button>
@@ -191,7 +191,7 @@ export default function CourseCatalogPage() {
 
         {/* 10 Unique Distinct Course Cards Display using their stored card_variant */}
         {filteredCourses.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 animate-slide-left stagger-2">
             {filteredCourses.map((course) => (
               <CourseCardVariant
                 key={course.id}
@@ -201,7 +201,7 @@ export default function CourseCatalogPage() {
             ))}
           </div>
         ) : (
-          <div className="glass-card rounded-2xl p-12 text-center space-y-4">
+          <div className="ultra-glass-panel rounded-2xl p-12 text-center space-y-4 animate-slide-left">
             <BookOpen className="w-12 h-12 text-[#94A3B8] mx-auto opacity-50" />
             <h3 className="font-royal text-xl font-bold text-white">No Courses Found</h3>
             <p className="text-xs text-[#94A3B8] max-w-sm mx-auto">

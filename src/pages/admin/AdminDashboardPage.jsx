@@ -101,10 +101,10 @@ export default function AdminDashboardPage() {
   };
 
   return (
-    <div className="space-y-8 font-sans">
-      {/* 1. TOP MACRO KPI ROW (Frosted Cyber Glass Cards) */}
+    <div className="space-y-8 font-sans animate-slide-left">
+      {/* 1. TOP MACRO KPI ROW (Frosted Liquid Glass Cards) */}
       <div className="grid grid-cols-4 gap-5">
-        <div className="p-5 rounded-2xl cyber-glass-card space-y-2 relative overflow-hidden group">
+        <div className="p-5 rounded-2xl ultra-glass-card space-y-2 relative overflow-hidden group animate-slide-left stagger-1">
           <div className="flex items-center justify-between text-xs font-mono text-[#94A3B8]">
             <span className="uppercase tracking-wider">Total Registered Cadets</span>
             <Users className="w-4 h-4 text-[#65F58A]" />
@@ -119,7 +119,7 @@ export default function AdminDashboardPage() {
           <div className="absolute top-0 right-0 w-28 h-28 bg-[#65F58A]/10 rounded-full blur-2xl pointer-events-none group-hover:bg-[#65F58A]/15 transition-all" />
         </div>
 
-        <div className="p-5 rounded-2xl cyber-glass-card space-y-2 relative overflow-hidden group">
+        <div className="p-5 rounded-2xl ultra-glass-card space-y-2 relative overflow-hidden group animate-slide-left stagger-2">
           <div className="flex items-center justify-between text-xs font-mono text-[#94A3B8]">
             <span className="uppercase tracking-wider">Active Curriculum</span>
             <BookOpen className="w-4 h-4 text-[#35E6B5]" />
@@ -133,7 +133,7 @@ export default function AdminDashboardPage() {
           <div className="absolute top-0 right-0 w-28 h-28 bg-[#35E6B5]/10 rounded-full blur-2xl pointer-events-none group-hover:bg-[#35E6B5]/15 transition-all" />
         </div>
 
-        <div className="p-5 rounded-2xl cyber-glass-card space-y-2 relative overflow-hidden group">
+        <div className="p-5 rounded-2xl ultra-glass-card space-y-2 relative overflow-hidden group animate-slide-left stagger-3">
           <div className="flex items-center justify-between text-xs font-mono text-[#94A3B8]">
             <span className="uppercase tracking-wider">Valid Credentials</span>
             <Award className="w-4 h-4 text-[#65F58A]" />
@@ -147,7 +147,7 @@ export default function AdminDashboardPage() {
           <div className="absolute top-0 right-0 w-28 h-28 bg-[#65F58A]/10 rounded-full blur-2xl pointer-events-none group-hover:bg-[#65F58A]/15 transition-all" />
         </div>
 
-        <div className="p-5 rounded-2xl cyber-glass-card space-y-2 relative overflow-hidden group">
+        <div className="p-5 rounded-2xl ultra-glass-card space-y-2 relative overflow-hidden group animate-slide-left stagger-4">
           <div className="flex items-center justify-between text-xs font-mono text-[#94A3B8]">
             <span className="uppercase tracking-wider">Token Circulation</span>
             <Coins className="w-4 h-4 text-amber-400" />
@@ -162,8 +162,8 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* 2. CATALOG RELEASE EMBARGO MASTER SWITCH BANNER (Cyber Glass Panel) */}
-      <div className="p-6 rounded-2xl cyber-glass-panel relative overflow-hidden">
+      {/* 2. CATALOG RELEASE EMBARGO MASTER SWITCH BANNER (Liquid Glass Panel) */}
+      <div className="p-6 rounded-2xl ultra-glass-panel relative overflow-hidden shimmer-lr animate-slide-left stagger-2">
         <div className="flex items-center justify-between">
           <div className="space-y-1 z-10 max-w-2xl">
             <div className="flex items-center gap-2">

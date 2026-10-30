@@ -86,29 +86,29 @@ export default function TokenWalletPage() {
         </div>
 
         {/* Wallet Overview Hero */}
-        <div className="bg-gradient-to-r from-surface-card via-surface-card to-[#1B2530] border border-surface-border rounded-xl p-8 shadow-2xl relative overflow-hidden">
+        <div className="ultra-glass-panel rounded-2xl p-8 shadow-2xl relative overflow-hidden shimmer-lr animate-slide-left">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10">
             <div className="space-y-2">
               <div className="flex items-center space-x-2 text-xs font-mono text-[#65F58A]">
-                <Coins className="w-4 h-4 animate-pulse-subtle" />
+                <Coins className="w-4 h-4 animate-pulse" />
                 <span>NON-MONETARY REWARDS LEDGER (PRD SECTION 8)</span>
               </div>
               <div className="text-4xl sm:text-5xl font-extrabold text-white font-mono tracking-tight tabular-nums flex items-baseline space-x-3">
                 <span>{tokenBalance}</span>
-                <span className="text-lg text-[#65F58A]/80 font-sans font-bold">RedKross Tokens</span>
+                <span className="text-lg text-[#65F58A] font-sans font-bold">RedKross Tokens</span>
               </div>
-              <p className="text-xs text-slate-400 max-w-md">
+              <p className="text-xs text-slate-300 max-w-md">
                 Tokens are earned strictly through continuous study, milestone progress, and passing evaluations. They cannot be transferred, sold, or converted into real currency.
               </p>
             </div>
 
             {/* Metrics */}
             <div className="flex sm:flex-col gap-3 min-w-[180px]">
-              <div className="p-3 rounded-lg bg-surface-100/70 border border-surface-border text-xs font-mono">
+              <div className="p-3 rounded-xl ultra-glass-card text-xs font-mono">
                 <div className="text-[10px] text-slate-400 uppercase">Total Earned</div>
                 <div className="text-sm font-bold text-emerald-400">+{totalEarned} Tokens</div>
               </div>
-              <div className="p-3 rounded-lg bg-surface-100/70 border border-surface-border text-xs font-mono">
+              <div className="p-3 rounded-xl ultra-glass-card text-xs font-mono">
                 <div className="text-[10px] text-slate-400 uppercase">Proctoring Penalties</div>
                 <div className="text-sm font-bold text-rose-400">-{totalPenalties} Tokens</div>
               </div>
@@ -117,14 +117,14 @@ export default function TokenWalletPage() {
         </div>
 
         {redemptionSuccess && (
-          <div className="p-4 rounded-lg bg-emerald-950/20 border border-emerald-500/40 text-emerald-300 text-xs font-semibold flex items-center space-x-2">
+          <div className="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/40 text-emerald-300 text-xs font-semibold flex items-center space-x-2 animate-slide-left">
             <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
             <span>{redemptionSuccess}</span>
           </div>
         )}
 
         {/* Two-Column Grid: Transaction Ledger & Redemption Catalog */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-slide-left stagger-1">
           {/* Transaction Ledger (Left 2 Columns) */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center justify-between">
@@ -135,12 +135,12 @@ export default function TokenWalletPage() {
               <span className="text-xs font-mono text-slate-400">{transactions.length} Records</span>
             </div>
 
-            <div className="bg-surface-card border border-surface-border rounded-xl overflow-hidden shadow-lg">
-              <div className="divide-y divide-surface-border/60">
+            <div className="ultra-glass-panel rounded-2xl overflow-hidden shadow-lg">
+              <div className="divide-y divide-[#263440]/60">
                 {transactions.map((tx) => {
                   const isPositive = tx.amount > 0;
                   return (
-                    <div key={tx.id} className="p-4 flex items-center justify-between text-xs hover:bg-surface-50 transition-colors">
+                    <div key={tx.id} className="p-4 flex items-center justify-between text-xs hover:bg-white/[0.02] transition-colors">
                       <div className="space-y-1 max-w-sm sm:max-w-md">
                         <div className="font-semibold text-white flex items-center space-x-2">
                           <span>{tx.description}</span>
@@ -175,7 +175,7 @@ export default function TokenWalletPage() {
           {/* Redemption Shop (Right Column) */}
           <div className="space-y-4">
             <h2 className="text-lg font-bold text-white flex items-center space-x-2">
-              <Gift className="w-4 h-4 text-redkross-500" />
+              <Gift className="w-4 h-4 text-[#65F58A]" />
               <span>Token Rewards Shop</span>
             </h2>
 

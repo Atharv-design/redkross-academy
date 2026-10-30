@@ -241,7 +241,7 @@ export default function AdminQuizzesPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-slide-left">
       {/* Top Banner & Quiz Switcher */}
       <div className="flex items-center justify-between cyber-glass-panel p-4 rounded-xl">
         <div className="flex items-center space-x-3">

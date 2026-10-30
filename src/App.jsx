@@ -36,6 +36,13 @@ import AdminProfilePage from './pages/admin/AdminProfilePage';
 function PublicLayout() {
   return (
     <div className="flex flex-col min-h-screen relative bg-[#071018] text-[#F1F5F9] overflow-x-hidden">
+      {/* Ambient Deep Canvas Multi-Orb Aurora Mesh for True Refraction */}
+      <div className="ambient-aurora-bg" aria-hidden="true">
+        <div className="ambient-aurora-orb-1" />
+        <div className="ambient-aurora-orb-2" />
+        <div className="ambient-aurora-orb-3" />
+      </div>
+
       {/* Centered Ambient RedKross Cyber Background Watermark */}
       <CyberBackgroundWatermark />
 

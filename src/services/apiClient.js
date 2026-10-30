@@ -10,7 +10,18 @@ const API_BASE = '/api';
 
 export const apiClient = {
   getAuthHeader() {
-    const token = localStorage.getItem('redkross_academy_auth_token') || localStorage.getItem('redkross_academy_active_user');
+    let token = localStorage.getItem('redkross_academy_auth_token');
+    if (!token) {
+      const userStr = localStorage.getItem('redkross_academy_active_user');
+      if (userStr) {
+        try {
+          const userObj = JSON.parse(userStr);
+          token = userObj.id || userStr;
+        } catch {
+          token = userStr;
+        }
+      }
+    }
     return token ? { Authorization: `Bearer ${token}` } : {};
   },
 

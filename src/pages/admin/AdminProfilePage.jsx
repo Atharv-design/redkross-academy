@@ -50,7 +50,7 @@ export default function AdminProfilePage() {
   };
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-6 max-w-4xl animate-slide-left">
       {/* Top Banner */}
       <div className="cyber-glass-panel p-5 rounded-xl flex items-center justify-between">
         <div className="flex items-center space-x-4">

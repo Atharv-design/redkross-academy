@@ -148,7 +148,7 @@ export default function Navbar() {
             }`}
           >
             {/* Brand Logo & Prestigious Title */}
-            <Link to="/" onClick={closeMobileMenu} className="flex items-center gap-3 group flex-shrink-0">
+            <Link to="/" onClick={closeMobileMenu} className="flex items-center gap-3 group flex-shrink-0 animate-slide-left">
               <div className="relative w-8 h-8 rounded-full overflow-hidden bg-black border border-[#65F58A]/50 flex items-center justify-center shadow-[0_0_15px_rgba(101,245,138,0.3)] group-hover:scale-105 transition-transform flex-shrink-0">
                 <img
                   src="/assets/crest-clean-circle.png"
@@ -168,13 +168,13 @@ export default function Navbar() {
 
             {/* Desktop Horizontal Navigation */}
             <nav className="hidden lg:flex items-center gap-3.5 xl:gap-5 flex-shrink min-w-0">
-              {navLinks.map((link) => {
+              {navLinks.map((link, idx) => {
                 const active = isActive(link.path);
                 return (
                   <Link
                     key={link.label}
                     to={link.path}
-                    className={`text-xs font-mono font-medium transition-colors duration-200 relative py-1 whitespace-nowrap ${
+                    className={`text-xs font-mono font-medium transition-colors duration-200 relative py-1 whitespace-nowrap animate-slide-left stagger-${(idx % 4) + 1} ${
                       active ? 'text-[#65F58A] font-bold' : 'text-[#94A3B8] hover:text-white'
                     }`}
                   >

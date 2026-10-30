@@ -16,11 +16,11 @@ export default function LearningPathsPage() {
   const ecosystem = getEcosystemLinks();
   return (
     <div className="min-h-[82vh] flex items-center justify-center py-16 px-4 sm:px-6 lg:px-8 relative z-10">
-      <div className="max-w-3xl w-full text-center space-y-8">
+      <div className="max-w-3xl w-full text-center space-y-8 ultra-glass-card rounded-3xl p-8 sm:p-14 shimmer-lr animate-slide-left">
         {/* Subtle Cyber Status Badge */}
-        <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-[#101923] border border-[#263440] text-xs font-mono shadow-md backdrop-blur-md">
+        <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full ultra-glass-pill text-xs font-mono shadow-md backdrop-blur-md">
           <span className="w-2 h-2 rounded-full bg-[#35E6B5] animate-pulse" />
-          <span className="text-[#94A3B8]">CURRICULUM PREPARATION IN PROGRESS</span>
+          <span className="text-slate-200">CURRICULUM PREPARATION IN PROGRESS</span>
           <span className="text-slate-600">•</span>
           <span className="text-[#65F58A] font-semibold">REDKROSS ACADEMY</span>
         </div>
@@ -28,7 +28,7 @@ export default function LearningPathsPage() {
         {/* Refined Cyber Visual Illustration (Geometric Security Node) */}
         <div className="relative w-48 h-48 sm:w-56 sm:h-56 mx-auto flex items-center justify-center my-4">
           {/* Subtle Ambient Glow */}
-          <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#65F58A]/10 via-[#35E6B5]/10 to-transparent blur-2xl" />
+          <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#65F58A]/15 via-[#35E6B5]/15 to-transparent blur-2xl" />
 
           <svg viewBox="0 0 200 200" className="w-full h-full relative z-10 drop-shadow-[0_0_25px_rgba(101,245,138,0.25)]">
             {/* Concentric Coordinate Rings */}
@@ -63,7 +63,7 @@ export default function LearningPathsPage() {
         </div>
 
         {/* Exact Primary Message & Supporting Copy (Phase 3.1 & 3.2) */}
-        <div className="space-y-4 max-w-2xl mx-auto">
+        <div className="space-y-4 max-w-2xl mx-auto animate-slide-left stagger-1">
           <h1 className="font-royal text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight title-shading-neon">
             Courses will be out soon
           </h1>
@@ -74,8 +74,8 @@ export default function LearningPathsPage() {
         </div>
 
         {/* Educational Framework Pillars (Informative without leaking course cards) */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 max-w-2xl mx-auto text-left">
-          <div className="p-4 rounded-xl bg-[#101923] border border-[#263440] space-y-1.5">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 max-w-2xl mx-auto text-left animate-slide-left stagger-2">
+          <div className="p-4 rounded-xl ultra-glass-panel space-y-1.5">
             <div className="w-7 h-7 rounded-lg bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center">
               <Terminal className="w-3.5 h-3.5 text-[#65F58A]" />
             </div>
@@ -85,7 +85,7 @@ export default function LearningPathsPage() {
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-[#101923] border border-[#263440] space-y-1.5">
+          <div className="p-4 rounded-xl ultra-glass-panel space-y-1.5">
             <div className="w-7 h-7 rounded-lg bg-[#35E6B5]/10 border border-[#35E6B5]/30 flex items-center justify-center">
               <Shield className="w-3.5 h-3.5 text-[#35E6B5]" />
             </div>
@@ -95,7 +95,7 @@ export default function LearningPathsPage() {
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-[#101923] border border-[#263440] space-y-1.5">
+          <div className="p-4 rounded-xl ultra-glass-panel space-y-1.5">
             <div className="w-7 h-7 rounded-lg bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center">
               <Award className="w-3.5 h-3.5 text-[#65F58A]" />
             </div>
@@ -107,10 +107,10 @@ export default function LearningPathsPage() {
         </div>
 
         {/* Action Links */}
-        <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-left stagger-3">
           <Link
             to="/verify"
-            className="w-full sm:w-auto px-6 py-3 rounded-full bg-[#101923] hover:bg-[#1B2530] border border-[#263440] text-xs font-mono text-[#94A3B8] hover:text-white transition-all flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-6 py-3 rounded-full ultra-glass-btn-secondary text-xs font-mono text-slate-200 hover:text-white transition-all flex items-center justify-center gap-2"
           >
             <Award className="w-4 h-4 text-[#65F58A]" />
             <span>Verify Institutional Credentials</span>
@@ -119,10 +119,10 @@ export default function LearningPathsPage() {
             href={ecosystem.cybersecurity}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full sm:w-auto px-6 py-3 rounded-full glass-button-primary font-royal font-bold text-xs tracking-wider transition-all flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-6 py-3 rounded-full ultra-glass-btn font-royal font-bold text-xs tracking-wider transition-all flex items-center justify-center gap-2 group"
           >
             <span>Explore Cyber Intelligence</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </a>
         </div>
       </div>

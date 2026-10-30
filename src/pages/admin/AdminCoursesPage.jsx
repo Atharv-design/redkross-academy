@@ -7,6 +7,7 @@ import {
   UploadCloud, Film, HardDrive, Loader2
 } from 'lucide-react';
 import { mockEngine } from '../../services/db/mockEngine';
+import { apiClient } from '../../services/apiClient';
 import { COURSE_CARD_STYLES, getCardStyleByIndex } from '../../utils/courseCardStyles';
 import { saveVideoBlob, resolveVideoUrl } from '../../services/db/videoStorage';
 
@@ -191,7 +192,7 @@ export default function AdminCoursesPage() {
     persistCourses(updated);
   };
 
-  const handleSaveCourse = (e) => {
+  const handleSaveCourse = async (e) => {
     e.preventDefault();
     if (!courseFormData.title || !courseFormData.title.trim()) {
       alert('Please enter a valid course title.');
@@ -263,12 +264,37 @@ export default function AdminCoursesPage() {
         ]
       };
 
-      const created = mockEngine.createCourse(newCoursePayload);
+      // 1. Create locally in mockEngine to guarantee immediate display, 3D variant allocation, and full state reactivity
+      const createdCourse = mockEngine.createCourse(newCoursePayload);
       const db = mockEngine.getDb();
-      setCourses(db.courses || []);
-      setSelectedCourse(created || (db.courses && db.courses[0]) || null);
+      setCourses([...(db.courses || [])]);
+      setSelectedCourse(createdCourse);
       setIsCreatingNew(false);
       setIsEditingCourse(false);
+
+      // Reset form to blank state
+      setCourseFormData({
+        title: '',
+        slug: '',
+        level: 'Intermediate',
+        category: 'Cyber Threat Intelligence',
+        description: '',
+        duration: '4 Weeks',
+        xp_reward: 1000,
+        status: 'PUBLISHED',
+        modules: []
+      });
+
+      // 2. Dual-persist to serverless API / Neon PostgreSQL in background
+      try {
+        await apiClient.createCourse({
+          ...newCoursePayload,
+          id: createdCourse.id,
+          card_variant: createdCourse.card_variant
+        });
+      } catch (err) {
+        console.warn('Serverless course sync deferred:', err);
+      }
     }
   };
 
@@ -430,7 +456,7 @@ export default function AdminCoursesPage() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-slide-left">
       {/* Top Action Bar */}
       <div className="flex items-center justify-between cyber-glass-panel p-4 rounded-xl">
         <div className="flex items-center space-x-3">

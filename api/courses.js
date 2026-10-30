@@ -24,10 +24,20 @@ export default async function handler(req, res) {
     const authHeader = req.headers.authorization;
     let isAdmin = false;
     if (authHeader && authHeader.startsWith('Bearer ')) {
-      const tokenUserId = authHeader.replace('Bearer ', '').trim();
-      const userCheck = await sql`SELECT role FROM users WHERE id = ${tokenUserId} LIMIT 1`;
-      if (userCheck.length > 0 && userCheck[0].role === 'super_admin') {
-        isAdmin = true;
+      let tokenUserId = authHeader.replace('Bearer ', '').trim();
+      if (tokenUserId.startsWith('{')) {
+        try {
+          const parsed = JSON.parse(tokenUserId);
+          tokenUserId = parsed.id || tokenUserId;
+        } catch {}
+      }
+      try {
+        const userCheck = await sql`SELECT role FROM users WHERE id = ${tokenUserId} LIMIT 1`;
+        if (userCheck.length > 0 && userCheck[0].role === 'super_admin') {
+          isAdmin = true;
+        }
+      } catch (authErr) {
+        console.warn('Auth check fallback in api/courses:', authErr);
       }
     }
 

@@ -119,17 +119,17 @@ export default function CourseDetailPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10">
           {/* Main Course Content (Left 2 Columns) */}
-          <div className="lg:col-span-2 space-y-10">
+          <div className="lg:col-span-2 space-y-10 animate-slide-left">
             {/* Header */}
             <div>
               <div className="flex flex-wrap items-center gap-2.5 mb-4">
-                <span className="text-xs font-mono px-3 py-1 rounded-full bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30 font-semibold">
+                <span className="text-xs font-mono px-3 py-1 rounded-full ultra-glass-pill font-semibold">
                   {course.category}
                 </span>
-                <span className="text-xs font-mono px-2.5 py-0.5 rounded-full bg-[#1B2530] text-slate-300 border border-[#263440]">
+                <span className="text-xs font-mono px-2.5 py-0.5 rounded-full ultra-glass-panel text-slate-300">
                   Version {course.version}
                 </span>
-                <span className="text-xs font-mono px-2.5 py-0.5 rounded-full bg-[#1B2530] text-slate-300 border border-[#263440]">
+                <span className="text-xs font-mono px-2.5 py-0.5 rounded-full ultra-glass-panel text-slate-300">
                   {course.difficulty}
                 </span>
               </div>
@@ -143,7 +143,7 @@ export default function CourseDetailPage() {
               </p>
 
               {/* Author bio pill */}
-              <div className="flex items-center space-x-4 p-4 rounded-2xl glass-card">
+              <div className="flex items-center space-x-4 p-4 rounded-2xl ultra-glass-card">
                 <img
                   src={course.lead_author?.avatar || 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=256&q=80'}
                   alt={course.lead_author?.name}
@@ -157,7 +157,7 @@ export default function CourseDetailPage() {
             </div>
 
             {/* Learning Objectives */}
-            <div className="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+            <div className="ultra-glass-panel rounded-2xl p-6 sm:p-8 space-y-4">
               <h2 className="font-royal text-xl font-bold text-white flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-[#65F58A]" />
                 <span>Core Competencies & Objectives</span>
@@ -173,7 +173,7 @@ export default function CourseDetailPage() {
             </div>
 
             {/* Course Curriculum & Syllabus Accordion */}
-            <div className="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+            <div className="ultra-glass-panel rounded-2xl p-6 sm:p-8 space-y-6">
               <div className="flex items-center justify-between pb-4 border-b border-[#263440]">
                 <h2 className="font-royal text-xl font-bold text-white">
                   Curriculum Breakdown
@@ -257,8 +257,8 @@ export default function CourseDetailPage() {
           </div>
 
           {/* Sidebar CTA Card (Right Column) */}
-          <div className="space-y-6">
-            <div className="glass-card rounded-2xl p-6 sm:p-7 space-y-6 sticky top-28">
+          <div className="space-y-6 animate-slide-left stagger-2">
+            <div className="ultra-glass-card rounded-2xl p-6 sm:p-7 space-y-6 sticky top-28">
               <div className="space-y-2">
                 <div className="text-[10px] font-mono uppercase tracking-wider text-[#94A3B8]">Enrollment Status</div>
                 <div className="flex items-baseline gap-2">

@@ -89,7 +89,7 @@ export default function AdminSettingsPage() {
   };
 
   return (
-    <form onSubmit={handleSaveSettings} className="space-y-6 max-w-4xl">
+    <form onSubmit={handleSaveSettings} className="space-y-6 max-w-4xl animate-slide-left">
       {/* Top Banner */}
       <div className="flex items-center justify-between cyber-glass-panel p-4 rounded-xl">
         <div>

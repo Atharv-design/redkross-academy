@@ -123,7 +123,7 @@ export default function AdminAssignmentsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-slide-left">
       {/* Top Assignment Overview */}
       <div className="grid grid-cols-2 gap-4">
         {assignments.map((asn) => (

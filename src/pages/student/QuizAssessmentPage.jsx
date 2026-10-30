@@ -348,7 +348,7 @@ export default function QuizAssessmentPage() {
         </div>
       )}
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 animate-slide-left">
         {/* Top Breadcrumb */}
         <div className="flex items-center justify-between pb-4 border-b border-surface-border">
           <Link
@@ -605,7 +605,7 @@ export default function QuizAssessmentPage() {
         {/* ==================================================== */}
         {showPreExamModal && (
           <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl flex items-center justify-center p-4">
-            <div className="glass-card max-w-lg w-full rounded-3xl p-8 border border-[#65F58A]/40 shadow-2xl space-y-6 relative overflow-hidden animate-fade-in">
+            <div className="ultra-glass-dropdown max-w-lg w-full rounded-3xl p-8 border border-[#65F58A]/40 shadow-2xl space-y-6 relative overflow-hidden shimmer-lr animate-slide-left">
               <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-[#65F58A]/10 to-transparent rounded-full blur-2xl -z-10" />
 
               {/* Header */}

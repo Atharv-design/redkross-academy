@@ -153,7 +153,7 @@ export default function FinalCertificationPage() {
 
   return (
     <div className="min-h-screen bg-[#071018] py-12">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 animate-slide-left">
         {/* Navigation Breadcrumb */}
         <div className="flex items-center justify-between pb-4 border-b border-surface-border">
           <Link

@@ -83,7 +83,7 @@ export default function AdminEnrollmentsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-slide-left">
       {/* Top Action Bar */}
       <div className="flex items-center justify-between cyber-glass-panel p-4 rounded-xl">
         <div>
