@@ -157,21 +157,24 @@ async function main() {
     serverProcess.stdout.on('data', d => { stdoutData += d.toString(); });
     serverProcess.stderr.on('data', d => { stdoutData += d.toString(); });
 
-    // Wait 2 seconds for boot
-    await new Promise(r => setTimeout(r, 2000));
+    // Wait 4 seconds for boot on Windows
+    await new Promise(r => setTimeout(r, 4000));
 
     try {
-      const resHealth = await fetch('http://localhost:3042/healthz');
+      const resHealth = await fetch('http://127.0.0.1:3042/healthz');
       assert.strictEqual(resHealth.status, 200, 'Health check must return 200 OK');
       const healthJson = await resHealth.json();
       assert.strictEqual(healthJson.status, 'healthy');
 
-      const resCourses = await fetch('http://localhost:3042/api/courses');
+      const resCourses = await fetch('http://127.0.0.1:3042/api/courses');
       assert.strictEqual(resCourses.status, 200, 'Courses API must return 200 OK');
       const coursesJson = await resCourses.json();
       assert.ok(Array.isArray(coursesJson.courses), 'courses must be an array');
+    } catch (err) {
+      console.error('Server output during test failure:\n', stdoutData);
+      throw err;
     } finally {
-      serverProcess.kill('SIGTERM');
+      serverProcess.kill();
     }
   });
 

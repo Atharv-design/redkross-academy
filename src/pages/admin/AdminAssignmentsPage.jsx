@@ -5,6 +5,8 @@ import {
   Sparkles, ExternalLink, Calendar, Send, FileCheck, FileText
 } from 'lucide-react';
 import { mockEngine } from '../../services/db/mockEngine';
+import { apiClient } from '../../services/apiClient';
+import { socketClient } from '../../services/socket/socketClient';
 import { resolvePdfUrl } from '../../services/db/videoStorage';
 
 /**
@@ -53,62 +55,54 @@ export default function AdminAssignmentsPage() {
   const [previewPdfModalSub, setPreviewPdfModalSub] = useState(null);
   const [resolvedPdfPreviewUrl, setResolvedPdfPreviewUrl] = useState('');
 
-  const loadSubmissions = () => {
-    const realSubs = mockEngine.getAssignmentSubmissions();
+  const loadSubmissions = async () => {
+    let serverSubs = [];
+    try {
+      serverSubs = await apiClient.getAssignments();
+    } catch (err) {
+      console.warn('API getAssignments fallback:', err);
+    }
+    const realSubs = (serverSubs && serverSubs.length > 0) ? serverSubs : mockEngine.getAssignmentSubmissions();
     if (realSubs && realSubs.length > 0) {
       const mapped = realSubs.map((s) => ({
         id: s.id,
         assignment_id: s.assignment_id || 'ASN-01',
-        student_name: s.cadet_id || s.user_id,
-        student_email: s.user_id,
+        student_name: s.student_name || s.cadet_id || s.user_id,
+        student_email: s.student_email || s.user_id,
         submitted_at: s.submitted_at?.replace('T', ' ').substring(0, 16) || 'Just now',
         file_name: s.file_name || 'Cadet_Lab_Report.pdf',
-        file_size: 'PDF Document',
+        file_size: s.file_size || 'PDF Document',
         file_url: s.file_url,
         text_summary: s.assignment_title
           ? `Technical laboratory analysis report for ${s.assignment_title}.`
           : 'Technical laboratory analysis report and packet capture triage.',
         status: s.status === 'passed' ? 'PASSED' : s.status === 'rejected' ? 'NEEDS_REVISION' : 'PENDING_REVIEW',
-        rubric_scores: {
+        rubric_scores: s.rubric_scores || {
           correctness: s.grade ? Math.round(s.grade * 0.4) : 35,
           methodology: s.grade ? Math.round(s.grade * 0.3) : 25,
           reporting: s.grade ? Math.round(s.grade * 0.3) : 25
         },
-        admin_feedback: s.reviewer_notes || 'Excellent analytical rigor and technical accuracy.',
+        admin_feedback: s.reviewer_notes || s.feedback || 'Technical laboratory analysis report reviewed.',
         final_grade: s.grade
       }));
       setSubmissions(mapped);
       setSelectedSub((prev) => prev ? mapped.find((m) => m.id === prev.id) || mapped[0] : mapped[0]);
     } else {
-      // Default initial mock queue if database has zero submissions yet
-      const fallback = [
-        {
-          id: 'SUB-101',
-          assignment_id: 'ASN-01',
-          student_name: 'RK-45035',
-          student_email: 'atharvgupta790@gmail.com',
-          submitted_at: '2026-10-30 17:39',
-          file_name: 'Antigravity Commands.pdf',
-          file_size: 'PDF Document',
-          file_url: null,
-          text_summary: 'Technical laboratory analysis report for 1.1 System Initialization & Operations Overview.',
-          status: 'PENDING_REVIEW',
-          rubric_scores: { correctness: 35, methodology: 25, reporting: 25 },
-          admin_feedback: 'Demonstrates thorough log triage and MITRE mapping.',
-          final_grade: null
-        }
-      ];
-      setSubmissions(fallback);
-      if (!selectedSub) setSelectedSub(fallback[0]);
+      setSubmissions([]);
+      setSelectedSub(null);
     }
   };
 
   useEffect(() => {
     loadSubmissions();
-    const unsub = mockEngine.subscribe(() => {
+    const unsubSocket = socketClient.on('assignment:submitted', loadSubmissions);
+    const unsubMock = mockEngine.subscribe(() => {
       loadSubmissions();
     });
-    return () => unsub();
+    return () => {
+      if (typeof unsubSocket === 'function') unsubSocket();
+      unsubMock();
+    };
   }, []);
 
   const handleSelectSubmission = (sub) => {
@@ -201,13 +195,26 @@ export default function AdminAssignmentsPage() {
     }
   };
 
-  const handlePublishGrade = () => {
+  const handlePublishGrade = async () => {
     if (!selectedSub) return;
     const totalScore = (parseInt(rubricScores.correctness) || 0) +
                        (parseInt(rubricScores.methodology) || 0) +
                        (parseInt(rubricScores.reporting) || 0);
 
     const targetStatus = gradeStatus === 'PASSED' ? 'passed' : 'rejected';
+
+    try {
+      await apiClient.gradeAssignment({
+        submission_id: selectedSub.id,
+        status: targetStatus,
+        grade: totalScore,
+        feedback: adminFeedback,
+        reviewerNotes: adminFeedback,
+        reviewerEmail: 'admin@redkross.org.in'
+      });
+    } catch (e) {
+      console.warn('Grade record API note:', e);
+    }
 
     try {
       mockEngine.gradeAssignment({
@@ -220,6 +227,14 @@ export default function AdminAssignmentsPage() {
     } catch (e) {
       console.warn('Grade record note:', e);
     }
+
+    socketClient.emit('assignment:graded', {
+      submissionId: selectedSub.id,
+      studentEmail: selectedSub.student_email,
+      status: targetStatus,
+      grade: totalScore,
+      feedback: adminFeedback
+    });
 
     loadSubmissions();
     alert(`Grade published! Student ${selectedSub.student_name} received score: ${totalScore}/100 (${gradeStatus}).`);

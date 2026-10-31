@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Shield, Award, Terminal, ArrowRight, CheckCircle2, Lock, Zap, BookOpen, Layers, Users, Sparkles, Coins, Flame, Clock, ShieldCheck } from 'lucide-react';
 import { mockEngine } from '../../services/db/mockEngine';
 import { apiClient } from '../../services/apiClient';
+import { socketClient } from '../../services/socket/socketClient';
 import CourseCardVariant from '../../components/cards/CourseCardVariant';
 import DefensivePathwayCard from '../../components/cards/DefensivePathwayCard';
 import AcademicSafeguardCard from '../../components/cards/AcademicSafeguardCard';
@@ -13,13 +14,27 @@ export default function HomePage() {
   const [learningPaths, setLearningPaths] = useState([]);
 
   useEffect(() => {
-    apiClient.getCourses().then((data) => {
-      setCourses(data.courses || []);
-      setCatalogEnabled(Boolean(data.public_catalog_enabled));
-    });
-    apiClient.getLearningPaths().then((data) => {
-      setLearningPaths(data.learning_paths || []);
-    });
+    const loadHomeData = () => {
+      apiClient.getCourses().then((data) => {
+        setCourses(data.courses || []);
+        setCatalogEnabled(Boolean(data.public_catalog_enabled));
+      });
+      apiClient.getLearningPaths().then((data) => {
+        setLearningPaths(data.learning_paths || []);
+      });
+    };
+
+    loadHomeData();
+
+    const unsubCourse = socketClient.on('course:mutation', loadHomeData);
+    const unsubEmbargo = socketClient.on('catalog:visibility', loadHomeData);
+    const unsubMock = mockEngine.subscribe(loadHomeData);
+
+    return () => {
+      if (typeof unsubCourse === 'function') unsubCourse();
+      if (typeof unsubEmbargo === 'function') unsubEmbargo();
+      if (typeof unsubMock === 'function') unsubMock();
+    };
   }, []);
 
   // Exactly 3 Flagship Benchmark Courses for Home (Admin newly added courses go to /courses without displacing Home)

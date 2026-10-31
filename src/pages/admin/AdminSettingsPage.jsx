@@ -4,6 +4,8 @@ import {
   CheckCircle2, AlertTriangle, Eye, EyeOff, Radio, Lock
 } from 'lucide-react';
 import { mockEngine } from '../../services/db/mockEngine';
+import { apiClient } from '../../services/apiClient';
+import { socketClient } from '../../services/socket/socketClient';
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState({
@@ -47,6 +49,10 @@ export default function AdminSettingsPage() {
         payload: { system_settings: settings, public_catalog_enabled: !settings.catalog_embargo }
       });
 
+      // Synchronize with PostgreSQL & WebSocket Bus
+      apiClient.toggleCatalogVisibility(!settings.catalog_embargo).catch(console.warn);
+      socketClient.emit('catalog:visibility', { enabled: !settings.catalog_embargo });
+
       mockEngine.logAction({
         action: 'SYSTEM_SETTINGS_UPDATE',
         category: 'SYSTEM_CONFIG',
@@ -74,6 +80,10 @@ export default function AdminSettingsPage() {
         type: 'CATALOG_EMBARGO_MUTATED',
         payload: { public_catalog_enabled: !nextEmbargo, embargo: nextEmbargo }
       });
+
+      // Synchronize with PostgreSQL & WebSocket Bus
+      apiClient.toggleCatalogVisibility(!nextEmbargo).catch(console.warn);
+      socketClient.emit('catalog:visibility', { enabled: !nextEmbargo });
 
       mockEngine.logAction({
         action: nextEmbargo ? 'CATALOG_EMBARGO_ENABLED' : 'CATALOG_EMBARGO_RELEASED',

@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { mockEngine } from '../../services/db/mockEngine';
 import { apiClient } from '../../services/apiClient';
+import { socketClient } from '../../services/socket/socketClient';
 
 export default function AdminDashboardPage() {
   const [metrics, setMetrics] = useState({
@@ -41,24 +42,39 @@ export default function AdminDashboardPage() {
   const [embargoToggling, setEmbargoToggling] = useState(false);
   const [embargoNotice, setEmbargoNotice] = useState('');
 
-  const loadDashboardData = () => {
+  const loadDashboardData = async () => {
     try {
+      // First try unified API telemetry from PostgreSQL backend
+      let apiData = null;
+      try {
+        apiData = await apiClient.getAdminTelemetry();
+      } catch (err) {
+        console.warn('Backend telemetry fallback to local:', err.message);
+      }
+
       const stats = mockEngine.getRealDatabaseStats();
       const db = mockEngine.getDb();
       const tokens = (db?.users || []).reduce((sum, u) => sum + (u.token_balance || 0), 0);
-      const logs = db?.audit_logs || [];
+      const logs = (apiData?.audit_logs && apiData.audit_logs.length > 0) ? apiData.audit_logs : (db?.audit_logs || []);
+
+      const totalStudents = apiData?.metrics?.total_students ?? stats.totalStudents;
+      const activeCourses = apiData?.metrics?.total_courses ?? stats.totalCourses;
+      const issuedCerts = apiData?.metrics?.total_credentials_issued ?? stats.validCredentialsCount;
+      const enrolmentCount = apiData?.metrics?.total_enrolments ?? stats.totalEnrolments;
+      const tokensCirculated = apiData?.metrics?.total_tokens_circulated ?? tokens;
+      const isPublic = apiData?.public_catalog_enabled !== undefined ? apiData.public_catalog_enabled : (db?.public_catalog_enabled !== false);
 
       setMetrics({
-        totalStudents: stats.totalStudents,
-        activeCourses: stats.totalCourses,
-        issuedCerts: stats.validCredentialsCount,
+        totalStudents,
+        activeCourses,
+        issuedCerts,
         revokedCerts: stats.revokedCredentialsCount,
-        enrolmentCount: stats.totalEnrolments,
+        enrolmentCount,
         pendingAssignments: stats.pendingAssignmentsCount,
         pendingCertificates: stats.pendingCertificatesCount,
         activeLockouts: stats.activeLockoutsCount,
-        tokensCirculated: tokens,
-        publicCatalogEnabled: db?.public_catalog_enabled !== false
+        tokensCirculated,
+        publicCatalogEnabled: isPublic
       });
 
       setRecentActivities(logs.slice(0, 6));
@@ -72,11 +88,24 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     loadDashboardData();
 
-    const unsubscribe = mockEngine.subscribe(() => {
+    // Universal Event Listeners: Local Bus & Live Sockets
+    const unsubMock = mockEngine.subscribe(() => {
       loadDashboardData();
     });
+    const unsubEmbargo = socketClient.on('catalog:visibility', loadDashboardData);
+    const unsubCourse = socketClient.on('course:mutation', loadDashboardData);
+    const unsubEnrol = socketClient.on('student:enrolled', loadDashboardData);
+    const unsubAssign = socketClient.on('assignment:submitted', loadDashboardData);
+    const unsubVio = socketClient.on('exam:violation', loadDashboardData);
 
-    return () => unsubscribe();
+    return () => {
+      if (typeof unsubMock === 'function') unsubMock();
+      if (typeof unsubEmbargo === 'function') unsubEmbargo();
+      if (typeof unsubCourse === 'function') unsubCourse();
+      if (typeof unsubEnrol === 'function') unsubEnrol();
+      if (typeof unsubAssign === 'function') unsubAssign();
+      if (typeof unsubVio === 'function') unsubVio();
+    };
   }, []);
 
   const handleToggleCatalogEmbargo = async () => {
@@ -84,7 +113,17 @@ export default function AdminDashboardPage() {
     setEmbargoNotice('');
     try {
       const nextState = !metrics.publicCatalogEnabled;
+      // 1. Sync local memory
       mockEngine.setPublicCatalogEnabled(nextState);
+      // 2. Sync PostgreSQL backend
+      try {
+        await apiClient.toggleCatalogVisibility(nextState);
+      } catch (apiErr) {
+        console.warn('Backend catalog toggle notice:', apiErr);
+      }
+      // 3. Broadcast to all student clients via WebSockets
+      socketClient.emit('catalog:visibility', { enabled: nextState });
+
       setMetrics((prev) => ({ ...prev, publicCatalogEnabled: nextState }));
       setEmbargoNotice(
         nextState

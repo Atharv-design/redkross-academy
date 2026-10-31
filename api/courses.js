@@ -137,6 +137,55 @@ export default async function handler(req, res) {
             updated_at = NOW()
           WHERE id = ${targetId}
         `;
+
+        // Upsert deep syllabus: modules and lessons with multi-media assets
+        if (Array.isArray(c.modules)) {
+          for (let mIdx = 0; mIdx < c.modules.length; mIdx++) {
+            const mod = c.modules[mIdx];
+            const modId = mod.id || `mod_${targetId}_${mIdx + 1}`;
+            try {
+              await sql`
+                INSERT INTO modules (id, course_id, title, description, module_order, created_at, updated_at)
+                VALUES (${modId}, ${targetId}, ${mod.title || `Module ${mIdx + 1}`}, ${mod.description || ''}, ${mIdx + 1}, NOW(), NOW())
+                ON CONFLICT (id) DO UPDATE SET
+                  title = EXCLUDED.title,
+                  description = EXCLUDED.description,
+                  module_order = EXCLUDED.module_order,
+                  updated_at = NOW()
+              `;
+
+              if (Array.isArray(mod.lessons)) {
+                for (let lIdx = 0; lIdx < mod.lessons.length; lIdx++) {
+                  const les = mod.lessons[lIdx];
+                  const lesId = les.id || `les_${modId}_${lIdx + 1}`;
+                  await sql`
+                    INSERT INTO lessons (id, module_id, title, duration, is_mandatory, lesson_type, summary, content, videos, images, pdf_attachment_url, lesson_order, created_at, updated_at)
+                    VALUES (
+                      ${lesId}, ${modId}, ${les.title || `Lesson ${lIdx + 1}`}, ${les.duration || '15 mins'},
+                      ${les.is_mandatory !== false}, ${les.lesson_type || 'theory'}, ${les.summary || ''}, ${les.content || ''},
+                      ${JSON.stringify(les.videos || [])}::jsonb, ${JSON.stringify(les.images || [])}::jsonb, ${les.pdf_attachment_url || null},
+                      ${lIdx + 1}, NOW(), NOW()
+                    )
+                    ON CONFLICT (id) DO UPDATE SET
+                      title = EXCLUDED.title,
+                      duration = EXCLUDED.duration,
+                      is_mandatory = EXCLUDED.is_mandatory,
+                      summary = EXCLUDED.summary,
+                      content = EXCLUDED.content,
+                      videos = EXCLUDED.videos,
+                      images = EXCLUDED.images,
+                      pdf_attachment_url = EXCLUDED.pdf_attachment_url,
+                      lesson_order = EXCLUDED.lesson_order,
+                      updated_at = NOW()
+                  `;
+                }
+              }
+            } catch (modErr) {
+              console.warn('Module/lesson deep persistence notice:', modErr.message);
+            }
+          }
+        }
+
         return json(res, { success: true, courseId: targetId });
       }
 

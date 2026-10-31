@@ -637,7 +637,11 @@ class MockEngine {
   setPublicCatalogEnabled(enabled) {
     const db = this.getDb();
     db.public_catalog_enabled = Boolean(enabled);
-    this.saveDb(db);
+    this.saveDb(db, {
+      type: 'CATALOG_EMBARGO_MUTATED',
+      payload: { public_catalog_enabled: db.public_catalog_enabled }
+    });
+    this.notify('CATALOG_EMBARGO_MUTATED', { public_catalog_enabled: db.public_catalog_enabled });
     return db.public_catalog_enabled;
   }
 

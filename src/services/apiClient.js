@@ -603,5 +603,166 @@ export const apiClient = {
 
   async adminResetCooldown(enrolmentId, quizId, reason, adminEmail) {
     return mockEngine.adminResetCooldown(enrolmentId, quizId, reason, adminEmail);
+  },
+
+  // UNIFIED INTEGRATION API EXTENSIONS (Phase 10: Admin-Student Synchronization)
+  async getStudents() {
+    try {
+      const res = await fetch(`${API_BASE}/admin`, {
+        headers: { ...this.getAuthHeader() }
+      });
+      if (!res.ok) throw new Error('API getStudents failed');
+      const data = await res.json();
+      if (Array.isArray(data.students) && data.students.length > 0) {
+        return data.students;
+      }
+      const db = mockEngine.getDb();
+      return (db.users || []).filter((u) => u.role === 'student' || !u.role || u.role === 'cadet');
+    } catch (err) {
+      console.warn('Fallback local getStudents:', err.message);
+      const db = mockEngine.getDb();
+      return (db.users || []).filter((u) => u.role === 'student' || !u.role || u.role === 'cadet');
+    }
+  },
+
+  async updateUserStatus(userId, status, reason) {
+    try {
+      const res = await fetch(`${API_BASE}/admin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...this.getAuthHeader() },
+        body: JSON.stringify({ action: 'SET_USER_STATUS', user_id: userId, status, reason })
+      });
+      mockEngine.setUserAccountStatus(userId, status, reason);
+      if (res.ok) return await res.json();
+      return { success: true };
+    } catch (err) {
+      console.warn('Fallback local updateUserStatus:', err.message);
+      return { success: true, user: mockEngine.setUserAccountStatus(userId, status, reason) };
+    }
+  },
+
+  async deleteUser(userId, email) {
+    try {
+      const res = await fetch(`${API_BASE}/admin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...this.getAuthHeader() },
+        body: JSON.stringify({ action: 'PERMANENT_DELETE_USER', user_id: userId, email })
+      });
+      mockEngine.permanentlyDeleteStudent(userId, email);
+      if (res.ok) return await res.json();
+      return { success: true };
+    } catch (err) {
+      console.warn('Fallback local deleteUser:', err.message);
+      return { success: true, result: mockEngine.permanentlyDeleteStudent(userId, email) };
+    }
+  },
+
+  async adjustTokens(userId, amount, reason) {
+    return this.adjustStudentTokens(userId, amount, reason);
+  },
+
+  async submitAssignment(submissionPayload) {
+    try {
+      const res = await fetch(`${API_BASE}/progress`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...this.getAuthHeader() },
+        body: JSON.stringify({ action: 'SUBMIT_ASSIGNMENT', ...submissionPayload })
+      });
+      const localResult = mockEngine.submitAssignment(submissionPayload);
+      if (res.ok) return await res.json();
+      return { success: true, submission: localResult };
+    } catch (err) {
+      console.warn('Fallback local submitAssignment:', err.message);
+      return { success: true, submission: mockEngine.submitAssignment(submissionPayload) };
+    }
+  },
+
+  async getAssignments() {
+    try {
+      const res = await fetch(`${API_BASE}/admin`, {
+        headers: { ...this.getAuthHeader() }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.submissions) && data.submissions.length > 0) {
+          return data.submissions;
+        }
+      }
+      return mockEngine.getAssignmentSubmissions();
+    } catch (err) {
+      console.warn('Fallback local getAssignments:', err.message);
+      return mockEngine.getAssignmentSubmissions();
+    }
+  },
+
+  async gradeAssignment(gradingPayload) {
+    try {
+      const res = await fetch(`${API_BASE}/admin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...this.getAuthHeader() },
+        body: JSON.stringify({ action: 'GRADE_ASSIGNMENT', ...gradingPayload })
+      });
+      const localResult = mockEngine.gradeAssignment(gradingPayload);
+      if (res.ok) return await res.json();
+      return { success: true, result: localResult };
+    } catch (err) {
+      console.warn('Fallback local gradeAssignment:', err.message);
+      return { success: true, result: mockEngine.gradeAssignment(gradingPayload) };
+    }
+  },
+
+  async dispatchCertificate(certificatePayload) {
+    try {
+      const res = await fetch(`${API_BASE}/admin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...this.getAuthHeader() },
+        body: JSON.stringify({ action: 'DISPATCH_CREDENTIAL', ...certificatePayload })
+      });
+      if (res.ok) return await res.json();
+      return { success: true, localOnly: true };
+    } catch (err) {
+      console.warn('Fallback local dispatchCertificate:', err.message);
+      return { success: true, localOnly: true };
+    }
+  },
+
+  async getAdminTelemetry() {
+    return this.getAdminMetrics();
+  },
+
+  async getAdminOverview() {
+    return this.getAdminMetrics();
+  },
+
+  async getCertificateRequests() {
+    try {
+      const res = await fetch(`${API_BASE}/admin`, {
+        headers: { ...this.getAuthHeader() }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.certificate_requests) && data.certificate_requests.length > 0) {
+          return data.certificate_requests;
+        }
+      }
+      const db = mockEngine.getDb();
+      return db.certificate_requests || [];
+    } catch (err) {
+      console.warn('Fallback local getCertificateRequests:', err.message);
+      const db = mockEngine.getDb();
+      return db.certificate_requests || [];
+    }
+  },
+
+  async enrollStudent(userId, courseId) {
+    return this.enrol(userId, courseId);
+  },
+
+  async suspendStudent(userId, status, reason = 'Administrative action') {
+    return this.updateUserStatus(userId, status, reason);
+  },
+
+  async deleteStudent(userId, email) {
+    return this.deleteUser(userId, email);
   }
 };

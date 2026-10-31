@@ -1,3 +1,4 @@
+import { io } from 'socket.io-client';
 /**
  * RedKross Academy — Real-Time Bidirectional Socket.io & Event Telemetry Engine
  * 
@@ -47,21 +48,34 @@ class SocketClient {
   }
 
   async tryConnectSocket() {
-    // If socket.io-client is available in environment or window, connect
+    if (typeof window === 'undefined') return;
     try {
-      if (typeof window !== 'undefined' && window.io) {
-        this.socket = window.io({ autoConnect: true, reconnection: true });
+      // Connect to Socket.io server via window.location.origin (proxied through Vite in dev)
+      const socketFactory = io || window.io;
+      if (typeof socketFactory === 'function') {
+        this.socket = socketFactory({
+          autoConnect: true,
+          reconnection: true,
+          reconnectionAttempts: 10,
+          reconnectionDelay: 1000,
+          transports: ['websocket', 'polling']
+        });
+
         this.socket.on('connect', () => {
           this.isConnected = true;
-          console.log('[SocketClient] Connected to Socket.io server.');
         });
+
+        this.socket.on('disconnect', () => {
+          this.isConnected = false;
+        });
+
         this.socket.onAny((event, ...args) => {
           this.notify(event, args[0]);
         });
       }
     } catch (e) {
-      // Gracefully fall back to BroadcastChannel and EventBus
-      console.log('[SocketClient] Running on zero-latency BroadcastChannel bus.');
+      // Fallback cleanly to BroadcastChannel and EventBus
+      console.warn('[SocketClient] Running on resilient BroadcastChannel bus.');
     }
   }
 

@@ -20,6 +20,8 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { mockEngine } from '../../services/db/mockEngine';
+import { apiClient } from '../../services/apiClient';
+import { socketClient } from '../../services/socket/socketClient';
 import { useAuth } from '../../services/auth/authContext';
 import PixelBackground from '../../components/ui/PixelBackground';
 import ExamCBTInterface from '../../components/student/ExamCBTInterface';
@@ -143,12 +145,31 @@ export default function QuizAssessmentPage() {
     setExamStarted(false);
     stopCameraStream();
 
+    const cadetId = currentUser?.cadet_id || 'RK-89421';
+    const studentName = currentUser?.full_name || 'Cadet Operator';
+
     const result = mockEngine.recordProctorViolation({
       enrolmentId,
       quizId,
       attemptId: activeAttempt?.id,
-      cadetId: currentUser?.cadet_id || 'RK-89421',
-      studentName: currentUser?.full_name || 'Cadet Operator',
+      cadetId,
+      studentName,
+      violationType,
+      details
+    });
+
+    apiClient.recordViolation({
+      attempt_id: activeAttempt?.id,
+      enrolment_id: enrolmentId,
+      quiz_id: quizId,
+      strike_count: 3,
+      reason: details,
+      user_id: currentUser?.id
+    }).catch(console.warn);
+
+    socketClient.emit('exam:violation', {
+      studentName,
+      cadetId,
       violationType,
       details
     });
@@ -304,6 +325,24 @@ export default function QuizAssessmentPage() {
 
       if (result.is_passed) {
         confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        if (quizMeta.type === 'final_exam' || quizMeta.is_final) {
+          apiClient.requestCertificate({
+            enrolment_id: enrolmentId,
+            course_id: course.id,
+            user_id: currentUser?.id,
+            cadet_id: currentUser?.cadet_id || 'RK-89421',
+            notes: 'Completed proctored final assessment'
+          }).catch(console.warn);
+
+          socketClient.emit('certificate:requested', {
+            enrolmentId,
+            courseId: course.id,
+            courseTitle: course.title,
+            cadetId: currentUser?.cadet_id || 'RK-89421',
+            studentName: currentUser?.full_name || 'Cadet Operator',
+            score: result.score_percentage
+          });
+        }
       }
     } catch (e) {
       alert(e.message);

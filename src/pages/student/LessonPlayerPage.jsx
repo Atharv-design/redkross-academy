@@ -36,6 +36,7 @@ import {
 import confetti from 'canvas-confetti';
 import { mockEngine } from '../../services/db/mockEngine';
 import { apiClient } from '../../services/apiClient';
+import { socketClient } from '../../services/socket/socketClient';
 import { useAuth } from '../../services/auth/authContext';
 import { resolveVideoUrl, resolvePdfUrl } from '../../services/db/videoStorage';
 import { renderMarkdownToHtml } from '../../utils/markdownParser';
@@ -371,14 +372,34 @@ export default function LessonPlayerPage() {
     if (quizSubmitted || isLockoutActive || !activeQuiz) return;
 
     try {
+      const studentName = currentUser?.name || currentUser?.full_name || 'Cadet Candidate';
+      const cadetId = currentUser?.cadet_id || enrolment?.cadet_id || 'RK-UNKNOWN';
+      const details = 'Adversary evasion or proctor protocol breached (exited view / tab switched during active examination).';
+
       mockEngine.recordProctorViolation({
         enrolmentId,
         quizId: activeUnit.id,
-        cadetId: currentUser?.cadet_id || enrolment?.cadet_id || 'RK-UNKNOWN',
-        studentName: currentUser?.name || currentUser?.full_name || 'Cadet Candidate',
+        cadetId,
+        studentName,
         violationType: `PROCTOR_VIOLATION: ${violationType}`,
-        details: 'Adversary evasion or proctor protocol breached (exited view / tab switched during active examination).'
+        details
       });
+
+      apiClient.recordViolation({
+        enrolment_id: enrolmentId,
+        quiz_id: activeUnit.id,
+        strike_count: 3,
+        reason: details,
+        user_id: currentUser?.id || enrolment?.user_id
+      }).catch(console.warn);
+
+      socketClient.emit('exam:violation', {
+        studentName,
+        cadetId,
+        violationType,
+        details
+      });
+
       setIsLockoutActive(true);
       setLockoutCountdown({ hours: 23, minutes: 59, seconds: 59 });
       alert('CRITICAL ANTI-CHEAT PROTOCOL BREACH: Tab switch or focus change detected during an active examination. Your account is subjected to an immediate 24-hour examination lockdown.');
@@ -418,6 +439,20 @@ export default function LessonPlayerPage() {
 
   useEffect(() => {
     loadAssignmentSubmission();
+    const unsubSocket = socketClient.on('assignment:graded', (payload) => {
+      if (!payload?.enrolmentId || payload.enrolmentId === enrolmentId) {
+        loadAssignmentSubmission();
+      }
+    });
+    const unsubMock = mockEngine.subscribe((event) => {
+      if (event.type === 'ASSIGNMENT_MUTATED' || event.type === 'DB_MUTATED') {
+        loadAssignmentSubmission();
+      }
+    });
+    return () => {
+      if (typeof unsubSocket === 'function') unsubSocket();
+      unsubMock();
+    };
   }, [enrolmentId, activeLesson?.id]);
 
   if (!enrolment || !course) {
@@ -572,12 +607,14 @@ export default function LessonPlayerPage() {
     reader.readAsDataURL(file);
   };
 
-  const confirmAssignmentSubmit = () => {
+  const confirmAssignmentSubmit = async () => {
     if (!uploadingDataUrl || !uploadingFileName || !activeLesson) return;
     setSubmittingPdf(true);
     try {
-      mockEngine.submitAssignment({
-        cadetId: currentUser?.cadet_id || 'RK-89421',
+      const studentName = currentUser?.full_name || currentUser?.name || 'Cadet Student';
+      const cadetId = currentUser?.cadet_id || 'RK-89421';
+      const localSub = mockEngine.submitAssignment({
+        cadetId,
         userId: currentUser?.id || enrolment.user_id,
         enrolmentId,
         courseId: course.id,
@@ -587,6 +624,27 @@ export default function LessonPlayerPage() {
         fileName: uploadingFileName,
         fileDataUrl: uploadingDataUrl
       });
+
+      apiClient.submitAssignment({
+        enrolment_id: enrolmentId,
+        assignment_id: activeLesson.id,
+        assignment_title: activeLesson.title,
+        student_id: currentUser?.id || enrolment.user_id,
+        student_name: studentName,
+        cadet_id: cadetId,
+        submission_file_name: uploadingFileName,
+        submission_url: uploadingDataUrl
+      }).catch(console.warn);
+
+      socketClient.emit('assignment:submitted', {
+        submissionId: localSub?.id,
+        enrolmentId,
+        assignmentId: activeLesson.id,
+        assignmentTitle: activeLesson.title,
+        studentName,
+        cadetId
+      });
+
       setUploadingFileName('');
       setUploadingDataUrl('');
       loadAssignmentSubmission();
@@ -732,9 +790,29 @@ export default function LessonPlayerPage() {
   };
 
   // Submit Certificate Request
-  const handleSubmitCertificateRequest = () => {
+  const handleSubmitCertificateRequest = async () => {
     try {
       mockEngine.requestCertificate(enrolmentId, certCadetNotes);
+      const studentName = currentUser?.name || currentUser?.full_name || 'Cadet Candidate';
+      const cadetId = currentUser?.cadet_id || enrolment?.cadet_id || 'RK-UNKNOWN';
+
+      apiClient.requestCertificate({
+        enrolment_id: enrolmentId,
+        course_id: course?.id,
+        user_id: currentUser?.id || enrolment?.user_id,
+        cadet_id: cadetId,
+        notes: certCadetNotes
+      }).catch(console.warn);
+
+      socketClient.emit('certificate:requested', {
+        enrolmentId,
+        courseId: course?.id,
+        courseTitle: course?.title,
+        cadetId,
+        studentName,
+        score: quizResult?.percentage || 90
+      });
+
       setCertRequestSubmitted(true);
       setTimeout(() => {
         setCertRequestModalOpen(false);

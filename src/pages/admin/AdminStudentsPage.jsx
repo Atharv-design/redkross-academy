@@ -6,6 +6,8 @@ import {
   ChevronLeft, ChevronRight, MoreHorizontal
 } from 'lucide-react';
 import { mockEngine } from '../../services/db/mockEngine';
+import { apiClient } from '../../services/apiClient';
+import { socketClient } from '../../services/socket/socketClient';
 
 export default function AdminStudentsPage() {
   const [students, setStudents] = useState([]);
@@ -31,23 +33,28 @@ export default function AdminStudentsPage() {
   const [studentToDelete, setStudentToDelete] = useState(null);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
-  const loadStudents = () => {
+  const loadStudents = async () => {
     try {
-      const db = mockEngine.getDb();
-      if (db && db.users) {
-        const studentList = db.users.filter((u) => u.role === 'student' || !u.role || u.role === 'cadet');
+      const studentList = await apiClient.getStudents();
+      if (Array.isArray(studentList)) {
         setStudents(studentList);
         if (studentList.length > 0 && !selectedStudent) {
           setSelectedStudent(studentList[0]);
         }
       }
     } catch (e) {
-      console.error(e);
+      console.error('Error loading students CRM:', e);
     }
   };
 
   useEffect(() => {
     loadStudents();
+
+    // Live Socket & DB event sync
+    const unsubEnrol = socketClient.on('student:enrolled', loadStudents);
+    const unsubReg = socketClient.on('user:registered', loadStudents);
+    const unsubStatus = socketClient.on('user:status_changed', loadStudents);
+    const unsubTokens = socketClient.on('token:adjusted', loadStudents);
 
     const unsubscribe = mockEngine.subscribe((event) => {
       if (
@@ -61,16 +68,24 @@ export default function AdminStudentsPage() {
       }
     });
 
-    return () => unsubscribe();
+    return () => {
+      if (typeof unsubEnrol === 'function') unsubEnrol();
+      if (typeof unsubReg === 'function') unsubReg();
+      if (typeof unsubStatus === 'function') unsubStatus();
+      if (typeof unsubTokens === 'function') unsubTokens();
+      unsubscribe();
+    };
   }, []);
 
   // Permanent student deletion with email blacklisting
-  const handleConfirmPermanentDelete = () => {
+  const handleConfirmPermanentDelete = async () => {
     if (!studentToDelete) return;
     if (deleteConfirmText.trim().toUpperCase() !== 'DELETE') return;
 
     try {
-      mockEngine.permanentlyDeleteStudent(studentToDelete.id, studentToDelete.email);
+      await apiClient.deleteStudent(studentToDelete.id, studentToDelete.email);
+      socketClient.emit('user:banned', { userId: studentToDelete.id, email: studentToDelete.email });
+      socketClient.emit('user:purged', { userId: studentToDelete.id, email: studentToDelete.email });
       setStudentToDelete(null);
       setDeleteConfirmText('');
       loadStudents();
@@ -84,12 +99,13 @@ export default function AdminStudentsPage() {
   };
 
   // Suspend / Reactivate account
-  const handleToggleStatus = (student) => {
+  const handleToggleStatus = async (student) => {
     const isSuspended = student.status === 'SUSPENDED';
     const nextStatus = isSuspended ? 'ACTIVE' : 'SUSPENDED';
 
     try {
-      mockEngine.setUserAccountStatus(student.id, nextStatus, `Admin toggled status to ${nextStatus}`);
+      await apiClient.suspendStudent(student.id, nextStatus, `Admin toggled status to ${nextStatus}`);
+      socketClient.emit('user:status_changed', { userId: student.id, status: nextStatus, is_suspended: !isSuspended });
       loadStudents();
     } catch (e) {
       console.error(e);
@@ -97,12 +113,13 @@ export default function AdminStudentsPage() {
   };
 
   // Adjust token balance
-  const handleAdjustTokens = () => {
+  const handleAdjustTokens = async () => {
     if (!selectedStudent || !tokenAmount) return;
     const delta = tokenAction === 'GRANT' ? parseInt(tokenAmount) : -parseInt(tokenAmount);
 
     try {
-      mockEngine.grantTokens(selectedStudent.id, delta, tokenReason);
+      await apiClient.adjustTokens(selectedStudent.id, delta, tokenReason);
+      socketClient.emit('token:adjusted', { userId: selectedStudent.id, delta, reason: tokenReason });
       loadStudents();
 
       setTokenModalOpen(false);
@@ -114,26 +131,12 @@ export default function AdminStudentsPage() {
   };
 
   // Reset student curriculum progress
-  const handleResetProgress = (student) => {
+  const handleResetProgress = async (student) => {
     if (confirm(`Reset all curriculum lab progress for ${student.name || student.full_name}? This will zero out completion telemetry.`)) {
       try {
-        const db = mockEngine.getDb();
-        if (db.enrolments) {
-          db.enrolments = db.enrolments.map((enr) =>
-            enr.user_id === student.id
-              ? { ...enr, progress: 0, completed_lessons: [], completed_mandatory_lessons: [], passed_quizzes: [] }
-              : enr
-          );
-        }
-        mockEngine.saveDb(db);
-
-        mockEngine.logAction({
-          action: 'STUDENT_PROGRESS_RESET',
-          category: 'STUDENT_ADMIN',
-          details: `Admin reset all curriculum progress for student ${student.email}`,
-          severity: 'WARN'
-        });
-
+        await apiClient.resetStudentProgress(student.id, null, null, 'Admin reset progress');
+        socketClient.emit('student:progress_reset', { userId: student.id });
+        loadStudents();
         alert(`Progress reset for ${student.name || student.full_name}.`);
       } catch (e) {
         console.error(e);

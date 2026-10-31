@@ -9,6 +9,7 @@ import {
 } from 'firebase/auth';
 import { auth, googleProvider } from './firebase';
 import { apiClient } from '../apiClient';
+import { socketClient } from '../socket/socketClient';
 import { mockEngine } from '../db/mockEngine';
 
 const AuthContext = createContext(null);
@@ -104,8 +105,34 @@ export function AuthProvider({ children }) {
     return () => unsubscribe();
   }, []);
 
-  // Live Event Bus subscription for instant cross-tab and cross-page sync
+  // Live Event Bus & Socket.io subscription for instant cross-tab and cross-page sync
   useEffect(() => {
+    if (!currentUser) return;
+
+    const unsubSocketStatus = socketClient.on('user:status_changed', (payload) => {
+      if (!payload?.userId || payload.userId === currentUser.id) {
+        const isSuspended = payload.status === 'SUSPENDED';
+        setCurrentUser((prev) =>
+          prev ? { ...prev, status: payload.status, is_suspended: isSuspended } : prev
+        );
+      }
+    });
+
+    const unsubSocketToken = socketClient.on('token:adjusted', (payload) => {
+      if (!payload?.userId || payload.userId === currentUser.id) {
+        if (typeof payload.newBalance === 'number') {
+          setTokenBalance(payload.newBalance);
+        }
+      }
+    });
+
+    const unsubSocketPurged = socketClient.on('user:purged', (payload) => {
+      if (!payload?.userId || payload.userId === currentUser.id || payload.email?.toLowerCase() === currentUser.email?.toLowerCase()) {
+        logout();
+        alert('This cadet account has been permanently purged by RedKross Academy Administration.');
+      }
+    });
+
     const unsubscribe = mockEngine.subscribe((event) => {
       if (!currentUser) return;
 
@@ -137,7 +164,12 @@ export function AuthProvider({ children }) {
       }
     });
 
-    return () => unsubscribe();
+    return () => {
+      if (typeof unsubSocketStatus === 'function') unsubSocketStatus();
+      if (typeof unsubSocketToken === 'function') unsubSocketToken();
+      if (typeof unsubSocketPurged === 'function') unsubSocketPurged();
+      unsubscribe();
+    };
   }, [currentUser]);
 
   // 1-Click Dev Cadet Creator / Switcher

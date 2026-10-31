@@ -62,6 +62,11 @@ io.on('connection', (socket) => {
     socket.join(room);
   });
 
+  // Universal real-time event relay across all connected clients
+  socket.onAny((event, data) => {
+    socket.broadcast.emit(event, data);
+  });
+
   // Proctoring telemetry
   socket.on('exam:violation', (data) => {
     io.emit('exam:violation', data);

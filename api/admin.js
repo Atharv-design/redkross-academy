@@ -1,4 +1,4 @@
-import { sql, json, cors } from './_db.js';
+﻿import { sql, json, cors } from './_db.js';
 
 /**
  * Super Admin Management & Operations Endpoint (Phase 4 & Phase 5)
@@ -66,6 +66,43 @@ export default async function handler(req, res) {
         return json(res, { success: true, transaction_id: txId });
       }
 
+      if (action === 'SET_USER_STATUS') {
+        const { user_id, status, reason } = body;
+        await sql`
+          UPDATE users 
+          SET status = ${status}, updated_at = NOW()
+          WHERE id = ${user_id}
+        `;
+        await sql`
+          INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
+          VALUES (${`aud_${Date.now()}`}, ${adminUserId}, 'USER_STATUS_MUTATED', 'users', ${user_id}, ${`Set user status to ${status}. Reason: ${reason || 'Admin action'}`}, NOW())
+        `;
+        return json(res, { success: true, status });
+      }
+
+      if (action === 'PERMANENT_DELETE_USER') {
+        const { user_id, email } = body;
+        await sql`DELETE FROM quiz_attempts WHERE enrolment_id IN (SELECT id FROM enrolments WHERE user_id = ${user_id})`;
+        await sql`DELETE FROM quiz_retry_windows WHERE enrolment_id IN (SELECT id FROM enrolments WHERE user_id = ${user_id})`;
+        await sql`DELETE FROM lesson_progress WHERE enrolment_id IN (SELECT id FROM enrolments WHERE user_id = ${user_id})`;
+        await sql`DELETE FROM credentials WHERE user_id = ${user_id}`;
+        await sql`DELETE FROM enrolments WHERE user_id = ${user_id}`;
+        await sql`DELETE FROM reward_ledger WHERE user_id = ${user_id}`;
+        await sql`DELETE FROM users WHERE id = ${user_id}`;
+        if (email) {
+          await sql`
+            INSERT INTO system_settings (key, value, updated_at)
+            VALUES (${`banned_email_${email.toLowerCase()}`}, 'true'::jsonb, NOW())
+            ON CONFLICT (key) DO NOTHING
+          `;
+        }
+        await sql`
+          INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
+          VALUES (${`aud_${Date.now()}`}, ${adminUserId}, 'USER_PERMANENTLY_DELETED', 'users', ${user_id}, ${`Permanently purged student account ${email || user_id} and blacklisted email`}, NOW())
+        `;
+        return json(res, { success: true });
+      }
+
       if (action === 'RESET_PROGRESS') {
         const { user_id, course_id, lesson_id, reason } = body;
         if (lesson_id) {
@@ -88,19 +125,30 @@ export default async function handler(req, res) {
         return json(res, { success: true });
       }
 
-      if (action === 'FORCE_ISSUE_CREDENTIAL') {
-        const { user_id, course_id } = body;
-        const verificationId = `RK-${Math.random().toString(36).substr(2, 4).toUpperCase()}-${Math.random().toString(36).substr(2, 4).toUpperCase()}`;
-        const credId = `cred_${Date.now()}`;
+      if (action === 'FORCE_ISSUE_CREDENTIAL' || action === 'DISPATCH_CREDENTIAL') {
+        const { id, verification_id, user_id, course_id, credential_title, grade_percentage, type } = body;
+        const verificationId = verification_id || `RK-${Math.random().toString(36).substr(2, 4).toUpperCase()}-${Math.random().toString(36).substr(2, 4).toUpperCase()}`;
+        const credId = id || `cred_${Date.now()}`;
         await sql`
           INSERT INTO credentials (id, verification_id, user_id, course_id, credential_title, type, grade_percentage, status, created_at)
-          VALUES (${credId}, ${verificationId}, ${user_id}, ${course_id}, 'Certified Cybersecurity Specialist', 'Executive Certification', 100, 'Active', NOW())
+          VALUES (${credId}, ${verificationId}, ${user_id}, ${course_id}, ${credential_title || 'Certified Cybersecurity Specialist'}, ${type || 'Executive Certification'}, ${grade_percentage || 100}, 'Active', NOW())
+          ON CONFLICT (id) DO UPDATE SET status = 'Active', updated_at = NOW()
         `;
         await sql`
           INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
-          VALUES (${`aud_${Date.now()}`}, ${adminUserId}, 'CREDENTIAL_FORCE_ISSUED', 'credentials', ${credId}, ${`Force-issued credential ${verificationId} to student ${user_id}`}, NOW())
+          VALUES (${`aud_${Date.now()}`}, ${adminUserId}, 'CREDENTIAL_DISPATCHED', 'credentials', ${credId}, ${`Dispatched official credential ${verificationId} to student ${user_id}`}, NOW())
         `;
-        return json(res, { success: true, verification_id: verificationId });
+        return json(res, { success: true, credential_id: credId, verification_id: verificationId });
+      }
+
+      if (action === 'GRADE_ASSIGNMENT') {
+        const { submission_id, grade, feedback, status } = body;
+        await sql`
+          UPDATE assignment_submissions 
+          SET status = ${status || 'graded'}, grade = ${grade || 'Pass'}, feedback = ${feedback || 'Approved by Lead Instructor'}, updated_at = NOW()
+          WHERE id = ${submission_id}
+        `;
+        return json(res, { success: true });
       }
 
       if (action === 'UPLOAD_VIDEO') {
@@ -127,7 +175,6 @@ export default async function handler(req, res) {
             )
           `;
         } catch (dbErr) {
-          // If table doesn't exist, gracefully fallback
           console.warn('course_video_assets table insert fallback:', dbErr.message);
         }
 
@@ -144,7 +191,7 @@ export default async function handler(req, res) {
 
     // 1. Fetch Students CRM
     const students = await sql`
-      SELECT u.id, u.full_name, u.email, u.avatar, u.headline, u.role, u.streak_days, u.created_at,
+      SELECT u.id, u.full_name, u.email, u.avatar, u.headline, u.role, u.cadet_id, u.status, u.streak_days, u.created_at,
              count(DISTINCT e.id) as enrolled_courses_count,
              count(DISTINCT c.id) as credentials_count,
              coalesce(sum(rl.amount), 0) as token_balance
@@ -152,7 +199,7 @@ export default async function handler(req, res) {
       LEFT JOIN enrolments e ON e.user_id = u.id
       LEFT JOIN credentials c ON c.user_id = u.id
       LEFT JOIN reward_ledger rl ON rl.user_id = u.id
-      GROUP BY u.id, u.full_name, u.email, u.avatar, u.headline, u.role, u.streak_days, u.created_at
+      GROUP BY u.id, u.full_name, u.email, u.avatar, u.headline, u.role, u.cadet_id, u.status, u.streak_days, u.created_at
       ORDER BY u.created_at DESC
     `;
 
@@ -183,25 +230,66 @@ export default async function handler(req, res) {
     const publicCatalogEnabled = settings.length > 0 ? (settings[0].value === true || settings[0].value === 'true') : false;
 
     // 5. Aggregate Metrics
-    const totalStudents = await sql`SELECT count(*) as count FROM users WHERE role = 'student'`;
+    const totalStudents = await sql`SELECT count(*) as count FROM users WHERE role = 'student' OR role IS NULL`;
+    const totalCourses = await sql`SELECT count(*) as count FROM courses`;
     const totalEnrolments = await sql`SELECT count(*) as count FROM enrolments`;
-    const totalCredentials = await sql`SELECT count(*) as count FROM credentials`;
+    const totalCredentials = await sql`SELECT count(*) as count FROM credentials WHERE status = 'Active'`;
     const totalTokens = await sql`SELECT coalesce(sum(amount), 0) as total FROM reward_ledger WHERE amount > 0`;
     const openTickets = await sql`SELECT count(*) as count FROM support_tickets WHERE status = 'Open'`;
 
+    // 6. Fetch Pending Submissions
+    let submissions = [];
+    try {
+      submissions = await sql`
+        SELECT s.*, u.full_name as student_name, u.email as student_email
+        FROM assignment_submissions s
+        LEFT JOIN enrolments e ON s.enrolment_id = e.id
+        LEFT JOIN users u ON e.user_id = u.id
+        ORDER BY s.submitted_at DESC
+        LIMIT 50
+      `;
+    } catch {}
+
+    // 7. Fetch Certificate Requests & Credentials
+    let certRequests = [];
+    try {
+      certRequests = await sql`
+        SELECT cr.*, u.full_name as student_name, u.email as student_email
+        FROM certificate_requests cr
+        LEFT JOIN users u ON cr.user_id = u.id
+        ORDER BY cr.created_at DESC
+        LIMIT 50
+      `;
+    } catch {}
+
+    let credentialsList = [];
+    try {
+      credentialsList = await sql`
+        SELECT cd.*, u.full_name as student_name, u.email as student_email
+        FROM credentials cd
+        LEFT JOIN users u ON cd.user_id = u.id
+        ORDER BY cd.created_at DESC
+        LIMIT 50
+      `;
+    } catch {}
+
     return json(res, {
       metrics: {
-        total_students: parseInt(totalStudents[0].count, 10),
-        total_enrolments: parseInt(totalEnrolments[0].count, 10),
-        total_credentials_issued: parseInt(totalCredentials[0].count, 10),
-        total_tokens_circulated: parseInt(totalTokens[0].total, 10),
-        open_support_tickets: parseInt(openTickets[0].count, 10),
+        total_students: parseInt(totalStudents[0]?.count || 0, 10),
+        total_courses: parseInt(totalCourses[0]?.count || 0, 10),
+        total_enrolments: parseInt(totalEnrolments[0]?.count || 0, 10),
+        total_credentials_issued: parseInt(totalCredentials[0]?.count || 0, 10),
+        total_tokens_circulated: parseInt(totalTokens[0]?.total || 0, 10),
+        open_support_tickets: parseInt(openTickets[0]?.count || 0, 10),
         active_exam_incidents: violations.length,
         public_catalog_enabled: publicCatalogEnabled
       },
       students,
       violations,
       audit_logs: auditLogs,
+      submissions,
+      certificate_requests: certRequests,
+      credentials: credentialsList,
       public_catalog_enabled: publicCatalogEnabled
     });
   } catch (error) {

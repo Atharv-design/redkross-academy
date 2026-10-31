@@ -374,15 +374,26 @@ export default function AdminCoursesPage() {
   });
 
   // Load courses from database
-  const loadCourses = () => {
+  const loadCourses = async () => {
     try {
-      const db = mockEngine.getDb();
-      if (db && db.courses) {
-        setCourses(db.courses);
-        if (db.courses.length > 0 && !selectedCourse) {
-          setSelectedCourse(db.courses[0]);
-          loadCourseIntoForm(db.courses[0]);
+      let serverCourses = null;
+      try {
+        const data = await apiClient.getCourses(true);
+        if (data && Array.isArray(data.courses)) {
+          serverCourses = data.courses;
         }
+      } catch (apiErr) {
+        console.warn('API courses fetch notice:', apiErr);
+      }
+
+      const db = mockEngine.getDb();
+      const courseList = serverCourses !== null ? serverCourses : (db?.courses || []);
+      setCourses(courseList);
+      if (courseList.length > 0 && !selectedCourse) {
+        setSelectedCourse(courseList[0]);
+        loadCourseIntoForm(courseList[0]);
+      } else if (courseList.length === 0) {
+        setSelectedCourse(null);
       }
     } catch (e) {
       console.error('Error loading courses:', e);
@@ -391,12 +402,16 @@ export default function AdminCoursesPage() {
 
   useEffect(() => {
     loadCourses();
-    const unsub = mockEngine.subscribe((event) => {
+    const unsubSocket = socketClient.on('course:mutation', loadCourses);
+    const unsubMock = mockEngine.subscribe((event) => {
       if (event.type === 'CURRICULUM_MUTATED' || event.type === 'DB_MUTATED') {
         loadCourses();
       }
     });
-    return () => unsub();
+    return () => {
+      if (typeof unsubSocket === 'function') unsubSocket();
+      unsubMock();
+    };
   }, []);
 
   const loadCourseIntoForm = (c) => {

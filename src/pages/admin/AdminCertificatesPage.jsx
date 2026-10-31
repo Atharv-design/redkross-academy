@@ -7,6 +7,8 @@ import {
   Sliders, Terminal, Loader2
 } from 'lucide-react';
 import { mockEngine } from '../../services/db/mockEngine';
+import { apiClient } from '../../services/apiClient';
+import { socketClient } from '../../services/socket/socketClient';
 import RedKrossOfficialCertificate from '../../components/certificate/RedKrossOfficialCertificate';
 import { downloadCertificatePdf } from '../../utils/pdfGenerator';
 
@@ -106,12 +108,20 @@ export default function AdminCertificatesPage() {
     digital_seal_url: null
   });
 
-  const loadData = () => {
+  const loadData = async () => {
     try {
+      let serverRequests = [];
+      try {
+        serverRequests = await apiClient.getCertificateRequests();
+      } catch (apiErr) {
+        console.warn('API getCertificateRequests fallback:', apiErr);
+      }
+
       const db = mockEngine.getDb();
       if (db) {
         if (db.credentials) setCredentials(db.credentials);
-        if (db.certificate_requests) setCertRequests(db.certificate_requests);
+        const resolvedRequests = (serverRequests && serverRequests.length > 0) ? serverRequests : (db.certificate_requests || []);
+        setCertRequests(resolvedRequests);
         if (db.users) {
           const studentList = db.users.filter((u) => u.role === 'student' || !u.role || u.role === 'cadet');
           setStudents(studentList);
@@ -138,6 +148,9 @@ export default function AdminCertificatesPage() {
   useEffect(() => {
     loadData();
 
+    const unsubCertReq = socketClient.on('certificate:requested', loadData);
+    const unsubCertDisp = socketClient.on('certificate:dispatched', loadData);
+
     const unsubscribe = mockEngine.subscribe((event) => {
       if (
         event.type === 'CREDENTIAL_MUTATED' ||
@@ -148,7 +161,11 @@ export default function AdminCertificatesPage() {
       }
     });
 
-    return () => unsubscribe();
+    return () => {
+      if (typeof unsubCertReq === 'function') unsubCertReq();
+      if (typeof unsubCertDisp === 'function') unsubCertDisp();
+      unsubscribe();
+    };
   }, []);
 
   const handleSelectStudent = (student) => {
@@ -263,6 +280,24 @@ export default function AdminCertificatesPage() {
         }
       });
 
+      // Synchronize with PostgreSQL & WebSockets
+      apiClient.dispatchCertificate({
+        id: newCredId,
+        verification_id: newCredId,
+        user_id: selectedStudentId || studioForm.cadet_id,
+        course_id: studioForm.course_title,
+        credential_title: studioForm.course_title,
+        grade_percentage: 95
+      }).catch(console.warn);
+
+      socketClient.emit('certificate:dispatched', {
+        credentialId: newCredId,
+        verificationId: newCredId,
+        cadetId: studioForm.cadet_id,
+        studentEmail: studioForm.student_email,
+        courseTitle: studioForm.course_title
+      });
+
       safeLogAction({
         action: 'CREDENTIAL_DISPATCHED',
         category: 'STUDENT_ADMIN',
@@ -328,6 +363,23 @@ export default function AdminCertificatesPage() {
           cadetId: newCredential.cadet_id,
           status: 'DISPATCHED'
         }
+      });
+
+      // Synchronize with PostgreSQL & WebSockets
+      apiClient.dispatchCertificate({
+        id: newCredId,
+        verification_id: newCredId,
+        user_id: req.user_id || req.cadet_id,
+        course_id: req.course_id || req.course_title,
+        credential_title: req.course_title,
+        grade_percentage: req.score || 90
+      }).catch(console.warn);
+
+      socketClient.emit('certificate:dispatched', {
+        credentialId: newCredId,
+        verificationId: newCredId,
+        cadetId: newCredential.cadet_id,
+        courseTitle: newCredential.course_title
       });
 
       safeLogAction({

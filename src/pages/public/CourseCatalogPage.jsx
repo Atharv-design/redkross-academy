@@ -29,7 +29,7 @@ export default function CourseCatalogPage() {
     const fetchCatalog = () => {
       apiClient.getCourses(isAdmin).then((data) => {
         setCourses(data.courses || []);
-        setCatalogEnabled(Boolean(data.public_catalog_enabled) || isAdmin);
+        setCatalogEnabled(Boolean(data.public_catalog_enabled));
         setLoading(false);
       }).catch(() => {
         setCourses([]);
@@ -40,12 +40,14 @@ export default function CourseCatalogPage() {
 
     fetchCatalog();
 
-    // Real-Time Event Sync: Admin course deletion or creation reflects immediately
+    // Real-Time Event Sync: Admin course deletion, creation, and embargo toggle
     const unsubSocket = socketClient.on('course:mutation', fetchCatalog);
+    const unsubEmbargo = socketClient.on('catalog:visibility', fetchCatalog);
     const unsubMock = mockEngine.subscribe(fetchCatalog);
 
     return () => {
       if (typeof unsubSocket === 'function') unsubSocket();
+      if (typeof unsubEmbargo === 'function') unsubEmbargo();
       if (typeof unsubMock === 'function') unsubMock();
     };
   }, [isAdmin]);
@@ -91,6 +93,33 @@ export default function CourseCatalogPage() {
     return (
       <div className="min-h-[82vh] flex items-center justify-center py-16 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-3xl w-full text-center space-y-8 ultra-glass-card rounded-3xl p-8 sm:p-14 shimmer-lr animate-slide-left border border-[#65F58A]/35 backdrop-blur-2xl bg-[#081a13]/60 shadow-[0_12px_45px_rgba(0,0,0,0.55)]">
+          {/* Super Admin Preview Notice */}
+          {isAdmin && (
+            <div className="p-3 rounded-xl bg-amber-400/10 border border-amber-400/30 text-amber-300 text-xs font-mono flex flex-col sm:flex-row items-center justify-between gap-2 text-left">
+              <span>Super Admin Notice: Public Catalog is currently in EMBARGO mode.</span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      await apiClient.toggleCatalogVisibility(true);
+                      socketClient.emit('catalog:visibility', { enabled: true });
+                      setCatalogEnabled(true);
+                    } catch (e) {
+                      console.warn('Release error:', e);
+                    }
+                  }}
+                  className="px-2.5 py-1 rounded bg-[#65F58A] text-[#071018] hover:bg-[#35E6B5] font-bold text-[11px] cursor-pointer transition-all"
+                >
+                  Release Live
+                </button>
+                <Link to="/admin" className="px-2.5 py-1 rounded bg-amber-400/20 text-amber-200 hover:text-white border border-amber-400/40 text-[11px] font-bold">
+                  Manage in Admin
+                </Link>
+              </div>
+            </div>
+          )}
+
           {/* Subtle Cyber Status Badge */}
           <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full ultra-glass-pill text-xs font-mono shadow-md backdrop-blur-md border border-[#65F58A]/30 bg-[#09241a]/60">
             <span className="w-2 h-2 rounded-full bg-[#35E6B5] animate-pulse" />
