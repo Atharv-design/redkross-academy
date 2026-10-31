@@ -2205,31 +2205,70 @@ class MockEngine {
   }
 
   isExamLocked(enrolmentId, quizId) {
+    if (!enrolmentId) return { isLocked: false, remainingHours: 0, remainingMinutes: 0, lockedUntil: null };
     const db = this.getDb();
-    const windowKey = `${enrolmentId}_${quizId}`;
-    const windowData = db.quiz_retry_windows?.[windowKey];
     const enrolment = (db.enrolments || []).find((e) => e.id === enrolmentId);
-
-    const lockoutTarget = windowData?.locked_until || enrolment?.exam_lockout_until;
-    if (!lockoutTarget) return { isLocked: false, remainingHours: 0, remainingMinutes: 0, lockedUntil: null };
-
-    const lockDate = new Date(lockoutTarget);
     const now = new Date();
-    if (now >= lockDate) {
+    let maxLockDate = null;
+    let maxLockIso = null;
+
+    const considerDate = (dateStr) => {
+      if (!dateStr) return;
+      const d = new Date(dateStr);
+      if (!isNaN(d.getTime()) && d > now) {
+        if (!maxLockDate || d > maxLockDate) {
+          maxLockDate = d;
+          maxLockIso = typeof dateStr === 'string' ? dateStr : d.toISOString();
+        }
+      }
+    };
+
+    // 1. Direct quiz window
+    if (quizId && db.quiz_retry_windows) {
+      const windowKey = `${enrolmentId}_${quizId}`;
+      considerDate(db.quiz_retry_windows[windowKey]?.locked_until);
+    }
+
+    // 2. Enrolment level proctor ban
+    considerDate(enrolment?.exam_lockout_until);
+
+    // 3. Any active proctor violation or retry window for this enrolment
+    if (db.quiz_retry_windows) {
+      for (const w of Object.values(db.quiz_retry_windows)) {
+        if (w && w.enrolment_id === enrolmentId) {
+          considerDate(w.locked_until);
+        }
+      }
+    }
+
+    // 4. Any violation events recorded for this enrolment
+    if (db.exam_violation_events) {
+      for (const ev of db.exam_violation_events) {
+        if (ev && ev.enrolment_id === enrolmentId) {
+          considerDate(ev.locked_until);
+        }
+      }
+    }
+
+    if (!maxLockDate) {
       return { isLocked: false, remainingHours: 0, remainingMinutes: 0, lockedUntil: null };
     }
 
-    const diffMs = lockDate.getTime() - now.getTime();
+    const diffMs = maxLockDate.getTime() - now.getTime();
     const remainingHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const remainingMinutes = Math.ceil((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    const remainingMinutes = Math.max(1, Math.ceil((diffMs % (1000 * 60 * 60)) / (1000 * 60)));
 
     return {
       isLocked: true,
-      lockedUntil: lockoutTarget,
+      lockedUntil: maxLockIso,
       remainingHours,
       remainingMinutes,
       diffMs
     };
+  }
+
+  getLockoutRemaining(enrolmentId, quizId) {
+    return this.isExamLocked(enrolmentId, quizId);
   }
 
   // ==========================================

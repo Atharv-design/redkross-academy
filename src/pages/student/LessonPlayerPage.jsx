@@ -102,9 +102,9 @@ export default function LessonPlayerPage() {
     }
   }
 
-  // Active unit state
-  const queryLessonId = searchParams.get('lessonId');
-  const [activeUnitId, setActiveUnitId] = useState(queryLessonId || allUnits[0]?.id || null);
+  // Active unit state (handles both ?unitId= and ?lessonId=)
+  const queryParamUnitId = searchParams.get('unitId') || searchParams.get('lessonId');
+  const [activeUnitId, setActiveUnitId] = useState(queryParamUnitId || allUnits[0]?.id || null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [expandedModules, setExpandedModules] = useState({});
   const [bookmarkedUnits, setBookmarkedUnits] = useState({});
@@ -134,9 +134,21 @@ export default function LessonPlayerPage() {
   const [examTimeRemaining, setExamTimeRemaining] = useState(null); // in seconds
   const [examAttemptCount, setExamAttemptCount] = useState(1);
 
-  // Anti-Cheat Proctoring & 24-Hour Lockdown State
-  const [isLockoutActive, setIsLockoutActive] = useState(false);
-  const [lockoutCountdown, setLockoutCountdown] = useState({ hours: 0, minutes: 0, seconds: 0 });
+  // Anti-Cheat Proctoring & 24-Hour Lockdown State (initialized synchronously to prevent any unrendered unlocked flash)
+  const initialLockout = (() => {
+    if (!enrolmentId) return { isLocked: false, remainingHours: 0, remainingMinutes: 0 };
+    try {
+      return mockEngine.isExamLocked(enrolmentId, queryParamUnitId);
+    } catch {
+      return { isLocked: false, remainingHours: 0, remainingMinutes: 0 };
+    }
+  })();
+  const [isLockoutActive, setIsLockoutActive] = useState(Boolean(initialLockout.isLocked));
+  const [lockoutCountdown, setLockoutCountdown] = useState({
+    hours: initialLockout.remainingHours || 0,
+    minutes: initialLockout.remainingMinutes || 0,
+    seconds: 0
+  });
   const [proctorWarningVisible, setProctorWarningVisible] = useState(false);
 
   // Certificate Request Modal State
@@ -197,17 +209,18 @@ export default function LessonPlayerPage() {
     });
   };
 
-  // Sync active unit on load or URL param change
+  // Sync active unit on load or URL param change (supports unitId & lessonId)
   useEffect(() => {
-    if (queryLessonId && allUnits.some((u) => u.id === queryLessonId)) {
-      setActiveUnitId(queryLessonId);
+    const targetUnitId = searchParams.get('unitId') || searchParams.get('lessonId');
+    if (targetUnitId && allUnits.some((u) => u.id === targetUnitId)) {
+      setActiveUnitId(targetUnitId);
     } else if (allUnits.length > 0 && !activeUnitId) {
       const firstIncomplete = allUnits.find(
         (u) => u.type === 'lesson' && !enrolment?.completed_mandatory_lessons?.includes(u.id)
       );
       setActiveUnitId(firstIncomplete ? firstIncomplete.id : allUnits[0].id);
     }
-  }, [queryLessonId, allUnits.length]);
+  }, [searchParams, allUnits.length]);
 
   // Load progress and expand current module
   useEffect(() => {
@@ -236,9 +249,12 @@ export default function LessonPlayerPage() {
 
   // Check 24-Hour Lockdown on active unit change
   const checkLockoutStatus = () => {
-    if (!enrolmentId || !activeUnit) return;
+    if (!enrolmentId) return;
     try {
-      const lockoutInfo = mockEngine.getLockoutRemaining(enrolmentId, activeUnit.id);
+      const targetQuizId = activeUnit?.type === 'quiz' || activeUnit?.type === 'final_exam'
+        ? (activeQuiz?.id || activeUnit?.id)
+        : activeUnit?.id;
+      const lockoutInfo = mockEngine.isExamLocked(enrolmentId, targetQuizId);
       if (lockoutInfo && lockoutInfo.isLocked) {
         setIsLockoutActive(true);
         setLockoutCountdown({
@@ -250,13 +266,32 @@ export default function LessonPlayerPage() {
         setIsLockoutActive(false);
       }
     } catch (e) {
-      setIsLockoutActive(false);
+      console.error('Lockout status check failed:', e);
+      try {
+        const enr = mockEngine.getEnrolment(enrolmentId);
+        if (enr?.exam_lockout_until && new Date(enr.exam_lockout_until) > new Date()) {
+          setIsLockoutActive(true);
+        } else {
+          setIsLockoutActive(false);
+        }
+      } catch {
+        setIsLockoutActive(false);
+      }
     }
   };
 
   useEffect(() => {
     checkLockoutStatus();
-  }, [enrolmentId, activeUnit?.id]);
+  }, [enrolmentId, activeUnitId, activeUnit?.id, activeQuiz?.id]);
+
+  // Periodic refresh of lockout countdown while locked
+  useEffect(() => {
+    if (!isLockoutActive) return;
+    const interval = setInterval(() => {
+      checkLockoutStatus();
+    }, 15000);
+    return () => clearInterval(interval);
+  }, [isLockoutActive, enrolmentId, activeUnitId]);
 
   // Reset selected video index when lesson changes
   useEffect(() => {
@@ -416,6 +451,20 @@ export default function LessonPlayerPage() {
     } else {
       setSearchParams({ unitId: unit.id });
     }
+
+    // Synchronously check if the target unit is locked
+    const targetQuizId = unit.quiz?.id || unit.id;
+    const lockCheck = mockEngine.isExamLocked(enrolmentId, targetQuizId);
+    if (lockCheck.isLocked) {
+      setIsLockoutActive(true);
+      setLockoutCountdown({
+        hours: lockCheck.remainingHours || 0,
+        minutes: lockCheck.remainingMinutes || 0,
+        seconds: 0
+      });
+    } else {
+      setIsLockoutActive(false);
+    }
   };
 
   const handlePrevUnit = () => {
@@ -549,6 +598,10 @@ export default function LessonPlayerPage() {
 
   const handleSubmitQuiz = (e) => {
     e?.preventDefault();
+    if (isLockoutActive || mockEngine.isExamLocked(enrolmentId, activeQuiz?.id).isLocked) {
+      alert('Examination Locked: A 24-hour proctoring security ban is actively in effect. Submissions are rejected.');
+      return;
+    }
     if (!activeQuiz || !activeQuiz.questions?.length) return;
 
     let correctCount = 0;
@@ -822,54 +875,65 @@ export default function LessonPlayerPage() {
                         })}
 
                         {/* 2. Module Knowledge Check Unit (20 Questions) */}
-                        {mod.quiz && (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleSelectUnit({
-                                id: mod.quiz.id,
-                                type: 'quiz',
-                                quiz: mod.quiz,
-                                moduleIndex: modIdx,
-                                moduleId: mod.id,
-                                moduleTitle: mod.title
-                              })
-                            }
-                            className={`w-full text-left p-2.5 rounded-lg text-xs flex items-center justify-between transition-all mt-1 cursor-pointer border ${
-                              activeUnit?.id === mod.quiz.id
-                                ? 'bg-[#65F58A] text-[#071018] font-bold border-[#65F58A] shadow-sm'
-                                : isModQuizPassed
-                                ? 'bg-[#092218]/90 text-[#65F58A] border-[#65F58A]/30 hover:bg-[#0c2a1e]'
-                                : 'bg-[#092218]/40 text-amber-300 border-amber-500/30 hover:bg-[#092218]'
-                            }`}
-                          >
-                            <div className="flex items-center space-x-2 truncate pr-2">
-                              <Award
-                                className={`w-3.5 h-3.5 flex-shrink-0 ${
-                                  activeUnit?.id === mod.quiz.id
-                                    ? 'text-[#071018]'
-                                    : isModQuizPassed
-                                    ? 'text-[#65F58A]'
-                                    : 'text-amber-400'
-                                }`}
-                              />
-                              <span className="truncate font-semibold">
-                                Knowledge Check (20 Qs)
-                              </span>
-                            </div>
-                            <span
-                              className={`text-[9px] font-mono px-1.5 py-0.5 rounded ${
+                        {mod.quiz && (() => {
+                          const isQuizLocked = mockEngine.isExamLocked(enrolmentId, mod.quiz.id).isLocked;
+                          return (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleSelectUnit({
+                                  id: mod.quiz.id,
+                                  type: 'quiz',
+                                  quiz: mod.quiz,
+                                  moduleIndex: modIdx,
+                                  moduleId: mod.id,
+                                  moduleTitle: mod.title
+                                })
+                              }
+                              className={`w-full text-left p-2.5 rounded-lg text-xs flex items-center justify-between transition-all mt-1 cursor-pointer border ${
                                 activeUnit?.id === mod.quiz.id
-                                  ? 'bg-[#071018] text-[#65F58A]'
+                                  ? 'bg-[#65F58A] text-[#071018] font-bold border-[#65F58A] shadow-sm'
+                                  : isQuizLocked
+                                  ? 'bg-rose-950/70 text-rose-300 border-rose-500/50 hover:bg-rose-900/60'
                                   : isModQuizPassed
-                                  ? 'bg-[#65F58A]/15 text-[#65F58A]'
-                                  : 'bg-amber-500/15 text-amber-300'
+                                  ? 'bg-[#092218]/90 text-[#65F58A] border-[#65F58A]/30 hover:bg-[#0c2a1e]'
+                                  : 'bg-[#092218]/40 text-amber-300 border-amber-500/30 hover:bg-[#092218]'
                               }`}
                             >
-                              {isModQuizPassed ? 'PASSED' : 'GRADED'}
-                            </span>
-                          </button>
-                        )}
+                              <div className="flex items-center space-x-2 truncate pr-2">
+                                {isQuizLocked ? (
+                                  <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0 text-rose-400" />
+                                ) : (
+                                  <Award
+                                    className={`w-3.5 h-3.5 flex-shrink-0 ${
+                                      activeUnit?.id === mod.quiz.id
+                                        ? 'text-[#071018]'
+                                        : isModQuizPassed
+                                        ? 'text-[#65F58A]'
+                                        : 'text-amber-400'
+                                    }`}
+                                  />
+                                )}
+                                <span className="truncate font-semibold">
+                                  Knowledge Check (20 Qs)
+                                </span>
+                              </div>
+                              <span
+                                className={`text-[9px] font-mono px-1.5 py-0.5 rounded ${
+                                  activeUnit?.id === mod.quiz.id
+                                    ? 'bg-[#071018] text-[#65F58A]'
+                                    : isQuizLocked
+                                    ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold'
+                                    : isModQuizPassed
+                                    ? 'bg-[#65F58A]/15 text-[#65F58A]'
+                                    : 'bg-amber-500/15 text-amber-300'
+                                }`}
+                              >
+                                {isQuizLocked ? '24H LOCK' : isModQuizPassed ? 'PASSED' : 'GRADED'}
+                              </span>
+                            </button>
+                          );
+                        })()}
                       </div>
                     )}
                   </div>
@@ -877,44 +941,63 @@ export default function LessonPlayerPage() {
               })}
 
               {/* 3. Final Certification Examination Milestone */}
-              {course.final_assessment && (
-                <div className="pt-3 border-t border-[#65F58A]/20">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (!isFinalExamUnlocked) {
-                        alert('Final Assessment Locked: You must complete all prior course modules and score >= 80% on each knowledge check.');
-                        return;
-                      }
-                      handleSelectUnit({
-                        id: course.final_assessment.id,
-                        type: 'final_exam',
-                        quiz: course.final_assessment,
-                        moduleIndex: course.modules.length,
-                        moduleId: 'mod_final',
-                        moduleTitle: 'Final Comprehensive Certification Assessment'
-                      });
-                    }}
-                    className={`w-full text-left p-3 rounded-xl text-xs flex items-center justify-between transition-all cursor-pointer border ${
-                      activeUnit?.id === course.final_assessment.id
-                        ? 'bg-[#65F58A] text-[#071018] font-bold border-[#65F58A] shadow-md'
-                        : isFinalExamUnlocked
-                        ? 'bg-[#092218] text-[#65F58A] border-[#65F58A]/40 hover:bg-[#0c2a1e]'
-                        : 'bg-[#040e0a] text-gray-500 border-gray-800 cursor-not-allowed opacity-60'
-                    }`}
-                  >
-                    <div className="flex items-center space-x-2 truncate pr-2">
-                      <Shield className="w-4 h-4 flex-shrink-0" />
-                      <span className="truncate font-bold">
-                        Final Certification Exam (50 MCQs)
+              {course.final_assessment && (() => {
+                const isFinalLocked = mockEngine.isExamLocked(enrolmentId, course.final_assessment.id).isLocked;
+                return (
+                  <div className="pt-3 border-t border-[#65F58A]/20">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!isFinalExamUnlocked) {
+                          alert('Final Assessment Locked: You must complete all prior course modules and score >= 80% on each knowledge check.');
+                          return;
+                        }
+                        handleSelectUnit({
+                          id: course.final_assessment.id,
+                          type: 'final_exam',
+                          quiz: course.final_assessment,
+                          moduleIndex: course.modules.length,
+                          moduleId: 'mod_final',
+                          moduleTitle: 'Final Comprehensive Certification Assessment'
+                        });
+                      }}
+                      className={`w-full text-left p-3 rounded-xl text-xs flex items-center justify-between transition-all cursor-pointer border ${
+                        activeUnit?.id === course.final_assessment.id
+                          ? 'bg-[#65F58A] text-[#071018] font-bold border-[#65F58A] shadow-md'
+                          : isFinalLocked
+                          ? 'bg-rose-950/70 text-rose-300 border-rose-500/50 hover:bg-rose-900/60'
+                          : isFinalExamUnlocked
+                          ? 'bg-[#092218] text-[#65F58A] border-[#65F58A]/40 hover:bg-[#0c2a1e]'
+                          : 'bg-[#040e0a] text-gray-500 border-gray-800 cursor-not-allowed opacity-60'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-2 truncate pr-2">
+                        {isFinalLocked ? (
+                          <AlertTriangle className="w-4 h-4 flex-shrink-0 text-rose-400" />
+                        ) : (
+                          <Shield className="w-4 h-4 flex-shrink-0" />
+                        )}
+                        <span className="truncate font-bold">
+                          Final Certification Exam (50 MCQs)
+                        </span>
+                      </div>
+                      <span
+                        className={`text-[9px] font-mono px-2 py-0.5 rounded border ${
+                          activeUnit?.id === course.final_assessment.id
+                            ? 'bg-[#071018] text-[#65F58A] border-[#071018]'
+                            : isFinalLocked
+                            ? 'bg-rose-500/20 text-rose-300 border-rose-500/40 font-bold'
+                            : isFinalExamUnlocked
+                            ? 'bg-[#65F58A]/15 text-[#65F58A] border-[#65F58A]/30'
+                            : 'border-white/10 text-gray-400'
+                        }`}
+                      >
+                        {isFinalLocked ? '24H LOCK' : isFinalExamUnlocked ? 'READY' : 'LOCKED'}
                       </span>
-                    </div>
-                    <span className="text-[9px] font-mono px-2 py-0.5 rounded border border-current">
-                      {isFinalExamUnlocked ? 'AVAILABLE' : 'LOCKED'}
-                    </span>
-                  </button>
-                </div>
-              )}
+                    </button>
+                  </div>
+                );
+              })()}
             </div>
           </aside>
         )}
@@ -1465,6 +1548,17 @@ export default function LessonPlayerPage() {
                         <button
                           type="button"
                           onClick={() => {
+                            const lockCheck = mockEngine.isExamLocked(enrolmentId, activeQuiz?.id);
+                            if (lockCheck.isLocked) {
+                              setIsLockoutActive(true);
+                              setLockoutCountdown({
+                                hours: lockCheck.remainingHours || 0,
+                                minutes: lockCheck.remainingMinutes || 0,
+                                seconds: 0
+                              });
+                              alert('Retake Locked: A 24-hour proctoring cooldown is actively enforcing lockdown on this evaluation.');
+                              return;
+                            }
                             setQuizSubmitted(false);
                             setQuizAnswers({});
                             setQuizResult(null);
