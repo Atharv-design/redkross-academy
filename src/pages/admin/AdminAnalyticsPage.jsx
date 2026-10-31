@@ -240,18 +240,30 @@ export default function AdminAnalyticsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
           {/* Left: Interactive Theme Donut Chart */}
           <div className="lg:col-span-5 flex flex-col items-center justify-center p-2 rounded-xl bg-[#061510]/50 border border-[#65F58A]/15">
-            <RedKrossDonutChart
-              data={analytics.progressionData}
-              height={260}
-              innerRadius={58}
-              outerRadius={92}
-              centerMetric={analytics.completionRate}
-              centerLabel="Certified"
-              showLegend={false}
-            />
-            <span className="text-[11px] font-mono text-[#72A88E] mt-1 text-center">
-              Hover slices to inspect student headcounts & drop-off deltas
-            </span>
+            {analytics.progressionData && analytics.progressionData.length > 0 ? (
+              <>
+                <RedKrossDonutChart
+                  data={analytics.progressionData}
+                  height={260}
+                  innerRadius={58}
+                  outerRadius={92}
+                  centerMetric={analytics.completionRate}
+                  centerLabel="Certified"
+                  showLegend={false}
+                />
+                <span className="text-[11px] font-mono text-[#72A88E] mt-1 text-center">
+                  Hover slices to inspect student headcounts & drop-off deltas
+                </span>
+              </>
+            ) : (
+              <div className="h-[260px] flex flex-col items-center justify-center text-center p-6 space-y-2">
+                <Layers className="w-8 h-8 text-[#65F58A]/40" />
+                <span className="text-xs font-mono text-white font-bold">No Active Learner Progression</span>
+                <span className="text-[11px] font-mono text-[#8BA2B5]">
+                  Live student enrolments will automatically populate progression slices in real-time.
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Right: Detailed Live Milestone Table */}
@@ -316,15 +328,25 @@ export default function AdminAnalyticsPage() {
 
           {/* Donut Chart with Center Metric */}
           <div className="flex flex-col items-center">
-            <RedKrossDonutChart
-              data={analytics.scoreDistributionData}
-              height={230}
-              innerRadius={52}
-              outerRadius={84}
-              centerMetric={analytics.firstAttemptPass}
-              centerLabel="Pass Rate"
-              showLegend={false}
-            />
+            {analytics.scoreDistributionData && analytics.scoreDistributionData.some((b) => b.value > 0) ? (
+              <RedKrossDonutChart
+                data={analytics.scoreDistributionData}
+                height={230}
+                innerRadius={52}
+                outerRadius={84}
+                centerMetric={analytics.firstAttemptPass}
+                centerLabel="Pass Rate"
+                showLegend={false}
+              />
+            ) : (
+              <div className="h-[230px] flex flex-col items-center justify-center text-center p-6 space-y-2">
+                <ShieldCheck className="w-8 h-8 text-[#35E6B5]/40" />
+                <span className="text-xs font-mono text-white font-bold">No Assessment Records Yet</span>
+                <span className="text-[11px] font-mono text-[#8BA2B5]">
+                  Candidate score distributions will appear automatically as evaluations are submitted.
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Score Legend Breakdown */}

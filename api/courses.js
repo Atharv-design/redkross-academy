@@ -23,8 +23,9 @@ export default async function handler(req, res) {
     // Check authorization header for super_admin bypass (e.g. for Admin Course Management)
     const authHeader = req.headers.authorization;
     let isAdmin = false;
+    let tokenUserId = null;
     if (authHeader && authHeader.startsWith('Bearer ')) {
-      let tokenUserId = authHeader.replace('Bearer ', '').trim();
+      tokenUserId = authHeader.replace('Bearer ', '').trim();
       if (tokenUserId.startsWith('{')) {
         try {
           const parsed = JSON.parse(tokenUserId);
@@ -103,7 +104,7 @@ export default async function handler(req, res) {
         return json(res, { error: 'Unauthorized: Super Admin role required' }, 403);
       }
 
-      const { action, public_catalog_enabled } = req.body || {};
+      const { action, public_catalog_enabled, course, id } = req.body || {};
 
       if (action === 'TOGGLE_CATALOG_VISIBILITY') {
         const newValue = Boolean(public_catalog_enabled);
@@ -116,7 +117,93 @@ export default async function handler(req, res) {
         return json(res, { success: true, public_catalog_enabled: newValue });
       }
 
-      return json(res, { error: 'Unsupported action' }, 400);
+      // Course update
+      const targetId = id || course?.id;
+      if (targetId) {
+        const c = course || req.body;
+        await sql`
+          UPDATE courses SET
+            title = COALESCE(${c.title}, title),
+            overview = COALESCE(${c.overview}, overview),
+            category = COALESCE(${c.category}, category),
+            difficulty = COALESCE(${c.difficulty}, difficulty),
+            price = COALESCE(${c.price}, price),
+            cert_price = COALESCE(${c.cert_price}, cert_price),
+            estimated_duration = COALESCE(${c.estimated_duration}, estimated_duration),
+            card_variant = COALESCE(${c.card_variant}, card_variant),
+            what_you_will_learn = COALESCE(${JSON.stringify(c.what_you_will_learn || [])}::jsonb, what_you_will_learn),
+            learning_objectives = COALESCE(${JSON.stringify(c.learning_objectives || [])}::jsonb, learning_objectives),
+            prerequisites = COALESCE(${JSON.stringify(c.prerequisites || [])}::jsonb, prerequisites),
+            updated_at = NOW()
+          WHERE id = ${targetId}
+        `;
+        return json(res, { success: true, courseId: targetId });
+      }
+
+      return json(res, { error: 'Unsupported action or missing target course id' }, 400);
+    }
+
+    // 4. Handle DELETE (Course Deletion by Admin with Cascades)
+    if (req.method === 'DELETE') {
+      if (!isAdmin) {
+        return json(res, { error: 'Unauthorized: Super Admin role required to delete courses' }, 403);
+      }
+
+      const courseId = req.query.id || req.body?.id || req.body?.courseId;
+      if (!courseId) {
+        return json(res, { error: 'Missing course id parameter' }, 400);
+      }
+
+      // Check course existence
+      const target = await sql`SELECT id, title FROM courses WHERE id = ${courseId} LIMIT 1`;
+      if (!target || target.length === 0) {
+        return json(res, { error: 'Course not found' }, 404);
+      }
+
+      const courseTitle = target[0].title;
+
+      try {
+        // Cascade delete all dependent child entities in clean sequence
+        await sql`DELETE FROM quiz_attempts WHERE enrolment_id IN (SELECT id FROM enrolments WHERE course_id = ${courseId})`;
+        await sql`DELETE FROM quiz_retry_windows WHERE enrolment_id IN (SELECT id FROM enrolments WHERE course_id = ${courseId})`;
+        await sql`DELETE FROM lesson_progress WHERE enrolment_id IN (SELECT id FROM enrolments WHERE course_id = ${courseId})`;
+        await sql`DELETE FROM certificate_requests WHERE course_id = ${courseId}`;
+        await sql`DELETE FROM credentials WHERE course_id = ${courseId}`;
+        await sql`DELETE FROM enrolments WHERE course_id = ${courseId}`;
+
+        // Cascade delete questions, options & quizzes
+        await sql`DELETE FROM options WHERE question_id IN (SELECT q.id FROM questions q JOIN quizzes z ON q.quiz_id = z.id WHERE z.course_id = ${courseId} OR z.module_id IN (SELECT id FROM modules WHERE course_id = ${courseId}))`;
+        await sql`DELETE FROM questions WHERE quiz_id IN (SELECT id FROM quizzes WHERE course_id = ${courseId} OR module_id IN (SELECT id FROM modules WHERE course_id = ${courseId}))`;
+        await sql`DELETE FROM quizzes WHERE course_id = ${courseId} OR module_id IN (SELECT id FROM modules WHERE course_id = ${courseId})`;
+
+        // Delete assets, lessons & modules
+        await sql`DELETE FROM course_video_assets WHERE course_id = ${courseId}`;
+        await sql`DELETE FROM lessons WHERE module_id IN (SELECT id FROM modules WHERE course_id = ${courseId})`;
+        await sql`DELETE FROM modules WHERE course_id = ${courseId}`;
+
+        // Finally delete the course
+        await sql`DELETE FROM courses WHERE id = ${courseId}`;
+
+        // Audit log
+        const auditId = `aud_${Date.now()}`;
+        await sql`
+          INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
+          VALUES (
+            ${auditId}, 
+            ${tokenUserId || 'admin'}, 
+            'COURSE_DELETED', 
+            'courses', 
+            ${courseId}, 
+            ${`Permanently deleted course "${courseTitle}" (${courseId}) and all associated modules, lessons and enrolments`}, 
+            NOW()
+          )
+        `;
+      } catch (cascadeErr) {
+        console.error('Cascading course deletion error:', cascadeErr);
+        return json(res, { error: 'Deletion cascade failed', details: cascadeErr.message }, 500);
+      }
+
+      return json(res, { success: true, message: `Course "${courseTitle}" deleted successfully`, courseId });
     }
 
     // 4. Handle GET (Course by ID/Slug or Course List)

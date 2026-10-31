@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { mockEngine } from '../../services/db/mockEngine';
 import { apiClient } from '../../services/apiClient';
+import { socketClient } from '../../services/socket/socketClient';
 import { COURSE_CARD_STYLES, getCardStyleByIndex } from '../../utils/courseCardStyles';
 import { saveVideoBlob, resolveVideoUrl, savePdfBlob, resolvePdfUrl } from '../../services/db/videoStorage';
 
@@ -461,7 +462,7 @@ export default function AdminCoursesPage() {
   };
 
   // Save changes to database
-  const persistCourses = (updatedCourses, auditMsg = 'Admin updated courses') => {
+  const persistCourses = async (updatedCourses, auditMsg = 'Admin updated courses') => {
     try {
       const db = mockEngine.getDb();
       db.courses = updatedCourses;
@@ -472,7 +473,14 @@ export default function AdminCoursesPage() {
       setCourses(updatedCourses);
       if (selectedCourse) {
         const refreshed = updatedCourses.find((c) => c.id === selectedCourse.id);
-        if (refreshed) setSelectedCourse(refreshed);
+        if (refreshed) {
+          setSelectedCourse(refreshed);
+          try {
+            await apiClient.updateCourse(refreshed.id, refreshed);
+          } catch (syncErr) {
+            console.warn('API updateCourse sync warning:', syncErr.message);
+          }
+        }
       }
       safeLogAction({
         action: 'COURSE_MUTATION',
@@ -480,21 +488,32 @@ export default function AdminCoursesPage() {
         details: auditMsg,
         severity: 'INFO'
       });
+      if (socketClient && typeof socketClient.emit === 'function') {
+        socketClient.emit('course:mutation', { type: 'UPDATE', courses: updatedCourses });
+      }
     } catch (e) {
       console.error('Failed to persist course changes:', e);
     }
   };
 
-  // Direct Course Deletion
-  const handleDeleteCourse = (courseId) => {
+  // Direct Course Deletion with Permanent Database Purge & Live Student Sync
+  const handleDeleteCourse = async (courseId) => {
     const target = courses.find((c) => c.id === courseId);
     const courseTitle = target?.title || 'this course';
     if (!confirm(`Are you sure you want to permanently delete course "${courseTitle}"? This will archive all student enrollments and purge all modules and lessons.`)) {
       return;
     }
 
-    const success = mockEngine.deleteCourse(courseId, 'usr_admin');
-    if (success) {
+    // 1. Delete from PostgreSQL API
+    try {
+      await apiClient.deleteCourse(courseId);
+    } catch (apiErr) {
+      console.warn('Backend course deletion warning:', apiErr.message);
+    }
+
+    // 2. Delete from local state engine
+    const res = mockEngine.deleteCourse(courseId, 'usr_admin');
+    if (res && res.success !== false) {
       const remaining = courses.filter((c) => c.id !== courseId);
       setCourses(remaining);
       if (selectedCourse?.id === courseId) {
@@ -506,6 +525,11 @@ export default function AdminCoursesPage() {
           setSelectedCourse(null);
           setIsCreatingNew(true);
         }
+      }
+
+      // 3. Broadcast deletion event to all active student browsers
+      if (socketClient && typeof socketClient.emit === 'function') {
+        socketClient.emit('course:mutation', { type: 'DELETE', courseId });
       }
     } else {
       alert('Failed to delete course.');

@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { Search, BookOpen, Clock, Award, Star, Filter, ArrowRight, Coins, Sparkles, Shield, Lock, Terminal } from 'lucide-react';
 import { apiClient } from '../../services/apiClient';
 import { useAuth } from '../../services/auth/authContext';
+import { socketClient } from '../../services/socket/socketClient';
+import { mockEngine } from '../../services/db/mockEngine';
 import CourseCardVariant from '../../components/cards/CourseCardVariant';
 
 /**
@@ -24,16 +26,28 @@ export default function CourseCatalogPage() {
   const [selectedPricing, setSelectedPricing] = useState('All');
 
   useEffect(() => {
-    // Fetch courses with authorization header
-    apiClient.getCourses(isAdmin).then((data) => {
-      setCourses(data.courses || []);
-      setCatalogEnabled(Boolean(data.public_catalog_enabled) || isAdmin);
-      setLoading(false);
-    }).catch(() => {
-      setCourses([]);
-      setCatalogEnabled(false);
-      setLoading(false);
-    });
+    const fetchCatalog = () => {
+      apiClient.getCourses(isAdmin).then((data) => {
+        setCourses(data.courses || []);
+        setCatalogEnabled(Boolean(data.public_catalog_enabled) || isAdmin);
+        setLoading(false);
+      }).catch(() => {
+        setCourses([]);
+        setCatalogEnabled(false);
+        setLoading(false);
+      });
+    };
+
+    fetchCatalog();
+
+    // Real-Time Event Sync: Admin course deletion or creation reflects immediately
+    const unsubSocket = socketClient.on('course:mutation', fetchCatalog);
+    const unsubMock = mockEngine.subscribe(fetchCatalog);
+
+    return () => {
+      if (typeof unsubSocket === 'function') unsubSocket();
+      if (typeof unsubMock === 'function') unsubMock();
+    };
   }, [isAdmin]);
 
   const filteredCourses = useMemo(() => {

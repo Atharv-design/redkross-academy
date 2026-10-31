@@ -12,11 +12,14 @@ import {
   Download,
   ExternalLink,
   ChevronLeft,
-  XCircle
+  XCircle,
+  Loader2
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { mockEngine } from '../../services/db/mockEngine';
 import { useAuth } from '../../services/auth/authContext';
+import RedKrossOfficialCertificate from '../../components/certificate/RedKrossOfficialCertificate';
+import { downloadCertificatePdf } from '../../utils/pdfGenerator';
 
 export default function FinalCertificationPage() {
   const { enrolmentId } = useParams();
@@ -35,6 +38,21 @@ export default function FinalCertificationPage() {
   const [issuedCredential, setIssuedCredential] = useState(null);
   const [focusStrikeModal, setFocusStrikeModal] = useState(null);
   const [activeAttemptId, setActiveAttemptId] = useState(null);
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
+
+  const handleDownloadPdf = async () => {
+    if (!issuedCredential) return;
+    try {
+      setDownloadingPdf(true);
+      const filename = `RedKross_Certificate_${issuedCredential.verification_id || 'RK'}.pdf`;
+      await downloadCertificatePdf('student-final-certificate-canvas', filename);
+    } catch (err) {
+      console.error('PDF export error:', err);
+      alert('Unable to export certificate PDF. Please retry.');
+    } finally {
+      setDownloadingPdf(false);
+    }
+  };
 
   useEffect(() => {
     if (enrolmentId) {
@@ -184,44 +202,20 @@ export default function FinalCertificationPage() {
               </p>
             </div>
 
-            {/* Certificate Canvas Box */}
-            <div className="p-8 rounded-xl bg-[#101923] border-2 border-red-500/40 text-center space-y-6 relative overflow-hidden shadow-2xl">
-              <div className="flex items-center justify-between border-b border-surface-border pb-4">
-                <div className="flex items-center space-x-2">
-                  <Shield className="w-6 h-6 text-redkross-500" />
-                  <span className="font-bold text-white font-mono text-sm tracking-wider">REDKROSS RESEARCH FOUNDATION</span>
-                </div>
-                <span className="text-xs font-mono text-emerald-400 font-bold">VERIFIED DIPLOMA</span>
-              </div>
-
-              <div className="space-y-2 py-4">
-                <div className="text-xs font-mono text-slate-400 uppercase tracking-widest">This certifies that</div>
-                <div className="text-3xl font-extrabold text-white tracking-wide">{issuedCredential.student_name}</div>
-                <div className="text-xs text-slate-400 max-w-md mx-auto pt-2">
-                  has demonstrated rigorous defensive proficiency in 24/7 SOC log analysis, incident triage, and forensic order of volatility and is awarded the title of
-                </div>
-                <div className="text-2xl font-bold text-red-400 font-mono tracking-wider pt-2">
-                  {issuedCredential.credential_title}
-                </div>
-              </div>
-
-              <div className="pt-6 border-t border-surface-border flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-slate-400">
-                <div className="text-left space-y-1">
-                  <div>Registry ID: <span className="text-white font-bold">{issuedCredential.verification_id}</span></div>
-                  <div>Issue Date: {issuedCredential.issue_date} • Grade: {issuedCredential.grade_percentage}%</div>
-                </div>
-
-                <div className="bg-white p-2 rounded-lg">
-                  <QRCodeSVG value={issuedCredential.verification_url} size={64} />
-                </div>
-              </div>
+            {/* Authentic Institutional Certificate Display Canvas */}
+            <div className="py-2 flex justify-center">
+              <RedKrossOfficialCertificate
+                credential={issuedCredential}
+                containerId="student-final-certificate-canvas"
+                className="max-w-[760px] shadow-[0_0_40px_rgba(101,245,138,0.15)] rounded-2xl"
+              />
             </div>
 
             {/* Credential Action CTAs */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 border-t border-surface-border">
               <Link
                 to={`/verify/${issuedCredential.verification_id}`}
-                className="w-full sm:w-auto px-6 py-3 rounded-lg bg-surface-100 hover:bg-surface-200 border border-surface-border text-white text-xs font-semibold flex items-center justify-center space-x-2"
+                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-surface-100 hover:bg-surface-200 border border-surface-border text-white text-xs font-semibold flex items-center justify-center space-x-2 transition-all"
               >
                 <Award className="w-4 h-4 text-cyber-emerald" />
                 <span>Open Public Verification Page</span>
@@ -229,11 +223,22 @@ export default function FinalCertificationPage() {
               </Link>
 
               <button
-                onClick={() => window.print()}
-                className="w-full sm:w-auto px-6 py-3 rounded-lg bg-redkross-600 hover:bg-redkross-700 text-white text-xs font-semibold flex items-center justify-center space-x-2 shadow-lg"
+                type="button"
+                disabled={downloadingPdf}
+                onClick={handleDownloadPdf}
+                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-bold text-xs tracking-wider flex items-center justify-center space-x-2 shadow-[0_0_20px_rgba(101,245,138,0.4)] transition-all cursor-pointer disabled:opacity-60"
               >
-                <Download className="w-4 h-4" />
-                <span>Print / Download Verified PDF</span>
+                {downloadingPdf ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin text-[#071018]" />
+                    <span>Generating Official PDF...</span>
+                  </>
+                ) : (
+                  <>
+                    <Download className="w-4 h-4" />
+                    <span>Download Official PDF Certificate</span>
+                  </>
+                )}
               </button>
             </div>
           </div>

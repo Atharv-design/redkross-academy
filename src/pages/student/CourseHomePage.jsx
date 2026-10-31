@@ -59,12 +59,11 @@ export default function CourseHomePage() {
     }
     setCourse(c);
 
-    const userEnrolments = mockEngine.getEnrolmentsForUser(currentUser.id);
-    const enr = userEnrolments.find((e) => e.course_id === c.id);
+    let userEnrolments = mockEngine.getEnrolmentsForUser(currentUser.id);
+    let enr = userEnrolments.find((e) => e.course_id === c.id);
     if (!enr) {
-      // If user isn't enrolled yet, navigate to course about page
-      navigate(`/courses/${c.slug || c.id}`);
-      return;
+      // Auto-register enrolment so newly enrolled students are never bounced back
+      enr = mockEngine.enrolStudent(currentUser.id, c.id);
     }
     setEnrolment(enr);
 

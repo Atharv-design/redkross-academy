@@ -98,8 +98,8 @@ const mockEngineContent = fs.readFileSync(mockEnginePath, 'utf-8');
 
 assert(mockEngineContent.includes('getLearningAnalytics(dateRange = \'30D\')'),
   'mockEngine.js implements official getLearningAnalytics method');
-assert(mockEngineContent.includes('ensureAnalyticsCohort(db)'),
-  'mockEngine.js implements ensureAnalyticsCohort for rich institutional telemetry');
+assert(!mockEngineContent.includes('ensureAnalyticsCohort'),
+  'mockEngine.js completely purges fake cohort generation for 100% real database telemetry');
 
 // Dynamically load mockEngine in test environment
 import('../src/services/db/mockEngine.js').then(({ mockEngine }) => {

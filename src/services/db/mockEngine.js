@@ -204,8 +204,26 @@ class MockEngine {
       parsed.quiz_retry_windows = parsed.quiz_retry_windows || {};
       parsed.banned_emails = parsed.banned_emails || [];
 
-      // Ensure all course lessons have a playable video_url (repair missing, BigBuckBunny 403, or expired blob URLs)
+      // 100% REAL DATA ENFORCEMENT: Purge any legacy fake cohorts / fake violation events
       let modified = false;
+      if (parsed.enrolments && parsed.enrolments.some((e) => e.id?.startsWith('enr_cohort_') || e.user_id?.startsWith('usr_cohort_'))) {
+        parsed.enrolments = parsed.enrolments.filter((e) => !e.id?.startsWith('enr_cohort_') && !e.user_id?.startsWith('usr_cohort_'));
+        modified = true;
+      }
+      if (parsed.users && parsed.users.some((u) => u.id?.startsWith('usr_cohort_'))) {
+        parsed.users = parsed.users.filter((u) => !u.id?.startsWith('usr_cohort_'));
+        modified = true;
+      }
+      if (parsed.exam_violation_events && parsed.exam_violation_events.some((v) => v.id?.startsWith('viol_seed_'))) {
+        parsed.exam_violation_events = parsed.exam_violation_events.filter((v) => !v.id?.startsWith('viol_seed_'));
+        modified = true;
+      }
+      if (parsed.credentials && parsed.credentials.some((c) => c.id?.startsWith('RK-CERT-1'))) {
+        parsed.credentials = parsed.credentials.filter((c) => !c.id?.startsWith('RK-CERT-1'));
+        modified = true;
+      }
+
+      // Ensure all course lessons have a playable video_url (repair missing, BigBuckBunny 403, or expired blob URLs)
       if (parsed.courses) {
         for (const course of parsed.courses) {
           if (course.modules) {
@@ -2714,161 +2732,10 @@ class MockEngine {
   // ==========================================
   // REAL-TIME LEARNING ANALYTICS & TELEMETRY AGGREGATION
   // ==========================================
-  ensureAnalyticsCohort(db) {
-    if (!db.enrolments) db.enrolments = [];
-    if (!db.credentials) db.credentials = [];
-    if (!db.exam_violation_events) db.exam_violation_events = [];
 
-    // If database already contains an active cohort, do not duplicate
-    if (db.enrolments.length >= 15) return;
-
-    const courses = (db.courses && db.courses.length > 0)
-      ? db.courses
-      : [{ id: 'crs_soc_fundamentals', title: 'SOC Fundamentals & Incident Response' }];
-
-    const sampleNames = [
-      { name: 'Sarah Chen, CISSP', email: 'sarah.chen@redkross.org.in', score: 96 },
-      { name: 'Atharv Gupta', email: 'atharvgupta790@gmail.com', score: 92 },
-      { name: 'Elena Rostova', email: 'elena.rostova@cyber.ops', score: 94 },
-      { name: 'Marcus Vance', email: 'marcus.v@defsec.io', score: 90 },
-      { name: 'Liam O Connor', email: 'liam.oc@soc-ops.net', score: 88 },
-      { name: 'Aisha Al-Mansoor', email: 'aisha.m@redkross.org.in', score: 95 },
-      { name: 'Chen Wei', email: 'chen.wei@security.lab', score: 86 },
-      { name: 'Samantha Reed', email: 's.reed@threatintel.org', score: 89 },
-      { name: 'David K. Miller', email: 'd.miller@forensics.gov', score: 82 },
-      { name: 'Zackariah Cole', email: 'zack.cole@defense.net', score: 85 },
-      { name: 'Fatima Zahra', email: 'fatima.z@pcap.triage', score: 91 },
-      { name: 'Hiroshi Tanaka', email: 'h.tanaka@tokyo.sec', score: 87 },
-      { name: 'Dmitri Ivanov', email: 'd.ivanov@kernel.def', score: 84 },
-      { name: 'Kavita Patel', email: 'kavita.p@redkross.org.in', score: 88 },
-      { name: 'Lucas Hernandez', email: 'l.hernandez@siem.ops', score: 78 },
-      { name: 'Jordan Blake', email: 'jordan.b@incident.response', score: 76 },
-      { name: 'Sophia Rossi', email: 's.rossi@blue-team.eu', score: 79 },
-      { name: 'Emily Watson', email: 'e.watson@mitre.eval', score: 74 },
-      { name: 'Nadia Petrova', email: 'nadia.p@remediation.lab', score: 68 },
-      { name: 'Tariq Aziz', email: 'tariq.a@defense.academy', score: 65 }
-    ];
-
-    // Seed realistic student enrolments across courses with varied progression
-    const stages = ['CERTIFIED', 'FINAL_EXAM', 'MIDTERM', 'MODULE_2', 'MODULE_1', 'ENROLLED'];
-    const now = Date.now();
-
-    for (let i = 0; i < 40; i++) {
-      const student = sampleNames[i % sampleNames.length];
-      const targetCourse = courses[i % courses.length];
-      const stage = stages[i % stages.length];
-      const cadetId = `RK-${Math.floor(10000 + (i * 382) % 90000)}`;
-      const enrolmentId = `enr_cohort_${i + 1}_${targetCourse.id}`;
-      const userId = `usr_cohort_${i + 1}`;
-
-      // Calculate days in past
-      const daysAgo = (i * 3) % 45 + 1;
-      const enrolledAt = new Date(now - daysAgo * 24 * 60 * 60 * 1000).toISOString();
-
-      // Register real user profile in db.users if not present
-      if (!db.users) db.users = [];
-      if (!db.users.some((u) => u.id === userId || (u.email && u.email === student.email))) {
-        db.users.push({
-          id: userId,
-          email: student.email,
-          name: student.name,
-          full_name: student.name,
-          cadet_id: cadetId,
-          role: 'student',
-          status: 'ACTIVE',
-          token_balance: 100 + ((i * 25) % 350),
-          created_at: enrolledAt
-        });
-      }
-
-      let isCertified = stage === 'CERTIFIED';
-      let credId = null;
-
-      if (isCertified) {
-        credId = `RK-CERT-${Math.floor(100000 + i * 17)}`;
-        const issueDate = new Date(now - Math.max(1, daysAgo - 12) * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-        
-        // Ensure credential exists in credentials array
-        if (!db.credentials.some((c) => c.id === credId)) {
-          db.credentials.push({
-            id: credId,
-            verification_id: credId,
-            cadet_id: cadetId,
-            student_name: student.name,
-            student_email: student.email,
-            course_id: targetCourse.id,
-            course_title: targetCourse.title,
-            credential_title: `RedKross Certified ${targetCourse.title.split(' ')[0]} Operator`,
-            type: 'Professional Certification',
-            issue_date: issueDate,
-            grade_percentage: student.score || 88,
-            status: 'Active',
-            revoked: false,
-            digital_signature: '0x' + Array.from({ length: 40 }, () => Math.floor(Math.random() * 16).toString(16)).join(''),
-            verification_url: `/verify/${credId}`
-          });
-        }
-      }
-
-      // Populate enrolment record
-      db.enrolments.push({
-        id: enrolmentId,
-        user_id: `usr_cohort_${i + 1}`,
-        cadet_id: cadetId,
-        student_name: student.name,
-        student_email: student.email,
-        course_id: targetCourse.id,
-        course_title: targetCourse.title,
-        enrolled_at: enrolledAt,
-        status: isCertified ? 'completed' : 'active',
-        completed_mandatory_lessons: stage === 'ENROLLED' ? [] : ['les_1_1', 'les_1_2', 'les_2_1'],
-        passed_quizzes: (stage === 'MODULE_1') ? ['quiz_mod_1'] : (stage === 'MODULE_2' || stage === 'MIDTERM') ? ['quiz_mod_1', 'quiz_mod_2'] : ['quiz_mod_1', 'quiz_mod_2', 'quiz_mod_3'],
-        passed_assignments: (stage === 'MIDTERM' || stage === 'FINAL_EXAM' || stage === 'CERTIFIED') ? ['asg_mod_1'] : [],
-        final_assessment_passed: isCertified || stage === 'FINAL_EXAM',
-        final_assessment_attempt_id: (stage === 'FINAL_EXAM' || isCertified) ? `att_final_${i}` : null,
-        credential_id: credId
-      });
-    }
-
-    // Seed 4 realistic proctoring violations & revoked credentials for authentic integrity telemetry
-    if (db.exam_violation_events.length === 0) {
-      db.exam_violation_events = [
-        {
-          id: 'viol_seed_1',
-          cadet_id: 'RK-91823',
-          student_name: 'Jordan Blake',
-          violation_type: 'TAB_SWITCH_BLUR',
-          details: 'Focus lost 4 times during timed final assessment.',
-          status: 'confirmed',
-          timestamp: new Date(now - 4 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        {
-          id: 'viol_seed_2',
-          cadet_id: 'RK-49120',
-          student_name: 'Nadia Petrova',
-          violation_type: 'UNAUTHORIZED_SECONDARY_DISPLAY',
-          details: 'WebRTC peripheral check detected secondary active viewport.',
-          status: 'confirmed',
-          timestamp: new Date(now - 7 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        {
-          id: 'viol_seed_3',
-          cadet_id: 'RK-88129',
-          student_name: 'Dmitri Ivanov',
-          violation_type: 'TAB_SWITCH_BLUR',
-          details: 'System clipboard copy event intercepted during live proctoring.',
-          status: 'confirmed',
-          timestamp: new Date(now - 12 * 24 * 60 * 60 * 1000).toISOString()
-        }
-      ];
-    }
-
-    this.saveDb(db, { type: 'ANALYTICS_COHORT_SEEDED', payload: { seededCount: 40 } });
-  }
 
   getLearningAnalytics(dateRange = '30D') {
     const db = this.getDb();
-    this.ensureAnalyticsCohort(db);
 
     const now = new Date();
     let daysCutoff = 30;
@@ -2984,13 +2851,35 @@ class MockEngine {
 
     // Top 4 Real Academic KPIs
     const completionRate = totalEnrolled > 0 ? ((issuedCredentialCount / totalEnrolled) * 100).toFixed(1) : '0.0';
-    const firstAttemptPass = totalExaminees > 0 ? (((highHonors + passed) / totalExaminees) * 100).toFixed(1) : '82.1';
+    const firstAttemptPass = totalExaminees > 0 ? (((highHonors + passed) / totalExaminees) * 100).toFixed(1) : '0.0';
+
+    // Compute actual median time to certification across issued credentials
+    let medianTimeToCert = '0.0 Days';
+    const certDurations = credentials
+      .map((c) => {
+        const enr = enrolments.find(
+          (e) => e.id === c.enrolment_id || (e.user_id === c.user_id && e.course_id === c.course_id)
+        );
+        if (enr && enr.enrolled_at && c.issue_date) {
+          const diffDays = (new Date(c.issue_date).getTime() - new Date(enr.enrolled_at).getTime()) / (1000 * 60 * 60 * 24);
+          return diffDays >= 0 ? diffDays : null;
+        }
+        return null;
+      })
+      .filter((d) => d !== null)
+      .sort((a, b) => a - b);
+
+    if (certDurations.length > 0) {
+      const mid = Math.floor(certDurations.length / 2);
+      const med = certDurations.length % 2 !== 0 ? certDurations[mid] : (certDurations[mid - 1] + certDurations[mid]) / 2;
+      medianTimeToCert = `${med.toFixed(1)} Days`;
+    }
 
     const tokenVelocity = ledger.reduce((acc, tx) => acc + Math.abs(tx.amount || 0), 0) +
       users.reduce((acc, u) => acc + (u.token_balance || 0), 0);
 
     // Real Proctoring Telemetry
-    const totalExams = totalExaminees > 0 ? totalExaminees : 24;
+    const totalExams = totalExaminees;
     const tabSwitchCount = violations.filter((v) => (v.violation_type || '').includes('TAB') || (v.details || '').includes('TAB')).length;
     const revokedCount = credentials.filter((c) => c.revoked).length;
     const cleanSessions = Math.max(0, totalExams - tabSwitchCount - revokedCount);
@@ -3000,7 +2889,7 @@ class MockEngine {
       totalEnrolled,
       issuedCredentialCount,
       completionRate: `${completionRate}%`,
-      medianTimeToCert: '22.4 Days',
+      medianTimeToCert,
       firstAttemptPass: `${firstAttemptPass}%`,
       tokenCirculationVelocity: tokenVelocity.toLocaleString(),
       progressionData,
