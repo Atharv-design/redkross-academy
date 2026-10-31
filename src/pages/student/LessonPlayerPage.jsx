@@ -29,7 +29,9 @@ import {
   HelpCircle,
   AlertTriangle,
   Send,
-  ExternalLink
+  ExternalLink,
+  Image as ImageIcon,
+  Film
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { mockEngine } from '../../services/db/mockEngine';
@@ -109,12 +111,14 @@ export default function LessonPlayerPage() {
   const [savingProgress, setSavingProgress] = useState(false);
   const [activeTab, setActiveTab] = useState('notes'); // 'notes' | 'assignment'
 
-  // Video State
+  // Video & Multi-Media State
   const videoRef = useRef(null);
   const [playbackSpeed, setPlaybackSpeed] = useState(1.0);
   const [watchProgressMap, setWatchProgressMap] = useState({});
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [resolvedVideoUrl, setResolvedVideoUrl] = useState('/assets/sample-lesson.mp4');
+  const [selectedVideoIndex, setSelectedVideoIndex] = useState(0);
+  const [lightboxImage, setLightboxImage] = useState(null);
 
   // PDF Assignment Submission State
   const [assignmentSubmission, setAssignmentSubmission] = useState(null);
@@ -253,11 +257,22 @@ export default function LessonPlayerPage() {
     checkLockoutStatus();
   }, [enrolmentId, activeUnit?.id]);
 
-  // Resolve video URL when active lesson changes
+  // Reset selected video index when lesson changes
+  useEffect(() => {
+    setSelectedVideoIndex(0);
+  }, [activeLesson?.id]);
+
+  // Resolve video URL when active lesson or selected video changes
   useEffect(() => {
     let active = true;
-    if (activeLesson?.video_url) {
-      resolveVideoUrl(activeLesson.video_url).then((url) => {
+    const currentVideos = activeLesson?.videos && activeLesson.videos.length > 0
+      ? activeLesson.videos
+      : (activeLesson?.video_url ? [{ url: activeLesson.video_url, name: 'Lesson Video' }] : []);
+
+    const targetVideo = currentVideos[selectedVideoIndex] || currentVideos[0];
+
+    if (targetVideo?.url) {
+      resolveVideoUrl(targetVideo.url).then((url) => {
         if (active) setResolvedVideoUrl(url);
       });
     } else {
@@ -266,7 +281,7 @@ export default function LessonPlayerPage() {
     return () => {
       active = false;
     };
-  }, [activeLesson?.video_url, activeLesson?.id]);
+  }, [activeLesson?.video_url, activeLesson?.videos, activeLesson?.id, selectedVideoIndex]);
 
   // Reset or load quiz state when switching to quiz/final_exam
   useEffect(() => {
@@ -970,6 +985,31 @@ export default function LessonPlayerPage() {
             {/* -------------------- 1. INSTRUCTIONAL LESSON UNIT -------------------- */}
             {activeUnit?.type === 'lesson' && activeLesson && (
               <div className="space-y-6">
+                {/* Multi-Video Selector (If Lesson has Multiple Video Recordings) */}
+                {activeLesson.videos && activeLesson.videos.length > 1 && (
+                  <div className="flex items-center space-x-2 overflow-x-auto pb-1 custom-scrollbar">
+                    <span className="text-[11px] font-mono text-[#72A88E] flex items-center gap-1 mr-1 flex-shrink-0">
+                      <Film className="w-3.5 h-3.5 text-[#65F58A]" />
+                      <span>RECORDINGS ({activeLesson.videos.length}):</span>
+                    </span>
+                    {activeLesson.videos.map((vid, idx) => (
+                      <button
+                        key={vid.id || idx}
+                        type="button"
+                        onClick={() => setSelectedVideoIndex(idx)}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold flex items-center space-x-1.5 transition-all cursor-pointer flex-shrink-0 ${
+                          selectedVideoIndex === idx
+                            ? 'bg-[#65F58A] text-[#071018] shadow-[0_0_15px_rgba(101,245,138,0.4)]'
+                            : 'bg-[#092218] text-[#72A88E] hover:text-white border border-[#65F58A]/30'
+                        }`}
+                      >
+                        <Play className="w-3 h-3 fill-current" />
+                        <span>{vid.caption || vid.name || `Video ${idx + 1}`}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
                 {/* Video Player */}
                 <div className="rounded-2xl overflow-hidden border border-[#65F58A]/30 bg-black aspect-video relative shadow-2xl">
                   {resolvedVideoUrl.includes('youtube.com') || resolvedVideoUrl.includes('youtu.be') ? (
@@ -989,6 +1029,45 @@ export default function LessonPlayerPage() {
                     />
                   )}
                 </div>
+
+                {/* Multi-Image / Architecture Diagrams Gallery (If Lesson has Images) */}
+                {activeLesson.images && activeLesson.images.length > 0 && (
+                  <div className="p-4 rounded-2xl bg-[#061510] border border-[#35E6B5]/25 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2 text-xs font-mono text-white font-bold">
+                        <ImageIcon className="w-4 h-4 text-[#35E6B5]" />
+                        <span>INSTRUCTIONAL DIAGRAMS & VISUAL EVIDENCE ({activeLesson.images.length})</span>
+                      </div>
+                      <span className="text-[10px] font-mono text-[#72A88E]">Click diagram to inspect in full-resolution</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                      {activeLesson.images.map((img, iIdx) => (
+                        <div
+                          key={img.id || iIdx}
+                          onClick={() => setLightboxImage(img)}
+                          className="group relative rounded-xl overflow-hidden border border-[#35E6B5]/20 bg-black cursor-pointer hover:border-[#35E6B5]/60 transition-all shadow-md"
+                        >
+                          <div className="aspect-video w-full overflow-hidden bg-black/60 flex items-center justify-center">
+                            <img
+                              src={img.url}
+                              alt={img.caption || img.name}
+                              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                            />
+                          </div>
+                          <div className="p-2.5 bg-[#092218]/90 border-t border-[#35E6B5]/15">
+                            <span className="text-xs font-mono font-bold text-white block truncate">
+                              {img.caption || img.name}
+                            </span>
+                            <span className="text-[10px] text-[#72A88E] font-mono">
+                              {img.size || 'Inspection Diagram'}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* Sub-Tabs: Notes vs Assignment */}
                 <div className="flex items-center justify-between border-b border-[#65F58A]/20 pb-2">
@@ -1487,6 +1566,68 @@ export default function LessonPlayerPage() {
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* -------------------- FULL-RESOLUTION DIAGRAM LIGHTBOX MODAL -------------------- */}
+      {lightboxImage && (
+        <div
+          role="dialog"
+          aria-label="High-Resolution Diagram Inspection"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-fadeIn"
+          onClick={() => setLightboxImage(null)}
+        >
+          <div
+            className="relative max-w-5xl max-h-[90vh] flex flex-col bg-[#071018] border border-[#35E6B5]/40 rounded-2xl shadow-2xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#35E6B5]/25 bg-[#061510]">
+              <div className="flex items-center space-x-3 min-w-0">
+                <ImageIcon className="w-5 h-5 text-[#35E6B5] flex-shrink-0" />
+                <div className="truncate">
+                  <h3 className="text-sm font-bold font-mono text-white truncate">
+                    {lightboxImage.caption || lightboxImage.name || 'Inspection Diagram'}
+                  </h3>
+                  <p className="text-[11px] font-mono text-[#72A88E]">
+                    {lightboxImage.name} • {lightboxImage.size || 'Local High-Res Asset'}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setLightboxImage(null)}
+                className="p-2 rounded-xl text-[#72A88E] hover:text-white hover:bg-white/10 transition-colors"
+                title="Close Lightbox (Esc)"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Image Body */}
+            <div className="p-4 overflow-auto max-h-[75vh] flex items-center justify-center bg-black/80">
+              <img
+                src={lightboxImage.url}
+                alt={lightboxImage.caption || lightboxImage.name}
+                className="max-w-full max-h-[70vh] object-contain rounded-lg border border-white/10 shadow-lg"
+              />
+            </div>
+
+            {/* Modal Footer */}
+            <div className="px-5 py-2.5 border-t border-[#35E6B5]/20 bg-[#061510] flex items-center justify-between text-xs font-mono">
+              <span className="text-[#72A88E]">
+                High-Fidelity Instructional Evidence & Diagram
+              </span>
+              <button
+                type="button"
+                onClick={() => setLightboxImage(null)}
+                className="px-4 py-1.5 rounded-lg bg-[#092218] hover:bg-[#0c2a1e] text-[#65F58A] border border-[#65F58A]/30 transition-colors"
+              >
+                Done
+              </button>
+            </div>
           </div>
         </div>
       )}

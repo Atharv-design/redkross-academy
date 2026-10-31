@@ -3,7 +3,7 @@ import {
   BookOpen, Plus, Search, Filter, Edit3, Trash2, Eye, EyeOff,
   ChevronDown, ChevronRight, Video, FileText, CheckCircle2,
   AlertTriangle, Clock, Sparkles, Layers,
-  ShieldCheck, PlayCircle, UploadCloud, Film, HardDrive, Loader2,
+  ShieldCheck, Play, PlayCircle, UploadCloud, Film, HardDrive, Loader2,
   FileCheck, Image as ImageIcon, Link as LinkIcon, Check, Award,
   HelpCircle, Save, ArrowLeft, ArrowRight, X
 } from 'lucide-react';
@@ -344,14 +344,19 @@ export default function AdminCoursesPage() {
   const [lessonForm, setLessonForm] = useState({
     title: '',
     duration: '15 mins',
-    type: 'video',
-    video_url: '/assets/sample-lesson.mp4',
-    video_source_type: 'url',
+    type: 'multimedia',
+    video_url: '',
+    videos: [],
+    images: [],
     content: '',
     pdf_attachment: null
   });
   const [uploadingLessonPdf, setUploadingLessonPdf] = useState(false);
+  const [uploadingLessonVideo, setUploadingLessonVideo] = useState(false);
+  const [uploadingLessonImage, setUploadingLessonImage] = useState(false);
   const lessonPdfRef = useRef(null);
+  const lessonVideoRef = useRef(null);
+  const lessonImageRef = useRef(null);
 
   // Manual Question Builder State (No Forced Auto-Generation)
   const [questionModalOpen, setQuestionModalOpen] = useState(false);
@@ -578,6 +583,97 @@ export default function AdminCoursesPage() {
     } finally {
       setUploadingLessonPdf(false);
     }
+  };
+
+  // Handle Direct System Upload of Lesson Videos (IndexedDB Persistent)
+  const handleLessonVideoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingLessonVideo(true);
+    try {
+      const assetId = `les_vid_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+      const idbUrl = await saveVideoBlob(assetId, file);
+      const sizeFormatted = file.size > 1024 * 1024
+        ? `${(file.size / (1024 * 1024)).toFixed(1)} MB`
+        : `${Math.round(file.size / 1024)} KB`;
+
+      const newVideo = {
+        id: assetId,
+        name: file.name,
+        size: sizeFormatted,
+        url: idbUrl,
+        caption: file.name.replace(/\.[^/.]+$/, '').replace(/[-_]+/g, ' '),
+        uploaded_at: new Date().toISOString()
+      };
+
+      setLessonForm((prev) => ({
+        ...prev,
+        videos: [...(prev.videos || []), newVideo],
+        video_url: prev.video_url || idbUrl
+      }));
+    } catch (err) {
+      console.error('Failed to upload lesson video:', err);
+      alert('Failed to upload video from local device.');
+    } finally {
+      setUploadingLessonVideo(false);
+      if (lessonVideoRef.current) lessonVideoRef.current.value = '';
+    }
+  };
+
+  const handleRemoveLessonVideo = (vIdx) => {
+    setLessonForm((prev) => {
+      const remaining = (prev.videos || []).filter((_, i) => i !== vIdx);
+      return {
+        ...prev,
+        videos: remaining,
+        video_url: remaining.length > 0 ? remaining[0].url : ''
+      };
+    });
+  };
+
+  // Handle Direct System Upload of Lesson Images/Diagrams
+  const handleLessonImageUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      alert('Please select a valid image file (PNG, JPG, WebP, SVG).');
+      return;
+    }
+    setUploadingLessonImage(true);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const sizeFormatted = file.size > 1024 * 1024
+        ? `${(file.size / (1024 * 1024)).toFixed(1)} MB`
+        : `${Math.round(file.size / 1024)} KB`;
+
+      const newImage = {
+        id: `les_img_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+        name: file.name,
+        size: sizeFormatted,
+        url: event.target.result,
+        caption: file.name.replace(/\.[^/.]+$/, '').replace(/[-_]+/g, ' '),
+        uploaded_at: new Date().toISOString()
+      };
+
+      setLessonForm((prev) => ({
+        ...prev,
+        images: [...(prev.images || []), newImage]
+      }));
+      setUploadingLessonImage(false);
+      if (lessonImageRef.current) lessonImageRef.current.value = '';
+    };
+    reader.onerror = () => {
+      alert('Failed to read image file.');
+      setUploadingLessonImage(false);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveLessonImage = (iIdx) => {
+    setLessonForm((prev) => ({
+      ...prev,
+      images: (prev.images || []).filter((_, i) => i !== iIdx)
+    }));
   };
 
   // Handle Launch or Update Course
@@ -1524,9 +1620,10 @@ export default function AdminCoursesPage() {
                                 setLessonForm({
                                   title: '',
                                   duration: '15 mins',
-                                  type: 'video',
-                                  video_url: '/assets/sample-lesson.mp4',
-                                  video_source_type: 'url',
+                                  type: 'multimedia',
+                                  video_url: '',
+                                  videos: [],
+                                  images: [],
                                   content: '',
                                   pdf_attachment: null
                                 });
@@ -1560,9 +1657,21 @@ export default function AdminCoursesPage() {
                               <div className="flex items-center space-x-2.5 truncate pr-2">
                                 <Play className="w-3.5 h-3.5 text-[#65F58A] flex-shrink-0" />
                                 <span className="text-white truncate font-medium">{les.title}</span>
+                                {les.videos?.length > 0 && (
+                                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/30 flex items-center gap-1">
+                                    <Video className="w-2.5 h-2.5" />
+                                    <span>{les.videos.length} Vid{les.videos.length > 1 ? 's' : ''}</span>
+                                  </span>
+                                )}
+                                {les.images?.length > 0 && (
+                                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#35E6B5]/15 text-[#35E6B5] border border-[#35E6B5]/30 flex items-center gap-1">
+                                    <ImageIcon className="w-2.5 h-2.5" />
+                                    <span>{les.images.length} Img{les.images.length > 1 ? 's' : ''}</span>
+                                  </span>
+                                )}
                                 {les.pdf_attachment && (
-                                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#35E6B5]/15 text-[#35E6B5]">
-                                    PDF Attached
+                                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400">
+                                    PDF
                                   </span>
                                 )}
                               </div>
@@ -1574,7 +1683,11 @@ export default function AdminCoursesPage() {
                                   onClick={() => {
                                     setActiveModuleIndex(modIdx);
                                     setEditingLessonIdx(lIdx);
-                                    setLessonForm(les);
+                                    setLessonForm({
+                                      ...les,
+                                      videos: les.videos || (les.video_url ? [{ id: 'vid_1', name: 'Primary Video', url: les.video_url, size: 'Primary' }] : []),
+                                      images: les.images || []
+                                    });
                                     setLessonModalOpen(true);
                                   }}
                                   className="text-[#65F58A] hover:underline cursor-pointer"
@@ -1890,28 +2003,170 @@ export default function AdminCoursesPage() {
                 />
               </div>
 
-              <div className="space-y-1">
-                <label className="text-xs font-mono text-[#72A88E]">Lesson Video Source</label>
-                <select
-                  value={lessonForm.video_source_type}
-                  onChange={(e) => setLessonForm({ ...lessonForm, video_source_type: e.target.value })}
-                  className="w-full bg-[#040e0a] rounded-xl p-3 text-xs text-white border border-[#65F58A]/25 focus:outline-none focus:border-[#65F58A]"
-                >
-                  <option value="url">Video URL (Stream / Embed)</option>
-                  <option value="upload">Upload Local Video File</option>
-                </select>
+            {/* 1. Multiple Local Video Uploads (Direct from Computer) */}
+            <div className="p-3.5 bg-[#040e0a] rounded-xl border border-[#65F58A]/25 space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-mono font-bold text-white flex items-center gap-1.5">
+                    <Video className="w-4 h-4 text-[#65F58A]" />
+                    <span>Lesson Videos (Upload from Device)</span>
+                  </span>
+                  <span className="text-[10px] text-[#72A88E] block">
+                    Attach multiple MP4/WebM videos directly from your system
+                  </span>
+                </div>
+
+                <label className="px-3 py-1.5 bg-[#092218] hover:bg-[#0c2a1e] text-[#65F58A] border border-[#65F58A]/40 rounded-lg text-xs font-mono font-bold cursor-pointer flex items-center space-x-1.5 transition-colors">
+                  {uploadingLessonVideo ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Saving to Cache...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>+ Upload Local Video</span>
+                    </>
+                  )}
+                  <input
+                    ref={lessonVideoRef}
+                    type="file"
+                    accept="video/*"
+                    disabled={uploadingLessonVideo}
+                    onChange={handleLessonVideoUpload}
+                    className="hidden"
+                  />
+                </label>
               </div>
+
+              {/* Uploaded Videos List */}
+              {(!lessonForm.videos || lessonForm.videos.length === 0) ? (
+                <div className="text-[11px] font-mono text-slate-500 italic p-2 border border-dashed border-white/5 rounded-lg text-center">
+                  No videos attached yet. Click "+ Upload Local Video" to add from your system.
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {lessonForm.videos.map((vid, vIdx) => (
+                    <div
+                      key={vid.id || vIdx}
+                      className="p-2.5 rounded-lg bg-[#061510] border border-[#65F58A]/20 flex items-center justify-between gap-3 text-xs"
+                    >
+                      <div className="flex items-center space-x-2 truncate flex-1">
+                        <Video className="w-4 h-4 text-[#65F58A] flex-shrink-0" />
+                        <div className="truncate flex-1">
+                          <input
+                            type="text"
+                            value={vid.caption || vid.name}
+                            onChange={(e) => {
+                              const updated = [...lessonForm.videos];
+                              updated[vIdx] = { ...updated[vIdx], caption: e.target.value };
+                              setLessonForm({ ...lessonForm, videos: updated });
+                            }}
+                            placeholder="Video Title / Caption"
+                            className="w-full bg-transparent text-xs text-white font-mono focus:outline-none focus:border-b border-[#65F58A]"
+                          />
+                          <span className="text-[10px] text-[#72A88E] font-mono block">
+                            {vid.name} • {vid.size || 'Local File'}
+                          </span>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveLessonVideo(vIdx)}
+                        className="p-1 text-red-400 hover:bg-red-500/10 rounded transition-colors flex-shrink-0"
+                        title="Remove Video"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
-            <div className="space-y-1">
-              <label className="text-xs font-mono text-[#72A88E]">Lesson Video Stream URL</label>
-              <input
-                type="text"
-                value={lessonForm.video_url}
-                onChange={(e) => setLessonForm({ ...lessonForm, video_url: e.target.value })}
-                placeholder="YouTube, Vimeo, or MP4 URL"
-                className="w-full bg-[#040e0a] rounded-xl p-3 text-xs text-white border border-[#65F58A]/25 focus:outline-none focus:border-[#65F58A]"
-              />
+            {/* 2. Multiple Local Image / Diagram Uploads (Direct from Computer) */}
+            <div className="p-3.5 bg-[#040e0a] rounded-xl border border-[#65F58A]/25 space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-mono font-bold text-white flex items-center gap-1.5">
+                    <ImageIcon className="w-4 h-4 text-[#35E6B5]" />
+                    <span>Instructional Diagrams & Images (Upload from Device)</span>
+                  </span>
+                  <span className="text-[10px] text-[#72A88E] block">
+                    Attach network topologies, packet captures, and flowcharts
+                  </span>
+                </div>
+
+                <label className="px-3 py-1.5 bg-[#092218] hover:bg-[#0c2a1e] text-[#35E6B5] border border-[#35E6B5]/40 rounded-lg text-xs font-mono font-bold cursor-pointer flex items-center space-x-1.5 transition-colors">
+                  {uploadingLessonImage ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Loading...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>+ Upload Local Image</span>
+                    </>
+                  )}
+                  <input
+                    ref={lessonImageRef}
+                    type="file"
+                    accept="image/*"
+                    disabled={uploadingLessonImage}
+                    onChange={handleLessonImageUpload}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+
+              {/* Uploaded Images List */}
+              {(!lessonForm.images || lessonForm.images.length === 0) ? (
+                <div className="text-[11px] font-mono text-slate-500 italic p-2 border border-dashed border-white/5 rounded-lg text-center">
+                  No images attached yet. Click "+ Upload Local Image" to add diagrams from your system.
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {lessonForm.images.map((img, iIdx) => (
+                    <div
+                      key={img.id || iIdx}
+                      className="p-2 rounded-lg bg-[#061510] border border-[#35E6B5]/20 flex items-center gap-2.5 text-xs"
+                    >
+                      <img
+                        src={img.url}
+                        alt={img.caption || img.name}
+                        className="w-12 h-12 object-cover rounded-md border border-white/10 flex-shrink-0"
+                      />
+                      <div className="truncate flex-1">
+                        <input
+                          type="text"
+                          value={img.caption || img.name}
+                          onChange={(e) => {
+                            const updated = [...lessonForm.images];
+                            updated[iIdx] = { ...updated[iIdx], caption: e.target.value };
+                            setLessonForm({ ...lessonForm, images: updated });
+                          }}
+                          placeholder="Diagram Caption"
+                          className="w-full bg-transparent text-xs text-white font-mono focus:outline-none focus:border-b border-[#35E6B5]"
+                        />
+                        <span className="text-[10px] text-[#72A88E] font-mono block">
+                          {img.name} • {img.size || 'Image'}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveLessonImage(iIdx)}
+                        className="p-1 text-red-400 hover:bg-red-500/10 rounded transition-colors flex-shrink-0"
+                        title="Remove Image"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
             </div>
 
             <div className="space-y-1">

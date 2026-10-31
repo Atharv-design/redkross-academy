@@ -205,13 +205,18 @@ export default function CourseDetailPage() {
                 <span>What You'll Learn</span>
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                {(course.learning_objectives || [
-                  'Master 24/7 security operations center alert analysis and SIEM triage.',
-                  'Analyze real adversary attack traces using Sysmon, packet captures, and logs.',
-                  'Formulate rapid containment playbooks without destroying volatile memory evidence.',
-                  'Align all defensive telemetry directly with MITRE ATT&CK techniques.',
-                  'Pass the cryptographically verifiable on-chain practical assessment.'
-                ]).map((obj, idx) => (
+                {(Array.isArray(course.learning_objectives)
+                  ? course.learning_objectives
+                  : typeof course.learning_objectives === 'string' && course.learning_objectives.trim()
+                    ? course.learning_objectives.split('\n').map((s) => s.trim()).filter(Boolean)
+                    : [
+                        'Master 24/7 security operations center alert analysis and SIEM triage.',
+                        'Analyze real adversary attack traces using Sysmon, packet captures, and logs.',
+                        'Formulate rapid containment playbooks without destroying volatile memory evidence.',
+                        'Align all defensive telemetry directly with MITRE ATT&CK techniques.',
+                        'Pass the cryptographically verifiable on-chain practical assessment.'
+                      ]
+                ).map((obj, idx) => (
                   <div key={idx} className="flex items-start gap-2.5 p-3 rounded-xl bg-[#092218]/40 border border-[#65F58A]/15 text-xs text-[#C9EFE0] leading-relaxed">
                     <CheckCircle2 className="w-4 h-4 text-[#65F58A] flex-shrink-0 mt-0.5" />
                     <span>{obj}</span>
@@ -298,11 +303,16 @@ export default function CourseDetailPage() {
                 <span>Prerequisites & Requirements</span>
               </h2>
               <ul className="space-y-2.5 text-xs text-[#C9EFE0] font-mono">
-                {(course.prerequisites || [
-                  'Fundamental understanding of IP addressing, TCP/UDP packets, and subnets.',
-                  'Basic familiarity with command line interfaces (Bash or PowerShell).',
-                  'A web browser supporting WebAssembly and WebRTC for live hands-on proctoring.'
-                ]).map((req, idx) => (
+                {(Array.isArray(course.prerequisites)
+                  ? course.prerequisites
+                  : typeof course.prerequisites === 'string' && course.prerequisites.trim()
+                    ? course.prerequisites.split('\n').map((s) => s.trim()).filter(Boolean)
+                    : [
+                        'Fundamental understanding of IP addressing, TCP/UDP packets, and subnets.',
+                        'Basic familiarity with command line interfaces (Bash or PowerShell).',
+                        'A web browser supporting WebAssembly and WebRTC for live hands-on proctoring.'
+                      ]
+                ).map((req, idx) => (
                   <li key={idx} className="flex items-start gap-2.5">
                     <span className="text-[#65F58A] font-bold">&bull;</span>
                     <span>{req}</span>
