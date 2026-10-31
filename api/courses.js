@@ -344,12 +344,17 @@ export default async function handler(req, res) {
           `;
           for (const quest of questions) {
             const options = await sql`
-              SELECT id, question_id, option_text, option_order 
-              FROM question_options 
+              SELECT id, question_id, text, is_correct, sort_order 
+              FROM options 
               WHERE question_id = ${quest.id} 
-              ORDER BY option_order ASC
+              ORDER BY sort_order ASC
             `;
-            quest.options = options;
+            quest.options = options.map(o => ({
+              id: o.id,
+              text: o.text,
+              option_text: o.text,
+              is_correct: o.is_correct
+            }));
           }
           q.questions = questions;
           mod.quiz = q;
@@ -367,6 +372,27 @@ export default async function handler(req, res) {
       `;
       if (finalExams.length > 0) {
         course.final_exam = finalExams[0];
+        const feQuestions = await sql`
+          SELECT id, quiz_id, question_text, question_type, points, explanation, question_order 
+          FROM questions 
+          WHERE quiz_id = ${course.final_exam.id} 
+          ORDER BY question_order ASC
+        `;
+        for (const feq of feQuestions) {
+          const feOpts = await sql`
+            SELECT id, question_id, text, is_correct, sort_order 
+            FROM options 
+            WHERE question_id = ${feq.id} 
+            ORDER BY sort_order ASC
+          `;
+          feq.options = feOpts.map(o => ({
+            id: o.id,
+            text: o.text,
+            option_text: o.text,
+            is_correct: o.is_correct
+          }));
+        }
+        course.final_exam.questions = feQuestions;
       }
 
       return json(res, { course, public_catalog_enabled: isCatalogEnabled });
@@ -391,8 +417,18 @@ export default async function handler(req, res) {
       ORDER BY rating DESC, enrolled_count DESC
     `;
 
+    // Strict filter: Exclude all legacy cybersecurity courses permanently
+    const LEGACY_COURSE_IDS = new Set([
+      'crs_networking_fund', 'crs_forensics_fund', 'crs_web_sec_fund', 
+      'crs_cloud_sec_fund', 'crs_sec_governance', 'crs_cyber_fund', 
+      'crs_linux_fund', 'crs_incident_response', 'crs_threat_hunting', 
+      'crs_soc_fundamentals', 'crs_practical_cyber_def',
+      'course-soc-101', 'course-threat-hunt-201', 'course-malware-rev-301'
+    ]);
+    const activeCourses = allCourses.filter(c => !LEGACY_COURSE_IDS.has(c.id));
+
     return json(res, {
-      courses: allCourses,
+      courses: activeCourses,
       public_catalog_enabled: isCatalogEnabled
     });
   } catch (error) {

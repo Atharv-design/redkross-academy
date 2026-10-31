@@ -37,31 +37,13 @@ export default function HomePage() {
     };
   }, []);
 
-  // Exactly 3 Flagship Benchmark Courses for Home (Admin newly added courses go to /courses without displacing Home)
+  // Featured Courses for Home Showcase (Up to 3 active courses)
   const homeFeaturedCourses = useMemo(() => {
     if (!courses || courses.length === 0) return [];
-
-    const flagshipIds = [
-      'course-soc-101',
-      'course-threat-hunt-201',
-      'course-malware-rev-301'
-    ];
-
-    const flagships = courses.filter((c) =>
-      flagshipIds.includes(c.id) ||
-      ['soc-fundamentals-incident-response', 'threat-hunting-active-defense', 'malware-analysis-reverse-engineering'].includes(c.slug)
-    );
-
-    if (flagships.length >= 3) {
-      return flagships.slice(0, 3);
-    }
-
-    // Fallback: exclude dynamically created courses starting with 'crs_'
-    const nonDynamic = courses.filter((c) => !c.id.startsWith('crs_'));
-    return (nonDynamic.length >= 3 ? nonDynamic : courses).slice(0, 3);
+    return courses.slice(0, 3);
   }, [courses]);
 
-  const featuredCourse = courses.find((c) => c.slug === 'soc-fundamentals-incident-response') || courses[0];
+  const featuredCourse = courses[0];
 
   return (
     <div className="min-h-screen relative z-10">
@@ -122,8 +104,8 @@ export default function HomePage() {
                 <div className="text-[11px] text-[#94A3B8] font-mono mt-1">Active Operators</div>
               </div>
               <div className="p-4 ultra-glass-card rounded-xl text-center">
-                <div className="text-2xl sm:text-3xl font-bold text-[#65F58A] font-mono tabular-nums">10</div>
-                <div className="text-[11px] text-[#94A3B8] font-mono mt-1">Specialized Courses</div>
+                <div className="text-2xl sm:text-3xl font-bold text-[#65F58A] font-mono tabular-nums">{courses.length}</div>
+                <div className="text-[11px] text-[#94A3B8] font-mono mt-1">Institutional Curriculum</div>
               </div>
               <div className="p-4 ultra-glass-card rounded-xl text-center">
                 <div className="text-2xl sm:text-3xl font-bold text-[#35E6B5] font-mono tabular-nums">98.4%</div>
@@ -150,10 +132,10 @@ export default function HomePage() {
                     <span>CURRICULUM SHOWCASE</span>
                   </div>
                   <h2 className="font-royal text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
-                    Defensive Operator Courseware
+                    Full Stack Engineering Courseware
                   </h2>
                   <p className="text-[#94A3B8] text-xs sm:text-sm mt-1 max-w-xl">
-                    Explore our distinct specialized modules crafted for blue team defenders, forensics analysts, and incident responders.
+                    Explore our comprehensive curriculum engineered from web fundamentals to enterprise production deployment.
                   </p>
                 </div>
 
@@ -166,7 +148,7 @@ export default function HomePage() {
                 </Link>
               </div>
 
-              {/* Cards Grid: Strictly 3 Flagship Courses on Home Page */}
+              {/* Cards Grid: Course card aligned to the left */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                 {homeFeaturedCourses.map((course, idx) => (
                   <CourseCardVariant
