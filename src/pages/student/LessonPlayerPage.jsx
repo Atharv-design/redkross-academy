@@ -62,7 +62,8 @@ export default function LessonPlayerPage() {
   const navigate = useNavigate();
   const { refreshBalance, currentUser } = useAuth();
 
-  const enrolment = mockEngine.getEnrolment(enrolmentId);
+  const [currentEnrolment, setCurrentEnrolment] = useState(() => mockEngine.getEnrolment(enrolmentId));
+  const enrolment = currentEnrolment || mockEngine.getEnrolment(enrolmentId);
   const course = enrolment ? mockEngine.getCourseById(enrolment.course_id) : null;
 
   // Build flattened sequential units (lessons + module quizzes + final assessment)
@@ -168,15 +169,17 @@ export default function LessonPlayerPage() {
   // ---------------- MODULE GATING LOGIC ----------------
   const isModuleUnlocked = (modIndex) => {
     if (modIndex === 0) return true;
+    const completedLessons = currentEnrolment?.completed_mandatory_lessons || enrolment?.completed_mandatory_lessons || [];
+    const passedQuizzes = currentEnrolment?.passed_quizzes || enrolment?.passed_quizzes || [];
     for (let i = 0; i < modIndex; i++) {
       const prevMod = course.modules[i];
       if (!prevMod) continue;
       const prevLessons = prevMod.lessons || [];
       const allLessonsDone = prevLessons.every((l) =>
-        enrolment.completed_mandatory_lessons?.includes(l.id)
+        completedLessons.includes(l.id)
       );
       const prevQuizDone = prevMod.quiz
-        ? enrolment.passed_quizzes?.includes(prevMod.quiz.id)
+        ? passedQuizzes.includes(prevMod.quiz.id)
         : true;
       if (!allLessonsDone || !prevQuizDone) return false;
     }
@@ -185,16 +188,41 @@ export default function LessonPlayerPage() {
 
   const areAllModulesCompleted = () => {
     if (!course || !course.modules) return false;
-    return course.modules.every((mod, idx) => {
+    const completedLessons = currentEnrolment?.completed_mandatory_lessons || enrolment?.completed_mandatory_lessons || [];
+    const passedQuizzes = currentEnrolment?.passed_quizzes || enrolment?.passed_quizzes || [];
+    return course.modules.every((mod) => {
       const lessonsDone = (mod.lessons || []).every((l) =>
-        enrolment.completed_mandatory_lessons?.includes(l.id)
+        completedLessons.includes(l.id)
       );
-      const quizDone = mod.quiz ? enrolment.passed_quizzes?.includes(mod.quiz.id) : true;
+      const quizDone = mod.quiz ? passedQuizzes.includes(mod.quiz.id) : true;
       return lessonsDone && quizDone;
     });
   };
 
   const isFinalExamUnlocked = areAllModulesCompleted();
+
+  // Synchronize Enrolment and Progress from mockEngine Event Stream
+  useEffect(() => {
+    const syncEnrolment = () => {
+      const updated = mockEngine.getEnrolment(enrolmentId);
+      if (updated) {
+        setCurrentEnrolment(updated);
+        setProgressData(mockEngine.getCourseProgress(enrolmentId));
+      }
+    };
+    const unsub = mockEngine.subscribe((event) => {
+      if (
+        event.type === 'LESSON_COMPLETED' ||
+        event.type === 'PROGRESS_SAVED' ||
+        event.type === 'DB_MUTATED' ||
+        event.type === 'QUIZ_ATTEMPT_FORFEITED' ||
+        event.type === 'QUIZ_ATTEMPT_RECORDED'
+      ) {
+        syncEnrolment();
+      }
+    });
+    return () => unsub();
+  }, [enrolmentId]);
 
   // Initialize and load saved bookmarks from localStorage
   useEffect(() => {
@@ -218,18 +246,32 @@ export default function LessonPlayerPage() {
     });
   };
 
-  // Sync active unit on load or URL param change (supports unitId & lessonId)
+  // Sync active unit on load or URL param change (supports unitId & lessonId, and resumes saved reading progress)
   useEffect(() => {
     const targetUnitId = searchParams.get('unitId') || searchParams.get('lessonId');
     if (targetUnitId && allUnits.some((u) => u.id === targetUnitId)) {
       setActiveUnitId(targetUnitId);
-    } else if (allUnits.length > 0 && !activeUnitId) {
-      const firstIncomplete = allUnits.find(
-        (u) => u.type === 'lesson' && !enrolment?.completed_mandatory_lessons?.includes(u.id)
-      );
-      setActiveUnitId(firstIncomplete ? firstIncomplete.id : allUnits[0].id);
+    } else if (allUnits.length > 0 && (!activeUnitId || !allUnits.some((u) => u.id === activeUnitId))) {
+      // Check persistently saved reading progress from enrolment
+      const savedUnitId = currentEnrolment?.last_visited_unit_id || enrolment?.last_visited_unit_id || localStorage.getItem(`rk_last_unit_${enrolmentId}`);
+      if (savedUnitId && allUnits.some((u) => u.id === savedUnitId)) {
+        setActiveUnitId(savedUnitId);
+      } else {
+        const completedLessons = currentEnrolment?.completed_mandatory_lessons || enrolment?.completed_mandatory_lessons || [];
+        const firstIncomplete = allUnits.find(
+          (u) => u.type === 'lesson' && !completedLessons.includes(u.id)
+        );
+        setActiveUnitId(firstIncomplete ? firstIncomplete.id : allUnits[0].id);
+      }
     }
-  }, [searchParams, allUnits.length]);
+  }, [searchParams, allUnits.length, enrolmentId]);
+
+  // Auto-save reading progress (current unit position) whenever activeUnit changes
+  useEffect(() => {
+    if (activeUnit?.id && enrolmentId) {
+      mockEngine.saveLastVisitedUnit(enrolmentId, activeUnit.id);
+    }
+  }, [activeUnit?.id, enrolmentId]);
 
   // Load progress and expand current module
   useEffect(() => {
@@ -249,10 +291,10 @@ export default function LessonPlayerPage() {
   const activeQuiz = activeUnit?.type === 'quiz' || activeUnit?.type === 'final_exam' ? activeUnit.quiz : null;
 
   const isLessonCompleted = activeLesson
-    ? enrolment?.completed_mandatory_lessons?.includes(activeLesson.id)
+    ? (currentEnrolment?.completed_mandatory_lessons || enrolment?.completed_mandatory_lessons || []).includes(activeLesson.id)
     : false;
   const isQuizPassed = activeQuiz
-    ? enrolment?.passed_quizzes?.includes(activeQuiz.id) || (activeUnit?.type === 'final_exam' && enrolment?.final_assessment_passed)
+    ? (currentEnrolment?.passed_quizzes || enrolment?.passed_quizzes || []).includes(activeQuiz.id) || (activeUnit?.type === 'final_exam' && (currentEnrolment?.final_assessment_passed || enrolment?.final_assessment_passed))
     : false;
   const isAssignment = activeLesson?.type === 'assignment';
 
@@ -291,6 +333,11 @@ export default function LessonPlayerPage() {
 
   useEffect(() => {
     checkLockoutStatus();
+    const handlePopState = () => {
+      checkLockoutStatus();
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, [enrolmentId, activeUnitId, activeUnit?.id, activeQuiz?.id]);
 
   // Periodic refresh of lockout countdown while locked
@@ -367,42 +414,34 @@ export default function LessonPlayerPage() {
     return () => clearInterval(timer);
   }, [activeQuiz?.id, quizSubmitted, isLockoutActive, examTimeRemaining]);
 
-  // ---------------- ANTI-CHEAT PROTOCOL: 24-HOUR DIRECT BAN ON TAB SWITCH / FOCUS LOSS ----------------
+  // ---------------- ANTI-CHEAT PROTOCOL: TAB SWITCH ATTEMPT DECREMENTS 1 ATTEMPT ----------------
   const triggerProctorViolation = (violationType) => {
     if (quizSubmitted || isLockoutActive || !activeQuiz) return;
 
     try {
-      const studentName = currentUser?.name || currentUser?.full_name || 'Cadet Candidate';
-      const cadetId = currentUser?.cadet_id || enrolment?.cadet_id || 'RK-UNKNOWN';
-      const details = 'Adversary evasion or proctor protocol breached (exited view / tab switched during active examination).';
+      const targetQuizId = activeQuiz?.id || activeUnit?.id;
 
-      mockEngine.recordProctorViolation({
+      // Decrement 1 attempt (e.g. 3 -> 2 -> 1, then 24h cooldown if 0)
+      const forfeitResult = mockEngine.forfeitQuizAttempt({
         enrolmentId,
-        quizId: activeUnit.id,
-        cadetId,
-        studentName,
-        violationType: `PROCTOR_VIOLATION: ${violationType}`,
-        details
+        quizId: targetQuizId,
+        reason: `PROCTOR_VIOLATION: ${violationType}`
       });
 
-      apiClient.recordViolation({
-        enrolment_id: enrolmentId,
-        quiz_id: activeUnit.id,
-        strike_count: 3,
-        reason: details,
-        user_id: currentUser?.id || enrolment?.user_id
-      }).catch(console.warn);
-
-      socketClient.emit('exam:violation', {
-        studentName,
-        cadetId,
-        violationType,
-        details
-      });
-
-      setIsLockoutActive(true);
-      setLockoutCountdown({ hours: 23, minutes: 59, seconds: 59 });
-      alert('CRITICAL ANTI-CHEAT PROTOCOL BREACH: Tab switch or focus change detected during an active examination. Your account is subjected to an immediate 24-hour examination lockdown.');
+      if (forfeitResult) {
+        setAttemptsStatus(forfeitResult);
+        if (forfeitResult.isLocked) {
+          setIsLockoutActive(true);
+          setLockoutCountdown({
+            hours: forfeitResult.remainingHours || 23,
+            minutes: forfeitResult.remainingMinutes || 59,
+            seconds: 59
+          });
+          alert('PROCTORING VIOLATION: Tab switch detected during active examination. All 3 evaluation attempts have been exhausted. A 24-hour examination cooldown is now enforced.');
+        } else {
+          alert(`PROCTORING WARNING: Tab switch detected. 1 attempt has been deducted. You have ${forfeitResult.attemptsRemaining} of 3 attempts remaining.`);
+        }
+      }
     } catch (e) {
       console.error('Proctoring enforcement error:', e);
     }
@@ -417,16 +456,10 @@ export default function LessonPlayerPage() {
       }
     };
 
-    const handleWindowBlur = () => {
-      triggerProctorViolation('WINDOW_FOCUS_LOST');
-    };
-
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('blur', handleWindowBlur);
 
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('blur', handleWindowBlur);
     };
   }, [activeQuiz?.id, quizSubmitted, isLockoutActive]);
 
@@ -475,9 +508,77 @@ export default function LessonPlayerPage() {
     );
   }
 
+  // ---------------- MID-EXAM FORFEIT DETECTION & WINDOW LIFECYCLE ----------------
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      const isExamInProgress =
+        (activeUnit?.type === 'quiz' || activeUnit?.type === 'final_exam') &&
+        !quizSubmitted &&
+        !isLockoutActive &&
+        (Object.keys(quizAnswers).length > 0 || (examTimeRemaining !== null && examTimeRemaining < (activeUnit?.type === 'final_exam' ? 3600 : 1200)));
+
+      if (isExamInProgress) {
+        mockEngine.forfeitQuizAttempt({
+          enrolmentId,
+          quizId: activeQuiz?.id || activeUnit?.id,
+          reason: 'BROWSER_TAB_CLOSED_MID_EXAM'
+        });
+        e.preventDefault();
+        e.returnValue = 'You have an active examination in progress. Exiting will forfeit 1 of your 3 attempts.';
+        return e.returnValue;
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [activeUnit?.id, activeQuiz?.id, quizSubmitted, isLockoutActive, quizAnswers, examTimeRemaining, enrolmentId]);
+
   // Navigation handlers
   const handleSelectUnit = (unit) => {
-    // If unit belongs to a locked module, disallow navigation
+    if (!unit) return;
+
+    // 1. Check if user is abandoning an active unsubmitted exam
+    const isExamInProgress =
+      (activeUnit?.type === 'quiz' || activeUnit?.type === 'final_exam') &&
+      !quizSubmitted &&
+      !isLockoutActive &&
+      (Object.keys(quizAnswers).length > 0 || (examTimeRemaining !== null && examTimeRemaining < (activeUnit?.type === 'final_exam' ? 3600 : 1200)));
+
+    if (isExamInProgress && unit.id !== activeUnit?.id) {
+      const confirmForfeit = window.confirm(
+        'EXAMINATION ACTIVE WARNING:\n\nYou are currently in an active examination session.\nIf you exit or switch units before submitting, you will FORFEIT 1 attempt.\n\n(Remaining attempts will decrease, e.g. 3 -> 2 -> 1 -> 24-Hour Lockout).\n\nAre you sure you want to exit and forfeit this attempt?'
+      );
+      if (!confirmForfeit) {
+        return; // Cadet cancels, stays on exam
+      }
+
+      // Forfeit 1 attempt
+      const targetQuizId = activeQuiz?.id || activeUnit?.id;
+      const forfeitResult = mockEngine.forfeitQuizAttempt({
+        enrolmentId,
+        quizId: targetQuizId,
+        reason: 'EXAM_ABANDONED_MIDWAY'
+      });
+
+      if (forfeitResult) {
+        setAttemptsStatus(forfeitResult);
+        if (forfeitResult.isLocked) {
+          setIsLockoutActive(true);
+          setLockoutCountdown({
+            hours: forfeitResult.remainingHours || 23,
+            minutes: forfeitResult.remainingMinutes || 59,
+            seconds: 59
+          });
+          alert('All 3 examination attempts have been exhausted (abandoned midway). A 24-hour proctoring cooldown is now actively enforced.');
+        } else {
+          alert(`Examination attempt forfeited. You now have ${forfeitResult.attemptsRemaining} of 3 attempts remaining.`);
+        }
+      }
+      setQuizAnswers({});
+      setExamTimeRemaining(null);
+    }
+
+    // 2. If unit belongs to a locked module, disallow navigation
     if (unit.type === 'final_exam') {
       if (!isFinalExamUnlocked) {
         alert('Final Assessment Locked: You must complete all prior course modules and score >= 80% on each knowledge check.');
@@ -530,10 +631,14 @@ export default function LessonPlayerPage() {
     setSavingProgress(true);
     try {
       mockEngine.recordLessonCompletion(enrolmentId, activeLesson.id);
+      const updatedEnr = mockEngine.getEnrolment(enrolmentId);
+      if (updatedEnr) {
+        setCurrentEnrolment({ ...updatedEnr });
+      }
       setProgressData(mockEngine.getCourseProgress(enrolmentId));
       refreshBalance();
     } catch (e) {
-      console.error(e);
+      console.error('Failed to mark lesson complete:', e);
     } finally {
       setSavingProgress(false);
     }
@@ -913,10 +1018,12 @@ export default function LessonPlayerPage() {
                 const isCurrentMod = activeUnit?.moduleId === mod.id;
                 const isUnlocked = isModuleUnlocked(modIdx);
                 const modLessons = mod.lessons || [];
+                const completedLessonsList = currentEnrolment?.completed_mandatory_lessons || enrolment?.completed_mandatory_lessons || [];
+                const passedQuizzesList = currentEnrolment?.passed_quizzes || enrolment?.passed_quizzes || [];
                 const completedCount = modLessons.filter((l) =>
-                  enrolment.completed_mandatory_lessons?.includes(l.id)
+                  completedLessonsList.includes(l.id)
                 ).length;
-                const isModQuizPassed = mod.quiz && enrolment.passed_quizzes?.includes(mod.quiz.id);
+                const isModQuizPassed = mod.quiz && passedQuizzesList.includes(mod.quiz.id);
 
                 return (
                   <div
@@ -986,7 +1093,7 @@ export default function LessonPlayerPage() {
                       <div className="p-2 space-y-1 bg-[#040e0a]/80 border-t border-[#65F58A]/15">
                         {/* 1. Lessons in Module */}
                         {modLessons.map((les) => {
-                          const isDone = enrolment.completed_mandatory_lessons?.includes(les.id);
+                          const isDone = (currentEnrolment?.completed_mandatory_lessons || enrolment?.completed_mandatory_lessons || []).includes(les.id);
                           const isActive = activeUnit?.id === les.id;
 
                           return (
@@ -1519,54 +1626,56 @@ export default function LessonPlayerPage() {
               />
             )}
 
-            {/* ================= 3. BOTTOM SEQUENTIAL NAVIGATION BAR ================= */}
-            <div className="pt-8 pb-12 border-t border-[#65F58A]/20 flex items-center justify-between gap-4">
-              <button
-                type="button"
-                onClick={handlePrevUnit}
-                disabled={activeIndex <= 0}
-                className={`px-5 py-2.5 rounded-xl text-xs font-mono font-bold flex items-center space-x-2 border transition-all ${
-                  activeIndex > 0
-                    ? 'bg-[#092218] hover:bg-[#0c2a1e] text-[#65F58A] border-[#65F58A]/30 cursor-pointer shadow-sm'
-                    : 'bg-[#040e0a] text-[#72A88E]/40 border-white/5 cursor-not-allowed'
-                }`}
-              >
-                <ChevronLeft className="w-4 h-4" />
-                <span>Previous</span>
-              </button>
-
-              <span className="text-xs font-mono text-[#72A88E] hidden sm:inline">
-                Unit {activeIndex + 1} of {allUnits.length}
-              </span>
-
-              {/* End-of-Course Final Assessment CTA */}
-              {activeIndex === allUnits.length - 2 && course?.final_assessment ? (
+            {/* ================= 3. BOTTOM SEQUENTIAL NAVIGATION BAR (Hidden during active CBT examination to prevent navigation conflict) ================= */}
+            {!((activeUnit?.type === 'quiz' || activeUnit?.type === 'final_exam') && !quizSubmitted) && (
+              <div className="pt-8 pb-12 border-t border-[#65F58A]/20 flex items-center justify-between gap-4">
                 <button
                   type="button"
-                  onClick={handleNextUnit}
-                  className="px-6 py-2.5 rounded-xl text-xs font-mono font-bold flex items-center space-x-2 border border-[#65F58A] bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] cursor-pointer shadow-[0_0_20px_rgba(101,245,138,0.5)] transition-all animate-pulse"
+                  onClick={handlePrevUnit}
+                  disabled={activeIndex <= 0}
+                  className={`px-5 py-2.5 rounded-xl text-xs font-mono font-bold flex items-center space-x-2 border transition-all ${
+                    activeIndex > 0
+                      ? 'bg-[#092218] hover:bg-[#0c2a1e] text-[#65F58A] border-[#65F58A]/30 cursor-pointer shadow-sm'
+                      : 'bg-[#040e0a] text-[#72A88E]/40 border-white/5 cursor-not-allowed'
+                  }`}
                 >
-                  <Shield className="w-4 h-4" />
-                  <span>Take Final Assessment (50 MCQs)</span>
-                  <ChevronRight className="w-4 h-4 stroke-[3]" />
+                  <ChevronLeft className="w-4 h-4" />
+                  <span>Previous</span>
                 </button>
-              ) : activeIndex >= allUnits.length - 1 ? (
-                <div className="flex items-center space-x-2">
-                  <span className="text-xs font-mono text-[#65F58A] font-bold">
-                    Curriculum Completed
-                  </span>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={handleNextUnit}
-                  className="px-5 py-2.5 rounded-xl text-xs font-mono font-bold flex items-center space-x-2 border border-[#65F58A] bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] cursor-pointer shadow-[0_0_15px_rgba(101,245,138,0.3)] transition-all"
-                >
-                  <span>Next</span>
-                  <ChevronRight className="w-4 h-4 stroke-[3]" />
-                </button>
-              )}
-            </div>
+
+                <span className="text-xs font-mono text-[#72A88E] hidden sm:inline">
+                  Unit {activeIndex + 1} of {allUnits.length}
+                </span>
+
+                {/* End-of-Course Final Assessment CTA */}
+                {activeIndex === allUnits.length - 2 && course?.final_assessment ? (
+                  <button
+                    type="button"
+                    onClick={handleNextUnit}
+                    className="px-6 py-2.5 rounded-xl text-xs font-mono font-bold flex items-center space-x-2 border border-[#65F58A] bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] cursor-pointer shadow-[0_0_20px_rgba(101,245,138,0.5)] transition-all animate-pulse"
+                  >
+                    <Shield className="w-4 h-4" />
+                    <span>Take Final Assessment (50 MCQs)</span>
+                    <ChevronRight className="w-4 h-4 stroke-[3]" />
+                  </button>
+                ) : activeIndex >= allUnits.length - 1 ? (
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs font-mono text-[#65F58A] font-bold">
+                      Curriculum Completed
+                    </span>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleNextUnit}
+                    className="px-5 py-2.5 rounded-xl text-xs font-mono font-bold flex items-center space-x-2 border border-[#65F58A] bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] cursor-pointer shadow-[0_0_15px_rgba(101,245,138,0.3)] transition-all"
+                  >
+                    <span>Next</span>
+                    <ChevronRight className="w-4 h-4 stroke-[3]" />
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         </main>
       </div>

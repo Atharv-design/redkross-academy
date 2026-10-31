@@ -37,7 +37,7 @@ import AdminProfilePage from './pages/admin/AdminProfilePage';
 
 function PublicLayout() {
   return (
-    <div className="flex flex-col min-h-screen relative bg-[#071018] text-[#F1F5F9] overflow-x-hidden">
+    <div className="flex flex-col min-h-screen relative bg-[#071018] text-[#F1F5F9] overflow-x-clip">
       {/* Centered Ambient RedKross Cyber Background Watermark & Theme Pixel Grid */}
       <CyberBackgroundWatermark />
       <PixelBackground opacity={0.4} gap={20} pixelSize={2.2} />

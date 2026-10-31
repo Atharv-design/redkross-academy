@@ -18,7 +18,7 @@ export default async function handler(req, res) {
       WHERE key = 'public_catalog_enabled' 
       LIMIT 1
     `;
-    const isCatalogEnabled = settings.length > 0 ? (settings[0].value === true || settings[0].value === 'true') : false;
+    const isCatalogEnabled = settings.length > 0 ? (settings[0].value === true || settings[0].value === 'true') : true;
 
     // Check authorization header for super_admin bypass (e.g. for Admin Course Management)
     const authHeader = req.headers.authorization;

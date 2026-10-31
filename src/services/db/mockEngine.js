@@ -206,6 +206,43 @@ class MockEngine {
 
       // 100% REAL DATA ENFORCEMENT: Purge any legacy fake cohorts / fake violation events
       let modified = false;
+
+      // EXCLUSIVE CURRICULUM NORMALIZATION: Purge legacy cybersecurity courses
+      const LEGACY_COURSE_IDS = [
+        'crs_soc_fundamentals',
+        'crs_practical_cyber_def',
+        'crs_enterprise_incident_resp',
+        'crs_threat_hunting',
+        'crs_malware_analysis',
+        'crs_cloud_sec',
+        'crs_network_sec',
+        'crs_identity_iam',
+        'crs_app_sec',
+        'crs_threat_intel',
+        'crs_incident_response'
+      ];
+      if (parsed.courses && parsed.courses.some((c) => LEGACY_COURSE_IDS.includes(c.id))) {
+        parsed.courses = parsed.courses.filter((c) => !LEGACY_COURSE_IDS.includes(c.id));
+        modified = true;
+      }
+
+      // Ensure Full Stack Web Development master course is populated if missing and not explicitly deleted by admin
+      parsed.admin_deleted_course_ids = parsed.admin_deleted_course_ids || [];
+      const hasFullStack = (parsed.courses || []).some((c) => c.id === 'crs_full_stack_web_dev');
+      const wasExplicitlyDeleted = parsed.admin_deleted_course_ids.includes('crs_full_stack_web_dev');
+      if (!hasFullStack && !wasExplicitlyDeleted) {
+        const fullStackMaster = INITIAL_COURSES.find((c) => c.id === 'crs_full_stack_web_dev');
+        if (fullStackMaster) {
+          parsed.courses.unshift(fullStackMaster);
+          modified = true;
+        }
+      }
+
+      // Default public catalog visibility to true so students immediately see the active curriculum
+      if (typeof parsed.public_catalog_enabled !== 'boolean') {
+        parsed.public_catalog_enabled = true;
+        modified = true;
+      }
       if (parsed.enrolments && parsed.enrolments.some((e) => e.id?.startsWith('enr_cohort_') || e.user_id?.startsWith('usr_cohort_'))) {
         parsed.enrolments = parsed.enrolments.filter((e) => !e.id?.startsWith('enr_cohort_') && !e.user_id?.startsWith('usr_cohort_'));
         modified = true;
@@ -880,6 +917,12 @@ class MockEngine {
     const courseTitle = course.title;
     db.courses = (db.courses || []).filter((c) => c.id !== courseId);
 
+    // Track explicitly deleted courses so mockEngine never resurrects them automatically
+    if (!db.admin_deleted_course_ids) db.admin_deleted_course_ids = [];
+    if (!db.admin_deleted_course_ids.includes(courseId)) {
+      db.admin_deleted_course_ids.push(courseId);
+    }
+
     // Archive or update enrollments
     if (db.enrolments) {
       db.enrolments = db.enrolments.filter((e) => e.course_id !== courseId);
@@ -1124,6 +1167,12 @@ class MockEngine {
       const prevProgress = this.getCourseProgress(enrolmentId).percentage;
       enrolment.completed_mandatory_lessons.push(lessonId);
 
+      // Save last visited unit as well for seamless resume
+      enrolment.last_visited_unit_id = lessonId;
+      enrolment.last_accessed_at = new Date().toISOString();
+      safeStorage.setItem(`rk_last_unit_${enrolmentId}`, lessonId);
+      safeStorage.setItem(`rk_completed_lessons_${enrolmentId}`, JSON.stringify(enrolment.completed_mandatory_lessons));
+
       const newProgress = this.getCourseProgress(enrolmentId).percentage;
 
       // PRD Section 8: Check for Milestone crossings: 20%, 50%, 80%, 100%
@@ -1146,10 +1195,102 @@ class MockEngine {
         }
       });
 
-      this.saveDb(db);
+      this.saveDb(db, {
+        type: 'LESSON_COMPLETED',
+        payload: { enrolmentId, lessonId, completedLessons: enrolment.completed_mandatory_lessons }
+      });
     }
 
     return this.getCourseProgress(enrolmentId);
+  }
+
+  recordLessonCompletion(enrolmentId, lessonId) {
+    return this.completeLesson(enrolmentId, lessonId);
+  }
+
+  saveLastVisitedUnit(enrolmentId, unitId) {
+    if (!enrolmentId || !unitId) return;
+    const db = this.getDb();
+    const enrolment = (db.enrolments || []).find((e) => e.id === enrolmentId);
+    if (enrolment) {
+      enrolment.last_visited_unit_id = unitId;
+      enrolment.last_accessed_at = new Date().toISOString();
+      safeStorage.setItem(`rk_last_unit_${enrolmentId}`, unitId);
+      this.saveDb(db, {
+        type: 'PROGRESS_SAVED',
+        payload: { enrolmentId, unitId }
+      });
+    }
+  }
+
+  forfeitQuizAttempt({ enrolmentId, quizId, reason = 'EXAM_ABANDONED_MIDWAY' }) {
+    if (!enrolmentId || !quizId) return null;
+    const db = this.getDb();
+    const key = `${enrolmentId}_${quizId}`;
+    if (!db.quiz_retry_windows) db.quiz_retry_windows = {};
+
+    let windowData = db.quiz_retry_windows[key];
+    if (!windowData) {
+      windowData = {
+        enrolment_id: enrolmentId,
+        quiz_id: quizId,
+        window_number: 1,
+        attempts_used: 0,
+        locked_until: null,
+      };
+    } else if (windowData.locked_until && new Date() >= new Date(windowData.locked_until)) {
+      windowData.window_number = (windowData.window_number || 1) + 1;
+      windowData.attempts_used = 0;
+      windowData.locked_until = null;
+    }
+
+    // Increment attempts used by 1 (consuming 1 attempt on mid-way abandonment)
+    windowData.attempts_used = Math.min(3, (windowData.attempts_used || 0) + 1);
+    const attemptsRemaining = Math.max(0, 3 - windowData.attempts_used);
+
+    const enrolment = (db.enrolments || []).find((e) => e.id === enrolmentId);
+
+    // If all 3 attempts are now exhausted -> enforce strict 24-HOUR LOCKOUT!
+    if (windowData.attempts_used >= 3) {
+      const lockedUntil = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+      windowData.locked_until = lockedUntil;
+      if (enrolment) {
+        enrolment.exam_lockout_until = lockedUntil;
+      }
+      safeStorage.setItem(`rk_proctor_lock_${enrolmentId}_${quizId}`, lockedUntil);
+      safeStorage.setItem(`rk_proctor_lock_${enrolmentId}`, lockedUntil);
+
+      if (!db.audit_logs) db.audit_logs = [];
+      db.audit_logs.unshift({
+        id: `aud_${Date.now()}`,
+        action: 'EXAM_ABANDONED_24H_LOCKOUT',
+        category: 'EXAM_SECURITY',
+        user_email: enrolment?.cadet_id || enrolment?.user_id,
+        details: `Candidate abandoned exam ${quizId} midway. All 3 attempts exhausted. 24-Hour Lockout enforced until ${lockedUntil}.`,
+        severity: 'HIGH',
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    db.quiz_retry_windows[key] = windowData;
+    this.saveDb(db, {
+      type: 'QUIZ_ATTEMPT_FORFEITED',
+      payload: {
+        enrolmentId,
+        quizId,
+        attemptsUsed: windowData.attempts_used,
+        attemptsRemaining,
+        reason
+      }
+    });
+
+    return {
+      attemptsUsed: windowData.attempts_used,
+      attemptsRemaining: windowData.locked_until ? 0 : attemptsRemaining,
+      maxAttempts: 3,
+      isLocked: Boolean(windowData.locked_until && new Date() < new Date(windowData.locked_until)),
+      lockedUntil: windowData.locked_until
+    };
   }
 
   // ==========================================
@@ -1273,6 +1414,14 @@ class MockEngine {
         windowData.locked_until = lockedUntil;
         if (enrolment) {
           enrolment.exam_lockout_until = lockedUntil;
+        }
+
+        // Multi-layer persistent backup in safeStorage
+        if (enrolmentId && quizId) {
+          safeStorage.setItem(`rk_proctor_lock_${enrolmentId}_${quizId}`, lockedUntil);
+        }
+        if (enrolmentId) {
+          safeStorage.setItem(`rk_proctor_lock_${enrolmentId}`, lockedUntil);
         }
 
         if (!db.audit_logs) db.audit_logs = [];
@@ -2260,7 +2409,18 @@ class MockEngine {
     };
     db.exam_violation_events.unshift(violationEvent);
 
-    // 5. Audit log
+    // 5. Persistent fallback in safeStorage (multi-layer survivability against browser navigation)
+    if (enrolmentId && quizId) {
+      safeStorage.setItem(`rk_proctor_lock_${enrolmentId}_${quizId}`, lockedUntil);
+    }
+    if (enrolmentId) {
+      safeStorage.setItem(`rk_proctor_lock_${enrolmentId}`, lockedUntil);
+    }
+    if (cadetId) {
+      safeStorage.setItem(`rk_proctor_lock_${cadetId}`, lockedUntil);
+    }
+
+    // 6. Audit log
     if (!db.audit_logs) db.audit_logs = [];
     db.audit_logs.unshift({
       id: `aud_${Date.now()}`,
@@ -2332,6 +2492,17 @@ class MockEngine {
           considerDate(ev.locked_until);
         }
       }
+    }
+
+    // 5. Multi-layer persistent storage fallback
+    if (enrolmentId && quizId) {
+      considerDate(safeStorage.getItem(`rk_proctor_lock_${enrolmentId}_${quizId}`));
+    }
+    if (enrolmentId) {
+      considerDate(safeStorage.getItem(`rk_proctor_lock_${enrolmentId}`));
+    }
+    if (enrolment?.cadet_id) {
+      considerDate(safeStorage.getItem(`rk_proctor_lock_${enrolment.cadet_id}`));
     }
 
     if (!maxLockDate) {

@@ -28,6 +28,15 @@ html {
   font-family: 'Lora', Georgia, serif !important;
 }
 
+/* Universal Typography & Word-Wrap Standard */
+/* Guarantees that words are NEVER sliced mid-syllable; whole words wrap cleanly to the next line */
+h1, h2, h3, h4, h5, h6, p, span, a, li, blockquote, label, .acad-card__title, .acad-card__desc {
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+  hyphens: manual !important;
+  text-wrap: pretty;
+}
+
 /* Tabular figures for telemetry & numbers */
 .font-mono, .mono, .tabular-nums {
   font-variant-numeric: tabular-nums;

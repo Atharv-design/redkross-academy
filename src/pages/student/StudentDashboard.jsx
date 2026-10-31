@@ -265,7 +265,7 @@ export default function StudentDashboard() {
                       <span className="text-[#65F58A] font-semibold">{String(enr.status || 'ACTIVE').toUpperCase()}</span>
                     </div>
 
-                    <h3 className="text-base font-royal font-bold text-white mb-2 break-words [overflow-wrap:anywhere] break-all">{crs.title}</h3>
+                    <h3 className="text-base font-royal font-bold text-white mb-2 break-words">{crs.title}</h3>
 
                     {/* Progress Bar */}
                     <div className="space-y-1 my-3">

@@ -391,7 +391,7 @@ export default function AdminCoursesPage() {
       }
 
       const db = mockEngine.getDb();
-      const courseList = serverCourses !== null ? serverCourses : (db?.courses || []);
+      const courseList = (serverCourses && serverCourses.length > 0) ? serverCourses : (db?.courses || []);
       setCourses(courseList);
       if (courseList.length > 0 && !selectedCourse) {
         setSelectedCourse(courseList[0]);

@@ -20,6 +20,7 @@ import { mockEngine } from '../../services/db/mockEngine';
 import { useAuth } from '../../services/auth/authContext';
 import RedKrossOfficialCertificate from '../../components/certificate/RedKrossOfficialCertificate';
 import { downloadCertificatePdf } from '../../utils/pdfGenerator';
+import ExamCBTInterface from '../../components/student/ExamCBTInterface';
 
 export default function FinalCertificationPage() {
   const { enrolmentId } = useParams();
@@ -39,6 +40,52 @@ export default function FinalCertificationPage() {
   const [focusStrikeModal, setFocusStrikeModal] = useState(null);
   const [activeAttemptId, setActiveAttemptId] = useState(null);
   const [downloadingPdf, setDownloadingPdf] = useState(false);
+
+  const [attemptsStatus, setAttemptsStatus] = useState(() => {
+    try {
+      return mockEngine.getQuizAttemptStatus(enrolmentId, examMeta?.id || 'mod_final');
+    } catch {
+      return { attemptsUsed: 0, attemptsRemaining: 3, maxAttempts: 3, isLocked: false };
+    }
+  });
+
+  const [lockoutState, setLockoutState] = useState(() => {
+    try {
+      return mockEngine.isExamLocked(enrolmentId, examMeta?.id || 'mod_final');
+    } catch {
+      return { isLocked: false, remainingHours: 0, remainingMinutes: 0 };
+    }
+  });
+
+  useEffect(() => {
+    const refreshExamStatus = () => {
+      if (enrolmentId) {
+        setLockoutState(mockEngine.isExamLocked(enrolmentId, examMeta?.id || 'mod_final'));
+        setAttemptsStatus(mockEngine.getQuizAttemptStatus(enrolmentId, examMeta?.id || 'mod_final'));
+      }
+    };
+    refreshExamStatus();
+    window.addEventListener('popstate', refreshExamStatus);
+
+    const handleBeforeUnload = (e) => {
+      if (examStarted && !examResult && !lockoutState.isLocked) {
+        mockEngine.forfeitQuizAttempt({
+          enrolmentId,
+          quizId: examMeta?.id || 'mod_final',
+          reason: 'BROWSER_TAB_CLOSED_MID_FINAL_EXAM'
+        });
+        e.preventDefault();
+        e.returnValue = 'You are currently in the final exam. Leaving now will forfeit 1 attempt.';
+        return e.returnValue;
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('popstate', refreshExamStatus);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [enrolmentId, examMeta?.id, examStarted, examResult, lockoutState.isLocked]);
 
   const handleDownloadPdf = async () => {
     if (!issuedCredential) return;
@@ -151,11 +198,25 @@ export default function FinalCertificationPage() {
     });
 
     const scorePct = total > 0 ? Math.round((earned / total) * 100) : 0;
-    const isPassed = scorePct >= examMeta.passing_score;
+    const isPassed = scorePct >= (examMeta.passing_score || 80);
+
+    mockEngine.recordQuizAttemptSubmission({
+      enrolmentId,
+      quizId: examMeta.id || 'mod_final',
+      scorePercentage: scorePct,
+      isPassed
+    });
+
+    const lock = mockEngine.isExamLocked(enrolmentId, examMeta.id || 'mod_final');
+    setLockoutState(lock);
+    const att = mockEngine.getQuizAttemptStatus(enrolmentId, examMeta.id || 'mod_final');
+    setAttemptsStatus(att);
 
     setExamResult({
+      score: scorePct,
       score_percentage: scorePct,
       is_passed: isPassed,
+      isPassed
     });
 
     if (isPassed) {
@@ -334,105 +395,32 @@ export default function FinalCertificationPage() {
               <span>Launch Comprehensive Examination</span>
             </button>
           </div>
-        ) : examResult && !examResult.is_passed ? (
-          /* FAILED EXAM */
-          <div className="bg-surface-card border border-rose-600/40 rounded-xl p-8 shadow-xl text-center space-y-6">
-            <div className="w-16 h-16 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-500 mx-auto">
-              <XCircle className="w-8 h-8" />
-            </div>
-            <h2 className="text-2xl font-bold text-white">Certification Standard Not Met</h2>
-            <div className="text-sm font-mono text-slate-300">
-              Achieved: <span className="font-bold text-white text-lg">{examResult.score_percentage}%</span> (Minimum 80% Required)
-            </div>
-            <p className="text-xs text-slate-400 max-w-md mx-auto">
-              You may review the course modules and attempt the comprehensive evaluation again.
-            </p>
-            <button
-              onClick={() => {
-                setExamResult(null);
-                setExamStarted(false);
-              }}
-              className="px-6 py-2.5 rounded-lg bg-redkross-600 hover:bg-redkross-700 text-white text-xs font-semibold"
-            >
-              Retry Examination
-            </button>
-          </div>
         ) : (
-          /* ACTIVE COMPREHENSIVE EXAM */
-          <div className="space-y-6">
-            {/* Live Timer Bar */}
-            <div className="p-4 rounded-xl bg-surface-card border border-surface-border flex items-center justify-between">
-              <div className="flex items-center space-x-2 text-xs font-mono">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-slate-200 font-bold">COMPREHENSIVE FINAL CERTIFICATION EXAM</span>
-              </div>
-              <div className="flex items-center space-x-2 text-xs font-mono">
-                <Clock className="w-4 h-4 text-[#35E6B5]" />
-                <span className="text-white font-bold tabular-nums">
-                  {Math.floor(timerSeconds / 60)}:{(timerSeconds % 60).toString().padStart(2, '0')}
-                </span>
-                {timerPaused && <span className="text-rose-400 font-bold">(PAUSED)</span>}
-              </div>
-            </div>
-
-            {/* Questions List */}
-            <div className="space-y-6">
-              {examMeta.questions.map((q, idx) => (
-                <div key={q.id} className="bg-surface-card border border-surface-border rounded-xl p-6 space-y-4">
-                  <div className="flex items-start justify-between gap-4">
-                    <h3 className="text-sm font-semibold text-white leading-relaxed">
-                      {idx + 1}. {q.text}
-                    </h3>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-surface-100 text-slate-400 border border-surface-border flex-shrink-0">
-                      {q.points} Pts
-                    </span>
-                  </div>
-
-                  <div className="space-y-2">
-                    {q.options.map((opt) => {
-                      const isSelected = userAnswers[q.id] === opt.id;
-                      return (
-                        <button
-                          key={opt.id}
-                          type="button"
-                          onClick={() => setUserAnswers((prev) => ({ ...prev, [q.id]: opt.id }))}
-                          className={`w-full text-left p-3.5 rounded-lg text-xs font-mono transition-all flex items-center space-x-3 border ${
-                            isSelected
-                              ? 'bg-redkross-600/20 border-redkross-500 text-white font-semibold'
-                              : 'bg-surface-100/60 border-surface-border/80 text-slate-300 hover:bg-surface-100'
-                          }`}
-                        >
-                          <span
-                            className={`w-4 h-4 rounded-full border flex items-center justify-center flex-shrink-0 ${
-                              isSelected ? 'border-redkross-500 bg-redkross-600' : 'border-slate-600'
-                            }`}
-                          >
-                            {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
-                          </span>
-                          <span>{opt.text}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Submit Bar */}
-            <div className="p-4 rounded-xl bg-surface-card border border-surface-border flex items-center justify-between">
-              <span className="text-xs font-mono text-slate-400">
-                {Object.keys(userAnswers).length} of {examMeta.questions.length} Questions Answered
-              </span>
-
-              <button
-                onClick={handleSubmit}
-                disabled={Object.keys(userAnswers).length < examMeta.questions.length}
-                className="px-6 py-2.5 rounded-lg bg-redkross-600 hover:bg-redkross-700 disabled:opacity-50 text-white font-semibold text-xs shadow-lg"
-              >
-                Submit for Final Credential Grading
-              </button>
-            </div>
-          </div>
+          /* ACTIVE CBT WIREFRAME EXAMINATION (MODULESIE & COURSE ENDING EXAM) */
+          <ExamCBTInterface
+            quiz={examMeta}
+            enrolmentId={enrolmentId}
+            isFinalExam={true}
+            timerSeconds={timerSeconds}
+            attemptsStatus={attemptsStatus}
+            answers={userAnswers}
+            onSelectAnswer={(qId, optId) => setUserAnswers((prev) => ({ ...prev, [qId]: optId }))}
+            onSubmitExam={handleSubmit}
+            isSubmitted={Boolean(examResult)}
+            submissionResult={examResult}
+            onRetakeExam={() => {
+              setExamResult(null);
+              setExamStarted(false);
+              setUserAnswers({});
+              setTimerSeconds(examMeta.duration_minutes ? examMeta.duration_minutes * 60 : 3600);
+            }}
+            isLockoutActive={lockoutState.isLocked}
+            lockoutCountdown={{
+              hours: lockoutState.remainingHours || 0,
+              minutes: lockoutState.remainingMinutes || 0,
+              seconds: 0
+            }}
+          />
         )}
 
         {/* PROCTORING 3-STRIKE WARNING MODAL */}

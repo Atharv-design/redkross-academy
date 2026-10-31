@@ -241,10 +241,10 @@ export default function CourseCatalogPage() {
             <span>OFFICIAL CURRICULUM DIRECTORY</span>
           </div>
           <h1 className="font-royal text-3xl sm:text-4xl lg:text-5xl font-extrabold title-shading-neon tracking-tight mb-4">
-            Defensive Security Course Directory
+            Institutional Curriculum Directory
           </h1>
           <p className="text-[#94A3B8] text-sm sm:text-base leading-relaxed">
-            Explore modular, rigorous courses built to take you from foundational telemetry to specialized incident response and threat hunting operations.
+            Explore industry-standard, rigorous full stack engineering and modern web architecture curricula designed to take you from foundational concepts to production deployment.
           </p>
         </div>
 
@@ -256,7 +256,7 @@ export default function CourseCatalogPage() {
               <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#94A3B8]" />
               <input
                 type="text"
-                placeholder="Search by topic, skill, or framework (e.g. SOC, SIEM, MITRE, Wireshark)..."
+                placeholder="Search curriculum by title, stack, or module (e.g. React, Node.js, Express, MongoDB)..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl ultra-glass-input text-xs sm:text-sm text-white placeholder-[#64748B] font-mono focus:outline-none"

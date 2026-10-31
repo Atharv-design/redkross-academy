@@ -56,10 +56,18 @@ export default function ExamCBTInterface({
 
   const handleNextQuestion = () => {
     if (currentQuestionIndex < totalQuestions - 1) {
+      // Normal progression to next question
       setCurrentQuestionIndex((prev) => prev + 1);
     } else {
-      // Last question -> open submit confirm modal
-      setShowSubmitConfirmModal(true);
+      // At the last question index: check if there are unattempted questions earlier
+      const firstUnanswered = questions.findIndex((q) => !answers[q.id]);
+      if (firstUnanswered !== -1 && firstUnanswered !== currentQuestionIndex) {
+        // Jump to first unanswered question so cadet can complete in random order
+        setCurrentQuestionIndex(firstUnanswered);
+      } else {
+        // All attempted or reviewed -> prompt submit confirmation modal
+        setShowSubmitConfirmModal(true);
+      }
     }
   };
 
@@ -459,7 +467,7 @@ export default function ExamCBTInterface({
 
         {/* ================= RIGHT: QUESTION NUMBERS PALETTE (~32%) ================= */}
         {/* Top-Right box with arrow "question numbers" in Wireframe */}
-        <div className="lg:col-span-4 bg-[#092218]/50 border border-[#65F58A]/25 rounded-2xl p-5 sm:p-6 space-y-5 shadow-2xl backdrop-blur-md">
+        <div className="lg:col-span-4 lg:sticky lg:top-24 h-fit self-start bg-[#092218]/50 border border-[#65F58A]/25 rounded-2xl p-5 sm:p-6 space-y-5 shadow-2xl backdrop-blur-md">
           {/* Palette Title */}
           <div className="flex items-center justify-between pb-3 border-b border-[#65F58A]/20">
             <div className="flex items-center space-x-2">

@@ -210,11 +210,11 @@ export default function CourseDetailPage() {
                 </span>
               </div>
 
-              <h1 className="font-royal text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-tight break-words [overflow-wrap:anywhere] break-all">
+              <h1 className="font-royal text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-tight break-words">
                 {course.title}
               </h1>
 
-              <p className="text-[#C9EFE0] text-sm sm:text-base leading-relaxed break-words [overflow-wrap:anywhere] break-all max-w-full">
+              <p className="text-[#C9EFE0] text-sm sm:text-base leading-relaxed break-words max-w-full">
                 {course.overview || course.description}
               </p>
 
@@ -243,7 +243,7 @@ export default function CourseDetailPage() {
                   <BookOpen className="w-5 h-5 text-[#65F58A]" />
                   <span>Course Details & Scope</span>
                 </h2>
-                <p className="text-[#C9EFE0] text-xs sm:text-sm leading-relaxed whitespace-pre-line break-words [overflow-wrap:anywhere] break-all max-w-full font-mono">
+                <p className="text-[#C9EFE0] text-xs sm:text-sm leading-relaxed whitespace-pre-line break-words max-w-full font-mono">
                   {course.description}
                 </p>
               </div>
@@ -346,7 +346,7 @@ export default function CourseDetailPage() {
                 {finalPrerequisites.map((req, idx) => (
                   <li key={idx} className="flex items-start gap-2.5 min-w-0 overflow-hidden">
                     <span className="text-[#65F58A] font-bold flex-shrink-0">&bull;</span>
-                    <span className="break-words [overflow-wrap:anywhere] break-all">{req}</span>
+                    <span className="break-words">{req}</span>
                   </li>
                 ))}
               </ul>
@@ -354,8 +354,8 @@ export default function CourseDetailPage() {
           </div>
 
           {/* ================= RIGHT STICKY SIDEBAR (Open edX Rail) ================= */}
-          <div className="space-y-6 min-w-0">
-            <div className="cyber-glass-card rounded-2xl p-6 sm:p-7 space-y-6 sticky top-28 border border-[#65F58A]/35 shadow-[0_0_30px_rgba(101,245,138,0.12)] overflow-hidden min-w-0">
+          <div className="lg:col-span-1 lg:sticky lg:top-28 h-fit self-start space-y-6 min-w-0 z-20">
+            <div className="cyber-glass-card rounded-2xl p-6 sm:p-7 space-y-6 border border-[#65F58A]/35 shadow-[0_0_30px_rgba(101,245,138,0.12)] overflow-hidden min-w-0">
               
               {/* Official RedKross Crest & Institutional Seal */}
               <div className="flex items-center gap-3.5 pb-4 border-b border-[#65F58A]/20">

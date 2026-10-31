@@ -12,8 +12,17 @@
 
 import { sql } from '../api/_db.js';
 import dotenv from 'dotenv';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const fullStackCourseData = JSON.parse(
+  fs.readFileSync(path.resolve(__dirname, '../src/services/db/fullstackCourse.json'), 'utf8')
+);
 
 async function seedMaster() {
   console.log('====================================================');
@@ -64,72 +73,29 @@ async function seedMaster() {
     console.log('[3/3] Seeding foundation course catalog...');
     const sampleCourses = [
       {
-        id: 'crs_soc_fundamentals',
-        slug: 'soc-fundamentals-incident-response',
-        title: 'SOC Fundamentals & Incident Response',
-        category: 'SOC Operations',
-        difficulty: 'Intermediate',
-        price: 0,
-        cert_price: 3999,
-        estimated_duration: '14 Hours',
-        rating: 4.9,
-        enrolled_count: 1420,
-        overview: 'Designed for cybersecurity operators and defensive practitioners. This course teaches the practical anatomy of a Security Operations Centre (SOC), modern alert correlation using SIEM, threat hunting workflows, and structured incident containment.',
-        card_variant: 'variant-01',
-        lead_author: JSON.stringify({
-          name: 'Sarah Chen, CISSP',
-          role: 'Principal Incident Handler, RedKross Lab',
-          avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150'
-        }),
-        what_you_will_learn: JSON.stringify([
-          'Triage and classify critical SIEM alerts and telemetry signatures',
-          'Coordinate rapid containment protocols against active adversary intrusions',
-          'Deploy automated playbooks to remediate credential compromises'
-        ]),
-        learning_objectives: JSON.stringify([
-          'SIEM Architecture & Alert Rules',
-          'Incident Response Lifecycle (NIST SP 800-61)',
-          'Live Memory & Disk Forensics Triage'
-        ]),
-        prerequisites: JSON.stringify([
-          'Fundamental understanding of IP addressing, TCP/UDP packets, and subnets.',
-          'Basic familiarity with command line interfaces (Bash or PowerShell).'
-        ])
-      },
-      {
-        id: 'crs_practical_cyber_def',
-        slug: 'practical-cybersecurity-network-defense',
-        title: 'Practical Cybersecurity & Network Defense',
-        category: 'Defensive Cyber Operations',
-        difficulty: 'Beginner',
-        price: 0,
-        cert_price: 2999,
-        estimated_duration: '18 Hours',
-        rating: 4.88,
-        enrolled_count: 2450,
-        overview: 'A high-impact, hands-on immersive curriculum providing defensive cyber operators with end-to-end operational tradecraft across packet inspection, firewall ACL hardening, IDS/IPS tuning, and perimeter defense.',
-        card_variant: 'variant-02',
-        lead_author: JSON.stringify({
-          name: 'Col. Vikram Singh',
-          role: 'Cyber Command Advisor, RedKross Lab',
-          avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150'
-        }),
-        what_you_will_learn: JSON.stringify([
-          'Analyze raw PCAP packet captures using Wireshark and Zeek',
-          'Configure stateful firewalls and IDS/IPS inspection signatures',
-          'Enforce Zero Trust microsegmentation across enterprise subnets'
-        ]),
-        learning_objectives: JSON.stringify([
-          'Layer 2-7 Protocol Vulnerabilities',
-          'Suricata / Snort Rule Writing',
-          'Defensive Hardening against Common MITRE ATT&CK Techniques'
-        ]),
-        prerequisites: JSON.stringify([
-          'Basic networking knowledge (OSI model, IP, TCP/UDP)',
-          'Curiosity and commitment to defensive cyber operations'
-        ])
+        id: fullStackCourseData.id,
+        slug: fullStackCourseData.slug,
+        title: fullStackCourseData.title,
+        category: fullStackCourseData.category,
+        difficulty: fullStackCourseData.difficulty,
+        price: fullStackCourseData.price,
+        cert_price: fullStackCourseData.cert_price,
+        estimated_duration: fullStackCourseData.estimated_duration,
+        rating: fullStackCourseData.rating,
+        enrolled_count: fullStackCourseData.enrolled_count,
+        overview: fullStackCourseData.overview,
+        card_variant: fullStackCourseData.card_variant,
+        lead_author: JSON.stringify(fullStackCourseData.lead_author),
+        what_you_will_learn: JSON.stringify(fullStackCourseData.what_you_will_learn),
+        learning_objectives: JSON.stringify(fullStackCourseData.learning_objectives),
+        prerequisites: JSON.stringify(fullStackCourseData.prerequisites),
+        modules: fullStackCourseData.modules
       }
     ];
+
+    // Purge legacy fake courses from PostgreSQL (Only Full Stack Web Development is allowed)
+    console.log('[3/3] Purging legacy sample courses and seeding Full Stack Web Development...');
+    await sql`DELETE FROM courses WHERE id != ${fullStackCourseData.id}`;
 
     for (const c of sampleCourses) {
       await sql`
@@ -150,8 +116,103 @@ async function seedMaster() {
           what_you_will_learn = EXCLUDED.what_you_will_learn,
           card_variant = EXCLUDED.card_variant;
       `;
+
+      // Insert all 12 Modules and 78 Lessons
+      if (Array.isArray(c.modules)) {
+        for (let mIdx = 0; mIdx < c.modules.length; mIdx++) {
+          const mod = c.modules[mIdx];
+          const modId = mod.id || `mod_${c.id}_${mIdx + 1}`;
+          
+          await sql`
+            INSERT INTO modules (id, course_id, title, description, module_order, created_at, updated_at)
+            VALUES (${modId}, ${c.id}, ${mod.title}, ${mod.description || ''}, ${mIdx + 1}, NOW(), NOW())
+            ON CONFLICT (id) DO UPDATE SET
+              title = EXCLUDED.title,
+              description = EXCLUDED.description,
+              module_order = EXCLUDED.module_order,
+              updated_at = NOW();
+          `;
+
+          // Insert Lessons
+          if (Array.isArray(mod.lessons)) {
+            for (let lIdx = 0; lIdx < mod.lessons.length; lIdx++) {
+              const les = mod.lessons[lIdx];
+              const lesId = les.id || `les_${modId}_${lIdx + 1}`;
+              const videoList = Array.isArray(les.videos) ? les.videos : [];
+              const imageList = Array.isArray(les.images) ? les.images : [];
+              const pdfUrl = les.pdf_attachment_url || null;
+
+              await sql`
+                INSERT INTO lessons (
+                  id, module_id, title, duration, is_mandatory, lesson_type, summary, content,
+                  video_url, videos, images, pdf_attachment_url, lesson_order, created_at, updated_at
+                ) VALUES (
+                  ${lesId}, ${modId}, ${les.title}, ${les.duration || '15 mins'},
+                  ${les.is_mandatory !== false}, ${les.lesson_type || 'theory'}, ${les.summary || ''}, ${les.content || ''},
+                  ${les.video_url || null}, ${JSON.stringify(videoList)}::jsonb, ${JSON.stringify(imageList)}::jsonb, ${pdfUrl},
+                  ${lIdx + 1}, NOW(), NOW()
+                )
+                ON CONFLICT (id) DO UPDATE SET
+                  title = EXCLUDED.title,
+                  duration = EXCLUDED.duration,
+                  summary = EXCLUDED.summary,
+                  content = EXCLUDED.content,
+                  video_url = EXCLUDED.video_url,
+                  videos = EXCLUDED.videos,
+                  images = EXCLUDED.images,
+                  pdf_attachment_url = EXCLUDED.pdf_attachment_url,
+                  lesson_order = EXCLUDED.lesson_order,
+                  updated_at = NOW();
+              `;
+            }
+          }
+
+          // Insert Module Quiz
+          if (mod.quiz) {
+            const qz = mod.quiz;
+            const qzId = qz.id || `quiz_${modId}`;
+            await sql`
+              INSERT INTO quizzes (id, module_id, course_id, title, passing_score, duration_minutes, is_final_exam, created_at)
+              VALUES (${qzId}, ${modId}, ${c.id}, ${qz.title}, ${qz.passing_score || 80}, ${qz.duration_minutes || 20}, false, NOW())
+              ON CONFLICT (id) DO UPDATE SET
+                title = EXCLUDED.title,
+                passing_score = EXCLUDED.passing_score,
+                duration_minutes = EXCLUDED.duration_minutes;
+            `;
+
+            // Insert Quiz Questions & Options
+            if (Array.isArray(qz.questions)) {
+              for (let qIdx = 0; qIdx < qz.questions.length; qIdx++) {
+                const quest = qz.questions[qIdx];
+                const questId = quest.id || `q_${qzId}_${qIdx + 1}`;
+                await sql`
+                  INSERT INTO questions (id, quiz_id, question_text, question_type, points, explanation, question_order, created_at)
+                  VALUES (${questId}, ${qzId}, ${quest.text}, 'single_choice', 1, ${quest.explanation || ''}, ${qIdx + 1}, NOW())
+                  ON CONFLICT (id) DO UPDATE SET
+                    question_text = EXCLUDED.question_text,
+                    explanation = EXCLUDED.explanation;
+                `;
+
+                if (Array.isArray(quest.options)) {
+                  for (let oIdx = 0; oIdx < quest.options.length; oIdx++) {
+                    const opt = quest.options[oIdx];
+                    const optId = opt.id || `opt_${questId}_${oIdx + 1}`;
+                    await sql`
+                      INSERT INTO options (id, question_id, option_text, is_correct, option_order)
+                      VALUES (${optId}, ${questId}, ${opt.text}, ${Boolean(opt.is_correct)}, ${oIdx + 1})
+                      ON CONFLICT (id) DO UPDATE SET
+                        option_text = EXCLUDED.option_text,
+                        is_correct = EXCLUDED.is_correct;
+                    `;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
-    console.log('?" Course catalog seeded.');
+    console.log('?" Full Stack Web Development course, 12 modules, 78 lessons, and 240 MCQs seeded into PostgreSQL.');
 
     console.log('\n====================================================');
     console.log('?" DATABASE SEEDING COMPLETED WITH ZERO ERRORS.');
