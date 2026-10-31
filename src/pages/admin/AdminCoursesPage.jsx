@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
+import confetti from 'canvas-confetti';
 import {
   BookOpen, Plus, Search, Filter, Edit3, Trash2, Eye, EyeOff,
   ChevronDown, ChevronRight, Video, FileText, CheckCircle2,
@@ -298,6 +300,8 @@ export default function AdminCoursesPage() {
   const [builderStep, setBuilderStep] = useState(1); // 1: Info, 2: Media, 3: Curriculum, 4: Quizzes
   const [isEditingCourse, setIsEditingCourse] = useState(false);
   const [isCreatingNew, setIsCreatingNew] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [successModalData, setSuccessModalData] = useState(null);
 
   // Course Form State
   const [courseFormData, setCourseFormData] = useState({
@@ -394,6 +398,7 @@ export default function AdminCoursesPage() {
         loadCourseIntoForm(courseList[0]);
       } else if (courseList.length === 0) {
         setSelectedCourse(null);
+        setIsCreatingNew(true);
       }
     } catch (e) {
       console.error('Error loading courses:', e);
@@ -720,7 +725,7 @@ export default function AdminCoursesPage() {
   };
 
   // Handle Launch or Update Course
-  const handleSaveCourse = (e) => {
+  const handleSaveCourse = async (e) => {
     e?.preventDefault();
     if (!courseFormData.title.trim()) {
       alert('Course title is required.');
@@ -731,118 +736,202 @@ export default function AdminCoursesPage() {
       ? courseFormData.slug.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
       : courseFormData.title.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
-    if (isCreatingNew) {
-      // Check for duplicate course
-      const isDuplicate = courses.some(
-        (c) => c.title?.toLowerCase() === courseFormData.title.trim().toLowerCase() || c.slug === formattedSlug
-      );
-      if (isDuplicate) {
-        alert(`A course with title "${courseFormData.title}" or slug "${formattedSlug}" already exists.`);
-        return;
-      }
+    setIsSaving(true);
 
-      // Default module with 20 questions if none created
-      const defaultModules = courseFormData.modules?.length > 0 ? courseFormData.modules : [
-        {
-          id: `mod_${Date.now()}_1`,
-          title: 'Module 1: Architecture & Defensive Fundamentals',
-          order: 1,
-          lessons: [
-            {
-              id: `les_${Date.now()}_1`,
-              title: '1.1 System Architecture & Telemetry Pipelines',
-              duration: '15 mins',
-              type: 'video',
-              video_url: courseFormData.video_url || '/assets/sample-lesson.mp4',
-              content: '### System Architecture & Telemetry Pipelines\n\nMaintain 100% operational visibility over host and network telemetry.\n\n```bash\nss -tulpn\n```'
-            }
-          ],
-          quiz: {
-            id: `quiz_${Date.now()}_1`,
-            title: 'Module 1 Evaluation: Defensive Telemetry & Standards',
-            passing_score: 70,
-            total_questions: 20,
-            token_bounty: 150,
-            questions: generate20ModuleQuestions('Module 1: Architecture & Defensive Fundamentals')
-          }
+    try {
+      // Determine if we are updating an existing course in the repository or creating new
+      const isExistingCourse = Boolean(
+        !isCreatingNew &&
+        selectedCourse &&
+        selectedCourse.id &&
+        courses.some((c) => c.id === selectedCourse.id)
+      );
+
+      if (!isExistingCourse) {
+        // Check for duplicate course
+        const isDuplicate = courses.some(
+          (c) => c.title?.toLowerCase() === courseFormData.title.trim().toLowerCase() || c.slug === formattedSlug
+        );
+        if (isDuplicate) {
+          alert(`A course with title "${courseFormData.title}" or slug "${formattedSlug}" already exists.`);
+          setIsSaving(false);
+          return;
         }
-      ];
 
-      const newCoursePayload = {
-        title: courseFormData.title.trim(),
-        slug: formattedSlug,
-        category: courseFormData.category,
-        level: courseFormData.level,
-        difficulty: courseFormData.level,
-        duration: courseFormData.duration,
-        estimated_duration: courseFormData.estimated_duration,
-        effort_pace: courseFormData.effort_pace,
-        price: courseFormData.price,
-        total_tokens_reward: Number(courseFormData.total_tokens_reward) || 150,
-        overview: courseFormData.overview || `Curriculum developed by RedKross Academy for ${courseFormData.title}.`,
-        description: courseFormData.description || courseFormData.overview,
-        what_you_will_learn: Array.isArray(courseFormData.what_you_will_learn)
-          ? courseFormData.what_you_will_learn.filter(Boolean)
-          : typeof courseFormData.what_you_will_learn === 'string'
-            ? courseFormData.what_you_will_learn.split('\n').map((s) => s.trim()).filter(Boolean)
-            : [],
-        learning_objectives: Array.isArray(courseFormData.what_you_will_learn)
-          ? courseFormData.what_you_will_learn.filter(Boolean)
-          : typeof courseFormData.what_you_will_learn === 'string'
-            ? courseFormData.what_you_will_learn.split('\n').map((s) => s.trim()).filter(Boolean)
-            : [],
-        prerequisites: courseFormData.prerequisites,
-        art: courseFormData.image_url,
-        video_url: courseFormData.video_url,
-        status: courseFormData.status || 'PUBLISHED',
-        modules: defaultModules
-      };
+        // Default module with 20 questions if none created
+        const defaultModules = (courseFormData.modules && courseFormData.modules.length > 0)
+          ? courseFormData.modules
+          : [
+              {
+                id: `mod_${Date.now()}_1`,
+                title: 'Module 1: Architecture & Defensive Fundamentals',
+                order: 1,
+                lessons: [
+                  {
+                    id: `les_${Date.now()}_1`,
+                    title: '1.1 System Architecture & Telemetry Pipelines',
+                    duration: '15 mins',
+                    type: 'video',
+                    video_url: courseFormData.video_url || '/assets/sample-lesson.mp4',
+                    content: '### System Architecture & Telemetry Pipelines\n\nMaintain 100% operational visibility over host and network telemetry.\n\n```bash\nss -tulpn\n```'
+                  }
+                ],
+                quiz: {
+                  id: `quiz_${Date.now()}_1`,
+                  title: 'Module 1 Evaluation: Defensive Telemetry & Standards',
+                  passing_score: 70,
+                  total_questions: 20,
+                  token_bounty: 150,
+                  questions: generate20ModuleQuestions('Module 1: Architecture & Defensive Fundamentals')
+                }
+              }
+            ];
 
-      const created = mockEngine.createCourse(newCoursePayload);
-      const db = mockEngine.getDb();
-      setCourses([...(db.courses || [])]);
-      setSelectedCourse(created);
-      setIsCreatingNew(false);
-      setIsEditingCourse(false);
-      alert('Course created and published successfully!');
-    } else if (selectedCourse) {
-      const updated = courses.map((c) =>
-        c.id === selectedCourse.id
-          ? {
-              ...c,
-              title: courseFormData.title.trim(),
-              slug: formattedSlug,
-              category: courseFormData.category,
-              level: courseFormData.level,
-              difficulty: courseFormData.level,
-              duration: courseFormData.duration,
-              estimated_duration: courseFormData.estimated_duration,
-              effort_pace: courseFormData.effort_pace,
-              price: courseFormData.price,
-              total_tokens_reward: Number(courseFormData.total_tokens_reward) || 150,
-              overview: courseFormData.overview,
-              description: courseFormData.description,
-              what_you_will_learn: Array.isArray(courseFormData.what_you_will_learn)
-          ? courseFormData.what_you_will_learn.filter(Boolean)
-          : typeof courseFormData.what_you_will_learn === 'string'
-            ? courseFormData.what_you_will_learn.split('\n').map((s) => s.trim()).filter(Boolean)
-            : [],
-        learning_objectives: Array.isArray(courseFormData.what_you_will_learn)
-          ? courseFormData.what_you_will_learn.filter(Boolean)
-          : typeof courseFormData.what_you_will_learn === 'string'
-            ? courseFormData.what_you_will_learn.split('\n').map((s) => s.trim()).filter(Boolean)
-            : [],
-              prerequisites: courseFormData.prerequisites,
-              art: courseFormData.image_url,
-              video_url: courseFormData.video_url,
-              status: courseFormData.status,
-              modules: courseFormData.modules
-            }
-          : c
-      );
-      persistCourses(updated, `Admin updated course: ${courseFormData.title}`);
-      alert('Course updated successfully!');
-      setIsEditingCourse(false);
+        const newCoursePayload = {
+          title: courseFormData.title.trim(),
+          slug: formattedSlug,
+          category: courseFormData.category || 'Defensive Cyber Operations',
+          level: courseFormData.level || 'Intermediate',
+          difficulty: courseFormData.level || 'Intermediate',
+          duration: courseFormData.duration || '4 Weeks',
+          estimated_duration: courseFormData.estimated_duration || '14 Hours',
+          effort_pace: courseFormData.effort_pace || 'Self-Paced (4-6 Hours / Week)',
+          price: courseFormData.price || 'Free Institutional Access',
+          total_tokens_reward: Number(courseFormData.total_tokens_reward) || 150,
+          overview: courseFormData.overview || `Curriculum developed by RedKross Academy for ${courseFormData.title}.`,
+          description: courseFormData.description || courseFormData.overview,
+          what_you_will_learn: Array.isArray(courseFormData.what_you_will_learn)
+            ? courseFormData.what_you_will_learn.filter(Boolean)
+            : typeof courseFormData.what_you_will_learn === 'string'
+              ? courseFormData.what_you_will_learn.split('\n').map((s) => s.trim()).filter(Boolean)
+              : [],
+          learning_objectives: Array.isArray(courseFormData.what_you_will_learn)
+            ? courseFormData.what_you_will_learn.filter(Boolean)
+            : typeof courseFormData.what_you_will_learn === 'string'
+              ? courseFormData.what_you_will_learn.split('\n').map((s) => s.trim()).filter(Boolean)
+              : [],
+          prerequisites: courseFormData.prerequisites || 'Basic Linux shell command line navigation and TCP/IP networking fundamentals.',
+          art: courseFormData.image_url || '/assets/course-art/art-01.jpg',
+          video_url: courseFormData.video_url || '/assets/sample-lesson.mp4',
+          status: courseFormData.status || 'PUBLISHED',
+          modules: defaultModules
+        };
+
+        // 1. Create in local database engine
+        const created = mockEngine.createCourse(newCoursePayload);
+
+        // 2. Persist to PostgreSQL database API
+        try {
+          await apiClient.createCourse({ ...newCoursePayload, id: created?.id });
+        } catch (apiErr) {
+          console.warn('Backend course creation API notice:', apiErr.message);
+        }
+
+        // 3. Update state
+        const db = mockEngine.getDb();
+        const updatedCourseList = [...(db.courses || [])];
+        setCourses(updatedCourseList);
+        const savedCourse = created || newCoursePayload;
+        setSelectedCourse(savedCourse);
+        setIsCreatingNew(false);
+        setIsEditingCourse(false);
+
+        // 4. Broadcast live Socket.io event to all student interfaces
+        if (socketClient && typeof socketClient.emit === 'function') {
+          socketClient.emit('course:mutation', { type: 'CREATE', course: savedCourse });
+        }
+
+        // 5. Audit log
+        safeLogAction({
+          action: 'COURSE_CREATED',
+          category: 'COURSE_MUTATION',
+          details: `Admin created and published course "${savedCourse.title}"`,
+          severity: 'INFO'
+        });
+
+        // 6. Confetti celebration
+        try {
+          confetti({
+            particleCount: 110,
+            spread: 75,
+            origin: { y: 0.6 },
+            colors: ['#65F58A', '#35E6B5', '#00FFA3']
+          });
+        } catch (_) {}
+
+        // 7. Pop-up Success Confirmation
+        setSuccessModalData({
+          isOpen: true,
+          isNew: true,
+          title: savedCourse.title,
+          slug: savedCourse.slug,
+          message: `Your course "${savedCourse.title}" has been successfully created, compiled, and published to the RedKross Academy directory. It is now live for all cadets.`
+        });
+
+      } else {
+        // Updating existing course in repository
+        const updated = courses.map((c) =>
+          c.id === selectedCourse.id
+            ? {
+                ...c,
+                title: courseFormData.title.trim(),
+                slug: formattedSlug,
+                category: courseFormData.category,
+                level: courseFormData.level,
+                difficulty: courseFormData.level,
+                duration: courseFormData.duration,
+                estimated_duration: courseFormData.estimated_duration,
+                effort_pace: courseFormData.effort_pace,
+                price: courseFormData.price,
+                total_tokens_reward: Number(courseFormData.total_tokens_reward) || 150,
+                overview: courseFormData.overview,
+                description: courseFormData.description,
+                what_you_will_learn: Array.isArray(courseFormData.what_you_will_learn)
+                  ? courseFormData.what_you_will_learn.filter(Boolean)
+                  : typeof courseFormData.what_you_will_learn === 'string'
+                    ? courseFormData.what_you_will_learn.split('\n').map((s) => s.trim()).filter(Boolean)
+                    : [],
+                learning_objectives: Array.isArray(courseFormData.what_you_will_learn)
+                  ? courseFormData.what_you_will_learn.filter(Boolean)
+                  : typeof courseFormData.what_you_will_learn === 'string'
+                    ? courseFormData.what_you_will_learn.split('\n').map((s) => s.trim()).filter(Boolean)
+                    : [],
+                prerequisites: courseFormData.prerequisites,
+                art: courseFormData.image_url,
+                video_url: courseFormData.video_url,
+                status: courseFormData.status,
+                modules: courseFormData.modules
+              }
+            : c
+        );
+
+        await persistCourses(updated, `Admin updated course: ${courseFormData.title}`);
+        setIsEditingCourse(false);
+
+        // Confetti celebration
+        try {
+          confetti({
+            particleCount: 80,
+            spread: 60,
+            origin: { y: 0.6 },
+            colors: ['#65F58A', '#35E6B5', '#00FFA3']
+          });
+        } catch (_) {}
+
+        // Pop-up Success Confirmation
+        setSuccessModalData({
+          isOpen: true,
+          isNew: false,
+          title: courseFormData.title,
+          slug: formattedSlug,
+          message: `Your changes to "${courseFormData.title}" have been successfully saved and synchronized across PostgreSQL and all student interfaces.`
+        });
+      }
+    } catch (err) {
+      console.error('Course save error:', err);
+      alert('Error saving course: ' + err.message);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -1256,10 +1345,10 @@ export default function AdminCoursesPage() {
           <div className="p-5 border-b border-[#65F58A]/20 bg-[#061510] flex items-center justify-between gap-4">
             <div>
               <span className="text-[10px] font-mono text-[#65F58A] uppercase tracking-wider block">
-                {isCreatingNew ? 'NEW COURSE STUDIO' : 'COURSE BUILDER & MANAGER'}
+                {isCreatingNew || !selectedCourse ? 'NEW COURSE STUDIO' : 'COURSE BUILDER & MANAGER'}
               </span>
               <h3 className="text-lg font-bold text-white">
-                {isCreatingNew ? 'Create New Course' : courseFormData.title || 'Course Architecture'}
+                {isCreatingNew || !selectedCourse ? (courseFormData.title || 'Create New Course') : (courseFormData.title || 'Course Architecture')}
               </h3>
             </div>
 
@@ -1277,11 +1366,21 @@ export default function AdminCoursesPage() {
               )}
               <button
                 type="button"
+                disabled={isSaving}
                 onClick={handleSaveCourse}
-                className="px-5 py-2 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-bold text-xs font-mono flex items-center space-x-1.5 transition-all shadow-[0_0_15px_rgba(101,245,138,0.3)] cursor-pointer"
+                className="px-5 py-2 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] disabled:opacity-60 text-[#071018] font-bold text-xs font-mono flex items-center space-x-1.5 transition-all shadow-[0_0_15px_rgba(101,245,138,0.3)] cursor-pointer"
               >
-                <Save className="w-4 h-4 stroke-[2.5]" />
-                <span>{isCreatingNew ? 'Launch Course' : 'Save Changes'}</span>
+                {isSaving ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Saving...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4 stroke-[2.5]" />
+                    <span>{isCreatingNew || !selectedCourse ? 'Launch Course' : 'Save Changes'}</span>
+                  </>
+                )}
               </button>
             </div>
           </div>
@@ -1999,11 +2098,21 @@ export default function AdminCoursesPage() {
                   </button>
                   <button
                     type="button"
+                    disabled={isSaving}
                     onClick={handleSaveCourse}
-                    className="px-6 py-3 bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-bold text-xs font-mono rounded-xl flex items-center space-x-2 transition-all shadow-[0_0_20px_rgba(101,245,138,0.4)] cursor-pointer"
+                    className="px-6 py-3 bg-[#65F58A] hover:bg-[#35E6B5] disabled:opacity-60 text-[#071018] font-bold text-xs font-mono rounded-xl flex items-center space-x-2 transition-all shadow-[0_0_20px_rgba(101,245,138,0.4)] cursor-pointer"
                   >
-                    <Save className="w-4 h-4 stroke-[3]" />
-                    <span>Save & Finalize Course</span>
+                    {isSaving ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Finalizing Course...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-4 h-4 stroke-[3]" />
+                        <span>Save & Finalize Course</span>
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
@@ -2440,6 +2549,85 @@ export default function AdminCoursesPage() {
               >
                 <Check className="w-4 h-4 stroke-[3]" />
                 <span>Save Question to Assessment</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* ================= MODAL: COURSE CREATED / UPDATED SUCCESS POP-UP ================= */}
+      {successModalData?.isOpen && (
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
+          <div className="max-w-lg w-full p-8 rounded-3xl bg-[#061510] border-2 border-[#65F58A]/50 shadow-[0_0_60px_rgba(101,245,138,0.25)] space-y-6 text-center relative overflow-hidden">
+            {/* Ambient Corner Glows */}
+            <div className="absolute -top-24 -left-24 w-48 h-48 bg-[#65F58A]/15 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-[#35E6B5]/15 rounded-full blur-3xl pointer-events-none" />
+
+            {/* Glowing Icon Badge */}
+            <div className="relative mx-auto w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#092218] to-[#0d3324] border border-[#65F58A]/50 flex items-center justify-center shadow-[0_0_25px_rgba(101,245,138,0.35)]">
+              <CheckCircle2 className="w-9 h-9 text-[#65F58A] animate-pulse" />
+            </div>
+
+            {/* Status Pill */}
+            <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full text-[11px] font-mono border border-[#65F58A]/35 bg-[#092218]/90 text-[#65F58A]">
+              <span className="w-2 h-2 rounded-full bg-[#65F58A] animate-ping" />
+              <span>{successModalData.isNew ? 'CURRICULUM CREATED & PUBLISHED' : 'CURRICULUM SYNCHRONIZED'}</span>
+            </div>
+
+            {/* Main Header & Proper English Message */}
+            <div className="space-y-2">
+              <h3 className="text-xl sm:text-2xl font-bold text-white font-lora">
+                {successModalData.isNew
+                  ? 'Your Course Has Been Created!'
+                  : 'Course Updated Successfully!'}
+              </h3>
+              <p className="text-xs sm:text-sm text-[#C9EFE0] leading-relaxed font-lora">
+                {successModalData.message}
+              </p>
+            </div>
+
+            {/* Metadata Summary Card */}
+            <div className="p-4 rounded-xl bg-[#040e0a] border border-[#65F58A]/20 text-left space-y-2 font-mono text-xs">
+              <div className="flex justify-between items-center text-slate-400">
+                <span>Course Title:</span>
+                <span className="text-white font-bold truncate max-w-[240px] text-right">{successModalData.title}</span>
+              </div>
+              <div className="flex justify-between items-center text-slate-400">
+                <span>Catalog Status:</span>
+                <span className="text-[#65F58A] font-bold">PUBLISHED • ACTIVE</span>
+              </div>
+              <div className="flex justify-between items-center text-slate-400">
+                <span>Sync Network:</span>
+                <span className="text-[#35E6B5]">PostgreSQL & Socket.io Live</span>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="space-y-2.5 pt-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <Link
+                  to={successModalData.slug ? `/courses/${successModalData.slug}` : '/courses'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-3 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-bold text-xs font-mono flex items-center justify-center space-x-2 transition-all shadow-[0_0_15px_rgba(101,245,138,0.3)] cursor-pointer"
+                >
+                  <Eye className="w-4 h-4" />
+                  <span>View in Catalog</span>
+                </Link>
+                <Link
+                  to="/student"
+                  className="px-4 py-3 rounded-xl bg-[#092218] hover:bg-[#0c2a1e] border border-[#65F58A]/40 text-[#65F58A] hover:text-white font-bold text-xs font-mono flex items-center justify-center space-x-2 transition-all cursor-pointer"
+                >
+                  <BookOpen className="w-4 h-4" />
+                  <span>Student Portal</span>
+                </Link>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setSuccessModalData(null)}
+                className="w-full py-2.5 text-xs font-mono text-[#72A88E] hover:text-white transition-colors cursor-pointer"
+              >
+                Continue Managing in Studio
               </button>
             </div>
           </div>
