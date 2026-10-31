@@ -411,12 +411,16 @@ export default function AdminCoursesPage() {
       total_tokens_reward: c.total_tokens_reward || c.xp_reward || 150,
       overview: c.overview || '',
       description: c.description || c.overview || '',
-      what_you_will_learn: c.what_you_will_learn || [
-        'Master continuous host and network telemetry inspection',
-        'Execute MITRE ATT&CK adversary mapping and threat detection',
-        'Isolate compromised endpoints without disrupting forensic tunnels',
-        'Conduct RFC 3227 compliant evidence acquisition and chain of custody'
-      ],
+      what_you_will_learn: (c.what_you_will_learn && c.what_you_will_learn.length > 0)
+        ? c.what_you_will_learn
+        : (c.learning_objectives && c.learning_objectives.length > 0)
+          ? c.learning_objectives
+          : [
+              'Master continuous host and network telemetry inspection',
+              'Execute MITRE ATT&CK adversary mapping and threat detection',
+              'Isolate compromised endpoints without disrupting forensic tunnels',
+              'Conduct RFC 3227 compliant evidence acquisition and chain of custody'
+            ],
       prerequisites: c.prerequisites || 'Basic Linux shell command line navigation and TCP/IP networking fundamentals.',
       image_source_type: c.art?.startsWith('data:') ? 'upload' : 'url',
       image_url: c.art || '/assets/course-art/art-01.jpg',
@@ -738,7 +742,16 @@ export default function AdminCoursesPage() {
         total_tokens_reward: Number(courseFormData.total_tokens_reward) || 150,
         overview: courseFormData.overview || `Curriculum developed by RedKross Academy for ${courseFormData.title}.`,
         description: courseFormData.description || courseFormData.overview,
-        what_you_will_learn: courseFormData.what_you_will_learn,
+        what_you_will_learn: Array.isArray(courseFormData.what_you_will_learn)
+          ? courseFormData.what_you_will_learn.filter(Boolean)
+          : typeof courseFormData.what_you_will_learn === 'string'
+            ? courseFormData.what_you_will_learn.split('\n').map((s) => s.trim()).filter(Boolean)
+            : [],
+        learning_objectives: Array.isArray(courseFormData.what_you_will_learn)
+          ? courseFormData.what_you_will_learn.filter(Boolean)
+          : typeof courseFormData.what_you_will_learn === 'string'
+            ? courseFormData.what_you_will_learn.split('\n').map((s) => s.trim()).filter(Boolean)
+            : [],
         prerequisites: courseFormData.prerequisites,
         art: courseFormData.image_url,
         video_url: courseFormData.video_url,
@@ -770,7 +783,16 @@ export default function AdminCoursesPage() {
               total_tokens_reward: Number(courseFormData.total_tokens_reward) || 150,
               overview: courseFormData.overview,
               description: courseFormData.description,
-              what_you_will_learn: courseFormData.what_you_will_learn,
+              what_you_will_learn: Array.isArray(courseFormData.what_you_will_learn)
+          ? courseFormData.what_you_will_learn.filter(Boolean)
+          : typeof courseFormData.what_you_will_learn === 'string'
+            ? courseFormData.what_you_will_learn.split('\n').map((s) => s.trim()).filter(Boolean)
+            : [],
+        learning_objectives: Array.isArray(courseFormData.what_you_will_learn)
+          ? courseFormData.what_you_will_learn.filter(Boolean)
+          : typeof courseFormData.what_you_will_learn === 'string'
+            ? courseFormData.what_you_will_learn.split('\n').map((s) => s.trim()).filter(Boolean)
+            : [],
               prerequisites: courseFormData.prerequisites,
               art: courseFormData.image_url,
               video_url: courseFormData.video_url,
@@ -1335,6 +1357,20 @@ export default function AdminCoursesPage() {
                     onChange={(e) => setCourseFormData({ ...courseFormData, description: e.target.value })}
                     placeholder="Comprehensive description of the course, laboratory environments, and defense strategies."
                     className="w-full bg-[#061510] rounded-xl p-3 text-xs text-white border border-[#65F58A]/25 focus:outline-none focus:border-[#65F58A]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-mono text-[#72A88E]">What You'll Learn (1 Learning Competency per line)</label>
+                    <span className="text-[10px] font-mono text-[#65F58A]/80">Displayed in Course Overview</span>
+                  </div>
+                  <textarea
+                    rows={4}
+                    value={Array.isArray(courseFormData.what_you_will_learn) ? courseFormData.what_you_will_learn.join('\n') : (courseFormData.what_you_will_learn || '')}
+                    onChange={(e) => setCourseFormData({ ...courseFormData, what_you_will_learn: e.target.value.split('\n') })}
+                    placeholder="Master continuous host and network telemetry inspection&#10;Execute MITRE ATT&CK adversary mapping and threat detection&#10;Isolate compromised endpoints without disrupting forensic tunnels&#10;Conduct RFC 3227 compliant evidence acquisition"
+                    className="w-full bg-[#061510] rounded-xl p-3 text-xs text-white border border-[#65F58A]/25 focus:outline-none focus:border-[#65F58A] font-mono placeholder:text-slate-600"
                   />
                 </div>
 

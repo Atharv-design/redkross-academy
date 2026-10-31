@@ -623,20 +623,58 @@ class MockEngine {
     return db.public_catalog_enabled;
   }
 
+  _normalizeCourse(course) {
+    if (!course) return course;
+    const raw = (course.what_you_will_learn && course.what_you_will_learn.length > 0)
+      ? course.what_you_will_learn
+      : (course.learning_objectives && course.learning_objectives.length > 0)
+        ? course.learning_objectives
+        : null;
+    let objectives = Array.isArray(raw)
+      ? raw.filter(Boolean)
+      : typeof raw === 'string' && raw.trim()
+        ? raw.split('\n').map((s) => s.trim()).filter(Boolean)
+        : [];
+    if (!objectives || objectives.length === 0) {
+      objectives = [
+        `Master tactical defense, incident handling, and telemetry analysis for ${course.title || 'Defensive Cyber'}.`,
+        'Analyze live adversary attack vectors, host intrusion artifacts, and IOC traces.',
+        'Formulate rapid containment playbooks and operational defensive procedures.',
+        'Align tactical enterprise telemetry directly with MITRE ATT&CK matrix frameworks.',
+        'Pass the cryptographically verifiable on-chain practical assessment.'
+      ];
+    }
+    course.learning_objectives = objectives;
+    course.what_you_will_learn = objectives;
+
+    if (!course.prerequisites || (Array.isArray(course.prerequisites) && course.prerequisites.length === 0)) {
+      course.prerequisites = [
+        'Fundamental understanding of IP addressing, TCP/UDP packets, and subnets.',
+        'Basic familiarity with command line interfaces (Bash or PowerShell).',
+        'A web browser supporting WebAssembly and WebRTC for live hands-on proctoring.'
+      ];
+    } else if (typeof course.prerequisites === 'string') {
+      course.prerequisites = course.prerequisites.split('\n').map((s) => s.trim()).filter(Boolean);
+    }
+    return course;
+  }
+
   getLearningPaths() {
     return this.getDb().learning_paths;
   }
 
   getCourses() {
-    return this.getDb().courses;
+    return (this.getDb().courses || []).map((c) => this._normalizeCourse(c));
   }
 
   getCourseBySlug(slug) {
-    return this.getDb().courses.find((c) => c.slug === slug);
+    const course = (this.getDb().courses || []).find((c) => c.slug === slug);
+    return this._normalizeCourse(course);
   }
 
   getCourseById(id) {
-    return this.getDb().courses.find((c) => c.id === id);
+    const course = (this.getDb().courses || []).find((c) => c.id === id);
+    return this._normalizeCourse(course);
   }
 
   createCourse(coursePayload) {
@@ -697,7 +735,28 @@ class MockEngine {
             : ['Defensive Operations', 'Threat Triage', 'Log Inspection']),
       overview: coursePayload.overview || coursePayload.description || `Comprehensive curriculum designed by RedKross Academy for ${coursePayload.title}.`,
       description: coursePayload.description || coursePayload.overview || `Comprehensive curriculum designed by RedKross Academy for ${coursePayload.title}.`,
-      learning_objectives: coursePayload.learning_objectives || [],
+      learning_objectives: (coursePayload.learning_objectives && coursePayload.learning_objectives.length > 0)
+        ? coursePayload.learning_objectives
+        : (coursePayload.what_you_will_learn && coursePayload.what_you_will_learn.length > 0)
+          ? coursePayload.what_you_will_learn
+          : [
+              `Master tactical defense, incident handling, and telemetry analysis for ${coursePayload.title || 'Defensive Cyber'}.`,
+              'Analyze live adversary attack vectors, host intrusion artifacts, and IOC traces.',
+              'Formulate rapid containment playbooks and operational defensive procedures.',
+              'Align tactical enterprise telemetry directly with MITRE ATT&CK matrix frameworks.',
+              'Pass the cryptographically verifiable on-chain practical assessment.'
+            ],
+      what_you_will_learn: (coursePayload.what_you_will_learn && coursePayload.what_you_will_learn.length > 0)
+        ? coursePayload.what_you_will_learn
+        : (coursePayload.learning_objectives && coursePayload.learning_objectives.length > 0)
+          ? coursePayload.learning_objectives
+          : [
+              `Master tactical defense, incident handling, and telemetry analysis for ${coursePayload.title || 'Defensive Cyber'}.`,
+              'Analyze live adversary attack vectors, host intrusion artifacts, and IOC traces.',
+              'Formulate rapid containment playbooks and operational defensive procedures.',
+              'Align tactical enterprise telemetry directly with MITRE ATT&CK matrix frameworks.',
+              'Pass the cryptographically verifiable on-chain practical assessment.'
+            ],
       lead_author: coursePayload.lead_author || {
         name: 'Sarah Chen, CISSP',
         title: 'Principal Incident Handler, RedKross Lab',

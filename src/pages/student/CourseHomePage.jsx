@@ -127,15 +127,15 @@ export default function CourseHomePage() {
         {/* ================= 1. OPEN EDX TOP SUB-NAVBAR & TABS ================= */}
         <div className="border-b border-[#65F58A]/20 pb-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <div className="flex items-center space-x-2 text-xs font-mono text-[#72A88E]">
-                <Link to="/student" className="hover:text-white transition-colors">Classroom</Link>
-                <span>/</span>
-                <span className="text-[#65F58A]">{course.category}</span>
-                <span>/</span>
-                <span className="text-white font-semibold">{course.title}</span>
+            <div className="space-y-1 min-w-0">
+              <div className="flex items-center space-x-2 text-xs font-mono text-[#72A88E] min-w-0 overflow-hidden">
+                <Link to="/student" className="hover:text-white transition-colors flex-shrink-0">Classroom</Link>
+                <span className="flex-shrink-0">/</span>
+                <span className="text-[#65F58A] flex-shrink-0">{course.category}</span>
+                <span className="flex-shrink-0">/</span>
+                <span className="text-white font-semibold truncate">{course.title}</span>
               </div>
-              <h1 className="font-royal text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              <h1 className="font-royal text-2xl sm:text-3xl font-extrabold text-white tracking-tight break-words [overflow-wrap:anywhere] break-all">
                 {course.title}
               </h1>
             </div>
@@ -220,10 +220,10 @@ export default function CourseHomePage() {
             </div>
 
             {/* Layout: Outline & Right Sidebar */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 min-w-0">
               
               {/* Modules Outline (Left 2 Columns) */}
-              <div className="lg:col-span-2 space-y-4">
+              <div className="lg:col-span-2 space-y-4 min-w-0">
                 
                 {/* Header with "Expand all / Collapse all" */}
                 <div className="flex items-center justify-between pb-2">

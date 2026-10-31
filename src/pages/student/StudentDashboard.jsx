@@ -195,8 +195,8 @@ export default function StudentDashboard() {
                   <Play className="w-3 h-3 fill-[#65F58A]" />
                   <span>RESUME ACTIVE PROGRAMME</span>
                 </div>
-                <h2 className="text-2xl font-royal font-bold text-white">{primaryCourse.title}</h2>
-                <p className="text-xs text-slate-300 leading-relaxed">{primaryCourse.overview}</p>
+                <h2 className="text-2xl font-royal font-bold text-white break-words [overflow-wrap:anywhere] break-all">{primaryCourse.title}</h2>
+                <p className="text-xs text-slate-300 leading-relaxed break-words [overflow-wrap:anywhere] break-all">{primaryCourse.overview}</p>
 
                 {/* Progress Bar */}
                 <div className="space-y-1.5 pt-2 max-w-md">
@@ -265,7 +265,7 @@ export default function StudentDashboard() {
                       <span className="text-[#65F58A] font-semibold">{String(enr.status || 'ACTIVE').toUpperCase()}</span>
                     </div>
 
-                    <h3 className="text-base font-royal font-bold text-white mb-2">{crs.title}</h3>
+                    <h3 className="text-base font-royal font-bold text-white mb-2 break-words [overflow-wrap:anywhere] break-all">{crs.title}</h3>
 
                     {/* Progress Bar */}
                     <div className="space-y-1 my-3">

@@ -137,29 +137,67 @@ export default function CourseDetailPage() {
     }
   };
 
+  // Robust fallback resolution for objectives and prerequisites
+  const rawObjectives = (course.what_you_will_learn && course.what_you_will_learn.length > 0)
+    ? course.what_you_will_learn
+    : (course.learning_objectives && course.learning_objectives.length > 0)
+      ? course.learning_objectives
+      : null;
+
+  const parsedObjectives = Array.isArray(rawObjectives)
+    ? rawObjectives.filter(Boolean)
+    : typeof rawObjectives === 'string' && rawObjectives.trim()
+      ? rawObjectives.split('\n').map((s) => s.trim()).filter(Boolean)
+      : [];
+
+  const finalObjectives = parsedObjectives.length > 0
+    ? parsedObjectives
+    : [
+        `Master tactical defense, incident handling, and telemetry analysis for ${course.title || 'Defensive Cyber'}.`,
+        'Analyze live adversary attack vectors, host intrusion artifacts, and IOC traces.',
+        'Formulate rapid containment playbooks and operational defensive procedures.',
+        'Align tactical enterprise telemetry directly with MITRE ATT&CK matrix frameworks.',
+        'Pass the cryptographically verifiable on-chain practical assessment.'
+      ];
+
+  const rawPrerequisites = course.prerequisites;
+  const parsedPrereqs = Array.isArray(rawPrerequisites)
+    ? rawPrerequisites.filter(Boolean)
+    : typeof rawPrerequisites === 'string' && rawPrerequisites.trim()
+      ? rawPrerequisites.split('\n').map((s) => s.trim()).filter(Boolean)
+      : [];
+
+  const finalPrerequisites = parsedPrereqs.length > 0
+    ? parsedPrereqs
+    : [
+        'Fundamental understanding of IP addressing, TCP/UDP packets, and subnets.',
+        'Basic familiarity with command line interfaces (Bash or PowerShell).',
+        'A web browser supporting WebAssembly and WebRTC for live hands-on proctoring.'
+      ];
+
   return (
     <div className="min-h-screen py-10 relative z-10 font-sans select-none">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         
         {/* Top Breadcrumb Navigation */}
-        <div className="flex items-center space-x-2 text-xs font-mono text-[#8BA2B5]">
-          <Link to="/" className="hover:text-white transition-colors">Academy</Link>
-          <span>/</span>
-          <Link to="/courses" className="hover:text-white transition-colors">Courses</Link>
-          <span>/</span>
-          <span className="text-[#65F58A]">{course.category || 'Specialist Training'}</span>
-          <span>/</span>
+        <div className="flex items-center space-x-2 text-xs font-mono text-[#8BA2B5] overflow-hidden min-w-0">
+          <Link to="/" className="hover:text-white transition-colors flex-shrink-0">Academy</Link>
+          <span className="flex-shrink-0">/</span>
+          <Link to="/courses" className="hover:text-white transition-colors flex-shrink-0">Courses</Link>
+          <span className="flex-shrink-0">/</span>
+          <span className="text-[#65F58A] flex-shrink-0">{course.category || 'Specialist Training'}</span>
+          <span className="flex-shrink-0">/</span>
           <span className="text-slate-200 truncate font-semibold">{course.title}</span>
         </div>
 
         {/* Main Two-Column Open edX Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10 min-w-0">
           
           {/* ================= LEFT MAIN CONTENT STREAM (2 Columns) ================= */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-8 min-w-0">
             
             {/* Header Hero Section */}
-            <div className="cyber-glass-panel rounded-2xl p-6 sm:p-8 space-y-4 border border-[#65F58A]/30">
+            <div className="cyber-glass-panel rounded-2xl p-6 sm:p-8 space-y-4 border border-[#65F58A]/30 overflow-hidden min-w-0">
               <div className="flex flex-wrap items-center gap-2.5">
                 <span className="text-[11px] font-mono px-3 py-1 rounded-full bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/40 font-bold uppercase tracking-wider">
                   {course.category}
@@ -172,61 +210,63 @@ export default function CourseDetailPage() {
                 </span>
               </div>
 
-              <h1 className="font-royal text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-tight">
+              <h1 className="font-royal text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-tight break-words [overflow-wrap:anywhere] break-all">
                 {course.title}
               </h1>
 
-              <p className="text-[#C9EFE0] text-sm sm:text-base leading-relaxed">
-                {course.overview}
+              <p className="text-[#C9EFE0] text-sm sm:text-base leading-relaxed break-words [overflow-wrap:anywhere] break-all max-w-full">
+                {course.overview || course.description}
               </p>
 
               {/* Author / Instructor Strip */}
-              <div className="flex items-center space-x-4 pt-4 border-t border-[#65F58A]/20">
+              <div className="flex items-center space-x-4 pt-4 border-t border-[#65F58A]/20 min-w-0">
                 <img
                   src={course.lead_author?.avatar || 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=256&q=80'}
                   alt={course.lead_author?.name || 'Instructor'}
-                  className="w-12 h-12 rounded-full border border-[#65F58A]/50 object-cover shadow-[0_0_12px_rgba(101,245,138,0.3)]"
+                  className="w-12 h-12 rounded-full border border-[#65F58A]/50 object-cover shadow-[0_0_12px_rgba(101,245,138,0.3)] flex-shrink-0"
                 />
-                <div>
-                  <div className="font-royal text-sm font-bold text-white">
+                <div className="min-w-0 overflow-hidden">
+                  <div className="font-royal text-sm font-bold text-white truncate">
                     {course.lead_author?.name || 'Sarah Chen, CISSP'}
                   </div>
-                  <div className="text-xs text-[#72A88E] font-mono">
+                  <div className="text-xs text-[#72A88E] font-mono truncate">
                     {course.lead_author?.title || 'Principal Defensive Handler • RedKross Cyber Lab'}
                   </div>
                 </div>
               </div>
             </div>
 
+            {/* Course Details & Scope Section (if description is distinct from overview) */}
+            {course.description && course.description !== course.overview && (
+              <div className="cyber-glass-panel rounded-2xl p-6 sm:p-8 space-y-3 border border-[#65F58A]/25 overflow-hidden min-w-0">
+                <h2 className="font-royal text-lg sm:text-xl font-bold text-white flex items-center gap-2.5">
+                  <BookOpen className="w-5 h-5 text-[#65F58A]" />
+                  <span>Course Details & Scope</span>
+                </h2>
+                <p className="text-[#C9EFE0] text-xs sm:text-sm leading-relaxed whitespace-pre-line break-words [overflow-wrap:anywhere] break-all max-w-full font-mono">
+                  {course.description}
+                </p>
+              </div>
+            )}
+
             {/* "What You'll Learn" / Learning Competencies Section */}
-            <div className="cyber-glass-panel rounded-2xl p-6 sm:p-8 space-y-4 border border-[#65F58A]/25">
+            <div className="cyber-glass-panel rounded-2xl p-6 sm:p-8 space-y-4 border border-[#65F58A]/25 overflow-hidden min-w-0">
               <h2 className="font-royal text-lg sm:text-xl font-bold text-white flex items-center gap-2.5">
                 <Sparkles className="w-5 h-5 text-[#65F58A]" />
                 <span>What You'll Learn</span>
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                {(Array.isArray(course.learning_objectives)
-                  ? course.learning_objectives
-                  : typeof course.learning_objectives === 'string' && course.learning_objectives.trim()
-                    ? course.learning_objectives.split('\n').map((s) => s.trim()).filter(Boolean)
-                    : [
-                        'Master 24/7 security operations center alert analysis and SIEM triage.',
-                        'Analyze real adversary attack traces using Sysmon, packet captures, and logs.',
-                        'Formulate rapid containment playbooks without destroying volatile memory evidence.',
-                        'Align all defensive telemetry directly with MITRE ATT&CK techniques.',
-                        'Pass the cryptographically verifiable on-chain practical assessment.'
-                      ]
-                ).map((obj, idx) => (
-                  <div key={idx} className="flex items-start gap-2.5 p-3 rounded-xl bg-[#092218]/40 border border-[#65F58A]/15 text-xs text-[#C9EFE0] leading-relaxed">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 min-w-0">
+                {finalObjectives.map((obj, idx) => (
+                  <div key={idx} className="flex items-start gap-2.5 p-3 rounded-xl bg-[#092218]/40 border border-[#65F58A]/15 text-xs text-[#C9EFE0] leading-relaxed min-w-0 overflow-hidden">
                     <CheckCircle2 className="w-4 h-4 text-[#65F58A] flex-shrink-0 mt-0.5" />
-                    <span>{obj}</span>
+                    <span className="break-words [overflow-wrap:anywhere] break-all">{obj}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Course Syllabus & Outline Accordion */}
-            <div className="cyber-glass-panel rounded-2xl p-6 sm:p-8 space-y-5 border border-[#65F58A]/25">
+            <div className="cyber-glass-panel rounded-2xl p-6 sm:p-8 space-y-5 border border-[#65F58A]/25 overflow-hidden min-w-0">
               <div className="flex items-center justify-between pb-3 border-b border-[#65F58A]/20">
                 <div>
                   <h2 className="font-royal text-lg sm:text-xl font-bold text-white">
@@ -247,13 +287,13 @@ export default function CourseDetailPage() {
                       onClick={() => toggleModule(modIdx)}
                       className="w-full p-4 text-left flex items-center justify-between hover:bg-[#0c2a1e]/60 transition-colors cursor-pointer"
                     >
-                      <div className="flex items-center gap-3">
-                        <span className="w-6 h-6 rounded-full bg-[#0a2318] text-[#65F58A] border border-[#65F58A]/40 flex items-center justify-center text-xs font-mono font-bold shadow-[0_0_8px_rgba(101,245,138,0.2)]">
+                      <div className="flex items-center gap-3 min-w-0 overflow-hidden pr-2">
+                        <span className="w-6 h-6 rounded-full bg-[#0a2318] text-[#65F58A] border border-[#65F58A]/40 flex items-center justify-center text-xs font-mono font-bold shadow-[0_0_8px_rgba(101,245,138,0.2)] flex-shrink-0">
                           {modIdx + 1}
                         </span>
-                        <span className="font-royal font-bold text-sm text-white">{module.title}</span>
+                        <span className="font-royal font-bold text-sm text-white break-words [overflow-wrap:anywhere]">{module.title}</span>
                       </div>
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3 flex-shrink-0">
                         <span className="text-[11px] font-mono text-[#72A88E] hidden sm:inline">
                           {(module.lessons || []).length} Lessons
                         </span>
@@ -272,9 +312,9 @@ export default function CourseDetailPage() {
                             key={lesson.id || lIdx}
                             className="p-3 rounded-lg bg-[#071912]/80 border border-[#65F58A]/15 flex items-center justify-between text-xs transition-colors"
                           >
-                            <div className="flex items-center gap-2.5 truncate">
+                            <div className="flex items-center gap-2.5 truncate min-w-0 pr-2">
                               <BookOpen className="w-3.5 h-3.5 text-[#35E6B5] flex-shrink-0" />
-                              <span className="text-[#C9EFE0] truncate font-medium">
+                              <span className="text-[#C9EFE0] truncate font-medium break-words">
                                 {lesson.title}
                               </span>
                               {lesson.is_mandatory && (
@@ -297,25 +337,16 @@ export default function CourseDetailPage() {
             </div>
 
             {/* Prerequisites & Technical Requirements */}
-            <div className="cyber-glass-panel rounded-2xl p-6 sm:p-8 space-y-4 border border-[#65F58A]/25">
+            <div className="cyber-glass-panel rounded-2xl p-6 sm:p-8 space-y-4 border border-[#65F58A]/25 overflow-hidden min-w-0">
               <h2 className="font-royal text-lg sm:text-xl font-bold text-white flex items-center gap-2.5">
                 <Shield className="w-5 h-5 text-[#65F58A]" />
                 <span>Prerequisites & Requirements</span>
               </h2>
-              <ul className="space-y-2.5 text-xs text-[#C9EFE0] font-mono">
-                {(Array.isArray(course.prerequisites)
-                  ? course.prerequisites
-                  : typeof course.prerequisites === 'string' && course.prerequisites.trim()
-                    ? course.prerequisites.split('\n').map((s) => s.trim()).filter(Boolean)
-                    : [
-                        'Fundamental understanding of IP addressing, TCP/UDP packets, and subnets.',
-                        'Basic familiarity with command line interfaces (Bash or PowerShell).',
-                        'A web browser supporting WebAssembly and WebRTC for live hands-on proctoring.'
-                      ]
-                ).map((req, idx) => (
-                  <li key={idx} className="flex items-start gap-2.5">
-                    <span className="text-[#65F58A] font-bold">&bull;</span>
-                    <span>{req}</span>
+              <ul className="space-y-2.5 text-xs text-[#C9EFE0] font-mono min-w-0">
+                {finalPrerequisites.map((req, idx) => (
+                  <li key={idx} className="flex items-start gap-2.5 min-w-0 overflow-hidden">
+                    <span className="text-[#65F58A] font-bold flex-shrink-0">&bull;</span>
+                    <span className="break-words [overflow-wrap:anywhere] break-all">{req}</span>
                   </li>
                 ))}
               </ul>
@@ -323,8 +354,8 @@ export default function CourseDetailPage() {
           </div>
 
           {/* ================= RIGHT STICKY SIDEBAR (Open edX Rail) ================= */}
-          <div className="space-y-6">
-            <div className="cyber-glass-card rounded-2xl p-6 sm:p-7 space-y-6 sticky top-28 border border-[#65F58A]/35 shadow-[0_0_30px_rgba(101,245,138,0.12)]">
+          <div className="space-y-6 min-w-0">
+            <div className="cyber-glass-card rounded-2xl p-6 sm:p-7 space-y-6 sticky top-28 border border-[#65F58A]/35 shadow-[0_0_30px_rgba(101,245,138,0.12)] overflow-hidden min-w-0">
               
               {/* Official RedKross Crest & Institutional Seal */}
               <div className="flex items-center gap-3.5 pb-4 border-b border-[#65F58A]/20">
