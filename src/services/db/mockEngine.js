@@ -1136,6 +1136,7 @@ class MockEngine {
   getRetryWindow(enrolmentId, quizId) {
     const db = this.getDb();
     const key = `${enrolmentId}_${quizId}`;
+    if (!db.quiz_retry_windows) db.quiz_retry_windows = {};
     let windowData = db.quiz_retry_windows[key];
 
     if (!windowData) {
@@ -1151,8 +1152,8 @@ class MockEngine {
     } else {
       // Check if cooldown has expired
       if (windowData.locked_until && new Date() >= new Date(windowData.locked_until)) {
-        // Automatically start fresh evaluation window
-        windowData.window_number += 1;
+        // Automatically start fresh evaluation window with 3 attempts
+        windowData.window_number = (windowData.window_number || 1) + 1;
         windowData.attempts_used = 0;
         windowData.locked_until = null;
         this.saveDb(db);
@@ -1162,59 +1163,133 @@ class MockEngine {
     return windowData;
   }
 
-  startQuizAttempt(enrolmentId, quizId) {
+  getQuizAttemptStatus(enrolmentId, quizId) {
+    if (!enrolmentId || !quizId) {
+      return {
+        attemptsUsed: 0,
+        attemptsRemaining: 3,
+        maxAttempts: 3,
+        isLocked: false,
+        lockedUntil: null,
+        remainingHours: 0,
+        remainingMinutes: 0,
+        isPassed: false,
+      };
+    }
+
     const db = this.getDb();
+    const enrolment = (db.enrolments || []).find((e) => e.id === enrolmentId);
     const windowData = this.getRetryWindow(enrolmentId, quizId);
+    const lockInfo = this.isExamLocked(enrolmentId, quizId);
 
-    // PRD Appendix A.1 Step 4: Check if in cooldown
-    if (windowData.locked_until && new Date() < new Date(windowData.locked_until)) {
-      const remainingMs = new Date(windowData.locked_until).getTime() - Date.now();
-      const remainingHours = Math.ceil(remainingMs / (1000 * 60 * 60));
-      throw new Error(`COOLDOWN_ACTIVE: Evaluation locked for ${remainingHours} more hours due to consecutive failed attempts.`);
-    }
+    const isPassed = Boolean(
+      enrolment?.passed_quizzes?.includes(quizId) ||
+      (enrolment?.final_assessment_passed && (quizId === 'mod_final' || quizId.includes('final') || quizId === enrolment?.final_assessment_id))
+    );
 
-    // PRD Appendix A.1 Step 5: Check max attempts per window
-    if (windowData.attempts_used >= 3) {
-      throw new Error('ATTEMPT_LIMIT: Maximum 3 attempts used in current window.');
-    }
+    const attemptsUsed = windowData?.attempts_used || 0;
+    const rawRemaining = Math.max(0, 3 - attemptsUsed);
+    const attemptsRemaining = lockInfo.isLocked ? 0 : rawRemaining;
 
-    // Atomically increment attempts used
-    windowData.attempts_used += 1;
-    db.quiz_retry_windows[`${enrolmentId}_${quizId}`] = windowData;
-
-    const attempt = {
-      id: `att_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
-      enrolment_id: enrolmentId,
-      quiz_id: quizId,
-      attempt_number: windowData.attempts_used,
-      window_number: windowData.window_number,
-      started_at: new Date().toISOString(),
-      submitted_at: null,
-      score_percentage: 0,
-      is_passed: false,
-      status: 'in_progress', // 'in_progress', 'submitted', 'terminated'
-      focus_strikes: 0,
-      user_answers: {},
+    return {
+      attemptsUsed,
+      attemptsRemaining,
+      maxAttempts: 3,
+      windowNumber: windowData?.window_number || 1,
+      isLocked: lockInfo.isLocked,
+      lockedUntil: lockInfo.lockedUntil,
+      remainingHours: lockInfo.remainingHours || 0,
+      remainingMinutes: lockInfo.remainingMinutes || 0,
+      isPassed,
     };
+  }
 
-    db.quiz_attempts.push(attempt);
-    this.saveDb(db);
-    return attempt;
+  recordQuizAttemptSubmission({ enrolmentId, quizId, scorePercentage, isPassed }) {
+    const db = this.getDb();
+    const key = `${enrolmentId}_${quizId}`;
+    if (!db.quiz_retry_windows) db.quiz_retry_windows = {};
+
+    let windowData = db.quiz_retry_windows[key];
+    if (!windowData) {
+      windowData = {
+        enrolment_id: enrolmentId,
+        quiz_id: quizId,
+        window_number: 1,
+        attempts_used: 0,
+        locked_until: null,
+      };
+    } else if (windowData.locked_until && new Date() >= new Date(windowData.locked_until)) {
+      windowData.window_number = (windowData.window_number || 1) + 1;
+      windowData.attempts_used = 0;
+      windowData.locked_until = null;
+    }
+
+    // Increment attempts used in current window
+    windowData.attempts_used = Math.min(3, (windowData.attempts_used || 0) + 1);
+    const attemptsRemaining = Math.max(0, 3 - windowData.attempts_used);
+
+    const enrolment = (db.enrolments || []).find((e) => e.id === enrolmentId);
+
+    if (isPassed) {
+      if (enrolment) {
+        if (!Array.isArray(enrolment.passed_quizzes)) enrolment.passed_quizzes = [];
+        if (!enrolment.passed_quizzes.includes(quizId)) {
+          enrolment.passed_quizzes.push(quizId);
+        }
+        enrolment.quiz_scores = enrolment.quiz_scores || {};
+        enrolment.quiz_scores[quizId] = scorePercentage;
+      }
+    } else {
+      if (enrolment) {
+        enrolment.quiz_scores = enrolment.quiz_scores || {};
+        enrolment.quiz_scores[quizId] = scorePercentage;
+      }
+
+      // If all 3 attempts have been exhausted without passing -> apply strict 24-HOUR LOCKOUT!
+      if (windowData.attempts_used >= 3) {
+        const lockedUntil = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+        windowData.locked_until = lockedUntil;
+        if (enrolment) {
+          enrolment.exam_lockout_until = lockedUntil;
+        }
+
+        if (!db.audit_logs) db.audit_logs = [];
+        db.audit_logs.unshift({
+          id: `aud_${Date.now()}`,
+          action: 'EXAM_ATTEMPTS_EXHAUSTED_24H_LOCKOUT',
+          category: 'EXAM_SECURITY',
+          user_email: enrolment?.cadet_id || enrolment?.user_id,
+          details: `Candidate exhausted all 3 attempts on quiz ${quizId}. 24-Hour Lockout applied until ${lockedUntil}.`,
+          severity: 'HIGH',
+          timestamp: new Date().toISOString()
+        });
+      }
+    }
+
+    db.quiz_retry_windows[key] = windowData;
+    this.saveDb(db, {
+      type: 'QUIZ_ATTEMPT_RECORDED',
+      payload: {
+        enrolmentId,
+        quizId,
+        attemptsUsed: windowData.attempts_used,
+        attemptsRemaining,
+        isPassed
+      }
+    });
+
+    return {
+      attemptsUsed: windowData.attempts_used,
+      attemptsRemaining: windowData.locked_until ? 0 : attemptsRemaining,
+      maxAttempts: 3,
+      isLocked: Boolean(windowData.locked_until && new Date() < new Date(windowData.locked_until)),
+      lockedUntil: windowData.locked_until,
+      isPassed
+    };
   }
 
   recordModuleQuizScore(enrolmentId, quizId, scorePercentage, isPassed) {
-    const db = this.getDb();
-    const enr = db.enrolments.find((e) => e.id === enrolmentId);
-    if (enr) {
-      if (!Array.isArray(enr.passed_quizzes)) enr.passed_quizzes = [];
-      if (isPassed && !enr.passed_quizzes.includes(quizId)) {
-        enr.passed_quizzes.push(quizId);
-      }
-      enr.quiz_scores = enr.quiz_scores || {};
-      enr.quiz_scores[quizId] = scorePercentage;
-      this.saveDb(db);
-      this.notify();
-    }
+    return this.recordQuizAttemptSubmission({ enrolmentId, quizId, scorePercentage, isPassed });
   }
 
   /**
@@ -1376,20 +1451,7 @@ class MockEngine {
     return attempt;
   }
 
-  recordModuleQuizScore(enrolmentId, quizId, scorePercentage, isPassed) {
-    const db = this.getDb();
-    const enr = db.enrolments.find((e) => e.id === enrolmentId);
-    if (enr) {
-      if (!Array.isArray(enr.passed_quizzes)) enr.passed_quizzes = [];
-      if (isPassed && !enr.passed_quizzes.includes(quizId)) {
-        enr.passed_quizzes.push(quizId);
-      }
-      enr.quiz_scores = enr.quiz_scores || {};
-      enr.quiz_scores[quizId] = scorePercentage;
-      this.saveDb(db);
-      this.notify();
-    }
-  }
+
 
   // ==========================================
   // FINAL ASSESSMENT UNLOCK GATE (PRD Section 5 & 21)

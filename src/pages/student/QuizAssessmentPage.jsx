@@ -22,6 +22,7 @@ import confetti from 'canvas-confetti';
 import { mockEngine } from '../../services/db/mockEngine';
 import { useAuth } from '../../services/auth/authContext';
 import PixelBackground from '../../components/ui/PixelBackground';
+import ExamCBTInterface from '../../components/student/ExamCBTInterface';
 
 export default function QuizAssessmentPage() {
   const { enrolmentId, quizId } = useParams();
@@ -522,85 +523,26 @@ export default function QuizAssessmentPage() {
             </div>
           </div>
         ) : (
-          /* ACTIVE EXAM CONTAINER */
-          <div className="space-y-6">
-            {/* Live Exam Bar */}
-            <div className="p-4 rounded-xl bg-surface-card border border-surface-border flex items-center justify-between">
-              <div className="flex items-center space-x-2 text-xs font-mono">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-slate-300 font-semibold">Active Assessment</span>
-                <span className="text-slate-500">•</span>
-                <span className="text-[#65F58A] font-bold">Proctored Session</span>
-              </div>
-
-              {/* Countdown Timer */}
-              <div className="flex items-center space-x-2 text-xs font-mono">
-                <Clock className="w-4 h-4 text-[#35E6B5]" />
-                <span className="text-white font-bold tabular-nums">
-                  {Math.floor(timerSeconds / 60)}:{(timerSeconds % 60).toString().padStart(2, '0')}
-                </span>
-                {timerPaused && <span className="text-rose-400 font-bold">(PAUSED)</span>}
-              </div>
-            </div>
-
-            {/* Questions Form */}
-            <div className="space-y-6">
-              {quizMeta.questions.map((q, idx) => (
-                <div key={q.id} className="bg-surface-card border border-surface-border rounded-xl p-6 space-y-4">
-                  <div className="flex items-start justify-between gap-4">
-                    <h3 className="text-sm font-semibold text-white leading-relaxed">
-                      {idx + 1}. {q.text}
-                    </h3>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-surface-100 text-slate-400 border border-surface-border flex-shrink-0">
-                      {q.points} Points
-                    </span>
-                  </div>
-
-                  <div className="space-y-2">
-                    {q.options.map((opt) => {
-                      const isSelected = userAnswers[q.id] === opt.id;
-                      return (
-                        <button
-                          key={opt.id}
-                          type="button"
-                          onClick={() => handleSelectOption(q.id, opt.id)}
-                          className={`w-full text-left p-3.5 rounded-lg text-xs font-mono transition-all flex items-center space-x-3 border ${
-                            isSelected
-                              ? 'bg-redkross-600/20 border-redkross-500 text-white font-semibold'
-                              : 'bg-surface-100/60 border-surface-border/80 text-slate-300 hover:bg-surface-100'
-                          }`}
-                        >
-                          <span
-                            className={`w-4 h-4 rounded-full border flex items-center justify-center flex-shrink-0 ${
-                              isSelected ? 'border-redkross-500 bg-redkross-600' : 'border-slate-600'
-                            }`}
-                          >
-                            {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
-                          </span>
-                          <span>{opt.text}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Submit Bar */}
-            <div className="p-4 rounded-xl bg-surface-card border border-surface-border flex items-center justify-between">
-              <span className="text-xs font-mono text-slate-400">
-                {Object.keys(userAnswers).length} of {quizMeta.questions.length} Questions Answered
-              </span>
-
-              <button
-                onClick={handleSubmit}
-                disabled={Object.keys(userAnswers).length < quizMeta.questions.length}
-                className="px-6 py-2.5 rounded-lg bg-redkross-600 hover:bg-redkross-700 disabled:opacity-50 text-white font-semibold text-xs transition-all shadow-md"
-              >
-                Submit Assessment for Evaluation
-              </button>
-            </div>
-          </div>
+          /* ACTIVE EXAM CONTAINER (CBT WIREFRAME FORMAT) */
+          <ExamCBTInterface
+            quiz={quizMeta}
+            enrolmentId={enrolmentId}
+            isFinalExam={false}
+            timerSeconds={timerSeconds}
+            attemptsStatus={mockEngine.getQuizAttemptStatus(enrolmentId, quizId)}
+            answers={userAnswers}
+            onSelectAnswer={handleSelectOption}
+            onSubmitExam={handleSubmit}
+            isSubmitted={false}
+            submissionResult={null}
+            onRetakeExam={() => {}}
+            isLockoutActive={lockoutState.isLocked}
+            lockoutCountdown={{
+              hours: lockoutState.remainingHours || 0,
+              minutes: lockoutState.remainingMinutes || 0,
+              seconds: 0
+            }}
+          />
         )}
 
         {/* ==================================================== */}

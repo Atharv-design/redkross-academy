@@ -41,6 +41,7 @@ import { resolveVideoUrl, resolvePdfUrl } from '../../services/db/videoStorage';
 import { renderMarkdownToHtml } from '../../utils/markdownParser';
 import PixelBackground from '../../components/ui/PixelBackground';
 import { FileUploadProgressBar } from '../../components/application/file-upload/FileUploadProgressBar';
+import ExamCBTInterface from '../../components/student/ExamCBTInterface';
 
 /**
  * Open edX-Inspired Courseware & Learning Workspace
@@ -133,6 +134,13 @@ export default function LessonPlayerPage() {
   const [quizResult, setQuizResult] = useState(null);
   const [examTimeRemaining, setExamTimeRemaining] = useState(null); // in seconds
   const [examAttemptCount, setExamAttemptCount] = useState(1);
+  const [attemptsStatus, setAttemptsStatus] = useState(() => {
+    try {
+      return mockEngine.getQuizAttemptStatus(enrolmentId, queryParamUnitId);
+    } catch {
+      return { attemptsUsed: 0, attemptsRemaining: 3, maxAttempts: 3, isLocked: false };
+    }
+  });
 
   // Anti-Cheat Proctoring & 24-Hour Lockdown State (initialized synchronously to prevent any unrendered unlocked flash)
   const initialLockout = (() => {
@@ -596,6 +604,30 @@ export default function LessonPlayerPage() {
     setQuizAnswers((prev) => ({ ...prev, [questionId]: optionId }));
   };
 
+  const loadAttemptsStatus = (targetId) => {
+    if (!enrolmentId || !targetId) return;
+    try {
+      const status = mockEngine.getQuizAttemptStatus(enrolmentId, targetId);
+      setAttemptsStatus(status);
+      if (status.isLocked) {
+        setIsLockoutActive(true);
+        setLockoutCountdown({
+          hours: status.remainingHours,
+          minutes: status.remainingMinutes,
+          seconds: 0
+        });
+      }
+    } catch (e) {
+      console.error('Failed to load attempt status:', e);
+    }
+  };
+
+  useEffect(() => {
+    if (activeQuiz) {
+      loadAttemptsStatus(activeQuiz.id);
+    }
+  }, [enrolmentId, activeQuiz?.id]);
+
   const handleSubmitQuiz = (e) => {
     e?.preventDefault();
     if (isLockoutActive || mockEngine.isExamLocked(enrolmentId, activeQuiz?.id).isLocked) {
@@ -627,6 +659,24 @@ export default function LessonPlayerPage() {
     });
     setQuizSubmitted(true);
 
+    // Record attempt in engine (decrements 3 -> 2 -> 1 -> 0, applies 24h lockout if 3 attempts used and not passed)
+    const updatedStatus = mockEngine.recordQuizAttemptSubmission({
+      enrolmentId,
+      quizId: activeQuiz.id,
+      scorePercentage: scorePct,
+      isPassed
+    });
+    setAttemptsStatus(updatedStatus);
+
+    if (updatedStatus.isLocked) {
+      setIsLockoutActive(true);
+      setLockoutCountdown({
+        hours: updatedStatus.remainingHours || 23,
+        minutes: updatedStatus.remainingMinutes || 59,
+        seconds: 59
+      });
+    }
+
     if (activeUnit?.type === 'final_exam') {
       // Record Final Assessment Score
       const db = mockEngine.getDb();
@@ -647,13 +697,38 @@ export default function LessonPlayerPage() {
         });
         setCertRequestModalOpen(true);
       }
-    } else {
-      // Record Module Quiz Score
-      mockEngine.recordModuleQuizScore(enrolmentId, activeQuiz.id, scorePct, isPassed);
     }
 
     setProgressData(mockEngine.getCourseProgress(enrolmentId));
     refreshBalance();
+  };
+
+  const handleRetakeExam = () => {
+    const lockCheck = mockEngine.isExamLocked(enrolmentId, activeQuiz?.id);
+    if (lockCheck.isLocked) {
+      setIsLockoutActive(true);
+      setLockoutCountdown({
+        hours: lockCheck.remainingHours || 0,
+        minutes: lockCheck.remainingMinutes || 0,
+        seconds: 0
+      });
+      alert('Retake Locked: A 24-hour proctoring cooldown is actively enforcing lockdown on this evaluation.');
+      return;
+    }
+
+    const currentStatus = mockEngine.getQuizAttemptStatus(enrolmentId, activeQuiz?.id);
+    if (currentStatus.attemptsRemaining <= 0) {
+      setIsLockoutActive(true);
+      alert('Retake Locked: All 3 evaluation attempts have been exhausted. Please wait 24 hours for the next window.');
+      return;
+    }
+
+    setQuizSubmitted(false);
+    setQuizAnswers({});
+    setQuizResult(null);
+    const totalMinutes = activeUnit?.type === 'final_exam' ? 60 : 20;
+    setExamTimeRemaining(totalMinutes * 60);
+    loadAttemptsStatus(activeQuiz?.id);
   };
 
   // Submit Certificate Request
@@ -876,7 +951,9 @@ export default function LessonPlayerPage() {
 
                         {/* 2. Module Knowledge Check Unit (20 Questions) */}
                         {mod.quiz && (() => {
-                          const isQuizLocked = mockEngine.isExamLocked(enrolmentId, mod.quiz.id).isLocked;
+                          const lockInfo = mockEngine.isExamLocked(enrolmentId, mod.quiz.id);
+                          const isQuizLocked = lockInfo.isLocked;
+                          const attemptStatus = mockEngine.getQuizAttemptStatus(enrolmentId, mod.quiz.id);
                           return (
                             <button
                               type="button"
@@ -929,7 +1006,7 @@ export default function LessonPlayerPage() {
                                     : 'bg-amber-500/15 text-amber-300'
                                 }`}
                               >
-                                {isQuizLocked ? '24H LOCK' : isModQuizPassed ? 'PASSED' : 'GRADED'}
+                                {isQuizLocked ? '24H LOCK' : isModQuizPassed ? 'PASSED' : `${attemptStatus.attemptsRemaining}/3 TRIES`}
                               </span>
                             </button>
                           );
@@ -943,6 +1020,7 @@ export default function LessonPlayerPage() {
               {/* 3. Final Certification Examination Milestone */}
               {course.final_assessment && (() => {
                 const isFinalLocked = mockEngine.isExamLocked(enrolmentId, course.final_assessment.id).isLocked;
+                const finalAttemptStatus = mockEngine.getQuizAttemptStatus(enrolmentId, course.final_assessment.id);
                 return (
                   <div className="pt-3 border-t border-[#65F58A]/20">
                     <button
@@ -987,12 +1065,20 @@ export default function LessonPlayerPage() {
                             ? 'bg-[#071018] text-[#65F58A] border-[#071018]'
                             : isFinalLocked
                             ? 'bg-rose-500/20 text-rose-300 border-rose-500/40 font-bold'
-                            : isFinalExamUnlocked
+                            : enrolment?.final_assessment_passed
                             ? 'bg-[#65F58A]/15 text-[#65F58A] border-[#65F58A]/30'
+                            : isFinalExamUnlocked
+                            ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
                             : 'border-white/10 text-gray-400'
                         }`}
                       >
-                        {isFinalLocked ? '24H LOCK' : isFinalExamUnlocked ? 'READY' : 'LOCKED'}
+                        {isFinalLocked
+                          ? '24H LOCK'
+                          : enrolment?.final_assessment_passed
+                          ? 'PASSED'
+                          : isFinalExamUnlocked
+                          ? `${finalAttemptStatus.attemptsRemaining}/3 TRIES`
+                          : 'LOCKED'}
                       </span>
                     </button>
                   </div>
@@ -1031,8 +1117,8 @@ export default function LessonPlayerPage() {
               </button>
             </div>
 
-            {/* -------------------- 24-HOUR ANTI-CHEAT PROCTOR LOCKDOWN HUD -------------------- */}
-            {isLockoutActive && (
+            {/* -------------------- 24-HOUR ANTI-CHEAT PROCTOR LOCKDOWN HUD (LESSON UNITS) -------------------- */}
+            {isLockoutActive && activeUnit?.type === 'lesson' && (
               <div className="p-8 rounded-2xl bg-red-950/70 border border-red-500/50 space-y-4 shadow-2xl">
                 <div className="flex items-center space-x-3 text-red-400">
                   <AlertTriangle className="w-8 h-8 flex-shrink-0 animate-bounce" />
@@ -1336,244 +1422,23 @@ export default function LessonPlayerPage() {
               </div>
             )}
 
-            {/* -------------------- 2. EVALUATION & EXAMINATION ENGINE (20 OR 50 QUESTIONS) -------------------- */}
-            {(activeUnit?.type === 'quiz' || activeUnit?.type === 'final_exam') && activeQuiz && !isLockoutActive && (
-              <div className="space-y-6">
-                {/* Header Information Card */}
-                <div className="cyber-glass-panel rounded-2xl p-6 sm:p-8 border border-[#65F58A]/30 space-y-4 shadow-xl">
-                  <div className="space-y-2 pb-4 border-b border-[#65F58A]/20">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-mono text-[#65F58A] font-bold tracking-widest uppercase block">
-                        {activeUnit?.type === 'final_exam' ? 'FINAL CERTIFICATION EXAMINATION' : 'MODULE KNOWLEDGE CHECK'} • {activeQuiz.questions?.length || 20} QUESTIONS
-                      </span>
-                      {/* Live Examination Countdown Timer */}
-                      {!quizSubmitted && examTimeRemaining !== null && (
-                        <div className="flex items-center space-x-1.5 px-3 py-1 rounded-md bg-[#092218] border border-[#65F58A]/30 text-xs font-mono text-[#65F58A]">
-                          <Clock className="w-3.5 h-3.5 animate-pulse" />
-                          <span className="font-bold">{formatTime(examTimeRemaining)}</span>
-                        </div>
-                      )}
-                    </div>
-                    <h3 className="text-2xl font-bold text-white font-lora">
-                      {activeQuiz.title || 'Knowledge Evaluation'}
-                    </h3>
-                    <p className="text-xs text-[#C9EFE0] leading-relaxed max-w-3xl">
-                      {activeUnit?.type === 'final_exam'
-                        ? 'Comprehensive capstone examination spanning all domain curricula. You must attain 80% or greater to qualify for official institutional credentialing. Anti-cheat proctoring is strictly active.'
-                        : `Complete this 20-question evaluation to verify your operational understanding of ${activeUnit.moduleTitle}. An 80% passing grade unlocks subsequent training modules.`}
-                    </p>
-                  </div>
-
-                  {/* Evaluation Metrics Bar */}
-                  <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl bg-[#061510] border border-[#65F58A]/20 text-xs font-mono">
-                    <div className="space-y-0.5">
-                      <span className="text-[#72A88E]">Passing Threshold:</span>
-                      <span className="text-[#65F58A] font-bold block">{activeQuiz.passing_score || 80}% Minimum</span>
-                    </div>
-                    <div className="space-y-0.5">
-                      <span className="text-[#72A88E]">Allowed Retries:</span>
-                      <span className="text-white font-bold block">3 Attempts per Evaluation Window</span>
-                    </div>
-                    <div className="space-y-0.5">
-                      <span className="text-[#72A88E]">Proctoring Security:</span>
-                      <span className="text-[#65F58A] font-bold block">Tab & Focus Lockout Active</span>
-                    </div>
-                    <div className="space-y-0.5">
-                      <span className="text-[#72A88E]">Current Status:</span>
-                      <span className={`font-bold block ${isQuizPassed ? 'text-[#65F58A]' : 'text-amber-400'}`}>
-                        {isQuizPassed ? 'PASSED (Certified)' : 'PENDING EVALUATION'}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Passing / Scorecard Banner */}
-                  {quizSubmitted && quizResult && (
-                    <div
-                      className={`p-5 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
-                        quizResult.isPassed
-                          ? 'bg-[#092218] border-[#65F58A]/50 text-[#65F58A]'
-                          : 'bg-[#181105] border-amber-500/40 text-amber-300'
-                      }`}
-                    >
-                      <div className="space-y-1">
-                        <div className="flex items-center space-x-2 font-bold text-sm">
-                          {quizResult.isPassed ? <Check className="w-5 h-5 stroke-[3]" /> : <AlertCircle className="w-5 h-5" />}
-                          <span>{quizResult.isPassed ? 'Evaluation Passed with Honors!' : 'Evaluation Threshold Not Met'}</span>
-                        </div>
-                        <p className="text-xs font-mono">
-                          You achieved {quizResult.score}% ({quizResult.correctCount}/{quizResult.totalQuestions} questions correct).
-                          {quizResult.isPassed
-                            ? ' Review your verified breakdown below.'
-                            : ' Review the technical rationales below and retake when prepared.'}
-                        </p>
-                      </div>
-
-                      <div className="flex items-center space-x-4">
-                        <span className="text-3xl font-bold font-mono">
-                          {quizResult.score}%
-                        </span>
-                        {activeUnit?.type === 'final_exam' && quizResult.isPassed && (
-                          <button
-                            type="button"
-                            onClick={() => setCertRequestModalOpen(true)}
-                            className="px-4 py-2 rounded-xl bg-[#65F58A] text-[#071018] font-bold text-xs font-mono shadow-[0_0_15px_rgba(101,245,138,0.5)] hover:bg-[#35E6B5] transition-all"
-                          >
-                            Request Certificate
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Questions Form */}
-                  <form onSubmit={handleSubmitQuiz} className="space-y-6 pt-4">
-                    <h4 className="font-bold text-sm text-white uppercase tracking-wider font-mono">
-                      Question Bank ({activeQuiz.questions?.length || 20} Items)
-                    </h4>
-
-                    {(activeQuiz.questions || []).map((q, qIdx) => {
-                      const selectedOptId = quizAnswers[q.id];
-                      const correctOpt = q.options?.find((o) => o.is_correct);
-                      const isQuestionCorrect = selectedOptId && correctOpt && selectedOptId === correctOpt.id;
-                      const hasSubmitted = quizSubmitted;
-
-                      return (
-                        <div
-                          key={q.id || qIdx}
-                          className={`p-5 rounded-xl border space-y-4 transition-all ${
-                            hasSubmitted
-                              ? isQuestionCorrect
-                                ? 'border-[#65F58A]/40 bg-[#061912]/80'
-                                : 'border-red-500/40 bg-[#160808]/80'
-                              : 'border-[#65F58A]/15 bg-[#061510]'
-                          }`}
-                        >
-                          {/* Question Header & Points Indicator */}
-                          <div className="flex items-start justify-between gap-4">
-                            <span className="text-xs font-mono text-[#72A88E]">
-                              {hasSubmitted
-                                ? isQuestionCorrect
-                                  ? '1.0/1.0 point (graded)'
-                                  : '0.0/1.0 point (graded)'
-                                : '1.0 point (graded)'}
-                            </span>
-                            {hasSubmitted && (
-                              <span
-                                className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
-                                  isQuestionCorrect
-                                    ? 'bg-[#65F58A]/20 text-[#65F58A]'
-                                    : 'bg-red-500/20 text-red-400'
-                                }`}
-                              >
-                                {isQuestionCorrect ? 'CORRECT' : 'INCORRECT'}
-                              </span>
-                            )}
-                          </div>
-
-                          {/* Question Prompt */}
-                          <p className="text-sm font-semibold text-white leading-relaxed font-lora">
-                            {qIdx + 1}. {q.text}
-                          </p>
-
-                          {/* Options */}
-                          <div className="space-y-2 pt-1 font-lora">
-                            {(q.options || []).map((opt, optIdx) => {
-                              const isSelected = selectedOptId === opt.id;
-                              const isThisCorrect = opt.is_correct;
-                              const optionLetter = String.fromCharCode(65 + optIdx); // A, B, C, D
-
-                              let optionClasses = 'border-[#65F58A]/20 bg-[#040e0a] text-gray-200 hover:bg-[#0c2a1e]';
-
-                              if (hasSubmitted) {
-                                if (isThisCorrect) {
-                                  optionClasses = 'border-[#65F58A] bg-[#092218] text-[#65F58A] font-bold shadow-[0_0_10px_rgba(101,245,138,0.2)]';
-                                } else if (isSelected && !isThisCorrect) {
-                                  optionClasses = 'border-red-500/60 bg-red-950/40 text-red-300 line-through';
-                                } else {
-                                  optionClasses = 'border-white/5 bg-[#030907] text-gray-400 opacity-60';
-                                }
-                              } else if (isSelected) {
-                                optionClasses = 'border-[#65F58A] bg-[#0c2a1e] text-white shadow-[0_0_10px_rgba(101,245,138,0.2)]';
-                              }
-
-                              return (
-                                <button
-                                  key={opt.id || optIdx}
-                                  type="button"
-                                  disabled={hasSubmitted}
-                                  onClick={() => handleSelectQuizOption(q.id, opt.id)}
-                                  className={`w-full text-left p-3.5 rounded-xl border text-xs flex items-start space-x-3 transition-all cursor-pointer ${optionClasses}`}
-                                >
-                                  <span className="w-5 h-5 rounded-full border border-current flex items-center justify-center font-mono text-[10px] font-bold flex-shrink-0 mt-0.5">
-                                    {optionLetter}
-                                  </span>
-                                  <span className="flex-1 leading-relaxed">{opt.text}</span>
-                                  {hasSubmitted && isThisCorrect && (
-                                    <Check className="w-4 h-4 text-[#65F58A] flex-shrink-0 stroke-[3]" />
-                                  )}
-                                </button>
-                              );
-                            })}
-                          </div>
-
-                          {/* Technical Rationale & Explanation (Instant Breakdown) */}
-                          {hasSubmitted && q.explanation && (
-                            <div className="p-3.5 rounded-lg bg-[#04120c] border border-[#65F58A]/30 space-y-1 text-xs">
-                              <span className="font-mono text-[10px] text-[#65F58A] font-bold uppercase tracking-wider block">
-                                Technical Rationale & Defensive Explanation:
-                              </span>
-                              <p className="font-lora text-xs text-[#C9EFE0] leading-relaxed">
-                                {q.explanation}
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-
-                    {/* Quiz Submit Button / Retry Button */}
-                    <div className="pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-[#65F58A]/20">
-                      <span className="text-xs font-mono text-[#72A88E]">
-                        Grading method: Last Score • 80% passing threshold
-                      </span>
-
-                      {!quizSubmitted ? (
-                        <button
-                          type="submit"
-                          className="px-6 py-3 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] active:scale-[0.99] text-[#071018] font-bold text-xs font-mono tracking-wider shadow-[0_0_20px_rgba(101,245,138,0.4)] transition-all cursor-pointer flex-shrink-0"
-                        >
-                          Submit Answers ({activeQuiz.questions?.length || 20} Questions)
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const lockCheck = mockEngine.isExamLocked(enrolmentId, activeQuiz?.id);
-                            if (lockCheck.isLocked) {
-                              setIsLockoutActive(true);
-                              setLockoutCountdown({
-                                hours: lockCheck.remainingHours || 0,
-                                minutes: lockCheck.remainingMinutes || 0,
-                                seconds: 0
-                              });
-                              alert('Retake Locked: A 24-hour proctoring cooldown is actively enforcing lockdown on this evaluation.');
-                              return;
-                            }
-                            setQuizSubmitted(false);
-                            setQuizAnswers({});
-                            setQuizResult(null);
-                            setExamTimeRemaining(activeUnit?.type === 'final_exam' ? 60 * 60 : 20 * 60);
-                          }}
-                          className="px-6 py-3 rounded-xl bg-[#092218] hover:bg-[#0c2a1e] text-[#65F58A] border border-[#65F58A]/40 font-bold text-xs font-mono tracking-wider transition-all cursor-pointer flex items-center space-x-2"
-                        >
-                          <RotateCcw className="w-3.5 h-3.5" />
-                          <span>Retake Evaluation</span>
-                        </button>
-                      )}
-                    </div>
-                  </form>
-                </div>
-              </div>
+            {/* -------------------- 2. EVALUATION & EXAMINATION ENGINE (CBT FORMAT) -------------------- */}
+            {(activeUnit?.type === 'quiz' || activeUnit?.type === 'final_exam') && activeQuiz && (
+              <ExamCBTInterface
+                quiz={activeQuiz}
+                enrolmentId={enrolmentId}
+                isFinalExam={activeUnit?.type === 'final_exam'}
+                timerSeconds={examTimeRemaining}
+                attemptsStatus={attemptsStatus}
+                answers={quizAnswers}
+                onSelectAnswer={handleSelectQuizOption}
+                onSubmitExam={handleSubmitQuiz}
+                isSubmitted={quizSubmitted}
+                submissionResult={quizResult}
+                onRetakeExam={handleRetakeExam}
+                isLockoutActive={isLockoutActive}
+                lockoutCountdown={lockoutCountdown}
+              />
             )}
 
             {/* ================= 3. BOTTOM SEQUENTIAL NAVIGATION BAR ================= */}
