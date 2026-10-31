@@ -31,5 +31,9 @@ export const getEcosystemLinks = () => {
 
     // Academy Platform
     academy: isLocal ? 'http://localhost:5173' : 'https://redkross-academy.vercel.app',
+
+    // Official Channels & Social Community
+    instagram: 'https://www.instagram.com/redkross_research_foundation?utm_source=ig_web_button_share_sheet&psln=ZDNlZDc0MzIxNw==',
+    whatsapp: 'https://whatsapp.com/channel/0029VbBbRCn7tkj2M1Sj7f3Z',
   };
 };
