@@ -4,9 +4,33 @@ import {
   Trash2, RefreshCw, Eye, CheckCircle2, Download, QrCode, FileText,
   UserCheck, Send, Check, Sparkles, Building2, Calendar, Clock,
   FileBadge, CheckCircle, ArrowRight, Upload, Image, X, RotateCcw,
-  Sliders, Terminal
+  Sliders, Terminal, Loader2
 } from 'lucide-react';
 import { mockEngine } from '../../services/db/mockEngine';
+import RedKrossOfficialCertificate from '../../components/certificate/RedKrossOfficialCertificate';
+import { downloadCertificatePdf } from '../../utils/pdfGenerator';
+
+const safeLogAction = (entry) => {
+  try {
+    if (typeof mockEngine?.logAction === 'function') {
+      mockEngine.logAction(entry);
+    } else {
+      const db = mockEngine.getDb ? mockEngine.getDb() : null;
+      if (db) {
+        if (!db.audit_logs) db.audit_logs = [];
+        db.audit_logs.unshift({
+          id: `aud_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+          timestamp: new Date().toISOString(),
+          created_at: new Date().toISOString(),
+          ...entry
+        });
+        mockEngine.saveDb(db);
+      }
+    }
+  } catch (err) {
+    console.warn('safeLogAction warning:', err);
+  }
+};
 
 export default function AdminCertificatesPage() {
   const [credentials, setCredentials] = useState([]);
@@ -19,6 +43,37 @@ export default function AdminCertificatesPage() {
   const [selectedCred, setSelectedCred] = useState(null);
   const [revokeReason, setRevokeReason] = useState('');
   const [dispatchSuccess, setDispatchSuccess] = useState(null);
+  const [exportingPdf, setExportingPdf] = useState(false);
+  const [selectedExportCred, setSelectedExportCred] = useState(null);
+
+  const handleDownloadPreviewPdf = async () => {
+    try {
+      setExportingPdf(true);
+      const filename = `RedKross_Certificate_Preview_${studioForm.cadet_id || 'RK'}.pdf`;
+      await downloadCertificatePdf('admin-certificate-preview-canvas', filename);
+    } catch (err) {
+      console.error('Failed to export preview PDF:', err);
+      alert('Unable to export certificate PDF. Please check your browser print settings.');
+    } finally {
+      setExportingPdf(false);
+    }
+  };
+
+  const handleDownloadRegistryPdf = async (cred) => {
+    try {
+      setExportingPdf(true);
+      setSelectedExportCred(cred);
+      await new Promise((res) => setTimeout(res, 350));
+      const filename = `RedKross_Certificate_${cred.cadet_id || 'RK'}_${cred.id}.pdf`;
+      await downloadCertificatePdf('admin-registry-export-element', filename);
+    } catch (err) {
+      console.error('Failed to export registry PDF:', err);
+      alert('Unable to export certificate PDF.');
+    } finally {
+      setExportingPdf(false);
+      setSelectedExportCred(null);
+    }
+  };
 
   const signatureInputRef = useRef(null);
   const sealInputRef = useRef(null);
@@ -208,7 +263,7 @@ export default function AdminCertificatesPage() {
         }
       });
 
-      mockEngine.logAction({
+      safeLogAction({
         action: 'CREDENTIAL_DISPATCHED',
         category: 'STUDENT_ADMIN',
         details: `Dispatched official certificate ${newCredId} to ${studioForm.student_name} (${studioForm.cadet_id})`,
@@ -275,7 +330,7 @@ export default function AdminCertificatesPage() {
         }
       });
 
-      mockEngine.logAction({
+      safeLogAction({
         action: 'CREDENTIAL_DISPATCHED',
         category: 'STUDENT_ADMIN',
         details: `Approved & dispatched official certificate ${newCredId} to ${newCredential.student_name} (${newCredential.cadet_id})`,
@@ -310,7 +365,7 @@ export default function AdminCertificatesPage() {
       });
       setCredentials(db.credentials);
 
-      mockEngine.logAction({
+      safeLogAction({
         action: 'CREDENTIAL_REVOKED',
         category: 'STUDENT_ADMIN',
         details: `Revoked credential ${selectedCred.id} for ${selectedCred.student_name}. Reason: ${revokeReason}`,
@@ -586,6 +641,17 @@ export default function AdminCertificatesPage() {
                         )}
                       </td>
                       <td className="p-3.5 text-right space-x-2">
+                        <button
+                          type="button"
+                          disabled={exportingPdf}
+                          onClick={() => handleDownloadRegistryPdf(cred)}
+                          className="inline-flex items-center space-x-1 px-2.5 py-1 liquid-glass-button rounded-lg text-[11px] text-[#65F58A] hover:text-[#35E6B5]"
+                          title="Download Authentic RedKross Official PDF"
+                        >
+                          <Download className="w-3 h-3" />
+                          <span>PDF</span>
+                        </button>
+
                         <a
                           href={`/verify/${cred.id}`}
                           target="_blank"
@@ -1017,13 +1083,29 @@ export default function AdminCertificatesPage() {
                   <span className="w-2 h-2 rounded-full bg-[#65F58A] animate-pulse" />
                   <span>AUTHENTIC REDKROSS CERTIFICATE (LIVE HIGH-RES PREVIEW)</span>
                 </span>
-                <span className="text-[10px] font-mono text-[#8BA2B5]">
-                  OFFICIAL LETTERHEAD SPEC
-                </span>
+                <button
+                  type="button"
+                  disabled={exportingPdf}
+                  onClick={handleDownloadPreviewPdf}
+                  className="px-3 py-1.5 rounded-lg liquid-glass-button text-xs font-mono font-bold text-[#65F58A] hover:text-[#35E6B5] flex items-center gap-1.5 transition-all shadow-[0_0_12px_rgba(101,245,138,0.25)]"
+                >
+                  {exportingPdf ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Generating...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Download PDF</span>
+                    </>
+                  )}
+                </button>
               </div>
 
               {/* Exact High-Fidelity Canvas Using Official Stationery Template */}
               <div
+                id="admin-certificate-preview-canvas"
                 className="relative w-full rounded-xl shadow-2xl overflow-hidden bg-white text-[#0C2340] select-none"
                 style={{
                   aspectRatio: '949 / 1343',
@@ -1232,6 +1314,26 @@ export default function AdminCertificatesPage() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+      {/* Hidden Container for Pristine Registry PDF Export */}
+      {selectedExportCred && (
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'fixed',
+            left: '-9999px',
+            top: '0px',
+            width: '949px',
+            height: '1343px',
+            zIndex: -9999,
+            pointerEvents: 'none'
+          }}
+        >
+          <RedKrossOfficialCertificate
+            credential={selectedExportCred}
+            containerId="admin-registry-export-element"
+          />
         </div>
       )}
     </div>

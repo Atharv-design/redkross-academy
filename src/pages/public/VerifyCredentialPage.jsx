@@ -4,10 +4,13 @@ import { QRCodeSVG } from 'qrcode.react';
 import {
   Shield, Award, CheckCircle2, Search, ExternalLink,
   Calendar, Hash, FileCheck, AlertTriangle, UserCheck,
-  BookOpen, Coins, Sparkles, ArrowRight, Layers, ShieldCheck
+  BookOpen, Coins, Sparkles, ArrowRight, Layers, ShieldCheck,
+  Download, Loader2
 } from 'lucide-react';
 import { mockEngine } from '../../services/db/mockEngine';
 import { apiClient } from '../../services/apiClient';
+import RedKrossOfficialCertificate from '../../components/certificate/RedKrossOfficialCertificate';
+import { downloadCertificatePdf } from '../../utils/pdfGenerator';
 
 export default function VerifyCredentialPage() {
   const { id } = useParams();
@@ -17,6 +20,23 @@ export default function VerifyCredentialPage() {
   const [dossier, setDossier] = useState(null);
   const [hasSearched, setHasSearched] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
+
+  const handleDownloadPdf = async (targetCred) => {
+    const credToExport = targetCred || credential;
+    if (!credToExport) return;
+    try {
+      setDownloadingPdf(true);
+      await new Promise((res) => setTimeout(res, 300));
+      const filename = `RedKross_Official_Certificate_${credToExport.cadet_id || 'RK'}_${credToExport.id}.pdf`;
+      await downloadCertificatePdf('verify-pdf-export-element', filename);
+    } catch (err) {
+      console.error('Failed to download verified certificate PDF:', err);
+      alert('Unable to generate PDF directly.');
+    } finally {
+      setDownloadingPdf(false);
+    }
+  };
 
   useEffect(() => {
     const targetId = id || 'RK-89421';
@@ -371,12 +391,33 @@ export default function VerifyCredentialPage() {
                 </div>
               </div>
 
-              {/* QR Code */}
-              <div className="bg-white p-2 rounded-xl border border-slate-700 self-start sm:self-auto">
-                <QRCodeSVG
-                  value={credential.verification_url || `https://redkross-academy.vercel.app/verify/${credential.verification_id || credential.id}`}
-                  size={72}
-                />
+              {/* Actions & QR Code */}
+              <div className="flex items-center gap-3 self-start sm:self-auto">
+                <button
+                  type="button"
+                  disabled={downloadingPdf}
+                  onClick={() => handleDownloadPdf(credential)}
+                  className="px-3.5 py-2 rounded-xl liquid-glass-button text-xs font-mono font-bold text-[#65F58A] hover:text-[#35E6B5] flex items-center gap-1.5 transition-transform hover:scale-[1.02] shadow-[0_0_15px_rgba(101,245,138,0.25)]"
+                >
+                  {downloadingPdf ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Generating PDF...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Download PDF</span>
+                    </>
+                  )}
+                </button>
+
+                <div className="bg-white p-2 rounded-xl border border-slate-700">
+                  <QRCodeSVG
+                    value={credential.verification_url || `https://redkross-academy.vercel.app/verify/${credential.verification_id || credential.id}`}
+                    size={64}
+                  />
+                </div>
               </div>
             </div>
 
@@ -443,6 +484,26 @@ export default function VerifyCredentialPage() {
           </div>
         ) : null}
       </div>
+      {/* Hidden Container for Pristine Verification PDF Export */}
+      {credential && (
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'fixed',
+            left: '-9999px',
+            top: '0px',
+            width: '949px',
+            height: '1343px',
+            zIndex: -9999,
+            pointerEvents: 'none'
+          }}
+        >
+          <RedKrossOfficialCertificate
+            credential={credential}
+            containerId="verify-pdf-export-element"
+          />
+        </div>
+      )}
     </div>
   );
 }

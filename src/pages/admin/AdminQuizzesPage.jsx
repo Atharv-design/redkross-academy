@@ -6,6 +6,28 @@ import {
 } from 'lucide-react';
 import { mockEngine } from '../../services/db/mockEngine';
 
+const safeLogAction = (entry) => {
+  try {
+    if (typeof mockEngine?.logAction === 'function') {
+      mockEngine.logAction(entry);
+    } else {
+      const db = mockEngine.getDb ? mockEngine.getDb() : null;
+      if (db) {
+        if (!db.audit_logs) db.audit_logs = [];
+        db.audit_logs.unshift({
+          id: `aud_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+          timestamp: new Date().toISOString(),
+          created_at: new Date().toISOString(),
+          ...entry
+        });
+        mockEngine.saveDb(db);
+      }
+    }
+  } catch (err) {
+    console.warn('safeLogAction warning:', err);
+  }
+};
+
 export default function AdminQuizzesPage() {
   const [quizzes, setQuizzes] = useState([]);
   const [selectedQuiz, setSelectedQuiz] = useState(null);
@@ -193,7 +215,7 @@ export default function AdminQuizzesPage() {
     setQuizzes(quizzes.map((q) => (q.id === selectedQuiz.id ? updatedQuiz : q)));
     setQuestionModalOpen(false);
 
-    mockEngine.logAction({
+    safeLogAction({
       action: 'QUIZ_QUESTION_MUTATION',
       category: 'COURSE_MUTATION',
       details: `Admin updated question bank for quiz: ${selectedQuiz.title}`,
@@ -227,7 +249,7 @@ export default function AdminQuizzesPage() {
       )
     );
 
-    mockEngine.logAction({
+    safeLogAction({
       action: 'PROCTORING_SCORE_OVERRIDE',
       category: 'STUDENT_ADMIN',
       details: `Admin manually adjusted attempt ${selectedAttempt.id} score to ${newScore}%. Reason: ${overrideReason}`,

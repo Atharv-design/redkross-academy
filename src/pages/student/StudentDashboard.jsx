@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { BookOpen, Award, Clock, ArrowRight, CheckCircle2, Coins, Flame, Shield, Play, Lock, AlertCircle, ShieldAlert, Download, ExternalLink } from 'lucide-react';
+import { BookOpen, Award, Clock, ArrowRight, CheckCircle2, Coins, Flame, Shield, Play, Lock, AlertCircle, ShieldAlert, Download, ExternalLink, Loader2 } from 'lucide-react';
 import { useAuth } from '../../services/auth/authContext';
 import { mockEngine } from '../../services/db/mockEngine';
+import RedKrossOfficialCertificate from '../../components/certificate/RedKrossOfficialCertificate';
+import { downloadCertificatePdf } from '../../utils/pdfGenerator';
 
 export default function StudentDashboard() {
   const { currentUser, tokenBalance, isSuspended } = useAuth();
+  const [downloadingCertId, setDownloadingCertId] = useState(null);
+  const [activePdfCred, setActivePdfCred] = useState(null);
 
   const [dashboardData, setDashboardData] = useState({
     enrolments: [],
@@ -86,40 +90,23 @@ export default function StudentDashboard() {
   const cadetId = currentUser?.cadet_id || 'RK-89421';
   const fullName = currentUser?.full_name || currentUser?.displayName || 'Cadet Operator';
 
-  const handleDownloadCertificate = (cred) => {
-    const certText = `========================================================================
-                      REDKROSS CYBER ACADEMY
-                 OFFICIAL INSTITUTIONAL CERTIFICATE
-========================================================================
+  const handleDownloadCertificate = async (cred) => {
+    try {
+      const certId = cred.verification_id || cred.id || 'RK-CERT';
+      setDownloadingCertId(certId);
+      setActivePdfCred(cred);
 
-CADET IDENTITY:    ${cred.student_name || currentUser.full_name || 'Cadet Operator'}
-CADET ID:          ${cred.cadet_id || currentUser.cadet_id || 'RK-89421'}
-COURSE:            ${cred.course_title || cred.credential_title || 'Defensive Cyber Operations'}
-CREDENTIAL:        ${cred.credential_title || 'Certified Cybersecurity Specialist'}
-VERIFICATION ID:   ${cred.verification_id || cred.id}
-ISSUE DATE:        ${new Date(cred.issue_date || Date.now()).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-ASSESSMENT GRADE:  ${cred.grade_percentage || 90}% (Verified Passing)
-STATUS:            ${cred.status || 'Active'}
+      // Brief delay to allow offscreen DOM rendering with high-res assets
+      await new Promise((resolve) => setTimeout(resolve, 350));
 
-CRYPTOGRAPHIC SIGNATURE:
-${cred.digital_signature || '0x' + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('')}
-
-OFFICIAL PUBLIC REGISTRY VERIFICATION LINK:
-https://academy.redkross.org.in/verify/${cred.verification_id || cred.id}
-
-========================================================================
-Issued under sovereign cryptographic governance by RedKross Academy.
-========================================================================`;
-
-    const blob = new Blob([certText], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `RedKross_Certificate_${cred.verification_id || cred.id}.txt`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+      const filename = `RedKross_Certificate_${cred.cadet_id || cadetId}_${certId}.pdf`;
+      await downloadCertificatePdf('student-pdf-export-element', filename);
+    } catch (err) {
+      console.error('Failed to generate official PDF certificate:', err);
+      alert('Unable to generate PDF certificate directly. Please try using print to PDF or reload.');
+    } finally {
+      setDownloadingCertId(null);
+    }
   };
 
   return (
@@ -399,11 +386,21 @@ Issued under sovereign cryptographic governance by RedKross Academy.
 
                     <button
                       type="button"
+                      disabled={downloadingCertId === (cred.verification_id || cred.id)}
                       onClick={() => handleDownloadCertificate(cred)}
-                      className="ultra-glass-btn px-4 py-2 rounded-xl text-xs font-mono font-bold flex items-center space-x-1.5 transition-transform hover:scale-[1.02]"
+                      className="ultra-glass-btn px-4 py-2 rounded-xl text-xs font-mono font-bold flex items-center space-x-1.5 transition-transform hover:scale-[1.02] disabled:opacity-50"
                     >
-                      <Download className="w-3.5 h-3.5" />
-                      <span>Download Certificate</span>
+                      {downloadingCertId === (cred.verification_id || cred.id) ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin text-[#65F58A]" />
+                          <span>Generating PDF...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Download className="w-3.5 h-3.5" />
+                          <span>Download PDF</span>
+                        </>
+                      )}
                     </button>
                   </div>
                 </div>
@@ -412,6 +409,27 @@ Issued under sovereign cryptographic governance by RedKross Academy.
           )}
         </div>
       </div>
+
+      {/* Hidden Off-Screen Container for Pristine 300 DPI Official Certificate PDF Generation */}
+      {activePdfCred && (
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'fixed',
+            left: '-9999px',
+            top: '0px',
+            width: '949px',
+            height: '1343px',
+            zIndex: -9999,
+            pointerEvents: 'none'
+          }}
+        >
+          <RedKrossOfficialCertificate
+            credential={activePdfCred}
+            containerId="student-pdf-export-element"
+          />
+        </div>
+      )}
     </div>
   );
 }

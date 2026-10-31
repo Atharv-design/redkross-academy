@@ -79,6 +79,8 @@ if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
 class MockEngine {
   constructor() {
     this.listeners = new Set();
+    this.logAction = this.logAction.bind(this);
+    this.logAudit = this.logAction.bind(this);
     this.initDatabase();
     this.initBusListener();
   }
@@ -789,6 +791,170 @@ class MockEngine {
     return assignmentItem;
   }
 
+  deleteCourse(courseId, adminId = 'usr_admin') {
+    const db = this.getDb();
+    const course = (db.courses || []).find((c) => c.id === courseId);
+    if (!course) return { success: false, reason: 'Course not found' };
+
+    const courseTitle = course.title;
+    db.courses = (db.courses || []).filter((c) => c.id !== courseId);
+
+    // Archive or update enrollments
+    if (db.enrolments) {
+      db.enrolments = db.enrolments.filter((e) => e.course_id !== courseId);
+    }
+
+    if (!db.audit_logs) db.audit_logs = [];
+    db.audit_logs.unshift({
+      id: `aud_${Date.now()}`,
+      actor_id: adminId,
+      action: 'COURSE_DELETED',
+      category: 'COURSE_MUTATION',
+      entity_type: 'courses',
+      entity_id: courseId,
+      details: `Permanently deleted course "${courseTitle}" (${courseId}) and its module hierarchy.`,
+      severity: 'WARNING',
+      timestamp: new Date().toISOString()
+    });
+
+    this.saveDb(db, {
+      type: 'CURRICULUM_MUTATED',
+      payload: { deletedCourseId: courseId, courses: db.courses }
+    });
+
+    return { success: true, deletedCourseId: courseId };
+  }
+
+  deleteModule(courseId, moduleId, adminId = 'usr_admin') {
+    const db = this.getDb();
+    const course = (db.courses || []).find((c) => c.id === courseId);
+    if (!course) return { success: false, reason: 'Course not found' };
+
+    const targetMod = (course.modules || []).find((m) => m.id === moduleId);
+    const modTitle = targetMod?.title || moduleId;
+
+    course.modules = (course.modules || [])
+      .filter((m) => m.id !== moduleId)
+      .map((m, idx) => ({ ...m, order: idx + 1 }));
+
+    course.updated_at = new Date().toISOString();
+
+    if (!db.audit_logs) db.audit_logs = [];
+    db.audit_logs.unshift({
+      id: `aud_${Date.now()}`,
+      actor_id: adminId,
+      action: 'MODULE_DELETED',
+      category: 'COURSE_MUTATION',
+      entity_type: 'courses',
+      entity_id: courseId,
+      details: `Deleted module "${modTitle}" from course "${course.title}".`,
+      severity: 'INFO',
+      timestamp: new Date().toISOString()
+    });
+
+    this.saveDb(db, {
+      type: 'CURRICULUM_MUTATED',
+      payload: { courseId, deletedModuleId: moduleId, modules: course.modules }
+    });
+
+    return { success: true, courseId, deletedModuleId: moduleId, remainingModules: course.modules };
+  }
+
+  deleteLesson(courseId, moduleId, lessonId, adminId = 'usr_admin') {
+    const db = this.getDb();
+    const course = (db.courses || []).find((c) => c.id === courseId);
+    if (!course) return { success: false, reason: 'Course not found' };
+
+    const mod = (course.modules || []).find((m) => m.id === moduleId);
+    if (!mod) return { success: false, reason: 'Module not found' };
+
+    const targetLesson = (mod.lessons || []).find((l) => l.id === lessonId);
+    const lessonTitle = targetLesson?.title || lessonId;
+
+    mod.lessons = (mod.lessons || []).filter((l) => l.id !== lessonId);
+    course.updated_at = new Date().toISOString();
+
+    if (!db.audit_logs) db.audit_logs = [];
+    db.audit_logs.unshift({
+      id: `aud_${Date.now()}`,
+      actor_id: adminId,
+      action: 'LESSON_DELETED',
+      category: 'COURSE_MUTATION',
+      entity_type: 'courses',
+      entity_id: courseId,
+      details: `Deleted lesson "${lessonTitle}" from module "${mod.title}".`,
+      severity: 'INFO',
+      timestamp: new Date().toISOString()
+    });
+
+    this.saveDb(db, {
+      type: 'CURRICULUM_MUTATED',
+      payload: { courseId, moduleId, deletedLessonId: lessonId, lessons: mod.lessons }
+    });
+
+    return { success: true, courseId, moduleId, deletedLessonId: lessonId, remainingLessons: mod.lessons };
+  }
+
+  saveQuizQuestions(courseId, moduleId, questionsOrQuizId, payloadOrAdminId = 'usr_admin', adminEmail = 'usr_admin') {
+    const db = this.getDb();
+    const course = (db.courses || []).find((c) => c.id === courseId);
+    if (!course) return { success: false, reason: 'Course not found' };
+
+    const mod = (course.modules || []).find((m) => m.id === moduleId);
+    if (!mod) return { success: false, reason: 'Module not found' };
+
+    let questions = [];
+    let actor = 'usr_admin';
+
+    if (Array.isArray(questionsOrQuizId)) {
+      questions = questionsOrQuizId;
+      actor = typeof payloadOrAdminId === 'string' ? payloadOrAdminId : 'usr_admin';
+      if (!mod.quiz) {
+        mod.quiz = {
+          id: `quiz_${moduleId}`,
+          title: `${mod.title} Assessment`,
+          passing_score: 80,
+          duration_minutes: 20,
+          total_questions: questions.length,
+          token_bounty: 150,
+          questions: []
+        };
+      }
+      mod.quiz.questions = questions;
+      mod.quiz.total_questions = questions.length;
+    } else if (typeof questionsOrQuizId === 'string' && typeof payloadOrAdminId === 'object') {
+      const quizId = questionsOrQuizId;
+      const quizPayload = payloadOrAdminId || {};
+      actor = adminEmail || 'usr_admin';
+      if (!mod.quiz) {
+        mod.quiz = { id: quizId || `q_${Date.now()}`, title: 'Module Assessment', questions: [] };
+      }
+      mod.quiz = { ...mod.quiz, ...quizPayload };
+    }
+
+    course.updated_at = new Date().toISOString();
+
+    if (!db.audit_logs) db.audit_logs = [];
+    db.audit_logs.unshift({
+      id: `aud_${Date.now()}`,
+      actor_id: actor,
+      action: 'QUIZ_QUESTIONS_SAVED',
+      category: 'COURSE_MUTATION',
+      entity_type: 'courses',
+      entity_id: courseId,
+      details: `Updated quiz questions for module "${mod.title}".`,
+      severity: 'INFO',
+      timestamp: new Date().toISOString()
+    });
+
+    this.saveDb(db, {
+      type: 'CURRICULUM_MUTATED',
+      payload: { courseId, moduleId, quiz: mod.quiz }
+    });
+
+    return { success: true, quiz: mod.quiz, ...mod.quiz };
+  }
+
   // ==========================================
   // ENROLMENTS & LESSON PROGRESSION
   // ==========================================
@@ -1472,34 +1638,6 @@ class MockEngine {
 
     this.saveDb(db);
     return mod.lessons[lessonIdx];
-  }
-
-  saveQuizQuestions(courseId, moduleId, quizId, quizPayload, adminEmail = 'usr_admin') {
-    const db = this.getDb();
-    const course = db.courses.find((c) => c.id === courseId);
-    if (!course) return null;
-
-    const mod = (course.modules || []).find((m) => m.id === moduleId);
-    if (!mod) return null;
-
-    if (!mod.quiz) {
-      mod.quiz = { id: quizId || `q_${Date.now()}`, title: 'Module Assessment', questions: [] };
-    }
-    mod.quiz = { ...mod.quiz, ...quizPayload };
-    course.updated_at = new Date().toISOString();
-
-    db.audit_logs.unshift({
-      id: `aud_${Date.now()}`,
-      actor_id: adminEmail,
-      action: 'QUIZ_CONFIGURED',
-      entity_type: 'quizzes',
-      entity_id: mod.quiz.id,
-      details: `Updated quiz questions and scoring parameters for ${course.title}`,
-      created_at: new Date().toISOString(),
-    });
-
-    this.saveDb(db);
-    return mod.quiz;
   }
 
   uploadVideoAsset(courseId, assetPayload, adminEmail = 'usr_admin') {

@@ -353,6 +353,20 @@ export default function AdminCoursesPage() {
   const [uploadingLessonPdf, setUploadingLessonPdf] = useState(false);
   const lessonPdfRef = useRef(null);
 
+  // Manual Question Builder State (No Forced Auto-Generation)
+  const [questionModalOpen, setQuestionModalOpen] = useState(false);
+  const [editingQuestionIdx, setEditingQuestionIdx] = useState(null);
+  const [questionForm, setQuestionForm] = useState({
+    text: '',
+    optionA: '',
+    optionB: '',
+    optionC: '',
+    optionD: '',
+    correctIndex: 0,
+    points: 1,
+    explanation: ''
+  });
+
   // Load courses from database
   const loadCourses = () => {
     try {
@@ -414,6 +428,29 @@ export default function AdminCoursesPage() {
     }
   };
 
+  // Safe Audit Logger
+  const safeLogAction = (entry) => {
+    try {
+      if (typeof mockEngine?.logAction === 'function') {
+        mockEngine.logAction(entry);
+      } else {
+        const db = mockEngine.getDb ? mockEngine.getDb() : null;
+        if (db) {
+          if (!db.audit_logs) db.audit_logs = [];
+          db.audit_logs.unshift({
+            id: `aud_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+            timestamp: new Date().toISOString(),
+            created_at: new Date().toISOString(),
+            ...entry
+          });
+          mockEngine.saveDb(db);
+        }
+      }
+    } catch (err) {
+      console.warn('safeLogAction warning:', err);
+    }
+  };
+
   // Save changes to database
   const persistCourses = (updatedCourses, auditMsg = 'Admin updated courses') => {
     try {
@@ -428,7 +465,7 @@ export default function AdminCoursesPage() {
         const refreshed = updatedCourses.find((c) => c.id === selectedCourse.id);
         if (refreshed) setSelectedCourse(refreshed);
       }
-      mockEngine.logAction({
+      safeLogAction({
         action: 'COURSE_MUTATION',
         category: 'COURSE_MUTATION',
         details: auditMsg,
@@ -436,6 +473,33 @@ export default function AdminCoursesPage() {
       });
     } catch (e) {
       console.error('Failed to persist course changes:', e);
+    }
+  };
+
+  // Direct Course Deletion
+  const handleDeleteCourse = (courseId) => {
+    const target = courses.find((c) => c.id === courseId);
+    const courseTitle = target?.title || 'this course';
+    if (!confirm(`Are you sure you want to permanently delete course "${courseTitle}"? This will archive all student enrollments and purge all modules and lessons.`)) {
+      return;
+    }
+
+    const success = mockEngine.deleteCourse(courseId, 'usr_admin');
+    if (success) {
+      const remaining = courses.filter((c) => c.id !== courseId);
+      setCourses(remaining);
+      if (selectedCourse?.id === courseId) {
+        if (remaining.length > 0) {
+          setSelectedCourse(remaining[0]);
+          loadCourseIntoForm(remaining[0]);
+          setIsCreatingNew(false);
+        } else {
+          setSelectedCourse(null);
+          setIsCreatingNew(true);
+        }
+      }
+    } else {
+      alert('Failed to delete course.');
     }
   };
 
@@ -650,15 +714,145 @@ export default function AdminCoursesPage() {
   };
 
   const handleDeleteModule = (idx) => {
-    if (!confirm('Are you sure you want to delete this module and its 20-question exam?')) return;
+    const currentMod = courseFormData.modules?.[idx];
+    if (!confirm(`Are you sure you want to delete module "${currentMod?.title || 'this module'}" and its lessons?`)) return;
     const updated = (courseFormData.modules || []).filter((_, i) => i !== idx);
     setCourseFormData((prev) => ({ ...prev, modules: updated }));
     if (activeModuleIndex >= updated.length) {
       setActiveModuleIndex(Math.max(0, updated.length - 1));
     }
+    if (selectedCourse?.id && currentMod?.id) {
+      mockEngine.deleteModule(selectedCourse.id, currentMod.id, 'usr_admin');
+    }
   };
 
-  // Auto-Generate or Reset 20 Questions for Active Module
+  // Manual Question Builder Handlers (User Specification: No auto-generation required)
+  const handleOpenAddQuestion = () => {
+    setEditingQuestionIdx(null);
+    setQuestionForm({
+      text: '',
+      optionA: '',
+      optionB: '',
+      optionC: '',
+      optionD: '',
+      correctIndex: 0,
+      points: 1,
+      explanation: ''
+    });
+    setQuestionModalOpen(true);
+  };
+
+  const handleOpenEditQuestion = (q, qIdx) => {
+    setEditingQuestionIdx(qIdx);
+    const opts = q.options || [];
+    const correctIdx = opts.findIndex((o) => o.is_correct);
+    setQuestionForm({
+      text: q.text || '',
+      optionA: opts[0]?.text || '',
+      optionB: opts[1]?.text || '',
+      optionC: opts[2]?.text || '',
+      optionD: opts[3]?.text || '',
+      correctIndex: correctIdx >= 0 ? correctIdx : 0,
+      points: q.points || 1,
+      explanation: q.explanation || ''
+    });
+    setQuestionModalOpen(true);
+  };
+
+  const handleSaveQuestion = () => {
+    if (!questionForm.text.trim()) {
+      alert('Please enter the question statement text.');
+      return;
+    }
+    if (
+      !questionForm.optionA.trim() ||
+      !questionForm.optionB.trim() ||
+      !questionForm.optionC.trim() ||
+      !questionForm.optionD.trim()
+    ) {
+      alert('All four options (A, B, C, D) are required.');
+      return;
+    }
+
+    const currentMod = courseFormData.modules?.[activeModuleIndex];
+    if (!currentMod) {
+      alert('Please select or create a module first.');
+      return;
+    }
+
+    const formattedQuestion = {
+      id: editingQuestionIdx !== null && currentMod.quiz?.questions?.[editingQuestionIdx]?.id
+        ? currentMod.quiz.questions[editingQuestionIdx].id
+        : `q_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      text: questionForm.text.trim(),
+      type: 'single_choice',
+      points: Number(questionForm.points) || 1,
+      options: [
+        { id: 'opt_a', text: questionForm.optionA.trim(), is_correct: questionForm.correctIndex === 0 },
+        { id: 'opt_b', text: questionForm.optionB.trim(), is_correct: questionForm.correctIndex === 1 },
+        { id: 'opt_c', text: questionForm.optionC.trim(), is_correct: questionForm.correctIndex === 2 },
+        { id: 'opt_d', text: questionForm.optionD.trim(), is_correct: questionForm.correctIndex === 3 }
+      ],
+      explanation: questionForm.explanation.trim() || 'Official technical explanation for verified answer choice.'
+    };
+
+    let updatedQuestions = [...(currentMod.quiz?.questions || [])];
+    if (editingQuestionIdx !== null) {
+      updatedQuestions[editingQuestionIdx] = formattedQuestion;
+    } else {
+      updatedQuestions.push(formattedQuestion);
+    }
+
+    const updatedMods = (courseFormData.modules || []).map((mod, idx) => {
+      if (idx !== activeModuleIndex) return mod;
+      return {
+        ...mod,
+        quiz: {
+          id: mod.quiz?.id || `quiz_${Date.now()}_${idx + 1}`,
+          title: mod.quiz?.title || `${mod.title} Assessment`,
+          passing_score: 70,
+          total_questions: updatedQuestions.length,
+          token_bounty: 150,
+          questions: updatedQuestions
+        }
+      };
+    });
+
+    setCourseFormData((prev) => ({ ...prev, modules: updatedMods }));
+    setQuestionModalOpen(false);
+
+    // Immediate DB synchronization
+    if (selectedCourse?.id && currentMod.id) {
+      mockEngine.saveQuizQuestions(selectedCourse.id, currentMod.id, updatedQuestions, 'usr_admin');
+    }
+  };
+
+  const handleDeleteQuestion = (qIdx) => {
+    if (!confirm('Are you sure you want to delete this question?')) return;
+    const currentMod = courseFormData.modules?.[activeModuleIndex];
+    if (!currentMod) return;
+
+    const updatedQuestions = (currentMod.quiz?.questions || []).filter((_, i) => i !== qIdx);
+    const updatedMods = (courseFormData.modules || []).map((mod, idx) => {
+      if (idx !== activeModuleIndex) return mod;
+      return {
+        ...mod,
+        quiz: {
+          ...mod.quiz,
+          total_questions: updatedQuestions.length,
+          questions: updatedQuestions
+        }
+      };
+    });
+
+    setCourseFormData((prev) => ({ ...prev, modules: updatedMods }));
+
+    if (selectedCourse?.id && currentMod.id) {
+      mockEngine.saveQuizQuestions(selectedCourse.id, currentMod.id, updatedQuestions, 'usr_admin');
+    }
+  };
+
+  // Optional: Auto-Generate 20 Questions fallback
   const handleGenerate20Questions = () => {
     const currentMod = courseFormData.modules?.[activeModuleIndex];
     if (!currentMod) return;
@@ -680,7 +874,7 @@ export default function AdminCoursesPage() {
     });
 
     setCourseFormData((prev) => ({ ...prev, modules: updatedMods }));
-    alert(`Successfully generated 20 cybersecurity exam questions for ${currentMod.title}!`);
+    alert(`Generated default questions for ${currentMod.title}. You can now edit each question manually.`);
   };
 
   // Lesson Save Action
@@ -715,15 +909,20 @@ export default function AdminCoursesPage() {
   };
 
   const handleDeleteLesson = (lIdx) => {
-    if (!confirm('Delete this lesson?')) return;
     const currentMod = courseFormData.modules?.[activeModuleIndex];
     if (!currentMod) return;
+    const targetLesson = currentMod.lessons?.[lIdx];
+    if (!confirm(`Delete lesson "${targetLesson?.title || 'this lesson'}"?`)) return;
 
-    const updatedLessons = currentMod.lessons.filter((_, i) => i !== lIdx);
+    const updatedLessons = (currentMod.lessons || []).filter((_, i) => i !== lIdx);
     const updatedMods = (courseFormData.modules || []).map((mod, idx) =>
       idx === activeModuleIndex ? { ...mod, lessons: updatedLessons } : mod
     );
     setCourseFormData((prev) => ({ ...prev, modules: updatedMods }));
+
+    if (selectedCourse?.id && currentMod?.id && targetLesson?.id) {
+      mockEngine.deleteLesson(selectedCourse.id, currentMod.id, targetLesson.id, 'usr_admin');
+    }
   };
 
   // Filtered courses
@@ -845,15 +1044,28 @@ export default function AdminCoursesPage() {
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#65F58A]/30 text-[#65F58A] bg-[#071018]/60">
                     {c.level || 'Intermediate'}
                   </span>
-                  <span
-                    className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
-                      c.status === 'PUBLISHED'
-                        ? 'bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/30'
-                        : 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
-                    }`}
-                  >
-                    {c.status || 'DRAFT'}
-                  </span>
+                  <div className="flex items-center space-x-1.5">
+                    <span
+                      className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
+                        c.status === 'PUBLISHED'
+                          ? 'bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/30'
+                          : 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
+                      }`}
+                    >
+                      {c.status || 'DRAFT'}
+                    </span>
+                    <button
+                      type="button"
+                      title="Permanently Delete Course"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteCourse(c.id);
+                      }}
+                      className="p-1 rounded-md text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
 
                 <h4 className="text-base font-bold text-white mb-1.5 leading-snug line-clamp-1">
@@ -895,6 +1107,17 @@ export default function AdminCoursesPage() {
             </div>
 
             <div className="flex items-center space-x-3">
+              {!isCreatingNew && selectedCourse?.id && (
+                <button
+                  type="button"
+                  onClick={() => handleDeleteCourse(selectedCourse.id)}
+                  className="px-3.5 py-2 rounded-xl bg-red-950/40 hover:bg-red-900/60 border border-red-500/30 text-red-400 font-bold text-xs font-mono flex items-center space-x-1.5 transition-all cursor-pointer"
+                  title="Permanently Delete Course"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Delete Course</span>
+                </button>
+              )}
               <button
                 type="button"
                 onClick={handleSaveCourse}
@@ -912,7 +1135,7 @@ export default function AdminCoursesPage() {
               { step: 1, title: '1. Course Info & About' },
               { step: 2, title: '2. Media (Image & Video)' },
               { step: 3, title: '3. Modules & Units' },
-              { step: 4, title: '4. 20-Question Exam' }
+              { step: 4, title: '4. Questions & Assessments' }
             ].map((s) => (
               <button
                 key={s.step}
@@ -1415,96 +1638,166 @@ export default function AdminCoursesPage() {
               </div>
             )}
 
-            {/* ================= STEP 4: 20-QUESTION EXAM GENERATOR ================= */}
+            {/* ================= STEP 4: MANUAL QUESTION BUILDER & EXAM STUDIO ================= */}
             {builderStep === 4 && (
               <div className="space-y-6 animate-slide-left">
                 <div className="p-5 rounded-2xl bg-[#061510] border border-[#65F58A]/25 space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#65F58A]/20">
                     <div>
                       <span className="text-[10px] font-mono text-[#65F58A] font-bold uppercase tracking-wider block">
-                        MODULE-WISE 20-QUESTION EXAMINATION
+                        MODULE ASSESSMENT & QUESTIONS (MANUAL BUILDER)
                       </span>
                       <h4 className="font-bold text-base text-white">
-                        {activeModule?.title || 'Select a Module'} — Knowledge Check
+                        {activeModule?.title || 'Select a Module'} — Examination Pool
                       </h4>
                     </div>
 
-                    {/* Module Selector Pill */}
-                    <select
-                      value={activeModuleIndex}
-                      onChange={(e) => setActiveModuleIndex(Number(e.target.value))}
-                      className="bg-[#040e0a] text-xs font-mono text-[#65F58A] px-3 py-2 rounded-xl border border-[#65F58A]/30 focus:outline-none"
-                    >
-                      {(courseFormData.modules || []).map((m, idx) => (
-                        <option key={m.id || idx} value={idx}>
-                          Module {idx + 1}: {m.title}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="flex items-center gap-2">
+                      {/* Module Selector Pill */}
+                      <select
+                        value={activeModuleIndex}
+                        onChange={(e) => setActiveModuleIndex(Number(e.target.value))}
+                        className="bg-[#040e0a] text-xs font-mono text-[#65F58A] px-3 py-2 rounded-xl border border-[#65F58A]/30 focus:outline-none"
+                      >
+                        {(courseFormData.modules || []).map((m, idx) => (
+                          <option key={m.id || idx} value={idx}>
+                            Module {idx + 1}: {m.title}
+                          </option>
+                        ))}
+                      </select>
+
+                      <button
+                        type="button"
+                        onClick={handleOpenAddQuestion}
+                        className="px-4 py-2 bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-bold text-xs font-mono rounded-xl transition-all shadow-[0_0_15px_rgba(101,245,138,0.3)] flex items-center space-x-1.5 cursor-pointer flex-shrink-0"
+                      >
+                        <Plus className="w-4 h-4 stroke-[3]" />
+                        <span>Add Question Manually</span>
+                      </button>
+                    </div>
                   </div>
 
-                  {/* 1-Click Auto-Generate 20 Questions Banner */}
+                  {/* Manual Question Builder Top Bar */}
                   <div className="p-4 rounded-xl bg-[#092218] border border-[#65F58A]/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-[0_0_15px_rgba(101,245,138,0.15)]">
                     <div className="space-y-0.5">
                       <span className="text-xs font-bold text-white flex items-center space-x-1.5 font-mono">
-                        <Sparkles className="w-4 h-4 text-[#65F58A]" />
-                        <span>Instant 20-Question Cybersecurity Exam Generator</span>
+                        <CheckCircle2 className="w-4 h-4 text-[#65F58A]" />
+                        <span>Dedicated Manual Question Authoring</span>
                       </span>
                       <p className="text-[11px] text-[#C9EFE0]">
-                        Click to generate or reset a comprehensive pool of 20 graded defensive questions with four options and explanations.
+                        Enter exact custom question statements, options A/B/C/D, specify the single verified correct option, and write technical explanations.
                       </p>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={handleGenerate20Questions}
-                      className="px-4 py-2 bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-bold text-xs font-mono rounded-lg transition-all shadow-sm flex-shrink-0 cursor-pointer"
-                    >
-                      ⚡ Auto-Generate 20 Questions
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={handleOpenAddQuestion}
+                        className="px-4 py-2 bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-bold text-xs font-mono rounded-lg transition-all shadow-sm flex items-center space-x-1 cursor-pointer"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>+ New Question</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleGenerate20Questions}
+                        className="px-3 py-2 bg-[#040e0a] hover:bg-[#071018] text-[#72A88E] hover:text-[#65F58A] text-xs font-mono rounded-lg border border-[#65F58A]/20 transition-all cursor-pointer"
+                        title="Load standard baseline template questions to edit manually"
+                      >
+                        Load Template Questions
+                      </button>
+                    </div>
                   </div>
 
-                  {/* List of 20 Questions in Active Module */}
+                  {/* List of Questions in Active Module */}
                   <div className="space-y-3 pt-2">
-                    <span className="text-xs font-mono text-[#72A88E] block">
-                      EXAM QUESTIONS ({activeModule?.quiz?.questions?.length || 0} / 20 Loaded)
-                    </span>
+                    <div className="flex items-center justify-between text-xs font-mono text-[#72A88E]">
+                      <span>
+                        EXAM QUESTIONS ({activeModule?.quiz?.questions?.length || 0} Total in Pool)
+                      </span>
+                      <span className="text-[#65F58A]">
+                        Minimum Passing Criteria: 80%
+                      </span>
+                    </div>
 
-                    {(activeModule?.quiz?.questions || []).map((q, qIdx) => (
-                      <div
-                        key={q.id || qIdx}
-                        className="p-4 rounded-xl bg-[#040e0a] border border-[#65F58A]/15 space-y-2 text-xs"
-                      >
-                        <div className="flex items-start justify-between gap-2">
-                          <span className="font-bold text-white font-lora">
-                            {qIdx + 1}. {q.text}
-                          </span>
-                          <span className="text-[10px] font-mono text-[#65F58A] flex-shrink-0">
-                            1.0 Point
-                          </span>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1">
-                          {(q.options || []).map((opt, oIdx) => (
-                            <div
-                              key={opt.id || oIdx}
-                              className={`p-2 rounded-lg border text-[11px] font-mono ${
-                                opt.is_correct
-                                  ? 'bg-[#092218] border-[#65F58A]/50 text-[#65F58A] font-bold'
-                                  : 'bg-[#061510] border-white/5 text-[#8BA2B5]'
-                              }`}
-                            >
-                              <span>{String.fromCharCode(65 + oIdx)}. {opt.text}</span>
-                              {opt.is_correct && <span className="ml-1 text-[#65F58A]">✔</span>}
-                            </div>
-                          ))}
-                        </div>
-
-                        <div className="text-[10px] text-[#72A88E] font-mono pt-1">
-                          Explanation: {q.explanation}
-                        </div>
+                    {(!activeModule?.quiz?.questions || activeModule.quiz.questions.length === 0) ? (
+                      <div className="p-8 text-center rounded-2xl bg-[#040e0a] border border-dashed border-[#65F58A]/20 space-y-3">
+                        <HelpCircle className="w-8 h-8 text-[#72A88E] mx-auto opacity-60" />
+                        <p className="text-xs text-[#72A88E]">No questions added to this module yet.</p>
+                        <button
+                          type="button"
+                          onClick={handleOpenAddQuestion}
+                          className="px-4 py-2 bg-[#65F58A] text-[#071018] font-bold text-xs font-mono rounded-xl hover:bg-[#35E6B5] transition-all cursor-pointer inline-flex items-center space-x-1.5"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>Add First Question Manually</span>
+                        </button>
                       </div>
-                    ))}
+                    ) : (
+                      (activeModule?.quiz?.questions || []).map((q, qIdx) => (
+                        <div
+                          key={q.id || qIdx}
+                          className="p-4 rounded-xl bg-[#040e0a] border border-[#65F58A]/20 space-y-3 text-xs"
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="space-y-1">
+                              <span className="font-bold text-white font-lora text-sm">
+                                {qIdx + 1}. {q.text}
+                              </span>
+                            </div>
+                            <div className="flex items-center space-x-2 flex-shrink-0">
+                              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30 font-bold">
+                                {q.points || 1} Point{(q.points || 1) > 1 ? 's' : ''}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => handleOpenEditQuestion(q, qIdx)}
+                                className="p-1.5 rounded-lg bg-[#092218] hover:bg-[#0c2a1e] text-[#65F58A] border border-[#65F58A]/30 transition-colors"
+                                title="Edit Question"
+                              >
+                                <Edit3 className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteQuestion(qIdx)}
+                                className="p-1.5 rounded-lg bg-red-950/40 hover:bg-red-900/60 text-red-400 border border-red-500/30 transition-colors"
+                                title="Delete Question"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                            {(q.options || []).map((opt, oIdx) => (
+                              <div
+                                key={opt.id || oIdx}
+                                className={`p-2.5 rounded-xl border text-[11px] font-mono flex items-center justify-between ${
+                                  opt.is_correct
+                                    ? 'bg-[#092218] border-[#65F58A] text-[#65F58A] font-bold shadow-[0_0_10px_rgba(101,245,138,0.2)]'
+                                    : 'bg-[#061510] border-white/5 text-[#8BA2B5]'
+                                }`}
+                              >
+                                <span>
+                                  <strong className="text-white mr-1.5">{String.fromCharCode(65 + oIdx)}.</strong>
+                                  {opt.text}
+                                </span>
+                                {opt.is_correct && (
+                                  <span className="text-[10px] font-bold text-[#65F58A] px-1.5 py-0.5 rounded bg-[#65F58A]/15 border border-[#65F58A]/30">
+                                    CORRECT
+                                  </span>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+
+                          <div className="text-[11px] text-[#72A88E] font-mono p-2.5 rounded-lg bg-[#061510] border border-[#65F58A]/10">
+                            <strong className="text-white">Explanation: </strong>
+                            <span>{q.explanation || 'No explanation provided.'}</span>
+                          </div>
+                        </div>
+                      ))
+                    )}
                   </div>
                 </div>
 
@@ -1668,6 +1961,155 @@ export default function AdminCoursesPage() {
                 className="px-4 py-2 rounded-xl bg-[#65F58A] text-[#071018] font-bold text-xs font-mono cursor-pointer"
               >
                 Save Lesson
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* ================= MODAL: ADD / EDIT QUESTION MANUALLY ================= */}
+      {questionModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="max-w-2xl w-full p-6 rounded-2xl bg-[#061510] border border-[#65F58A]/30 space-y-4 max-h-[92vh] overflow-y-auto custom-scrollbar shadow-2xl">
+            <div className="flex items-center justify-between border-b border-[#65F58A]/20 pb-3">
+              <div>
+                <span className="text-[10px] font-mono text-[#65F58A] font-bold uppercase tracking-wider block">
+                  MANUAL QUESTION AUTHORING
+                </span>
+                <h3 className="font-bold text-base text-white">
+                  {editingQuestionIdx !== null ? 'Edit Question' : 'Add Question to Assessment'}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setQuestionModalOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Question Statement */}
+            <div className="space-y-1">
+              <label className="text-xs font-mono text-[#72A88E] flex items-center justify-between">
+                <span>Question Statement / Problem Text *</span>
+                <span className="text-[10px] text-slate-400">Clear & unambiguous</span>
+              </label>
+              <textarea
+                rows={3}
+                required
+                value={questionForm.text}
+                onChange={(e) => setQuestionForm({ ...questionForm, text: e.target.value })}
+                placeholder="e.g. Which Wireshark filter syntax isolates all TCP SYN packets with no ACK flag set?"
+                className="w-full bg-[#040e0a] rounded-xl p-3 text-xs text-white border border-[#65F58A]/25 focus:outline-none focus:border-[#65F58A]"
+              />
+            </div>
+
+            {/* Four Options with Radio Button to Designate Correct Answer */}
+            <div className="space-y-3 pt-1">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-mono text-[#72A88E]">
+                  Answer Choices (Select the Radio Button for the Verified Correct Option) *
+                </label>
+                <span className="text-[10px] font-mono text-[#65F58A]">
+                  Option {String.fromCharCode(65 + questionForm.correctIndex)} is designated Correct
+                </span>
+              </div>
+
+              {[
+                { key: 'optionA', label: 'Option A', index: 0 },
+                { key: 'optionB', label: 'Option B', index: 1 },
+                { key: 'optionC', label: 'Option C', index: 2 },
+                { key: 'optionD', label: 'Option D', index: 3 }
+              ].map((opt) => {
+                const isSelected = questionForm.correctIndex === opt.index;
+                return (
+                  <div
+                    key={opt.key}
+                    className={`p-3 rounded-xl border transition-all ${
+                      isSelected
+                        ? 'bg-[#092218] border-[#65F58A] shadow-[0_0_12px_rgba(101,245,138,0.15)]'
+                        : 'bg-[#040e0a] border-[#65F58A]/20'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="radio"
+                        id={`radio_${opt.key}`}
+                        name="correct_answer_choice"
+                        checked={isSelected}
+                        onChange={() => setQuestionForm({ ...questionForm, correctIndex: opt.index })}
+                        className="w-4 h-4 accent-[#65F58A] cursor-pointer"
+                      />
+                      <label
+                        htmlFor={`radio_${opt.key}`}
+                        className={`text-xs font-mono font-bold cursor-pointer w-20 flex-shrink-0 ${
+                          isSelected ? 'text-[#65F58A]' : 'text-slate-300'
+                        }`}
+                      >
+                        {opt.label}:
+                      </label>
+                      <input
+                        type="text"
+                        value={questionForm[opt.key]}
+                        onChange={(e) => setQuestionForm({ ...questionForm, [opt.key]: e.target.value })}
+                        placeholder={`Enter text for ${opt.label}...`}
+                        className="flex-1 bg-transparent text-xs text-white placeholder-slate-500 focus:outline-none"
+                      />
+                      {isSelected && (
+                        <span className="text-[10px] font-mono font-bold text-[#65F58A] px-2 py-0.5 rounded bg-[#65F58A]/10 border border-[#65F58A]/30 flex-shrink-0">
+                          CORRECT
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Points & Explanation */}
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 pt-1">
+              <div className="sm:col-span-1 space-y-1">
+                <label className="text-xs font-mono text-[#72A88E]">Points</label>
+                <input
+                  type="number"
+                  min={1}
+                  max={100}
+                  value={questionForm.points}
+                  onChange={(e) => setQuestionForm({ ...questionForm, points: Number(e.target.value) || 1 })}
+                  className="w-full bg-[#040e0a] rounded-xl p-3 text-xs text-white border border-[#65F58A]/25 focus:outline-none focus:border-[#65F58A]"
+                />
+              </div>
+
+              <div className="sm:col-span-3 space-y-1">
+                <label className="text-xs font-mono text-[#72A88E]">
+                  Technical Explanation / Rationale *
+                </label>
+                <textarea
+                  rows={2}
+                  value={questionForm.explanation}
+                  onChange={(e) => setQuestionForm({ ...questionForm, explanation: e.target.value })}
+                  placeholder="Explain why the selected option is correct and why other choices are invalid."
+                  className="w-full bg-[#040e0a] rounded-xl p-3 text-xs text-white border border-[#65F58A]/25 focus:outline-none focus:border-[#65F58A]"
+                />
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex justify-end space-x-3 pt-3 border-t border-[#65F58A]/20">
+              <button
+                type="button"
+                onClick={() => setQuestionModalOpen(false)}
+                className="px-4 py-2 text-xs font-mono text-[#8BA2B5] hover:text-white"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveQuestion}
+                className="px-5 py-2.5 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-bold text-xs font-mono flex items-center space-x-1.5 transition-all shadow-[0_0_15px_rgba(101,245,138,0.35)] cursor-pointer"
+              >
+                <Check className="w-4 h-4 stroke-[3]" />
+                <span>Save Question to Assessment</span>
               </button>
             </div>
           </div>
