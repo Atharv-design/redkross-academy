@@ -246,6 +246,20 @@ export default function LessonPlayerPage() {
     });
   };
 
+  // Handle active unit resolution
+  const activeUnit = allUnits.find((u) => u.id === activeUnitId) || allUnits[0];
+  const activeIndex = allUnits.findIndex((u) => u.id === activeUnit?.id);
+  const activeLesson = activeUnit?.type === 'lesson' ? activeUnit.lesson : null;
+  const activeQuiz = activeUnit?.type === 'quiz' || activeUnit?.type === 'final_exam' ? activeUnit.quiz : null;
+
+  const isLessonCompleted = activeLesson
+    ? (currentEnrolment?.completed_mandatory_lessons || enrolment?.completed_mandatory_lessons || []).includes(activeLesson.id)
+    : false;
+  const isQuizPassed = activeQuiz
+    ? (currentEnrolment?.passed_quizzes || enrolment?.passed_quizzes || []).includes(activeQuiz.id) || (activeUnit?.type === 'final_exam' && (currentEnrolment?.final_assessment_passed || enrolment?.final_assessment_passed))
+    : false;
+  const isAssignment = activeLesson?.type === 'assignment';
+
   // Sync active unit on load or URL param change (supports unitId & lessonId, and resumes saved reading progress)
   useEffect(() => {
     const targetUnitId = searchParams.get('unitId') || searchParams.get('lessonId');
@@ -283,20 +297,6 @@ export default function LessonPlayerPage() {
       setExpandedModules((prev) => ({ ...prev, [currentUnit.moduleId]: true }));
     }
   }, [enrolmentId, activeUnitId]);
-
-  // Handle active unit resolution
-  const activeUnit = allUnits.find((u) => u.id === activeUnitId) || allUnits[0];
-  const activeIndex = allUnits.findIndex((u) => u.id === activeUnit?.id);
-  const activeLesson = activeUnit?.type === 'lesson' ? activeUnit.lesson : null;
-  const activeQuiz = activeUnit?.type === 'quiz' || activeUnit?.type === 'final_exam' ? activeUnit.quiz : null;
-
-  const isLessonCompleted = activeLesson
-    ? (currentEnrolment?.completed_mandatory_lessons || enrolment?.completed_mandatory_lessons || []).includes(activeLesson.id)
-    : false;
-  const isQuizPassed = activeQuiz
-    ? (currentEnrolment?.passed_quizzes || enrolment?.passed_quizzes || []).includes(activeQuiz.id) || (activeUnit?.type === 'final_exam' && (currentEnrolment?.final_assessment_passed || enrolment?.final_assessment_passed))
-    : false;
-  const isAssignment = activeLesson?.type === 'assignment';
 
   // Check 24-Hour Lockdown on active unit change
   const checkLockoutStatus = () => {
