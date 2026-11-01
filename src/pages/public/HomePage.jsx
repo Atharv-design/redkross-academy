@@ -7,6 +7,8 @@ import { socketClient } from '../../services/socket/socketClient';
 import CourseCardVariant from '../../components/cards/CourseCardVariant';
 import DefensivePathwayCard from '../../components/cards/DefensivePathwayCard';
 import AcademicSafeguardCard from '../../components/cards/AcademicSafeguardCard';
+import SplitText from '../../components/common/SplitText';
+import ScrollReveal from '../../components/common/ScrollReveal';
 
 export default function HomePage() {
   const [courses, setCourses] = useState([]);
@@ -60,16 +62,17 @@ export default function HomePage() {
             </div>
 
             {/* Main Headline with Royal Cinzel font & neon shading */}
-            <h1 className="font-royal text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.12] animate-slide-left stagger-1">
-              Institutional Training for <br />
-              <span className="title-shading-neon">
-                Defensive Cyber Operators
-              </span>
+            <h1 className="font-royal text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.12]">
+              <SplitText as="span" text="Institutional Training for" staggerDelay={45} baseDelay={60} />
+              <br />
+              <SplitText as="span" text="Defensive Cyber Operators" wordClassName="title-shading-neon" staggerDelay={55} baseDelay={200} />
             </h1>
 
-            <p className="text-sm sm:text-base lg:text-lg text-[#94A3B8] max-w-2xl mx-auto leading-relaxed animate-slide-left stagger-2">
+            <ScrollReveal direction="left" delay={320}>
+              <p className="text-sm sm:text-base lg:text-lg text-[#94A3B8] max-w-2xl mx-auto leading-relaxed">
               Master 24/7 SOC telemetry analysis, MITRE ATT&CK correlation, and incident triage through structured hands-on curricula and tamper-proof cryptographic credentials.
-            </p>
+              </p>
+            </ScrollReveal>
 
             {/* Call To Actions */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-4 animate-slide-left stagger-3">
@@ -107,25 +110,29 @@ export default function HomePage() {
             <>
               <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                 <div>
-                  <div className="inline-flex items-center space-x-2 text-xs font-mono text-[#65F58A] font-semibold px-2.5 py-1 rounded-full bg-[#65F58A]/10 border border-[#65F58A]/30 mb-3">
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>CURRICULUM SHOWCASE</span>
-                  </div>
-                  <h2 className="font-royal text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
-                    Full Stack Engineering Courseware
-                  </h2>
-                  <p className="text-[#94A3B8] text-xs sm:text-sm mt-1 max-w-xl">
-                    Explore our comprehensive curriculum engineered from web fundamentals to enterprise production deployment.
-                  </p>
+                  <ScrollReveal direction="left" delay={0}>
+                    <div className="inline-flex items-center space-x-2 text-xs font-mono text-[#65F58A] font-semibold px-2.5 py-1 rounded-full bg-[#65F58A]/10 border border-[#65F58A]/30 mb-3">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>CURRICULUM SHOWCASE</span>
+                    </div>
+                  </ScrollReveal>
+                  <SplitText as="h2" text="Full Stack Engineering Courseware" className="font-royal text-2xl sm:text-4xl font-extrabold text-white tracking-tight" staggerDelay={50} baseDelay={60} />
+                  <ScrollReveal direction="left" delay={220}>
+                    <p className="text-[#94A3B8] text-xs sm:text-sm mt-1 max-w-xl">
+                      Explore our comprehensive curriculum engineered from web fundamentals to enterprise production deployment.
+                    </p>
+                  </ScrollReveal>
                 </div>
 
-                <Link
-                  to="/courses"
-                  className="hidden sm:inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#65F58A] hover:underline"
-                >
-                  <span>Explore Full Catalog ({courses.length})</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
+                <ScrollReveal direction="right" delay={260}>
+                  <Link
+                    to="/courses"
+                    className="hidden sm:inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#65F58A] hover:underline"
+                  >
+                    <span>Explore Full Catalog ({courses.length})</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </ScrollReveal>
               </div>
 
               {/* Cards Grid: Course card aligned to the left */}
@@ -267,12 +274,12 @@ export default function HomePage() {
       <section className="py-10 sm:py-12 border-b border-[#263440]/80 bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="text-center max-w-2xl mx-auto">
-            <h2 className="font-royal text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-3">
-              Defensive Career Pathways
-            </h2>
-            <p className="text-[#94A3B8] text-xs sm:text-sm">
-              Structured step-by-step curricula taking you from foundational networking and operating system telemetry to advanced incident response.
-            </p>
+            <SplitText as="h2" text="Defensive Career Pathways" className="font-royal text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-3" staggerDelay={55} baseDelay={40} />
+            <ScrollReveal direction="left" delay={200}>
+              <p className="text-[#94A3B8] text-xs sm:text-sm">
+                Structured step-by-step curricula taking you from foundational networking and operating system telemetry to advanced incident response.
+              </p>
+            </ScrollReveal>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
@@ -291,16 +298,18 @@ export default function HomePage() {
       <section className="py-10 sm:py-12 border-b border-[#263440]/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="text-center max-w-2xl mx-auto">
-            <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#65F58A]/10 border border-[#65F58A]/30 text-[#65F58A] text-xs font-mono mb-3">
-              <Lock className="w-3.5 h-3.5" />
-              <span>STRICT ACADEMIC FIDELITY</span>
-            </div>
-            <h2 className="font-royal text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-3">
-              Protected Credential Integrity
-            </h2>
-            <p className="text-[#94A3B8] text-xs sm:text-sm">
-              Our certifications are trusted by enterprise blue teams because every evaluation strictly enforces proctoring standards specified in our Developer Handover PRD.
-            </p>
+            <ScrollReveal direction="left" delay={0}>
+              <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#65F58A]/10 border border-[#65F58A]/30 text-[#65F58A] text-xs font-mono mb-3">
+                <Lock className="w-3.5 h-3.5" />
+                <span>STRICT ACADEMIC FIDELITY</span>
+              </div>
+            </ScrollReveal>
+            <SplitText as="h2" text="Protected Credential Integrity" className="font-royal text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-3" staggerDelay={55} baseDelay={50} />
+            <ScrollReveal direction="left" delay={200}>
+              <p className="text-[#94A3B8] text-xs sm:text-sm">
+                Our certifications are trusted by enterprise blue teams because every evaluation strictly enforces proctoring standards specified in our Developer Handover PRD.
+              </p>
+            </ScrollReveal>
           </div>
 
           {/* 3D Cyber Academic Safeguards Cards Grid */}

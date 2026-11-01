@@ -526,16 +526,16 @@ body {
   background: rgba(101,245,138,.12);
 }
 
-/* staggered entry, runs once */
+/* staggered left-to-right entrance, runs on scroll */
 .acad-card.reveal {
   opacity: 0;
-  transform: translateY(14px);
+  transform: translateX(-32px);
 }
 
 .acad-card.reveal.is-in {
   opacity: 1;
-  transform: none;
-  transition: opacity .6s ease calc(var(--i, 0) * 90ms), transform .6s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * 90ms), border-color .35s, box-shadow .35s;
+  transform: translateX(0);
+  transition: opacity .65s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--i, 0) * 160ms), transform .65s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--i, 0) * 160ms), border-color .35s, box-shadow .35s;
 }
 
 .acad-card.reveal.is-in:hover,

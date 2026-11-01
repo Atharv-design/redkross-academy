@@ -91,15 +91,13 @@ export default function AcademicKitCard({
           }
         });
       },
-      { threshold: 0.12 }
+      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
     );
 
     observer.observe(el);
-    const timer = setTimeout(() => setIsIn(true), 900);
 
     return () => {
       observer.disconnect();
-      clearTimeout(timer);
     };
   }, []);
 

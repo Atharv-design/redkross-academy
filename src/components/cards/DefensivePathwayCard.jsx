@@ -34,14 +34,13 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
           }
         });
       },
-      { threshold: 0.12 }
+      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
     );
 
     observer.observe(el);
-    const timer = setTimeout(() => setIsIn(true), 800);
+
     return () => {
       observer.disconnect();
-      clearTimeout(timer);
     };
   }, []);
 
@@ -93,8 +92,9 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
     return (
       <div
         ref={cardRef}
-        className={`group relative ${cfg.gridClass} rounded-2xl overflow-hidden isolation-isolate border border-[#263440] hover:border-[#65F58A]/60 bg-[#101923]/90 backdrop-blur-2xl transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_rgba(0,0,0,0.6),0_0_30px_rgba(101,245,138,0.12)] p-6 sm:p-8 flex flex-col justify-between min-h-[460px] ${
-          isIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+        style={{ transitionDelay: `${index * 150}ms` }}
+        className={`group relative ${cfg.gridClass} rounded-2xl overflow-hidden isolation-isolate border border-[#263440] hover:border-[#65F58A]/60 bg-[#101923]/90 backdrop-blur-2xl transition-all duration-600 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_rgba(0,0,0,0.6),0_0_30px_rgba(101,245,138,0.12)] p-6 sm:p-8 flex flex-col justify-between min-h-[460px] ${
+          isIn ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
         }`}
       >
         {/* Full-bleed background artwork layer */}
@@ -214,8 +214,9 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
     return (
       <div
         ref={cardRef}
-        className={`group relative ${cfg.gridClass} rounded-2xl overflow-hidden isolation-isolate border border-[#263440] hover:border-[#35E6B5]/60 bg-[#101923]/90 backdrop-blur-2xl transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_rgba(0,0,0,0.6),0_0_30px_rgba(53,230,181,0.12)] p-6 sm:p-7 flex flex-col justify-between min-h-[460px] ${
-          isIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+        style={{ transitionDelay: `${index * 150}ms` }}
+        className={`group relative ${cfg.gridClass} rounded-2xl overflow-hidden isolation-isolate border border-[#263440] hover:border-[#35E6B5]/60 bg-[#101923]/90 backdrop-blur-2xl transition-all duration-600 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_rgba(0,0,0,0.6),0_0_30px_rgba(53,230,181,0.12)] p-6 sm:p-7 flex flex-col justify-between min-h-[460px] ${
+          isIn ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
         }`}
       >
         {/* Full-bleed background artwork layer */}
@@ -327,8 +328,9 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
   return (
     <div
       ref={cardRef}
-      className={`group relative ${cfg.gridClass} rounded-2xl overflow-hidden isolation-isolate border border-[#263440] hover:border-[#65F58A]/60 bg-[#101923]/90 backdrop-blur-2xl transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_rgba(0,0,0,0.6),0_0_30px_rgba(101,245,138,0.12)] p-6 sm:p-8 ${
-        isIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+      style={{ transitionDelay: `${index * 150}ms` }}
+      className={`group relative ${cfg.gridClass} rounded-2xl overflow-hidden isolation-isolate border border-[#263440] hover:border-[#65F58A]/60 bg-[#101923]/90 backdrop-blur-2xl transition-all duration-600 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_rgba(0,0,0,0.6),0_0_30px_rgba(101,245,138,0.12)] p-6 sm:p-8 ${
+        isIn ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
       }`}
     >
       {/* Full-bleed background artwork layer */}

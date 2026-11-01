@@ -32,14 +32,13 @@ export default function AcademicSafeguardCard({ safeguard, index = 0 }) {
           }
         });
       },
-      { threshold: 0.12 }
+      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
     );
 
     observer.observe(el);
-    const timer = setTimeout(() => setIsIn(true), 800);
+
     return () => {
       observer.disconnect();
-      clearTimeout(timer);
     };
   }, []);
 
@@ -103,13 +102,13 @@ export default function AcademicSafeguardCard({ safeguard, index = 0 }) {
   return (
     <div
       ref={cardRef}
-      className={`relative rounded-2xl border transition-all duration-300 overflow-hidden group flex flex-col justify-between p-6 sm:p-7 min-h-[470px] ${
-        isIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+      className={`relative rounded-2xl border transition-all duration-600 overflow-hidden group flex flex-col justify-between p-6 sm:p-7 min-h-[470px] ${
+        isIn ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
       }`}
       style={{
         backgroundColor: '#0A121A',
         borderColor: '#263440',
-        transitionDelay: `${index * 120}ms`
+        transitionDelay: `${index * 160}ms`
       }}
     >
       {/* 3D Cyberpunk Artwork Layer - High Vividness & Detail */}
