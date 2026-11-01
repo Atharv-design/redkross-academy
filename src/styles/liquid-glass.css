@@ -17,7 +17,7 @@
 /* 2. Liquid Glass Navbar */
 .liquid-glass-nav,
 .ultra-glass-nav {
-  background: rgba(6, 18, 14, 0.82);
+  background: transparent;
   backdrop-filter: blur(24px) saturate(190%);
   -webkit-backdrop-filter: blur(24px) saturate(190%);
   border-bottom: 1px solid rgba(101, 245, 138, 0.25);

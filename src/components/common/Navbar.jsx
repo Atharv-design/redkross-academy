@@ -99,7 +99,7 @@ export default function Navbar() {
     <>
       <header className="fixed top-0 inset-x-0 z-50 pointer-events-none select-none">
         {/* Top Cross-Domain Ecosystem Utility Bar */}
-        <div className="bg-[#040e0a]/92 border-b border-[#65F58A]/20 py-1.5 px-4 sm:px-8 text-[11px] font-mono text-[#B8E6CE] flex items-center justify-between backdrop-blur-md pointer-events-auto">
+        <div className="bg-transparent border-b border-[#65F58A]/20 py-1.5 px-4 sm:px-8 text-[11px] font-mono text-[#B8E6CE] flex items-center justify-between backdrop-blur-md pointer-events-auto">
           <div className="flex items-center gap-3 sm:gap-4 truncate">
             <a 
               href={ecosystem.foundation}
@@ -141,7 +141,7 @@ export default function Navbar() {
         {/* Floating Rounded-Full Main Navbar */}
         <div className="px-4 sm:px-8 pt-3">
           <div
-            className={`max-w-7xl mx-auto rounded-full px-5 py-2.5 flex items-center justify-between transition-all duration-300 pointer-events-auto liquid-glass-nav ${
+            className={`max-w-7xl mx-auto rounded-full px-5 py-2.5 flex items-center justify-between transition-all duration-300 pointer-events-auto liquid-glass-nav bg-transparent ${
               scrolled
                 ? 'shadow-[0_16px_48px_rgba(0,0,0,0.85)] border-[#65F58A]/40'
                 : 'border-[#65F58A]/30'
