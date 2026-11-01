@@ -7,7 +7,7 @@ import { getEcosystemLinks } from '../../utils/ecosystemLinks';
 export default function Footer() {
   const ecosystem = getEcosystemLinks();
   return (
-    <footer className="bg-[#040e0a] border-t border-[#65F58A]/20 text-[#B8E6CE] relative overflow-hidden select-none">
+    <footer className="bg-transparent border-t border-[#65F58A]/20 text-[#B8E6CE] relative overflow-hidden select-none">
       {/* Subtle Neon Radial Ambient Glow */}
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[850px] h-[320px] bg-[#65F58A]/[0.03] rounded-full blur-[160px] pointer-events-none" />
 
