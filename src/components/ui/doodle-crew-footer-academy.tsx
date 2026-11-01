@@ -519,6 +519,14 @@ export interface DoodleCrewFooterProps {
 
   className?: string
 
+  wordmarkColorMode?: string
+
+  showTop?: boolean
+
+  showBar?: boolean
+
+  as?: React.ElementType
+
 }
 
 

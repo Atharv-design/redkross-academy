@@ -1,7 +1,5 @@
-"use client";
-
 import * as React from "react";
-import { animate, motion, useMotionValue, useTransform } from "motion/react";
+import { animate, motion, useMotionValue, useTransform } from "framer-motion";
 
 import { cn } from "@/lib/utils";
 import { usePrefersReducedMotion } from "@/components/ui/tree-nav-utils/use-typewriter";
@@ -199,7 +197,7 @@ export function TreeNav({
           ),
         };
 
-        if (typeof Link === "string" || Link === "a") {
+        if (typeof Link === "string") {
           linkProps.href = item.href;
         } else {
           linkProps.to = item.href;
