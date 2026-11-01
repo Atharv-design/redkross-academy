@@ -11,8 +11,8 @@ export default function Footer() {
       {/* Subtle Neon Radial Ambient Glow */}
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[850px] h-[320px] bg-[#65F58A]/[0.03] rounded-full blur-[160px] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-6 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-4 sm:mb-6">
           
           {/* Col 1 & 2: Platform Identity */}
           <div className="lg:col-span-2 space-y-4">
@@ -109,7 +109,7 @@ export default function Footer() {
         </div>
 
         {/* Interactive Hand-Drawn Doodle Crew Brandmark for RedKross Academy — Direct on Footer Canvas (No Box Container) */}
-        <div className="my-4">
+        <div className="mt-1 sm:mt-2 mb-4">
           <DoodleCrewFooter
             as="div"
             showTop={false}
@@ -118,7 +118,7 @@ export default function Footer() {
             subWordmark="ACADEMY"
             wordmarkColorMode="logo"
             tagline="Empowering Next-Gen Defensive Security Practitioners with Rigorous Curricula and Verifiable Credentials"
-            height="520px"
+            height="auto"
             palette={{
               background: "transparent",
               ink: "#F1F5F9",
@@ -144,7 +144,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] font-mono text-slate-500">
+        <div className="pt-4 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] font-mono text-slate-500">
           <p>
             &copy; {new Date().getFullYear()} RedKross Research Foundation. Academic Division. Zero Fabrications Policy Enforced.
           </p>

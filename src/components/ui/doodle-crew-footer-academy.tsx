@@ -1383,9 +1383,9 @@ export default function DoodleCrewFooter({
 
     if (subLayout) {
       r = Math.max(r, subOffsetX + subLayout.width)
-      b = Math.max(b, 135)
+      b = Math.max(b, 118)
     }
-    const pad = 24
+    const pad = 16
 
     return { x: l - pad, y: t - pad, w: r - l + pad * 2, h: b - t + pad * 2 }
 
@@ -2641,7 +2641,7 @@ const CSS =
 
   // world
 
-  ".dcf-world{position:relative;flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding:clamp(22px,4vw,48px) var(--dcf-pad) 0;max-width:1360px;width:100%;margin:0 auto}" +
+  ".dcf-world{position:relative;flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding:0 var(--dcf-pad) 0;max-width:1360px;width:100%;margin:0 auto}" +
 
   ".dcf-stage{position:relative;z-index:1}" +
 
@@ -2719,7 +2719,7 @@ const CSS =
 
   // cta
 
-  ".dcf-cta{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;gap:20px;padding:clamp(20px,3vw,34px) 0 clamp(30px,4vw,48px);text-align:center}" +
+  ".dcf-cta{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;gap:12px;padding:8px 0 16px;text-align:center}" +
 
   ".dcf-tagline{font-family:'Lora',serif !important;font-size:clamp(17px,1.9vw,22px);line-height:1.4;letter-spacing:-.005em;max-width:44ch;text-wrap:balance}" +
 
