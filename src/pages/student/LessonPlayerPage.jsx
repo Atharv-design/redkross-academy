@@ -41,6 +41,7 @@ import { useAuth } from '../../services/auth/authContext';
 import { resolveVideoUrl, resolvePdfUrl } from '../../services/db/videoStorage';
 import { renderMarkdownToHtml } from '../../utils/markdownParser';
 import PixelBackground from '../../components/ui/PixelBackground';
+import CyberCloudsBackground from '../../components/common/CyberCloudsBackground';
 import { FileUploadProgressBar } from '../../components/application/file-upload/FileUploadProgressBar';
 import ExamCBTInterface from '../../components/student/ExamCBTInterface';
 
@@ -939,7 +940,8 @@ export default function LessonPlayerPage() {
 
   return (
     <div className="min-h-screen bg-[#071018] text-[#F1F5F9] font-lora relative flex flex-col">
-      <PixelBackground opacity={0.35} />
+      <CyberCloudsBackground />
+      <PixelBackground opacity={0.25} />
 
       {/* ================= 1. OPEN EDX TOP SUB-NAVBAR & TABS ================= */}
       <header className="sticky top-0 z-30 bg-[#071018]/95 backdrop-blur-xl border-b border-[#65F58A]/20 px-4 sm:px-6 py-3">

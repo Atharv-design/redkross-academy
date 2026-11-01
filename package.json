@@ -32,7 +32,9 @@
     "recharts": "^3.10.1",
     "socket.io": "^4.8.4",
     "socket.io-client": "^4.8.4",
-    "tailwind-merge": "^3.0.2"
+    "tailwind-merge": "^3.0.2",
+    "three": "^0.187.0",
+    "vanta": "^0.5.24"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
