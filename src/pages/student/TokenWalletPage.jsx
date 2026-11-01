@@ -29,7 +29,7 @@ export default function TokenWalletPage() {
 
   if (!currentUser) {
     return (
-      <div className="min-h-screen bg-[#071018] py-24 text-center">
+      <div className="min-h-screen bg-transparent py-24 text-center">
         <h2 className="text-xl font-bold text-white mb-2">Please Sign In</h2>
       </div>
     );
@@ -69,7 +69,7 @@ export default function TokenWalletPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#071018] py-12">
+    <div className="min-h-screen bg-transparent py-12">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         {/* Header Breadcrumb */}
         <div className="flex items-center justify-between pb-4 border-b border-surface-border">

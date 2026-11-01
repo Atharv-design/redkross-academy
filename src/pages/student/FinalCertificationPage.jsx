@@ -168,7 +168,7 @@ export default function FinalCertificationPage() {
 
   if (!enrolment || !course || !examMeta) {
     return (
-      <div className="min-h-screen bg-[#071018] py-24 text-center">
+      <div className="min-h-screen bg-transparent py-24 text-center">
         <h2 className="text-xl font-bold text-white mb-2">Final Assessment Not Found</h2>
         <Link to="/student" className="px-4 py-2 bg-redkross-600 rounded text-white text-xs font-semibold">
           Return to Dashboard
@@ -231,7 +231,7 @@ export default function FinalCertificationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#071018] py-12">
+    <div className="min-h-screen bg-transparent py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 animate-slide-left">
         {/* Navigation Breadcrumb */}
         <div className="flex items-center justify-between pb-4 border-b border-surface-border">

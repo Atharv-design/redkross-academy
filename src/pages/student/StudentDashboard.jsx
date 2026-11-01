@@ -73,7 +73,7 @@ export default function StudentDashboard() {
 
   if (!currentUser) {
     return (
-      <div className="min-h-screen bg-[#071018] py-24 text-center">
+      <div className="min-h-screen bg-transparent py-24 text-center">
         <div className="max-w-md mx-auto liquid-glass-panel rounded-2xl p-8 space-y-4">
           <Shield className="w-10 h-10 text-[#65F58A] mx-auto animate-pulse" />
           <h2 className="text-xl font-bold text-white">Authentication Required</h2>
@@ -110,10 +110,10 @@ export default function StudentDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#071018] py-12">
+    <div className="min-h-screen bg-transparent py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         {/* Welcome Header */}
-        <div className="ultra-glass-panel rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 border border-[#263440] animate-slide-left">
+        <div className="ultra-glass-panel rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 border border-[#65F58A]/25 animate-slide-left">
           <div className="flex items-center space-x-4">
             <div className="relative">
               <img
