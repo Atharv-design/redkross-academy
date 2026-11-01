@@ -93,7 +93,7 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
       <div
         ref={cardRef}
         style={{ transitionDelay: `${index * 150}ms` }}
-        className={`group relative ${cfg.gridClass} rounded-2xl overflow-hidden isolation-isolate border border-[#263440] hover:border-[#65F58A]/60 bg-[#101923]/90 backdrop-blur-2xl transition-all duration-600 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_rgba(0,0,0,0.6),0_0_30px_rgba(101,245,138,0.12)] p-6 sm:p-8 flex flex-col justify-between min-h-[460px] ${
+        className={`group relative ${cfg.gridClass} rounded-2xl overflow-hidden isolation-isolate border border-[#65F58A]/25 hover:border-[#65F58A]/60 bg-[#04140d]/65 backdrop-blur-2xl transition-all duration-600 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_rgba(0,0,0,0.6),0_0_30px_rgba(101,245,138,0.22)] p-6 sm:p-8 flex flex-col justify-between min-h-[460px] ${
           isIn ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
         }`}
       >
@@ -112,9 +112,9 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
           className="absolute inset-0 z-[-1] pointer-events-none"
           style={{
             background:
-              'linear-gradient(0deg, rgba(7,16,24,0.98) 0%, rgba(7,16,24,0.82) 25%, rgba(7,16,24,0.1) 60%), ' +
-              'linear-gradient(180deg, rgba(7,16,24,0.6) 0%, rgba(7,16,24,0) 25%), ' +
-              'linear-gradient(90deg, rgba(7,16,24,0.98) 0%, rgba(7,16,24,0.92) 45%, rgba(7,16,24,0.65) 70%, rgba(7,16,24,0.2) 100%)',
+              'linear-gradient(0deg, rgba(3,14,9,0.98) 0%, rgba(3,14,9,0.82) 25%, rgba(3,14,9,0.1) 60%), ' +
+              'linear-gradient(180deg, rgba(3,14,9,0.6) 0%, rgba(3,14,9,0) 25%), ' +
+              'linear-gradient(90deg, rgba(3,14,9,0.98) 0%, rgba(3,14,9,0.92) 45%, rgba(3,14,9,0.65) 70%, rgba(3,14,9,0.2) 100%)',
           }}
         />
 
@@ -143,7 +143,7 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
           </p>
 
           {/* Sequential Step Progression Roadmap */}
-          <div className="mb-6 p-3.5 rounded-xl bg-[#0B121B]/80 border border-[#263440]/80 backdrop-blur-md max-w-xl">
+          <div className="mb-6 p-3.5 rounded-xl bg-[#03140c]/70 border border-[#65F58A]/20 backdrop-blur-md max-w-xl">
             <div className="text-[10px] font-mono uppercase tracking-widest text-[#94A3B8] mb-2 flex items-center justify-between">
               <span>Curriculum Progression</span>
               <span className="text-[#65F58A]">4 Sequential Modules</span>
@@ -152,7 +152,7 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
               {cfg.trackSteps.map((step, idx) => (
                 <div
                   key={idx}
-                  className="px-2 py-1 rounded bg-[#101923] border border-[#263440] text-[10px] font-mono text-slate-300 truncate text-center hover:border-[#65F58A]/40 transition-colors"
+                  className="px-2 py-1 rounded bg-[#051c12]/80 border border-[#65F58A]/18 text-[10px] font-mono text-slate-300 truncate text-center hover:border-[#65F58A]/40 transition-colors"
                   title={step}
                 >
                   {step}
@@ -170,7 +170,7 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
               {path.skills.map((skill, idx) => (
                 <span
                   key={idx}
-                  className="text-[11px] px-2.5 py-1 rounded-full bg-[#1B2530]/85 text-slate-300 font-mono border border-[#263440] backdrop-blur-sm group-hover:border-[#65F58A]/30 transition-colors"
+                  className="text-[11px] px-2.5 py-1 rounded-full bg-[#062417]/70 text-emerald-100/90 font-mono border border-[#65F58A]/20 backdrop-blur-sm group-hover:border-[#65F58A]/30 transition-colors"
                 >
                   {skill}
                 </span>
@@ -180,7 +180,7 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
         </div>
 
         {/* Bottom Credential & Action Row */}
-        <div className="pt-4 border-t border-[#263440]/90 flex items-center justify-between gap-4">
+        <div className="pt-4 border-t border-[#65F58A]/20 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-9 h-9 rounded-xl bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center flex-none">
               <Shield className="w-5 h-5 text-[#65F58A]" />
@@ -197,7 +197,7 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
 
           <Link
             to="/paths"
-            className="w-10 h-10 rounded-full border border-[#263440] bg-[#101923]/90 text-[#65F58A] group-hover:bg-[#65F58A] group-hover:text-black group-hover:border-[#65F58A] flex items-center justify-center transition-all duration-300 shadow-[0_0_15px_rgba(101,245,138,0.2)] flex-none group-hover:scale-105"
+            className="w-10 h-10 rounded-full border border-[#65F58A]/35 bg-[#041a10]/80 text-[#65F58A] group-hover:bg-[#65F58A] group-hover:text-black group-hover:border-[#65F58A] flex items-center justify-center transition-all duration-300 shadow-[0_0_15px_rgba(101,245,138,0.2)] flex-none group-hover:scale-105"
             aria-label={`View track ${path.title}`}
           >
             <ArrowRight className="w-5 h-5" />
@@ -215,7 +215,7 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
       <div
         ref={cardRef}
         style={{ transitionDelay: `${index * 150}ms` }}
-        className={`group relative ${cfg.gridClass} rounded-2xl overflow-hidden isolation-isolate border border-[#263440] hover:border-[#35E6B5]/60 bg-[#101923]/90 backdrop-blur-2xl transition-all duration-600 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_rgba(0,0,0,0.6),0_0_30px_rgba(53,230,181,0.12)] p-6 sm:p-7 flex flex-col justify-between min-h-[460px] ${
+        className={`group relative ${cfg.gridClass} rounded-2xl overflow-hidden isolation-isolate border border-[#35E6B5]/25 hover:border-[#35E6B5]/60 bg-[#04140e]/65 backdrop-blur-2xl transition-all duration-600 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_rgba(0,0,0,0.6),0_0_30px_rgba(53,230,181,0.22)] p-6 sm:p-7 flex flex-col justify-between min-h-[460px] ${
           isIn ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
         }`}
       >
@@ -234,9 +234,9 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
           className="absolute inset-0 z-[-1] pointer-events-none"
           style={{
             background:
-              'linear-gradient(0deg, rgba(7,16,24,0.98) 0%, rgba(7,16,24,0.85) 35%, rgba(7,16,24,0.2) 65%), ' +
-              'linear-gradient(180deg, rgba(7,16,24,0.6) 0%, rgba(7,16,24,0) 25%), ' +
-              'linear-gradient(90deg, rgba(7,16,24,0.98) 0%, rgba(7,16,24,0.92) 50%, rgba(7,16,24,0.7) 100%)',
+              'linear-gradient(0deg, rgba(3,14,9,0.98) 0%, rgba(3,14,9,0.85) 35%, rgba(3,14,9,0.2) 65%), ' +
+              'linear-gradient(180deg, rgba(3,14,9,0.6) 0%, rgba(3,14,9,0) 25%), ' +
+              'linear-gradient(90deg, rgba(3,14,9,0.98) 0%, rgba(3,14,9,0.92) 50%, rgba(3,14,9,0.7) 100%)',
           }}
         />
 
@@ -260,7 +260,7 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
           </p>
 
           {/* Sequential Modules Flow */}
-          <div className="mb-4 p-3 rounded-xl bg-[#0B121B]/80 border border-[#263440]/80 backdrop-blur-md">
+          <div className="mb-4 p-3 rounded-xl bg-[#03140c]/70 border border-[#65F58A]/20 backdrop-blur-md">
             <div className="text-[10px] font-mono uppercase tracking-widest text-[#94A3B8] mb-1.5 flex items-center justify-between">
               <span>Investigation Track</span>
               <span className="text-[#35E6B5]">3 Labs</span>
@@ -269,7 +269,7 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
               {cfg.trackSteps.map((step, idx) => (
                 <div
                   key={idx}
-                  className="px-2.5 py-1 rounded bg-[#101923] border border-[#263440] text-[10px] font-mono text-slate-300 flex items-center justify-between hover:border-[#35E6B5]/40 transition-colors"
+                  className="px-2.5 py-1 rounded bg-[#051c12]/80 border border-[#65F58A]/18 text-[10px] font-mono text-slate-300 flex items-center justify-between hover:border-[#35E6B5]/40 transition-colors"
                 >
                   <span className="truncate">{step}</span>
                   <CheckCircle2 className="w-3 h-3 text-[#35E6B5] flex-none ml-1.5 opacity-70" />
@@ -287,7 +287,7 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
               {path.skills.slice(0, 4).map((skill, idx) => (
                 <span
                   key={idx}
-                  className="text-[10px] px-2 py-0.5 rounded-full bg-[#1B2530]/85 text-slate-300 font-mono border border-[#263440]"
+                  className="text-[10px] px-2 py-0.5 rounded-full bg-[#062417]/70 text-emerald-100/90 font-mono border border-[#65F58A]/20"
                 >
                   {skill}
                 </span>
@@ -297,7 +297,7 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
         </div>
 
         {/* Bottom Credential & Action Row */}
-        <div className="pt-4 border-t border-[#263440]/90 flex items-center justify-between gap-3">
+        <div className="pt-4 border-t border-[#65F58A]/20 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="w-8 h-8 rounded-lg bg-[#35E6B5]/10 border border-[#35E6B5]/30 flex items-center justify-center flex-none">
               <Shield className="w-4 h-4 text-[#35E6B5]" />
@@ -312,7 +312,7 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
 
           <Link
             to="/paths"
-            className="w-9 h-9 rounded-full border border-[#263440] bg-[#101923]/90 text-[#35E6B5] group-hover:bg-[#35E6B5] group-hover:text-black group-hover:border-[#35E6B5] flex items-center justify-center transition-all duration-300 shadow-[0_0_15px_rgba(53,230,181,0.2)] flex-none group-hover:scale-105"
+            className="w-9 h-9 rounded-full border border-[#35E6B5]/35 bg-[#041a12]/80 text-[#35E6B5] group-hover:bg-[#35E6B5] group-hover:text-black group-hover:border-[#35E6B5] flex items-center justify-center transition-all duration-300 shadow-[0_0_15px_rgba(53,230,181,0.2)] flex-none group-hover:scale-105"
             aria-label={`View track ${path.title}`}
           >
             <ArrowRight className="w-4 h-4" />
@@ -329,7 +329,7 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
     <div
       ref={cardRef}
       style={{ transitionDelay: `${index * 150}ms` }}
-      className={`group relative ${cfg.gridClass} rounded-2xl overflow-hidden isolation-isolate border border-[#263440] hover:border-[#65F58A]/60 bg-[#101923]/90 backdrop-blur-2xl transition-all duration-600 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_rgba(0,0,0,0.6),0_0_30px_rgba(101,245,138,0.12)] p-6 sm:p-8 ${
+      className={`group relative ${cfg.gridClass} rounded-2xl overflow-hidden isolation-isolate border border-[#65F58A]/25 hover:border-[#65F58A]/60 bg-[#04140d]/65 backdrop-blur-2xl transition-all duration-600 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_rgba(0,0,0,0.6),0_0_30px_rgba(101,245,138,0.22)] p-6 sm:p-8 ${
         isIn ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
       }`}
     >
@@ -348,9 +348,9 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
         className="absolute inset-0 z-[-1] pointer-events-none"
         style={{
           background:
-            'linear-gradient(0deg, rgba(7,16,24,0.98) 0%, rgba(7,16,24,0.85) 30%, rgba(7,16,24,0.1) 70%), ' +
-            'linear-gradient(180deg, rgba(7,16,24,0.6) 0%, rgba(7,16,24,0) 25%), ' +
-            'linear-gradient(90deg, rgba(7,16,24,0.98) 0%, rgba(7,16,24,0.94) 50%, rgba(7,16,24,0.65) 75%, rgba(7,16,24,0.15) 100%)',
+            'linear-gradient(0deg, rgba(3,14,9,0.98) 0%, rgba(3,14,9,0.85) 30%, rgba(3,14,9,0.1) 70%), ' +
+            'linear-gradient(180deg, rgba(3,14,9,0.6) 0%, rgba(3,14,9,0) 25%), ' +
+            'linear-gradient(90deg, rgba(3,14,9,0.98) 0%, rgba(3,14,9,0.94) 50%, rgba(3,14,9,0.65) 75%, rgba(3,14,9,0.15) 100%)',
         }}
       />
 
@@ -377,7 +377,7 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
           </p>
 
           {/* Sequential Step Progression */}
-          <div className="p-3.5 rounded-xl bg-[#0B121B]/80 border border-[#263440]/80 backdrop-blur-md max-w-2xl">
+          <div className="p-3.5 rounded-xl bg-[#03140c]/70 border border-[#65F58A]/20 backdrop-blur-md max-w-2xl">
             <div className="text-[10px] font-mono uppercase tracking-widest text-[#94A3B8] mb-2 flex items-center justify-between">
               <span>Architectural Track Blueprint</span>
               <span className="text-[#65F58A]">Cloud & Infrastructure Hardening</span>
@@ -386,7 +386,7 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
               {cfg.trackSteps.map((step, idx) => (
                 <div
                   key={idx}
-                  className="px-2 py-1.5 rounded bg-[#101923] border border-[#263440] text-[10.5px] font-mono text-slate-300 truncate text-center hover:border-[#65F58A]/40 transition-colors"
+                  className="px-2 py-1.5 rounded bg-[#051c12]/80 border border-[#65F58A]/18 text-[10.5px] font-mono text-slate-300 truncate text-center hover:border-[#65F58A]/40 transition-colors"
                   title={step}
                 >
                   {step}
@@ -404,7 +404,7 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
               {path.skills.map((skill, idx) => (
                 <span
                   key={idx}
-                  className="text-[11px] px-2.5 py-1 rounded-full bg-[#1B2530]/85 text-slate-300 font-mono border border-[#263440] backdrop-blur-sm"
+                  className="text-[11px] px-2.5 py-1 rounded-full bg-[#062417]/70 text-emerald-100/90 font-mono border border-[#65F58A]/20 backdrop-blur-sm"
                 >
                   {skill}
                 </span>
@@ -414,8 +414,8 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
         </div>
 
         {/* Right Column (Milestone Box & CTA) */}
-        <div className="lg:col-span-4 lg:border-l lg:border-[#263440]/80 lg:pl-6 space-y-5">
-          <div className="p-5 rounded-xl bg-[#0B121B]/90 border border-[#263440] space-y-3 shadow-lg">
+        <div className="lg:col-span-4 lg:border-l lg:border-[#65F58A]/20 lg:pl-6 space-y-5">
+          <div className="p-5 rounded-xl bg-[#03140c]/75 border border-[#65F58A]/25 backdrop-blur-md space-y-3 shadow-lg">
             <div className="w-10 h-10 rounded-xl bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center">
               <Award className="w-6 h-6 text-[#65F58A]" />
             </div>

@@ -50,7 +50,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen relative z-10">
       {/* Hero Section */}
-      <section className="relative pt-8 sm:pt-14 pb-10 sm:pb-12 overflow-hidden border-b border-[#263440]/80">
+      <section className="relative pt-8 sm:pt-14 pb-10 sm:pb-12 overflow-hidden border-b border-[#65F58A]/15">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-4xl mx-auto space-y-6">
             {/* Status Pill */}
@@ -104,7 +104,7 @@ export default function HomePage() {
       </section>
 
       {/* Featured Courses Showcase / Embargo Banner */}
-      <section className="py-10 sm:py-12 border-b border-[#263440]/80">
+      <section className="py-10 sm:py-12 border-b border-[#65F58A]/15">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           {catalogEnabled && courses.length > 0 ? (
             <>
@@ -271,7 +271,7 @@ export default function HomePage() {
       </section>
 
       {/* Career Learning Tracks */}
-      <section className="py-10 sm:py-12 border-b border-[#263440]/80 bg-transparent">
+      <section className="py-10 sm:py-12 border-b border-[#65F58A]/15 bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="text-center max-w-2xl mx-auto">
             <SplitText as="h2" text="Defensive Career Pathways" className="font-royal text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-3" staggerDelay={55} baseDelay={40} />
@@ -295,7 +295,7 @@ export default function HomePage() {
       </section>
 
       {/* PRD Academic Safeguards */}
-      <section className="py-10 sm:py-12 border-b border-[#263440]/80">
+      <section className="py-10 sm:py-12 border-b border-[#65F58A]/15">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="text-center max-w-2xl mx-auto">
             <ScrollReveal direction="left" delay={0}>

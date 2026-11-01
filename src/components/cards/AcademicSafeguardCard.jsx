@@ -106,8 +106,8 @@ export default function AcademicSafeguardCard({ safeguard, index = 0 }) {
         isIn ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
       }`}
       style={{
-        backgroundColor: '#0A121A',
-        borderColor: '#263440',
+        backgroundColor: 'rgba(4, 20, 13, 0.65)',
+        borderColor: 'rgba(101, 245, 138, 0.22)',
         transitionDelay: `${index * 160}ms`
       }}
     >
@@ -128,9 +128,9 @@ export default function AcademicSafeguardCard({ safeguard, index = 0 }) {
         className="absolute inset-0 z-0 pointer-events-none"
         style={{
           background: `
-            linear-gradient(90deg, rgba(7, 16, 24, 0.98) 0%, rgba(7, 16, 24, 0.88) 35%, rgba(7, 16, 24, 0.48) 62%, rgba(7, 16, 24, 0.06) 100%),
-            linear-gradient(0deg, rgba(7, 16, 24, 0.98) 0%, rgba(7, 16, 24, 0.75) 24%, rgba(7, 16, 24, 0) 50%),
-            linear-gradient(180deg, rgba(7, 16, 24, 0.70) 0%, rgba(7, 16, 24, 0) 22%)
+            linear-gradient(90deg, rgba(3, 14, 9, 0.98) 0%, rgba(3, 14, 9, 0.88) 35%, rgba(3, 14, 9, 0.48) 62%, rgba(3, 14, 9, 0.06) 100%),
+            linear-gradient(0deg, rgba(3, 14, 9, 0.98) 0%, rgba(3, 14, 9, 0.75) 24%, rgba(3, 14, 9, 0) 50%),
+            linear-gradient(180deg, rgba(3, 14, 9, 0.70) 0%, rgba(3, 14, 9, 0) 22%)
           `
         }}
         aria-hidden="true"
@@ -146,7 +146,7 @@ export default function AcademicSafeguardCard({ safeguard, index = 0 }) {
       />
 
       {/* Top Header Row: Protocol Stamp & Glowing Badge */}
-      <div className="relative z-10 flex items-center justify-between gap-3 pb-4 border-b border-[#263440]/80">
+      <div className="relative z-10 flex items-center justify-between gap-3 pb-4 border-b border-[#65F58A]/20">
         <div className="flex items-center gap-2">
           <span 
             className="w-2 h-2 rounded-full animate-pulse"
@@ -200,7 +200,7 @@ export default function AcademicSafeguardCard({ safeguard, index = 0 }) {
             {config.steps.map((step, sIdx) => (
               <div 
                 key={sIdx}
-                className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-[#071018]/70 border border-[#263440]/80 text-[11px] font-mono text-slate-300 group-hover:border-[#65F58A]/30 transition-colors"
+                className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-[#051c12]/70 border border-[#65F58A]/18 text-[11px] font-mono text-slate-300 group-hover:border-[#65F58A]/30 transition-colors"
               >
                 <CheckCircle2 
                   className="w-3.5 h-3.5 flex-shrink-0"
@@ -214,7 +214,7 @@ export default function AcademicSafeguardCard({ safeguard, index = 0 }) {
       </div>
 
       {/* Bottom Footer: Enforcement Engine & Active Indicator */}
-      <div className="relative z-10 pt-4 mt-4 border-t border-[#263440]/80 flex items-center justify-between text-[11px] font-mono text-[#94A3B8]">
+      <div className="relative z-10 pt-4 mt-4 border-t border-[#65F58A]/20 flex items-center justify-between text-[11px] font-mono text-[#94A3B8]">
         <div className="flex items-center gap-1.5 truncate">
           <Cpu className="w-3.5 h-3.5 text-[#35E6B5]" />
           <span className="truncate">{config.footerTag}</span>
