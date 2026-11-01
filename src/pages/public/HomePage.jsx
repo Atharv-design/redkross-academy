@@ -284,7 +284,7 @@ export default function HomePage() {
       </section>
 
       {/* Career Learning Tracks */}
-      <section className="py-20 border-b border-[#263440]/80 bg-[#060C13]/60">
+      <section className="py-20 border-b border-[#263440]/80 bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="text-center max-w-2xl mx-auto">
             <h2 className="font-royal text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-3">
