@@ -48,7 +48,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen relative z-10">
       {/* Hero Section */}
-      <section className="relative pt-8 sm:pt-14 pb-20 sm:pb-28 overflow-hidden border-b border-[#263440]/80">
+      <section className="relative pt-8 sm:pt-14 pb-10 sm:pb-12 overflow-hidden border-b border-[#263440]/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-4xl mx-auto space-y-6">
             {/* Status Pill */}
@@ -96,33 +96,13 @@ export default function HomePage() {
                 <span>Verify Credential</span>
               </Link>
             </div>
-
-            {/* Live Platform Telemetry Bar */}
-            <div className="mt-12 sm:mt-16 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto pt-8 border-t border-[#263440]/60 animate-slide-left stagger-4">
-              <div className="p-4 ultra-glass-card rounded-xl text-center">
-                <div className="text-2xl sm:text-3xl font-bold text-white font-mono tabular-nums">1,420+</div>
-                <div className="text-[11px] text-[#94A3B8] font-mono mt-1">Active Operators</div>
-              </div>
-              <div className="p-4 ultra-glass-card rounded-xl text-center">
-                <div className="text-2xl sm:text-3xl font-bold text-[#65F58A] font-mono tabular-nums">{courses.length}</div>
-                <div className="text-[11px] text-[#94A3B8] font-mono mt-1">Institutional Curriculum</div>
-              </div>
-              <div className="p-4 ultra-glass-card rounded-xl text-center">
-                <div className="text-2xl sm:text-3xl font-bold text-[#35E6B5] font-mono tabular-nums">98.4%</div>
-                <div className="text-[11px] text-[#94A3B8] font-mono mt-1">Audit Verification</div>
-              </div>
-              <div className="p-4 ultra-glass-card rounded-xl text-center">
-                <div className="text-2xl sm:text-3xl font-bold text-[#65F58A] font-mono tabular-nums">500 T</div>
-                <div className="text-[11px] text-[#94A3B8] font-mono mt-1">Token Bounties</div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
 
       {/* Featured Courses Showcase / Embargo Banner */}
-      <section className="py-20 border-b border-[#263440]/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <section className="py-10 sm:py-12 border-b border-[#263440]/80">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           {catalogEnabled && courses.length > 0 ? (
             <>
               <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
@@ -284,8 +264,8 @@ export default function HomePage() {
       </section>
 
       {/* Career Learning Tracks */}
-      <section className="py-20 border-b border-[#263440]/80 bg-transparent">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <section className="py-10 sm:py-12 border-b border-[#263440]/80 bg-transparent">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="text-center max-w-2xl mx-auto">
             <h2 className="font-royal text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-3">
               Defensive Career Pathways
@@ -308,8 +288,8 @@ export default function HomePage() {
       </section>
 
       {/* PRD Academic Safeguards */}
-      <section className="py-20 border-b border-[#263440]/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <section className="py-10 sm:py-12 border-b border-[#263440]/80">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="text-center max-w-2xl mx-auto">
             <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#65F58A]/10 border border-[#65F58A]/30 text-[#65F58A] text-xs font-mono mb-3">
               <Lock className="w-3.5 h-3.5" />
