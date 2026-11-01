@@ -252,6 +252,17 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 
 CREATE INDEX IF NOT EXISTS idx_audit_created ON audit_logs(created_at DESC);
 
+-- Enforce Immutable Append-Only Ledger on Audit Logs (Prevents Tampering)
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_rules WHERE rulename = 'no_update_audit_logs') THEN
+    CREATE RULE no_update_audit_logs AS ON UPDATE TO audit_logs DO INSTEAD NOTHING;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_rules WHERE rulename = 'no_delete_audit_logs') THEN
+    CREATE RULE no_delete_audit_logs AS ON DELETE TO audit_logs DO INSTEAD NOTHING;
+  END IF;
+END $$;
+
 -- 15. PDF ASSIGNMENT SUBMISSIONS
 CREATE TABLE IF NOT EXISTS assignment_submissions (
     id VARCHAR(100) PRIMARY KEY,

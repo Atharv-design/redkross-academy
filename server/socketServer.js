@@ -1,5 +1,5 @@
 /**
- * RedKross Academy — Standalone Real-Time Socket.io Server
+ * RedKross Academy — Standalone Real-Time Socket.io Server (Hardened)
  * 
  * Run with: node server/socketServer.js
  * Default Port: 3001
@@ -14,63 +14,77 @@ const httpServer = createServer((req, res) => {
   res.end(JSON.stringify({ status: 'healthy', service: 'RedKross Academy Socket.io Telemetry' }));
 });
 
+const ALLOWED_ORIGINS = [
+  'https://academy.redkross.org.in',
+  'https://redkross-academy.vercel.app',
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'http://localhost:3000',
+  'http://127.0.0.1:3000'
+];
+
+function isOriginAllowed(origin) {
+  if (!origin) return true;
+  if (ALLOWED_ORIGINS.includes(origin)) return true;
+  if (/^https:\/\/redkross-academy.*\.vercel\.app$/.test(origin)) return true;
+  return false;
+}
+
 const io = new Server(httpServer, {
   cors: {
-    origin: '*',
-    methods: ['GET', 'POST']
+    origin: (origin, callback) => {
+      if (isOriginAllowed(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('CORS blocked: Origin not authorized for WebSocket connection.'));
+      }
+    },
+    methods: ['GET', 'POST'],
+    credentials: true
   }
 });
 
 io.on('connection', (socket) => {
-  console.log(`[Socket] Client connected: ${socket.id}`);
-
   // Room subscriptions
   socket.on('join:room', (room) => {
-    socket.join(room);
-    console.log(`[Socket] Client ${socket.id} joined room ${room}`);
+    if (typeof room === 'string' && /^[a-zA-Z0-9_\-:]+$/.test(room)) {
+      socket.join(room);
+    }
   });
 
-  // Proctoring Incident Event
+  // Proctoring telemetry: scope strictly to relevant exam session and proctors
   socket.on('exam:violation', (data) => {
-    console.log(`[Socket] Proctoring Violation: Cadet ${data.cadetId} - ${data.violationType}`);
-    io.emit('exam:violation', data);
+    if (data && data.enrolmentId) {
+      io.to(`exam:${data.enrolmentId}`).to('admin:proctoring').emit('exam:violation', data);
+    }
   });
 
-  // Assignment Submission Event
+  // Assignments telemetry: scope to student and admin reviewers
   socket.on('assignment:submit', (data) => {
-    console.log(`[Socket] Assignment Submitted: ${data.assignmentTitle} by Cadet ${data.cadetId}`);
-    io.emit('assignment:submit', data);
+    io.to('admin:assignments').emit('assignment:submit', data);
   });
-
-  // Assignment Evaluated Event
   socket.on('assignment:evaluated', (data) => {
-    console.log(`[Socket] Assignment Evaluated: Submission ${data.submissionId} - ${data.status}`);
-    io.emit('assignment:evaluated', data);
+    if (data && data.userId) {
+      io.to(`user:${data.userId}`).emit('assignment:evaluated', data);
+    }
   });
 
-  // Certificate Request Event
+  // Certificates telemetry: scope strictly to student and credentials desk
   socket.on('certificate:request', (data) => {
-    console.log(`[Socket] Certificate Requested by Cadet ${data.cadetId} for course ${data.courseTitle}`);
-    io.emit('certificate:request', data);
+    io.to('admin:credentials').emit('certificate:request', data);
   });
-
-  // Certificate Dispatched Event
   socket.on('certificate:dispatch', (data) => {
-    console.log(`[Socket] Certificate Dispatched: ${data.credentialId} to Cadet ${data.cadetId}`);
-    io.emit('certificate:dispatch', data);
+    if (data && data.userId) {
+      io.to(`user:${data.userId}`).emit('certificate:dispatch', data);
+    }
   });
-
-  // Certificate Revoked Event
   socket.on('certificate:revoke', (data) => {
-    console.log(`[Socket] Certificate Revoked: ${data.credentialId}`);
-    io.emit('certificate:revoke', data);
-  });
-
-  socket.on('disconnect', () => {
-    console.log(`[Socket] Client disconnected: ${socket.id}`);
+    if (data && data.userId) {
+      io.to(`user:${data.userId}`).emit('certificate:revoke', data);
+    }
   });
 });
 
 httpServer.listen(PORT, () => {
-  console.log(`⚡ RedKross Academy Socket.io Server listening on http://localhost:${PORT}`);
+  console.log(`[Socket.io] Real-time telemetry server running on port ${PORT}`);
 });

@@ -6,8 +6,7 @@ import { json, cors } from './_db.js';
  * directly to the verified operational administrator email (atharvgupta790@gmail.com).
  */
 
-const FALLBACK_KEY = Buffer.from('cmVfZzNVcktGakZfN254dkJ1QVJvTTZBblZqR3dIa1N2ZFRG', 'base64').toString('ascii');
-const RESEND_API_KEY = process.env.RESEND_API_KEY || FALLBACK_KEY;
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const PRIMARY_ADMIN_EMAIL = process.env.ADMIN_INBOX_EMAIL || 'atharvgupta790@gmail.com';
 
 export default async function handler(req, res) {
@@ -15,6 +14,11 @@ export default async function handler(req, res) {
 
   if (req.method !== 'POST') {
     return json(res, { error: 'Method not allowed' }, 405);
+  }
+
+  if (!RESEND_API_KEY) {
+    console.error('API /send-email: RESEND_API_KEY is not configured in server environment.');
+    return json(res, { error: 'Email dispatch service is currently unavailable. Please configure RESEND_API_KEY.' }, 503);
   }
 
   try {

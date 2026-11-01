@@ -1,7 +1,11 @@
 import { neon } from '@neondatabase/serverless';
 import pg from 'pg';
 
-const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_3RwIaSv9ptBg@ep-proud-flower-a5ho5vpv-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require';
+const DATABASE_URL = process.env.DATABASE_URL;
+
+if (!DATABASE_URL) {
+  throw new Error('[FATAL] DATABASE_URL environment variable is required. Please set DATABASE_URL in your environment or .env file.');
+}
 
 // Detect whether connection string is Neon or standard self-hosted PostgreSQL
 const isNeon = (DATABASE_URL.includes('neon.tech') || process.env.DB_ENGINE === 'neon') && process.env.DB_ENGINE !== 'pg';

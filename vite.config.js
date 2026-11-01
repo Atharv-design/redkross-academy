@@ -1,4 +1,4 @@
-﻿import { defineConfig } from 'vite';
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
@@ -30,8 +30,8 @@ export default defineConfig({
       },
     },
     watch: {
-      // Windows-critical: usePolling ensures every single character save is detected immediately
-      usePolling: true,
+      // Windows-specific: usePolling ensures file system watcher catches atomic saves on NTFS
+      usePolling: process.platform === 'win32',
       interval: 100,
     },
     hmr: {

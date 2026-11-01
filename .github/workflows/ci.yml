@@ -1,0 +1,56 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Pre-Flight Environment Audit
+        run: node scripts/verify-env.js
+        env:
+          DATABASE_URL: "postgresql://ci_runner:ci_password@127.0.0.1:5432/ci_db?sslmode=disable"
+          VITE_FIREBASE_API_KEY: "ci_test_key"
+          VITE_FIREBASE_PROJECT_ID: "redkross-academy"
+
+      - name: Run Student Feature & Integrity Tests
+        run: npm test
+
+      - name: Production Build Compilation
+        run: npm run build
+
+      - name: Audit Build Output for Accidental Secret Leakage
+        run: |
+          node -e "
+          const fs = require('fs');
+          if (!fs.existsSync('dist/assets')) {
+            console.error('dist/assets directory missing');
+            process.exit(1);
+          }
+          const files = fs.readdirSync('dist/assets').filter(f => f.endsWith('.js'));
+          for (const f of files) {
+            const content = fs.readFileSync('dist/assets/' + f, 'utf8');
+            if (content.includes('npg_') || content.includes('re_g3UrKFjkF')) {
+              console.error('FAIL: Leaked secret string detected in client asset bundle:', f);
+              process.exit(1);
+            }
+          }
+          console.log('PASS: Client distribution bundle is completely sanitized.');
+          "

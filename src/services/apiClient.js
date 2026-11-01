@@ -12,7 +12,7 @@ export const apiClient = {
   getAuthHeader() {
     let token = localStorage.getItem('redkross_academy_auth_token');
     if (!token) {
-      if (localStorage.getItem('redkross_academy_dev_admin') === 'true') {
+      if (import.meta.env.DEV && localStorage.getItem('redkross_academy_dev_admin') === 'true') {
         token = 'usr_super_admin_dev';
       } else {
         const userStr = localStorage.getItem('redkross_academy_active_user');

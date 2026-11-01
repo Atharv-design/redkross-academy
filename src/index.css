@@ -23,9 +23,17 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Universal 100% Lora Typography Everywhere */
-*, *::before, *::after, html, body, button, input, select, textarea, code, pre, kbd, span, p, h1, h2, h3, h4, h5, h6, .font-royal, .font-mono, .mono, .font-lora, .font-sans {
-  font-family: 'Lora', Georgia, serif !important;
+/* Typography Standard: Lora Serif for Headings & Display, Space Mono for Telemetry & Code */
+body, p, span, a, li, blockquote, label, .font-lora, .font-royal {
+  font-family: 'Lora', Georgia, serif;
+}
+
+code, pre, kbd, samp, .font-mono, .mono, .tabular-nums {
+  font-family: 'Space Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+}
+
+input, textarea, select, button {
+  font-family: inherit;
 }
 
 /* Universal Typography & Word-Wrap Standard */
@@ -562,18 +570,21 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
   .acad-card, .acad-card__art, .acad-card::after, .acad-go {
     transition: none !important;
   }
   .acad-card.reveal {
-    opacity: 1;
-    transform: none;
+    opacity: 1 !important;
+    transform: none !important;
   }
   .acad-card:hover, .acad-card:focus-visible {
-    transform: none;
-  }
-  .acad-card:hover .acad-card__art, .acad-card:focus-visible .acad-card__art {
-    transform: scale(1.03);
+    transform: none !important;
   }
 }
 
