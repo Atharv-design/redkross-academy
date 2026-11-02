@@ -26,12 +26,17 @@ export default async function handler(req, res) {
       form_type = 'INQUIRY',
       sender_name = 'Anonymous Cadet',
       sender_email,
+      recipient_email,
+      to_email,
+      to,
       subject,
       message,
       priority = 'Normal',
       category = 'General Support',
       metadata = {}
     } = req.body || {};
+
+    const targetRecipient = (recipient_email || to_email || to || PRIMARY_ADMIN_EMAIL).trim().toLowerCase();
 
     if (!sender_email || !message) {
       return json(res, { error: 'sender_email and message are required' }, 400);
@@ -131,8 +136,8 @@ ${escapeHtml(message)}
       },
       body: JSON.stringify({
         from: 'RedKross Academy <onboarding@resend.dev>',
-        to: [PRIMARY_ADMIN_EMAIL],
-        reply_to: sender_email,
+        to: [targetRecipient],
+        reply_to: sender_email || 'contact@redkross.org.in',
         subject: emailSubject,
         html: htmlContent
       })

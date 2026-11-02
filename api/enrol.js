@@ -1,5 +1,16 @@
-import { sql, json, cors } from './_db.js';
+﻿import { sql, json, cors } from './_db.js';
 import { dispatchWebhook } from './_webhooks.js';
+
+function generateCadetId(email = '', uid = '') {
+  const seed = `${(email || '').toLowerCase()}::${uid || ''}`;
+  let hash = 2166136261;
+  for (let i = 0; i < seed.length; i++) {
+    hash ^= seed.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  const num = (Math.abs(hash) % 90000) + 10000;
+  return `RK-CADET-${num}`;
+}
 
 export default async function handler(req, res) {
   if (cors(req, res)) return;
@@ -13,31 +24,61 @@ export default async function handler(req, res) {
         return json(res, { error: 'user_id and course_id are required' }, 400);
       }
 
+      const studentEmail = email ? email.trim().toLowerCase() : `${user_id}@cadet.redkross.org.in`;
+      const studentName = full_name || 'Cadet Operator';
+      let effectiveUserId = user_id;
+      let assignedCadetId = cadet_id || generateCadetId(studentEmail, user_id);
+
       // 1. Ensure user profile exists in Postgres to prevent foreign key violations
       try {
-        const studentEmail = email ? email.trim().toLowerCase() : `${user_id}@cadet.redkross.org.in`;
-        const studentName = full_name || 'Cadet Operator';
-        const assignedCadetId = cadet_id || 'RK-CADET';
-
-        await sql`
-          INSERT INTO users (id, email, full_name, cadet_id, role, status, token_balance, created_at, updated_at)
-          VALUES (
-            ${user_id},
-            ${studentEmail},
-            ${studentName},
-            ${assignedCadetId},
-            'student',
-            'ACTIVE',
-            150,
-            NOW(),
-            NOW()
-          )
-          ON CONFLICT (id) DO UPDATE SET
-            email = COALESCE(EXCLUDED.email, users.email),
-            full_name = COALESCE(EXCLUDED.full_name, users.full_name),
-            cadet_id = COALESCE(EXCLUDED.cadet_id, users.cadet_id),
-            updated_at = NOW()
+        const existingUsers = await sql`
+          SELECT id, email, cadet_id, status FROM users 
+          WHERE id = ${user_id} OR LOWER(email) = ${studentEmail}
+          LIMIT 1
         `;
+
+        if (existingUsers.length > 0) {
+          effectiveUserId = existingUsers[0].id;
+          assignedCadetId = existingUsers[0].cadet_id || assignedCadetId;
+
+          await sql`
+            UPDATE users 
+            SET full_name = COALESCE(${studentName}, full_name),
+                status = 'ACTIVE',
+                cadet_id = COALESCE(cadet_id, ${assignedCadetId}),
+                updated_at = NOW()
+            WHERE id = ${effectiveUserId}
+          `;
+        } else {
+          // Check if assignedCadetId is taken by another user
+          const cadetTaken = await sql`SELECT id FROM users WHERE cadet_id = ${assignedCadetId} LIMIT 1`;
+          if (cadetTaken.length > 0) {
+            assignedCadetId = `RK-CADET-${Math.floor(10000 + Math.random() * 90000)}`;
+          }
+
+          const insertedUser = await sql`
+            INSERT INTO users (
+              id, email, full_name, cadet_id, role, status, token_balance, streak_days, created_at, updated_at
+            )
+            VALUES (
+              ${user_id},
+              ${studentEmail},
+              ${studentName},
+              ${assignedCadetId},
+              'student',
+              'ACTIVE',
+              150,
+              1,
+              NOW(),
+              NOW()
+            )
+            RETURNING id, cadet_id
+          `;
+          if (insertedUser.length > 0) {
+            effectiveUserId = insertedUser[0].id;
+            assignedCadetId = insertedUser[0].cadet_id;
+          }
+        }
       } catch (userUpsertErr) {
         console.warn('[User Upsert Warning]:', userUpsertErr.message);
       }
@@ -45,18 +86,40 @@ export default async function handler(req, res) {
       // 2. Check if already enrolled
       const existing = await sql`
         SELECT * FROM enrolments 
-        WHERE user_id = ${user_id} AND course_id = ${course_id}
+        WHERE user_id = ${effectiveUserId} AND course_id = ${course_id}
         LIMIT 1
       `;
 
+      // Fetch course details for accurate titles
+      let courseTitle = 'Defensive Cyber Curriculum';
+      try {
+        const courseRes = await sql`SELECT title FROM courses WHERE id = ${course_id} LIMIT 1`;
+        if (courseRes.length > 0 && courseRes[0].title) {
+          courseTitle = courseRes[0].title;
+        }
+      } catch {}
+
       if (existing.length > 0) {
+        // Asynchronously dispatch confirmation email even if already enrolled
+        await dispatchWebhook('student.enrolled', {
+          userId: effectiveUserId,
+          email: studentEmail,
+          fullName: studentName,
+          cadetId: assignedCadetId,
+          courseTitle,
+          from: 'contact@redkross.org.in',
+          to: studentEmail,
+          enrolledAt: existing[0].enrolled_at || new Date().toISOString(),
+          tokenBalance: 150
+        });
+
         return json(res, { enrolment: existing[0], message: 'Already enrolled' });
       }
 
       const id = `enr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
       const newEnrolment = await sql`
         INSERT INTO enrolments (id, user_id, course_id, course_version, enrolled_at, status)
-        VALUES (${id}, ${user_id}, ${course_id}, '1.2', NOW(), 'Active')
+        VALUES (${id}, ${effectiveUserId}, ${course_id}, '1.2', NOW(), 'Active')
         RETURNING *
       `;
 
@@ -68,41 +131,35 @@ export default async function handler(req, res) {
       `;
 
       // 4. Award 50 onboarding tokens for first enrolment if applicable
-      const ledgerCount = await sql`
-        SELECT count(*) as count FROM reward_ledger WHERE user_id = ${user_id}
-      `;
-      if (parseInt(ledgerCount[0].count) === 0) {
-        const rewardId = `rw_${Date.now()}`;
-        await sql`
-          INSERT INTO reward_ledger (id, user_id, amount, transaction_type, description, idempotency_key, created_at)
-          VALUES (${rewardId}, ${user_id}, 50, 'welcome_bonus', 'Initial Academy Enrolment Welcome Bonus', ${rewardId}, NOW())
+      try {
+        const ledgerCount = await sql`
+          SELECT count(*) as count FROM reward_ledger WHERE user_id = ${effectiveUserId}
         `;
+        if (parseInt(ledgerCount[0].count) === 0) {
+          const rewardId = `rw_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+          await sql`
+            INSERT INTO reward_ledger (id, user_id, amount, transaction_type, description, idempotency_key, created_at)
+            VALUES (${rewardId}, ${effectiveUserId}, 50, 'welcome_bonus', 'Initial Academy Enrolment Welcome Bonus', ${rewardId}, NOW())
+            ON CONFLICT (idempotency_key) DO NOTHING
+          `;
+        }
+      } catch (rewardErr) {
+        console.warn('[Enrolment Reward Notice]:', rewardErr.message);
       }
 
       // 5. Asynchronously trigger n8n onboarding automation directly to the student's exact email address
-      (async () => {
-        try {
-          const userRes = await sql`SELECT full_name, email, cadet_id FROM users WHERE id = ${user_id} LIMIT 1`;
-          const courseRes = await sql`SELECT title FROM courses WHERE id = ${course_id} LIMIT 1`;
-          const userObj = userRes[0] || {};
-          const courseObj = courseRes[0] || {};
-          const recipientEmail = email || userObj.email;
-
-          if (recipientEmail) {
-            dispatchWebhook('student.enrolled', {
-              userId: user_id,
-              email: recipientEmail.trim().toLowerCase(),
-              fullName: full_name || userObj.full_name || 'Cadet Operator',
-              cadetId: cadet_id || userObj.cadet_id || 'RK-UNKNOWN',
-              courseTitle: courseObj.title || 'Defensive Cyber Curriculum',
-              enrolledAt: new Date().toISOString(),
-              tokenBalance: 150
-            });
-          }
-        } catch (hookErr) {
-          console.warn('[Webhook Hook Error]:', hookErr.message);
-        }
-      })();
+      await dispatchWebhook('student.enrolled', {
+        userId: effectiveUserId,
+        email: studentEmail,
+        studentEmail: studentEmail,
+        fullName: studentName,
+        cadetId: assignedCadetId,
+        courseTitle,
+        from: 'contact@redkross.org.in',
+        to: studentEmail,
+        enrolledAt: new Date().toISOString(),
+        tokenBalance: 150
+      });
 
       return json(res, { enrolment: newEnrolment[0], success: true });
     }
@@ -170,7 +227,6 @@ export default async function handler(req, res) {
 
       // Compute progress for each enrolment
       for (const enr of enrolments) {
-        // Count total mandatory lessons
         const totalMandatoryRes = await sql`
           SELECT count(l.id) as total 
           FROM lessons l 
@@ -179,7 +235,6 @@ export default async function handler(req, res) {
         `;
         const totalMandatory = parseInt(totalMandatoryRes[0].total) || 1;
 
-        // Count completed mandatory lessons
         const completedRes = await sql`
           SELECT count(lp.id) as completed 
           FROM lesson_progress lp 

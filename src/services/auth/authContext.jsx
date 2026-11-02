@@ -46,6 +46,26 @@ export function AuthProvider({ children }) {
 
       setCurrentUser(cadetUser);
       setTokenBalance(cadetUser.token_balance || 150);
+
+      // Persist authenticated student directly into Neon PostgreSQL so records show up in Admin CRM
+      apiClient.syncUser({
+        uid: firebaseUser.uid,
+        email: firebaseUser.email,
+        full_name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Cadet Operator',
+        avatar: firebaseUser.photoURL || null,
+        cadet_id: cadetUser.cadet_id
+      }).then((serverUser) => {
+        if (serverUser) {
+          setCurrentUser((prev) => ({
+            ...prev,
+            ...serverUser,
+            cadet_id: serverUser.cadet_id || cadetUser.cadet_id
+          }));
+          if (typeof serverUser.token_balance === 'number') {
+            setTokenBalance(serverUser.token_balance);
+          }
+        }
+      }).catch((e) => console.warn('Neon DB user sync note:', e.message));
     } catch (err) {
       console.error('Failed to sync user session:', err);
       // Fallback local student profile with deterministic cadet ID
@@ -101,6 +121,24 @@ export function AuthProvider({ children }) {
       }
       await syncFirebaseUser(firebaseUser);
     });
+
+    // Background backfill: sync any existing local cadet students to Neon DB
+    try {
+      const db = mockEngine.getDb();
+      if (Array.isArray(db.users)) {
+        db.users
+          .filter((u) => u.email && (u.role === 'student' || !u.role || u.role === 'cadet'))
+          .forEach((u) => {
+            apiClient.syncUser({
+              uid: u.id,
+              email: u.email,
+              full_name: u.full_name || u.name,
+              avatar: u.avatar,
+              cadet_id: u.cadet_id
+            }).catch(() => {});
+          });
+      }
+    } catch {}
 
     return () => unsubscribe();
   }, []);
@@ -197,27 +235,40 @@ export function AuthProvider({ children }) {
   const loginWithSelectedGoogleAccount = async (account) => {
     setAuthError(null);
     setIsLoading(true);
-    const userProfile = {
-      uid: account.uid || 'usr_google_' + Math.random().toString(36).substring(2, 9),
-      email: account.email,
-      displayName: account.name || account.displayName || account.email?.split('@')[0],
-      photoURL: account.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(account.name || 'User')}&background=101923&color=65F58A&bold=true`,
-      getIdToken: async () => 'google_oauth_token_' + Date.now()
-    };
-    
+    const email = (account.email || '').trim().toLowerCase();
+    const displayName = account.name || account.displayName || email.split('@')[0] || 'Cadet Operator';
+    const avatar = account.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=101923&color=65F58A&bold=true`;
+    const uid = account.uid || 'usr_google_' + Math.random().toString(36).substring(2, 9);
+
     const cadet = devLoginAsCadet({
-      uid: userProfile.uid,
-      email: userProfile.email,
-      displayName: userProfile.displayName,
-      photoURL: userProfile.photoURL
+      uid,
+      email,
+      displayName,
+      photoURL: avatar
     });
-    
+
     try {
-      await apiClient.syncUser(userProfile);
+      const serverUser = await apiClient.syncUser({
+        uid,
+        email,
+        full_name: displayName,
+        avatar,
+        cadet_id: cadet.cadet_id
+      });
+      if (serverUser) {
+        setCurrentUser((prev) => ({
+          ...prev,
+          ...serverUser,
+          cadet_id: serverUser.cadet_id || cadet.cadet_id
+        }));
+        if (typeof serverUser.token_balance === 'number') {
+          setTokenBalance(serverUser.token_balance);
+        }
+      }
     } catch (e) {
       console.warn('Backend sync note:', e.message);
     }
-    
+
     setIsLoading(false);
     return cadet;
   };

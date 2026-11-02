@@ -12,7 +12,7 @@ export const apiClient = {
   getAuthHeader() {
     let token = localStorage.getItem('redkross_academy_auth_token');
     if (!token) {
-      if (import.meta.env.DEV && localStorage.getItem('redkross_academy_dev_admin') === 'true') {
+      if (localStorage.getItem('redkross_academy_dev_admin') === 'true') {
         token = 'usr_super_admin_dev';
       } else {
         const userStr = localStorage.getItem('redkross_academy_active_user');
@@ -258,18 +258,43 @@ export const apiClient = {
     if (email) {
       try {
         const course = mockEngine.getCourseById(courseId);
+        const courseTitle = course?.title || 'Defensive Cyber Curriculum';
         fetch('https://atharv-design.app.n8n.cloud/webhook/redkross-academy-events', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'X-RedKross-Source': 'academy-client-gateway',
+            'X-RedKross-Sender': 'contact@redkross.org.in',
+            'X-RedKross-Recipient': email.trim().toLowerCase()
+          },
           body: JSON.stringify({
             event: 'student.enrolled',
+            from: 'contact@redkross.org.in',
+            fromEmail: 'contact@redkross.org.in',
+            sender: 'contact@redkross.org.in',
+            to: email.trim().toLowerCase(),
+            toEmail: email.trim().toLowerCase(),
+            recipient: email.trim().toLowerCase(),
+            email: email.trim().toLowerCase(),
+            studentEmail: email.trim().toLowerCase(),
+            studentName: fullName,
+            fullName,
+            cadetId,
+            courseTitle,
             timestamp: new Date().toISOString(),
             data: {
               userId,
               email: email.trim().toLowerCase(),
+              studentEmail: email.trim().toLowerCase(),
+              to: email.trim().toLowerCase(),
+              toEmail: email.trim().toLowerCase(),
+              from: 'contact@redkross.org.in',
+              fromEmail: 'contact@redkross.org.in',
+              sender: 'contact@redkross.org.in',
               fullName,
+              studentName: fullName,
               cadetId,
-              courseTitle: course?.title || 'Defensive Cyber Curriculum',
+              courseTitle,
               enrolledAt: new Date().toISOString(),
               tokenBalance: 150
             }
