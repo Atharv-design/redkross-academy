@@ -248,60 +248,83 @@ export default function StudentDashboard() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {enrolments.map((enr) => {
-              const crs = mockEngine.getCourseById(enr.course_id);
-              if (!crs) return null;
-              const progress = mockEngine.getCourseProgress(enr.id) || { percentage: 0 };
-
-              return (
-                <div
-                  key={enr.id}
-                  className="ultra-glass-card rounded-2xl p-6 flex flex-col justify-between space-y-4"
+          {enrolments.length === 0 ? (
+            <div className="ultra-glass-panel rounded-2xl p-10 text-center space-y-4 border border-white/5">
+              <div className="w-14 h-14 rounded-2xl bg-surface-100/80 border border-surface-border flex items-center justify-center mx-auto text-slate-400">
+                <BookOpen className="w-7 h-7 text-[#65F58A]/80" />
+              </div>
+              <div className="space-y-1.5 max-w-md mx-auto">
+                <h3 className="text-base font-royal font-bold text-white">No Active Enrolments Yet</h3>
+                <p className="text-xs text-slate-400 leading-relaxed font-sans">
+                  You are not currently enrolled in any curriculum tracks. Explore our industry-accredited cybersecurity syllabus and begin your training.
+                </p>
+              </div>
+              <div className="pt-2">
+                <Link
+                  to="/courses"
+                  className="ultra-glass-btn px-6 py-2.5 rounded-xl font-royal font-bold text-xs inline-flex items-center space-x-2"
                 >
-                  <div>
-                    <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 mb-2">
-                      <span className="px-2 py-0.5 rounded-md bg-surface-100 border border-surface-border">{crs.difficulty || 'Specialist'}</span>
-                      <span className="text-[#65F58A] font-semibold">{String(enr.status || 'ACTIVE').toUpperCase()}</span>
+                  <span>Browse Curriculum Catalog</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {enrolments.map((enr) => {
+                const crs = mockEngine.getCourseById(enr.course_id);
+                if (!crs) return null;
+                const progress = mockEngine.getCourseProgress(enr.id) || { percentage: 0 };
+
+                return (
+                  <div
+                    key={enr.id}
+                    className="ultra-glass-card rounded-2xl p-6 flex flex-col justify-between space-y-4"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 mb-2">
+                        <span className="px-2 py-0.5 rounded-md bg-surface-100 border border-surface-border">{crs.difficulty || 'Specialist'}</span>
+                        <span className="text-[#65F58A] font-semibold">{String(enr.status || 'ACTIVE').toUpperCase()}</span>
+                      </div>
+
+                      <h3 className="text-base font-royal font-bold text-white mb-2 break-words">{crs.title}</h3>
+
+                      {/* Progress Bar */}
+                      <div className="space-y-1 my-3">
+                        <div className="flex justify-between text-[11px] font-mono">
+                          <span className="text-slate-400">Progress</span>
+                          <span className="text-white font-bold tabular-nums">{progress.percentage || 0}%</span>
+                        </div>
+                        <div className="w-full h-2 rounded-full bg-surface-100 overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-[#65F58A] to-[#35E6B5] rounded-full transition-all"
+                            style={{ width: `${progress.percentage || 0}%` }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Passed Quizzes count */}
+                      <div className="text-[11px] font-mono text-slate-400 flex items-center space-x-1.5">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#65F58A]" />
+                        <span>{(enr.passed_quizzes || []).length} Chapter Evaluations Passed</span>
+                      </div>
                     </div>
 
-                    <h3 className="text-base font-royal font-bold text-white mb-2 break-words">{crs.title}</h3>
-
-                    {/* Progress Bar */}
-                    <div className="space-y-1 my-3">
-                      <div className="flex justify-between text-[11px] font-mono">
-                        <span className="text-slate-400">Progress</span>
-                        <span className="text-white font-bold tabular-nums">{progress.percentage || 0}%</span>
-                      </div>
-                      <div className="w-full h-2 rounded-full bg-surface-100 overflow-hidden">
-                        <div
-                          className="h-full bg-gradient-to-r from-[#65F58A] to-[#35E6B5] rounded-full transition-all"
-                          style={{ width: `${progress.percentage || 0}%` }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Passed Quizzes count */}
-                    <div className="text-[11px] font-mono text-slate-400 flex items-center space-x-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-[#65F58A]" />
-                      <span>{(enr.passed_quizzes || []).length} Chapter Evaluations Passed</span>
+                    <div className="pt-4 border-t border-surface-border flex items-center justify-between">
+                      <span className="text-xs font-mono text-amber-400">+{crs.total_tokens_reward || 350} Bounty</span>
+                      <Link
+                        to={`/student/learn/${enr.id}`}
+                        className="ultra-glass-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1"
+                      >
+                        <span>Study</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
                     </div>
                   </div>
-
-                  <div className="pt-4 border-t border-surface-border flex items-center justify-between">
-                    <span className="text-xs font-mono text-amber-400">+{crs.total_tokens_reward || 350} Bounty</span>
-                    <Link
-                      to={`/student/learn/${enr.id}`}
-                      className="ultra-glass-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1"
-                    >
-                      <span>Study</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </Link>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Verifiable Institutional Credentials & Certificates Section */}

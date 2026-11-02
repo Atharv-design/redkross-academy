@@ -260,6 +260,27 @@ class MockEngine {
         modified = true;
       }
 
+      // Purge phantom auto-enrolments from previous sessions where cadet never actually enrolled or studied
+      if (parsed.enrolments && parsed.enrolments.length > 0) {
+        const initialCount = parsed.enrolments.length;
+        parsed.enrolments = parsed.enrolments.filter((e) => {
+          if (e.user_id === 'usr_student_01') return true;
+          const hasActivity = (e.completed_mandatory_lessons && e.completed_mandatory_lessons.length > 0) ||
+            (e.passed_quizzes && e.passed_quizzes.length > 0) ||
+            Boolean(e.credential_id) ||
+            Boolean(e.final_assessment_attempt_id) ||
+            (e.progress && e.progress > 0);
+          if (hasActivity) return true;
+          if (e.status === 'in_progress' && (!e.progress || e.progress === 0)) {
+            return false;
+          }
+          return true;
+        });
+        if (parsed.enrolments.length !== initialCount) {
+          modified = true;
+        }
+      }
+
       // Ensure all course lessons have a playable video_url (repair missing, BigBuckBunny 403, or expired blob URLs)
       if (parsed.courses) {
         for (const course of parsed.courses) {
@@ -542,24 +563,7 @@ class MockEngine {
 
     db.users.push(newUser);
 
-    // Auto-enroll cadet in initial foundation course
-    if (db.courses && db.courses.length > 0) {
-      if (!db.enrolments) db.enrolments = [];
-      const primaryCourse = db.courses[0];
-      const newEnrolment = {
-        id: `enr_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
-        user_id: newUser.id,
-        cadet_id: cadetId,
-        course_id: primaryCourse.id,
-        status: 'in_progress',
-        progress: 0,
-        completed_mandatory_lessons: [],
-        passed_quizzes: [],
-        current_lesson_id: primaryCourse.modules?.[0]?.lessons?.[0]?.id || null,
-        enrolled_at: new Date().toISOString()
-      };
-      db.enrolments.push(newEnrolment);
-    }
+    // Note: No automatic enrolment. New cadets start with 0 enrolments until explicitly enrolled via the course catalog.
 
     this.saveDb(db, {
       type: 'USER_CREATED',
