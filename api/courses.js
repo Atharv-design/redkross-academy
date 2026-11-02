@@ -46,19 +46,27 @@ export default async function handler(req, res) {
       }
     }
 
-        // Handle Learning Paths if requested via /api/learning-paths rewrite
+        // Handle Learning Paths if requested via /api/learning-paths or query
     if ((req.url && req.url.includes('learning-paths')) || (req.query && req.query.type === 'learning_paths')) {
-      const paths = await sql
-        SELECT id, slug, title, short_desc, difficulty, estimated_weeks, total_hours, milestone_cert, featured, skills
-        FROM learning_paths 
-        ORDER BY featured DESC, estimated_weeks ASC
-      ;
-
-      return json(res, {
-        learning_paths: paths,
-        public_catalog_enabled: isCatalogEnabled,
-        message: isCatalogEnabled ? 'Active' : 'Courses will be out soon'
-      });
+      try {
+        const paths = await sql`
+          SELECT id, slug, title, short_desc, difficulty, estimated_weeks, total_hours, milestone_cert, featured, skills
+          FROM learning_paths 
+          ORDER BY featured DESC, estimated_weeks ASC
+        `;
+        return json(res, {
+          learning_paths: paths || [],
+          public_catalog_enabled: isCatalogEnabled,
+          message: isCatalogEnabled ? 'Active' : 'Courses will be out soon'
+        });
+      } catch (pathErr) {
+        console.warn('Learning paths DB query fallback:', pathErr.message);
+        return json(res, {
+          learning_paths: [],
+          public_catalog_enabled: isCatalogEnabled,
+          message: 'Active'
+        });
+      }
     }
 
     // 2. Handle POST (Create Course by Super Admin - Phase 7.4)
