@@ -994,6 +994,212 @@ Final size of elf file: 239 bytes
     return { output: `COMMAND     PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME\napache2     512 root    4u  IPv4  24912      0t0  TCP 10.10.11.110:80 (LISTEN)\nkasmvnc     724 kali    6u  IPv4  84920      0t0  TCP *:5901 (LISTEN)`, exitCode: 0, isError: false };
   }
 
+  // ================= 7. NEOFETCH / FASTFETCH (MATCHING IMAGE 6) =================
+  if (baseCmd === 'neofetch' || baseCmd === 'fastfetch') {
+    return {
+      output: `...............-*-............      linuxiac@kali
+............:***:...............     -------------
+...........+****-...............     OS: Kali GNU/Linux Rolling x86_64
+..........+*****-...............     Host: KVM/QEMU Standard PC (Q35 + ICH9, 2009) (pc-q35-11.0)
+.........-******:...............     Kernel: Linux 6.19.14-kali-amd64
+........:*******+...............     Uptime: 24 mins
+.......-*********:..............     Packages: 2879 (dpkg)
+......:***********:.............     Shell: zsh 5.9
+.....-*************:............     Display (QEMU Monitor): 1680x1050 in 15", 60 Hz
+....:***************:...........     DE: Xfce4 4.20
+...-*****************:..........     WM: Xfwm4 (X11)
+..:*******************:.........     WM Theme: Kali-Dark
+.-*********************:........     Theme: Fusion [Qt], Kali-Dark [GTK2/3/4]
+:***********************:.......     Icons: Flat-Remix-Blue-Dark [Qt], Flat-Remix-Blue-Dark [GTK2/3/4]
+.:::::::::::::::::::::::........     Font: Cantarell (11pt) [GTK2/3/4]
+................................     Cursor: Adwaita (24px)
+                                     Terminal: qterminal 2.4.0
+                                     Terminal Font: FiraCode (10pt)
+                                     CPU: 2 x AMD Ryzen 7 7700X (2) @ 4.49 GHz
+                                     GPU: RedHat Virtio 1.0 GPU
+                                     Memory: 887.32 MiB / 3.83 GiB (23%)
+                                     Swap: 0 B / 1.33 GiB (0%)
+                                     Disk (/): 14.47 GiB / 23.13 GiB (63%) - ext4
+                                     Local IP (eth0): 10.10.11.100/24
+                                     Locale: en_US.UTF-8
+
+                                     \x1b[41m   \x1b[42m   \x1b[43m   \x1b[44m   \x1b[45m   \x1b[46m   \x1b[47m   \x1b[0m`,
+      exitCode: 0,
+      isError: false
+    };
+  }
+
+  // ================= 8. WGET & WEB RETRIEVAL =================
+  if (baseCmd === 'wget') {
+    const url = parts[1] || 'http://10.10.11.110/login.php';
+    return {
+      output: `--2026-11-03 01:00:25--  ${url}
+Connecting to 10.10.11.110:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 1540 (1.5K) [text/html]
+Saving to: 'index.html'
+
+index.html          100%[===================>]   1.50K  --.-KB/s    in 0.001s
+
+2026-11-03 01:00:25 (1.50 MB/s) - 'index.html' saved [1540/1540]`,
+      exitCode: 0,
+      isError: false
+    };
+  }
+
+  // ================= 9. PROCESS MANAGEMENT (BG, FG, NOHUP, JOBS) =================
+  if (baseCmd === 'bg') {
+    return { output: `[1]+ tcpdump -i eth0 &`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'fg') {
+    return { output: `tcpdump -i eth0`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'jobs') {
+    return { output: `[1]+  Running                 tcpdump -i eth0 &`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'nohup') {
+    return { output: `nohup: ignoring input and appending output to 'nohup.out'`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'alias') {
+    return { output: `alias ll='ls -la'\nalias grep='grep --color=auto'\nalias update='sudo apt update && sudo apt upgrade'`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'unalias') {
+    return { output: `[+] Alias removed for '${parts[1] || 'cmd'}'.`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'shutdown' || baseCmd === 'reboot' || baseCmd === 'poweroff') {
+    return { output: `Broadcast message from root@kali-sandbox (pts/0) (2026-11-03 01:00):\n\nThe system is going down for maintenance NOW!`, exitCode: 0, isError: false };
+  }
+
+  // ================= 10. USER & GROUP MANAGEMENT =================
+  if (baseCmd === 'adduser' || baseCmd === 'useradd') {
+    const u = parts[1] || 'newuser';
+    return { output: `Adding user \`${u}' ...\nAdding new group \`${u}' (1001) ...\nAdding new user \`${u}' (1001) with group \`${u}' ...\nCreating home directory \`/home/${u}' ...\nCopying files from \`/etc/skel' ...`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'userdel') {
+    const u = parts[1] || 'user';
+    return { output: `userdel: user \`${u}' removed successfully.`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'passwd') {
+    return { output: `New password: \nRetype new password: \npasswd: password updated successfully for ${parts[1] || 'kali'}`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'groupadd') {
+    return { output: `groupadd: group '${parts[1] || 'security'}' created with GID 1002.`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'groupdel') {
+    return { output: `groupdel: group '${parts[1] || 'security'}' removed.`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'usermod') {
+    return { output: `usermod: user '${parts[parts.length - 1] || 'kali'}' modified successfully.`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'groups') {
+    return { output: `kali : kali cdrom floppy sudo audio dip video plugdev users netdev bluetooth`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'su' || baseCmd === 'sudo') {
+    if (clean.includes('su -') || clean.includes('sudo su')) {
+      virtualFS.currentUser = 'root';
+      return { output: `[sudo] password for kali: \nroot@kali-sandbox:~# `, exitCode: 0, isError: false };
+    }
+    return { output: `[sudo] command executed with root privileges.`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'visudo') {
+    return { output: `/etc/sudoers: parsed OK\n# User privilege specification\nroot    ALL=(ALL:ALL) ALL\nkali    ALL=(ALL:ALL) NOPASSWD:ALL`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'chage') {
+    return { output: `Minimum Password Age: 0\nMaximum Password Age: 99999\nPassword Expiration Warning: 7\nPassword Inactive: never\nAccount Expires: never`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'last') {
+    return { output: `kali     pts/0        10.10.11.1       Tue Nov  3 00:36   still logged in\nreboot   system boot  6.19.14-kali     Tue Nov  3 00:35   still running\n\nwtmp begins Tue Nov  3 00:35:10 2026`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'w') {
+    return { output: ` 01:00:30 up 24 min,  1 user,  load average: 0.12, 0.18, 0.14\nUSER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT\nkali     pts/0    10.10.11.1       00:36    0.00s  0.18s  0.02s w`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'who') {
+    return { output: `kali     pts/0        2026-11-03 00:36 (10.10.11.1)`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'finger') {
+    return { output: `Login: kali                             Name: Kali Default User\nDirectory: /home/kali                   Shell: /bin/zsh\nOn since Tue Nov  3 00:36 (UTC) on pts/0 from 10.10.11.1\nNo mail.\nNo Plan.`, exitCode: 0, isError: false };
+  }
+
+  // ================= 11. ADVANCED ACL & PERMISSIONS =================
+  if (baseCmd === 'umask') {
+    return { output: `0022`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'getfacl') {
+    const f = parts[1] || 'recon_notes.txt';
+    return { output: `# file: ${f}\n# owner: kali\n# group: kali\nuser::rw-\ngroup::r--\nother::r--`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'setfacl') {
+    return { output: `setfacl: ACL updated for ${parts[parts.length - 1] || 'target'}.`, exitCode: 0, isError: false };
+  }
+
+  // ================= 12. PASSWORD GENERATORS & WORDLISTS =================
+  if (baseCmd === 'cupp') {
+    return { output: `[+] Common User Passwords Profiler (CUPP) v3.2.0\n[+] Loaded dictionary generator engine.\n[+] Generated 1,482 targeted dictionary candidate hashes. Saved to user_wordlist.txt.`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'crunch') {
+    return { output: `Crunch will now generate the following amount of data: 48512 bytes (0 MB)\nCrunch will now generate 5482 words.\n[+] Process finished. Output written to stdout / crunch.txt.`, exitCode: 0, isError: false };
+  }
+
+  // ================= 13. WEB SECURITY TOOLS (WPSCAN, SUBLIST3R, BURPSUITE) =================
+  if (baseCmd === 'wpscan') {
+    return { output: `_______________________________________________________________\n        __          _______   _____                    \n        \\ \\        / /  __ \\ / ____|                   \n         \\ \\  /\\  / /| |__) | (___   ___  __ _ _ __    \n          \\ \\/  \\/ / |  ___/ \\___ \\ / __|/ _\` | '_ \\   \n           \\  /\\  /  | |     ____) | (__| (_| | | | |  \n            \\/  \\/   |_|    |_____/ \\___|\\__,_|_| |_|  \n\n[+] URL: http://10.10.11.110/\n[+] Effective URL: http://10.10.11.110/login.php\n[+] Interesting Finding: robots.txt found (Status: 200)\n[+] WordPress version: Non-WordPress application detected (Custom PHP/DVWA).`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'sublist3r') {
+    return { output: `[-] Enumerating subdomains now for redkross.internal\n[-] Searching now in Baidu, Yahoo, Google, Bing, Ask, Netcraft, Virustotal...\n[+] Total Unique Subdomains Found: 4\napi.redkross.internal\nauth.redkross.internal\nlab.redkross.internal\nportal.redkross.internal`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'burpsuite') {
+    return { output: `[+] Burp Suite Community Edition v2024.1.2\n[+] Proxy service listening on 127.0.0.1:8080 (Intercept: OFF)\n[+] Headless API gateway active for cyber-lab browser integration.`, exitCode: 0, isError: false };
+  }
+
+  // ================= 14. EXPLOITATION & ARMITAGE =================
+  if (baseCmd === 'armitage') {
+    return { output: `[*] Starting Armitage GUI connector on 127.0.0.1:55553...\n[*] Connected to Metasploit RPC daemon.\n[*] 7 Target nodes mapped to interactive graphical canvas.`, exitCode: 0, isError: false };
+  }
+
+  // ================= 15. POST EXPLOITATION TOOLS =================
+  if (baseCmd === 'mimikatz') {
+    return { output: `  .#####.   mimikatz 2.2.0 (x64) #19041 Aug 10 2023 17:19:53\n .## ^ ##.  "A La Vie, A L'Amour"\n ## / \\ ##  /* * *                      \n ## \\ / ##   Benjamin DELPY \`gentilkiwi\` ( benjamin@gentilkiwi.com )\n '## v ##'   http://blog.gentilkiwi.com/mimikatz             (oe.eo)\n  '#####'    Ported to Linux LSASS dump extraction           * * * */\n\nmimikatz # sekurlsa::logonpasswords\nAuthentication Id : 0 ; 996 (00000000:000003e4)\nSession           : Service from 0\nUser Name         : SYSTEM\nDomain            : REDKROSS\nLogon Server      : (null)\n    * NTLM        : 31d6cfe0d16ae931b73c59d7e0c089c0\n    * SHA1        : da39a3ee5e6b4b0d3255bfef95601890afd80709`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'empire') {
+    return { output: `================================================================\n[Empire] > Active listeners: 1 (http_80)\n[Empire] > Active agents: 1 (Debian-Target / 10.10.11.105)\n================================================================`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'beef') {
+    return { output: `[BeEF] Hook URL: http://10.10.11.100:3000/hook.js\n[BeEF] UI URL:   http://10.10.11.100:3000/ui/panel\n[BeEF] Online hooked browsers: 1 (Juice-Shop Chromium Session)`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'responder') {
+    return { output: `[+] Listening for events on eth0 (10.10.11.100)...\n[+] Poisoners: LLMNR: ON | NBT-NS: ON | MDNS: ON\n[+] Servers:   HTTP: ON | HTTPS: ON | SMB: ON | LDAP: ON\n[+] Waiting for incoming credential authentication requests...`, exitCode: 0, isError: false };
+  }
+
+  // ================= 16. FORENSICS, REVERSING & DEBUGGERS =================
+  if (baseCmd === 'autopsy') {
+    return { output: `[+] Autopsy Forensic Browser v4.21.0\n[+] Digital investigation engine active on http://127.0.0.1:9999/autopsy\n[+] Case loaded: 'RedKross Incident Response 01'. Images: debian_root.dd`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'ghidra') {
+    return { output: `[+] Ghidra Software Reverse Engineering Suite v11.0.1\n[+] Loaded project: 'crackme_challenge'\n[+] Architecture: x86_64 ELF. Entry point: 0x00401120. Decompiler initialized.`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'gdb') {
+    return { output: `GNU gdb (Debian 13.2-1) 13.2\nCopyright (C) 2023 Free Software Foundation, Inc.\nType "help" for a list of commands.\n(gdb) target remote 10.10.11.105:1234\nRemote debugging using 10.10.11.105:1234\n0x00007ffff7fe32b0 in _start () from /lib64/ld-linux-x86-64.so.2\n(gdb) `, exitCode: 0, isError: false };
+  }
+
+  // ================= 17. WIRELESS ATTACKS =================
+  if (baseCmd === 'reaver') {
+    return { output: `Reaver v1.6.6 WiFi Protected Setup Attack Tool\nCopyright (c) 2011, Tactical Network Solutions, Craig Heffner\n[+] Waiting for beacon from 00:11:22:33:44:55\n[+] Associated with 00:11:22:33:44:55 (ESSID: RedKross-Secure-Lab)\n[+] Trying pin '12345670'`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'fern-wifi-cracker') {
+    return { output: `[+] Fern WiFi Wireless Security Auditing Suite initialized.\n[+] Monitoring interface: wlan0mon. 4 access points in range.`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'kismet') {
+    return { output: `INFO: Kismet 2023-07-R1\nINFO: Logging to /home/kali/Kismet-20261103.kismet\nINFO: Web UI active on http://127.0.0.1:2501\nINFO: Packets captured: 1,492 on virtual RF bridge.`, exitCode: 0, isError: false };
+  }
+
+  // ================= 18. CRON & SCHEDULING =================
+  if (baseCmd === 'cron' || baseCmd === 'crontab') {
+    return { output: `# RedKross Crontab File\n0 * * * * /usr/local/bin/lab-healthcheck.sh\n*/15 * * * * /usr/bin/python3 /opt/recon_agent.py\n# Scheduled jobs are active.`, exitCode: 0, isError: false };
+  }
+  if (baseCmd === 'at') {
+    return { output: `job 1 at Tue Nov  3 02:00:00 2026\n[+] Scheduled task registered.`, exitCode: 0, isError: false };
+  }
+
   // Fallback for any other valid commands
   return {
     output: `[kali-sandbox: ~]$ Executed: '${clean}'\n[+] Task acknowledged by Kali attacker subsystem (PID ${Math.floor(Math.random() * 8000 + 1000)}).`,

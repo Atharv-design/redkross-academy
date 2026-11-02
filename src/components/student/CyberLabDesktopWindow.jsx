@@ -66,7 +66,8 @@ export function OfficialKaliLogo({
   className = 'h-24',
   showText = true,
   isWhiteVariant = true,
-  dragonSize = 'w-36 h-28'
+  dragonSize = 'w-36 h-28',
+  variant = 'wallpaper'
 }) {
   return (
     <div className={`flex flex-col items-center justify-center select-none ${className}`}>
@@ -108,20 +109,31 @@ export function OfficialKaliLogo({
         />
       </svg>
 
-      {/* Official Kali Box & Offensive Security Wordmark (Matching Image 2) */}
+      {/* Official Kali Branding */}
       {showText && (
-        <div className="flex flex-col items-center mt-2 font-sans tracking-widest text-center">
-          {/* Bordered Box around KALI */}
-          <div className="px-6 py-1.5 rounded-lg border-2 border-white bg-black/30 backdrop-blur-sm shadow-lg">
-            <span className="text-2xl sm:text-3xl font-black text-white tracking-[0.25em] pl-1 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+        variant === 'brand' ? (
+          <div className="flex items-center space-x-1.5 mt-2 font-sans tracking-wide">
+            <span className="text-2xl sm:text-3xl font-black text-white tracking-widest drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
               KALI
             </span>
+            <span className="text-2xl sm:text-3xl font-black text-[#00A2FF] tracking-widest drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] flex items-center">
+              LINUX<sup className="text-xs text-white ml-0.5 font-bold">®</sup>
+            </span>
           </div>
-          {/* Subtitle */}
-          <span className="text-[10px] sm:text-[11px] font-bold text-white/90 uppercase tracking-[0.3em] mt-2 drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
-            BY OFFENSIVE SECURITY®
-          </span>
-        </div>
+        ) : (
+          <div className="flex flex-col items-center mt-2 font-sans tracking-widest text-center">
+            {/* Bordered Box around KALI */}
+            <div className="px-6 py-1.5 rounded-lg border-2 border-white bg-black/30 backdrop-blur-sm shadow-lg">
+              <span className="text-2xl sm:text-3xl font-black text-white tracking-[0.25em] pl-1 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                KALI
+              </span>
+            </div>
+            {/* Subtitle */}
+            <span className="text-[10px] sm:text-[11px] font-bold text-white/90 uppercase tracking-[0.3em] mt-2 drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
+              BY OFFENSIVE SECURITY®
+            </span>
+          </div>
+        )
       )}
     </div>
   );
