@@ -204,7 +204,7 @@ export const apiClient = {
   // LEARNING PATHS (Phase 3.2)
   async getLearningPaths() {
     try {
-      const res = await fetch(`${API_BASE}/learning-paths`);
+      const res = await fetch(`${API_BASE}/courses?type=learning_paths`);
       if (!res.ok) throw new Error('API fetch failed');
       const data = await res.json();
       return {
