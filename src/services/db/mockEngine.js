@@ -1450,6 +1450,20 @@ class MockEngine {
         }
         enrolment.quiz_scores = enrolment.quiz_scores || {};
         enrolment.quiz_scores[quizId] = scorePercentage;
+
+        // Auto-complete all lessons of this module in enrolment so subsequent modules and final exam unlock immediately
+        const course = (db.courses || []).find((c) => c.id === enrolment.course_id);
+        if (course && course.modules) {
+          const mod = course.modules.find((m) => m.quiz?.id === quizId);
+          if (mod && mod.lessons) {
+            if (!Array.isArray(enrolment.completed_mandatory_lessons)) enrolment.completed_mandatory_lessons = [];
+            mod.lessons.forEach((l) => {
+              if (!enrolment.completed_mandatory_lessons.includes(l.id)) {
+                enrolment.completed_mandatory_lessons.push(l.id);
+              }
+            });
+          }
+        }
       }
     } else {
       if (enrolment) {
@@ -1915,7 +1929,7 @@ class MockEngine {
     const course = (db.courses || []).find((c) => c.id === courseId);
     if (!course || !course.modules || !course.modules[moduleIndex - 1]) return true;
 
-    // Previous module must have all lessons completed AND its quiz passed
+    // Previous module must have its quiz passed (or all lessons completed if no quiz exists)
     const prevMod = course.modules[moduleIndex - 1];
     const prevLessons = prevMod.lessons || [];
     const allPrevLessonsCompleted = prevLessons.every((l) =>
@@ -1925,7 +1939,7 @@ class MockEngine {
       ? enrolment.passed_quizzes?.includes(prevMod.quiz.id)
       : true;
 
-    return allPrevLessonsCompleted && prevQuizPassed;
+    return prevMod.quiz ? prevQuizPassed : allPrevLessonsCompleted;
   }
 
   // ==========================================

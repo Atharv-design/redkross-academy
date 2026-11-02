@@ -31,7 +31,10 @@ import {
   Send,
   ExternalLink,
   Image as ImageIcon,
-  Film
+  Film,
+  Trophy,
+  ShieldAlert,
+  ArrowRight
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { mockEngine } from '../../services/db/mockEngine';
@@ -167,6 +170,20 @@ export default function LessonPlayerPage() {
   const [certRequestSubmitted, setCertRequestSubmitted] = useState(false);
   const [certCadetNotes, setCertCadetNotes] = useState('');
 
+  // Pre-Flight Exam Rules Modal State (tracks acknowledged rules per quiz id)
+  const [hasAcknowledgedExamRules, setHasAcknowledgedExamRules] = useState({});
+
+  // Module Unlock Celebration Modal State
+  const [unlockCelebrationModal, setUnlockCelebrationModal] = useState({
+    isOpen: false,
+    type: 'module', // 'module' | 'final_round'
+    unlockedModuleIndex: null,
+    unlockedModuleName: '',
+    score: 0,
+    passingScore: 80,
+    nextUnitId: null
+  });
+
   // ---------------- MODULE GATING LOGIC ----------------
   const isModuleUnlocked = (modIndex) => {
     if (modIndex === 0) return true;
@@ -182,7 +199,8 @@ export default function LessonPlayerPage() {
       const prevQuizDone = prevMod.quiz
         ? passedQuizzes.includes(prevMod.quiz.id)
         : true;
-      if (!allLessonsDone || !prevQuizDone) return false;
+      const prevModCleared = prevMod.quiz ? prevQuizDone : allLessonsDone;
+      if (!prevModCleared) return false;
     }
     return true;
   };
@@ -196,7 +214,7 @@ export default function LessonPlayerPage() {
         completedLessons.includes(l.id)
       );
       const quizDone = mod.quiz ? passedQuizzes.includes(mod.quiz.id) : true;
-      return lessonsDone && quizDone;
+      return mod.quiz ? quizDone : lessonsDone;
     });
   };
 
@@ -260,6 +278,11 @@ export default function LessonPlayerPage() {
     ? (currentEnrolment?.passed_quizzes || enrolment?.passed_quizzes || []).includes(activeQuiz.id) || (activeUnit?.type === 'final_exam' && (currentEnrolment?.final_assessment_passed || enrolment?.final_assessment_passed))
     : false;
   const isAssignment = activeLesson?.type === 'assignment';
+
+  // Pre-flight Exam Rules Gate calculation
+  const isExamUnit = (activeUnit?.type === 'quiz' || activeUnit?.type === 'final_exam') && !!activeQuiz;
+  const isExamRulesAcknowledged = activeQuiz ? !!hasAcknowledgedExamRules[activeQuiz.id] : false;
+  const showExamRulesGate = isExamUnit && !isQuizPassed && !quizSubmitted && !isLockoutActive && !isExamRulesAcknowledged;
 
   // Sync active unit on load or URL param change (supports unitId & lessonId, and resumes saved reading progress)
   useEffect(() => {
@@ -399,6 +422,7 @@ export default function LessonPlayerPage() {
   // Live Exam Countdown Timer
   useEffect(() => {
     if (!activeQuiz || quizSubmitted || isLockoutActive || examTimeRemaining === null || examTimeRemaining <= 0) return;
+    if (!hasAcknowledgedExamRules[activeQuiz.id] && !isQuizPassed) return; // Wait until rules are acknowledged
 
     const timer = setInterval(() => {
       setExamTimeRemaining((prev) => {
@@ -413,11 +437,12 @@ export default function LessonPlayerPage() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [activeQuiz?.id, quizSubmitted, isLockoutActive, examTimeRemaining]);
+  }, [activeQuiz?.id, quizSubmitted, isLockoutActive, examTimeRemaining, hasAcknowledgedExamRules, isQuizPassed]);
 
   // ---------------- ANTI-CHEAT PROTOCOL: TAB SWITCH ATTEMPT DECREMENTS 1 ATTEMPT ----------------
   const triggerProctorViolation = (violationType) => {
     if (quizSubmitted || isLockoutActive || !activeQuiz) return;
+    if (!hasAcknowledgedExamRules[activeQuiz.id] && !isQuizPassed) return; // Only monitor after official commencement
 
     try {
       const targetQuizId = activeQuiz?.id || activeUnit?.id;
@@ -450,6 +475,7 @@ export default function LessonPlayerPage() {
 
   useEffect(() => {
     if (!activeQuiz || quizSubmitted || isLockoutActive) return;
+    if (!hasAcknowledgedExamRules[activeQuiz.id] && !isQuizPassed) return;
 
     const handleVisibilityChange = () => {
       if (document.hidden) {
@@ -516,6 +542,8 @@ export default function LessonPlayerPage() {
         (activeUnit?.type === 'quiz' || activeUnit?.type === 'final_exam') &&
         !quizSubmitted &&
         !isLockoutActive &&
+        activeQuiz &&
+        hasAcknowledgedExamRules[activeQuiz.id] &&
         (Object.keys(quizAnswers).length > 0 || (examTimeRemaining !== null && examTimeRemaining < (activeUnit?.type === 'final_exam' ? 3600 : 1200)));
 
       if (isExamInProgress) {
@@ -532,7 +560,7 @@ export default function LessonPlayerPage() {
 
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [activeUnit?.id, activeQuiz?.id, quizSubmitted, isLockoutActive, quizAnswers, examTimeRemaining, enrolmentId]);
+  }, [activeUnit?.id, activeQuiz?.id, quizSubmitted, isLockoutActive, quizAnswers, examTimeRemaining, enrolmentId, hasAcknowledgedExamRules]);
 
   // Navigation handlers
   const handleSelectUnit = (unit) => {
@@ -543,6 +571,8 @@ export default function LessonPlayerPage() {
       (activeUnit?.type === 'quiz' || activeUnit?.type === 'final_exam') &&
       !quizSubmitted &&
       !isLockoutActive &&
+      activeQuiz &&
+      hasAcknowledgedExamRules[activeQuiz.id] &&
       (Object.keys(quizAnswers).length > 0 || (examTimeRemaining !== null && examTimeRemaining < (activeUnit?.type === 'final_exam' ? 3600 : 1200)));
 
     if (isExamInProgress && unit.id !== activeUnit?.id) {
@@ -841,25 +871,83 @@ export default function LessonPlayerPage() {
       });
     }
 
-    if (activeUnit?.type === 'final_exam') {
-      // Record Final Assessment Score
-      const db = mockEngine.getDb();
-      const currentEnrolment = db.enrolments.find((e) => e.id === enrolmentId);
-      if (currentEnrolment) {
-        currentEnrolment.final_assessment_score = scorePct;
-        currentEnrolment.final_assessment_passed = isPassed;
-        mockEngine.saveDb(db);
+    // Refresh enrolment state immediately so UI updates
+    const refreshedEnrolment = mockEngine.getEnrolment(enrolmentId);
+    if (refreshedEnrolment) {
+      setCurrentEnrolment({ ...refreshedEnrolment });
+    }
+
+    if (isPassed) {
+      // 1. Auto-complete all lessons of this module in enrolment so subsequent modules unlock
+      const currentMod = course?.modules?.find(
+        (m) => m.quiz?.id === activeQuiz.id || m.id === activeUnit?.moduleId
+      );
+      if (currentMod && currentMod.lessons) {
+        currentMod.lessons.forEach((l) => {
+          mockEngine.recordLessonCompletion(enrolmentId, l.id);
+        });
+        const refetched = mockEngine.getEnrolment(enrolmentId);
+        if (refetched) {
+          setCurrentEnrolment({ ...refetched });
+        }
       }
 
-      if (isPassed) {
-        // Trigger celebratory confetti and open Request Certificate modal
-        confetti({
-          particleCount: 120,
-          spread: 70,
-          origin: { y: 0.6 },
-          colors: ['#65F58A', '#35E6B5', '#00FFA3']
-        });
+      // 2. Fire celebratory confetti
+      confetti({
+        particleCount: 120,
+        spread: 80,
+        origin: { y: 0.6 },
+        colors: ['#65F58A', '#35E6B5', '#00FFA3', '#FFD700']
+      });
+
+      // 3. Check if final assessment vs intermediate module vs last module before final exam
+      if (activeUnit?.type === 'final_exam') {
+        const db = mockEngine.getDb();
+        const enr = db.enrolments.find((e) => e.id === enrolmentId);
+        if (enr) {
+          enr.final_assessment_score = scorePct;
+          enr.final_assessment_passed = isPassed;
+          mockEngine.saveDb(db);
+        }
         setCertRequestModalOpen(true);
+      } else {
+        const currentModIdx =
+          activeUnit?.moduleIndex ??
+          course?.modules?.findIndex((m) => m.quiz?.id === activeQuiz.id) ??
+          0;
+        const totalModules = course?.modules?.length || 0;
+        const isLastModule = currentModIdx >= totalModules - 1;
+
+        if (isLastModule) {
+          // Passed Module 12 (Final Module)! Final exam unlocked!
+          const finalExamUnit = allUnits.find((u) => u.type === 'final_exam');
+          setUnlockCelebrationModal({
+            isOpen: true,
+            type: 'final_round',
+            unlockedModuleIndex: null,
+            unlockedModuleName: 'Final Comprehensive Certification Assessment (50 MCQs)',
+            score: scorePct,
+            passingScore,
+            nextUnitId: finalExamUnit?.id || null
+          });
+        } else {
+          // Passed intermediate module (Module 1, 2, ...)!
+          const nextModIdx = currentModIdx + 1;
+          const nextModule = course?.modules?.[nextModIdx];
+          const nextUnit =
+            allUnits.find((u) => u.moduleIndex === nextModIdx && u.type === 'lesson') ||
+            allUnits.find((u) => u.moduleIndex === nextModIdx);
+
+          setUnlockCelebrationModal({
+            isOpen: true,
+            type: 'module',
+            unlockedModuleIndex: nextModIdx + 1,
+            unlockedModuleName: nextModule?.title || `Module ${nextModIdx + 1}`,
+            score: scorePct,
+            passingScore,
+            nextUnitId: nextUnit?.id || null
+          });
+        }
       }
     }
 
@@ -890,9 +978,73 @@ export default function LessonPlayerPage() {
     setQuizSubmitted(false);
     setQuizAnswers({});
     setQuizResult(null);
+    if (activeQuiz?.id) {
+      setHasAcknowledgedExamRules((prev) => ({
+        ...prev,
+        [activeQuiz.id]: false
+      }));
+    }
     const totalMinutes = activeUnit?.type === 'final_exam' ? 60 : 20;
     setExamTimeRemaining(totalMinutes * 60);
     loadAttemptsStatus(activeQuiz?.id);
+  };
+
+  const handleAcknowledgeExamRules = () => {
+    if (!activeQuiz) return;
+    setHasAcknowledgedExamRules((prev) => ({
+      ...prev,
+      [activeQuiz.id]: true
+    }));
+  };
+
+  const handleCancelExamRules = () => {
+    if (activeIndex > 0) {
+      const prev = allUnits[activeIndex - 1];
+      handleSelectUnit(prev);
+    } else {
+      navigate('/student');
+    }
+  };
+
+  const handleProceedFromCelebration = () => {
+    const nextUnitId = unlockCelebrationModal.nextUnitId;
+    const isFinalRound = unlockCelebrationModal.type === 'final_round';
+    setUnlockCelebrationModal({
+      isOpen: false,
+      type: 'module',
+      unlockedModuleIndex: null,
+      unlockedModuleName: '',
+      score: 0,
+      passingScore: 80,
+      nextUnitId: null
+    });
+
+    if (isFinalRound) {
+      const finalExamUnit = allUnits.find((u) => u.type === 'final_exam');
+      if (finalExamUnit) {
+        handleSelectUnit(finalExamUnit);
+      }
+    } else if (nextUnitId) {
+      const targetUnit = allUnits.find((u) => u.id === nextUnitId);
+      if (targetUnit) {
+        handleSelectUnit(targetUnit);
+        if (targetUnit.moduleId) {
+          setExpandedModules((prev) => ({ ...prev, [targetUnit.moduleId]: true }));
+        }
+      }
+    }
+  };
+
+  const handleDismissCelebration = () => {
+    setUnlockCelebrationModal({
+      isOpen: false,
+      type: 'module',
+      unlockedModuleIndex: null,
+      unlockedModuleName: '',
+      score: 0,
+      passingScore: 80,
+      nextUnitId: null
+    });
   };
 
   // Submit Certificate Request
@@ -1816,6 +1968,180 @@ export default function LessonPlayerPage() {
                 className="px-4 py-1.5 rounded-lg bg-[#092218] hover:bg-[#0c2a1e] text-[#65F58A] border border-[#65F58A]/30 transition-colors"
               >
                 Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= PRE-FLIGHT EXAM RULES MODAL ================= */}
+      {showExamRulesGate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-fadeIn">
+          <div className="max-w-xl w-full cyber-glass-panel rounded-2xl p-6 sm:p-8 border border-[#65F58A]/50 space-y-6 bg-[#081a13] shadow-[0_0_35px_rgba(101,245,138,0.25)]">
+            {/* Header */}
+            <div className="flex items-center space-x-3.5 pb-4 border-b border-[#65F58A]/20">
+              <div className="w-11 h-11 rounded-xl bg-[#65F58A]/15 border border-[#65F58A]/40 flex items-center justify-center text-[#65F58A] flex-shrink-0">
+                <ShieldAlert className="w-6 h-6" />
+              </div>
+              <div className="min-w-0">
+                <h3 className="text-lg font-bold text-white font-lora">
+                  Official Examination Protocols & Integrity Rules
+                </h3>
+                <p className="text-xs font-mono text-[#65F58A] truncate">
+                  {activeUnit?.type === 'final_exam'
+                    ? 'Final Comprehensive Certification Assessment (50 MCQs)'
+                    : `${activeUnit?.moduleTitle || 'Module'} Knowledge Check (20 MCQs)`}
+                </p>
+              </div>
+            </div>
+
+            {/* Protocol Items */}
+            <div className="space-y-3 font-mono text-xs">
+              <div className="p-3.5 rounded-xl bg-[#05140e] border border-[#65F58A]/20 flex items-start space-x-3">
+                <Award className="w-4 h-4 text-[#65F58A] mt-0.5 flex-shrink-0" />
+                <div>
+                  <span className="text-white font-bold block">80% Passing Threshold Required</span>
+                  <p className="text-[#72A88E] text-[11px] mt-0.5 leading-relaxed">
+                    You must achieve a minimum score of 80% to successfully clear this evaluation and unlock subsequent operational modules.
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-[#05140e] border border-[#65F58A]/20 flex items-start space-x-3">
+                <Clock className="w-4 h-4 text-[#35E6B5] mt-0.5 flex-shrink-0" />
+                <div>
+                  <span className="text-white font-bold block">
+                    Strict Time Limit: {activeUnit?.type === 'final_exam' ? '60 Minutes (50 MCQs)' : '20 Minutes (20 MCQs)'}
+                  </span>
+                  <p className="text-[#72A88E] text-[11px] mt-0.5 leading-relaxed">
+                    The exam timer runs continuously once initiated. If the timer expires before manual submission, your completed answers will be auto-submitted.
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-[#05140e] border border-amber-500/20 flex items-start space-x-3">
+                <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5 flex-shrink-0" />
+                <div>
+                  <span className="text-amber-300 font-bold block">Tab Switch & Proctor Integrity Protocol</span>
+                  <p className="text-[#72A88E] text-[11px] mt-0.5 leading-relaxed">
+                    Switching browser tabs, minimizing the screen, or navigating away during active testing will trigger an immediate proctor violation and forfeit 1 evaluation attempt.
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-[#05140e] border border-rose-500/20 flex items-start space-x-3">
+                <Lock className="w-4 h-4 text-rose-400 mt-0.5 flex-shrink-0" />
+                <div>
+                  <span className="text-rose-300 font-bold block">3-Strike Policy & 24-Hour Security Lockdown</span>
+                  <p className="text-[#72A88E] text-[11px] mt-0.5 leading-relaxed">
+                    Cadets are granted 3 attempts. If all 3 attempts are exhausted through failing scores or proctor violations, a mandatory 24-hour security lockout is automatically enforced.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 pt-3 border-t border-[#65F58A]/20">
+              <button
+                type="button"
+                onClick={handleCancelExamRules}
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-white/20 text-[#8BA2B5] hover:text-white font-mono text-xs transition-colors cursor-pointer"
+              >
+                Return to Study / Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleAcknowledgeExamRules}
+                className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-bold font-mono text-xs shadow-[0_0_20px_rgba(101,245,138,0.4)] flex items-center justify-center space-x-2 transition-all cursor-pointer"
+              >
+                <span>I Understand the Rules & Begin Exam</span>
+                <ArrowRight className="w-4 h-4 stroke-[3]" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= MODULE UNLOCK CELEBRATION MODAL ================= */}
+      {unlockCelebrationModal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-fadeIn">
+          <div className="max-w-lg w-full cyber-glass-panel rounded-2xl p-6 sm:p-8 border border-[#65F58A]/60 space-y-6 bg-[#081a13] shadow-[0_0_40px_rgba(101,245,138,0.3)] text-center">
+            {/* Visual Icon Badge */}
+            {unlockCelebrationModal.type === 'final_round' ? (
+              <div className="w-16 h-16 rounded-2xl bg-[#FFD700]/20 border border-[#FFD700]/50 flex items-center justify-center text-[#FFD700] mx-auto shadow-[0_0_30px_rgba(255,215,0,0.4)] animate-pulse">
+                <Award className="w-8 h-8" />
+              </div>
+            ) : (
+              <div className="w-16 h-16 rounded-2xl bg-[#65F58A]/20 border border-[#65F58A]/50 flex items-center justify-center text-[#65F58A] mx-auto shadow-[0_0_30px_rgba(101,245,138,0.4)] animate-bounce">
+                <Trophy className="w-8 h-8" />
+              </div>
+            )}
+
+            {/* Typography & Copy */}
+            {unlockCelebrationModal.type === 'final_round' ? (
+              <div className="space-y-2">
+                <h3 className="text-2xl font-bold text-white font-lora">
+                  Get ready for the final round!
+                </h3>
+                <p className="text-sm font-bold font-mono text-[#65F58A]">
+                  All the best, Cadet! 🎖️
+                </p>
+                <p className="text-xs text-[#B8E6CE] font-mono leading-relaxed pt-1">
+                  Phenomenal execution! You have conquered all operational modules of the curriculum. The comprehensive Final Certification Examination (50 MCQs) is now unlocked.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <h3 className="text-2xl font-bold text-white font-lora">
+                  Congratulations Cadet! 🎉
+                </h3>
+                <p className="text-sm font-bold font-mono text-[#65F58A]">
+                  You've Unlocked Module {unlockCelebrationModal.unlockedModuleIndex}!
+                </p>
+                <p className="text-xs text-[#B8E6CE] font-mono leading-relaxed pt-1">
+                  Outstanding operational performance! You passed with a score of <span className="text-white font-bold">{unlockCelebrationModal.score}%</span>. We're proud of your dedicated progress—keep the momentum surging!
+                </p>
+              </div>
+            )}
+
+            {/* Telemetry Stats Card */}
+            <div className="p-4 rounded-xl bg-[#05140e] border border-[#65F58A]/30 flex items-center justify-around font-mono text-xs">
+              <div>
+                <span className="text-[10px] text-[#72A88E] block uppercase">Exam Score</span>
+                <span className="text-white font-bold text-sm">{unlockCelebrationModal.score}%</span>
+              </div>
+              <div className="h-8 w-px bg-white/10" />
+              <div>
+                <span className="text-[10px] text-[#72A88E] block uppercase">Reward</span>
+                <span className="text-[#65F58A] font-bold text-sm">+100 RK Tokens</span>
+              </div>
+              <div className="h-8 w-px bg-white/10" />
+              <div>
+                <span className="text-[10px] text-[#72A88E] block uppercase">Status</span>
+                <span className="text-[#35E6B5] font-bold text-sm">PASSED</span>
+              </div>
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={handleDismissCelebration}
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-white/20 text-[#8BA2B5] hover:text-white font-mono text-xs transition-colors cursor-pointer"
+              >
+                Continue Later / Review
+              </button>
+              <button
+                type="button"
+                onClick={handleProceedFromCelebration}
+                className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-bold font-mono text-xs shadow-[0_0_20px_rgba(101,245,138,0.4)] flex items-center justify-center space-x-2 transition-all cursor-pointer"
+              >
+                <span>
+                  {unlockCelebrationModal.type === 'final_round'
+                    ? 'Proceed to Final Certification Exam'
+                    : `Proceed with Module ${unlockCelebrationModal.unlockedModuleIndex}`}
+                </span>
+                <ArrowRight className="w-4 h-4 stroke-[3]" />
               </button>
             </div>
           </div>
