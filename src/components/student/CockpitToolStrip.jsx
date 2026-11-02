@@ -8,6 +8,26 @@ import {
   Globe
 } from 'lucide-react';
 
+function KaliDragonIcon({ className = 'w-5 h-5' }) {
+  return (
+    <svg viewBox="0 0 120 100" className={className} fill="currentColor">
+      <path
+        d="M 10 24 C 30 18, 55 22, 68 38 C 50 32, 28 34, 12 40 C 28 38, 52 42, 64 54 C 45 49, 25 52, 14 58 C 30 55, 52 60, 62 70"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M 68 38 C 76 46, 85 45, 92 48 C 96 42, 92 38, 90 36 C 96 36, 102 42, 108 46 C 114 50, 110 54, 104 53 C 98 52, 92 56, 84 52 C 78 48, 70 44, 62 48 C 54 54, 52 66, 56 74 C 62 84, 76 86, 82 92 C 86 96, 84 100, 80 100 C 74 98, 68 94, 64 88 C 56 78, 52 70, 50 58 C 48 44, 56 34, 68 38 Z"
+        fill="currentColor"
+      />
+      <circle cx="96" cy="43" r="3" fill="#35E6B5" />
+    </svg>
+  );
+}
+
 /**
  * CockpitToolStrip.jsx
  * Sleek, vertical icon toolbar pinned on the right of the RedKross Learning Cockpit.
@@ -42,7 +62,7 @@ export default function CockpitToolStrip({
       id: 'cyberlab',
       label: 'CyberLab V3',
       desc: 'Kali Linux Web Desktop, DVWA & OWASP Juice Shop',
-      icon: Shield,
+      icon: KaliDragonIcon,
       onClick: onOpenCyberLab,
       isActive: isCyberLabOpen,
       badge: isCyberLabOpen ? 'ACTIVE' : 'V3',

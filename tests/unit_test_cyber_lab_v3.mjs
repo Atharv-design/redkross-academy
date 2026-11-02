@@ -178,6 +178,63 @@ test('CyberLabDesktopWindow component exists and exports OfficialKaliLogo and de
   assert.ok(src.includes('WHISKER_CATEGORIES'), 'Must include authentic Whisker menu categories');
   assert.ok(src.includes('desktop-context-menu'), 'Must include authentic desktop right-click context menu');
   assert.ok(src.includes('COMMAND SUGGESTIONS'), 'Must include curved command suggestions popover');
+  assert.ok(src.includes('activeWindow'), 'Must track active window and allow clean desktop state');
+  assert.ok(src.includes('handleCreateFolder'), 'Must support real desktop folder creation');
+  assert.ok(src.includes('handleCreateDocument'), 'Must support real desktop file creation');
+});
+
+// ================= TEST GROUP 5: 143+ COMMAND SUITE EXECUTION =================
+test('Basic Linux commands (whoami, pwd, id, uname) execute with authentic system metadata', () => {
+  const whoami = executeCyberLabCommand('whoami');
+  assert.equal(whoami.output, 'kali');
+
+  const pwd = executeCyberLabCommand('pwd');
+  assert.match(pwd.output, /\/home\/kali/);
+
+  const id = executeCyberLabCommand('id');
+  assert.match(id.output, /uid=1000\(kali\)/);
+
+  const uname = executeCyberLabCommand('uname -a');
+  assert.match(uname.output, /Linux kali-sandbox.*x86_64/);
+});
+
+test('Virtual filesystem commands (touch, ls, cat) create and retrieve files', () => {
+  executeCyberLabCommand('touch test_payload.py');
+  const ls = executeCyberLabCommand('ls');
+  assert.match(ls.output, /test_payload\.py/);
+
+  const catPasswd = executeCyberLabCommand('cat /etc/passwd');
+  assert.match(catPasswd.output, /root:x:0:0:root/);
+  assert.match(catPasswd.output, /kali:x:1000:1000/);
+});
+
+test('Network utilities (ifconfig, ip a, netstat, dig) return lab subnet details', () => {
+  const ifconfig = executeCyberLabCommand('ifconfig');
+  assert.match(ifconfig.output, /10\.10\.11\.100/);
+
+  const ipA = executeCyberLabCommand('ip a');
+  assert.match(ipA.output, /10\.10\.11\.100\/24/);
+
+  const netstat = executeCyberLabCommand('netstat -tulnp');
+  assert.match(netstat.output, /5901/); // KasmVNC port
+
+  const dig = executeCyberLabCommand('dig dvwa.lab');
+  assert.match(dig.output, /10\.10\.11\.110/);
+});
+
+test('Penetration testing & password tools (hydra, metasploit, gobuster, nikto) execute properly', () => {
+  const hydra = executeCyberLabCommand('hydra -l admin -P wordlist.txt 10.10.11.110 http-post-form');
+  assert.match(hydra.output, /1 valid password found/);
+
+  const msf = executeCyberLabCommand('msfconsole');
+  assert.match(msf.output, /metasploit v6/);
+  assert.match(msf.output, /msf6 >/);
+
+  const gobuster = executeCyberLabCommand('gobuster dir -u http://dvwa');
+  assert.match(gobuster.output, /\/login\.php/);
+
+  const nikto = executeCyberLabCommand('nikto -h dvwa');
+  assert.match(nikto.output, /Nikto v2\.5\.0/);
 });
 
 console.log(`\nResults: ${passedTests}/${totalTests} tests passed.`);
