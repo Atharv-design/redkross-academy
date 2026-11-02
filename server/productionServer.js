@@ -297,6 +297,21 @@ for (const route of apiRoutes) {
 }
 
 // -----------------------------------------------------------------------------
+// Explicit route for learning-paths forwarded to courses.js
+app.all('/api/learning-paths', async (req, res) => {
+  try {
+    const module = await import('../api/courses.js');
+    req.query = req.query || {};
+    req.query.type = 'learning_paths';
+    return await module.default(req, res);
+  } catch (err) {
+    console.error('[API Error] /api/learning-paths:', err);
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'Internal Server Error', details: err.message });
+    }
+  }
+});
+
 // 7. FRONTEND STATIC ASSET SERVING & SPA FALLBACK (dist/)
 // -----------------------------------------------------------------------------
 const distDir = path.join(__dirname, '../dist');
