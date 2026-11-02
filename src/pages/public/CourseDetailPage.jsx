@@ -155,8 +155,13 @@ export default function CourseDetailPage() {
     if (couponCode.trim().toUpperCase() === 'GRANT100' || couponCode.trim().toUpperCase() === 'REDKROSS2026') {
       setGrantSuccess(true);
       setGrantError('');
+      const userMetadata = {
+        email: currentUser.email,
+        full_name: currentUser.full_name || currentUser.displayName,
+        cadet_id: currentUser.cadet_id
+      };
       try {
-        await apiClient.enrol(currentUser.id, course.id);
+        await apiClient.enrol(currentUser.id, course.id, userMetadata);
         refreshBalance();
       } catch (e) {
         mockEngine.enrolStudent(currentUser.id, course.id);

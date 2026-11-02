@@ -225,9 +225,10 @@ export const apiClient = {
   // ENROLMENTS (Phase 2 Mandatory Authentication & Dynamic Automation Dispatch)
   async enrol(userId, courseId, userMetadata = {}) {
     let serverEnrolment = null;
-    const email = userMetadata.email || null;
-    const fullName = userMetadata.full_name || 'Cadet Operator';
-    const cadetId = userMetadata.cadet_id || 'RK-CADET';
+    const localUser = mockEngine.getDb().users?.find((u) => u.id === userId);
+    const email = (userMetadata.email || localUser?.email || '').trim().toLowerCase();
+    const fullName = userMetadata.full_name || localUser?.full_name || localUser?.name || 'Cadet Operator';
+    const cadetId = userMetadata.cadet_id || localUser?.cadet_id || 'RK-CADET';
 
     try {
       const res = await fetch(`${API_BASE}/enrol`, {
