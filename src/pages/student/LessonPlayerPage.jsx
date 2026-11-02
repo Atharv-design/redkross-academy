@@ -240,7 +240,7 @@ export default function LessonPlayerPage() {
         syncEnrolment();
       }
     });
-    return () => unsub();
+  return () => unsub();
   }, [enrolmentId]);
 
   // Initialize and load saved bookmarks from localStorage
@@ -620,6 +620,9 @@ export default function LessonPlayerPage() {
       return;
     }
 
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      setSidebarOpen(false);
+    }
     setActiveUnitId(unit.id);
     if (unit.type === 'lesson') {
       setSearchParams({ lessonId: unit.id });
@@ -1090,66 +1093,10 @@ export default function LessonPlayerPage() {
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
-  return (
-    <div className="min-h-screen bg-[#071018] text-[#F1F5F9] font-lora relative flex flex-col">
-      <CyberCloudsBackground />
-      <PixelBackground opacity={0.25} />
-
-      {/* ================= 1. OPEN EDX TOP SUB-NAVBAR & TABS ================= */}
-      <header className="sticky top-0 z-30 bg-[#071018]/95 backdrop-blur-xl border-b border-[#65F58A]/20 px-4 sm:px-6 py-3">
-        <div className="max-w-[1800px] mx-auto flex items-center justify-between gap-4">
-          {/* Left: Outline Toggle Button [ |< ] + Breadcrumb */}
-          <div className="flex items-center space-x-3 truncate">
-            <button
-              type="button"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-1.5 rounded-lg border border-[#65F58A]/30 bg-[#092218] text-[#65F58A] hover:bg-[#65F58A]/20 transition-all cursor-pointer flex-shrink-0"
-              title={sidebarOpen ? 'Hide Course Outline' : 'Show Course Outline'}
-            >
-              <Menu className="w-4 h-4" />
-            </button>
-
-            <div className="truncate text-xs font-mono">
-              <span className="text-[#72A88E] hidden md:inline">Course / </span>
-              <span className="text-white font-bold truncate">{course.title}</span>
-            </div>
-          </div>
-
-          {/* Right: Open edX Sub-Tabs & Live Progress */}
-          <div className="flex items-center space-x-4 flex-shrink-0">
-            <div className="hidden sm:flex items-center space-x-4 text-xs font-mono">
-              <Link
-                to={`/student/course/${course.id}?tab=course`}
-                className="text-[#65F58A] hover:underline"
-              >
-                Course
-              </Link>
-              <Link
-                to={`/student/course/${course.id}?tab=progress`}
-                className="text-[#8BA2B5] hover:text-white transition-colors"
-              >
-                Progress
-              </Link>
-            </div>
-
-            {/* Quick Completion / Grade Pill */}
-            <div className="flex items-center space-x-2 pl-3 border-l border-[#65F58A]/20 text-xs font-mono">
-              <span className="text-[#72A88E] hidden sm:inline">Progress:</span>
-              <span className="px-2.5 py-1 rounded-md bg-[#092218] border border-[#65F58A]/30 text-[#65F58A] font-bold">
-                {progressData.percentage}%
-              </span>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* ================= 2. MAIN COURSEWARE WORKSPACE ================= */}
-      {/* Container with items-start so sticky sidebar sticks within viewport */}
-      <div className="flex-1 flex max-w-[1800px] w-full mx-auto relative items-start">
-        {/* ================= LEFT: STICKY COURSE OUTLINE SIDEBAR ================= */}
-        {sidebarOpen && (
-          <aside className="w-80 sm:w-96 sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto custom-scrollbar border-r border-[#65F58A]/20 bg-[#061510]/95 backdrop-blur-xl flex flex-col flex-shrink-0 transition-all duration-300 z-20 self-start">
-            {/* Sidebar Header */}
+    // Render Course Outline Sidebar Content (shared between Desktop & Mobile Slide-Over Drawer)
+  const renderSidebarContent = () => (
+    <div className="flex flex-col h-full">
+      {/* Sidebar Header */}
             <div className="p-4 border-b border-[#65F58A]/20 flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <BookOpen className="w-4 h-4 text-[#65F58A]" />
@@ -1424,12 +1371,90 @@ export default function LessonPlayerPage() {
                 );
               })()}
             </div>
+    </div>
+  );
+
+
+  return (
+    <div className="w-full min-h-screen bg-[#071018] text-[#F1F5F9] font-lora relative flex flex-col overflow-x-hidden">
+      <CyberCloudsBackground />
+      <PixelBackground opacity={0.25} />
+
+      {/* ================= 1. OPEN EDX TOP SUB-NAVBAR & TABS ================= */}
+      <header className="sticky top-0 z-30 bg-[#071018]/95 backdrop-blur-xl border-b border-[#65F58A]/20 px-4 sm:px-6 lg:px-8 py-3">
+        <div className="w-full flex items-center justify-between gap-4">
+          {/* Left: Outline Toggle Button [ |< ] + Breadcrumb */}
+          <div className="flex items-center space-x-3 truncate min-w-0">
+            <button
+              type="button"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="p-2 rounded-xl border border-[#65F58A]/30 bg-[#092218] text-[#65F58A] hover:bg-[#65F58A]/20 transition-all cursor-pointer flex-shrink-0"
+              title={sidebarOpen ? 'Hide Course Outline' : 'Show Course Outline'}
+            >
+              <Menu className="w-4 h-4" />
+            </button>
+
+            <div className="truncate text-xs font-mono min-w-0">
+              <span className="text-[#72A88E] hidden md:inline">Course / </span>
+              <span className="text-white font-bold truncate">{course.title}</span>
+            </div>
+          </div>
+
+          {/* Right: Open edX Sub-Tabs & Live Progress */}
+          <div className="flex items-center space-x-4 flex-shrink-0">
+            <div className="hidden sm:flex items-center space-x-4 text-xs font-mono">
+              <Link
+                to={`/student/course/${course.id}?tab=course`}
+                className="text-[#65F58A] hover:underline"
+              >
+                Course
+              </Link>
+              <Link
+                to={`/student/course/${course.id}?tab=progress`}
+                className="text-[#8BA2B5] hover:text-white transition-colors"
+              >
+                Progress
+              </Link>
+            </div>
+
+            {/* Quick Completion / Grade Pill */}
+            <div className="flex items-center space-x-2 pl-3 border-l border-[#65F58A]/20 text-xs font-mono">
+              <span className="text-[#72A88E] hidden sm:inline">Progress:</span>
+              <span className="px-2.5 py-1 rounded-full bg-[#092218] border border-[#65F58A]/30 text-[#65F58A] font-bold">
+                {progressData.percentage}%
+              </span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* ================= 2. MAIN COURSEWARE WORKSPACE ================= */}
+      {/* Container with items-start so sticky sidebar sticks within viewport */}
+      <div className="flex-1 flex w-full relative items-start">
+        {/* ================= LEFT: STICKY COURSE OUTLINE SIDEBAR ================= */}
+        {/* Desktop Sticky Course Outline Sidebar */}
+        {sidebarOpen && (
+          <aside className="w-80 lg:w-88 xl:w-96 sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto custom-scrollbar border-r border-[#65F58A]/20 bg-[#061510]/95 backdrop-blur-xl hidden lg:flex flex-col flex-shrink-0 transition-all duration-300 z-20 self-start">
+            {renderSidebarContent()}
           </aside>
         )}
 
+        {/* Mobile Slide-Over Touch Drawer */}
+        {sidebarOpen && (
+          <div className="fixed inset-0 z-50 lg:hidden animate-fadeIn">
+            <div
+              className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
+              onClick={() => setSidebarOpen(false)}
+            />
+            <aside className="fixed inset-y-0 left-0 w-[85vw] max-w-sm bg-[#061510] border-r border-[#65F58A]/30 shadow-2xl flex flex-col h-full z-10 animate-fade-in">
+              {renderSidebarContent()}
+            </aside>
+          </div>
+        )}
+
         {/* ================= RIGHT: SCROLLABLE MAIN CONTENT WORKSPACE ================= */}
-        <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 space-y-6">
-          <div className="max-w-4xl mx-auto space-y-6">
+        <main className="flex-1 min-w-0 w-full p-4 sm:p-6 lg:p-8 space-y-6 pb-28">
+          <div className={`${(activeUnit?.type === 'quiz' || activeUnit?.type === 'final_exam') ? 'w-full' : 'max-w-5xl mx-auto w-full'} space-y-6`}>
             {/* Top Unit Title Bar & Bookmark Toggle */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#65F58A]/20 gap-3">
               <div>
@@ -1782,7 +1807,7 @@ export default function LessonPlayerPage() {
 
             {/* ================= 3. BOTTOM SEQUENTIAL NAVIGATION BAR (Hidden during active CBT examination to prevent navigation conflict) ================= */}
             {!((activeUnit?.type === 'quiz' || activeUnit?.type === 'final_exam') && !quizSubmitted) && (
-              <div className="pt-8 pb-12 border-t border-[#65F58A]/20 flex items-center justify-between gap-4">
+              <div className="pt-8 pb-10 border-t border-[#65F58A]/20 flex flex-wrap items-center justify-between gap-4">
                 <button
                   type="button"
                   onClick={handlePrevUnit}

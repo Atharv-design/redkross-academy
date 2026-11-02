@@ -11,9 +11,20 @@ import {
   RotateCcw,
   LayoutGrid,
   Check,
-  AlertCircle
+  AlertCircle,
+  X
 } from 'lucide-react';
 
+/**
+ * RedKross Academy - CBT Examination Console (Hallmark v3.0 Soft Modern & Responsive Edition)
+ * Features:
+ * - 100% Full-bleed edge-to-edge layout on desktop/laptop
+ * - 100% Mobile Responsive with dedicated mobile question matrix bottom-sheet drawer
+ * - Soft rounded radii (rounded-2xl, rounded-xl, rounded-lg, rounded-full) - Zero sharp brutalist edges
+ * - Strict RedKross cyber theme (#071018, #35E6B5, #65F58A, #72A88E)
+ * - Dual typography: Lora serif for questions and prompts, Space Mono for telemetry and timers
+ * - Zero overflow guarantee: text wrapping, min-w-0 safety, and responsive touch targets (>= 48px)
+ */
 export default function ExamCBTInterface({
   quiz,
   enrolmentId,
@@ -31,6 +42,7 @@ export default function ExamCBTInterface({
 }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [showSubmitConfirmModal, setShowSubmitConfirmModal] = useState(false);
+  const [mobilePaletteOpen, setMobilePaletteOpen] = useState(false);
 
   const questions = quiz?.questions || [];
   const totalQuestions = questions.length;
@@ -56,16 +68,13 @@ export default function ExamCBTInterface({
 
   const handleNextQuestion = () => {
     if (currentQuestionIndex < totalQuestions - 1) {
-      // Normal progression to next question
       setCurrentQuestionIndex((prev) => prev + 1);
     } else {
       // At the last question index: check if there are unattempted questions earlier
       const firstUnanswered = questions.findIndex((q) => !answers[q.id]);
       if (firstUnanswered !== -1 && firstUnanswered !== currentQuestionIndex) {
-        // Jump to first unanswered question so cadet can complete in random order
         setCurrentQuestionIndex(firstUnanswered);
       } else {
-        // All attempted or reviewed -> prompt submit confirmation modal
         setShowSubmitConfirmModal(true);
       }
     }
@@ -114,12 +123,12 @@ export default function ExamCBTInterface({
   // -------------------------------------------------------------
   if (isLockoutActive || (attemptsRemaining === 0 && !isSubmitted)) {
     return (
-      <div className="p-8 rounded-2xl bg-rose-950/70 border border-rose-500/50 space-y-5 shadow-2xl animate-fade-in">
-        <div className="flex items-center space-x-3 text-rose-400">
+      <div className="w-full p-6 sm:p-8 rounded-2xl bg-rose-950/70 border border-rose-500/50 space-y-5 shadow-2xl animate-fade-in">
+        <div className="flex items-center space-x-3.5 text-rose-400">
           <AlertTriangle className="w-8 h-8 flex-shrink-0 animate-bounce" />
-          <div>
+          <div className="min-w-0">
             <h3 className="text-xl font-bold font-lora text-white">24-Hour Proctoring Cooldown Enforced</h3>
-            <p className="text-xs font-mono text-rose-300">
+            <p className="text-xs font-mono text-rose-300 truncate">
               {attemptsRemaining === 0
                 ? 'All 3 evaluation attempts have been exhausted for this window.'
                 : 'Security Protocol Enforced: Academic dishonesty prevention or focus loss intercepted.'}
@@ -139,7 +148,7 @@ export default function ExamCBTInterface({
           </div>
         </div>
 
-        <div className="pt-2 flex items-center justify-between text-xs font-mono text-gray-400">
+        <div className="pt-2 flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-gray-400">
           <span>Security Protocol: STRICT_24H_COOLDOWN</span>
           <span className="text-[#65F58A]">Automatic Reset after 24h</span>
         </div>
@@ -156,7 +165,7 @@ export default function ExamCBTInterface({
     const passingScore = quiz?.passing_score || 80;
 
     return (
-      <div className="space-y-8 animate-fade-in">
+      <div className="w-full space-y-8 animate-fade-in">
         {/* Top Score Banner */}
         <div
           className={`p-6 sm:p-8 rounded-2xl border shadow-2xl relative overflow-hidden ${
@@ -176,14 +185,14 @@ export default function ExamCBTInterface({
               >
                 {isPassed ? <CheckCircle2 className="w-9 h-9" /> : <XCircle className="w-9 h-9" />}
               </div>
-              <div>
+              <div className="min-w-0">
                 <span className="text-[11px] font-mono uppercase tracking-wider block opacity-80">
                   Evaluation Performance Report
                 </span>
-                <h3 className="text-2xl font-bold font-lora">
+                <h3 className="text-xl sm:text-2xl font-bold font-lora">
                   {isPassed ? 'Operational Standard Met (Passed)' : 'Passing Threshold Not Reached'}
                 </h3>
-                <p className="text-xs font-mono mt-1 opacity-90">
+                <p className="text-xs font-mono mt-1 opacity-90 leading-relaxed">
                   {isPassed
                     ? 'Congratulations! You have verified operational competence for this curriculum milestone.'
                     : `Required standard: ${passingScore}% passing score. Review the rationales below and prepare for retake.`}
@@ -206,7 +215,7 @@ export default function ExamCBTInterface({
           <div className="mt-6 pt-5 border-t border-current/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs font-mono">
             <div className="flex items-center space-x-2">
               <span className="opacity-70">Window Status:</span>
-              <span className={`px-2.5 py-1 rounded font-bold border ${attemptBadge.className}`}>
+              <span className={`px-2.5 py-1 rounded-full font-bold border ${attemptBadge.className}`}>
                 {isPassed ? 'PASSED (UNLOCKED)' : attemptBadge.label}
               </span>
             </div>
@@ -224,7 +233,7 @@ export default function ExamCBTInterface({
                     <span>Retake Evaluation (Attempt {Math.min(3, attemptsUsed + 1)} of 3)</span>
                   </button>
                 ) : (
-                  <span className="px-4 py-2 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold">
+                  <span className="px-4 py-2 rounded-xl bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold">
                     0 Attempts Left • 24-Hour Cooldown Enforced
                   </span>
                 )}
@@ -256,11 +265,11 @@ export default function ExamCBTInterface({
                   }`}
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <span className="font-lora text-sm font-bold text-white leading-relaxed">
+                    <span className="font-lora text-sm font-bold text-white leading-relaxed break-words">
                       {idx + 1}. {q.text}
                     </span>
                     <span
-                      className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold uppercase tracking-wider flex-shrink-0 ${
+                      className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold uppercase tracking-wider flex-shrink-0 ${
                         isCorrect
                           ? 'bg-[#65F58A]/20 text-[#65F58A] border border-[#65F58A]/40'
                           : 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
@@ -271,7 +280,7 @@ export default function ExamCBTInterface({
                   </div>
 
                   {/* Options summary */}
-                  <div className="space-y-1.5 pl-2 font-mono text-[11px]">
+                  <div className="space-y-1.5 pl-1 sm:pl-2 font-mono text-[11px]">
                     {q.options?.map((opt, oIdx) => {
                       const letter = String.fromCharCode(65 + oIdx);
                       const isUserSelected = selectedOptId === opt.id;
@@ -280,7 +289,7 @@ export default function ExamCBTInterface({
                       return (
                         <div
                           key={opt.id}
-                          className={`p-2 rounded-lg flex items-center justify-between border ${
+                          className={`p-2.5 rounded-lg flex items-center justify-between gap-2 border ${
                             isOptCorrect
                               ? 'bg-[#65F58A]/10 text-[#65F58A] border-[#65F58A]/40 font-semibold'
                               : isUserSelected
@@ -288,17 +297,17 @@ export default function ExamCBTInterface({
                               : 'text-gray-400 border-transparent'
                           }`}
                         >
-                          <span className="flex items-center gap-2">
-                            <span className="font-bold">({letter})</span>
-                            <span>{opt.text}</span>
+                          <span className="flex items-start sm:items-center gap-2 min-w-0">
+                            <span className="font-bold flex-shrink-0">({letter})</span>
+                            <span className="break-words">{opt.text}</span>
                           </span>
                           {isOptCorrect && (
-                            <span className="text-[10px] text-[#65F58A] uppercase font-bold">
+                            <span className="text-[10px] text-[#65F58A] uppercase font-bold flex-shrink-0">
                               ✓ Correct Answer
                             </span>
                           )}
                           {!isOptCorrect && isUserSelected && (
-                            <span className="text-[10px] text-rose-400 uppercase font-bold">
+                            <span className="text-[10px] text-rose-400 uppercase font-bold flex-shrink-0">
                               ✗ Your Choice
                             </span>
                           )}
@@ -309,7 +318,7 @@ export default function ExamCBTInterface({
 
                   {/* Explanation Note */}
                   {q.explanation && (
-                    <div className="p-3 rounded-lg bg-black/60 border border-[#65F58A]/20 text-[11px] font-lora text-[#C9EFE0] leading-relaxed">
+                    <div className="p-3.5 rounded-lg bg-black/60 border border-[#65F58A]/20 text-[11px] font-lora text-[#C9EFE0] leading-relaxed break-words">
                       <strong className="font-mono text-[#65F58A] block uppercase text-[10px] mb-1">
                         Technical Rationale:
                       </strong>
@@ -326,75 +335,89 @@ export default function ExamCBTInterface({
   }
 
   // -------------------------------------------------------------
-  // 3. ACTIVE CBT EXAMINATION INTERFACE (PER USER WIREFRAME)
+  // 3. ACTIVE CBT EXAMINATION INTERFACE (EDGE-TO-EDGE FULL-SCREEN COCKPIT)
   // -------------------------------------------------------------
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="w-full space-y-5 animate-fade-in">
       {/* ----------------- TOP META & ASSESSMENT HUD ----------------- */}
-      <div className="p-4 sm:p-5 rounded-2xl bg-[#092218]/60 border border-[#65F58A]/20 backdrop-blur-md flex flex-wrap items-center justify-between gap-4 shadow-xl">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center text-[#65F58A] flex-shrink-0">
+      <div className="w-full p-4 sm:p-5 rounded-2xl bg-[#092218]/70 border border-[#65F58A]/30 backdrop-blur-md flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl">
+        <div className="flex items-center space-x-3.5 min-w-0">
+          <div className="w-11 h-11 rounded-xl bg-[#65F58A]/15 border border-[#65F58A]/35 flex items-center justify-center text-[#65F58A] flex-shrink-0 shadow-[0_0_12px_rgba(101,245,138,0.2)]">
             {isFinalExam ? <Shield className="w-5 h-5" /> : <Award className="w-5 h-5" />}
           </div>
-          <div>
-            <h3 className="text-base sm:text-lg font-bold font-lora text-white">
+          <div className="min-w-0">
+            <h3 className="text-base sm:text-lg font-bold font-lora text-white truncate">
               {quiz?.title || 'Interactive Assessment'}
             </h3>
-            <div className="flex items-center space-x-2 text-[11px] font-mono text-[#72A88E]">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] font-mono text-[#72A88E]">
               <span>Passing: {quiz?.passing_score || 80}%</span>
               <span>•</span>
-              <span>{totalQuestions} Graded Questions</span>
+              <span>{totalQuestions} Graded MCQs</span>
+              <span>•</span>
+              <span className="text-[#35E6B5]">Active Proctoring // Tab-Lock Enforced</span>
             </div>
           </div>
         </div>
 
-        {/* Live Badges: Attempts Remaining & Timer */}
-        <div className="flex items-center space-x-3">
-          {/* Live Attempts Counter */}
-          <div className={`px-3 py-1.5 rounded-lg border text-xs font-mono font-bold flex items-center space-x-1.5 ${attemptBadge.className}`}>
-            <span className="w-2 h-2 rounded-full bg-current animate-pulse" />
-            <span>{attemptBadge.label}</span>
-          </div>
+        {/* Live Badges: Attempts Remaining, Mobile Drawer Toggle & Timer */}
+        <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto justify-between md:justify-end">
+          {/* Mobile Question Matrix Trigger */}
+          <button
+            type="button"
+            onClick={() => setMobilePaletteOpen(true)}
+            className="lg:hidden px-3 py-1.5 rounded-xl bg-[#061510] border border-[#65F58A]/40 text-[#65F58A] text-xs font-mono font-bold flex items-center space-x-1.5 transition-all active:scale-95 shadow-sm"
+          >
+            <LayoutGrid className="w-3.5 h-3.5" />
+            <span>Matrix ({attemptedCount}/{totalQuestions})</span>
+          </button>
 
-          {/* Countdown Clock */}
-          <div className="px-3.5 py-1.5 rounded-lg bg-black/70 border border-[#35E6B5]/40 text-[#35E6B5] text-xs font-mono font-bold flex items-center space-x-2 shadow-inner">
-            <Clock className="w-4 h-4 animate-spin-slow" />
-            <span className="tabular-nums text-sm font-extrabold">{formatTimer(timerSeconds)}</span>
+          <div className="flex items-center space-x-2.5">
+            {/* Live Attempts Counter */}
+            <div className={`px-3 py-1.5 rounded-full border text-[11px] font-mono font-bold flex items-center space-x-1.5 ${attemptBadge.className}`}>
+              <span className="w-2 h-2 rounded-full bg-current animate-pulse" />
+              <span className="truncate">{attemptBadge.label}</span>
+            </div>
+
+            {/* Countdown Clock */}
+            <div className="px-3.5 py-1.5 rounded-xl bg-black/80 border border-[#35E6B5]/50 text-[#35E6B5] text-xs font-mono font-bold flex items-center space-x-2 shadow-[0_0_12px_rgba(53,230,181,0.25)]">
+              <Clock className="w-4 h-4 animate-spin-slow text-[#35E6B5]" />
+              <span className="tabular-nums text-sm font-extrabold tracking-wider">{formatTimer(timerSeconds)}</span>
+            </div>
           </div>
         </div>
       </div>
 
       {/* ----------------- MAIN SPLIT CBT WORKSPACE (WIREFRAME LAYOUT) ----------------- */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* ================= LEFT / CENTER: CURRENT QUESTION & OPTIONS (~68%) ================= */}
-        <div className="lg:col-span-8 bg-[#092218]/40 border border-[#65F58A]/25 rounded-2xl p-6 sm:p-8 space-y-6 shadow-2xl relative min-w-0">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start w-full">
+        {/* ================= LEFT / CENTER: CURRENT QUESTION & OPTIONS (~70%) ================= */}
+        <div className="lg:col-span-8 xl:col-span-9 bg-[#092218]/40 border border-[#65F58A]/25 rounded-2xl p-5 sm:p-8 space-y-6 shadow-2xl backdrop-blur-md relative min-w-0">
           {/* Question Header & Points */}
-          <div className="flex items-center justify-between pb-4 border-b border-[#65F58A]/15 text-xs font-mono">
+          <div className="flex flex-wrap items-center justify-between pb-4 border-b border-[#65F58A]/15 text-xs font-mono gap-2">
             <div className="flex items-center space-x-2">
-              <span className="px-2.5 py-1 rounded bg-[#65F58A]/15 text-[#65F58A] font-bold border border-[#65F58A]/30">
+              <span className="px-2.5 py-1 rounded-lg bg-[#65F58A]/15 text-[#65F58A] font-bold border border-[#65F58A]/30">
                 Question {currentQuestionIndex + 1} of {totalQuestions}
               </span>
               {answers[currentQuestion?.id] ? (
-                <span className="px-2 py-0.5 rounded bg-[#65F58A]/20 text-[#65F58A] text-[10px] uppercase font-bold flex items-center gap-1">
+                <span className="px-2.5 py-1 rounded-full bg-[#65F58A]/20 text-[#65F58A] text-[10px] uppercase font-bold flex items-center gap-1 border border-[#65F58A]/30">
                   <Check className="w-3 h-3" /> Attempted
                 </span>
               ) : (
-                <span className="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 text-[10px] uppercase font-bold flex items-center gap-1">
+                <span className="px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-300 text-[10px] uppercase font-bold flex items-center gap-1 border border-rose-500/30">
                   <AlertCircle className="w-3 h-3" /> Not Attempted
                 </span>
               )}
             </div>
-            <span className="text-[#72A88E] hidden sm:inline">1.0 point (graded)</span>
+            <span className="text-[#72A88E] font-mono text-xs">1.0 point (graded)</span>
           </div>
 
-          {/* Question Statement (Arrow "Question" in Wireframe) */}
+          {/* Question Statement */}
           <div className="space-y-2">
-            <h4 className="text-base sm:text-xl font-bold font-lora text-white leading-relaxed">
+            <h4 className="text-base sm:text-xl font-bold font-lora text-white leading-relaxed break-words">
               {currentQuestion?.text || 'Loading question statement...'}
             </h4>
           </div>
 
-          {/* Options List (Arrow "options" in Wireframe) */}
+          {/* Options List */}
           <div className="space-y-3 pt-2">
             {currentQuestion?.options?.map((opt, oIdx) => {
               const letter = String.fromCharCode(65 + oIdx);
@@ -405,101 +428,120 @@ export default function ExamCBTInterface({
                   key={opt.id || oIdx}
                   type="button"
                   onClick={() => handleSelectOption(opt.id)}
-                  className={`w-full text-left p-4 rounded-xl text-xs sm:text-sm font-mono transition-all flex items-center space-x-4 border cursor-pointer ${
+                  className={`w-full text-left p-4 sm:p-4.5 rounded-xl text-xs sm:text-sm font-mono transition-all flex items-center space-x-3.5 sm:space-x-4 border cursor-pointer min-h-[52px] ${
                     isSelected
                       ? 'bg-[#092218] border-[#65F58A] text-white font-bold shadow-[0_0_20px_rgba(101,245,138,0.25)] ring-1 ring-[#65F58A]'
                       : 'bg-[#05130e]/90 border-[#65F58A]/20 text-slate-200 hover:border-[#65F58A]/50 hover:bg-[#071913]'
                   }`}
                 >
-                  {/* Round Radio Indicator (Matching circles in Wireframe) */}
+                  {/* Key Badge [A] - [D] */}
                   <span
-                    className={`w-7 h-7 rounded-full border-2 flex items-center justify-center flex-shrink-0 font-bold text-xs transition-all ${
+                    className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg border flex items-center justify-center font-bold text-xs sm:text-sm flex-shrink-0 transition-all ${
                       isSelected
-                        ? 'border-[#65F58A] bg-[#65F58A] text-[#071018]'
-                        : 'border-[#65F58A]/40 bg-[#061510] text-[#72A88E]'
+                        ? 'border-[#65F58A] bg-[#65F58A] text-[#071018] shadow-[0_0_10px_rgba(101,245,138,0.4)]'
+                        : 'border-[#65F58A]/40 bg-black/50 text-[#65F58A]'
                     }`}
                   >
                     {letter}
                   </span>
 
                   {/* Option Text */}
-                  <span className="flex-1 leading-relaxed text-sm font-normal">
+                  <span className="flex-1 leading-relaxed break-words whitespace-normal text-left">
                     {opt.text}
                   </span>
 
-                  {/* Check Indicator */}
-                  {isSelected && (
-                    <CheckCircle2 className="w-5 h-5 text-[#65F58A] flex-shrink-0 animate-scale-in" />
-                  )}
+                  {/* Radio Indicator */}
+                  <span
+                    className={`w-5 h-5 rounded-full border flex items-center justify-center flex-shrink-0 ${
+                      isSelected ? 'border-[#65F58A] bg-[#65F58A]' : 'border-gray-600 bg-transparent'
+                    }`}
+                  >
+                    {isSelected && <span className="w-2 h-2 rounded-full bg-[#071018]" />}
+                  </span>
                 </button>
               );
             })}
           </div>
 
-          {/* Bottom Action Bar (PREVIOUS and SAVE & NEXT in Wireframe) */}
-          <div className="pt-6 border-t border-[#65F58A]/20 flex items-center justify-between gap-4">
-            {/* Previous Button (Left) */}
+          {/* Bottom Action Bar (PREVIOUS and SAVE & NEXT) */}
+          <div className="pt-5 border-t border-[#65F58A]/15 flex flex-wrap items-center justify-between gap-3">
+            {/* Previous Button */}
             <button
               type="button"
               onClick={handlePrevQuestion}
               disabled={currentQuestionIndex === 0}
-              className={`px-5 py-3 rounded-xl text-xs font-mono font-bold flex items-center space-x-2 border transition-all ${
-                currentQuestionIndex > 0
-                  ? 'bg-[#092218] hover:bg-[#0c2a1e] text-[#65F58A] border-[#65F58A]/40 cursor-pointer shadow-md'
-                  : 'bg-black/30 text-gray-600 border-white/5 cursor-not-allowed opacity-50'
-              }`}
+              className="px-4 sm:px-5 py-2.5 rounded-xl border border-white/20 bg-black/40 hover:bg-black/70 text-gray-200 text-xs font-mono font-bold flex items-center space-x-2 transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
             >
               <ChevronLeft className="w-4 h-4" />
               <span>PREVIOUS</span>
             </button>
 
-            {/* Save & Next Button (Right) */}
-            <button
-              type="button"
-              onClick={handleNextQuestion}
-              className="px-6 py-3 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] active:scale-[0.99] text-[#071018] font-bold text-xs font-mono tracking-wider shadow-[0_0_20px_rgba(101,245,138,0.4)] transition-all cursor-pointer flex items-center space-x-2"
-            >
-              <span>{currentQuestionIndex === totalQuestions - 1 ? 'SAVE & FINISH' : 'SAVE & NEXT'}</span>
-              <ChevronRight className="w-4 h-4" />
-            </button>
+            {/* Save & Next / Submit Button */}
+            <div className="flex items-center space-x-3">
+              {currentQuestionIndex === totalQuestions - 1 ? (
+                <button
+                  type="button"
+                  onClick={() => setShowSubmitConfirmModal(true)}
+                  className="px-5 sm:px-6 py-2.5 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-mono font-bold text-xs sm:text-sm transition-all shadow-[0_0_20px_rgba(101,245,138,0.4)] flex items-center space-x-2 cursor-pointer"
+                >
+                  <span>REVIEW & SUBMIT</span>
+                  <CheckCircle2 className="w-4 h-4" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleNextQuestion}
+                  className="px-5 sm:px-6 py-2.5 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-mono font-bold text-xs sm:text-sm transition-all shadow-[0_0_15px_rgba(101,245,138,0.35)] flex items-center space-x-2 cursor-pointer"
+                >
+                  <span>SAVE & NEXT</span>
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* ================= RIGHT: QUESTION NUMBERS PALETTE (~32%) ================= */}
-        {/* Top-Right box with arrow "question numbers" in Wireframe */}
-        <div className="lg:col-span-4 lg:sticky lg:top-24 h-fit self-start bg-[#092218]/50 border border-[#65F58A]/25 rounded-2xl p-5 sm:p-6 space-y-5 shadow-2xl backdrop-blur-md">
+        {/* ================= RIGHT: QUESTION NUMBERS PALETTE (DESKTOP DOCK ~30%) ================= */}
+        <div className="hidden lg:block lg:col-span-4 xl:col-span-3 bg-[#092218]/40 border border-[#65F58A]/25 rounded-2xl p-5 shadow-2xl backdrop-blur-md sticky top-20 min-w-0">
           {/* Palette Title */}
-          <div className="flex items-center justify-between pb-3 border-b border-[#65F58A]/20">
+          <div className="pb-3 border-b border-[#65F58A]/20 flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <LayoutGrid className="w-4 h-4 text-[#65F58A]" />
-              <h5 className="text-sm font-bold font-lora text-white">Questions Palette</h5>
+              <h5 className="font-lora font-bold text-sm text-white">Question Matrix</h5>
             </div>
             <span className="text-[11px] font-mono text-[#72A88E]">
-              {attemptedCount} / {totalQuestions} Answered
+              {attemptedCount} / {totalQuestions} Done
             </span>
           </div>
 
-          {/* Marking Legend (Explicitly matching user's handwriting notes) */}
-          <div className="p-3 rounded-xl bg-black/50 border border-[#65F58A]/15 space-y-2 text-[11px] font-mono">
-            <div className="text-[10px] text-gray-400 uppercase tracking-wider">Palette Color Coding:</div>
+          {/* Marking Legend */}
+          <div className="py-3 border-b border-[#65F58A]/15 space-y-2 text-[11px] font-mono">
             <div className="flex items-center justify-between">
-              <span className="flex items-center space-x-2">
-                <span className="w-3 h-3 rounded-sm bg-[#65F58A] inline-block" />
-                <span className="text-[#65F58A] font-semibold">Attempted ({attemptedCount})</span>
-              </span>
-              <span className="flex items-center space-x-2">
-                <span className="w-3 h-3 rounded-sm bg-rose-500 inline-block" />
-                <span className="text-rose-300 font-semibold">Not Attempted ({unattemptedCount})</span>
-              </span>
+              <div className="flex items-center space-x-2">
+                <span className="w-3 h-3 rounded-full bg-[#65F58A] shadow-[0_0_6px_rgba(101,245,138,0.6)]" />
+                <span className="text-slate-300">Attempted</span>
+              </div>
+              <span className="font-bold text-[#65F58A]">{attemptedCount}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <span className="w-3 h-3 rounded-full bg-rose-500/80 border border-rose-500" />
+                <span className="text-slate-300">Not Attempted</span>
+              </div>
+              <span className="font-bold text-rose-300">{unattemptedCount}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <span className="w-3 h-3 rounded-full border-2 border-white bg-transparent" />
+                <span className="text-slate-300">Current Question</span>
+              </div>
+              <span className="font-bold text-white">Q{currentQuestionIndex + 1}</span>
             </div>
           </div>
 
           {/* Grid of Question Numbers (1..N) */}
-          <div className="space-y-2">
-            <span className="text-[10px] font-mono text-gray-400 uppercase tracking-wider block">
-              Jump To Question:
-            </span>
-            <div className="grid grid-cols-5 gap-2 max-h-[320px] overflow-y-auto custom-scrollbar p-1">
+          <div className="py-3">
+            <div className="grid grid-cols-4 xl:grid-cols-5 gap-2 max-h-[320px] overflow-y-auto custom-scrollbar p-1">
               {questions.map((q, idx) => {
                 const isAnswered = Boolean(answers[q.id]);
                 const isCurrent = idx === currentQuestionIndex;
@@ -509,7 +551,7 @@ export default function ExamCBTInterface({
                     key={q.id || idx}
                     type="button"
                     onClick={() => setCurrentQuestionIndex(idx)}
-                    className={`h-10 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer flex items-center justify-center border ${
+                    className={`h-9 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer flex items-center justify-center border ${
                       isCurrent
                         ? 'ring-2 ring-white ring-offset-2 ring-offset-[#071018] scale-105 z-10'
                         : ''
@@ -540,13 +582,93 @@ export default function ExamCBTInterface({
         </div>
       </div>
 
+      {/* ----------------- MOBILE QUESTION MATRIX BOTTOM SHEET DRAWER ----------------- */}
+      {mobilePaletteOpen && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md lg:hidden flex flex-col justify-end animate-fadeIn">
+          <div className="bg-[#071018] border-t border-[#65F58A]/40 rounded-t-3xl p-5 max-h-[82vh] overflow-y-auto space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between pb-3 border-b border-[#65F58A]/20">
+              <div className="flex items-center space-x-2">
+                <LayoutGrid className="w-4 h-4 text-[#65F58A]" />
+                <h5 className="font-lora font-bold text-base text-white">Question Matrix</h5>
+              </div>
+              <button
+                type="button"
+                onClick={() => setMobilePaletteOpen(false)}
+                className="p-1.5 rounded-lg bg-black/60 border border-white/20 text-gray-300 hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Marking Legend */}
+            <div className="flex items-center justify-around py-2 border-b border-[#65F58A]/15 text-xs font-mono">
+              <div className="flex items-center space-x-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#65F58A]" />
+                <span className="text-[#65F58A] font-bold">{attemptedCount} Answered</span>
+              </div>
+              <div className="flex items-center space-x-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
+                <span className="text-rose-300 font-bold">{unattemptedCount} Remaining</span>
+              </div>
+            </div>
+
+            {/* Grid of Question Numbers */}
+            <div className="grid grid-cols-5 sm:grid-cols-6 gap-2.5 py-2 max-h-[45vh] overflow-y-auto custom-scrollbar">
+              {questions.map((q, idx) => {
+                const isAnswered = Boolean(answers[q.id]);
+                const isCurrent = idx === currentQuestionIndex;
+
+                return (
+                  <button
+                    key={q.id || idx}
+                    type="button"
+                    onClick={() => {
+                      setCurrentQuestionIndex(idx);
+                      setMobilePaletteOpen(false);
+                    }}
+                    className={`h-11 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer flex items-center justify-center border ${
+                      isCurrent
+                        ? 'ring-2 ring-white ring-offset-2 ring-offset-[#071018] scale-105 z-10'
+                        : ''
+                    } ${
+                      isAnswered
+                        ? 'bg-[#65F58A] text-[#071018] border-[#65F58A] shadow-md'
+                        : 'bg-rose-950/70 text-rose-300 border-rose-500/50'
+                    }`}
+                  >
+                    {idx + 1}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Mobile Submit CTA */}
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setMobilePaletteOpen(false);
+                  setShowSubmitConfirmModal(true);
+                }}
+                className="w-full py-3 rounded-xl bg-[#65F58A] text-[#071018] font-bold text-xs font-mono tracking-wider transition-all cursor-pointer flex items-center justify-center space-x-2 shadow-lg"
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                <span>SUBMIT ASSESSMENT NOW</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ----------------- SUBMISSION CONFIRMATION MODAL ----------------- */}
       {showSubmitConfirmModal && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[#071018] border border-[#65F58A]/40 rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl animate-scale-in">
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn">
+          <div className="bg-[#071018] border border-[#65F58A]/50 rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl">
             <div className="flex items-center space-x-3 text-[#65F58A]">
-              <Award className="w-7 h-7" />
-              <div>
+              <div className="w-10 h-10 rounded-xl bg-[#65F58A]/15 border border-[#65F58A]/30 flex items-center justify-center text-[#65F58A]">
+                <Award className="w-6 h-6" />
+              </div>
+              <div className="min-w-0">
                 <h4 className="text-lg font-bold font-lora text-white">Confirm Assessment Submission</h4>
                 <p className="text-xs font-mono text-[#72A88E]">Verification & Grading Protocol</p>
               </div>
@@ -572,7 +694,7 @@ export default function ExamCBTInterface({
             </div>
 
             {unattemptedCount > 0 && (
-              <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-mono flex items-center gap-2">
+              <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-mono flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 flex-shrink-0" />
                 <span>Warning: You have {unattemptedCount} unanswered question(s). Unanswered questions count as 0 points.</span>
               </div>
@@ -582,7 +704,7 @@ export default function ExamCBTInterface({
               <button
                 type="button"
                 onClick={() => setShowSubmitConfirmModal(false)}
-                className="px-4 py-2.5 rounded-xl bg-black/60 hover:bg-black text-gray-300 border border-gray-700 text-xs font-mono transition-colors"
+                className="px-4 py-2.5 rounded-xl bg-black/60 hover:bg-black text-gray-300 border border-gray-700 text-xs font-mono transition-colors cursor-pointer"
               >
                 Back to Questions
               </button>
@@ -592,7 +714,7 @@ export default function ExamCBTInterface({
                   setShowSubmitConfirmModal(false);
                   onSubmitExam();
                 }}
-                className="px-5 py-2.5 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-bold text-xs font-mono transition-all shadow-[0_0_15px_rgba(101,245,138,0.4)]"
+                className="px-5 py-2.5 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-bold text-xs font-mono transition-all shadow-[0_0_15px_rgba(101,245,138,0.4)] cursor-pointer"
               >
                 Confirm & Submit
               </button>
