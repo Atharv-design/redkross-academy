@@ -65,14 +65,14 @@ it('CockpitTerminalPanel supports multi-terminal tabs with add and close actions
 });
 
 it('CockpitTerminalPanel contains dynamic chapter-aware help and commands drawer', () => {
-  assert(panelSrc.includes('getChapterCommands'), 'Missing getChapterCommands logic');
+  assert(panelSrc.includes('getCommandsForModule'), 'Missing getCommandsForModule logic');
   assert(panelSrc.includes('isHelpOpen'), 'Missing help open toggle');
-  assert(panelSrc.includes('Chapter Suggested Commands'), 'Missing suggested commands heading');
+  assert(panelSrc.includes('Chapter Suggested Exercises'), 'Missing suggested exercises heading');
 });
 
 it('CockpitTerminalPanel provides 1-click Run and Copy buttons for commands', () => {
-  assert(panelSrc.includes('executeCommand(item.cmd)'), 'Missing 1-click Run invocation');
-  assert(panelSrc.includes('navigator.clipboard.writeText(item.cmd)'), 'Missing 1-click Copy invocation');
+  assert(panelSrc.includes('executeCommand(item.command)'), 'Missing 1-click Run invocation');
+  assert(panelSrc.includes('navigator.clipboard.writeText(item.command)'), 'Missing 1-click Copy invocation');
 });
 
 it('CockpitTerminalPanel provides mobile backdrop overlay and slide-over support', () => {
