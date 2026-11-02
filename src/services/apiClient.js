@@ -222,9 +222,13 @@ export const apiClient = {
     }
   },
 
-  // ENROLMENTS (Phase 2 Mandatory Authentication)
-  async enrol(userId, courseId) {
+  // ENROLMENTS (Phase 2 Mandatory Authentication & Dynamic Automation Dispatch)
+  async enrol(userId, courseId, userMetadata = {}) {
     let serverEnrolment = null;
+    const email = userMetadata.email || null;
+    const fullName = userMetadata.full_name || 'Cadet Operator';
+    const cadetId = userMetadata.cadet_id || 'RK-CADET';
+
     try {
       const res = await fetch(`${API_BASE}/enrol`, {
         method: 'POST',
@@ -232,7 +236,13 @@ export const apiClient = {
           'Content-Type': 'application/json',
           ...this.getAuthHeader()
         },
-        body: JSON.stringify({ user_id: userId, course_id: courseId })
+        body: JSON.stringify({
+          user_id: userId,
+          course_id: courseId,
+          email,
+          full_name: fullName,
+          cadet_id: cadetId
+        })
       });
       if (res.ok) {
         const data = await res.json();
@@ -241,8 +251,63 @@ export const apiClient = {
     } catch (apiErr) {
       console.warn('Fallback local enrolment:', apiErr.message);
     }
+
+    // Direct asynchronous event dispatch to n8n automation hub
+    // Ensures the email is delivered to the exact logged-in user's email address
+    if (email) {
+      try {
+        const course = mockEngine.getCourseById(courseId);
+        fetch('https://atharv-design.app.n8n.cloud/webhook/redkross-academy-events', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            event: 'student.enrolled',
+            timestamp: new Date().toISOString(),
+            data: {
+              userId,
+              email: email.trim().toLowerCase(),
+              fullName,
+              cadetId,
+              courseTitle: course?.title || 'Defensive Cyber Curriculum',
+              enrolledAt: new Date().toISOString(),
+              tokenBalance: 150
+            }
+          })
+        }).catch((webhookErr) => {
+          console.warn('[n8n Webhook Dispatch Warning]:', webhookErr.message);
+        });
+      } catch (hookErr) {
+        console.warn('[Direct Hook Exception]:', hookErr);
+      }
+    }
+
     const localEnr = mockEngine.enrolStudent(userId, courseId);
     return serverEnrolment || localEnr;
+  },
+
+  async cancelEnrolment(enrolmentId, userId, courseId) {
+    let serverSuccess = false;
+    try {
+      const res = await fetch(`${API_BASE}/enrol`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          ...this.getAuthHeader()
+        },
+        body: JSON.stringify({
+          enrolment_id: enrolmentId,
+          user_id: userId,
+          course_id: courseId
+        })
+      });
+      if (res.ok) {
+        serverSuccess = true;
+      }
+    } catch (apiErr) {
+      console.warn('Fallback local cancelEnrolment:', apiErr.message);
+    }
+    const localResult = mockEngine.cancelEnrolment(enrolmentId, userId);
+    return { success: true, serverSuccess, localResult };
   },
 
   async getEnrolments(userId) {

@@ -19,7 +19,9 @@ import {
   FileCheck2,
   Layers,
   GraduationCap,
-  PlayCircle
+  PlayCircle,
+  XCircle,
+  ShieldAlert
 } from 'lucide-react';
 import { mockEngine } from '../../services/db/mockEngine';
 import { apiClient } from '../../services/apiClient';
@@ -44,6 +46,7 @@ export default function CourseDetailPage() {
   const [grantSuccess, setGrantSuccess] = useState(false);
   const [grantError, setGrantError] = useState('');
   const [enrolling, setEnrolling] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
 
   useEffect(() => {
     if (slug) {
@@ -97,8 +100,14 @@ export default function CourseDetailPage() {
     }
 
     setEnrolling(true);
+    const userMetadata = {
+      email: currentUser.email,
+      full_name: currentUser.full_name || currentUser.displayName,
+      cadet_id: currentUser.cadet_id
+    };
+
     try {
-      await apiClient.enrol(currentUser.id, course.id);
+      await apiClient.enrol(currentUser.id, course.id, userMetadata);
       refreshBalance();
       navigate(`/student/course/${course.id}`);
     } catch (err) {
@@ -108,6 +117,31 @@ export default function CourseDetailPage() {
       navigate(`/student/course/${course.id}`);
     } finally {
       setEnrolling(false);
+    }
+  };
+
+  const handleCancelEnrolment = async () => {
+    if (!currentUser || !activeEnrolment) return;
+
+    if (course.price > 0) {
+      alert('Institutional Policy: Paid course tracks are non-refundable and cannot be cancelled.');
+      return;
+    }
+
+    if (!window.confirm(`Are you sure you want to cancel your free enrolment in "${course.title}"? Your progress and chapter quiz scores will be reset.`)) {
+      return;
+    }
+
+    setCancelling(true);
+    try {
+      await apiClient.cancelEnrolment(activeEnrolment.id, currentUser.id, course.id);
+      refreshBalance();
+      navigate('/student');
+    } catch (err) {
+      console.error('Cancel enrolment error:', err);
+      alert(err.message || 'Unable to cancel enrolment');
+    } finally {
+      setCancelling(false);
     }
   };
 
@@ -407,14 +441,34 @@ export default function CourseDetailPage() {
                     </button>
                   </div>
                 ) : isEnrolled ? (
-                  <button
-                    type="button"
-                    onClick={() => navigate(`/student/course/${course.id}`)}
-                    className="w-full py-3.5 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] active:scale-[0.99] text-[#071018] font-royal font-bold text-xs tracking-wider flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(101,245,138,0.4)] transition-all cursor-pointer"
-                  >
-                    <BookOpen className="w-4 h-4" />
-                    <span>View Course in Classroom</span>
-                  </button>
+                  <div className="space-y-2">
+                    <button
+                      type="button"
+                      onClick={() => navigate(`/student/course/${course.id}`)}
+                      className="w-full py-3.5 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] active:scale-[0.99] text-[#071018] font-royal font-bold text-xs tracking-wider flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(101,245,138,0.4)] transition-all cursor-pointer"
+                    >
+                      <BookOpen className="w-4 h-4" />
+                      <span>View Course in Classroom</span>
+                    </button>
+
+                    {/* Free Cancellation vs Paid Non-Refundable Indicator */}
+                    {(!course.price || course.price === 0) ? (
+                      <button
+                        type="button"
+                        onClick={handleCancelEnrolment}
+                        disabled={cancelling}
+                        className="w-full py-2.5 rounded-xl bg-red-950/25 hover:bg-red-950/50 border border-red-500/30 text-xs font-mono text-red-300 hover:text-red-200 flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                      >
+                        <XCircle className="w-3.5 h-3.5 text-red-400" />
+                        <span>{cancelling ? 'Cancelling...' : 'Cancel Enrolment (Free Track)'}</span>
+                      </button>
+                    ) : (
+                      <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/25 text-amber-300 text-[11px] font-mono flex items-center justify-center gap-2">
+                        <Lock className="w-3.5 h-3.5 text-amber-400" />
+                        <span>Paid Course Track • Non-Refundable</span>
+                      </div>
+                    )}
+                  </div>
                 ) : (
                   <button
                     type="button"

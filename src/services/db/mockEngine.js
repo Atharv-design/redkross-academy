@@ -1130,6 +1130,51 @@ class MockEngine {
     return newEnrolment;
   }
 
+  cancelEnrolment(enrolmentId, userId) {
+    const db = this.getDb();
+    const enrolment = (db.enrolments || []).find((e) => e.id === enrolmentId && (e.user_id === userId || !userId));
+    if (!enrolment) {
+      throw new Error('Enrolment not found');
+    }
+    const course = (db.courses || []).find((c) => c.id === enrolment.course_id);
+
+    // Strict Institutional Policy Guard: Paid courses are non-refundable and cannot be cancelled
+    if (course && typeof course.price === 'number' && course.price > 0) {
+      throw new Error('Institutional Policy: Paid course tracks are non-refundable and cannot be cancelled.');
+    }
+
+    // Remove enrolment from active enrolments
+    db.enrolments = (db.enrolments || []).filter((e) => e.id !== enrolmentId);
+
+    // Clean up attempts and retry windows for this enrolment
+    if (db.quiz_retry_windows) {
+      Object.keys(db.quiz_retry_windows).forEach((key) => {
+        if (key.startsWith(`${enrolmentId}_`)) {
+          delete db.quiz_retry_windows[key];
+        }
+      });
+    }
+
+    // Audit log cancellation
+    if (!db.audit_logs) db.audit_logs = [];
+    db.audit_logs.push({
+      id: `aud_${Date.now()}`,
+      actor_id: userId || enrolment.user_id,
+      action: 'COURSE_ENROLMENT_CANCELLED',
+      entity_type: 'enrolments',
+      entity_id: enrolmentId,
+      details: `Cadet cancelled free enrolment for ${course?.title || enrolment.course_id}`,
+      created_at: new Date().toISOString()
+    });
+
+    this.saveDb(db, {
+      type: 'ENROLMENT_CANCELLED',
+      payload: { enrolmentId, userId, courseId: enrolment.course_id }
+    });
+
+    return { success: true };
+  }
+
   /**
    * PRD Section 5: Progress % = (Completed Mandatory Lessons / Total Mandatory Lessons) * 100
    */

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { BookOpen, Award, Clock, ArrowRight, CheckCircle2, Coins, Flame, Shield, Play, Lock, AlertCircle, ShieldAlert, Download, ExternalLink, Loader2 } from 'lucide-react';
+import { BookOpen, Award, Clock, ArrowRight, CheckCircle2, Coins, Flame, Shield, Play, Lock, AlertCircle, ShieldAlert, Download, ExternalLink, Loader2, XCircle } from 'lucide-react';
 import { useAuth } from '../../services/auth/authContext';
 import { mockEngine } from '../../services/db/mockEngine';
+import { apiClient } from '../../services/apiClient';
 import RedKrossOfficialCertificate from '../../components/certificate/RedKrossOfficialCertificate';
 import { downloadCertificatePdf } from '../../utils/pdfGenerator';
 
@@ -10,6 +11,8 @@ export default function StudentDashboard() {
   const { currentUser, tokenBalance, isSuspended } = useAuth();
   const [downloadingCertId, setDownloadingCertId] = useState(null);
   const [activePdfCred, setActivePdfCred] = useState(null);
+  const [cancelModal, setCancelModal] = useState({ isOpen: false, enrolment: null, course: null });
+  const [cancellingEnrolment, setCancellingEnrolment] = useState(false);
 
   const [dashboardData, setDashboardData] = useState({
     enrolments: [],
@@ -106,6 +109,21 @@ export default function StudentDashboard() {
       alert('Unable to generate PDF certificate directly. Please try using print to PDF or reload.');
     } finally {
       setDownloadingCertId(null);
+    }
+  };
+
+  const handleConfirmCancel = async () => {
+    if (!cancelModal.enrolment) return;
+    setCancellingEnrolment(true);
+    try {
+      await apiClient.cancelEnrolment(cancelModal.enrolment.id, currentUser.id, cancelModal.enrolment.course_id);
+      loadData();
+      setCancelModal({ isOpen: false, enrolment: null, course: null });
+    } catch (err) {
+      console.error('Failed to cancel enrolment:', err);
+      alert(err.message || 'Unable to cancel enrolment');
+    } finally {
+      setCancellingEnrolment(false);
     }
   };
 
@@ -320,6 +338,28 @@ export default function StudentDashboard() {
                         <ArrowRight className="w-3.5 h-3.5" />
                       </Link>
                     </div>
+
+                    {/* Cancellation (Free) vs Non-Refundable (Paid) Policy */}
+                    <div className="pt-2 border-t border-surface-border/50 flex items-center justify-between text-[11px] font-mono">
+                      {(!crs.price || crs.price === 0) ? (
+                        <button
+                          type="button"
+                          onClick={() => setCancelModal({ isOpen: true, enrolment: enr, course: crs })}
+                          className="text-red-400/90 hover:text-red-300 flex items-center gap-1 transition-colors hover:underline cursor-pointer"
+                        >
+                          <XCircle className="w-3.5 h-3.5 text-red-400" />
+                          <span>Cancel Enrolment</span>
+                        </button>
+                      ) : (
+                        <span className="text-amber-400/80 flex items-center gap-1 text-[10px]" title="Paid course tracks are non-refundable under Institutional Policy">
+                          <Lock className="w-3 h-3 text-amber-400" />
+                          <span>Paid Track (Non-Refundable)</span>
+                        </span>
+                      )}
+                      <span className="text-[10px] text-slate-500 font-mono">
+                        {(!crs.price || crs.price === 0) ? 'Free Curriculum' : 'Paid Specialist'}
+                      </span>
+                    </div>
                   </div>
                 );
               })}
@@ -451,6 +491,48 @@ export default function StudentDashboard() {
             credential={activePdfCred}
             containerId="student-pdf-export-element"
           />
+        </div>
+      )}
+
+      {/* Cancel Free Enrolment Confirmation Modal */}
+      {cancelModal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+          <div className="max-w-md w-full ultra-glass-panel rounded-2xl p-6 border border-red-500/40 shadow-[0_0_30px_rgba(239,68,68,0.25)] space-y-4">
+            <div className="w-12 h-12 rounded-xl bg-red-950/60 border border-red-500/40 flex items-center justify-center text-red-400 mx-auto">
+              <XCircle className="w-6 h-6" />
+            </div>
+            <div className="text-center space-y-1.5">
+              <h3 className="text-lg font-royal font-bold text-white">Cancel Course Enrolment?</h3>
+              <p className="text-xs text-[#65F58A] font-mono font-bold">{cancelModal.course?.title}</p>
+              <p className="text-xs text-slate-300 leading-relaxed pt-2">
+                This free course track will be removed from your cadet learning portal and all recorded chapter progress will be reset. You can re-enrol anytime from the curriculum catalog.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-3 pt-3">
+              <button
+                type="button"
+                onClick={() => setCancelModal({ isOpen: false, enrolment: null, course: null })}
+                className="ultra-glass-btn-secondary py-2.5 rounded-xl text-xs font-mono text-center cursor-pointer"
+              >
+                Keep Enrolment
+              </button>
+              <button
+                type="button"
+                disabled={cancellingEnrolment}
+                onClick={handleConfirmCancel}
+                className="py-2.5 rounded-xl bg-red-600 hover:bg-red-500 active:scale-[0.98] text-white font-mono text-xs font-bold transition-all shadow-[0_0_15px_rgba(239,68,68,0.4)] flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+              >
+                {cancellingEnrolment ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Cancelling...</span>
+                  </>
+                ) : (
+                  <span>Confirm & Cancel</span>
+                )}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
