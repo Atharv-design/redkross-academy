@@ -1,4 +1,5 @@
 import { sql, json, cors } from './_db.js';
+import { dispatchWebhook } from './_webhooks.js';
 
 export default async function handler(req, res) {
   if (cors(req, res)) return;
@@ -65,6 +66,28 @@ export default async function handler(req, res) {
           ${attempt_id || quiz_id}, ${JSON.stringify({ reason, strikes: 3, locked_until: lockedUntil })}, NOW()
         )
       `;
+
+      // Asynchronously trigger n8n Exam Lockout recovery notice
+      (async () => {
+        try {
+          const userRes = user_id ? await sql`SELECT full_name, email FROM users WHERE id = ${user_id} LIMIT 1` : [];
+          const quizRes = await sql`SELECT title FROM quizzes WHERE id = ${quiz_id} LIMIT 1`;
+          const uObj = userRes[0] || {};
+          const qObj = quizRes[0] || {};
+
+          dispatchWebhook('exam.lockout', {
+            enrolmentId: enrolment_id,
+            userId: user_id,
+            email: uObj.email,
+            studentName: uObj.full_name || 'Cadet Operator',
+            quizTitle: qObj.title || 'Technical Capstone Assessment',
+            lockoutUntil,
+            reason: reason || 'Focus loss/tab switch limit exceeded (3 strikes)'
+          });
+        } catch (hookErr) {
+          console.warn('[Webhook Hook Error]:', hookErr.message);
+        }
+      })();
     }
 
     return json(res, {

@@ -1,4 +1,5 @@
-﻿import { sql, json, cors } from './_db.js';
+import { sql, json, cors } from './_db.js';
+import { dispatchWebhook } from './_webhooks.js';
 
 /**
  * Super Admin Management & Operations Endpoint (Phase 4 & Phase 5)
@@ -138,6 +139,30 @@ export default async function handler(req, res) {
           INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
           VALUES (${`aud_${Date.now()}`}, ${adminUserId}, 'CREDENTIAL_DISPATCHED', 'credentials', ${credId}, ${`Dispatched official credential ${verificationId} to student ${user_id}`}, NOW())
         `;
+
+        // Asynchronously dispatch n8n Certificate & LinkedIn automation
+        (async () => {
+          try {
+            const userRes = await sql`SELECT full_name, email FROM users WHERE id = ${user_id} LIMIT 1`;
+            const courseRes = await sql`SELECT title FROM courses WHERE id = ${course_id} LIMIT 1`;
+            const uObj = userRes[0] || {};
+            const cObj = courseRes[0] || {};
+
+            dispatchWebhook('credential.dispatched', {
+              credentialId: credId,
+              verificationId,
+              userId: user_id,
+              studentName: uObj.full_name || 'Cadet Operator',
+              email: uObj.email,
+              courseTitle: cObj.title || credential_title || 'Defensive Cyber Curriculum',
+              credentialTitle: credential_title || cObj.title || 'Certified Cybersecurity Specialist',
+              gradePercentage: grade_percentage || 100
+            });
+          } catch (hookErr) {
+            console.warn('[Webhook Hook Error]:', hookErr.message);
+          }
+        })();
+
         return json(res, { success: true, credential_id: credId, verification_id: verificationId });
       }
 

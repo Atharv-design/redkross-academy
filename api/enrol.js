@@ -1,4 +1,5 @@
 import { sql, json, cors } from './_db.js';
+import { dispatchWebhook } from './_webhooks.js';
 
 export default async function handler(req, res) {
   if (cors(req, res)) return;
@@ -48,6 +49,28 @@ export default async function handler(req, res) {
           VALUES (${rewardId}, ${user_id}, 50, 'welcome_bonus', 'Initial Academy Enrolment Welcome Bonus', ${rewardId}, NOW())
         `;
       }
+
+      // Asynchronously trigger n8n onboarding automation (non-blocking)
+      (async () => {
+        try {
+          const userRes = await sql`SELECT full_name, email, cadet_id FROM users WHERE id = ${user_id} LIMIT 1`;
+          const courseRes = await sql`SELECT title FROM courses WHERE id = ${course_id} LIMIT 1`;
+          const userObj = userRes[0] || {};
+          const courseObj = courseRes[0] || {};
+
+          dispatchWebhook('student.enrolled', {
+            userId: user_id,
+            email: userObj.email,
+            fullName: userObj.full_name || 'Cadet Operator',
+            cadetId: userObj.cadet_id || 'RK-UNKNOWN',
+            courseTitle: courseObj.title || 'Defensive Cyber Curriculum',
+            enrolledAt: new Date().toISOString(),
+            tokenBalance: 100
+          });
+        } catch (hookErr) {
+          console.warn('[Webhook Hook Error]:', hookErr.message);
+        }
+      })();
 
       return json(res, { enrolment: newEnrolment[0], success: true });
     }
