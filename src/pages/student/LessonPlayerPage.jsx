@@ -34,7 +34,8 @@ import {
   Film,
   Trophy,
   ShieldAlert,
-  ArrowRight
+  ArrowRight,
+  PanelRight
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { mockEngine } from '../../services/db/mockEngine';
@@ -118,6 +119,9 @@ export default function LessonPlayerPage() {
   const [progressData, setProgressData] = useState({ percentage: 0, completed: 0, total: 0 });
   const [savingProgress, setSavingProgress] = useState(false);
   const [activeTab, setActiveTab] = useState('notes'); // 'notes' | 'assignment'
+  const [inspectorOpen, setInspectorOpen] = useState(true);
+  const [inspectorTab, setInspectorTab] = useState('inspector'); // 'inspector' | 'resources'
+  const [reflectionNote, setReflectionNote] = useState('');
 
   // Video & Multi-Media State
   const videoRef = useRef(null);
@@ -1093,7 +1097,209 @@ export default function LessonPlayerPage() {
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
-    // Render Course Outline Sidebar Content (shared between Desktop & Mobile Slide-Over Drawer)
+    // Render Section 3: Right Sticky Tactical Notes & Lab Inspector
+  const renderTacticalInspector = () => (
+    <aside className="w-80 xl:w-88 sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto custom-scrollbar border-l border-[#65F58A]/20 bg-[#061510]/95 backdrop-blur-xl hidden xl:flex flex-col p-5 space-y-5 flex-shrink-0 z-20 self-start animate-fade-in">
+      {/* Header */}
+      <div className="flex items-center justify-between pb-3 border-b border-[#65F58A]/20">
+        <div className="flex items-center space-x-2">
+          <FileText className="w-4 h-4 text-[#65F58A]" />
+          <h4 className="font-lora font-bold text-sm text-white">Tactical Notes</h4>
+        </div>
+        <div className="flex items-center space-x-2">
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/30 font-bold">
+            +150 Tokens
+          </span>
+          <button
+            type="button"
+            onClick={() => setInspectorOpen(false)}
+            className="p-1 rounded-lg text-[#72A88E] hover:text-[#65F58A] transition-colors cursor-pointer"
+            title="Collapse Inspector"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* Sub-tabs: Lab Inspector vs Resources/Summary */}
+      <div className="flex items-center rounded-xl bg-black/60 p-1 border border-[#65F58A]/20 text-xs font-mono">
+        <button
+          type="button"
+          onClick={() => setInspectorTab('inspector')}
+          className={`flex-1 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+            inspectorTab === 'inspector'
+              ? 'bg-[#65F58A] text-[#071018] shadow-sm'
+              : 'text-[#72A88E] hover:text-white'
+          }`}
+        >
+          Lab Inspector
+        </button>
+        <button
+          type="button"
+          onClick={() => setInspectorTab('resources')}
+          className={`flex-1 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+            inspectorTab === 'resources'
+              ? 'bg-[#65F58A] text-[#071018] shadow-sm'
+              : 'text-[#72A88E] hover:text-white'
+          }`}
+        >
+          Resources
+        </button>
+      </div>
+
+      {/* Tab 1: Lab Inspector (Assignment & Findings) */}
+      {inspectorTab === 'inspector' && (
+        <div className="space-y-4">
+          <div className="p-3.5 rounded-xl bg-[#092218]/50 border border-[#65F58A]/20 space-y-2">
+            <div className="flex items-center space-x-2 text-xs font-mono text-[#65F58A] font-bold">
+              <FileCheck className="w-4 h-4" />
+              <span>Lab Findings & Forensics</span>
+            </div>
+            <p className="text-[11px] font-mono text-[#8BA2B5] leading-relaxed">
+              {isAssignment
+                ? 'Submit your packet triage and laboratory findings dossier as a single verified PDF (Max 25 MB).'
+                : 'Unit Telemetry: Defensive laboratory briefing and operational objectives verified.'}
+            </p>
+          </div>
+
+          {isAssignment ? (
+            <div className="space-y-3">
+              <FileUploadProgressBar
+                isDisabled={submittingPdf}
+                dropZoneTitle="Drag & drop lab PDF here"
+                dropZoneSubtitle="Verified .PDF only (Max 25 MB)"
+                maxSizeBytes={25 * 1024 * 1024}
+                onFileUploaded={({ name, dataUrl }) => {
+                  setUploadingFileName(name);
+                  setUploadingDataUrl(dataUrl);
+                }}
+                onFileRemoved={() => {
+                  setUploadingFileName('');
+                  setUploadingDataUrl('');
+                }}
+              />
+
+              <button
+                type="button"
+                onClick={confirmAssignmentSubmit}
+                disabled={submittingPdf || !uploadingDataUrl}
+                className={`w-full py-2.5 rounded-xl font-bold font-mono text-xs flex items-center justify-center space-x-2 transition-all cursor-pointer ${
+                  uploadingDataUrl && !submittingPdf
+                    ? 'bg-[#65F58A] text-[#071018] hover:bg-[#35E6B5] shadow-[0_0_15px_rgba(101,245,138,0.4)]'
+                    : 'bg-[#092218] text-[#8BA2B5] border border-white/10 opacity-50 cursor-not-allowed'
+                }`}
+              >
+                {submittingPdf ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Encrypting & Submitting...</span>
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4" />
+                    <span>Confirm Lab Submission</span>
+                  </>
+                )}
+              </button>
+
+              {assignmentSubmission && (
+                <div className="p-3.5 rounded-xl bg-[#061510] border border-[#65F58A]/30 text-xs font-mono space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[#65F58A] font-bold flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#65F58A]" />
+                      <span>Verified On File</span>
+                    </span>
+                    <span
+                      className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold ${
+                        assignmentSubmission.status === 'passed'
+                          ? 'bg-[#65F58A]/20 text-[#65F58A] border border-[#65F58A]/30'
+                          : 'bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30'
+                      }`}
+                    >
+                      {assignmentSubmission.status}
+                    </span>
+                  </div>
+                  <p className="text-white truncate font-medium text-[11px]">{assignmentSubmission.file_name}</p>
+                  <div className="flex items-center justify-between text-[10px] text-[#72A88E] pt-1 border-t border-white/5">
+                    <span>Submitted: {new Date(assignmentSubmission.submitted_at).toLocaleDateString()}</span>
+                    {assignmentSubmission.grade && (
+                      <span className="text-white font-bold">Grade: {assignmentSubmission.grade}%</span>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="p-4 rounded-xl bg-black/40 border border-white/10 text-xs font-mono text-gray-400 space-y-2">
+              <span className="text-white font-bold block">Standard Laboratory Unit</span>
+              <p className="text-[11px] text-[#72A88E] leading-relaxed">
+                Review the core operational principles in the main stage. No external PDF dispatch is required for this unit.
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Tab 2: Resources & Chapter Summary */}
+      {inspectorTab === 'resources' && (
+        <div className="space-y-4">
+          {/* Telemetry Stats Card */}
+          <div className="p-4 rounded-xl bg-[#092218]/50 border border-[#65F58A]/20 font-mono text-xs space-y-2.5">
+            <div className="flex items-center justify-between text-gray-400">
+              <span>Unit Duration:</span>
+              <span className="text-white font-bold">{activeLesson?.duration || '15 Mins'}</span>
+            </div>
+            <div className="flex items-center justify-between text-gray-400">
+              <span>Bounty Reward:</span>
+              <span className="text-[#65F58A] font-bold">+150 Tokens</span>
+            </div>
+            <div className="flex items-center justify-between text-gray-400">
+              <span>Unit Status:</span>
+              <span className={`font-bold ${isLessonCompleted ? 'text-[#65F58A]' : 'text-amber-400'}`}>
+                {isLessonCompleted ? 'COMPLETED' : 'IN PROGRESS'}
+              </span>
+            </div>
+          </div>
+
+          {/* Download Study Notes */}
+          <button
+            type="button"
+            onClick={handleDownloadChapterNotes}
+            className="w-full py-2.5 rounded-xl border border-[#65F58A]/30 bg-[#092218] text-[#65F58A] hover:bg-[#65F58A]/20 text-xs font-mono font-bold flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-sm"
+          >
+            <Download className="w-4 h-4" />
+            <span>Download Study Notes (.md)</span>
+          </button>
+
+          {/* Admin Attached PDF Reference Resources */}
+          {activeLesson?.pdf_resources && activeLesson.pdf_resources.length > 0 && (
+            <div className="space-y-2">
+              <span className="text-xs font-mono font-bold text-[#65F58A] block">
+                Official Chapter References:
+              </span>
+              <div className="space-y-1.5">
+                {activeLesson.pdf_resources.map((res, rIdx) => (
+                  <button
+                    key={rIdx}
+                    onClick={() => handleDownloadAdminPdf(res)}
+                    className="w-full flex items-center justify-between p-2.5 rounded-lg bg-[#0a261a] border border-[#65F58A]/30 text-xs font-mono text-[#C9EFE0] hover:text-white transition-colors cursor-pointer"
+                  >
+                    <div className="flex items-center space-x-2 truncate">
+                      <FileDown className="w-3.5 h-3.5 text-[#65F58A] flex-shrink-0" />
+                      <span className="truncate">{res.name || 'Resource.pdf'}</span>
+                    </div>
+                    <Download className="w-3 h-3 text-[#72A88E] flex-shrink-0" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </aside>
+  );
+
+  // Render Course Outline Sidebar Content (shared between Desktop & Mobile Slide-Over Drawer)
   const renderSidebarContent = () => (
     <div className="flex flex-col h-full">
       {/* Sidebar Header */}
@@ -1424,6 +1630,28 @@ export default function LessonPlayerPage() {
                 {progressData.percentage}%
               </span>
             </div>
+
+            {/* Glowing +150 Tokens Bounty Pill */}
+            <span className="px-3 py-1 rounded-full bg-[#65F58A]/15 border border-[#65F58A]/30 text-[#65F58A] font-bold text-xs font-mono hidden md:inline">
+              +150 Tokens
+            </span>
+
+            {/* Toggle Tactical Notes Inspector Button (Desktop) */}
+            {activeUnit?.type === 'lesson' && (
+              <button
+                type="button"
+                onClick={() => setInspectorOpen(!inspectorOpen)}
+                className={`p-2 rounded-xl border text-xs font-mono transition-all cursor-pointer hidden xl:flex items-center space-x-1.5 ${
+                  inspectorOpen
+                    ? 'bg-[#65F58A]/20 text-[#65F58A] border-[#65F58A]/40'
+                    : 'bg-[#092218] text-[#8BA2B5] border-[#65F58A]/20 hover:text-white'
+                }`}
+                title={inspectorOpen ? 'Hide Tactical Inspector' : 'Show Tactical Inspector'}
+              >
+                <PanelRight className="w-4 h-4" />
+                <span className="text-[11px] font-bold hidden 2xl:inline">Inspector</span>
+              </button>
+            )}
           </div>
         </div>
       </header>
@@ -1434,7 +1662,7 @@ export default function LessonPlayerPage() {
         {/* ================= LEFT: STICKY COURSE OUTLINE SIDEBAR ================= */}
         {/* Desktop Sticky Course Outline Sidebar */}
         {sidebarOpen && (
-          <aside className="w-80 lg:w-88 xl:w-96 sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto custom-scrollbar border-r border-[#65F58A]/20 bg-[#061510]/95 backdrop-blur-xl hidden lg:flex flex-col flex-shrink-0 transition-all duration-300 z-20 self-start">
+          <aside className="w-72 lg:w-80 xl:w-84 sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto custom-scrollbar border-r border-[#65F58A]/20 bg-[#061510]/95 backdrop-blur-xl hidden lg:flex flex-col flex-shrink-0 transition-all duration-300 z-20 self-start">
             {renderSidebarContent()}
           </aside>
         )}
@@ -1453,8 +1681,8 @@ export default function LessonPlayerPage() {
         )}
 
         {/* ================= RIGHT: SCROLLABLE MAIN CONTENT WORKSPACE ================= */}
-        <main className="flex-1 min-w-0 w-full p-4 sm:p-6 lg:p-8 space-y-6 pb-28">
-          <div className={`${(activeUnit?.type === 'quiz' || activeUnit?.type === 'final_exam') ? 'w-full' : 'max-w-5xl mx-auto w-full'} space-y-6`}>
+        <main className="flex-1 min-w-0 h-[calc(100vh-3.5rem)] overflow-y-auto custom-scrollbar p-4 sm:p-6 lg:p-7 space-y-6 bg-[#040907]/90 pb-24">
+          <div className="w-full space-y-6">
             {/* Top Unit Title Bar & Bookmark Toggle */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#65F58A]/20 gap-3">
               <div>
@@ -1767,6 +1995,37 @@ export default function LessonPlayerPage() {
                   </div>
                 )}
 
+                
+                {/* Interactive Reflection / Observation Bar (matching reference cockpit) */}
+                <div className="p-4 rounded-2xl bg-[#061510] border border-[#65F58A]/20 flex items-center space-x-3 shadow-lg">
+                  <input
+                    type="text"
+                    value={reflectionNote}
+                    onChange={(e) => setReflectionNote(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && reflectionNote.trim()) {
+                        alert('Reflection logged in telemetry: ' + reflectionNote);
+                        setReflectionNote('');
+                      }
+                    }}
+                    placeholder="Write a technical reflection or lab observation..."
+                    className="flex-1 bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-xs font-mono text-white placeholder-gray-500 focus:outline-none focus:border-[#65F58A]/50 transition-colors"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (reflectionNote.trim()) {
+                        alert('Reflection logged in telemetry: ' + reflectionNote);
+                        setReflectionNote('');
+                      }
+                    }}
+                    className="px-4 py-2.5 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-bold text-xs font-mono transition-all flex items-center space-x-1.5 cursor-pointer shadow-md"
+                  >
+                    <Send className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Log</span>
+                  </button>
+                </div>
+
                 {/* Mark Complete Action Button */}
                 <div className="flex justify-end pt-2">
                   <button
@@ -1857,6 +2116,9 @@ export default function LessonPlayerPage() {
             )}
           </div>
         </main>
+
+        {/* ================= SECTION 3: RIGHT STICKY TACTICAL NOTES & LAB INSPECTOR ================= */}
+        {inspectorOpen && activeUnit?.type === 'lesson' && renderTacticalInspector()}
       </div>
 
       {/* ================= 4. CERTIFICATE REQUEST MODAL ================= */}
