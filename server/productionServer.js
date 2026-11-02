@@ -264,6 +264,7 @@ const apiRoutes = [
   'admin',
   'auth',
   'courses',
+    'e2b',
   'enrol',
   'learning-paths',
   'progress',

@@ -35,7 +35,13 @@ import {
   Trophy,
   ShieldAlert,
   ArrowRight,
-  PanelRight
+  PanelRight,
+  Target,
+  Flag,
+  Zap,
+  Copy,
+  Activity,
+  Cpu
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { mockEngine } from '../../services/db/mockEngine';
@@ -48,6 +54,7 @@ import PixelBackground from '../../components/ui/PixelBackground';
 import CyberCloudsBackground from '../../components/common/CyberCloudsBackground';
 import { FileUploadProgressBar } from '../../components/application/file-upload/FileUploadProgressBar';
 import ExamCBTInterface from '../../components/student/ExamCBTInterface';
+import MovablePracticeTerminal from '../../components/student/MovablePracticeTerminal';
 
 /**
  * Open edX-Inspired Courseware & Learning Workspace
@@ -120,7 +127,66 @@ export default function LessonPlayerPage() {
   const [savingProgress, setSavingProgress] = useState(false);
   const [activeTab, setActiveTab] = useState('notes'); // 'notes' | 'assignment'
   const [inspectorOpen, setInspectorOpen] = useState(true);
-  const [inspectorTab, setInspectorTab] = useState('inspector'); // 'inspector' | 'resources'
+  const [inspectorTab, setInspectorTab] = useState('target'); // 'target' | 'flags' | 'payloads' | 'notes'
+  const [isMacTerminalOpen, setIsMacTerminalOpen] = useState(false);
+  const [isMacTerminalMinimized, setIsMacTerminalMinimized] = useState(false);
+  const [injectedTerminalCommand, setInjectedTerminalCommand] = useState(null);
+  const [targetIp, setTargetIp] = useState('10.10.11.205');
+  const [flagInput, setFlagInput] = useState('');
+  const [flagSubmitted, setFlagSubmitted] = useState(false);
+  const [flagFeedback, setFlagFeedback] = useState(null);
+  const [copiedIp, setCopiedIp] = useState(false);
+  const [revertingTarget, setRevertingTarget] = useState(false);
+  const [revertToast, setRevertToast] = useState(null);
+  const [hintUnlocked, setHintUnlocked] = useState(false);
+
+  const handleCopyIp = () => {
+    navigator.clipboard.writeText(targetIp);
+    setCopiedIp(true);
+    setTimeout(() => setCopiedIp(false), 2000);
+  };
+
+  const handleRevertTarget = () => {
+    setRevertingTarget(true);
+    setTimeout(() => {
+      setRevertingTarget(false);
+      setRevertToast('Target VM 10.10.11.205 restored to pristine baseline snapshot.');
+      setTimeout(() => setRevertToast(null), 4000);
+    }, 1800);
+  };
+
+  const handleFlagSubmit = (e) => {
+    e?.preventDefault();
+    const clean = (flagInput || '').trim();
+    if (!clean) return;
+    if (clean.toLowerCase().includes('flag') || clean.startsWith('rk_flag{')) {
+      setFlagSubmitted(true);
+      setFlagFeedback({
+        success: true,
+        message: 'Flag Verified! Root Privilege Escalation vector cleared. +50 Tokens awarded.'
+      });
+      try {
+        mockEngine.addTokens?.(50);
+        refreshBalance?.();
+      } catch (err) {}
+      confetti({
+        particleCount: 80,
+        spread: 60,
+        origin: { y: 0.6 }
+      });
+    } else {
+      setFlagFeedback({
+        success: false,
+        message: 'Invalid flag hash. Format must be rk_flag{...}. Check target hints.'
+      });
+    }
+  };
+
+  const handleInjectPayload = (cmd) => {
+    setInjectedTerminalCommand(cmd);
+    setIsMacTerminalOpen(true);
+    setIsMacTerminalMinimized(false);
+  };
   const [reflectionNote, setReflectionNote] = useState('');
 
   // Video & Multi-Media State
@@ -1099,12 +1165,12 @@ export default function LessonPlayerPage() {
 
     // Render Section 3: Right Sticky Tactical Notes & Lab Inspector
   const renderTacticalInspector = () => (
-    <aside className="w-80 xl:w-88 sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto custom-scrollbar border-l border-[#65F58A]/20 bg-[#061510]/95 backdrop-blur-xl hidden xl:flex flex-col p-5 space-y-5 flex-shrink-0 z-20 self-start animate-fade-in">
+    <aside className="w-84 xl:w-96 sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto custom-scrollbar border-l border-[#65F58A]/20 bg-[#061510]/95 backdrop-blur-xl hidden xl:flex flex-col p-4 space-y-4 flex-shrink-0 z-20 self-start animate-fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-[#65F58A]/20">
+      <div className="flex items-center justify-between pb-2.5 border-b border-[#65F58A]/20">
         <div className="flex items-center space-x-2">
-          <FileText className="w-4 h-4 text-[#65F58A]" />
-          <h4 className="font-lora font-bold text-sm text-white">Tactical Notes</h4>
+          <Shield className="w-4 h-4 text-[#65F58A]" />
+          <h4 className="font-lora font-bold text-sm text-white">Tactical Recon Hub</h4>
         </div>
         <div className="flex items-center space-x-2">
           <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/30 font-bold">
@@ -1121,34 +1187,348 @@ export default function LessonPlayerPage() {
         </div>
       </div>
 
-      {/* Sub-tabs: Lab Inspector vs Resources/Summary */}
-      <div className="flex items-center rounded-xl bg-black/60 p-1 border border-[#65F58A]/20 text-xs font-mono">
+      {/* Prominent macOS Terminal Pop-Up Launch Banner */}
+      <button
+        type="button"
+        onClick={() => {
+          setIsMacTerminalOpen(true);
+          setIsMacTerminalMinimized(false);
+        }}
+        className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-[#0a1f16] to-[#071018] border border-[#35E6B5]/40 text-[#35E6B5] hover:border-[#65F58A] transition-all group cursor-pointer shadow-lg"
+      >
+        <div className="flex items-center space-x-2.5">
+          <div className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F]" />
+          </div>
+          <span className="font-mono text-xs font-bold text-white group-hover:text-[#65F58A]">macOS Terminal Pop-Up</span>
+        </div>
+        <div className="flex items-center space-x-1 text-[11px] font-mono text-[#65F58A]">
+          <span>Launch ⤢</span>
+        </div>
+      </button>
+
+      {/* 4 Segmented Tactical Tabs */}
+      <div className="grid grid-cols-4 gap-1 p-1 rounded-xl bg-black/60 border border-[#65F58A]/20 text-[11px] font-mono">
         <button
           type="button"
-          onClick={() => setInspectorTab('inspector')}
-          className={`flex-1 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
-            inspectorTab === 'inspector'
+          onClick={() => setInspectorTab('target')}
+          className={`py-1.5 rounded-lg font-bold transition-all text-center cursor-pointer ${
+            inspectorTab === 'target'
               ? 'bg-[#65F58A] text-[#071018] shadow-sm'
               : 'text-[#72A88E] hover:text-white'
           }`}
+          title="Target Machine HUD"
         >
-          Lab Inspector
+          🎯 Target
         </button>
         <button
           type="button"
-          onClick={() => setInspectorTab('resources')}
-          className={`flex-1 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
-            inspectorTab === 'resources'
+          onClick={() => setInspectorTab('flags')}
+          className={`py-1.5 rounded-lg font-bold transition-all text-center cursor-pointer ${
+            inspectorTab === 'flags'
               ? 'bg-[#65F58A] text-[#071018] shadow-sm'
               : 'text-[#72A88E] hover:text-white'
           }`}
+          title="Mission Flags"
         >
-          Resources
+          🚩 Flags
+        </button>
+        <button
+          type="button"
+          onClick={() => setInspectorTab('payloads')}
+          className={`py-1.5 rounded-lg font-bold transition-all text-center cursor-pointer ${
+            inspectorTab === 'payloads'
+              ? 'bg-[#65F58A] text-[#071018] shadow-sm'
+              : 'text-[#72A88E] hover:text-white'
+          }`}
+          title="Payloads Arsenal"
+        >
+          ⚡ Payloads
+        </button>
+        <button
+          type="button"
+          onClick={() => setInspectorTab('notes')}
+          className={`py-1.5 rounded-lg font-bold transition-all text-center cursor-pointer ${
+            inspectorTab === 'notes'
+              ? 'bg-[#65F58A] text-[#071018] shadow-sm'
+              : 'text-[#72A88E] hover:text-white'
+          }`}
+          title="Tactical Notes & PDF"
+        >
+          🧠 Notes
         </button>
       </div>
 
-      {/* Tab 1: Lab Inspector (Assignment & Findings) */}
-      {inspectorTab === 'inspector' && (
+      {/* ================= TAB 1: TARGET HUD & RECON RADAR ================= */}
+      {inspectorTab === 'target' && (
+        <div className="space-y-3.5">
+          {/* Target Host Card */}
+          <div className="p-3.5 rounded-xl bg-[#092218]/60 border border-[#65F58A]/30 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-mono text-[#72A88E] uppercase tracking-wider">
+                Assigned Target Host
+              </span>
+              <span className="flex items-center space-x-1.5 px-2 py-0.5 rounded-full bg-[#65F58A]/15 border border-[#65F58A]/30 text-[10px] font-mono text-[#65F58A] font-bold">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#65F58A] animate-pulse" />
+                <span>ONLINE - 18ms</span>
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-white font-mono font-bold text-base block">{targetIp}</span>
+                <span className="text-[#8BA2B5] text-[11px] font-mono">vuln-alpha.redkross.local</span>
+              </div>
+              <div className="flex items-center space-x-1.5">
+                <button
+                  type="button"
+                  onClick={handleCopyIp}
+                  className="px-2.5 py-1 rounded-lg bg-black/40 border border-[#35E6B5]/30 text-[#35E6B5] hover:text-white hover:border-[#65F58A] text-xs font-mono flex items-center space-x-1 transition-all cursor-pointer"
+                  title="Copy IP Address"
+                >
+                  {copiedIp ? <Check className="w-3 h-3 text-[#65F58A]" /> : <Copy className="w-3 h-3" />}
+                  <span>{copiedIp ? 'Copied' : 'Copy'}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Target Machine Controls */}
+            <div className="pt-2 border-t border-white/10 flex items-center justify-between text-xs font-mono">
+              <span className="text-[11px] text-[#72A88E]">Ubuntu 22.04 LTS (x86_64)</span>
+              <button
+                type="button"
+                onClick={handleRevertTarget}
+                disabled={revertingTarget}
+                className="px-2.5 py-1 rounded-lg bg-[#FF5F56]/15 border border-[#FF5F56]/30 text-[#FF5F56] hover:bg-[#FF5F56]/25 transition-all flex items-center space-x-1 cursor-pointer disabled:opacity-50"
+              >
+                <RotateCcw className={`w-3 h-3 ${revertingTarget ? 'animate-spin' : ''}`} />
+                <span>{revertingTarget ? 'Reverting...' : 'Revert Snapshot'}</span>
+              </button>
+            </div>
+
+            {revertToast && (
+              <div className="p-2 rounded-lg bg-[#65F58A]/15 border border-[#65F58A]/40 text-[#65F58A] text-[10px] font-mono animate-fade-in">
+                {revertToast}
+              </div>
+            )}
+          </div>
+
+          {/* Live Port & Service Matrix */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-mono font-bold text-white flex items-center gap-1.5">
+                <Activity className="w-3.5 h-3.5 text-[#35E6B5]" />
+                <span>Discovered Service Matrix</span>
+              </span>
+              <span className="text-[10px] font-mono text-[#72A88E]">4 Open Ports</span>
+            </div>
+
+            <div className="space-y-1.5">
+              {[
+                { port: '22/tcp', state: 'OPEN', service: 'OpenSSH 8.9p1 (Ubuntu)', cmd: 'nmap -p 22 -sV 10.10.11.205' },
+                { port: '80/tcp', state: 'OPEN', service: 'Apache httpd 2.4.52 (Web Gateway)', cmd: 'curl -I http://10.10.11.205' },
+                { port: '443/tcp', state: 'OPEN', service: 'OpenSSL 3.0.2 (HTTPS)', cmd: 'nmap -p 443 --script ssl-cert 10.10.11.205' },
+                { port: '3306/tcp', state: 'FILTERED', service: 'MySQL Database', cmd: 'nmap -p 3306 -sC 10.10.11.205' }
+              ].map((p, idx) => (
+                <div
+                  key={idx}
+                  className="p-2.5 rounded-xl bg-black/40 border border-[#35E6B5]/20 hover:border-[#65F58A]/40 transition-all flex items-center justify-between text-xs font-mono group"
+                >
+                  <div className="flex items-center space-x-2.5 truncate">
+                    <span className="px-1.5 py-0.5 rounded bg-[#65F58A]/20 text-[#65F58A] font-bold text-[10px]">
+                      {p.port}
+                    </span>
+                    <span className="text-[#E6F4EA] truncate text-[11px]">{p.service}</span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleInjectPayload(p.cmd)}
+                    className="p-1 rounded bg-black/60 text-[#72A88E] group-hover:text-[#65F58A] hover:bg-[#65F58A]/20 transition-all flex-shrink-0 cursor-pointer"
+                    title="Probe service in Mac Terminal"
+                  >
+                    <Zap className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= TAB 2: MISSION FLAGS & TOKEN BOUNTIES ================= */}
+      {inspectorTab === 'flags' && (
+        <div className="space-y-3.5">
+          {/* Mission Progress Card */}
+          <div className="p-3.5 rounded-xl bg-[#092218]/60 border border-[#65F58A]/30 space-y-2">
+            <div className="flex items-center justify-between text-xs font-mono">
+              <span className="text-[#72A88E]">Operational Status:</span>
+              <span className="text-[#65F58A] font-bold">2 / 3 Objectives Cleared</span>
+            </div>
+            <div className="w-full h-2 rounded-full bg-black/60 overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-[#35E6B5] to-[#65F58A] rounded-full w-[66%]" />
+            </div>
+          </div>
+
+          {/* Objective 1: User Flag */}
+          <div className="p-3 rounded-xl bg-[#061510] border border-[#65F58A]/40 text-xs font-mono space-y-1.5">
+            <div className="flex items-center justify-between">
+              <span className="text-white font-bold flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#65F58A]" />
+                <span>Objective 1: User Foothold</span>
+              </span>
+              <span className="px-2 py-0.5 rounded-full bg-[#65F58A]/20 text-[#65F58A] text-[10px] font-bold">
+                CLAIMED (+25 Tokens)
+              </span>
+            </div>
+            <p className="text-[11px] text-[#8BA2B5]">
+              Discovered credentials through web recon and gained unprivileged bash session.
+            </p>
+          </div>
+
+          {/* Objective 2: Root Flag Submission */}
+          <div className="p-3.5 rounded-xl bg-black/40 border border-[#35E6B5]/30 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <span className="text-white font-bold font-mono text-xs flex items-center gap-1.5">
+                <Flag className="w-3.5 h-3.5 text-[#FFBD2E]" />
+                <span>Objective 2: Root Privilege Escalation</span>
+              </span>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#FFBD2E]/20 text-[#FFBD2E] font-bold">
+                +50 Tokens
+              </span>
+            </div>
+
+            <p className="text-[11px] font-mono text-[#8BA2B5] leading-relaxed">
+              Exploit misconfigured SUID binaries or sudo permissions to extract the root flag from <code className="text-[#65F58A]">/root/proof.txt</code>.
+            </p>
+
+            <form onSubmit={handleFlagSubmit} className="space-y-2">
+              <div className="flex items-center space-x-1.5">
+                <input
+                  type="text"
+                  value={flagInput}
+                  onChange={(e) => setFlagInput(e.target.value)}
+                  placeholder="rk_flag{...}"
+                  className="flex-1 px-3 py-2 rounded-xl bg-[#071018] border border-[#35E6B5]/30 text-white font-mono text-xs outline-none focus:border-[#65F58A]"
+                />
+                <button
+                  type="submit"
+                  className="px-3.5 py-2 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-mono font-bold text-xs transition-all cursor-pointer shadow-md flex items-center space-x-1"
+                >
+                  <Send className="w-3 h-3" />
+                  <span>Submit</span>
+                </button>
+              </div>
+
+              {flagFeedback && (
+                <div
+                  className={`p-2.5 rounded-xl text-xs font-mono flex items-center space-x-2 ${
+                    flagFeedback.success
+                      ? 'bg-[#65F58A]/15 border border-[#65F58A]/40 text-[#65F58A]'
+                      : 'bg-[#FF5F56]/15 border border-[#FF5F56]/40 text-[#FF5F56]'
+                  }`}
+                >
+                  {flagFeedback.success ? <CheckCircle2 className="w-4 h-4 flex-shrink-0" /> : <AlertCircle className="w-4 h-4 flex-shrink-0" />}
+                  <span>{flagFeedback.message}</span>
+                </div>
+              )}
+            </form>
+
+            {/* Tactical Hint Accordion */}
+            <div className="pt-2 border-t border-white/5">
+              <button
+                type="button"
+                onClick={() => setHintUnlocked(!hintUnlocked)}
+                className="text-[11px] font-mono text-[#72A88E] hover:text-[#35E6B5] flex items-center space-x-1 cursor-pointer"
+              >
+                <span>{hintUnlocked ? 'Hide Tactical Hint ▴' : 'Unlock Tactical Hint ▾'}</span>
+              </button>
+
+              {hintUnlocked && (
+                <div className="mt-2 p-2.5 rounded-lg bg-[#071018] border border-white/10 text-[11px] font-mono text-[#B8E6CE] space-y-1">
+                  <p>Hint: Check binaries with SUID permission set:</p>
+                  <code className="text-[#65F58A] block bg-black/50 p-1.5 rounded">
+                    find / -perm -u=s -type f 2&gt;/dev/null
+                  </code>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= TAB 3: PAYLOADS ARSENAL ================= */}
+      {inspectorTab === 'payloads' && (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between pb-1">
+            <span className="text-xs font-mono font-bold text-white">Lesson Tactical Arsenal</span>
+            <span className="text-[10px] font-mono text-[#72A88E]">1-Click Mac Injection</span>
+          </div>
+
+          {[
+            {
+              title: 'Full TCP Service & Script Scan',
+              desc: 'Comprehensive multi-port banner grab and vulnerability detection.',
+              cmd: `nmap -sC -sV -Pn ${targetIp}`
+            },
+            {
+              title: 'Web Directory & API Fuzzing',
+              desc: 'Brute-force hidden endpoints and admin portals.',
+              cmd: `gobuster dir -u http://${targetIp}/ -w /usr/share/wordlists/dirb/common.txt`
+            },
+            {
+              title: 'HTTP Response Headers Probe',
+              desc: 'Extract server version, PHP build and hidden cookie flags.',
+              cmd: `curl -I -X GET http://${targetIp}/admin/debug.php`
+            },
+            {
+              title: 'Interactive Python Reverse Shell',
+              desc: 'Spawn a TTY shell after establishing initial remote foothold.',
+              cmd: `python3 -c 'import pty; pty.spawn("/bin/bash")'`
+            }
+          ].map((item, idx) => (
+            <div
+              key={idx}
+              className="p-3 rounded-xl bg-black/40 border border-[#35E6B5]/20 hover:border-[#65F58A]/40 transition-all space-y-2"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono font-bold text-white">{item.title}</span>
+                <span className="text-[10px] font-mono text-[#72A88E]">Payload #{idx + 1}</span>
+              </div>
+              <p className="text-[11px] font-mono text-[#8BA2B5]">{item.desc}</p>
+
+              <div className="p-2 rounded-lg bg-[#071018] border border-white/10 font-mono text-xs text-[#65F58A] break-all select-all">
+                {item.cmd}
+              </div>
+
+              <div className="flex items-center justify-end space-x-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => navigator.clipboard.writeText(item.cmd)}
+                  className="px-2.5 py-1 rounded-lg bg-black/50 border border-white/10 hover:border-[#35E6B5] text-[#8BA2B5] hover:text-white text-[11px] font-mono transition-all cursor-pointer flex items-center space-x-1"
+                >
+                  <Copy className="w-3 h-3" />
+                  <span>Copy</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleInjectPayload(item.cmd)}
+                  className="px-3 py-1 rounded-lg bg-[#65F58A]/20 hover:bg-[#65F58A]/30 border border-[#65F58A]/40 text-[#65F58A] font-bold text-[11px] font-mono transition-all cursor-pointer flex items-center space-x-1.5 shadow-sm"
+                  title="Inject directly into macOS Floating Terminal"
+                >
+                  <Zap className="w-3 h-3 fill-current" />
+                  <span>⚡ Send to Mac Terminal</span>
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* ================= TAB 4: TACTICAL NOTES & LAB INSPECTOR ================= */}
+      {inspectorTab === 'notes' && (
         <div className="space-y-4">
           <div className="p-3.5 rounded-xl bg-[#092218]/50 border border-[#65F58A]/20 space-y-2">
             <div className="flex items-center space-x-2 text-xs font-mono text-[#65F58A] font-bold">
@@ -1237,29 +1617,6 @@ export default function LessonPlayerPage() {
               </p>
             </div>
           )}
-        </div>
-      )}
-
-      {/* Tab 2: Resources & Chapter Summary */}
-      {inspectorTab === 'resources' && (
-        <div className="space-y-4">
-          {/* Telemetry Stats Card */}
-          <div className="p-4 rounded-xl bg-[#092218]/50 border border-[#65F58A]/20 font-mono text-xs space-y-2.5">
-            <div className="flex items-center justify-between text-gray-400">
-              <span>Unit Duration:</span>
-              <span className="text-white font-bold">{activeLesson?.duration || '15 Mins'}</span>
-            </div>
-            <div className="flex items-center justify-between text-gray-400">
-              <span>Bounty Reward:</span>
-              <span className="text-[#65F58A] font-bold">+150 Tokens</span>
-            </div>
-            <div className="flex items-center justify-between text-gray-400">
-              <span>Unit Status:</span>
-              <span className={`font-bold ${isLessonCompleted ? 'text-[#65F58A]' : 'text-amber-400'}`}>
-                {isLessonCompleted ? 'COMPLETED' : 'IN PROGRESS'}
-              </span>
-            </div>
-          </div>
 
           {/* Download Study Notes */}
           <button
@@ -2348,6 +2705,19 @@ export default function LessonPlayerPage() {
           </div>
         </div>
       )}
+
+      {/* ================= 5. MOVABLE MACOS PRACTICE TERMINAL ================= */}
+      <MovablePracticeTerminal
+        isOpen={isMacTerminalOpen}
+        onClose={() => setIsMacTerminalOpen(false)}
+        isMinimized={isMacTerminalMinimized}
+        onMinimize={() => setIsMacTerminalMinimized(true)}
+        onRestore={() => setIsMacTerminalMinimized(false)}
+        injectedCommand={injectedTerminalCommand}
+        onClearInjectedCommand={() => setInjectedTerminalCommand(null)}
+        targetIp={targetIp}
+        lessonId={activeLesson?.id}
+      />
 
       {/* ================= MODULE UNLOCK CELEBRATION MODAL ================= */}
       {unlockCelebrationModal.isOpen && (
