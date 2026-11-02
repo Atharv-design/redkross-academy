@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/learning-paths",
-      "destination": "/api/courses.js?type=learning_paths"
+      "destination": "/api/courses"
     },
     {
       "source": "/((?!api/.*).*)",
