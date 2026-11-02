@@ -59,7 +59,7 @@ import CyberCloudsBackground from '../../components/common/CyberCloudsBackground
 import { FileUploadProgressBar } from '../../components/application/file-upload/FileUploadProgressBar';
 import ExamCBTInterface from '../../components/student/ExamCBTInterface';
 import MovablePracticeTerminal from '../../components/student/MovablePracticeTerminal';
-import CockpitTerminalPanel from '../../components/student/CockpitTerminalPanel';
+import CockpitToolStrip from '../../components/student/CockpitToolStrip';
 
 /**
  * Open edX-Inspired Courseware & Learning Workspace
@@ -131,8 +131,7 @@ export default function LessonPlayerPage() {
   const [progressData, setProgressData] = useState({ percentage: 0, completed: 0, total: 0 });
   const [savingProgress, setSavingProgress] = useState(false);
   const [activeTab, setActiveTab] = useState('notes'); // 'notes' | 'assignment'
-  const [inspectorOpen, setInspectorOpen] = useState(true);
-  const [inspectorTab, setInspectorTab] = useState('target'); // 'target' | 'flags' | 'payloads' | 'notes'
+  const [toolsStripOpen, setToolsStripOpen] = useState(true);
   const [isMacTerminalOpen, setIsMacTerminalOpen] = useState(false);
   const [isMacTerminalMinimized, setIsMacTerminalMinimized] = useState(false);
   const [injectedTerminalCommand, setInjectedTerminalCommand] = useState(null);
@@ -192,6 +191,19 @@ export default function LessonPlayerPage() {
     setIsMacTerminalOpen(true);
     setIsMacTerminalMinimized(false);
   };
+
+  // Global Ctrl+K / Cmd+K listener to toggle Tactical Terminal
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsMacTerminalOpen((prev) => !prev);
+        setIsMacTerminalMinimized(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
   const [reflectionNote, setReflectionNote] = useState('');
 
   // Video & Multi-Media State
@@ -2012,20 +2024,20 @@ export default function LessonPlayerPage() {
               +150 Tokens
             </span>
 
-            {/* Toggle Real MicroVM Terminal (Desktop Sticky & Mobile Slide-Over) */}
+            {/* Toggle Tactical Tools Strip */}
             {activeUnit?.type === 'lesson' && (
               <button
                 type="button"
-                onClick={() => setInspectorOpen(!inspectorOpen)}
+                onClick={() => setToolsStripOpen(!toolsStripOpen)}
                 className={`p-2 rounded-xl border text-xs font-mono transition-all cursor-pointer flex items-center space-x-1.5 ${
-                  inspectorOpen
+                  toolsStripOpen
                     ? 'bg-[#65F58A]/20 text-[#65F58A] border-[#65F58A]/40 shadow-[0_0_12px_rgba(101,245,138,0.2)]'
                     : 'bg-[#092218] text-[#8BA2B5] border-[#65F58A]/20 hover:text-white'
                 }`}
-                title={inspectorOpen ? 'Hide Terminal' : 'Show Terminal'}
+                title={toolsStripOpen ? 'Collapse Tools Strip' : 'Show Tools Strip'}
               >
-                <Terminal className="w-4 h-4 text-[#65F58A]" />
-                <span className="text-[11px] font-bold hidden sm:inline">Terminal</span>
+                <Zap className="w-4 h-4 text-[#65F58A]" />
+                <span className="text-[11px] font-bold hidden sm:inline">Tools</span>
               </button>
             )}
           </div>
@@ -2493,17 +2505,15 @@ export default function LessonPlayerPage() {
           </div>
         </main>
 
-        {/* ================= SECTION 3: EMBEDDED REAL-EXECUTION TERMINAL ================= */}
-        {inspectorOpen && activeUnit?.type === 'lesson' && (
-          <CockpitTerminalPanel
-            activeUnit={activeUnit}
-            onPopOut={() => {
+        {/* ================= SECTION 3: VERTICAL TACTICAL TOOL STRIP ================= */}
+        {toolsStripOpen && activeUnit?.type === 'lesson' && (
+          <CockpitToolStrip
+            onOpenTerminal={() => {
               setIsMacTerminalOpen(true);
               setIsMacTerminalMinimized(false);
             }}
-            onClose={() => setInspectorOpen(false)}
-            injectedCommand={injectedTerminalCommand}
-            onClearInjectedCommand={() => setInjectedTerminalCommand(null)}
+            isTerminalOpen={isMacTerminalOpen && !isMacTerminalMinimized}
+            onCollapse={() => setToolsStripOpen(false)}
           />
         )}
       </div>
@@ -2736,7 +2746,7 @@ export default function LessonPlayerPage() {
         </div>
       )}
 
-      {/* ================= 5. MOVABLE MACOS PRACTICE TERMINAL ================= */}
+      {/* ================= 5. MOVABLE TACTICAL PRACTICE TERMINAL ================= */}
       <MovablePracticeTerminal
         isOpen={isMacTerminalOpen}
         onClose={() => setIsMacTerminalOpen(false)}
