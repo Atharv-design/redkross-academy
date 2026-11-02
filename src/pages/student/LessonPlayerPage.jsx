@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import {
+  Folder,
+  FolderOpen,
+  Book,
+  Terminal,
   BookOpen,
   CheckCircle2,
   Lock,
@@ -55,6 +59,7 @@ import CyberCloudsBackground from '../../components/common/CyberCloudsBackground
 import { FileUploadProgressBar } from '../../components/application/file-upload/FileUploadProgressBar';
 import ExamCBTInterface from '../../components/student/ExamCBTInterface';
 import MovablePracticeTerminal from '../../components/student/MovablePracticeTerminal';
+import CockpitTerminalPanel from '../../components/student/CockpitTerminalPanel';
 
 /**
  * Open edX-Inspired Courseware & Learning Workspace
@@ -1716,23 +1721,32 @@ export default function LessonPlayerPage() {
                       className="w-full p-3 flex items-center justify-between text-left hover:bg-[#0c2a1e]/50 transition-colors cursor-pointer"
                     >
                       <div className="flex items-center space-x-2.5 truncate pr-2">
-                        <span
-                          className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-mono font-bold flex-shrink-0 border ${
-                            !isUnlocked
-                              ? 'bg-black text-gray-500 border-gray-700'
-                              : completedCount === modLessons.length && (!mod.quiz || isModQuizPassed)
-                              ? 'bg-[#65F58A] text-[#071018] border-[#65F58A]'
-                              : 'bg-[#040e0a] text-[#65F58A] border-[#65F58A]/30'
-                          }`}
-                        >
+                        <div className="flex items-center space-x-1.5 flex-shrink-0">
                           {!isUnlocked ? (
-                            <Lock className="w-2.5 h-2.5" />
-                          ) : completedCount === modLessons.length && (!mod.quiz || isModQuizPassed) ? (
-                            <Check className="w-3 h-3 stroke-[3]" />
+                            <Folder className="w-4 h-4 text-gray-500" />
+                          ) : isExpanded ? (
+                            <FolderOpen className="w-4 h-4 text-[#65F58A]" />
                           ) : (
-                            modIdx + 1
+                            <Folder className="w-4 h-4 text-[#35E6B5]" />
                           )}
-                        </span>
+                          <span
+                            className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-mono font-bold border ${
+                              !isUnlocked
+                                ? 'bg-black text-gray-500 border-gray-700'
+                                : completedCount === modLessons.length && (!mod.quiz || isModQuizPassed)
+                                ? 'bg-[#65F58A] text-[#071018] border-[#65F58A]'
+                                : 'bg-[#040e0a] text-[#65F58A] border-[#65F58A]/30'
+                            }`}
+                          >
+                            {!isUnlocked ? (
+                              <Lock className="w-2.5 h-2.5" />
+                            ) : completedCount === modLessons.length && (!mod.quiz || isModQuizPassed) ? (
+                              <Check className="w-3 h-3 stroke-[3]" />
+                            ) : (
+                              modIdx + 1
+                            )}
+                          </span>
+                        </div>
                         <span className="text-xs font-bold text-white truncate font-lora">
                           {mod.title}
                         </span>
@@ -1772,28 +1786,33 @@ export default function LessonPlayerPage() {
                               }`}
                             >
                               <div className="flex items-center space-x-2 truncate pr-2">
-                                {isDone ? (
+                                <BookOpen
+                                  className={`w-3.5 h-3.5 flex-shrink-0 ${
+                                    isActive
+                                      ? 'text-[#071018]'
+                                      : isDone
+                                      ? 'text-[#65F58A]'
+                                      : 'text-[#72A88E]'
+                                  }`}
+                                />
+                                <span className="truncate">{les.title}</span>
+                              </div>
+                              <div className="flex items-center space-x-1.5 flex-shrink-0">
+                                {isDone && (
                                   <CheckCircle2
-                                    className={`w-3.5 h-3.5 flex-shrink-0 ${
+                                    className={`w-3 h-3 ${
                                       isActive ? 'text-[#071018]' : 'text-[#65F58A]'
                                     }`}
                                   />
-                                ) : (
-                                  <Play
-                                    className={`w-3 h-3 flex-shrink-0 ${
-                                      isActive ? 'fill-[#071018]' : 'fill-[#65F58A] opacity-70'
-                                    }`}
-                                  />
                                 )}
-                                <span className="truncate">{les.title}</span>
+                                <span
+                                  className={`text-[10px] font-mono ${
+                                    isActive ? 'text-[#071018]' : 'text-[#72A88E]'
+                                  }`}
+                                >
+                                  {les.duration || '15 mins'}
+                                </span>
                               </div>
-                              <span
-                                className={`text-[10px] font-mono flex-shrink-0 ${
-                                  isActive ? 'text-[#071018]' : 'text-[#72A88E]'
-                                }`}
-                              >
-                                {les.duration || '15 mins'}
-                              </span>
                             </button>
                           );
                         })}
@@ -1993,20 +2012,20 @@ export default function LessonPlayerPage() {
               +150 Tokens
             </span>
 
-            {/* Toggle Tactical Notes Inspector Button (Desktop) */}
+            {/* Toggle Real MicroVM Terminal (Desktop Sticky & Mobile Slide-Over) */}
             {activeUnit?.type === 'lesson' && (
               <button
                 type="button"
                 onClick={() => setInspectorOpen(!inspectorOpen)}
-                className={`p-2 rounded-xl border text-xs font-mono transition-all cursor-pointer hidden xl:flex items-center space-x-1.5 ${
+                className={`p-2 rounded-xl border text-xs font-mono transition-all cursor-pointer flex items-center space-x-1.5 ${
                   inspectorOpen
-                    ? 'bg-[#65F58A]/20 text-[#65F58A] border-[#65F58A]/40'
+                    ? 'bg-[#65F58A]/20 text-[#65F58A] border-[#65F58A]/40 shadow-[0_0_12px_rgba(101,245,138,0.2)]'
                     : 'bg-[#092218] text-[#8BA2B5] border-[#65F58A]/20 hover:text-white'
                 }`}
-                title={inspectorOpen ? 'Hide Tactical Inspector' : 'Show Tactical Inspector'}
+                title={inspectorOpen ? 'Hide Terminal' : 'Show Terminal'}
               >
-                <PanelRight className="w-4 h-4" />
-                <span className="text-[11px] font-bold hidden 2xl:inline">Inspector</span>
+                <Terminal className="w-4 h-4 text-[#65F58A]" />
+                <span className="text-[11px] font-bold hidden sm:inline">Terminal</span>
               </button>
             )}
           </div>
@@ -2474,8 +2493,19 @@ export default function LessonPlayerPage() {
           </div>
         </main>
 
-        {/* ================= SECTION 3: RIGHT STICKY TACTICAL NOTES & LAB INSPECTOR ================= */}
-        {inspectorOpen && activeUnit?.type === 'lesson' && renderTacticalInspector()}
+        {/* ================= SECTION 3: EMBEDDED REAL-EXECUTION TERMINAL ================= */}
+        {inspectorOpen && activeUnit?.type === 'lesson' && (
+          <CockpitTerminalPanel
+            activeUnit={activeUnit}
+            onPopOut={() => {
+              setIsMacTerminalOpen(true);
+              setIsMacTerminalMinimized(false);
+            }}
+            onClose={() => setInspectorOpen(false)}
+            injectedCommand={injectedTerminalCommand}
+            onClearInjectedCommand={() => setInjectedTerminalCommand(null)}
+          />
+        )}
       </div>
 
       {/* ================= 4. CERTIFICATE REQUEST MODAL ================= */}
