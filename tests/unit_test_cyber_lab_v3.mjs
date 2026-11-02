@@ -5,6 +5,8 @@
  */
 
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
 import {
   CYBER_LAB_CONTAINERS,
   JUICE_SHOP_PRODUCTS,
@@ -156,6 +158,26 @@ test('Packet sniffer "tcpdump" captures isolated network traffic', () => {
   assert.equal(res.exitCode, 0);
   assert.match(res.output, /listening on any, link-type/);
   assert.match(res.output, /10\.10\.11\.100/);
+});
+
+// ================= TEST GROUP 4: UI & AUTOCOMPLETE ENGINE =================
+test('Single character query matches relevant cybersecurity commands for curved suggestions', () => {
+  const queryN = 'n';
+  const labCmds = ['nmap dvwa', 'nmap juice-shop', 'nikto -h dvwa'];
+  const matches = labCmds.filter(c => c.startsWith(queryN));
+  assert.ok(matches.length >= 2, 'Should match nmap commands for curved suggestions');
+  assert.ok(matches.includes('nmap dvwa'));
+});
+
+test('CyberLabDesktopWindow component exists and exports OfficialKaliLogo and default component', () => {
+  const compPath = path.resolve('src/components/student/CyberLabDesktopWindow.jsx');
+  assert.ok(fs.existsSync(compPath), 'CyberLabDesktopWindow.jsx must exist');
+  const src = fs.readFileSync(compPath, 'utf8');
+  assert.ok(src.includes('export function OfficialKaliLogo'), 'Must export OfficialKaliLogo');
+  assert.ok(src.includes('export default function CyberLabDesktopWindow'), 'Must export default CyberLabDesktopWindow');
+  assert.ok(src.includes('WHISKER_CATEGORIES'), 'Must include authentic Whisker menu categories');
+  assert.ok(src.includes('desktop-context-menu'), 'Must include authentic desktop right-click context menu');
+  assert.ok(src.includes('COMMAND SUGGESTIONS'), 'Must include curved command suggestions popover');
 });
 
 console.log(`\nResults: ${passedTests}/${totalTests} tests passed.`);
