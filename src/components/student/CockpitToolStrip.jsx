@@ -3,23 +3,28 @@ import {
   Terminal as TerminalIcon,
   Zap,
   ChevronRight,
-  ChevronLeft
+  ChevronLeft,
+  Shield,
+  Globe
 } from 'lucide-react';
 
 /**
  * CockpitToolStrip.jsx
  * Sleek, vertical icon toolbar pinned on the right of the RedKross Learning Cockpit.
- * Currently dedicated to the Tactical MicroVM Terminal (with all 340+ integrated commands).
- * Additional tools can be cleanly appended to the `tools` array as needed.
+ * Houses:
+ * - Tool #1: Tactical MicroVM Terminal (340+ verified commands & live autocomplete)
+ * - Tool #2: CyberLab V3 (Authentic Kali Linux Web Desktop, DVWA, OWASP Juice Shop)
  */
 export default function CockpitToolStrip({
   onOpenTerminal,
   isTerminalOpen,
+  onOpenCyberLab,
+  isCyberLabOpen,
   onCollapse
 }) {
   const [hoveredTool, setHoveredTool] = useState(null);
 
-  // Tools currently pinned to this strip (Terminal only for now, as requested)
+  // Tools currently pinned to this strip
   const tools = [
     {
       id: 'terminal',
@@ -32,6 +37,18 @@ export default function CockpitToolStrip({
       badgeColor: isTerminalOpen
         ? 'bg-[#65F58A] text-[#071018] font-bold'
         : 'bg-[#092218] text-[#65F58A] border border-[#65F58A]/40'
+    },
+    {
+      id: 'cyberlab',
+      label: 'CyberLab V3',
+      desc: 'Kali Linux Web Desktop, DVWA & OWASP Juice Shop',
+      icon: Shield,
+      onClick: onOpenCyberLab,
+      isActive: isCyberLabOpen,
+      badge: isCyberLabOpen ? 'ACTIVE' : 'V3',
+      badgeColor: isCyberLabOpen
+        ? 'bg-[#35E6B5] text-[#071018] font-bold'
+        : 'bg-[#0b1b26] text-[#35E6B5] border border-[#35E6B5]/40'
     }
   ];
 
@@ -52,7 +69,7 @@ export default function CockpitToolStrip({
         <div className="w-8 h-px bg-[#65F58A]/20" />
 
         {/* Tools Icon Stack */}
-        <div className="flex flex-col items-center space-y-3 w-full px-2 pt-1">
+        <div className="flex flex-col items-center space-y-3.5 w-full px-2 pt-1">
           {tools.map((t) => {
             const Icon = t.icon;
             const isHovered = hoveredTool === t.id;
@@ -81,7 +98,7 @@ export default function CockpitToolStrip({
                   )}
                 </button>
 
-                {/* Badge (ACTIVE or 340+) */}
+                {/* Badge (ACTIVE, 340+, or V3) */}
                 {t.badge && !t.isActive && (
                   <span
                     className={`absolute -bottom-1 text-[8px] font-mono px-1 rounded-full font-bold pointer-events-none ${t.badgeColor}`}
@@ -114,7 +131,7 @@ export default function CockpitToolStrip({
         </div>
       </div>
 
-      {/* Bottom Strip Collapse Trigger (if provided) */}
+      {/* Bottom Strip Collapse Trigger */}
       {onCollapse && (
         <div className="w-full flex justify-center pb-2">
           <button

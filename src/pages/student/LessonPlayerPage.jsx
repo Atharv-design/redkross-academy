@@ -60,6 +60,7 @@ import { FileUploadProgressBar } from '../../components/application/file-upload/
 import ExamCBTInterface from '../../components/student/ExamCBTInterface';
 import MovablePracticeTerminal from '../../components/student/MovablePracticeTerminal';
 import CockpitToolStrip from '../../components/student/CockpitToolStrip';
+import CyberLabDesktopWindow from '../../components/student/CyberLabDesktopWindow';
 
 /**
  * Open edX-Inspired Courseware & Learning Workspace
@@ -134,6 +135,8 @@ export default function LessonPlayerPage() {
   const [toolsStripOpen, setToolsStripOpen] = useState(true);
   const [isMacTerminalOpen, setIsMacTerminalOpen] = useState(false);
   const [isMacTerminalMinimized, setIsMacTerminalMinimized] = useState(false);
+  const [isCyberLabOpen, setIsCyberLabOpen] = useState(false);
+  const [isCyberLabMinimized, setIsCyberLabMinimized] = useState(false);
   const [injectedTerminalCommand, setInjectedTerminalCommand] = useState(null);
   const [targetIp, setTargetIp] = useState('10.10.11.205');
   const [flagInput, setFlagInput] = useState('');
@@ -2513,6 +2516,11 @@ export default function LessonPlayerPage() {
               setIsMacTerminalMinimized(false);
             }}
             isTerminalOpen={isMacTerminalOpen && !isMacTerminalMinimized}
+            onOpenCyberLab={() => {
+              setIsCyberLabOpen(true);
+              setIsCyberLabMinimized(false);
+            }}
+            isCyberLabOpen={isCyberLabOpen && !isCyberLabMinimized}
             onCollapse={() => setToolsStripOpen(false)}
           />
         )}
@@ -2757,6 +2765,15 @@ export default function LessonPlayerPage() {
         onClearInjectedCommand={() => setInjectedTerminalCommand(null)}
         targetIp={targetIp}
         lessonId={activeLesson?.id}
+      />
+
+      {/* ================= 6. MOVABLE CYBERLAB V3 KALI DESKTOP ================= */}
+      <CyberLabDesktopWindow
+        isOpen={isCyberLabOpen}
+        onClose={() => setIsCyberLabOpen(false)}
+        isMinimized={isCyberLabMinimized}
+        onMinimize={() => setIsCyberLabMinimized(true)}
+        onRestore={() => setIsCyberLabMinimized(false)}
       />
 
       {/* ================= MODULE UNLOCK CELEBRATION MODAL ================= */}
