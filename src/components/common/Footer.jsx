@@ -41,7 +41,6 @@ export default function Footer() {
             <ul className="space-y-2 text-xs">
               <li><Link to="/academy/cybersecurity" className="hover:text-[#FFA439] transition-colors">Cybersecurity Academy</Link></li>
               <li><Link to="/academy/psychology" className="hover:text-teal-300 transition-colors">Psychology Academy</Link></li>
-              <li><Link to="/courses" className="hover:text-white transition-colors">Course Catalogue</Link></li>
               <li><Link to="/verify" className="hover:text-white transition-colors">Verify Credential</Link></li>
               <li><Link to="/student" className="hover:text-white transition-colors">Student Dashboard</Link></li>
             </ul>

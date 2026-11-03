@@ -80,16 +80,11 @@ export default function Navbar() {
     { label: "Home", path: "/" },
     { label: "Cyber Academy", path: "/academy/cybersecurity" },
     { label: "Psychology Academy", path: "/academy/psychology" },
-    { label: "All Courses", path: "/courses" },
     { label: "Verify Credential", path: "/verify" }
   ];
 
-  if (currentUser) {
-    if (currentUser.role === 'super_admin') {
-      navLinks.push({ label: "Super Admin", path: "/admin" });
-    } else {
-      navLinks.push({ label: "Student Portal", path: "/student" });
-    }
+  if (currentUser && currentUser.role === 'super_admin') {
+    navLinks.push({ label: "Admin Console", path: "/admin" });
   }
 
   const roleDisplay = String(currentUser?.role || 'student').replace('_', ' ').toUpperCase();
@@ -133,16 +128,27 @@ export default function Navbar() {
             </a>
           </div>
 
-          <div className="flex items-center gap-2 text-[10px] text-[#FFA439]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#FF7A00] animate-pulse" />
-            <span className="font-semibold tracking-wider font-mono">REDKROSS ACADEMY FOUNDATION</span>
+          <div className="flex items-center gap-3 sm:gap-4">
+            <button
+              onClick={() => setSupportModalOpen(true)}
+              className="flex items-center gap-1.5 text-[10px] font-mono text-[#E2D9CE] hover:text-[#FFA439] transition-colors"
+              title="Open Academy Support Desk"
+            >
+              <LifeBuoy className="w-3 h-3 text-[#FFA439]" />
+              <span className="hidden xs:inline">Support Desk</span>
+            </button>
+            <span className="text-[#FF7A00]/30 hidden sm:inline">|</span>
+            <div className="hidden sm:flex items-center gap-2 text-[10px] text-[#FFA439]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#FF7A00] animate-pulse" />
+              <span className="font-semibold tracking-wider font-mono">REDKROSS ACADEMY FOUNDATION</span>
+            </div>
           </div>
         </div>
 
         {/* Floating Rounded-Full Main Navbar */}
         <div className="px-4 sm:px-8 pt-3">
           <div
-            className={`max-w-7xl mx-auto rounded-full px-5 py-2.5 flex items-center justify-between transition-all duration-300 pointer-events-auto liquid-glass-nav bg-transparent ${
+            className={`max-w-7xl mx-auto rounded-full px-5 py-2.5 flex items-center justify-between gap-4 transition-all duration-300 pointer-events-auto liquid-glass-nav bg-transparent ${
               scrolled
                 ? 'shadow-[0_16px_48px_rgba(0,0,0,0.85)] border-[#FF7A00]/40'
                 : 'border-[#FF7A00]/30'
@@ -167,8 +173,8 @@ export default function Navbar() {
               </div>
             </Link>
 
-            {/* Desktop Horizontal Navigation */}
-            <nav className="hidden lg:flex items-center gap-3.5 xl:gap-5 flex-shrink min-w-0">
+            {/* Desktop Horizontal Navigation - Clean Spacing & Strict Zero Collision */}
+            <nav className="hidden lg:flex items-center gap-4 xl:gap-6 2xl:gap-8 flex-shrink-0">
               {navLinks.map((link, idx) => {
                 const active = isActive(link.path);
                 return (
@@ -190,16 +196,6 @@ export default function Navbar() {
 
             {/* Right Action & Auth Elements */}
             <div className="flex items-center gap-2 sm:gap-2.5 flex-shrink-0">
-              {/* Support Desk Trigger */}
-              <button
-                onClick={() => setSupportModalOpen(true)}
-                className="hidden 2xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0a261a]/70 hover:bg-[#0f3827] border border-[#65F58A]/30 text-xs font-mono text-[#B8E6CE] hover:text-white transition-colors flex-shrink-0"
-                title="Open Academy Support Desk"
-              >
-                <LifeBuoy className="w-3.5 h-3.5 text-[#35E6B5]" />
-                <span>Support</span>
-              </button>
-
               {/* Live Token Counter */}
               {currentUser && (
                 <Link
