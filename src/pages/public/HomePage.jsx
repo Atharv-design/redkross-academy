@@ -34,27 +34,47 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           
           {/* Status Pill with Amber + Black Blending */}
-          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-black/75 border border-[#FF7A00]/30 backdrop-blur-md text-xs font-mono mb-6 shadow-lg shadow-black/60">
+          <motion.div 
+            initial={{ opacity: 0, y: -15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-black/75 border border-[#FF7A00]/30 backdrop-blur-md text-xs font-mono mb-6 shadow-lg shadow-black/60"
+          >
             <span className="w-2 h-2 rounded-full bg-[#FF7A00] animate-pulse shadow-[0_0_8px_#FF7A00]" />
             <span className="text-slate-300">REDKROSS ACADEMY FOUNDATION</span>
             <span className="text-slate-600">&bull;</span>
             <span className="text-[#FFA439] font-semibold">DUAL-DISCIPLINE PORTAL ACTIVE</span>
-          </div>
+          </motion.div>
 
           {/* Main Headline with Amber Gradient */}
-          <h1 className="font-royal text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.15] max-w-4xl mx-auto text-white">
+          <motion.h1 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            className="font-royal text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.15] max-w-4xl mx-auto text-white"
+          >
             One Institutional Foundation. <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF7A00] via-[#FFA439] via-50% to-[#FF8C00] drop-shadow-[0_0_35px_rgba(255,122,0,0.4)]">
               Two Dedicated Academies.
             </span>
-          </h1>
+          </motion.h1>
 
-          <p className="mt-6 text-sm sm:text-base lg:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed font-sans">
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-6 text-sm sm:text-base lg:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed font-sans"
+          >
             Choose your specialized learning track below to enter dedicated, domain-themed academies equipped with practical laboratories, clinical frameworks, and cryptographic credentials.
-          </p>
+          </motion.p>
 
           {/* Foundation Quick Actions */}
-          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 pt-6">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 pt-6"
+          >
             <Link
               to="/student"
               className="px-7 py-3.5 rounded-full bg-gradient-to-r from-[#FF7A00] to-[#E56A00] text-black font-mono font-bold text-xs tracking-wider transition-all flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(255,122,0,0.45)] hover:brightness-110"
@@ -70,26 +90,47 @@ export default function HomePage() {
               <Award className="w-4 h-4 text-[#FFA439]" />
               <span>Verify Credential</span>
             </Link>
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* 2. DUAL-DIVISION GATEWAY SHOWCASE (Unified Amber + Black Blending) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center max-w-3xl mx-auto mb-10">
-          <span className="text-[11px] font-mono tracking-widest text-[#FFA439] uppercase">
-            SELECT LEARNING DISCIPLINE // AUTHENTIC DIVISION INTERFACES
-          </span>
-          <h2 className="text-2xl sm:text-4xl font-bold font-royal text-white mt-2">
+      {/* 2. DUAL-DIVISION GATEWAY SHOWCASE (Perfect Symmetrical Split Layout with Staggered Scroll) */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center max-w-3xl mx-auto mb-12"
+        >
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF7A00]/10 border border-[#FF7A00]/30 text-[10px] font-mono tracking-widest text-[#FFA439] uppercase mb-2">
+            <span>PERFECT DUAL SPLIT PORTAL</span>
+            <span className="text-[#FF7A00]">&bull;</span>
+            <span>CHOOSE DISCIPLINE</span>
+          </div>
+          <h2 className="text-2xl sm:text-4xl font-bold font-royal text-white mt-1">
             Enter Your Chosen Academy
           </h2>
+        </motion.div>
+
+        {/* Central Split Indicator for Desktop */}
+        <div className="hidden lg:flex flex-col items-center justify-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none mt-6">
+          <div className="w-[1px] h-28 bg-gradient-to-b from-transparent via-[#FF7A00]/40 to-[#FF7A00]/70" />
+          <div className="px-3 py-1 rounded-full bg-[#06090E]/95 border border-[#FF7A00]/50 text-[10px] font-mono tracking-widest text-[#FFA439] shadow-[0_0_20px_rgba(255,122,0,0.35)] backdrop-blur-xl uppercase font-bold my-2 select-none">
+            SPLIT &bull; VIEW
+          </div>
+          <div className="w-[1px] h-28 bg-gradient-to-b from-[#FF7A00]/70 via-[#FF7A00]/40 to-transparent" />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-stretch relative">
           
-          {/* PILLAR 1: CYBERSECURITY ACADEMY CARD */}
-          <div 
-            className="relative overflow-hidden rounded-3xl p-7 sm:p-9 flex flex-col justify-between bg-gradient-to-b from-[#1A130C]/90 via-[#0D1219]/90 to-[#070A0F]/95 backdrop-blur-2xl border border-[#FF7A00]/35 hover:border-[#FFA439]/80 transition-all duration-500 shadow-2xl shadow-black/80 hover:shadow-[0_0_45px_rgba(255,122,0,0.25)] group select-none min-h-[490px]"
+          {/* PILLAR 1: CYBERSECURITY ACADEMY CARD (Glides in from Left on Scroll) */}
+          <motion.div 
+            initial={{ opacity: 0, x: -45, y: 25 }}
+            whileInView={{ opacity: 1, x: 0, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            className="relative overflow-hidden rounded-3xl p-7 sm:p-9 flex flex-col justify-between bg-gradient-to-b from-[#1A130C]/90 via-[#0D1219]/90 to-[#070A0F]/95 backdrop-blur-2xl border border-[#FF7A00]/35 hover:border-[#FFA439]/80 transition-all duration-500 shadow-2xl shadow-black/80 hover:shadow-[0_0_45px_rgba(255,122,0,0.25)] group select-none min-h-[500px]"
             onMouseEnter={() => setIsHoveredCyber(true)}
             onMouseLeave={() => setIsHoveredCyber(false)}
           >
@@ -142,29 +183,47 @@ export default function HomePage() {
 
               {/* 3 Symmetrical Competencies */}
               <div className="space-y-2.5 mb-2">
-                <div className="flex items-start gap-3 p-3 rounded-xl bg-black/50 border border-[#FF7A00]/25 group-hover:border-[#FF7A00]/45 transition-colors">
+                <motion.div 
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: 0.2 }}
+                  className="flex items-start gap-3 p-3 rounded-xl bg-black/50 border border-[#FF7A00]/25 group-hover:border-[#FF7A00]/45 transition-colors"
+                >
                   <Shield className="w-4 h-4 text-[#FFA439] shrink-0 mt-0.5" />
                   <div>
                     <div className="text-xs font-semibold text-white">Full-Stack Application Defense</div>
                     <div className="text-[11px] text-slate-300">OWASP Top 10 mitigation &amp; secure API hardening</div>
                   </div>
-                </div>
+                </motion.div>
 
-                <div className="flex items-start gap-3 p-3 rounded-xl bg-black/50 border border-[#FF7A00]/25 group-hover:border-[#FF7A00]/45 transition-colors">
+                <motion.div 
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: 0.3 }}
+                  className="flex items-start gap-3 p-3 rounded-xl bg-black/50 border border-[#FF7A00]/25 group-hover:border-[#FF7A00]/45 transition-colors"
+                >
                   <Terminal className="w-4 h-4 text-[#FF7A00] shrink-0 mt-0.5" />
                   <div>
                     <div className="text-xs font-semibold text-white">Interactive Kali CyberLab</div>
                     <div className="text-[11px] text-slate-300">143+ real Linux tools &amp; active terminal sandbox</div>
                   </div>
-                </div>
+                </motion.div>
 
-                <div className="flex items-start gap-3 p-3 rounded-xl bg-black/50 border border-[#FF7A00]/25 group-hover:border-[#FF7A00]/45 transition-colors">
+                <motion.div 
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: 0.4 }}
+                  className="flex items-start gap-3 p-3 rounded-xl bg-black/50 border border-[#FF7A00]/25 group-hover:border-[#FF7A00]/45 transition-colors"
+                >
                   <Award className="w-4 h-4 text-[#FFA439] shrink-0 mt-0.5" />
                   <div>
                     <div className="text-xs font-semibold text-white">Cryptographic Credentials</div>
                     <div className="text-[11px] text-slate-300">SHA-256 tamper-proof verification on public registry</div>
                   </div>
-                </div>
+                </motion.div>
               </div>
             </div>
 
@@ -189,11 +248,15 @@ export default function HomePage() {
                 </Link>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          {/* PILLAR 2: PSYCHOLOGY ACADEMY CARD */}
-          <div 
-            className="relative overflow-hidden rounded-3xl p-7 sm:p-9 flex flex-col justify-between bg-gradient-to-b from-[#1A130C]/90 via-[#0D1219]/90 to-[#070A0F]/95 backdrop-blur-2xl border border-[#FF7A00]/35 hover:border-[#FFA439]/80 transition-all duration-500 shadow-2xl shadow-black/80 hover:shadow-[0_0_45px_rgba(255,122,0,0.25)] group select-none min-h-[490px]"
+          {/* PILLAR 2: PSYCHOLOGY ACADEMY CARD (Glides in from Right on Scroll) */}
+          <motion.div 
+            initial={{ opacity: 0, x: 45, y: 25 }}
+            whileInView={{ opacity: 1, x: 0, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.7, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            className="relative overflow-hidden rounded-3xl p-7 sm:p-9 flex flex-col justify-between bg-gradient-to-b from-[#1A130C]/90 via-[#0D1219]/90 to-[#070A0F]/95 backdrop-blur-2xl border border-[#FF7A00]/35 hover:border-[#FFA439]/80 transition-all duration-500 shadow-2xl shadow-black/80 hover:shadow-[0_0_45px_rgba(255,122,0,0.25)] group select-none min-h-[500px]"
             onMouseEnter={() => setIsHoveredPsych(true)}
             onMouseLeave={() => setIsHoveredPsych(false)}
           >
@@ -246,29 +309,47 @@ export default function HomePage() {
 
               {/* 3 Symmetrical Competencies */}
               <div className="space-y-2.5 mb-2">
-                <div className="flex items-start gap-3 p-3 rounded-xl bg-black/50 border border-[#FF7A00]/25 group-hover:border-[#FF7A00]/45 transition-colors">
+                <motion.div 
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: 0.2 }}
+                  className="flex items-start gap-3 p-3 rounded-xl bg-black/50 border border-[#FF7A00]/25 group-hover:border-[#FF7A00]/45 transition-colors"
+                >
                   <Brain className="w-4 h-4 text-[#FFA439] shrink-0 mt-0.5" />
                   <div>
                     <div className="text-xs font-semibold text-white">Clinical CBT Protocols</div>
                     <div className="text-[11px] text-slate-300">Evidence-based cognitive therapy &amp; affective neuroscience</div>
                   </div>
-                </div>
+                </motion.div>
 
-                <div className="flex items-start gap-3 p-3 rounded-xl bg-black/50 border border-[#FF7A00]/25 group-hover:border-[#FF7A00]/45 transition-colors">
+                <motion.div 
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: 0.3 }}
+                  className="flex items-start gap-3 p-3 rounded-xl bg-black/50 border border-[#FF7A00]/25 group-hover:border-[#FF7A00]/45 transition-colors"
+                >
                   <HeartHandshake className="w-4 h-4 text-[#FF7A00] shrink-0 mt-0.5" />
                   <div>
                     <div className="text-xs font-semibold text-white">Crisis De-Escalation Care</div>
                     <div className="text-[11px] text-slate-300">Immediate psychological first aid &amp; trauma interventions</div>
                   </div>
-                </div>
+                </motion.div>
 
-                <div className="flex items-start gap-3 p-3 rounded-xl bg-black/50 border border-[#FF7A00]/25 group-hover:border-[#FF7A00]/45 transition-colors">
+                <motion.div 
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: 0.4 }}
+                  className="flex items-start gap-3 p-3 rounded-xl bg-black/50 border border-[#FF7A00]/25 group-hover:border-[#FF7A00]/45 transition-colors"
+                >
                   <Award className="w-4 h-4 text-[#FFA439] shrink-0 mt-0.5" />
                   <div>
                     <div className="text-xs font-semibold text-white">Clinical Competency Proofs</div>
                     <div className="text-[11px] text-slate-300">Institutional certifications &amp; case management credentials</div>
                   </div>
-                </div>
+                </motion.div>
               </div>
             </div>
 
@@ -293,15 +374,21 @@ export default function HomePage() {
                 </Link>
               </div>
             </div>
-          </div>
+          </motion.div>
 
         </div>
       </section>
 
-      {/* 3. FOUNDATION FEATURES SUMMARY */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
+      {/* 3. FOUNDATION FEATURES SUMMARY (Scroll Triggered One-by-One Entrance) */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-6 rounded-2xl bg-gradient-to-b from-[#18120B]/80 via-[#0C1017]/80 to-[#06090E]/90 border border-[#FF7A00]/25 backdrop-blur-xl hover:border-[#FFA439]/60 transition-all duration-300 shadow-xl shadow-black/60 hover:shadow-[0_0_25px_rgba(255,122,0,0.2)] group">
+          <motion.div 
+            initial={{ opacity: 0, y: 35 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            className="p-6 rounded-2xl bg-gradient-to-b from-[#18120B]/80 via-[#0C1017]/80 to-[#06090E]/90 border border-[#FF7A00]/25 backdrop-blur-xl hover:border-[#FFA439]/60 transition-all duration-300 shadow-xl shadow-black/60 hover:shadow-[0_0_25px_rgba(255,122,0,0.2)] group"
+          >
             <div className="w-10 h-10 rounded-xl bg-[#FF7A00]/15 border border-[#FF7A00]/40 flex items-center justify-center text-[#FFA439] mb-3.5 shadow-[0_0_12px_rgba(255,122,0,0.25)] group-hover:scale-105 transition-transform">
               <Cpu className="w-5 h-5 drop-shadow-[0_0_6px_rgba(255,122,0,0.6)]" />
             </div>
@@ -309,9 +396,15 @@ export default function HomePage() {
             <p className="text-xs text-slate-300 leading-relaxed font-sans">
               One unified login and dashboard tracking all course completions, token rewards, and assignments across both divisions.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="p-6 rounded-2xl bg-gradient-to-b from-[#18120B]/80 via-[#0C1017]/80 to-[#06090E]/90 border border-[#FF7A00]/25 backdrop-blur-xl hover:border-[#FFA439]/60 transition-all duration-300 shadow-xl shadow-black/60 hover:shadow-[0_0_25px_rgba(255,122,0,0.2)] group">
+          <motion.div 
+            initial={{ opacity: 0, y: 35 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="p-6 rounded-2xl bg-gradient-to-b from-[#18120B]/80 via-[#0C1017]/80 to-[#06090E]/90 border border-[#FF7A00]/25 backdrop-blur-xl hover:border-[#FFA439]/60 transition-all duration-300 shadow-xl shadow-black/60 hover:shadow-[0_0_25px_rgba(255,122,0,0.2)] group"
+          >
             <div className="w-10 h-10 rounded-xl bg-[#FF7A00]/15 border border-[#FF7A00]/40 flex items-center justify-center text-[#FFA439] mb-3.5 shadow-[0_0_12px_rgba(255,122,0,0.25)] group-hover:scale-105 transition-transform">
               <Award className="w-5 h-5 drop-shadow-[0_0_6px_rgba(255,122,0,0.6)]" />
             </div>
@@ -319,9 +412,15 @@ export default function HomePage() {
             <p className="text-xs text-slate-300 leading-relaxed font-sans">
               Tamper-proof digital certificates secured with cryptographic SHA-256 signatures verifiable on our public verification portal.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="p-6 rounded-2xl bg-gradient-to-b from-[#18120B]/80 via-[#0C1017]/80 to-[#06090E]/90 border border-[#FF7A00]/25 backdrop-blur-xl hover:border-[#FFA439]/60 transition-all duration-300 shadow-xl shadow-black/60 hover:shadow-[0_0_25px_rgba(255,122,0,0.2)] group">
+          <motion.div 
+            initial={{ opacity: 0, y: 35 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="p-6 rounded-2xl bg-gradient-to-b from-[#18120B]/80 via-[#0C1017]/80 to-[#06090E]/90 border border-[#FF7A00]/25 backdrop-blur-xl hover:border-[#FFA439]/60 transition-all duration-300 shadow-xl shadow-black/60 hover:shadow-[0_0_25px_rgba(255,122,0,0.2)] group"
+          >
             <div className="w-10 h-10 rounded-xl bg-[#FF7A00]/15 border border-[#FF7A00]/40 flex items-center justify-center text-[#FFA439] mb-3.5 shadow-[0_0_12px_rgba(255,122,0,0.25)] group-hover:scale-105 transition-transform">
               <Sparkles className="w-5 h-5 drop-shadow-[0_0_6px_rgba(255,122,0,0.6)]" />
             </div>
@@ -329,7 +428,7 @@ export default function HomePage() {
             <p className="text-xs text-slate-300 leading-relaxed font-sans">
               Fully non-profit, Section 8 registered curriculum designed to empower emerging practitioners and students without tuition friction.
             </p>
-          </div>
+          </motion.div>
         </div>
       </section>
 

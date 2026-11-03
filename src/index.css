@@ -218,65 +218,65 @@ body {
   }
 
   .glass-pill {
-    background: rgba(101, 245, 138, 0.12);
+    background: rgba(255, 122, 0, 0.12);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(101, 245, 138, 0.32);
-    color: #65F58A;
+    border: 1px solid rgba(255, 122, 0, 0.32);
+    color: #FFA439;
   }
 
   .glass-pill-amber, .glass-pill-mint {
-    background: rgba(53, 230, 181, 0.12);
+    background: rgba(255, 122, 0, 0.12);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(53, 230, 181, 0.35);
-    color: #35E6B5;
+    border: 1px solid rgba(255, 164, 57, 0.35);
+    color: #FFA439;
   }
 
   .glass-button-primary {
-    background: linear-gradient(135deg, rgba(101, 245, 138, 0.9), rgba(53, 230, 181, 0.95));
+    background: linear-gradient(135deg, #FF7A00, #E05300);
     backdrop-filter: blur(12px);
-    color: #071018;
-    border: 1px solid rgba(0, 255, 163, 0.5);
-    box-shadow: 0 4px 20px 0 rgba(101, 245, 138, 0.3);
+    color: #000000;
+    border: 1px solid rgba(255, 164, 57, 0.6);
+    box-shadow: 0 4px 20px 0 rgba(255, 122, 0, 0.35);
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .glass-button-primary:hover {
-    background: linear-gradient(135deg, rgba(0, 255, 163, 1), rgba(101, 245, 138, 1));
-    box-shadow: 0 6px 28px 0 rgba(0, 255, 163, 0.5);
+    background: linear-gradient(135deg, #FFA439, #FF7A00);
+    box-shadow: 0 6px 28px 0 rgba(255, 122, 0, 0.55);
     transform: translateY(-1px);
   }
 
   .glass-button-secondary {
-    background: rgba(9, 28, 20, 0.65);
+    background: rgba(18, 14, 10, 0.75);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(101, 245, 138, 0.25);
+    border: 1px solid rgba(255, 122, 0, 0.28);
     color: #F1F5F9;
     transition: all 0.3s ease;
   }
 
   .glass-button-secondary:hover {
-    background: rgba(14, 38, 28, 0.82);
-    border-color: rgba(101, 245, 138, 0.55);
-    color: #FFFFFF;
+    background: rgba(26, 18, 12, 0.88);
+    border-color: rgba(255, 164, 57, 0.6);
+    color: #FFA439;
     transform: translateY(-1px);
   }
 
   /* Shading & Blending for Cinzel Headers */
   .title-shading-neon {
-    background: linear-gradient(180deg, #FFFFFF 0%, #E2E8F0 55%, #65F58A 100%);
+    background: linear-gradient(180deg, #FFFFFF 0%, #E2E8F0 55%, #FFA439 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 2px 14px rgba(101, 245, 138, 0.25));
+    filter: drop-shadow(0 2px 14px rgba(255, 122, 0, 0.25));
   }
 
   .title-shading-amber, .title-shading-mint {
-    background: linear-gradient(180deg, #FFFFFF 0%, #D1FAE5 55%, #35E6B5 100%);
+    background: linear-gradient(180deg, #FFFFFF 0%, #FFE0B2 55%, #FFA439 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 2px 14px rgba(53, 230, 181, 0.25));
+    filter: drop-shadow(0 2px 14px rgba(255, 122, 0, 0.25));
   }
 
   .title-shading-white {
@@ -303,30 +303,35 @@ body {
   }
 }
 
-/* Custom Themed Scrollbar */
+/* Custom Themed Scrollbar (Amber Orange + Nocturnal Black Theme) */
+html {
+  scrollbar-color: rgba(255, 122, 0, 0.45) #05070B;
+}
+
 ::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #071018;
+  background: #05070B;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(101, 245, 138, 0.25);
+  background: rgba(255, 122, 0, 0.40);
   border-radius: 9999px;
-  border: 1px solid rgba(101, 245, 138, 0.1);
+  border: 1px solid rgba(255, 122, 0, 0.15);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(101, 245, 138, 0.5);
+  background: rgba(255, 164, 57, 0.75);
+  box-shadow: 0 0 10px rgba(255, 122, 0, 0.5);
 }
 
 /* Explicit Custom Scrollbar Utility */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: rgba(101, 245, 138, 0.35) transparent;
+  scrollbar-color: rgba(255, 122, 0, 0.45) transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -339,17 +344,42 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(101, 245, 138, 0.3);
+  background: rgba(255, 122, 0, 0.40);
   border-radius: 9999px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(101, 245, 138, 0.6);
+  background: rgba(255, 164, 57, 0.75);
+}
+
+/* Division Scoped Scrollbars */
+[data-academy-theme="cybersecurity"] {
+  scrollbar-color: rgba(0, 240, 255, 0.4) #030906;
+}
+[data-academy-theme="cybersecurity"] ::-webkit-scrollbar-thumb {
+  background: rgba(0, 240, 255, 0.35);
+  border: 1px solid rgba(0, 240, 255, 0.15);
+}
+[data-academy-theme="cybersecurity"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 240, 255, 0.75);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+}
+
+[data-academy-theme="psychology"] {
+  scrollbar-color: rgba(230, 184, 125, 0.45) #0C0F0E;
+}
+[data-academy-theme="psychology"] ::-webkit-scrollbar-thumb {
+  background: rgba(230, 184, 125, 0.40);
+  border: 1px solid rgba(230, 184, 125, 0.15);
+}
+[data-academy-theme="psychology"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(230, 184, 125, 0.80);
+  box-shadow: 0 0 10px rgba(230, 184, 125, 0.5);
 }
 
 /* Accessible Focus Ring */
 :focus-visible {
-  outline: 2px solid #65F58A;
+  outline: 2px solid #FF7A00;
   outline-offset: 2px;
 }
 
