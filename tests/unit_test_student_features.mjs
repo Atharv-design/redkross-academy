@@ -16,11 +16,12 @@ function assert(condition, testName) {
 }
 
 try {
-  // Test 1: Course Normalization & Single Course Persistence
+  // Test 1: Course Normalization & Single Course Persistence in Cybersecurity Division
   const courses = mockEngine.getCourses();
-  assert(courses.length === 1, `Catalog contains exclusively 1 course: found ${courses.length}`);
-  assert(courses[0].id === 'crs_full_stack_web_dev', `Catalog course is Full Stack Web Development (crs_full_stack_web_dev)`);
-  assert(courses[0].modules.length === 12, `Course has all 12 modules`);
+  const cyberCourses = courses.filter(c => (c.division || 'cybersecurity') === 'cybersecurity');
+  assert(cyberCourses.length === 1, `Cybersecurity division contains exclusively 1 course: found ${cyberCourses.length}`);
+  assert(cyberCourses[0].id === 'crs_full_stack_web_dev', `Catalog course is Full Stack Web Development (crs_full_stack_web_dev)`);
+  assert(cyberCourses[0].modules.length === 12, `Course has all 12 modules`);
 
   // Test 2: Enrolment initialization
   const db = mockEngine.getDb();

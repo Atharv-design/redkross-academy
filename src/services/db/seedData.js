@@ -4,8 +4,8 @@
  */
 
 import fullStackCourseJson from './fullstackCourse.json' with { type: 'json' };
-import { CYBER_COURSES, CYBER_LEARNING_PATHS } from './cyberCourses';
-import { PSYCHOLOGY_COURSES, PSYCHOLOGY_LEARNING_PATHS } from './psychologyCourses';
+import { CYBER_COURSES, CYBER_LEARNING_PATHS } from './cyberCourses.js';
+import { PSYCHOLOGY_COURSES, PSYCHOLOGY_LEARNING_PATHS } from './psychologyCourses.js';
 
 export const INITIAL_USERS = [
   {
