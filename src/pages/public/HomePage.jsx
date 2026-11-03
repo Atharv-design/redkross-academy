@@ -73,10 +73,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 2. DUAL-DIVISION GATEWAY SHOWCASE (Exact Website Card Designs) */}
+      {/* 2. DUAL-DIVISION GATEWAY SHOWCASE (Unified Amber + Black Blending) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center max-w-3xl mx-auto mb-10">
-          <span className="text-[11px] font-mono tracking-widest text-slate-400 uppercase">
+          <span className="text-[11px] font-mono tracking-widest text-[#FFA439] uppercase">
             SELECT LEARNING DISCIPLINE // AUTHENTIC DIVISION INTERFACES
           </span>
           <h2 className="text-2xl sm:text-4xl font-bold font-royal text-white mt-2">
@@ -86,32 +86,32 @@ export default function HomePage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-stretch">
           
-          {/* PILLAR 1: EXACT CYBERSECURITY WEBSITE CIRCUIT FRAME CARD DESIGN */}
+          {/* PILLAR 1: CYBERSECURITY CIRCUIT FRAME CARD (Amber + Black Theme) */}
           <div 
             className="relative group transition-all duration-300 w-full h-full flex flex-col justify-between select-none"
             onMouseEnter={() => setIsHoveredCyber(true)}
             onMouseLeave={() => setIsHoveredCyber(false)}
           >
-            {/* 1. DITTO SCI-FI CYBER HUD CIRCUIT FRAME (Exact SVG from Cyber Website) */}
-            <CyberCircuitFrame isHovered={isHoveredCyber} />
+            {/* 1. SCI-FI CYBER HUD CIRCUIT FRAME (Amber Palette) */}
+            <CyberCircuitFrame isHovered={isHoveredCyber} theme="amber" />
 
             {/* 2. CARD CONTENT CONTAINER (Safe Inset Zone) */}
             <div className="relative z-10 px-8 sm:px-10 pt-8 pb-7 flex flex-col justify-between h-full min-h-[460px]">
               <div>
                 {/* Header Row: Track Badge (Left) & Compact Cyber Icon (Right) */}
                 <div className="flex items-center justify-between mb-4">
-                  <span className="px-3 py-1 rounded-full text-[11px] font-mono tracking-wider font-semibold border border-cyan-500/40 text-[#65F58A] bg-cyan-950/70 group-hover:border-[#65F58A] group-hover:bg-emerald-950/80 group-hover:shadow-[0_0_12px_rgba(101,245,138,0.3)] transition-all duration-300 uppercase">
+                  <span className="px-3 py-1 rounded-full text-[11px] font-mono tracking-wider font-semibold border border-[#FF7A00]/40 text-[#FFA439] bg-black/80 group-hover:border-[#FF7A00] group-hover:shadow-[0_0_12px_rgba(255,122,0,0.3)] transition-all duration-300 uppercase">
                     DIVISION 01 &bull; DEFENSIVE CYBER
                   </span>
 
                   {/* Inset Cyber Icon Badge */}
-                  <div className="relative p-2 rounded-xl bg-cyan-950/50 border border-cyan-500/40 group-hover:border-[#65F58A] group-hover:bg-[#65F58A]/15 group-hover:shadow-[0_0_15px_rgba(101,245,138,0.4)] transition-all duration-300 overflow-hidden flex items-center justify-center">
-                    <Terminal className="w-5 h-5 text-[#65F58A] group-hover:text-[#35E6B5] transition-all duration-300 relative z-10 drop-shadow-[0_0_8px_rgba(101,245,138,0.85)]" />
+                  <div className="relative p-2 rounded-xl bg-black/80 border border-[#FF7A00]/40 group-hover:border-[#FF7A00] group-hover:bg-[#FF7A00]/15 group-hover:shadow-[0_0_15px_rgba(255,122,0,0.4)] transition-all duration-300 overflow-hidden flex items-center justify-center">
+                    <Terminal className="w-5 h-5 text-[#FFA439] group-hover:text-[#FF7A00] transition-all duration-300 relative z-10 drop-shadow-[0_0_8px_rgba(255,122,0,0.85)]" />
                   </div>
                 </div>
 
                 {/* Title */}
-                <h3 className="text-2xl sm:text-3xl font-black font-royal text-white mb-3 group-hover:text-[#65F58A] transition-colors leading-tight">
+                <h3 className="text-2xl sm:text-3xl font-black font-royal text-white mb-3 group-hover:text-[#FFA439] transition-colors leading-tight">
                   Cybersecurity &amp; Application Defense Academy
                 </h3>
 
@@ -125,7 +125,7 @@ export default function HomePage() {
                   {['Full Stack Engineering', 'OWASP Top 10 Defense', '143+ Kali Tools', 'Cryptographic Proofs'].map((tag) => (
                     <span
                       key={tag}
-                      className="text-[10px] font-mono px-2.5 py-1 rounded bg-black/60 text-emerald-200/90 border border-emerald-500/30 group-hover:border-emerald-500/50 transition-colors"
+                      className="text-[10px] font-mono px-2.5 py-1 rounded bg-black/80 text-[#FFA439] border border-[#FF7A00]/30 group-hover:border-[#FF7A00]/60 transition-colors"
                     >
                       {tag}
                     </span>
@@ -136,18 +136,18 @@ export default function HomePage() {
               {/* Footer Action & Trace Divider */}
               <div className="mt-4">
                 <div className="relative w-full h-[1px] mb-4 overflow-hidden" aria-hidden="true">
-                  <div className="absolute inset-0 bg-white/10 group-hover:bg-emerald-500/30 transition-colors duration-300" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-400/30 to-transparent" />
-                  <div className="absolute inset-y-0 left-0 w-2/5 bg-gradient-to-r from-transparent via-[#65F58A] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-[0_0_12px_#65F58A]" />
+                  <div className="absolute inset-0 bg-white/10 group-hover:bg-[#FF7A00]/30 transition-colors duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#FF7A00]/40 to-transparent" />
+                  <div className="absolute inset-y-0 left-0 w-2/5 bg-gradient-to-r from-transparent via-[#FF7A00] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-[0_0_12px_#FF7A00]" />
                 </div>
 
                 <div className="flex items-center justify-between text-xs font-mono">
-                  <span className="text-slate-400 group-hover:text-emerald-300 transition-colors tracking-wider">
+                  <span className="text-slate-400 group-hover:text-[#FFA439] transition-colors tracking-wider">
                     OPERATOR TRACK 01
                   </span>
                   <Link
                     to="/academy/cybersecurity"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#65F58A] hover:bg-[#35E6B5] text-[#030906] font-mono font-bold text-xs transition-all shadow-[0_0_15px_rgba(101,245,138,0.3)] hover:shadow-[0_0_25px_rgba(101,245,138,0.5)]"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#FF7A00] hover:bg-[#FFA439] text-black font-mono font-bold text-xs transition-all shadow-[0_0_15px_rgba(255,122,0,0.35)] hover:shadow-[0_0_25px_rgba(255,122,0,0.55)]"
                   >
                     <span>Enter Cyber Academy</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
@@ -157,40 +157,40 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* PILLAR 2: EXACT PSYCHOLOGY WEBSITE THEMED FULLSPAN CARD DESIGN */}
+          {/* PILLAR 2: PSYCHOLOGY THEMED FULLSPAN CARD (Amber + Black Blending) */}
           <div 
-            className="relative overflow-hidden rounded-3xl p-8 sm:p-10 flex flex-col justify-between bg-[#081524]/90 backdrop-blur-2xl border border-teal-500/25 hover:border-teal-400/50 transition-all duration-500 shadow-xl shadow-black/50 hover:shadow-teal-950/40 group select-none min-h-[460px]"
+            className="relative overflow-hidden rounded-3xl p-8 sm:p-10 flex flex-col justify-between bg-gradient-to-br from-[#120D08]/95 via-[#0A0704]/90 to-black/95 backdrop-blur-2xl border border-[#FF7A00]/30 hover:border-[#FFA439]/60 transition-all duration-500 shadow-xl shadow-black/60 hover:shadow-[0_0_30px_rgba(255,122,0,0.2)] group select-none min-h-[460px]"
             onMouseEnter={() => setIsHoveredPsych(true)}
             onMouseLeave={() => setIsHoveredPsych(false)}
           >
             {/* Specular top border light beam */}
-            <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-teal-400/50 to-transparent pointer-events-none z-10" />
+            <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#FFA439]/50 to-transparent pointer-events-none z-10" />
 
-            {/* Signature Ethereal Artwork Spanning the Full Vertical Height of the Card */}
+            {/* Signature Ethereal Artwork Tinted in Warm Amber / Sepia */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-3xl z-0 select-none">
               <img
                 src="/assets/cards/card-individual-counselling-fullspan.png"
                 alt=""
-                className="w-full h-full object-cover object-center opacity-30 group-hover:opacity-45 transition-opacity duration-700 filter saturate-125"
+                className="w-full h-full object-cover object-center opacity-25 group-hover:opacity-40 transition-opacity duration-700 filter sepia(85%) hue-rotate(345deg) saturate(260%)"
                 loading="lazy"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#06121E] via-[#081524]/80 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-[#0E0904]/85 to-transparent" />
             </div>
 
             {/* Content Top Zone */}
             <div className="relative z-10">
               {/* Header Badges */}
               <div className="flex items-center justify-between mb-4">
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-mono tracking-wider uppercase font-semibold text-teal-300 bg-teal-950/70 border border-teal-400/40 backdrop-blur-md shadow-sm shadow-teal-950/30">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-mono tracking-wider uppercase font-semibold text-[#FFA439] bg-black/80 border border-[#FF7A00]/40 backdrop-blur-md shadow-sm">
                   DIVISION 02 &bull; PSYCHOLOGY &amp; CARE
                 </span>
-                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-medium text-slate-300 bg-slate-800/60 border border-slate-700/60 backdrop-blur-md">
+                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-medium text-slate-300 bg-black/60 border border-[#FF7A00]/30 backdrop-blur-md">
                   RCI-Aligned Ethics
                 </span>
               </div>
 
               {/* Title */}
-              <h3 className="text-2xl sm:text-3xl font-black font-royal text-white mb-3 group-hover:text-teal-200 transition-colors leading-tight">
+              <h3 className="text-2xl sm:text-3xl font-black font-royal text-white mb-3 group-hover:text-[#FFA439] transition-colors leading-tight">
                 Psychology &amp; Mental Wellbeing Academy
               </h3>
 
@@ -201,13 +201,13 @@ export default function HomePage() {
 
               {/* Metadata Highlights */}
               <div className="space-y-2 mb-6">
-                <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-[#06101B]/85 border border-teal-500/20 text-slate-200 text-xs shadow-sm">
-                  <Brain className="w-4 h-4 text-teal-400 shrink-0" />
+                <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-black/75 border border-[#FF7A00]/25 text-slate-200 text-xs shadow-sm">
+                  <Brain className="w-4 h-4 text-[#FFA439] shrink-0" />
                   <span>CBT Protocols, Affective Neuroscience &amp; Crisis Response</span>
                 </div>
-                <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-[#06101B]/85 border border-teal-500/20 text-slate-200 text-xs shadow-sm">
-                  <Award className="w-4 h-4 text-amber-400 shrink-0" />
-                  <span className="text-amber-200/90">Institutional Certificate of Clinical Competency</span>
+                <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-black/75 border border-[#FF7A00]/25 text-slate-200 text-xs shadow-sm">
+                  <Award className="w-4 h-4 text-[#FF7A00] shrink-0" />
+                  <span className="text-[#FFA439]">Institutional Certificate of Clinical Competency</span>
                 </div>
               </div>
             </div>
@@ -216,12 +216,12 @@ export default function HomePage() {
             <div className="relative z-10 pt-2">
               <Link
                 to="/academy/psychology"
-                className="w-full h-12 rounded-full bg-gradient-to-r from-teal-500/20 via-teal-500/25 to-teal-500/30 border border-teal-500/40 hover:border-teal-400 hover:from-teal-500/30 hover:to-teal-500/45 flex items-center justify-between px-6 transition-all duration-300 group/btn shadow-lg shadow-teal-950/40"
+                className="w-full h-12 rounded-full bg-gradient-to-r from-[#FF7A00]/20 via-[#FF7A00]/25 to-[#FF7A00]/30 border border-[#FF7A00]/40 hover:border-[#FFA439] hover:from-[#FF7A00]/30 hover:to-[#FF7A00]/45 flex items-center justify-between px-6 transition-all duration-300 group/btn shadow-lg shadow-[#FF7A00]/15"
               >
-                <span className="font-royal text-xs sm:text-sm font-bold tracking-wider uppercase text-teal-200 group-hover/btn:text-white transition-colors">
+                <span className="font-royal text-xs sm:text-sm font-bold tracking-wider uppercase text-[#FFA439] group-hover/btn:text-white transition-colors">
                   Enter Psychology Academy
                 </span>
-                <div className="w-8 h-8 rounded-full bg-teal-400 text-[#08121E] flex items-center justify-center font-bold shadow-md shadow-teal-400/40 group-hover/btn:translate-x-1 group-hover/btn:bg-teal-300 transition-all shrink-0">
+                <div className="w-8 h-8 rounded-full bg-[#FF7A00] text-black flex items-center justify-center font-bold shadow-md shadow-[#FF7A00]/40 group-hover/btn:translate-x-1 group-hover/btn:bg-[#FFA439] transition-all shrink-0">
                   <ArrowRight className="w-4 h-4 stroke-[2.5]" />
                 </div>
               </Link>
@@ -234,8 +234,8 @@ export default function HomePage() {
       {/* 3. FOUNDATION FEATURES SUMMARY */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-6 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-md">
-            <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#65F58A] mb-3">
+          <div className="p-6 rounded-2xl bg-black/60 border border-[#FF7A00]/20 backdrop-blur-md">
+            <div className="w-8 h-8 rounded-lg bg-[#FF7A00]/10 border border-[#FF7A00]/30 flex items-center justify-center text-[#FFA439] mb-3">
               <Cpu className="w-4 h-4" />
             </div>
             <h4 className="font-royal font-bold text-white text-base mb-1">Central Student Hub</h4>
@@ -244,8 +244,8 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="p-6 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-md">
-            <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#FF7A00] mb-3">
+          <div className="p-6 rounded-2xl bg-black/60 border border-[#FF7A00]/20 backdrop-blur-md">
+            <div className="w-8 h-8 rounded-lg bg-[#FF7A00]/10 border border-[#FF7A00]/30 flex items-center justify-center text-[#FFA439] mb-3">
               <Award className="w-4 h-4" />
             </div>
             <h4 className="font-royal font-bold text-white text-base mb-1">Cryptographic Credentials</h4>
@@ -254,8 +254,8 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="p-6 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-md">
-            <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-teal-300 mb-3">
+          <div className="p-6 rounded-2xl bg-black/60 border border-[#FF7A00]/20 backdrop-blur-md">
+            <div className="w-8 h-8 rounded-lg bg-[#FF7A00]/10 border border-[#FF7A00]/30 flex items-center justify-center text-[#FFA439] mb-3">
               <Sparkles className="w-4 h-4" />
             </div>
             <h4 className="font-royal font-bold text-white text-base mb-1">Zero-Cost Institutional Access</h4>

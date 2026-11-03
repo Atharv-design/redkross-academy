@@ -17,8 +17,7 @@ import {
 } from 'lucide-react';
 import CyberAcademyNavbar from '../../components/cyber/CyberAcademyNavbar';
 import CyberAcademyFooter from '../../components/cyber/CyberAcademyFooter';
-import CyberBackgroundWatermark from '../../components/common/CyberBackgroundWatermark';
-import CyberCloudsBackground from '../../components/common/CyberCloudsBackground';
+import CyberDivisionWatermark from '../../components/cyber/CyberDivisionWatermark';
 import CircuitTraceCard from '../../components/cyber/CircuitTraceCard';
 import CyberLearningCard from '../../components/cyber/CyberLearningCard';
 import { apiClient } from '../../services/apiClient';
@@ -56,11 +55,10 @@ export default function CyberAcademyPage() {
   return (
     <div 
       data-academy-theme="cybersecurity"
-      className="min-h-screen relative bg-transparent text-[#F1F5F9] overflow-x-clip flex flex-col font-sans"
+      className="min-h-screen relative bg-[#04070D] text-slate-100 overflow-x-clip flex flex-col font-sans"
     >
-      {/* Volumetric Cyber Clouds & Background Watermark */}
-      <CyberCloudsBackground />
-      <CyberBackgroundWatermark />
+      {/* Exact Cybersecurity Website Deep Ambient Watermark & Traveling Lightning Discharge */}
+      <CyberDivisionWatermark />
 
       {/* Cyber Academy Navigation */}
       <CyberAcademyNavbar />

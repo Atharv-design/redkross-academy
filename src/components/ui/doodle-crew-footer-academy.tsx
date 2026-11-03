@@ -1027,7 +1027,7 @@ const Doodle = ({ kind }: { kind: DoodleKind }) => {
 
     case "sparkle":
 
-      return <path fill="#65F58A" d="M0 -13 C1 -4 4 -1 13 0 C4 1 1 4 0 13 C-1 4 -4 1 -13 0 C-4 -1 -1 -4 0 -13 Z" />
+      return <path fill="#FF7A00" d="M0 -13 C1 -4 4 -1 13 0 C4 1 1 4 0 13 C-1 4 -4 1 -13 0 C-4 -1 -1 -4 0 -13 Z" />
 
     case "spiral":
 
@@ -1072,30 +1072,30 @@ type Metrics = { advances: number[]; cap: number }
 
 
 const REDKROSS_PALETTE = [
-  "#65F58A", // R - Neon Green
-  "#35E6B5", // E - Mint Green
-  "#00FFA3", // D - Electric Azure
-  "#45F5A1", // K - Progress Green
-  "#65F58A", // R - Vivid Cobalt
-  "#35E6B5", // O - Radiant Teal
-  "#35E6B5", // S - Mint Green
-  "#65F58A", // S - Neon Green
+  "#FF7A00", // R - Amber
+  "#FFA439", // E - Mint Green
+  "#FF8C00", // D - Electric Azure
+  "#FFB74D", // K - Progress Green
+  "#FF7A00", // R - Vivid Cobalt
+  "#FFA439", // O - Radiant Teal
+  "#FFA439", // S - Mint Green
+  "#FF7A00", // S - Neon Green
 ]
 
 const REDKROSS_SUB_PALETTE = [
-  "#65F58A", // C - Neon Green
-  "#35E6B5", // Y - Mint Green
-  "#00FFA3", // B - Azure
-  "#65F58A", // E - Cobalt
-  "#35E6B5", // R - Teal
-  "#65F58A", // S - Neon Green
-  "#35E6B5", // E - Mint Green
-  "#00FFA3", // C - Azure
-  "#65F58A", // U - Cobalt
-  "#35E6B5", // R - Teal
-  "#35E6B5", // I - Mint Green
-  "#65F58A", // T - Neon Green
-  "#00FFA3", // Y - Radiant Amber
+  "#FF7A00", // C - Neon Green
+  "#FFA439", // Y - Mint Green
+  "#FF8C00", // B - Azure
+  "#FF7A00", // E - Cobalt
+  "#FFA439", // R - Teal
+  "#FF7A00", // S - Neon Green
+  "#FFA439", // E - Mint Green
+  "#FF8C00", // C - Azure
+  "#FF7A00", // U - Cobalt
+  "#FFA439", // R - Teal
+  "#FFA439", // I - Mint Green
+  "#FF7A00", // T - Neon Green
+  "#FF8C00", // Y - Radiant Amber
 ]
 
 const FONT_SIZE = 200
@@ -2663,13 +2663,13 @@ const CSS =
 
   ".dcf-art .dcf-shadow{fill:var(--dcf-ink);stroke:none;opacity:.14}" +
 
-  ".dcf-ground path{fill:none;stroke:var(--dcf-accent,#65F58A);stroke-width:2.4;stroke-linecap:round;filter:drop-shadow(0 0 10px rgba(101,245,138,.5))}" +
+  ".dcf-ground path{fill:none;stroke:var(--dcf-accent,#FF7A00);stroke-width:2.4;stroke-linecap:round;filter:drop-shadow(0 0 10px rgba(255,122,0,.5))}" +
 
   ".dcf-ground .dcf-tufts{stroke-width:1.8}" +
 
-  ".dcf-pebble{fill:var(--dcf-bg);stroke:var(--dcf-accent,#65F58A)!important;stroke-width:1.6}" +
+  ".dcf-pebble{fill:var(--dcf-bg);stroke:var(--dcf-accent,#FF7A00)!important;stroke-width:1.6}" +
 
-  ".dcf-dust{fill:none;stroke:var(--dcf-accent,#65F58A);stroke-width:3;stroke-linecap:round;opacity:0}" +
+  ".dcf-dust{fill:none;stroke:var(--dcf-accent,#FF7A00);stroke-width:3;stroke-linecap:round;opacity:0}" +
 
   ".dcf-hit{fill:transparent;stroke:none;cursor:pointer;outline:none}" +
 
@@ -2733,9 +2733,9 @@ const CSS =
 
   ".dcf-btn{display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 20px 0 16px;border-radius:999px;border:2px solid var(--dcf-ink);font-size:14.5px;font-weight:750;letter-spacing:-.01em;box-shadow:0 3px 0 var(--dcf-ink);transition:transform .18s cubic-bezier(.3,1.4,.5,1),box-shadow .18s cubic-bezier(.3,1.4,.5,1)}" +
 
-  ".dcf-btn.is-outline{background:rgba(14,14,22,.85);color:#f9fafb;border:2px solid rgba(101,245,138,.6);box-shadow:0 0 12px rgba(101,245,138,.2);backdrop-filter:blur(8px)}" +
+  ".dcf-btn.is-outline{background:rgba(14,14,22,.85);color:#f9fafb;border:2px solid rgba(255,122,0,.6);box-shadow:0 0 12px rgba(255,122,0,.2);backdrop-filter:blur(8px)}" +
 
-  ".dcf-btn.is-solid{background:linear-gradient(135deg,#65F58A 0%,#35E6B5 100%);color:#03060A;border:2px solid #65F58A;box-shadow:0 4px 18px rgba(0,255,163,.4);font-weight:700}" +
+  ".dcf-btn.is-solid{background:linear-gradient(135deg,#FF7A00 0%,#FFA439 100%);color:#03060A;border:2px solid #FF7A00;box-shadow:0 4px 18px rgba(255,122,0,.4);font-weight:700}" +
 
   ".dcf-btn.is-solid .dcf-icon{stroke:var(--dcf-bg)}" +
 

@@ -124,8 +124,8 @@ void main() {
 
     float n = fbm((uv + vec2(sin(u_time * 0.08), u_time * 0.06)) * 2.0 - 2.0);
 
-    // Color mixing in vibrant Amber/Burnt Orange and Crimson Red
-    vec3 baseColour = mix(C_DARK, mix(C_RED * 0.35, C_AMBER * 0.65, n), n);
+    // Color mixing in vibrant Amber / Burnt Orange and Golden Highlights
+    vec3 baseColour = mix(C_DARK, mix(C_AMBER_DEEP * 0.40, C_AMBER * 0.75, n), n);
 
     vec3 layerColour = domain(uv);
 
@@ -139,9 +139,10 @@ void main() {
 
     baseColour /= (opacity_sum * 0.75);
 
-    // Final color clamp with amber-ruby luminescence
-    vec3 finalGlow = clamp(baseColour * 4.2, 0.0, 1.0);
-    gl_FragColor = vec4(finalGlow, 1.0);
+    // Final color clamp with amber luminescence & soft alpha blending
+    vec3 finalGlow = clamp(baseColour * 4.6, 0.0, 1.0);
+    float alpha = clamp(length(finalGlow) * 1.85, 0.0, 0.95);
+    gl_FragColor = vec4(finalGlow, alpha);
 }
 `;
 
