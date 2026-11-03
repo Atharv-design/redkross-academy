@@ -1,7 +1,7 @@
 /* eslint-disable */
 // CyberShaderBackground — RedKross Academy Ray-Marching Fractal WebGL Engine
-// Implements the user's custom fragment shader mapped strictly to Emerald Green (#65F58A, #00FFA3)
-// and Electric Mint (#35E6B5) over dark cyber canvas (#071018). ZERO BLUE.
+// Implements the user's custom fragment shader mapped strictly to Amber / Burnt Orange (#FF7A00)
+// and Crimson Red (#DC2626) over dark carbon canvas (#050608).
 
 import React, { useEffect, useRef } from 'react';
 
@@ -28,11 +28,11 @@ const float zoomSpeed = 10.0;
 const int layers = 8;
 const int octaves = 4;
 
-// RedKross Signature Palettes (Strict Zero Blue)
-// Emerald Green #00FFA3 / #65F58A and Electric Mint #35E6B5
-const vec3 C_EMERALD = vec3(0.0, 1.0, 0.64);
-const vec3 C_MINT    = vec3(0.21, 0.90, 0.71);
-const vec3 C_DARK    = vec3(0.027, 0.063, 0.094);
+// Amber + Black Blending Palette (Strictly Zero Red)
+const vec3 C_AMBER      = vec3(1.0, 0.48, 0.0);   // Amber / Burnt Orange #FF7A00
+const vec3 C_AMBER_DEEP = vec3(0.68, 0.22, 0.0);  // Deep Burnt Amber #AD3800
+const vec3 C_GOLD       = vec3(1.0, 0.75, 0.24);  // Warm Amber Gold #FFBF3D
+const vec3 C_DARK       = vec3(0.005, 0.005, 0.008); // Pitch Nocturnal Black
 
 vec2 hash2(vec2 p) {
     return texture2D(u_noise, (p + 0.5) / 256.0).xy;
@@ -74,7 +74,9 @@ float fbm(in vec2 uv) {
 vec3 domain(vec2 z) {
     float angle = atan(z.y, z.x);
     float t = sin(angle * 2.0 + u_time * 0.15) * 0.5 + 0.5;
-    return mix(C_MINT, C_EMERALD, t);
+    vec3 amberWarm = mix(C_AMBER, C_GOLD, t);
+    float blendPhase = sin(u_time * 0.18 + angle * 3.0) * 0.5 + 0.5;
+    return mix(C_AMBER_DEEP, amberWarm, blendPhase);
 }
 
 vec3 render(vec2 uv, float scale, vec3 colour) {
@@ -122,8 +124,8 @@ void main() {
 
     float n = fbm((uv + vec2(sin(u_time * 0.08), u_time * 0.06)) * 2.0 - 2.0);
 
-    // Color mixing strictly in Emerald Green and Electric Mint
-    vec3 baseColour = mix(C_DARK, mix(C_MINT * 0.35, C_EMERALD * 0.65, n), n);
+    // Color mixing in vibrant Amber/Burnt Orange and Crimson Red
+    vec3 baseColour = mix(C_DARK, mix(C_RED * 0.35, C_AMBER * 0.65, n), n);
 
     vec3 layerColour = domain(uv);
 
@@ -137,14 +139,14 @@ void main() {
 
     baseColour /= (opacity_sum * 0.75);
 
-    // Final color clamp with cyber glass luminescence
-    vec3 finalGlow = clamp(baseColour * 4.5, 0.0, 1.0);
+    // Final color clamp with amber-ruby luminescence
+    vec3 finalGlow = clamp(baseColour * 4.2, 0.0, 1.0);
     gl_FragColor = vec4(finalGlow, 1.0);
 }
 `;
 
 export default function CyberShaderBackground({
-    opacity = 0.35,
+    opacity = 0.40,
     className = ""
 }) {
     const canvasRef = useRef(null);
@@ -246,7 +248,6 @@ export default function CyberShaderBackground({
         };
         window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
-        // Resize handler with 0.75x DPR for super smooth 60fps
         const resize = () => {
             const width = window.innerWidth;
             const height = window.innerHeight;

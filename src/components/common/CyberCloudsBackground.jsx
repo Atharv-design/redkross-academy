@@ -3,16 +3,11 @@ import * as THREE from 'three';
 import CLOUDS from 'vanta/dist/vanta.clouds.min';
 
 /**
- * CyberCloudsBackground (Vanta.js CLOUDS in RedKross Cyber Theme)
- * 
- * Exact Color Tuning:
- * - Deep Obsidian Atmosphere (Nocturnal Cyber Sky: 0x05130d)
- * - Luminous Emerald Vapors (Cloud Color: 0x1b543b)
- * - Deep Obsidian Shadows (Cloud Shadow: 0x04120b)
- * - Brand Neon Glow Sun (Horizon Focus: 0x65f58a)
- * - Brand Mint Sun Glare (0x35e6b5)
- * - Directional Ambient Light (0x45f39e)
- * - Zero blue, strictly matched to RedKross Academy brand design.
+ * CyberCloudsBackground
+ * 3D Vanta.js Volumetric Clouds in Amber + Black Blending Combo:
+ * - 🟠 Amber / Burnt Orange (#FF7A00 / #FFA439 / #FF8C00): Eagle, Technology & Research
+ * - ⚫ Deep Nocturnal Black (#000000 / #040406): Void, Depth & Contrast
+ * - Seamlessly blended volumetric amber vapors drifting over pure black canvas (0% green, 0% red)
  */
 export default function CyberCloudsBackground() {
   const [vantaEffect, setVantaEffect] = useState(null);
@@ -21,7 +16,6 @@ export default function CyberCloudsBackground() {
   useEffect(() => {
     if (!vantaEffect && vantaRef.current) {
       try {
-        // Ensure THREE is globally available for Vanta internal shaders
         if (typeof window !== 'undefined') {
           window.THREE = THREE;
         }
@@ -34,15 +28,15 @@ export default function CyberCloudsBackground() {
           gyroControls: false,
           minHeight: 200.0,
           minWidth: 200.0,
-          // RedKross Cyber Emerald & Obsidian Color Palette
-          backgroundColor: 0x071018,
-          skyColor: 0x061810,          // Deep obsidian jade sky
-          cloudColor: 0x1b543b,        // Luminous emerald volumetric clouds
-          cloudShadowColor: 0x04120b,  // Dark obsidian cloud shadow
-          sunColor: 0x65f58a,          // Brand Neon Green (#65F58A) horizon core
-          sunGlareColor: 0x35e6b5,     // Brand Mint (#35E6B5) radial flare
-          sunlightColor: 0x45f39e,     // Ambient laser sunlight
-          speed: 0.85                  // Smooth, cinematic atmospheric drift
+          // Amber + Black Blending Combo (Strictly zero red)
+          backgroundColor: 0x000000,
+          skyColor: 0x040406,          // Deep nocturnal pitch black sky
+          cloudColor: 0x2e1503,        // Rich Amber / Burnt Orange volumetric cloud vapors
+          cloudShadowColor: 0x020202,  // Ultra-deep carbon shadow
+          sunColor: 0xff7a00,          // Vibrant Amber sun core (#FF7A00)
+          sunGlareColor: 0xffa439,     // Radiant Amber-Gold flare (#FFA439 - zero red)
+          sunlightColor: 0xff8c00,     // Pure Amber sunlight (#FF8C00)
+          speed: 0.85                  // Atmospheric drift
         });
 
         setVantaEffect(effect);
@@ -70,17 +64,17 @@ export default function CyberCloudsBackground() {
       {/* 1. Underlying 3D Vanta Clouds Canvas */}
       <div 
         ref={vantaRef} 
-        className="w-full h-full opacity-75 transition-opacity duration-1000"
+        className="w-full h-full opacity-85 transition-opacity duration-1000"
       />
 
-      {/* 2. Optical Contrast Vignette: Keeps Text 100% WCAG Readable */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#071018]/50 via-transparent to-[#071018]/80 pointer-events-none" />
+      {/* 2. Soft Optical Contrast Vignette */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#000000]/60 via-transparent to-[#000000]/85 pointer-events-none" />
 
-      {/* 3. Subtle Cybernetic Scanlines */}
+      {/* 3. Subtle Brand Amber Holographic Scanlines */}
       <div 
-        className="absolute inset-0 pointer-events-none opacity-[0.035]"
+        className="absolute inset-0 pointer-events-none opacity-[0.02]"
         style={{
-          backgroundImage: 'repeating-linear-gradient(0deg, #65F58A 0px, #65F58A 1px, transparent 1px, transparent 4px)',
+          backgroundImage: 'repeating-linear-gradient(0deg, #FF7A00 0px, #FF7A00 1px, transparent 1px, transparent 4px)',
           backgroundSize: '100% 4px'
         }}
       />

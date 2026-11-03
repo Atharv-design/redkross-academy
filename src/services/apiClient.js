@@ -81,6 +81,24 @@ export const apiClient = {
       };
     }
   },
+  async getCoursesByDivision(division, preview = false) {
+    const data = await this.getCourses(preview);
+    const allCourses = data.courses || [];
+    if (!division) return data;
+    return {
+      ...data,
+      courses: allCourses.filter((c) => (c.division || 'cybersecurity') === division)
+    };
+  },
+
+  async getLearningPathsByDivision(division) {
+    const res = await this.getLearningPaths();
+    const allPaths = res.learning_paths || [];
+    if (!division) return res;
+    return {
+      learning_paths: allPaths.filter((p) => (p.division || 'cybersecurity') === division)
+    };
+  },
 
   async getCourseById(id) {
     try {
@@ -220,6 +238,24 @@ export const apiClient = {
         message: 'Courses will be out soon'
       };
     }
+  },
+  async getCoursesByDivision(division, preview = false) {
+    const data = await this.getCourses(preview);
+    const allCourses = data.courses || [];
+    if (!division) return data;
+    return {
+      ...data,
+      courses: allCourses.filter((c) => (c.division || 'cybersecurity') === division)
+    };
+  },
+
+  async getLearningPathsByDivision(division) {
+    const res = await this.getLearningPaths();
+    const allPaths = res.learning_paths || [];
+    if (!division) return res;
+    return {
+      learning_paths: allPaths.filter((p) => (p.division || 'cybersecurity') === division)
+    };
   },
 
   // ENROLMENTS (Phase 2 Mandatory Authentication & Dynamic Automation Dispatch)

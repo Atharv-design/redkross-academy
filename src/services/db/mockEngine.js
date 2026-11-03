@@ -207,36 +207,35 @@ class MockEngine {
       // 100% REAL DATA ENFORCEMENT: Purge any legacy fake cohorts / fake violation events
       let modified = false;
 
-      // EXCLUSIVE CURRICULUM NORMALIZATION: Purge legacy cybersecurity courses
-      const LEGACY_COURSE_IDS = [
-        'crs_soc_fundamentals',
-        'crs_practical_cyber_def',
-        'crs_enterprise_incident_resp',
-        'crs_threat_hunting',
-        'crs_malware_analysis',
-        'crs_cloud_sec',
-        'crs_network_sec',
-        'crs_identity_iam',
-        'crs_app_sec',
-        'crs_threat_intel',
-        'crs_incident_response'
-      ];
-      if (parsed.courses && parsed.courses.some((c) => LEGACY_COURSE_IDS.includes(c.id))) {
-        parsed.courses = parsed.courses.filter((c) => !LEGACY_COURSE_IDS.includes(c.id));
+      // Ensure all master courses from INITIAL_COURSES (Cybersecurity & Psychology Divisions) are populated
+      parsed.admin_deleted_course_ids = parsed.admin_deleted_course_ids || [];
+      const validCourseIds = INITIAL_COURSES.map((c) => c.id);
+      if (parsed.courses && parsed.courses.some((c) => !validCourseIds.includes(c.id))) {
+        parsed.courses = parsed.courses.filter((c) => validCourseIds.includes(c.id));
         modified = true;
       }
-
-      // Ensure Full Stack Web Development master course is populated if missing and not explicitly deleted by admin
-      parsed.admin_deleted_course_ids = parsed.admin_deleted_course_ids || [];
-      const hasFullStack = (parsed.courses || []).some((c) => c.id === 'crs_full_stack_web_dev');
-      const wasExplicitlyDeleted = parsed.admin_deleted_course_ids.includes('crs_full_stack_web_dev');
-      if (!hasFullStack && !wasExplicitlyDeleted) {
-        const fullStackMaster = INITIAL_COURSES.find((c) => c.id === 'crs_full_stack_web_dev');
-        if (fullStackMaster) {
-          parsed.courses.unshift(fullStackMaster);
+      INITIAL_COURSES.forEach((initCourse) => {
+        const exists = (parsed.courses || []).some((c) => c.id === initCourse.id);
+        const wasDeleted = parsed.admin_deleted_course_ids.includes(initCourse.id);
+        if (!exists && !wasDeleted) {
+          parsed.courses.push(initCourse);
           modified = true;
         }
+      });
+
+      // Ensure all learning paths from INITIAL_LEARNING_PATHS are populated
+      const validPathIds = INITIAL_LEARNING_PATHS.map((p) => p.id);
+      if (parsed.learning_paths && parsed.learning_paths.some((p) => !validPathIds.includes(p.id))) {
+        parsed.learning_paths = parsed.learning_paths.filter((p) => validPathIds.includes(p.id));
+        modified = true;
       }
+      INITIAL_LEARNING_PATHS.forEach((initPath) => {
+        const exists = (parsed.learning_paths || []).some((p) => p.id === initPath.id);
+        if (!exists) {
+          parsed.learning_paths.push(initPath);
+          modified = true;
+        }
+      });
 
       // Default public catalog visibility to true so students immediately see the active curriculum
       if (typeof parsed.public_catalog_enabled !== 'boolean') {
@@ -728,6 +727,17 @@ class MockEngine {
 
   getCourses() {
     return (this.getDb().courses || []).map((c) => this._normalizeCourse(c));
+  }
+
+  getCoursesByDivision(division) {
+    if (!division) return this.getCourses();
+    return this.getCourses().filter((c) => (c.division || 'cybersecurity') === division);
+  }
+
+  getLearningPathsByDivision(division) {
+    const paths = this.getDb().learning_paths || [];
+    if (!division) return paths;
+    return paths.filter((p) => (p.division || 'cybersecurity') === division);
   }
 
   getCourseBySlug(slug) {

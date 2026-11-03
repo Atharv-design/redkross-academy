@@ -24,6 +24,7 @@ export default function CourseCatalogPage() {
   const [selectedDifficulty, setSelectedDifficulty] = useState('All');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedPricing, setSelectedPricing] = useState('All');
+  const [selectedDivision, setSelectedDivision] = useState('All');
 
   useEffect(() => {
     const fetchCatalog = () => {
@@ -70,9 +71,11 @@ export default function CourseCatalogPage() {
         (selectedPricing === 'Free' && course.price === 0) ||
         (selectedPricing === 'Paid' && course.price > 0);
 
-      return matchesSearch && matchesDifficulty && matchesCategory && matchesPricing;
+      const matchesDivision = selectedDivision === 'All' || (course.division || 'cybersecurity') === selectedDivision;
+
+      return matchesSearch && matchesDifficulty && matchesCategory && matchesPricing && matchesDivision;
     });
-  }, [courses, searchQuery, selectedDifficulty, selectedCategory, selectedPricing]);
+  }, [courses, searchQuery, selectedDifficulty, selectedCategory, selectedPricing, selectedDivision]);
 
   // Loading state
   if (loading) {
@@ -250,6 +253,39 @@ export default function CourseCatalogPage() {
 
         {/* Filter Controls Bar */}
         <div className="ultra-glass-panel rounded-2xl p-4 sm:p-6 space-y-4 animate-slide-left stagger-1">
+          <div className="flex flex-wrap items-center gap-2 border-b border-white/10 pb-3">
+            <button
+              onClick={() => setSelectedDivision('All')}
+              className={`px-4 py-1.5 rounded-full text-xs font-mono transition-all ${
+                selectedDivision === 'All'
+                  ? 'bg-white/20 text-white font-bold border border-white/30 shadow-sm'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              All Courses ({courses.length})
+            </button>
+            <button
+              onClick={() => setSelectedDivision('cybersecurity')}
+              className={`px-4 py-1.5 rounded-full text-xs font-mono transition-all ${
+                selectedDivision === 'cybersecurity'
+                  ? 'bg-[#65F58A]/25 text-[#65F58A] font-bold border border-[#65F58A]/50 shadow-[0_0_12px_rgba(101,245,138,0.25)]'
+                  : 'text-slate-400 hover:text-[#65F58A]'
+              }`}
+            >
+              Cybersecurity Academy
+            </button>
+            <button
+              onClick={() => setSelectedDivision('psychology')}
+              className={`px-4 py-1.5 rounded-full text-xs font-mono transition-all ${
+                selectedDivision === 'psychology'
+                  ? 'bg-teal-500/25 text-teal-300 font-bold border border-teal-400/50 shadow-[0_0_12px_rgba(45,212,191,0.25)]'
+                  : 'text-slate-400 hover:text-teal-300'
+              }`}
+            >
+              Psychology Academy
+            </button>
+          </div>
+
           <div className="flex flex-col md:flex-row gap-4">
             {/* Search Input */}
             <div className="relative flex-1">

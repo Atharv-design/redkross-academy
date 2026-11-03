@@ -78,8 +78,9 @@ export default function Navbar() {
 
   const navLinks = [
     { label: "Home", path: "/" },
-    { label: "Learning Paths", path: "/paths" },
-    { label: "Courses", path: "/courses" },
+    { label: "Cyber Academy", path: "/academy/cybersecurity" },
+    { label: "Psychology Academy", path: "/academy/psychology" },
+    { label: "All Courses", path: "/courses" },
     { label: "Verify Credential", path: "/verify" }
   ];
 
@@ -99,42 +100,42 @@ export default function Navbar() {
     <>
       <header className="fixed top-0 inset-x-0 z-50 pointer-events-none select-none">
         {/* Top Cross-Domain Ecosystem Utility Bar */}
-        <div className="bg-transparent border-b border-[#65F58A]/20 py-1.5 px-4 sm:px-8 text-[11px] font-mono text-[#B8E6CE] flex items-center justify-between backdrop-blur-md pointer-events-auto">
+        <div className="bg-transparent border-b border-[#FF7A00]/20 py-1.5 px-4 sm:px-8 text-[11px] font-mono text-[#E2D9CE] flex items-center justify-between backdrop-blur-md pointer-events-auto">
           <div className="flex items-center gap-3 sm:gap-4 truncate">
             <a 
               href={ecosystem.foundation}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-[#C9EFE0] hover:text-[#65F58A] transition-colors truncate"
+              className="flex items-center gap-1.5 text-[#E2D9CE] hover:text-[#FF7A00] transition-colors truncate"
             >
               <span>&larr; RedKross Foundation</span>
               <ExternalLink className="w-3 h-3 opacity-60" />
             </a>
-            <span className="text-[#65F58A]/30">|</span>
+            <span className="text-[#FF7A00]/30">|</span>
             <a 
               href={ecosystem.cybersecurity}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-[#B8E6CE] hover:text-[#35E6B5] transition-colors hidden sm:flex"
+              className="flex items-center gap-1.5 text-[#E2D9CE] hover:text-[#FFA439] transition-colors hidden sm:flex"
             >
               <span>Cybersecurity Platform</span>
               <ExternalLink className="w-3 h-3 opacity-60" />
             </a>
-            <span className="text-[#65F58A]/30 hidden sm:inline">|</span>
+            <span className="text-[#FF7A00]/30 hidden sm:inline">|</span>
             <a 
               href={ecosystem.psychology}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-[#B8E6CE] hover:text-[#65F58A] transition-colors hidden md:flex"
+              className="flex items-center gap-1.5 text-[#E2D9CE] hover:text-[#FF7A00] transition-colors hidden md:flex"
             >
               <span>Psychology Platform</span>
               <ExternalLink className="w-3 h-3 opacity-60" />
             </a>
           </div>
 
-          <div className="flex items-center gap-2 text-[10px] text-[#65F58A]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#65F58A] animate-pulse" />
-            <span className="font-semibold tracking-wider font-mono">DEFENSIVE CYBER ACADEMY</span>
+          <div className="flex items-center gap-2 text-[10px] text-[#FFA439]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#FF7A00] animate-pulse" />
+            <span className="font-semibold tracking-wider font-mono">REDKROSS ACADEMY FOUNDATION</span>
           </div>
         </div>
 
@@ -143,13 +144,13 @@ export default function Navbar() {
           <div
             className={`max-w-7xl mx-auto rounded-full px-5 py-2.5 flex items-center justify-between transition-all duration-300 pointer-events-auto liquid-glass-nav bg-transparent ${
               scrolled
-                ? 'shadow-[0_16px_48px_rgba(0,0,0,0.85)] border-[#65F58A]/40'
-                : 'border-[#65F58A]/30'
+                ? 'shadow-[0_16px_48px_rgba(0,0,0,0.85)] border-[#FF7A00]/40'
+                : 'border-[#FF7A00]/30'
             }`}
           >
             {/* Brand Logo & Prestigious Title */}
             <Link to="/" onClick={closeMobileMenu} className="flex items-center gap-3 group flex-shrink-0 animate-slide-left">
-              <div className="relative w-8 h-8 rounded-full overflow-hidden bg-black border border-[#65F58A]/50 flex items-center justify-center shadow-[0_0_15px_rgba(101,245,138,0.3)] group-hover:scale-105 transition-transform flex-shrink-0">
+              <div className="relative w-8 h-8 rounded-full overflow-hidden bg-black border border-[#FF7A00]/50 flex items-center justify-center shadow-[0_0_15px_rgba(255,122,0,0.3)] group-hover:scale-105 transition-transform flex-shrink-0">
                 <img
                   src="/assets/crest-clean-circle.png"
                   alt="RedKross Logo"
@@ -158,10 +159,10 @@ export default function Navbar() {
               </div>
               <div className="flex flex-col">
                 <span className="font-royal font-bold text-sm sm:text-base tracking-wider text-white leading-tight">
-                  RedKross <span className="text-[#65F58A]">Academy</span>
+                  RedKross <span className="text-[#FF7A00]">Academy</span>
                 </span>
-                <span className="text-[9px] font-mono tracking-widest text-[#B8E6CE] uppercase -mt-0.5">
-                  Defensive Cyber &bull; Operator Training
+                <span className="text-[9px] font-mono tracking-widest text-[#E2D9CE] uppercase -mt-0.5">
+                  Dual Division &bull; Cyber &bull; Psychology
                 </span>
               </div>
             </Link>
@@ -175,12 +176,12 @@ export default function Navbar() {
                     key={link.label}
                     to={link.path}
                     className={`text-xs font-mono font-medium transition-colors duration-200 relative py-1 whitespace-nowrap animate-slide-left stagger-${(idx % 4) + 1} ${
-                      active ? 'text-[#65F58A] font-bold' : 'text-[#B8E6CE] hover:text-white'
+                      active ? 'text-[#FF7A00] font-bold' : 'text-[#E2D9CE] hover:text-white'
                     }`}
                   >
                     {link.label}
                     {active && (
-                      <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-gradient-to-r from-[#65F58A] to-[#35E6B5] rounded-full shadow-[0_0_8px_rgba(101,245,138,0.8)]" />
+                      <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-gradient-to-r from-[#FF7A00] to-[#FFA439] rounded-full shadow-[0_0_8px_rgba(255,122,0,0.8)]" />
                     )}
                   </Link>
                 );
@@ -203,12 +204,12 @@ export default function Navbar() {
               {currentUser && (
                 <Link
                   to="/student/tokens"
-                  className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#65F58A]/10 border border-[#65F58A]/30 text-[#65F58A] hover:bg-[#65F58A]/20 transition-all text-xs font-mono font-medium flex-shrink-0"
+                  className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FF7A00]/10 border border-[#FF7A00]/30 text-[#FFA439] hover:bg-[#FF7A00]/20 transition-all text-xs font-mono font-medium flex-shrink-0"
                   title="RedKross Reward Tokens"
                 >
-                  <Coins className="w-3.5 h-3.5 text-[#65F58A] animate-pulse" />
+                  <Coins className="w-3.5 h-3.5 text-[#FFA439] animate-pulse" />
                   <span className="tabular-nums font-bold">{typeof tokenBalance === 'number' ? tokenBalance : 150}</span>
-                  <span className="hidden md:inline text-[10px] text-[#35E6B5] uppercase">Tokens</span>
+                  <span className="hidden md:inline text-[10px] text-[#FF7A00] uppercase">Tokens</span>
                 </Link>
               )}
 
@@ -219,11 +220,11 @@ export default function Navbar() {
                   devLoginAsAdmin();
                   navigate('/admin');
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full liquid-glass-button text-xs font-mono font-bold shadow-[0_0_15px_rgba(101,245,138,0.2)] flex-shrink-0"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full liquid-glass-button text-xs font-mono font-bold shadow-[0_0_15px_rgba(255,122,0,0.25)] flex-shrink-0"
                 title="1-Click Super Admin Console"
               >
-                <Zap className="w-3.5 h-3.5 text-[#65F58A] animate-pulse" />
-                <span>Admin</span>
+                <Zap className="w-3.5 h-3.5 text-[#FFA439] animate-pulse" />
+                <span className="text-[#FFA439]">Admin</span>
               </button>
 
               {/* User Profile Dropdown or Slim Pill CTA Button */}
@@ -341,13 +342,13 @@ export default function Navbar() {
               ) : (
                 <Link
                   to="/login"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[#071018] text-xs font-royal font-bold tracking-wider shadow-[0_0_20px_rgba(101,245,138,0.35)] hover:scale-105 transition-all cursor-pointer uppercase font-semibold"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-black text-xs font-royal font-bold tracking-wider shadow-[0_0_20px_rgba(255,122,0,0.35)] hover:scale-105 transition-all cursor-pointer uppercase font-semibold"
                   style={{
-                    background: 'linear-gradient(135deg, #65F58A, #35E6B5)'
+                    background: 'linear-gradient(135deg, #FF7A00, #FFA439)'
                   }}
                 >
-                  <span>Operator Login</span>
-                  <ArrowUpRight className="w-3.5 h-3.5" />
+                  <span>Student Portal</span>
+                  <ArrowUpRight className="w-3.5 h-3.5 text-black" />
                 </Link>
               )}
 

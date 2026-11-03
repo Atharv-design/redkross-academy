@@ -4,6 +4,8 @@
  */
 
 import fullStackCourseJson from './fullstackCourse.json' with { type: 'json' };
+import { CYBER_COURSES, CYBER_LEARNING_PATHS } from './cyberCourses';
+import { PSYCHOLOGY_COURSES, PSYCHOLOGY_LEARNING_PATHS } from './psychologyCourses';
 
 export const INITIAL_USERS = [
   {
@@ -42,54 +44,17 @@ export const INITIAL_USERS = [
   }
 ];
 
+export { CYBER_COURSES, CYBER_LEARNING_PATHS, PSYCHOLOGY_COURSES, PSYCHOLOGY_LEARNING_PATHS };
+
 export const INITIAL_LEARNING_PATHS = [
-  {
-    id: 'path_soc_analyst',
-    slug: 'soc-analyst-career-path',
-    title: 'Tier-1 to Tier-2 SOC Analyst Career Track',
-    short_desc: 'Comprehensive training for 24/7 security operations centres: log analysis, alert triage, SIEM correlation, and rapid defensive response.',
-    difficulty: 'Beginner to Intermediate',
-    estimated_weeks: 12,
-    total_hours: 48,
-    courses_count: 4,
-    milestone_cert: 'Certified RedKross SOC Specialist (CRSS)',
-    featured: true,
-    skills: ['SIEM / Splunk / Elastic', 'MITRE ATT&CK', 'Log Triage', 'Packet Inspection', 'Incident Handling'],
-    course_ids: ['crs_cyber_fund', 'crs_networking_fund', 'crs_soc_fundamentals', 'crs_incident_response']
-  },
-  {
-    id: 'path_threat_hunter',
-    slug: 'threat-hunting-forensics',
-    title: 'Threat Hunting & Digital Forensics Specialist',
-    short_desc: 'Proactive adversary detection, memory forensics, network packet reassembly, and threat intelligence synthesis.',
-    difficulty: 'Intermediate to Advanced',
-    estimated_weeks: 14,
-    total_hours: 56,
-    courses_count: 3,
-    milestone_cert: 'Certified Threat Defense Hunter (CTDH)',
-    featured: true,
-    skills: ['Memory Analysis', 'YARA & Sigma Rules', 'Volatility', 'PCAP Forensics', 'Adversary Emulation'],
-    course_ids: ['crs_linux_fund', 'crs_forensics_fund', 'crs_incident_response']
-  },
-  {
-    id: 'path_defensive_engineer',
-    slug: 'defensive-security-engineer',
-    title: 'Defensive Infrastructure & Cloud Security Architect',
-    short_desc: 'Harden enterprise endpoints, configure zero-trust perimeters, and master cloud workload defense in AWS & GCP.',
-    difficulty: 'Advanced',
-    estimated_weeks: 16,
-    total_hours: 64,
-    courses_count: 4,
-    milestone_cert: 'Certified Defensive Security Architect (CDSA)',
-    featured: false,
-    skills: ['Cloud IAM', 'Kubernetes Security', 'Hardening', 'Zero Trust Architecture', 'Detection Engineering'],
-    course_ids: ['crs_linux_fund', 'crs_web_sec_fund', 'crs_cloud_sec_fund', 'crs_sec_governance']
-  }
+  ...CYBER_LEARNING_PATHS,
+  ...PSYCHOLOGY_LEARNING_PATHS
 ];
 
-// ONLY ONE OFFICIAL MASTER CURRICULUM PER SPECIFICATION: Full Stack Web Development
+// Master Unified Curricula (Cybersecurity & Psychology Divisions)
 export const INITIAL_COURSES = [
-  fullStackCourseJson
+  ...CYBER_COURSES,
+  ...PSYCHOLOGY_COURSES
 ];
 
 

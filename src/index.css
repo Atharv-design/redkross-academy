@@ -4,32 +4,85 @@
 @tailwind utilities;
 
 :root {
-  --bg: #071018;
-  --card: rgba(8, 24, 18, 0.55);
-  --surface-2: rgba(9, 28, 20, 0.65);
-  --nav: rgba(6, 18, 14, 0.85);
+  --bg: transparent;
+  --card: rgba(12, 10, 8, 0.55);
+  --surface-2: rgba(18, 14, 10, 0.65);
+  --nav: rgba(8, 8, 8, 0.88);
+  --accent: #FF7A00;
+  --accent-2: #FFA439;
+  --glow: rgba(255, 122, 0, 0.45);
+  --text: #F1F5F9;
+  --text-2: #E2D9CE;
+  --border: rgba(255, 122, 0, 0.22);
+  --muted: #A3907C;
+  --progress: #FF7A00;
+
+  /* RedKross Foundation Amber + Black Blending Tokens */
+  --brand-amber: #FF7A00;
+  --brand-amber-light: #FFA439;
+  --brand-amber-deep: #AD3800;
+  --brand-void: #000000;
+  --brand-glow-amber: rgba(255, 122, 0, 0.45);
+
+  color-scheme: dark;
+}
+
+/* Division Scoped Theme: Cybersecurity */
+[data-academy-theme="cybersecurity"] {
+  --bg: #030906;
+  --card: rgba(4, 16, 10, 0.72);
+  --surface-2: rgba(6, 24, 15, 0.85);
+  --nav: rgba(3, 9, 6, 0.92);
   --accent: #65F58A;
   --accent-2: #35E6B5;
   --glow: #00FFA3;
   --text: #F1F5F9;
   --text-2: #B8E6CE;
-  --border: rgba(101, 245, 138, 0.22);
+  --border: rgba(101, 245, 138, 0.24);
   --muted: #72A88E;
   --progress: #45F5A1;
-  color-scheme: dark;
+}
+
+/* Division Scoped Theme: Psychology */
+[data-academy-theme="psychology"] {
+  --bg: #0C0F0E;
+  --card: rgba(18, 25, 22, 0.70);
+  --surface-2: rgba(26, 38, 32, 0.82);
+  --nav: rgba(12, 15, 14, 0.92);
+  --accent: #A3C9A8;
+  --accent-2: #E6B87D;
+  --glow: rgba(163, 201, 168, 0.4);
+  --text: #F7F4EE;
+  --text-2: #DCD7CC;
+  --border: rgba(163, 201, 168, 0.22);
+  --muted: #959E97;
+  --progress: #E6B87D;
 }
 
 html {
   scroll-behavior: smooth;
+  background-color: #000000;
 }
 
-/* Typography Standard: Lora Serif for Headings & Display, Space Mono for Telemetry & Code */
-body, p, span, a, li, blockquote, label, .font-lora, .font-royal {
+/* Typography Standard */
+body, p, span, a, li, blockquote, label {
   font-family: 'Lora', Georgia, serif;
 }
 
+.font-cinzel {
+  font-family: 'Cinzel', serif !important;
+}
+
+.font-orbitron {
+  font-family: 'Orbitron', 'Space Mono', sans-serif !important;
+}
+
+.font-plus-jakarta {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+
 code, pre, kbd, samp, .font-mono, .mono, .tabular-nums {
-  font-family: 'Space Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  font-family: 'Space Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
 }
 
 input, textarea, select, button {
@@ -51,73 +104,64 @@ h1, h2, h3, h4, h5, h6, p, span, a, li, blockquote, label, .acad-card__title, .a
 }
 
 @layer utilities {
-  .font-royal, .font-lora, .font-mono, .mono, .font-sans {
+  .font-royal, .font-lora, .font-serif {
     font-family: 'Lora', Georgia, serif !important;
   }
 }
 
 @layer base {
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Lora', Georgia, serif !important;
     letter-spacing: -0.01em;
-  }
-  .font-royal, .font-lora, .font-mono, .mono, .font-sans {
-    font-family: 'Lora', Georgia, serif !important;
   }
 }
 
 body {
   margin: 0;
   font-family: 'Lora', Georgia, serif !important;
-  background-color: #071018;
+  background-color: transparent;
   color: #F1F5F9;
   overflow-x: hidden;
-  background-image:
-    radial-gradient(circle at 18% 15%, rgba(101, 245, 138, 0.06) 0%, transparent 52%),
-    radial-gradient(circle at 82% 80%, rgba(53, 230, 181, 0.05) 0%, transparent 55%),
-    radial-gradient(circle at 50% 50%, rgba(0, 255, 163, 0.03) 0%, transparent 60%);
-  background-attachment: fixed;
 }
 
-/* Glassmorphism System for RedKross Academy - Emerald Liquid Glass */
+/* Glassmorphism System for RedKross Academy - Amber + Black Blending Liquid Glass */
 @layer components {
   .glass-card {
-    background: linear-gradient(135deg, rgba(10, 30, 22, 0.55) 0%, rgba(6, 20, 15, 0.45) 100%);
+    background: linear-gradient(135deg, rgba(20, 14, 8, 0.55) 0%, rgba(6, 6, 6, 0.45) 100%);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(101, 245, 138, 0.22);
-    border-top: 1px solid rgba(255, 255, 255, 0.22);
-    box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.7), inset 0 1px 0 0 rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 122, 0, 0.22);
+    border-top: 1px solid rgba(255, 164, 57, 0.32);
+    box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.75), inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
   }
 
   .cyber-glass-panel, .glass-panel {
-    background: linear-gradient(135deg, rgba(8, 26, 19, 0.62) 0%, rgba(5, 18, 13, 0.52) 100%);
+    background: linear-gradient(135deg, rgba(22, 15, 8, 0.62) 0%, rgba(6, 6, 6, 0.52) 100%);
     backdrop-filter: blur(24px) saturate(190%);
     -webkit-backdrop-filter: blur(24px) saturate(190%);
-    border: 1px solid rgba(101, 245, 138, 0.24);
-    border-top: 1px solid rgba(255, 255, 255, 0.22);
-    box-shadow: 0 20px 48px -8px rgba(0, 0, 0, 0.78), inset 0 1px 1px 0 rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 122, 0, 0.24);
+    border-top: 1px solid rgba(255, 164, 57, 0.35);
+    box-shadow: 0 20px 48px -8px rgba(0, 0, 0, 0.82), inset 0 1px 1px 0 rgba(255, 255, 255, 0.14);
   }
 
   .cyber-glass-card {
-    background: linear-gradient(135deg, rgba(9, 28, 20, 0.58) 0%, rgba(6, 19, 14, 0.48) 100%);
+    background: linear-gradient(135deg, rgba(20, 14, 8, 0.58) 0%, rgba(6, 6, 6, 0.48) 100%);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(101, 245, 138, 0.22);
-    border-top: 1px solid rgba(255, 255, 255, 0.18);
-    box-shadow: 0 14px 34px -4px rgba(0, 0, 0, 0.65), inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 122, 0, 0.22);
+    border-top: 1px solid rgba(255, 164, 57, 0.28);
+    box-shadow: 0 14px 34px -4px rgba(0, 0, 0, 0.70), inset 0 1px 0 0 rgba(255, 255, 255, 0.10);
   }
 
   .cyber-glass-nav {
-    background: rgba(6, 18, 14, 0.85);
+    background: rgba(8, 6, 4, 0.88);
     backdrop-filter: blur(24px) saturate(190%);
     -webkit-backdrop-filter: blur(24px) saturate(190%);
-    border-bottom: 1px solid rgba(101, 245, 138, 0.24);
-    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    border-bottom: 1px solid rgba(255, 122, 0, 0.22);
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
   }
 
   .cyber-glass-input {
-    background: rgba(8, 24, 18, 0.72);
+    background: rgba(16, 12, 8, 0.72);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border: 1px solid rgba(101, 245, 138, 0.22);

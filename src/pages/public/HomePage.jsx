@@ -1,345 +1,271 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Shield, Award, Terminal, ArrowRight, CheckCircle2, Lock, Zap, BookOpen, Layers, Users, Sparkles, Coins, Flame, Clock, ShieldCheck } from 'lucide-react';
-import { mockEngine } from '../../services/db/mockEngine';
-import { apiClient } from '../../services/apiClient';
-import { socketClient } from '../../services/socket/socketClient';
-import CourseCardVariant from '../../components/cards/CourseCardVariant';
-import DefensivePathwayCard from '../../components/cards/DefensivePathwayCard';
-import AcademicSafeguardCard from '../../components/cards/AcademicSafeguardCard';
-import SplitText from '../../components/common/SplitText';
-import ScrollReveal from '../../components/common/ScrollReveal';
+import { motion } from 'framer-motion';
+import { 
+  ShieldCheck, 
+  Brain, 
+  Terminal, 
+  Award, 
+  ArrowRight, 
+  CheckCircle2, 
+  Lock, 
+  Zap, 
+  BookOpen, 
+  Layers, 
+  Users, 
+  Sparkles, 
+  Cpu, 
+  HeartHandshake, 
+  Clock,
+  Monitor
+} from 'lucide-react';
+import CyberCircuitFrame from '../../components/cyber/CyberCircuitFrame';
 
 export default function HomePage() {
-  const [courses, setCourses] = useState([]);
-  const [catalogEnabled, setCatalogEnabled] = useState(false);
-  const [learningPaths, setLearningPaths] = useState([]);
-
-  useEffect(() => {
-    const loadHomeData = () => {
-      apiClient.getCourses().then((data) => {
-        setCourses(data.courses || []);
-        setCatalogEnabled(Boolean(data.public_catalog_enabled));
-      });
-      apiClient.getLearningPaths().then((data) => {
-        setLearningPaths(data.learning_paths || []);
-      });
-    };
-
-    loadHomeData();
-
-    const unsubCourse = socketClient.on('course:mutation', loadHomeData);
-    const unsubEmbargo = socketClient.on('catalog:visibility', loadHomeData);
-    const unsubMock = mockEngine.subscribe(loadHomeData);
-
-    return () => {
-      if (typeof unsubCourse === 'function') unsubCourse();
-      if (typeof unsubEmbargo === 'function') unsubEmbargo();
-      if (typeof unsubMock === 'function') unsubMock();
-    };
-  }, []);
-
-  // Featured Courses for Home Showcase (Up to 3 active courses)
-  const homeFeaturedCourses = useMemo(() => {
-    if (!courses || courses.length === 0) return [];
-    return courses.slice(0, 3);
-  }, [courses]);
-
-  const featuredCourse = courses[0];
+  const [isHoveredCyber, setIsHoveredCyber] = useState(false);
+  const [isHoveredPsych, setIsHoveredPsych] = useState(false);
 
   return (
-    <div className="min-h-screen relative z-10">
-      {/* Hero Section */}
-      <section className="relative pt-8 sm:pt-14 pb-10 sm:pb-12 overflow-hidden border-b border-[#65F58A]/15">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-4xl mx-auto space-y-6">
-            {/* Status Pill */}
-            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full ultra-glass-card text-xs font-mono shadow-md backdrop-blur-md animate-slide-left shimmer-lr">
-              <span className="w-2 h-2 rounded-full bg-[#65F58A] animate-pulse" />
-              <span className="text-slate-200">ACADEMY COHORT 2026 ACTIVE</span>
-              <span className="text-slate-600">•</span>
-              <span className="text-[#65F58A] font-semibold">PRD v1.0 DEFENSIVE CERTIFICATIONS</span>
-            </div>
+    <div className="min-h-screen relative z-10 select-none pb-20">
+      
+      {/* 1. HERO SECTION WITH AMBER + BLACK BLENDING */}
+      <section className="relative pt-6 sm:pt-12 pb-12 sm:pb-16 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+          
+          {/* Status Pill with Amber + Black Blending */}
+          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-black/75 border border-[#FF7A00]/30 backdrop-blur-md text-xs font-mono mb-6 shadow-lg shadow-black/60">
+            <span className="w-2 h-2 rounded-full bg-[#FF7A00] animate-pulse shadow-[0_0_8px_#FF7A00]" />
+            <span className="text-slate-300">REDKROSS ACADEMY FOUNDATION</span>
+            <span className="text-slate-600">&bull;</span>
+            <span className="text-[#FFA439] font-semibold">DUAL-DISCIPLINE PORTAL ACTIVE</span>
+          </div>
 
-            {/* Main Headline with Royal Cinzel font & neon shading */}
-            <h1 className="font-royal text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.12]">
-              <SplitText as="span" text="Institutional Training for" staggerDelay={45} baseDelay={60} />
-              <br />
-              <SplitText as="span" text="Defensive Cyber Operators" wordClassName="title-shading-neon" staggerDelay={55} baseDelay={200} />
-            </h1>
+          {/* Main Headline with Amber Gradient */}
+          <h1 className="font-royal text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.15] max-w-4xl mx-auto text-white">
+            One Institutional Foundation. <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF7A00] via-[#FFA439] via-50% to-[#FF8C00] drop-shadow-[0_0_35px_rgba(255,122,0,0.4)]">
+              Two Dedicated Academies.
+            </span>
+          </h1>
 
-            <ScrollReveal direction="left" delay={320}>
-              <p className="text-sm sm:text-base lg:text-lg text-[#94A3B8] max-w-2xl mx-auto leading-relaxed">
-              Master 24/7 SOC telemetry analysis, MITRE ATT&CK correlation, and incident triage through structured hands-on curricula and tamper-proof cryptographic credentials.
-              </p>
-            </ScrollReveal>
+          <p className="mt-6 text-sm sm:text-base lg:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed font-sans">
+            Choose your specialized learning track below to enter dedicated, domain-themed academies equipped with practical laboratories, clinical frameworks, and cryptographic credentials.
+          </p>
 
-            {/* Call To Actions */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-4 animate-slide-left stagger-3">
-              <Link
-                to="/courses"
-                className="w-full sm:w-auto px-7 py-3.5 rounded-full ultra-glass-btn font-royal font-bold text-xs tracking-wider transition-all flex items-center justify-center gap-2 group"
-              >
-                <BookOpen className="w-4 h-4" />
-                <span>Explore Course Catalogue</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link
-                to="/paths"
-                className="w-full sm:w-auto px-6 py-3.5 rounded-full ultra-glass-btn-secondary font-royal font-semibold text-xs tracking-wider transition-all flex items-center justify-center gap-2"
-              >
-                <Layers className="w-4 h-4 text-[#35E6B5]" />
-                <span>Career Learning Paths</span>
-              </Link>
-              <Link
-                to="/verify"
-                className="w-full sm:w-auto px-6 py-3.5 rounded-full ultra-glass-card text-[#94A3B8] hover:text-white font-mono text-xs transition-all flex items-center justify-center gap-2"
-              >
-                <Award className="w-4 h-4 text-[#65F58A]" />
-                <span>Verify Credential</span>
-              </Link>
-            </div>
+          {/* Foundation Quick Actions */}
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 pt-6">
+            <Link
+              to="/student"
+              className="px-7 py-3.5 rounded-full bg-gradient-to-r from-[#FF7A00] to-[#E56A00] text-black font-mono font-bold text-xs tracking-wider transition-all flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(255,122,0,0.45)] hover:brightness-110"
+            >
+              <Users className="w-4 h-4 text-black" />
+              <span>Student Dashboard</span>
+              <ArrowRight className="w-4 h-4 text-black" />
+            </Link>
+            <Link
+              to="/verify"
+              className="px-6 py-3.5 rounded-full bg-black/60 border border-[#FF7A00]/30 text-slate-200 hover:text-white font-mono text-xs transition-all flex items-center justify-center gap-2 hover:border-[#FF7A00]/70 shadow-lg shadow-black/40"
+            >
+              <Award className="w-4 h-4 text-[#FFA439]" />
+              <span>Verify Credential</span>
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Featured Courses Showcase / Embargo Banner */}
-      <section className="py-10 sm:py-12 border-b border-[#65F58A]/15">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-          {catalogEnabled && courses.length > 0 ? (
-            <>
-              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-                <div>
-                  <ScrollReveal direction="left" delay={0}>
-                    <div className="inline-flex items-center space-x-2 text-xs font-mono text-[#65F58A] font-semibold px-2.5 py-1 rounded-full bg-[#65F58A]/10 border border-[#65F58A]/30 mb-3">
-                      <Sparkles className="w-3.5 h-3.5" />
-                      <span>CURRICULUM SHOWCASE</span>
-                    </div>
-                  </ScrollReveal>
-                  <SplitText as="h2" text="Full Stack Engineering Courseware" className="font-royal text-2xl sm:text-4xl font-extrabold text-white tracking-tight" staggerDelay={50} baseDelay={60} />
-                  <ScrollReveal direction="left" delay={220}>
-                    <p className="text-[#94A3B8] text-xs sm:text-sm mt-1 max-w-xl">
-                      Explore our comprehensive curriculum engineered from web fundamentals to enterprise production deployment.
-                    </p>
-                  </ScrollReveal>
+      {/* 2. DUAL-DIVISION GATEWAY SHOWCASE (Exact Website Card Designs) */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="text-center max-w-3xl mx-auto mb-10">
+          <span className="text-[11px] font-mono tracking-widest text-slate-400 uppercase">
+            SELECT LEARNING DISCIPLINE // AUTHENTIC DIVISION INTERFACES
+          </span>
+          <h2 className="text-2xl sm:text-4xl font-bold font-royal text-white mt-2">
+            Enter Your Chosen Academy
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-stretch">
+          
+          {/* PILLAR 1: EXACT CYBERSECURITY WEBSITE CIRCUIT FRAME CARD DESIGN */}
+          <div 
+            className="relative group transition-all duration-300 w-full h-full flex flex-col justify-between select-none"
+            onMouseEnter={() => setIsHoveredCyber(true)}
+            onMouseLeave={() => setIsHoveredCyber(false)}
+          >
+            {/* 1. DITTO SCI-FI CYBER HUD CIRCUIT FRAME (Exact SVG from Cyber Website) */}
+            <CyberCircuitFrame isHovered={isHoveredCyber} />
+
+            {/* 2. CARD CONTENT CONTAINER (Safe Inset Zone) */}
+            <div className="relative z-10 px-8 sm:px-10 pt-8 pb-7 flex flex-col justify-between h-full min-h-[460px]">
+              <div>
+                {/* Header Row: Track Badge (Left) & Compact Cyber Icon (Right) */}
+                <div className="flex items-center justify-between mb-4">
+                  <span className="px-3 py-1 rounded-full text-[11px] font-mono tracking-wider font-semibold border border-cyan-500/40 text-[#65F58A] bg-cyan-950/70 group-hover:border-[#65F58A] group-hover:bg-emerald-950/80 group-hover:shadow-[0_0_12px_rgba(101,245,138,0.3)] transition-all duration-300 uppercase">
+                    DIVISION 01 &bull; DEFENSIVE CYBER
+                  </span>
+
+                  {/* Inset Cyber Icon Badge */}
+                  <div className="relative p-2 rounded-xl bg-cyan-950/50 border border-cyan-500/40 group-hover:border-[#65F58A] group-hover:bg-[#65F58A]/15 group-hover:shadow-[0_0_15px_rgba(101,245,138,0.4)] transition-all duration-300 overflow-hidden flex items-center justify-center">
+                    <Terminal className="w-5 h-5 text-[#65F58A] group-hover:text-[#35E6B5] transition-all duration-300 relative z-10 drop-shadow-[0_0_8px_rgba(101,245,138,0.85)]" />
+                  </div>
                 </div>
 
-                <ScrollReveal direction="right" delay={260}>
-                  <Link
-                    to="/courses"
-                    className="hidden sm:inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#65F58A] hover:underline"
-                  >
-                    <span>Explore Full Catalog ({courses.length})</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </ScrollReveal>
-              </div>
+                {/* Title */}
+                <h3 className="text-2xl sm:text-3xl font-black font-royal text-white mb-3 group-hover:text-[#65F58A] transition-colors leading-tight">
+                  Cybersecurity &amp; Application Defense Academy
+                </h3>
 
-              {/* Cards Grid: Course card aligned to the left */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                {homeFeaturedCourses.map((course, idx) => (
-                  <CourseCardVariant
-                    key={course.id}
-                    course={course}
-                    variantId={course.card_variant}
-                    index={idx}
-                  />
-                ))}
-              </div>
-
-              {/* Dedicated High-Craft Button for All Courses */}
-              <div className="pt-4 flex flex-col sm:flex-row items-center justify-center">
-                <Link
-                  to="/courses"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl bg-[#65F58A] hover:bg-[#00FFA3] active:scale-[0.99] text-black font-royal font-bold text-xs sm:text-sm tracking-wider uppercase transition-all shadow-[0_0_25px_rgba(101,245,138,0.25)] hover:shadow-[0_0_35px_rgba(101,245,138,0.4)] group"
-                >
-                  <BookOpen className="w-4 h-4 text-black" />
-                  <span>View All Courses & Full Curriculum ({courses.length})</span>
-                  <ArrowRight className="w-4 h-4 text-black group-hover:translate-x-1.5 transition-transform" />
-                </Link>
-              </div>
-            </>
-          ) : (
-            <div className="max-w-3xl w-full mx-auto text-center space-y-8 ultra-glass-card rounded-3xl p-8 sm:p-12 shimmer-lr animate-slide-left border border-[#65F58A]/35 backdrop-blur-2xl bg-[#081a13]/60 shadow-[0_12px_45px_rgba(0,0,0,0.55)]">
-              {/* Subtle Cyber Status Badge */}
-              <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full ultra-glass-pill text-xs font-mono shadow-md backdrop-blur-md border border-[#65F58A]/30 bg-[#09241a]/60">
-                <span className="w-2 h-2 rounded-full bg-[#35E6B5] animate-pulse" />
-                <span className="text-[#C9EFE0]">CURRICULUM PREPARATION IN PROGRESS</span>
-                <span className="text-[#65F58A]/40">•</span>
-                <span className="text-[#65F58A] font-semibold">REDKROSS ACADEMY</span>
-              </div>
-
-              {/* Refined Cyber Visual Illustration (Geometric Security Node) */}
-              <div className="relative w-44 h-44 sm:w-52 sm:h-52 mx-auto flex items-center justify-center my-2">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#65F58A]/15 via-[#35E6B5]/15 to-transparent blur-2xl" />
-
-                <svg viewBox="0 0 200 200" className="w-full h-full relative z-10 drop-shadow-[0_0_25px_rgba(101,245,138,0.25)]">
-                  {/* Concentric Coordinate Rings */}
-                  <circle cx="100" cy="100" r="88" fill="none" stroke="#65F58A" strokeWidth="1" strokeDasharray="3 3" strokeOpacity="0.25" />
-                  <circle cx="100" cy="100" r="70" fill="none" stroke="#35E6B5" strokeWidth="1" strokeOpacity="0.4" />
-                  <circle cx="100" cy="100" r="50" fill="#071912" stroke="#65F58A" strokeWidth="1.5" />
-
-                  {/* Orbital Cyber Nodes */}
-                  <circle cx="100" cy="12" r="4" fill="#65F58A" />
-                  <circle cx="100" cy="188" r="4" fill="#65F58A" />
-                  <circle cx="12" cy="100" r="4" fill="#35E6B5" />
-                  <circle cx="188" cy="100" r="4" fill="#35E6B5" />
-
-                  {/* Connecting Cross-hair gridlines */}
-                  <line x1="100" y1="20" x2="100" y2="50" stroke="#65F58A" strokeWidth="1.2" strokeOpacity="0.6" />
-                  <line x1="100" y1="150" x2="100" y2="180" stroke="#65F58A" strokeWidth="1.2" strokeOpacity="0.6" />
-                  <line x1="20" y1="100" x2="50" y2="100" stroke="#35E6B5" strokeWidth="1.2" strokeOpacity="0.6" />
-                  <line x1="150" y1="100" x2="180" y2="100" stroke="#35E6B5" strokeWidth="1.2" strokeOpacity="0.6" />
-
-                  {/* Central Shield Icon Graphic */}
-                  <path
-                    d="M 100 70 L 122 80 V 98 C 122 114 100 126 100 126 C 100 126 78 114 78 98 V 80 Z"
-                    fill="#09261a"
-                    stroke="#65F58A"
-                    strokeWidth="2"
-                    strokeLinejoin="round"
-                  />
-                  {/* Center Lock / Keyhole */}
-                  <circle cx="100" cy="94" r="4" fill="#35E6B5" />
-                  <line x1="100" y1="98" x2="100" y2="105" stroke="#35E6B5" strokeWidth="2.5" strokeLinecap="round" />
-                </svg>
-              </div>
-
-              {/* Exact Primary Message & Supporting Copy */}
-              <div className="space-y-4 max-w-2xl mx-auto animate-slide-left stagger-1">
-                <h2 className="font-royal text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight title-shading-neon">
-                  Courses will be out soon
-                </h2>
-                <p className="text-sm sm:text-base text-[#B8E6CE] leading-relaxed max-w-xl mx-auto">
-                  We're preparing structured cybersecurity learning paths to help you build practical skills, strengthen your knowledge, and progress toward your goals. Stay tuned for upcoming releases.
+                {/* Summary */}
+                <p className="text-xs sm:text-sm text-slate-300 font-sans leading-relaxed mb-6">
+                  Engineered directly in the dark tactical aesthetic of the RedKross Cybersecurity flagship. Master full-stack application defense, OWASP mitigation, and practice real exploits inside the virtual Kali CyberLab.
                 </p>
-              </div>
 
-              {/* Educational Framework Pillars */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 max-w-2xl mx-auto text-left animate-slide-left stagger-2">
-                <div className="p-4 rounded-xl ultra-glass-panel space-y-1.5 border border-[#65F58A]/25 bg-[#092218]/50 backdrop-blur-md">
-                  <div className="w-7 h-7 rounded-lg bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center">
-                    <Terminal className="w-3.5 h-3.5 text-[#65F58A]" />
-                  </div>
-                  <div className="font-royal text-xs font-bold text-white">Hands-on Telemetry</div>
-                  <p className="text-[11px] text-[#B8E6CE] leading-relaxed">
-                    Real-world log correlation across SIEM and defensive monitoring stacks.
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-xl ultra-glass-panel space-y-1.5 border border-[#35E6B5]/25 bg-[#092218]/50 backdrop-blur-md">
-                  <div className="w-7 h-7 rounded-lg bg-[#35E6B5]/10 border border-[#35E6B5]/30 flex items-center justify-center">
-                    <Shield className="w-3.5 h-3.5 text-[#35E6B5]" />
-                  </div>
-                  <div className="font-royal text-xs font-bold text-white">Adversary Mapping</div>
-                  <p className="text-[11px] text-[#B8E6CE] leading-relaxed">
-                    Curricula aligned strictly with MITRE ATT&CK defensive methodologies.
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-xl ultra-glass-panel space-y-1.5 border border-[#65F58A]/25 bg-[#092218]/50 backdrop-blur-md">
-                  <div className="w-7 h-7 rounded-lg bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center">
-                    <Award className="w-3.5 h-3.5 text-[#65F58A]" />
-                  </div>
-                  <div className="font-royal text-xs font-bold text-white">Tamper-Proof Proofs</div>
-                  <p className="text-[11px] text-[#B8E6CE] leading-relaxed">
-                    Cryptographically verified credentials on the public registry.
-                  </p>
+                {/* Telemetry Chips */}
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {['Full Stack Engineering', 'OWASP Top 10 Defense', '143+ Kali Tools', 'Cryptographic Proofs'].map((tag) => (
+                    <span
+                      key={tag}
+                      className="text-[10px] font-mono px-2.5 py-1 rounded bg-black/60 text-emerald-200/90 border border-emerald-500/30 group-hover:border-emerald-500/50 transition-colors"
+                    >
+                      {tag}
+                    </span>
+                  ))}
                 </div>
               </div>
 
-              {/* Action Links */}
-              <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-left stagger-3">
-                <Link
-                  to="/verify"
-                  className="w-full sm:w-auto px-6 py-3 rounded-full ultra-glass-btn-secondary text-xs font-mono text-[#C9EFE0] hover:text-white transition-all flex items-center justify-center gap-2 border border-[#65F58A]/30 bg-[#09241a]/60 hover:bg-[#0c3123]"
-                >
-                  <Award className="w-4 h-4 text-[#65F58A]" />
-                  <span>Verify Institutional Credentials</span>
-                </Link>
-                <Link
-                  to="/paths"
-                  className="w-full sm:w-auto px-6 py-3 rounded-full ultra-glass-btn font-royal font-bold text-xs tracking-wider transition-all flex items-center justify-center gap-2 group shadow-[0_0_20px_rgba(101,245,138,0.25)] hover:shadow-[0_0_30px_rgba(101,245,138,0.4)]"
-                >
-                  <span>Explore Cyber Intelligence</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </Link>
+              {/* Footer Action & Trace Divider */}
+              <div className="mt-4">
+                <div className="relative w-full h-[1px] mb-4 overflow-hidden" aria-hidden="true">
+                  <div className="absolute inset-0 bg-white/10 group-hover:bg-emerald-500/30 transition-colors duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-400/30 to-transparent" />
+                  <div className="absolute inset-y-0 left-0 w-2/5 bg-gradient-to-r from-transparent via-[#65F58A] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-[0_0_12px_#65F58A]" />
+                </div>
+
+                <div className="flex items-center justify-between text-xs font-mono">
+                  <span className="text-slate-400 group-hover:text-emerald-300 transition-colors tracking-wider">
+                    OPERATOR TRACK 01
+                  </span>
+                  <Link
+                    to="/academy/cybersecurity"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#65F58A] hover:bg-[#35E6B5] text-[#030906] font-mono font-bold text-xs transition-all shadow-[0_0_15px_rgba(101,245,138,0.3)] hover:shadow-[0_0_25px_rgba(101,245,138,0.5)]"
+                  >
+                    <span>Enter Cyber Academy</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </div>
               </div>
             </div>
-          )}
-        </div>
-      </section>
-
-      {/* Career Learning Tracks */}
-      <section className="py-10 sm:py-12 border-b border-[#65F58A]/15 bg-transparent">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-          <div className="text-center max-w-2xl mx-auto">
-            <SplitText as="h2" text="Defensive Career Pathways" className="font-royal text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-3" staggerDelay={55} baseDelay={40} />
-            <ScrollReveal direction="left" delay={200}>
-              <p className="text-[#94A3B8] text-xs sm:text-sm">
-                Structured step-by-step curricula taking you from foundational networking and operating system telemetry to advanced incident response.
-              </p>
-            </ScrollReveal>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
-            {learningPaths.map((path, idx) => (
-              <DefensivePathwayCard
-                key={path.id}
-                path={path}
-                index={idx}
+          {/* PILLAR 2: EXACT PSYCHOLOGY WEBSITE THEMED FULLSPAN CARD DESIGN */}
+          <div 
+            className="relative overflow-hidden rounded-3xl p-8 sm:p-10 flex flex-col justify-between bg-[#081524]/90 backdrop-blur-2xl border border-teal-500/25 hover:border-teal-400/50 transition-all duration-500 shadow-xl shadow-black/50 hover:shadow-teal-950/40 group select-none min-h-[460px]"
+            onMouseEnter={() => setIsHoveredPsych(true)}
+            onMouseLeave={() => setIsHoveredPsych(false)}
+          >
+            {/* Specular top border light beam */}
+            <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-teal-400/50 to-transparent pointer-events-none z-10" />
+
+            {/* Signature Ethereal Artwork Spanning the Full Vertical Height of the Card */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-3xl z-0 select-none">
+              <img
+                src="/assets/cards/card-individual-counselling-fullspan.png"
+                alt=""
+                className="w-full h-full object-cover object-center opacity-30 group-hover:opacity-45 transition-opacity duration-700 filter saturate-125"
+                loading="lazy"
               />
-            ))}
-          </div>
-        </div>
-      </section>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#06121E] via-[#081524]/80 to-transparent" />
+            </div>
 
-      {/* PRD Academic Safeguards */}
-      <section className="py-10 sm:py-12 border-b border-[#65F58A]/15">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-          <div className="text-center max-w-2xl mx-auto">
-            <ScrollReveal direction="left" delay={0}>
-              <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#65F58A]/10 border border-[#65F58A]/30 text-[#65F58A] text-xs font-mono mb-3">
-                <Lock className="w-3.5 h-3.5" />
-                <span>STRICT ACADEMIC FIDELITY</span>
+            {/* Content Top Zone */}
+            <div className="relative z-10">
+              {/* Header Badges */}
+              <div className="flex items-center justify-between mb-4">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-mono tracking-wider uppercase font-semibold text-teal-300 bg-teal-950/70 border border-teal-400/40 backdrop-blur-md shadow-sm shadow-teal-950/30">
+                  DIVISION 02 &bull; PSYCHOLOGY &amp; CARE
+                </span>
+                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-medium text-slate-300 bg-slate-800/60 border border-slate-700/60 backdrop-blur-md">
+                  RCI-Aligned Ethics
+                </span>
               </div>
-            </ScrollReveal>
-            <SplitText as="h2" text="Protected Credential Integrity" className="font-royal text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-3" staggerDelay={55} baseDelay={50} />
-            <ScrollReveal direction="left" delay={200}>
-              <p className="text-[#94A3B8] text-xs sm:text-sm">
-                Our certifications are trusted by enterprise blue teams because every evaluation strictly enforces proctoring standards specified in our Developer Handover PRD.
+
+              {/* Title */}
+              <h3 className="text-2xl sm:text-3xl font-black font-royal text-white mb-3 group-hover:text-teal-200 transition-colors leading-tight">
+                Psychology &amp; Mental Wellbeing Academy
+              </h3>
+
+              {/* Description */}
+              <p className="text-xs sm:text-sm text-slate-300/95 leading-relaxed font-light mb-6">
+                Engineered in the warm, serene organic aesthetic of the RedKross Psychology flagship. Master evidence-based Cognitive Behavioral Therapy, acute crisis de-escalation, and student burnout mitigation.
               </p>
-            </ScrollReveal>
+
+              {/* Metadata Highlights */}
+              <div className="space-y-2 mb-6">
+                <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-[#06101B]/85 border border-teal-500/20 text-slate-200 text-xs shadow-sm">
+                  <Brain className="w-4 h-4 text-teal-400 shrink-0" />
+                  <span>CBT Protocols, Affective Neuroscience &amp; Crisis Response</span>
+                </div>
+                <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-[#06101B]/85 border border-teal-500/20 text-slate-200 text-xs shadow-sm">
+                  <Award className="w-4 h-4 text-amber-400 shrink-0" />
+                  <span className="text-amber-200/90">Institutional Certificate of Clinical Competency</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Signature Full-Width Glowing Pill CTA Button */}
+            <div className="relative z-10 pt-2">
+              <Link
+                to="/academy/psychology"
+                className="w-full h-12 rounded-full bg-gradient-to-r from-teal-500/20 via-teal-500/25 to-teal-500/30 border border-teal-500/40 hover:border-teal-400 hover:from-teal-500/30 hover:to-teal-500/45 flex items-center justify-between px-6 transition-all duration-300 group/btn shadow-lg shadow-teal-950/40"
+              >
+                <span className="font-royal text-xs sm:text-sm font-bold tracking-wider uppercase text-teal-200 group-hover/btn:text-white transition-colors">
+                  Enter Psychology Academy
+                </span>
+                <div className="w-8 h-8 rounded-full bg-teal-400 text-[#08121E] flex items-center justify-center font-bold shadow-md shadow-teal-400/40 group-hover/btn:translate-x-1 group-hover/btn:bg-teal-300 transition-all shrink-0">
+                  <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+                </div>
+              </Link>
+            </div>
           </div>
 
-          {/* 3D Cyber Academic Safeguards Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 items-stretch">
-            {[
-              {
-                title: '3-Strike Exam Focus Tracking',
-                description: 'During evaluated assessments, client tab switches and window blur events are actively tracked. Strike 1 warns the student; Strike 2 deducts 50 RedKross Tokens; Strike 3 immediately aborts the exam and locks the evaluation window.',
-                icon: Zap
-              },
-              {
-                title: '24-Hour Mandatory Retake Lockout',
-                description: 'Exhausting 3 failed attempts or suffering a Strike 3 violation triggers an automated 24-hour server cooldown period to enforce structured material remediation before re-attempting.',
-                icon: Clock
-              },
-              {
-                title: 'Cryptographic Verification',
-                description: 'Every earned certificate generates an immutable hexadecimal digital signature and public verification URL with QR code, directly verifiable by prospective employers.',
-                icon: ShieldCheck
-              }
-            ].map((safeguard, idx) => (
-              <AcademicSafeguardCard
-                key={safeguard.title}
-                safeguard={safeguard}
-                index={idx}
-              />
-            ))}
+        </div>
+      </section>
+
+      {/* 3. FOUNDATION FEATURES SUMMARY */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="p-6 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-md">
+            <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#65F58A] mb-3">
+              <Cpu className="w-4 h-4" />
+            </div>
+            <h4 className="font-royal font-bold text-white text-base mb-1">Central Student Hub</h4>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              One unified login and dashboard tracking all course completions, token rewards, and assignments across both divisions.
+            </p>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-md">
+            <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#FF7A00] mb-3">
+              <Award className="w-4 h-4" />
+            </div>
+            <h4 className="font-royal font-bold text-white text-base mb-1">Cryptographic Credentials</h4>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Tamper-proof digital certificates secured with cryptographic SHA-256 signatures verifiable on our public verification portal.
+            </p>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-md">
+            <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-teal-300 mb-3">
+              <Sparkles className="w-4 h-4" />
+            </div>
+            <h4 className="font-royal font-bold text-white text-base mb-1">Zero-Cost Institutional Access</h4>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Fully non-profit, Section 8 registered curriculum designed to empower emerging practitioners and students without tuition friction.
+            </p>
           </div>
         </div>
       </section>
+
     </div>
   );
 }
