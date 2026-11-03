@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
+  Shield,
   ShieldCheck, 
   Brain, 
   Terminal, 
@@ -86,145 +87,211 @@ export default function HomePage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-stretch">
           
-          {/* PILLAR 1: CYBERSECURITY CIRCUIT FRAME CARD (Amber + Black Theme) */}
+          {/* PILLAR 1: CYBERSECURITY ACADEMY CARD */}
           <div 
-            className="relative group transition-all duration-300 w-full h-full flex flex-col justify-between select-none"
+            className="relative overflow-hidden rounded-3xl p-7 sm:p-9 flex flex-col justify-between bg-gradient-to-b from-[#1A130C]/90 via-[#0D1219]/90 to-[#070A0F]/95 backdrop-blur-2xl border border-[#FF7A00]/35 hover:border-[#FFA439]/80 transition-all duration-500 shadow-2xl shadow-black/80 hover:shadow-[0_0_45px_rgba(255,122,0,0.25)] group select-none min-h-[490px]"
             onMouseEnter={() => setIsHoveredCyber(true)}
             onMouseLeave={() => setIsHoveredCyber(false)}
           >
-            {/* 1. SCI-FI CYBER HUD CIRCUIT FRAME (Amber Palette) */}
-            <CyberCircuitFrame isHovered={isHoveredCyber} theme="amber" />
+            {/* Top Specular Light Beam */}
+            <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#FFA439]/80 to-transparent pointer-events-none z-10" />
 
-            {/* 2. CARD CONTENT CONTAINER (Safe Inset Zone) */}
-            <div className="relative z-10 px-8 sm:px-10 pt-8 pb-7 flex flex-col justify-between h-full min-h-[460px]">
-              <div>
-                {/* Header Row: Track Badge (Left) & Compact Cyber Icon (Right) */}
-                <div className="flex items-center justify-between mb-4">
-                  <span className="px-3 py-1 rounded-full text-[11px] font-mono tracking-wider font-semibold border border-[#FF7A00]/40 text-[#FFA439] bg-black/80 group-hover:border-[#FF7A00] group-hover:shadow-[0_0_12px_rgba(255,122,0,0.3)] transition-all duration-300 uppercase">
-                    DIVISION 01 &bull; DEFENSIVE CYBER
-                  </span>
+            {/* Glowing Amber Corner Brackets */}
+            <div className="absolute top-3.5 left-3.5 w-3.5 h-3.5 border-t-2 border-l-2 border-[#FFA439]/70 rounded-tl-sm pointer-events-none z-10" />
+            <div className="absolute top-3.5 right-3.5 w-3.5 h-3.5 border-t-2 border-r-2 border-[#FFA439]/70 rounded-tr-sm pointer-events-none z-10" />
+            <div className="absolute bottom-3.5 left-3.5 w-3.5 h-3.5 border-b-2 border-l-2 border-[#FFA439]/70 rounded-bl-sm pointer-events-none z-10" />
+            <div className="absolute bottom-3.5 right-3.5 w-3.5 h-3.5 border-b-2 border-r-2 border-[#FFA439]/70 rounded-br-sm pointer-events-none z-10" />
 
-                  {/* Inset Cyber Icon Badge */}
-                  <div className="relative p-2 rounded-xl bg-black/80 border border-[#FF7A00]/40 group-hover:border-[#FF7A00] group-hover:bg-[#FF7A00]/15 group-hover:shadow-[0_0_15px_rgba(255,122,0,0.4)] transition-all duration-300 overflow-hidden flex items-center justify-center">
-                    <Terminal className="w-5 h-5 text-[#FFA439] group-hover:text-[#FF7A00] transition-all duration-300 relative z-10 drop-shadow-[0_0_8px_rgba(255,122,0,0.85)]" />
-                  </div>
+            {/* Luminous Background Grid & Ambient Aura */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-3xl z-0 select-none">
+              <div className="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity duration-700 bg-[radial-gradient(circle_at_85%_15%,rgba(255,122,0,0.22),transparent_55%)]" />
+              <div className="absolute inset-0 opacity-[0.07] bg-[linear-gradient(to_right,rgba(255,122,0,0.15)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,122,0,0.15)_1px,transparent_1px)] bg-[size:24px_24px]" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+            </div>
+
+            {/* Content Container */}
+            <div className="relative z-10">
+              {/* Header Row */}
+              <div className="flex items-center justify-between mb-5">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-mono tracking-wider uppercase font-semibold text-[#FFA439] bg-black/60 border border-[#FF7A00]/40 backdrop-blur-md shadow-[0_0_10px_rgba(255,122,0,0.15)]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#FF7A00] animate-pulse" />
+                  <span>DIVISION 01 // DEFENSIVE CYBER</span>
                 </div>
 
-                {/* Title */}
-                <h3 className="text-2xl sm:text-3xl font-black font-royal text-white mb-3 group-hover:text-[#FFA439] transition-colors leading-tight">
-                  Cybersecurity &amp; Application Defense Academy
-                </h3>
-
-                {/* Summary */}
-                <p className="text-xs sm:text-sm text-slate-300 font-sans leading-relaxed mb-6">
-                  Engineered directly in the dark tactical aesthetic of the RedKross Cybersecurity flagship. Master full-stack application defense, OWASP mitigation, and practice real exploits inside the virtual Kali CyberLab.
-                </p>
-
-                {/* Telemetry Chips */}
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {['Full Stack Engineering', 'OWASP Top 10 Defense', '143+ Kali Tools', 'Cryptographic Proofs'].map((tag) => (
-                    <span
-                      key={tag}
-                      className="text-[10px] font-mono px-2.5 py-1 rounded bg-black/80 text-[#FFA439] border border-[#FF7A00]/30 group-hover:border-[#FF7A00]/60 transition-colors"
-                    >
-                      {tag}
-                    </span>
-                  ))}
+                <div className="p-2.5 rounded-xl bg-black/60 border border-[#FF7A00]/40 text-[#FFA439] group-hover:border-[#FFA439] group-hover:bg-[#FF7A00]/15 group-hover:shadow-[0_0_15px_rgba(255,122,0,0.35)] transition-all flex items-center justify-center">
+                  <Terminal className="w-5 h-5 drop-shadow-[0_0_6px_rgba(255,122,0,0.7)]" />
                 </div>
               </div>
 
-              {/* Footer Action & Trace Divider */}
-              <div className="mt-4">
-                <div className="relative w-full h-[1px] mb-4 overflow-hidden" aria-hidden="true">
-                  <div className="absolute inset-0 bg-white/10 group-hover:bg-[#FF7A00]/30 transition-colors duration-300" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#FF7A00]/40 to-transparent" />
-                  <div className="absolute inset-y-0 left-0 w-2/5 bg-gradient-to-r from-transparent via-[#FF7A00] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-[0_0_12px_#FF7A00]" />
+              {/* Title & Scope */}
+              <h3 className="text-2xl sm:text-3xl font-black font-royal text-white mb-1.5 group-hover:text-[#FFA439] transition-colors leading-tight">
+                Cybersecurity &amp; Defense Academy
+              </h3>
+              <div className="text-[11px] font-mono uppercase tracking-wider text-[#FFA439]/80 mb-3 flex items-center gap-2">
+                <span>Application Security</span>
+                <span className="text-[#FF7A00]">&bull;</span>
+                <span>Kali CyberLab</span>
+                <span className="text-[#FF7A00]">&bull;</span>
+                <span>Cryptographic Proofs</span>
+              </div>
+
+              {/* Summary */}
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans mb-5">
+                Engineered directly in the dark tactical aesthetic of RedKross. Master application security, digital forensics, and practice live simulated exploits inside the virtual Kali Linux CyberLab.
+              </p>
+
+              {/* 3 Symmetrical Competencies */}
+              <div className="space-y-2.5 mb-2">
+                <div className="flex items-start gap-3 p-3 rounded-xl bg-black/50 border border-[#FF7A00]/25 group-hover:border-[#FF7A00]/45 transition-colors">
+                  <Shield className="w-4 h-4 text-[#FFA439] shrink-0 mt-0.5" />
+                  <div>
+                    <div className="text-xs font-semibold text-white">Full-Stack Application Defense</div>
+                    <div className="text-[11px] text-slate-300">OWASP Top 10 mitigation &amp; secure API hardening</div>
+                  </div>
                 </div>
 
-                <div className="flex items-center justify-between text-xs font-mono">
-                  <span className="text-slate-400 group-hover:text-[#FFA439] transition-colors tracking-wider">
-                    OPERATOR TRACK 01
-                  </span>
-                  <Link
-                    to="/academy/cybersecurity"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#FF7A00] hover:bg-[#FFA439] text-black font-mono font-bold text-xs transition-all shadow-[0_0_15px_rgba(255,122,0,0.35)] hover:shadow-[0_0_25px_rgba(255,122,0,0.55)]"
-                  >
-                    <span>Enter Cyber Academy</span>
-                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                  </Link>
+                <div className="flex items-start gap-3 p-3 rounded-xl bg-black/50 border border-[#FF7A00]/25 group-hover:border-[#FF7A00]/45 transition-colors">
+                  <Terminal className="w-4 h-4 text-[#FF7A00] shrink-0 mt-0.5" />
+                  <div>
+                    <div className="text-xs font-semibold text-white">Interactive Kali CyberLab</div>
+                    <div className="text-[11px] text-slate-300">143+ real Linux tools &amp; active terminal sandbox</div>
+                  </div>
                 </div>
+
+                <div className="flex items-start gap-3 p-3 rounded-xl bg-black/50 border border-[#FF7A00]/25 group-hover:border-[#FF7A00]/45 transition-colors">
+                  <Award className="w-4 h-4 text-[#FFA439] shrink-0 mt-0.5" />
+                  <div>
+                    <div className="text-xs font-semibold text-white">Cryptographic Credentials</div>
+                    <div className="text-[11px] text-slate-300">SHA-256 tamper-proof verification on public registry</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer Action & Trace Divider */}
+            <div className="relative z-10 pt-4">
+              <div className="relative w-full h-[1px] mb-4 overflow-hidden" aria-hidden="true">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#FF7A00]/30 to-transparent" />
+                <div className="absolute inset-y-0 left-0 w-2/5 bg-gradient-to-r from-transparent via-[#FFA439] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 shadow-[0_0_12px_#FFA439]" />
+              </div>
+
+              <div className="flex items-center justify-between text-xs font-mono">
+                <div className="flex items-center gap-2 text-slate-300 group-hover:text-[#FFA439] transition-colors tracking-wider">
+                  <span className="w-2 h-2 rounded-full bg-[#FF7A00] animate-pulse shadow-[0_0_8px_#FF7A00]" />
+                  <span>TRACK 01 // DEFENSIVE OPERATOR</span>
+                </div>
+                <Link
+                  to="/academy/cybersecurity"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#FF7A00] to-[#E05300] hover:from-[#FFA439] hover:to-[#FF7A00] text-black font-mono font-bold text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(255,122,0,0.35)] hover:shadow-[0_0_30px_rgba(255,122,0,0.6)] group/btn"
+                >
+                  <span>Enter Cyber Academy</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
+                </Link>
               </div>
             </div>
           </div>
 
-          {/* PILLAR 2: PSYCHOLOGY THEMED FULLSPAN CARD (Amber + Black Blending) */}
+          {/* PILLAR 2: PSYCHOLOGY ACADEMY CARD */}
           <div 
-            className="relative overflow-hidden rounded-3xl p-8 sm:p-10 flex flex-col justify-between bg-gradient-to-br from-[#120D08]/95 via-[#0A0704]/90 to-black/95 backdrop-blur-2xl border border-[#FF7A00]/30 hover:border-[#FFA439]/60 transition-all duration-500 shadow-xl shadow-black/60 hover:shadow-[0_0_30px_rgba(255,122,0,0.2)] group select-none min-h-[460px]"
+            className="relative overflow-hidden rounded-3xl p-7 sm:p-9 flex flex-col justify-between bg-gradient-to-b from-[#1A130C]/90 via-[#0D1219]/90 to-[#070A0F]/95 backdrop-blur-2xl border border-[#FF7A00]/35 hover:border-[#FFA439]/80 transition-all duration-500 shadow-2xl shadow-black/80 hover:shadow-[0_0_45px_rgba(255,122,0,0.25)] group select-none min-h-[490px]"
             onMouseEnter={() => setIsHoveredPsych(true)}
             onMouseLeave={() => setIsHoveredPsych(false)}
           >
-            {/* Specular top border light beam */}
-            <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#FFA439]/50 to-transparent pointer-events-none z-10" />
+            {/* Top Specular Light Beam */}
+            <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#FFA439]/80 to-transparent pointer-events-none z-10" />
 
-            {/* Signature Ethereal Artwork Tinted in Warm Amber / Sepia */}
+            {/* Glowing Amber Corner Brackets */}
+            <div className="absolute top-3.5 left-3.5 w-3.5 h-3.5 border-t-2 border-l-2 border-[#FFA439]/70 rounded-tl-sm pointer-events-none z-10" />
+            <div className="absolute top-3.5 right-3.5 w-3.5 h-3.5 border-t-2 border-r-2 border-[#FFA439]/70 rounded-tr-sm pointer-events-none z-10" />
+            <div className="absolute bottom-3.5 left-3.5 w-3.5 h-3.5 border-b-2 border-l-2 border-[#FFA439]/70 rounded-bl-sm pointer-events-none z-10" />
+            <div className="absolute bottom-3.5 right-3.5 w-3.5 h-3.5 border-b-2 border-r-2 border-[#FFA439]/70 rounded-br-sm pointer-events-none z-10" />
+
+            {/* Luminous Background Aurora & Radial Bloom */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-3xl z-0 select-none">
-              <img
-                src="/assets/cards/card-individual-counselling-fullspan.png"
-                alt=""
-                className="w-full h-full object-cover object-center opacity-25 group-hover:opacity-40 transition-opacity duration-700 filter sepia(85%) hue-rotate(345deg) saturate(260%)"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-[#0E0904]/85 to-transparent" />
+              <div className="absolute inset-0 opacity-15 group-hover:opacity-25 transition-opacity duration-700 bg-[radial-gradient(circle_at_85%_15%,rgba(255,164,57,0.22),transparent_55%)]" />
+              <div className="absolute inset-0 opacity-[0.06] bg-[radial-gradient(circle_at_20%_80%,rgba(255,122,0,0.25),transparent_60%)]" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
             </div>
 
-            {/* Content Top Zone */}
+            {/* Content Container */}
             <div className="relative z-10">
-              {/* Header Badges */}
-              <div className="flex items-center justify-between mb-4">
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-mono tracking-wider uppercase font-semibold text-[#FFA439] bg-black/80 border border-[#FF7A00]/40 backdrop-blur-md shadow-sm">
-                  DIVISION 02 &bull; PSYCHOLOGY &amp; CARE
-                </span>
-                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-medium text-slate-300 bg-black/60 border border-[#FF7A00]/30 backdrop-blur-md">
-                  RCI-Aligned Ethics
-                </span>
+              {/* Header Row */}
+              <div className="flex items-center justify-between mb-5">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-mono tracking-wider uppercase font-semibold text-[#FFA439] bg-black/60 border border-[#FF7A00]/40 backdrop-blur-md shadow-[0_0_10px_rgba(255,122,0,0.15)]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#FFA439] animate-pulse" />
+                  <span>DIVISION 02 // PSYCHOLOGY &amp; CARE</span>
+                </div>
+
+                <div className="p-2.5 rounded-xl bg-black/60 border border-[#FF7A00]/40 text-[#FFA439] group-hover:border-[#FFA439] group-hover:bg-[#FF7A00]/15 group-hover:shadow-[0_0_15px_rgba(255,122,0,0.35)] transition-all flex items-center justify-center">
+                  <Brain className="w-5 h-5 drop-shadow-[0_0_6px_rgba(255,122,0,0.7)]" />
+                </div>
               </div>
 
-              {/* Title */}
-              <h3 className="text-2xl sm:text-3xl font-black font-royal text-white mb-3 group-hover:text-[#FFA439] transition-colors leading-tight">
-                Psychology &amp; Mental Wellbeing Academy
+              {/* Title & Scope */}
+              <h3 className="text-2xl sm:text-3xl font-black font-royal text-white mb-1.5 group-hover:text-[#FFA439] transition-colors leading-tight">
+                Psychology &amp; Wellbeing Academy
               </h3>
+              <div className="text-[11px] font-mono uppercase tracking-wider text-[#FFA439]/80 mb-3 flex items-center gap-2">
+                <span>Cognitive Behavioral Therapy</span>
+                <span className="text-[#FF7A00]">&bull;</span>
+                <span>Neuroscience</span>
+                <span className="text-[#FF7A00]">&bull;</span>
+                <span>Crisis Care</span>
+              </div>
 
-              {/* Description */}
-              <p className="text-xs sm:text-sm text-slate-300/95 leading-relaxed font-light mb-6">
-                Engineered in the warm, serene organic aesthetic of the RedKross Psychology flagship. Master evidence-based Cognitive Behavioral Therapy, acute crisis de-escalation, and student burnout mitigation.
+              {/* Summary */}
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans mb-5">
+                Engineered in the serene clinical aesthetic of RedKross. Master evidence-based Cognitive Behavioral Therapy, neuropsychology, crisis de-escalation, and student burnout mitigation.
               </p>
 
-              {/* Metadata Highlights */}
-              <div className="space-y-2 mb-6">
-                <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-black/75 border border-[#FF7A00]/25 text-slate-200 text-xs shadow-sm">
-                  <Brain className="w-4 h-4 text-[#FFA439] shrink-0" />
-                  <span>CBT Protocols, Affective Neuroscience &amp; Crisis Response</span>
+              {/* 3 Symmetrical Competencies */}
+              <div className="space-y-2.5 mb-2">
+                <div className="flex items-start gap-3 p-3 rounded-xl bg-black/50 border border-[#FF7A00]/25 group-hover:border-[#FF7A00]/45 transition-colors">
+                  <Brain className="w-4 h-4 text-[#FFA439] shrink-0 mt-0.5" />
+                  <div>
+                    <div className="text-xs font-semibold text-white">Clinical CBT Protocols</div>
+                    <div className="text-[11px] text-slate-300">Evidence-based cognitive therapy &amp; affective neuroscience</div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-black/75 border border-[#FF7A00]/25 text-slate-200 text-xs shadow-sm">
-                  <Award className="w-4 h-4 text-[#FF7A00] shrink-0" />
-                  <span className="text-[#FFA439]">Institutional Certificate of Clinical Competency</span>
+
+                <div className="flex items-start gap-3 p-3 rounded-xl bg-black/50 border border-[#FF7A00]/25 group-hover:border-[#FF7A00]/45 transition-colors">
+                  <HeartHandshake className="w-4 h-4 text-[#FF7A00] shrink-0 mt-0.5" />
+                  <div>
+                    <div className="text-xs font-semibold text-white">Crisis De-Escalation Care</div>
+                    <div className="text-[11px] text-slate-300">Immediate psychological first aid &amp; trauma interventions</div>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 p-3 rounded-xl bg-black/50 border border-[#FF7A00]/25 group-hover:border-[#FF7A00]/45 transition-colors">
+                  <Award className="w-4 h-4 text-[#FFA439] shrink-0 mt-0.5" />
+                  <div>
+                    <div className="text-xs font-semibold text-white">Clinical Competency Proofs</div>
+                    <div className="text-[11px] text-slate-300">Institutional certifications &amp; case management credentials</div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Signature Full-Width Glowing Pill CTA Button */}
-            <div className="relative z-10 pt-2">
-              <Link
-                to="/academy/psychology"
-                className="w-full h-12 rounded-full bg-gradient-to-r from-[#FF7A00]/20 via-[#FF7A00]/25 to-[#FF7A00]/30 border border-[#FF7A00]/40 hover:border-[#FFA439] hover:from-[#FF7A00]/30 hover:to-[#FF7A00]/45 flex items-center justify-between px-6 transition-all duration-300 group/btn shadow-lg shadow-[#FF7A00]/15"
-              >
-                <span className="font-royal text-xs sm:text-sm font-bold tracking-wider uppercase text-[#FFA439] group-hover/btn:text-white transition-colors">
-                  Enter Psychology Academy
-                </span>
-                <div className="w-8 h-8 rounded-full bg-[#FF7A00] text-black flex items-center justify-center font-bold shadow-md shadow-[#FF7A00]/40 group-hover/btn:translate-x-1 group-hover/btn:bg-[#FFA439] transition-all shrink-0">
-                  <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+            {/* Footer Action & Trace Divider */}
+            <div className="relative z-10 pt-4">
+              <div className="relative w-full h-[1px] mb-4 overflow-hidden" aria-hidden="true">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#FF7A00]/30 to-transparent" />
+                <div className="absolute inset-y-0 left-0 w-2/5 bg-gradient-to-r from-transparent via-[#FFA439] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 shadow-[0_0_12px_#FFA439]" />
+              </div>
+
+              <div className="flex items-center justify-between text-xs font-mono">
+                <div className="flex items-center gap-2 text-slate-300 group-hover:text-[#FFA439] transition-colors tracking-wider">
+                  <span className="w-2 h-2 rounded-full bg-[#FFA439] animate-pulse shadow-[0_0_8px_#FFA439]" />
+                  <span>TRACK 02 // CLINICAL PRACTICE</span>
                 </div>
-              </Link>
+                <Link
+                  to="/academy/psychology"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#FF7A00] to-[#E05300] hover:from-[#FFA439] hover:to-[#FF7A00] text-black font-mono font-bold text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(255,122,0,0.35)] hover:shadow-[0_0_30px_rgba(255,122,0,0.6)] group/btn"
+                >
+                  <span>Enter Psychology Academy</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
+                </Link>
+              </div>
             </div>
           </div>
 
@@ -234,32 +301,32 @@ export default function HomePage() {
       {/* 3. FOUNDATION FEATURES SUMMARY */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-6 rounded-2xl bg-black/60 border border-[#FF7A00]/20 backdrop-blur-md">
-            <div className="w-8 h-8 rounded-lg bg-[#FF7A00]/10 border border-[#FF7A00]/30 flex items-center justify-center text-[#FFA439] mb-3">
-              <Cpu className="w-4 h-4" />
+          <div className="p-6 rounded-2xl bg-gradient-to-b from-[#18120B]/80 via-[#0C1017]/80 to-[#06090E]/90 border border-[#FF7A00]/25 backdrop-blur-xl hover:border-[#FFA439]/60 transition-all duration-300 shadow-xl shadow-black/60 hover:shadow-[0_0_25px_rgba(255,122,0,0.2)] group">
+            <div className="w-10 h-10 rounded-xl bg-[#FF7A00]/15 border border-[#FF7A00]/40 flex items-center justify-center text-[#FFA439] mb-3.5 shadow-[0_0_12px_rgba(255,122,0,0.25)] group-hover:scale-105 transition-transform">
+              <Cpu className="w-5 h-5 drop-shadow-[0_0_6px_rgba(255,122,0,0.6)]" />
             </div>
-            <h4 className="font-royal font-bold text-white text-base mb-1">Central Student Hub</h4>
-            <p className="text-xs text-slate-300 leading-relaxed">
+            <h4 className="font-royal font-bold text-white text-base mb-1.5 group-hover:text-[#FFA439] transition-colors">Central Student Hub</h4>
+            <p className="text-xs text-slate-300 leading-relaxed font-sans">
               One unified login and dashboard tracking all course completions, token rewards, and assignments across both divisions.
             </p>
           </div>
 
-          <div className="p-6 rounded-2xl bg-black/60 border border-[#FF7A00]/20 backdrop-blur-md">
-            <div className="w-8 h-8 rounded-lg bg-[#FF7A00]/10 border border-[#FF7A00]/30 flex items-center justify-center text-[#FFA439] mb-3">
-              <Award className="w-4 h-4" />
+          <div className="p-6 rounded-2xl bg-gradient-to-b from-[#18120B]/80 via-[#0C1017]/80 to-[#06090E]/90 border border-[#FF7A00]/25 backdrop-blur-xl hover:border-[#FFA439]/60 transition-all duration-300 shadow-xl shadow-black/60 hover:shadow-[0_0_25px_rgba(255,122,0,0.2)] group">
+            <div className="w-10 h-10 rounded-xl bg-[#FF7A00]/15 border border-[#FF7A00]/40 flex items-center justify-center text-[#FFA439] mb-3.5 shadow-[0_0_12px_rgba(255,122,0,0.25)] group-hover:scale-105 transition-transform">
+              <Award className="w-5 h-5 drop-shadow-[0_0_6px_rgba(255,122,0,0.6)]" />
             </div>
-            <h4 className="font-royal font-bold text-white text-base mb-1">Cryptographic Credentials</h4>
-            <p className="text-xs text-slate-300 leading-relaxed">
+            <h4 className="font-royal font-bold text-white text-base mb-1.5 group-hover:text-[#FFA439] transition-colors">Cryptographic Credentials</h4>
+            <p className="text-xs text-slate-300 leading-relaxed font-sans">
               Tamper-proof digital certificates secured with cryptographic SHA-256 signatures verifiable on our public verification portal.
             </p>
           </div>
 
-          <div className="p-6 rounded-2xl bg-black/60 border border-[#FF7A00]/20 backdrop-blur-md">
-            <div className="w-8 h-8 rounded-lg bg-[#FF7A00]/10 border border-[#FF7A00]/30 flex items-center justify-center text-[#FFA439] mb-3">
-              <Sparkles className="w-4 h-4" />
+          <div className="p-6 rounded-2xl bg-gradient-to-b from-[#18120B]/80 via-[#0C1017]/80 to-[#06090E]/90 border border-[#FF7A00]/25 backdrop-blur-xl hover:border-[#FFA439]/60 transition-all duration-300 shadow-xl shadow-black/60 hover:shadow-[0_0_25px_rgba(255,122,0,0.2)] group">
+            <div className="w-10 h-10 rounded-xl bg-[#FF7A00]/15 border border-[#FF7A00]/40 flex items-center justify-center text-[#FFA439] mb-3.5 shadow-[0_0_12px_rgba(255,122,0,0.25)] group-hover:scale-105 transition-transform">
+              <Sparkles className="w-5 h-5 drop-shadow-[0_0_6px_rgba(255,122,0,0.6)]" />
             </div>
-            <h4 className="font-royal font-bold text-white text-base mb-1">Zero-Cost Institutional Access</h4>
-            <p className="text-xs text-slate-300 leading-relaxed">
+            <h4 className="font-royal font-bold text-white text-base mb-1.5 group-hover:text-[#FFA439] transition-colors">Zero-Cost Institutional Access</h4>
+            <p className="text-xs text-slate-300 leading-relaxed font-sans">
               Fully non-profit, Section 8 registered curriculum designed to empower emerging practitioners and students without tuition friction.
             </p>
           </div>

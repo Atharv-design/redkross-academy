@@ -89,7 +89,7 @@ export default class ErrorBoundary extends React.Component {
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <button
                 onClick={this.handleReload}
-                className="flex-1 py-2.5 rounded-xl liquid-glass-button bg-gradient-to-r from-[#65F58A]/20 to-[#35E6B5]/20 hover:from-[#65F58A]/30 hover:to-[#35E6B5]/30 border border-[#65F58A]/40 text-[#65F58A] font-royal font-bold text-xs flex items-center justify-center gap-2"
+                className="flex-1 py-2.5 rounded-xl liquid-glass-button bg-gradient-to-r from-[#FF7A00]/20 to-[#FFA439]/20 hover:from-[#FF7A00]/30 hover:to-[#FFA439]/30 border border-[#FF7A00]/40 text-[#FFA439] font-royal font-bold text-xs flex items-center justify-center gap-2"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
                 <span>Reload Terminal</span>

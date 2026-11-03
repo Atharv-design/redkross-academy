@@ -64,12 +64,12 @@ export default function SupportTicketModal({ isOpen, onClose }) {
 
         {submittedTicket ? (
           <div className="text-center py-6 space-y-4">
-            <div className="w-14 h-14 rounded-full bg-[#65F58A]/10 border border-[#65F58A]/30 text-[#65F58A] flex items-center justify-center mx-auto shadow-[0_0_20px_rgba(101,245,138,0.25)]">
+            <div className="w-14 h-14 rounded-full bg-[#FFA439]/10 border border-[#FFA439]/30 text-[#FFA439] flex items-center justify-center mx-auto shadow-[0_0_20px_rgba(101,245,138,0.25)]">
               <CheckCircle2 className="w-8 h-8" />
             </div>
             <h3 className="font-royal text-xl font-bold text-white">Ticket Dispatched Successfully</h3>
             <div className="p-3 bg-[#071018] border border-[#263440] rounded-xl text-xs font-mono text-[#94A3B8]">
-              Ticket Reference: <span className="text-[#65F58A] font-bold">{submittedTicket.id}</span>
+              Ticket Reference: <span className="text-[#FFA439] font-bold">{submittedTicket.id}</span>
             </div>
             <p className="text-xs text-[#94A3B8] max-w-sm mx-auto leading-relaxed">
               Your inquiry has been escalated directly via Resend to the Academy Operations Desk. An operational officer will respond to <span className="text-white font-mono">{emailToUse}</span> within 4 business hours.
@@ -84,7 +84,7 @@ export default function SupportTicketModal({ isOpen, onClose }) {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="flex items-center space-x-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center text-[#65F58A]">
+              <div className="w-10 h-10 rounded-xl bg-[#FFA439]/10 border border-[#FFA439]/30 flex items-center justify-center text-[#FFA439]">
                 <LifeBuoy className="w-5 h-5" />
               </div>
               <div>
@@ -102,7 +102,7 @@ export default function SupportTicketModal({ isOpen, onClose }) {
                     placeholder="Operator Name"
                     value={guestName}
                     onChange={(e) => setGuestName(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#071018] border border-[#263440] rounded-xl text-xs text-white placeholder-[#64748B] font-mono focus:border-[#65F58A]"
+                    className="w-full px-3 py-2 bg-[#071018] border border-[#263440] rounded-xl text-xs text-white placeholder-[#64748B] font-mono focus:border-[#FFA439]"
                   />
                 </div>
                 <div>
@@ -113,7 +113,7 @@ export default function SupportTicketModal({ isOpen, onClose }) {
                     placeholder="operator@domain.com"
                     value={guestEmail}
                     onChange={(e) => setGuestEmail(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#071018] border border-[#263440] rounded-xl text-xs text-white placeholder-[#64748B] font-mono focus:border-[#65F58A]"
+                    className="w-full px-3 py-2 bg-[#071018] border border-[#263440] rounded-xl text-xs text-white placeholder-[#64748B] font-mono focus:border-[#FFA439]"
                   />
                 </div>
               </div>
@@ -125,7 +125,7 @@ export default function SupportTicketModal({ isOpen, onClose }) {
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#071018] border border-[#263440] rounded-xl text-xs text-white font-mono focus:border-[#65F58A]"
+                  className="w-full px-3 py-2 bg-[#071018] border border-[#263440] rounded-xl text-xs text-white font-mono focus:border-[#FFA439]"
                 >
                   <option value="Exam Reset Appeal">Exam Reset Appeal</option>
                   <option value="Certificate Verification">Credential Verification</option>
@@ -139,7 +139,7 @@ export default function SupportTicketModal({ isOpen, onClose }) {
                 <select
                   value={priority}
                   onChange={(e) => setPriority(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#071018] border border-[#263440] rounded-xl text-xs text-white font-mono focus:border-[#65F58A]"
+                  className="w-full px-3 py-2 bg-[#071018] border border-[#263440] rounded-xl text-xs text-white font-mono focus:border-[#FFA439]"
                 >
                   <option value="Low">Low</option>
                   <option value="Medium">Medium</option>
@@ -157,7 +157,7 @@ export default function SupportTicketModal({ isOpen, onClose }) {
                 placeholder="e.g. Inadvertent blur strike during SOC Module 2 assessment"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
-                className="w-full px-3 py-2 bg-[#071018] border border-[#263440] rounded-xl text-xs text-white placeholder-[#64748B] font-mono focus:border-[#65F58A]"
+                className="w-full px-3 py-2 bg-[#071018] border border-[#263440] rounded-xl text-xs text-white placeholder-[#64748B] font-mono focus:border-[#FFA439]"
               />
             </div>
 
@@ -169,7 +169,7 @@ export default function SupportTicketModal({ isOpen, onClose }) {
                 placeholder="Describe your inquiry with relevant context..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full px-3 py-2 bg-[#071018] border border-[#263440] rounded-xl text-xs text-white placeholder-[#64748B] font-mono focus:border-[#65F58A]"
+                className="w-full px-3 py-2 bg-[#071018] border border-[#263440] rounded-xl text-xs text-white placeholder-[#64748B] font-mono focus:border-[#FFA439]"
               />
             </div>
 

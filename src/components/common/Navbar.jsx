@@ -229,9 +229,9 @@ export default function Navbar() {
                   <button
                     type="button"
                     onClick={() => setShowProfileMenu(!showProfileMenu)}
-                    className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#1B2530]/80 hover:bg-[#263440] border border-[#263440] hover:border-[#65F58A]/40 text-xs text-white transition-all cursor-pointer shadow-md"
+                    className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#0B1118]/90 hover:bg-[#131C26] border border-[#FF7A00]/30 hover:border-[#FFA439]/60 text-xs text-white transition-all cursor-pointer shadow-[0_0_15px_rgba(255,122,0,0.15)] hover:shadow-[0_0_20px_rgba(255,122,0,0.25)]"
                   >
-                    <div className="w-6 h-6 rounded-full overflow-hidden bg-[#101923] border border-[#65F58A]/40 flex items-center justify-center flex-shrink-0">
+                    <div className="w-6 h-6 rounded-full overflow-hidden bg-gradient-to-br from-[#FF7A00] to-[#CC4E00] border border-[#FFA439]/60 flex items-center justify-center flex-shrink-0 shadow-[0_0_8px_rgba(255,122,0,0.35)]">
                       {currentUser.avatar ? (
                         <img
                           src={currentUser.avatar}
@@ -242,25 +242,25 @@ export default function Navbar() {
                           }}
                         />
                       ) : (
-                        <span className="text-[10px] font-mono text-[#65F58A]">
+                        <span className="text-[10px] font-mono font-bold text-black">
                           {(fullName || 'C').charAt(0).toUpperCase()}
                         </span>
                       )}
                     </div>
-                    <span className="max-w-[75px] md:max-w-[100px] truncate text-xs font-mono hidden sm:inline">
+                    <span className="max-w-[75px] md:max-w-[100px] truncate text-xs font-mono hidden sm:inline text-slate-100">
                       {fullName.split(' ')[0]}
                     </span>
                     {cadetId && (
-                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/30 hidden md:inline font-bold">
+                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#FF7A00]/15 text-[#FFA439] border border-[#FF7A00]/35 hidden md:inline font-bold shadow-[0_0_6px_rgba(255,122,0,0.2)]">
                         {cadetId}
                       </span>
                     )}
                     {currentUser.role === 'super_admin' && (
-                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#65F58A]/20 text-[#65F58A] border border-[#65F58A]/40 hidden lg:inline font-bold">
+                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#FF7A00]/25 text-[#FFA439] border border-[#FF7A00]/50 hidden lg:inline font-bold">
                         ADMIN
                       </span>
                     )}
-                    <ChevronDown className="w-3 h-3 text-[#94A3B8]" />
+                    <ChevronDown className="w-3 h-3 text-[#FFA439]/70" />
                   </button>
 
                   {showProfileMenu && (
@@ -273,12 +273,12 @@ export default function Navbar() {
                           {currentUser.email || 'operator@redkross.org.in'}
                         </div>
                         {cadetId && (
-                          <div className="mt-1 text-[11px] font-mono text-[#65F58A] font-bold">
+                          <div className="mt-1 text-[11px] font-mono text-[#FFA439] font-bold">
                             CADET: {cadetId}
                           </div>
                         )}
-                        <div className="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono uppercase bg-[#65F58A]/10 border border-[#65F58A]/30 text-[#65F58A]">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#65F58A]" />
+                        <div className="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono uppercase bg-[#FF7A00]/15 border border-[#FF7A00]/30 text-[#FFA439]">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#FF7A00] animate-pulse" />
                           <span>Role: {roleDisplay}</span>
                         </div>
                       </div>
@@ -287,34 +287,34 @@ export default function Navbar() {
                         <Link
                           to="/student"
                           onClick={() => setShowProfileMenu(false)}
-                          className="flex items-center gap-2 px-4 py-2 text-slate-300 hover:text-white hover:bg-[#1B2530] transition-colors"
+                          className="flex items-center gap-2 px-4 py-2 text-slate-300 hover:text-[#FFA439] hover:bg-[#1B2530] transition-colors"
                         >
-                          <User className="w-4 h-4 text-[#35E6B5]" />
+                          <User className="w-4 h-4 text-[#FFA439]" />
                           <span>Student Portal</span>
                         </Link>
                         {cadetId && (
                           <Link
                             to={`/verify/${cadetId}`}
                             onClick={() => setShowProfileMenu(false)}
-                            className="flex items-center gap-2 px-4 py-2 text-slate-300 hover:text-white hover:bg-[#1B2530] transition-colors"
+                            className="flex items-center gap-2 px-4 py-2 text-slate-300 hover:text-[#FFA439] hover:bg-[#1B2530] transition-colors"
                           >
-                            <Award className="w-4 h-4 text-[#65F58A]" />
+                            <Award className="w-4 h-4 text-[#FF7A00]" />
                             <span>My Verified Dossier</span>
                           </Link>
                         )}
                         <Link
                           to="/student/tokens"
                           onClick={() => setShowProfileMenu(false)}
-                          className="flex items-center gap-2 px-4 py-2 text-slate-300 hover:text-white hover:bg-[#1B2530] transition-colors"
+                          className="flex items-center gap-2 px-4 py-2 text-slate-300 hover:text-[#FFA439] hover:bg-[#1B2530] transition-colors"
                         >
-                          <Coins className="w-4 h-4 text-[#65F58A]" />
+                          <Coins className="w-4 h-4 text-[#FFA439]" />
                           <span>Token Ledger</span>
                         </Link>
                         {currentUser.role === 'super_admin' && (
                           <Link
                             to="/admin"
                             onClick={() => setShowProfileMenu(false)}
-                            className="flex items-center gap-2 px-4 py-2 text-[#65F58A] hover:bg-[#1B2530] transition-colors font-semibold"
+                            className="flex items-center gap-2 px-4 py-2 text-[#FFA439] hover:bg-[#1B2530] transition-colors font-semibold"
                           >
                             <Shield className="w-4 h-4" />
                             <span>Super Admin Area</span>
@@ -373,8 +373,8 @@ export default function Navbar() {
                     onClick={closeMobileMenu}
                     className={`px-3 py-2 rounded-lg transition-colors ${
                       isActive(link.path)
-                        ? 'bg-[#65F58A]/15 text-[#65F58A] font-bold'
-                        : 'text-slate-300 hover:bg-[#1B2530]'
+                        ? 'bg-[#FF7A00]/15 text-[#FFA439] font-bold border border-[#FF7A00]/30'
+                        : 'text-slate-300 hover:bg-[#1B2530] hover:text-[#FFA439]'
                     }`}
                   >
                     {link.label}
