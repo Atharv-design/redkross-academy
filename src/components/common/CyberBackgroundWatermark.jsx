@@ -55,14 +55,14 @@ export default function CyberBackgroundWatermark() {
         style={{ transform: 'translateY(-360px)' }}
       />
 
-      {/* 7. Centered RedKross Cyber Crest Watermark (Monochromatic Amber Orange Conversion) */}
+      {/* 7. Centered RedKross Cyber Crest Watermark (Monochromatic Amber Orange Conversion - Guaranteed Zero Blue) */}
       <div className="relative z-10 flex items-center justify-center">
         <img 
           src="/assets/logo-cyber-watermark.png" 
           alt=""
           className="w-[300px] sm:w-[440px] md:w-[520px] lg:w-[600px] h-auto object-contain opacity-[0.22] transition-opacity duration-1000 pointer-events-none"
           style={{
-            filter: 'sepia(100%) hue-rotate(345deg) saturate(380%) brightness(0.95) drop-shadow(0 0 50px rgba(255, 122, 0, 0.5)) drop-shadow(0 0 100px rgba(255, 164, 57, 0.3))',
+            filter: 'grayscale(100%) sepia(100%) hue-rotate(350deg) saturate(550%) brightness(0.92) drop-shadow(0 0 45px rgba(255, 122, 0, 0.45)) drop-shadow(0 0 90px rgba(255, 164, 57, 0.25))',
             maskImage: 'radial-gradient(circle at center, black 65%, transparent 92%)',
             WebkitMaskImage: 'radial-gradient(circle at center, black 65%, transparent 92%)'
           }}
