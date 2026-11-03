@@ -90,11 +90,11 @@ export default function CyberLearningCard({
           </div>
 
           <Link
-            to={track.slug ? `/paths` : `/courses`}
+            to="/courses/crs_full_stack_web_dev"
             className="inline-flex items-center gap-2 text-xs font-mono font-bold text-[#FFA439] hover:text-white group-hover:underline transition-colors"
           >
             <span>Review Track Curriculum &amp; Labs</span>
-            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform text-[#FF7A00] group-hover:text-[#FFA439]" />
           </Link>
         </div>
       </div>

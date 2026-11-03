@@ -18,9 +18,8 @@ import {
 import CyberCloudsBackground from '../../components/common/CyberCloudsBackground';
 import CyberShaderBackground from '../../components/ui/CyberShaderBackground';
 import CyberAcademyNavbar from '../../components/cyber/CyberAcademyNavbar';
-import CyberAcademyFooter from '../../components/cyber/CyberAcademyFooter';
+import Footer from '../../components/common/Footer';
 import CyberDivisionWatermark from '../../components/cyber/CyberDivisionWatermark';
-import CircuitTraceCard from '../../components/cyber/CircuitTraceCard';
 import CyberLearningCard from '../../components/cyber/CyberLearningCard';
 import { apiClient } from '../../services/apiClient';
 import { socketClient } from '../../services/socket/socketClient';
@@ -53,6 +52,22 @@ export default function CyberAcademyPage() {
       if (typeof unsub === 'function') unsub();
     };
   }, []);
+
+  // Authoritative Full Stack Career Track & Curriculum Data
+  const masterTrack = learningPaths[0] || {
+    id: 'path_fullstack_career',
+    division: 'cybersecurity',
+    slug: 'full-stack-web-development-career-path',
+    title: 'Full Stack Web Development & Application Defense Track',
+    short_desc: 'Comprehensive full-stack engineering curriculum taking developers from web foundations through modern React, Node.js REST APIs, MongoDB, and OWASP defense.',
+    difficulty: 'BEGINNER TO ADVANCED',
+    estimated_weeks: 12,
+    total_hours: 48,
+    courses_count: 1,
+    milestone_cert: 'Full Stack Web Developer Certificate',
+    featured: true,
+    skills: ['HTML5 & CSS3', 'JavaScript ES6+', 'React 18', 'Node.js & Express', 'MongoDB', 'OWASP Web Defense', 'Docker']
+  };
 
   return (
     <div 
@@ -136,39 +151,9 @@ export default function CyberAcademyPage() {
             </motion.div>
           </section>
 
-          {/* CAREER TRACKS SHOWCASE */}
-          {learningPaths.length > 0 && (
-            <section className="mb-20">
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="flex items-center justify-between mb-8 pb-3 border-b border-[#FF7A00]/25"
-              >
-                <div>
-                  <h2 className="text-2xl sm:text-3xl font-bold font-royal text-white">
-                    Specialized Career Tracks
-                  </h2>
-                  <p className="text-xs sm:text-sm font-mono text-slate-400 mt-1">
-                    Structured multi-week technical pipelines engineered for software defense and architecture.
-                  </p>
-                </div>
-                <span className="text-xs font-mono text-[#FFA439] hidden sm:block">
-                  [ {learningPaths.length} ACTIVE TRACK ]
-                </span>
-              </motion.div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                {learningPaths.map((track, idx) => (
-                  <CyberLearningCard key={track.id} track={track} idx={idx} />
-                ))}
-              </div>
-            </section>
-          )}
-
           {/* DEDICATED CYBER COURSES CATALOGUE */}
           <section id="courses" className="mb-20">
+            {/* Section Header */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -189,26 +174,13 @@ export default function CyberAcademyPage() {
               </span>
             </motion.div>
 
-            {loading ? (
-              <div className="py-20 text-center text-[#FFA439] font-mono text-sm animate-pulse">
-                Initializing Cybersecurity Telemetry...
-              </div>
-            ) : courses.length === 0 ? (
-              <div className="p-8 rounded-2xl bg-black/40 border border-[#FF7A00]/25 text-center font-mono text-sm text-slate-400">
-                Courses are being configured for the active cohort.
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 max-w-4xl mx-auto">
-                {courses.map((course, idx) => (
-                  <CircuitTraceCard 
-                    key={course.id} 
-                    course={course} 
-                    idx={idx} 
-                    actionLabel="View Full Syllabus & Labs" 
-                  />
-                ))}
-              </div>
-            )}
+            {/* Official Master Curriculum Card (Themed HUD Plate) */}
+            <div className="max-w-2xl mx-auto">
+              <CyberLearningCard 
+                track={masterTrack} 
+                idx={0} 
+              />
+            </div>
           </section>
 
           {/* KALI CYBERLAB CALLOUT BANNER */}
@@ -247,8 +219,8 @@ export default function CyberAcademyPage() {
         </div>
       </main>
 
-      {/* 5. Transparent Liquid-Glass Cyber Academy Footer with Amber Doodle Crew */}
-      <CyberAcademyFooter />
+      {/* 5. Authoritative RedKross Website Footer with Ambient Amber Doodle Crew */}
+      <Footer />
     </div>
   );
 }
