@@ -94,35 +94,24 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 2. DUAL-DIVISION GATEWAY SHOWCASE (Perfect Symmetrical Split Layout with Staggered Scroll) */}
+      {/* 2. DUAL-DIVISION GATEWAY SHOWCASE (Symmetrical Split Layout with Staggered Scroll) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center max-w-3xl mx-auto mb-12"
+          className="text-center max-w-3xl mx-auto mb-10"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF7A00]/10 border border-[#FF7A00]/30 text-[10px] font-mono tracking-widest text-[#FFA439] uppercase mb-2">
-            <span>PERFECT DUAL SPLIT PORTAL</span>
-            <span className="text-[#FF7A00]">&bull;</span>
-            <span>CHOOSE DISCIPLINE</span>
-          </div>
+          <span className="text-[11px] font-mono tracking-widest text-[#FFA439] uppercase">
+            SELECT LEARNING DISCIPLINE
+          </span>
           <h2 className="text-2xl sm:text-4xl font-bold font-royal text-white mt-1">
             Enter Your Chosen Academy
           </h2>
         </motion.div>
 
-        {/* Central Split Indicator for Desktop */}
-        <div className="hidden lg:flex flex-col items-center justify-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none mt-6">
-          <div className="w-[1px] h-28 bg-gradient-to-b from-transparent via-[#FF7A00]/40 to-[#FF7A00]/70" />
-          <div className="px-3 py-1 rounded-full bg-[#06090E]/95 border border-[#FF7A00]/50 text-[10px] font-mono tracking-widest text-[#FFA439] shadow-[0_0_20px_rgba(255,122,0,0.35)] backdrop-blur-xl uppercase font-bold my-2 select-none">
-            SPLIT &bull; VIEW
-          </div>
-          <div className="w-[1px] h-28 bg-gradient-to-b from-[#FF7A00]/70 via-[#FF7A00]/40 to-transparent" />
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-stretch relative">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-stretch relative">
           
           {/* PILLAR 1: CYBERSECURITY ACADEMY CARD (Glides in from Left on Scroll) */}
           <motion.div 
@@ -130,7 +119,7 @@ export default function HomePage() {
             whileInView={{ opacity: 1, x: 0, y: 0 }}
             viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-            className="relative overflow-hidden rounded-3xl p-7 sm:p-9 flex flex-col justify-between bg-gradient-to-b from-[#1A130C]/90 via-[#0D1219]/90 to-[#070A0F]/95 backdrop-blur-2xl border border-[#FF7A00]/35 hover:border-[#FFA439]/80 transition-all duration-500 shadow-2xl shadow-black/80 hover:shadow-[0_0_45px_rgba(255,122,0,0.25)] group select-none min-h-[500px]"
+            className="relative overflow-hidden rounded-3xl p-7 sm:p-9 flex flex-col justify-between bg-gradient-to-b from-[#1A130C]/90 via-[#0D1219]/90 to-[#070A0F]/95 backdrop-blur-2xl border border-[#FF7A00]/35 hover:border-[#FFA439]/80 transition-all duration-500 shadow-2xl shadow-black/80 hover:shadow-[0_0_45px_rgba(255,122,0,0.25)] group select-none min-h-[480px]"
             onMouseEnter={() => setIsHoveredCyber(true)}
             onMouseLeave={() => setIsHoveredCyber(false)}
           >
@@ -152,13 +141,8 @@ export default function HomePage() {
 
             {/* Content Container */}
             <div className="relative z-10">
-              {/* Header Row */}
-              <div className="flex items-center justify-between mb-5">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-mono tracking-wider uppercase font-semibold text-[#FFA439] bg-black/60 border border-[#FF7A00]/40 backdrop-blur-md shadow-[0_0_10px_rgba(255,122,0,0.15)]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#FF7A00] animate-pulse" />
-                  <span>DIVISION 01 // DEFENSIVE CYBER</span>
-                </div>
-
+              {/* Header Icon Row */}
+              <div className="flex items-center justify-end mb-4">
                 <div className="p-2.5 rounded-xl bg-black/60 border border-[#FF7A00]/40 text-[#FFA439] group-hover:border-[#FFA439] group-hover:bg-[#FF7A00]/15 group-hover:shadow-[0_0_15px_rgba(255,122,0,0.35)] transition-all flex items-center justify-center">
                   <Terminal className="w-5 h-5 drop-shadow-[0_0_6px_rgba(255,122,0,0.7)]" />
                 </div>
@@ -234,14 +218,10 @@ export default function HomePage() {
                 <div className="absolute inset-y-0 left-0 w-2/5 bg-gradient-to-r from-transparent via-[#FFA439] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 shadow-[0_0_12px_#FFA439]" />
               </div>
 
-              <div className="flex items-center justify-between text-xs font-mono">
-                <div className="flex items-center gap-2 text-slate-300 group-hover:text-[#FFA439] transition-colors tracking-wider">
-                  <span className="w-2 h-2 rounded-full bg-[#FF7A00] animate-pulse shadow-[0_0_8px_#FF7A00]" />
-                  <span>TRACK 01 // DEFENSIVE OPERATOR</span>
-                </div>
+              <div className="flex items-center justify-end text-xs font-mono">
                 <Link
                   to="/academy/cybersecurity"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#FF7A00] to-[#E05300] hover:from-[#FFA439] hover:to-[#FF7A00] text-black font-mono font-bold text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(255,122,0,0.35)] hover:shadow-[0_0_30px_rgba(255,122,0,0.6)] group/btn"
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-[#FF7A00] to-[#E05300] hover:from-[#FFA439] hover:to-[#FF7A00] text-black font-mono font-bold text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(255,122,0,0.35)] hover:shadow-[0_0_30px_rgba(255,122,0,0.6)] group/btn"
                 >
                   <span>Enter Cyber Academy</span>
                   <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
@@ -256,7 +236,7 @@ export default function HomePage() {
             whileInView={{ opacity: 1, x: 0, y: 0 }}
             viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.7, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            className="relative overflow-hidden rounded-3xl p-7 sm:p-9 flex flex-col justify-between bg-gradient-to-b from-[#1A130C]/90 via-[#0D1219]/90 to-[#070A0F]/95 backdrop-blur-2xl border border-[#FF7A00]/35 hover:border-[#FFA439]/80 transition-all duration-500 shadow-2xl shadow-black/80 hover:shadow-[0_0_45px_rgba(255,122,0,0.25)] group select-none min-h-[500px]"
+            className="relative overflow-hidden rounded-3xl p-7 sm:p-9 flex flex-col justify-between bg-gradient-to-b from-[#1A130C]/90 via-[#0D1219]/90 to-[#070A0F]/95 backdrop-blur-2xl border border-[#FF7A00]/35 hover:border-[#FFA439]/80 transition-all duration-500 shadow-2xl shadow-black/80 hover:shadow-[0_0_45px_rgba(255,122,0,0.25)] group select-none min-h-[480px]"
             onMouseEnter={() => setIsHoveredPsych(true)}
             onMouseLeave={() => setIsHoveredPsych(false)}
           >
@@ -278,13 +258,8 @@ export default function HomePage() {
 
             {/* Content Container */}
             <div className="relative z-10">
-              {/* Header Row */}
-              <div className="flex items-center justify-between mb-5">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-mono tracking-wider uppercase font-semibold text-[#FFA439] bg-black/60 border border-[#FF7A00]/40 backdrop-blur-md shadow-[0_0_10px_rgba(255,122,0,0.15)]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#FFA439] animate-pulse" />
-                  <span>DIVISION 02 // PSYCHOLOGY &amp; CARE</span>
-                </div>
-
+              {/* Header Icon Row */}
+              <div className="flex items-center justify-end mb-4">
                 <div className="p-2.5 rounded-xl bg-black/60 border border-[#FF7A00]/40 text-[#FFA439] group-hover:border-[#FFA439] group-hover:bg-[#FF7A00]/15 group-hover:shadow-[0_0_15px_rgba(255,122,0,0.35)] transition-all flex items-center justify-center">
                   <Brain className="w-5 h-5 drop-shadow-[0_0_6px_rgba(255,122,0,0.7)]" />
                 </div>
@@ -360,14 +335,10 @@ export default function HomePage() {
                 <div className="absolute inset-y-0 left-0 w-2/5 bg-gradient-to-r from-transparent via-[#FFA439] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 shadow-[0_0_12px_#FFA439]" />
               </div>
 
-              <div className="flex items-center justify-between text-xs font-mono">
-                <div className="flex items-center gap-2 text-slate-300 group-hover:text-[#FFA439] transition-colors tracking-wider">
-                  <span className="w-2 h-2 rounded-full bg-[#FFA439] animate-pulse shadow-[0_0_8px_#FFA439]" />
-                  <span>TRACK 02 // CLINICAL PRACTICE</span>
-                </div>
+              <div className="flex items-center justify-end text-xs font-mono">
                 <Link
                   to="/academy/psychology"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#FF7A00] to-[#E05300] hover:from-[#FFA439] hover:to-[#FF7A00] text-black font-mono font-bold text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(255,122,0,0.35)] hover:shadow-[0_0_30px_rgba(255,122,0,0.6)] group/btn"
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-[#FF7A00] to-[#E05300] hover:from-[#FFA439] hover:to-[#FF7A00] text-black font-mono font-bold text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(255,122,0,0.35)] hover:shadow-[0_0_30px_rgba(255,122,0,0.6)] group/btn"
                 >
                   <span>Enter Psychology Academy</span>
                   <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
