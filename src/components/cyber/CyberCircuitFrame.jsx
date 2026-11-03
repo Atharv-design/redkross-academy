@@ -25,20 +25,20 @@ export default function CyberCircuitFrame({ isHovered = false, theme = 'amber' }
             </feMerge>
           </filter>
 
-          {/* Volumetric Radial Vignette Gradient */}
+          {/* Volumetric Radial Vignette Gradient - PURE TRANSPARENT LIQUID GLASS */}
           {isAmber ? (
             <radialGradient id="hudPlateFillAmber" cx="50%" cy="50%" r="55%">
-              <stop offset="0%" stopColor="#0B0804" stopOpacity="0.98" />
-              <stop offset="65%" stopColor="#140D06" stopOpacity="0.96" />
-              <stop offset="88%" stopColor="#221306" stopOpacity="0.88" />
-              <stop offset="100%" stopColor="#FF7A00" stopOpacity="0.28" />
+              <stop offset="0%" stopColor="#0B0804" stopOpacity="0.45" />
+              <stop offset="65%" stopColor="#140D06" stopOpacity="0.32" />
+              <stop offset="88%" stopColor="#221306" stopOpacity="0.18" />
+              <stop offset="100%" stopColor="#FF7A00" stopOpacity="0.05" />
             </radialGradient>
           ) : (
             <radialGradient id="hudPlateFill" cx="50%" cy="50%" r="55%">
-              <stop offset="0%" stopColor="#040813" stopOpacity="0.98" />
-              <stop offset="65%" stopColor="#050C1B" stopOpacity="0.96" />
-              <stop offset="88%" stopColor="#081E33" stopOpacity="0.88" />
-              <stop offset="100%" stopColor="#004D66" stopOpacity="0.45" />
+              <stop offset="0%" stopColor="#040813" stopOpacity="0.45" />
+              <stop offset="65%" stopColor="#050C1B" stopOpacity="0.32" />
+              <stop offset="88%" stopColor="#081E33" stopOpacity="0.18" />
+              <stop offset="100%" stopColor="#004D66" stopOpacity="0.05" />
             </radialGradient>
           )}
         </defs>

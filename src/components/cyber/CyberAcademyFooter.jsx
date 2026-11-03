@@ -5,9 +5,9 @@ import DoodleCrewFooter from '../ui/doodle-crew-footer-cyber';
 
 export default function CyberAcademyFooter() {
   return (
-    <footer className="w-full bg-[#03060A] border-t border-cyan-500/20 text-gray-400 font-sans relative overflow-hidden select-none z-10">
-      {/* Subtle Cyan Radial Ambient Glow */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-[#00F0FF]/[0.025] rounded-full blur-[150px] pointer-events-none" />
+    <footer className="w-full bg-transparent border-t border-[#FF7A00]/20 text-gray-400 font-sans relative overflow-hidden select-none z-10">
+      {/* Subtle Amber Radial Ambient Glow */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[850px] h-[300px] bg-[#FF7A00]/[0.035] rounded-full blur-[150px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
@@ -15,35 +15,35 @@ export default function CyberAcademyFooter() {
           {/* Identity */}
           <div className="lg:col-span-2 space-y-3">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-black border border-[#00F0FF]/50 flex items-center justify-center shadow-[0_0_15px_rgba(0,240,255,0.3)]">
+              <div className="w-9 h-9 rounded-full bg-black border border-[#FF7A00]/50 flex items-center justify-center shadow-[0_0_15px_rgba(255,122,0,0.3)]">
                 <img src="/assets/crest-clean-circle.png" alt="Logo" className="w-full h-full object-cover" />
               </div>
               <span className="font-royal font-bold text-lg text-white">
-                RedKross <span className="text-[#00F0FF]">Cyber Academy</span>
+                RedKross <span className="text-[#FF7A00]">Cyber Academy</span>
               </span>
             </div>
-            <p className="text-xs text-gray-400 leading-relaxed max-w-sm">
+            <p className="text-xs text-slate-300 leading-relaxed max-w-sm">
               Hands-on defensive engineering, web application penetration defense, and tamper-proof cryptographic credentials. Section 8 non-profit research foundation.
             </p>
           </div>
 
           {/* Quick Division Links */}
           <div className="space-y-2">
-            <h4 className="text-xs font-mono uppercase tracking-widest text-[#00F0FF] font-semibold">Division Navigation</h4>
+            <h4 className="text-xs font-mono uppercase tracking-widest text-[#FFA439] font-semibold">Division Navigation</h4>
             <ul className="space-y-1.5 text-xs">
-              <li><Link to="/" className="hover:text-white transition-colors">Foundation Gateway</Link></li>
+              <li><Link to="/" className="hover:text-[#FFA439] transition-colors">Foundation Gateway</Link></li>
               <li><Link to="/academy/psychology" className="hover:text-teal-300 transition-colors">Psychology Academy</Link></li>
               <li><Link to="/student" className="hover:text-white transition-colors">Cadet Dashboard</Link></li>
-              <li><Link to="/verify" className="hover:text-[#00F0FF] transition-colors">Verify Credential</Link></li>
+              <li><Link to="/verify" className="hover:text-[#FFA439] transition-colors">Verify Credential</Link></li>
             </ul>
           </div>
 
           {/* Institutional Integrity */}
           <div className="space-y-2">
-            <h4 className="text-xs font-mono uppercase tracking-widest text-[#00F0FF] font-semibold">Integrity Standards</h4>
-            <ul className="space-y-1.5 text-xs text-gray-400">
+            <h4 className="text-xs font-mono uppercase tracking-widest text-[#FFA439] font-semibold">Integrity Standards</h4>
+            <ul className="space-y-1.5 text-xs text-slate-300">
               <li className="flex items-center gap-1.5 text-white">
-                <Lock className="w-3.5 h-3.5 text-[#00F0FF]" />
+                <Lock className="w-3.5 h-3.5 text-[#FF7A00]" />
                 <span>SHA-256 Verified Certificates</span>
               </li>
               <li>NIST SP 800-61r2 Playbooks</li>
@@ -64,9 +64,9 @@ export default function CyberAcademyFooter() {
             tagline="Pioneering Applied Cybersecurity, Isolated Lab Sandboxes & Verifiable Defensive Engineering"
             height="auto"
             palette={{
-              background: "#03060A",
+              background: "transparent",
               ink: "#f1f5f9",
-              accent: "#00F0FF"
+              accent: "#FF7A00"
             }}
             crew={[
               { kind: "yeti", letter: 0, seat: "front", scale: 0.44, offset: -0.32, says: "Guarding zero-day vectors & perimeter!" },
@@ -87,7 +87,7 @@ export default function CyberAcademyFooter() {
           />
         </div>
 
-        <div className="pt-4 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] font-mono text-gray-500">
+        <div className="pt-4 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] font-mono text-slate-500">
           <p>&copy; {new Date().getFullYear()} RedKross Research Foundation. Academic Cyber Division.</p>
           <p>CIN: U85300HR2022NPL107482 &bull; RoC Haryana</p>
         </div>

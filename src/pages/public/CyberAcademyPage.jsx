@@ -15,6 +15,8 @@ import {
   Clock,
   Sparkles
 } from 'lucide-react';
+import CyberCloudsBackground from '../../components/common/CyberCloudsBackground';
+import CyberShaderBackground from '../../components/ui/CyberShaderBackground';
 import CyberAcademyNavbar from '../../components/cyber/CyberAcademyNavbar';
 import CyberAcademyFooter from '../../components/cyber/CyberAcademyFooter';
 import CyberDivisionWatermark from '../../components/cyber/CyberDivisionWatermark';
@@ -55,63 +57,95 @@ export default function CyberAcademyPage() {
   return (
     <div 
       data-academy-theme="cybersecurity"
-      className="min-h-screen relative bg-[#04070D] text-slate-100 overflow-x-clip flex flex-col font-sans"
+      className="min-h-screen relative bg-transparent text-slate-100 overflow-x-clip flex flex-col font-sans select-none"
     >
-      {/* Exact Cybersecurity Website Deep Ambient Watermark & Traveling Lightning Discharge */}
+      {/* 1. 3D Vanta Volumetric Clouds (Amber + Black Blending) */}
+      <CyberCloudsBackground />
+
+      {/* 2. WebGL Ray-Marching Fractal Particles (Amber + Black Blending) */}
+      <CyberShaderBackground />
+
+      {/* 3. Deep Ambient Reticle, Radar Rings & Traveling Amber Lightning Discharge */}
       <CyberDivisionWatermark />
 
-      {/* Cyber Academy Navigation */}
+      {/* 4. Transparent Liquid-Glass Cyber Academy Navigation */}
       <CyberAcademyNavbar />
 
-      <main className="flex-1 relative z-10 pt-10 pb-20">
+      <main className="flex-1 relative z-10 pt-8 pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           {/* DIVISION HERO BANNER */}
-          <section className="text-center max-w-4xl mx-auto pt-6 pb-14 space-y-6">
+          <section className="text-center max-w-4xl mx-auto pt-4 pb-14 space-y-6">
             {/* Status Telemetry Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-950/70 border border-emerald-500/30 text-xs font-mono text-[#65F58A] shadow-[0_0_15px_rgba(101,245,138,0.2)]">
-              <span className="w-2 h-2 rounded-full bg-[#65F58A] animate-ping" />
+            <motion.div 
+              initial={{ opacity: 0, y: -15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/60 border border-[#FF7A00]/35 text-xs font-mono text-[#FFA439] shadow-[0_0_20px_rgba(255,122,0,0.25)] backdrop-blur-md"
+            >
+              <span className="w-2 h-2 rounded-full bg-[#FF7A00] animate-pulse shadow-[0_0_8px_#FF7A00]" />
               <span>DEFENSIVE CYBER DIVISION // COHORT 2026</span>
               <span className="text-slate-600">&bull;</span>
               <span className="text-slate-300">LIVE KALI CYBERLAB INTEGRATED</span>
-            </div>
+            </motion.div>
 
             {/* Headline */}
-            <h1 className="font-royal text-4xl sm:text-6xl font-black tracking-tight text-white leading-tight">
+            <motion.h1 
+              initial={{ opacity: 0, y: 25 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.65, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+              className="font-royal text-4xl sm:text-6xl font-black tracking-tight text-white leading-tight"
+            >
               Defensive Cyber Operations &amp; <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#65F58A] via-[#35E6B5] to-[#00FFA3] drop-shadow-[0_0_25px_rgba(101,245,138,0.4)]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF7A00] via-[#FFA439] to-[#FF8C00] drop-shadow-[0_0_30px_rgba(255,122,0,0.45)]">
                 Application Defense Academy
               </span>
-            </h1>
+            </motion.h1>
 
             {/* Description */}
-            <p className="text-slate-300 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto leading-relaxed font-sans">
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.65, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="text-slate-300 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto leading-relaxed font-sans"
+            >
               Master full-stack engineering, OWASP Top 10 web application defenses, and secure microservices through structured hands-on curricula and tamper-proof cryptographic credentials.
-            </p>
+            </motion.p>
 
             {/* Fast Quick Links */}
-            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="flex flex-wrap items-center justify-center gap-3 pt-2"
+            >
               <a 
                 href="#courses"
-                className="px-6 py-3 rounded-full bg-[#65F58A] text-[#030906] font-mono font-bold text-xs hover:bg-[#35E6B5] hover:shadow-[0_0_20px_rgba(101,245,138,0.5)] transition-all flex items-center gap-2"
+                className="px-6 py-3 rounded-full bg-gradient-to-r from-[#FF7A00] to-[#E56A00] text-black font-mono font-bold text-xs hover:brightness-110 shadow-[0_0_20px_rgba(255,122,0,0.4)] transition-all flex items-center gap-2"
               >
-                <Terminal className="w-4 h-4" />
+                <Terminal className="w-4 h-4 text-black" />
                 <span>Explore Cyber Course</span>
               </a>
               <Link 
                 to="/student"
-                className="px-6 py-3 rounded-full bg-black/60 border border-emerald-500/40 text-emerald-300 font-mono text-xs hover:bg-emerald-950/40 transition-all flex items-center gap-2"
+                className="px-6 py-3 rounded-full bg-black/60 border border-[#FF7A00]/35 text-slate-200 hover:text-white hover:border-[#FF7A00]/70 font-mono text-xs hover:bg-[#FF7A00]/10 transition-all flex items-center gap-2 shadow-lg shadow-black/40"
               >
-                <Cpu className="w-4 h-4 text-[#65F58A]" />
+                <Cpu className="w-4 h-4 text-[#FFA439]" />
                 <span>Open Student Workstation</span>
               </Link>
-            </div>
+            </motion.div>
           </section>
 
           {/* CAREER TRACKS SHOWCASE */}
           {learningPaths.length > 0 && (
             <section className="mb-20">
-              <div className="flex items-center justify-between mb-8 pb-3 border-b border-[#65F58A]/20">
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                className="flex items-center justify-between mb-8 pb-3 border-b border-[#FF7A00]/25"
+              >
                 <div>
                   <h2 className="text-2xl sm:text-3xl font-bold font-royal text-white">
                     Specialized Career Tracks
@@ -120,10 +154,10 @@ export default function CyberAcademyPage() {
                     Structured multi-week technical pipelines engineered for software defense and architecture.
                   </p>
                 </div>
-                <span className="text-xs font-mono text-[#65F58A] hidden sm:block">
+                <span className="text-xs font-mono text-[#FFA439] hidden sm:block">
                   [ {learningPaths.length} ACTIVE TRACK ]
                 </span>
-              </div>
+              </motion.div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                 {learningPaths.map((track, idx) => (
@@ -135,7 +169,13 @@ export default function CyberAcademyPage() {
 
           {/* DEDICATED CYBER COURSES CATALOGUE */}
           <section id="courses" className="mb-20">
-            <div className="flex items-center justify-between mb-8 pb-3 border-b border-[#65F58A]/20">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="flex items-center justify-between mb-8 pb-3 border-b border-[#FF7A00]/25"
+            >
               <div>
                 <h2 className="text-2xl sm:text-3xl font-bold font-royal text-white">
                   Cybersecurity Course Curriculum
@@ -144,17 +184,17 @@ export default function CyberAcademyPage() {
                   Hands-on course with cryptographic verification, real code assessments, and lab workstations.
                 </p>
               </div>
-              <span className="text-xs font-mono text-[#65F58A] hidden sm:block">
+              <span className="text-xs font-mono text-[#FFA439] hidden sm:block">
                 [ OFFICIAL MASTER CURRICULUM ]
               </span>
-            </div>
+            </motion.div>
 
             {loading ? (
-              <div className="py-20 text-center text-slate-400 font-mono text-sm animate-pulse">
+              <div className="py-20 text-center text-[#FFA439] font-mono text-sm animate-pulse">
                 Initializing Cybersecurity Telemetry...
               </div>
             ) : courses.length === 0 ? (
-              <div className="p-8 rounded-2xl bg-black/40 border border-white/10 text-center font-mono text-sm text-slate-400">
+              <div className="p-8 rounded-2xl bg-black/40 border border-[#FF7A00]/25 text-center font-mono text-sm text-slate-400">
                 Courses are being configured for the active cohort.
               </div>
             ) : (
@@ -172,12 +212,18 @@ export default function CyberAcademyPage() {
           </section>
 
           {/* KALI CYBERLAB CALLOUT BANNER */}
-          <section className="p-8 sm:p-10 rounded-3xl bg-gradient-to-r from-[#030e07] via-[#05180e] to-[#030906] border border-[#65F58A]/30 relative overflow-hidden shadow-[0_0_30px_rgba(101,245,138,0.15)]">
-            <div className="absolute -right-10 -bottom-10 w-72 h-72 bg-[#65F58A]/10 rounded-full blur-3xl pointer-events-none" />
+          <motion.section 
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="p-8 sm:p-10 rounded-3xl bg-gradient-to-r from-[#1A1208]/85 via-[#0E0C09]/90 to-[#070503]/95 backdrop-blur-2xl border border-[#FF7A00]/35 hover:border-[#FFA439]/70 relative overflow-hidden shadow-[0_0_35px_rgba(255,122,0,0.2)] transition-all"
+          >
+            <div className="absolute -right-10 -bottom-10 w-72 h-72 bg-[#FF7A00]/10 rounded-full blur-3xl pointer-events-none" />
             
             <div className="max-w-2xl relative z-10 space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-900/60 border border-emerald-500/40 text-[10px] font-mono text-[#65F58A] uppercase font-bold">
-                <Terminal className="w-3.5 h-3.5" />
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF7A00]/15 border border-[#FF7A00]/35 text-[10px] font-mono text-[#FFA439] uppercase font-bold">
+                <Terminal className="w-3.5 h-3.5 text-[#FFA439]" />
                 <span>Integrated Virtual CyberLab V3</span>
               </div>
               <h3 className="text-2xl sm:text-3xl font-bold font-royal text-white">
@@ -189,18 +235,19 @@ export default function CyberAcademyPage() {
               <div className="pt-2">
                 <Link
                   to="/student"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#65F58A] text-[#030906] font-mono font-bold text-xs hover:bg-[#35E6B5] transition-all shadow-md"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[#FF7A00] to-[#E56A00] text-black font-mono font-bold text-xs hover:brightness-110 transition-all shadow-[0_0_20px_rgba(255,122,0,0.35)]"
                 >
                   <span>Launch Student Workstation &amp; CyberLab</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-4 h-4 text-black" />
                 </Link>
               </div>
             </div>
-          </section>
+          </motion.section>
 
         </div>
       </main>
 
+      {/* 5. Transparent Liquid-Glass Cyber Academy Footer with Amber Doodle Crew */}
       <CyberAcademyFooter />
     </div>
   );

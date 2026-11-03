@@ -9,8 +9,13 @@ import React, { useEffect, useRef } from 'react';
  * - Slower, cinematic progression with a soft return echo (~4.2s cycle).
  * - Leaves the central RedKross logo completely unhindered and crystal clear.
  */
-export default function CyberLightningDischarge() {
+export default function CyberLightningDischarge({ theme = 'amber' }) {
   const canvasRef = useRef(null);
+  const isAmber = theme === 'amber';
+  const glowOuter = isAmber ? '#FF7A00' : '#00F0FF';
+  const filamentColor = isAmber ? '#FFA439' : '#00E5FF';
+  const coreGlow = isAmber ? '#FFA439' : '#5CF7FF';
+  const coreFilament = isAmber ? '#FFE0B2' : '#B3F5FF';
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -265,10 +270,10 @@ export default function CyberLightningDischarge() {
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
 
-      // PASS 1: Ultra-Light Cyan Ambient Glow Filament
-      ctx.shadowColor = '#00F0FF';
+      // PASS 1: Ultra-Light Ambient Glow Filament
+      ctx.shadowColor = glowOuter;
       ctx.shadowBlur = 8;
-      ctx.strokeStyle = '#00E5FF';
+      ctx.strokeStyle = filamentColor;
       ctx.lineWidth = 1.2;
       ctx.globalAlpha = finalAlpha * 0.7;
 
@@ -285,9 +290,9 @@ export default function CyberLightningDischarge() {
       }
 
       // PASS 2: Delicate Faint Hairline Core
-      ctx.shadowColor = '#5CF7FF';
+      ctx.shadowColor = coreGlow;
       ctx.shadowBlur = 3;
-      ctx.strokeStyle = '#B3F5FF';
+      ctx.strokeStyle = coreFilament;
       ctx.lineWidth = 0.6;
       ctx.globalAlpha = finalAlpha * 0.9;
 
@@ -309,10 +314,10 @@ export default function CyberLightningDischarge() {
         const arcAlpha = finalAlpha * arcProgress * 0.6;
 
         ctx.save();
-        ctx.strokeStyle = '#00F0FF';
+        ctx.strokeStyle = glowOuter;
         ctx.lineWidth = 1.0;
         ctx.shadowBlur = 8;
-        ctx.shadowColor = '#00F0FF';
+        ctx.shadowColor = glowOuter;
         ctx.globalAlpha = arcAlpha;
         ctx.beginPath();
         for (const seg of bottomArcSegments) {

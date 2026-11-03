@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowUpRight, ShieldCheck, Terminal, Clock, BookOpen, Award } from 'lucide-react';
+import { ArrowUpRight, Terminal, Clock, Award } from 'lucide-react';
 import CyberCircuitFrame from './CyberCircuitFrame';
 
 export default function CircuitTraceCard({ 
@@ -27,31 +27,31 @@ export default function CircuitTraceCard({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* 1. DITTO SCI-FI CYBER HUD CIRCUIT FRAME */}
-      <CyberCircuitFrame isHovered={isHovered} />
+      {/* 1. DITTO SCI-FI CYBER HUD CIRCUIT FRAME (Pure Transparent Amber Theme) */}
+      <CyberCircuitFrame isHovered={isHovered} theme="amber" />
 
       {/* 2. CARD CONTENT CONTAINER (Safe Inset Zone) */}
       <div className="relative z-10 px-8 sm:px-10 pt-7 pb-6 flex flex-col justify-between h-full">
         <div>
           {/* Header Row: Difficulty/Badge (Left) & Compact Cyber Icon (Right) */}
           <div className="flex items-center justify-between mb-2.5">
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono tracking-wider font-semibold border border-emerald-500/40 text-[#65F58A] bg-emerald-950/70 group-hover:border-[#65F58A] group-hover:bg-emerald-900/60 group-hover:shadow-[0_0_10px_rgba(101,245,138,0.25)] transition-all duration-300 uppercase">
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono tracking-wider font-semibold border border-[#FF7A00]/40 text-[#FFA439] bg-[#FF7A00]/15 group-hover:border-[#FFA439] group-hover:bg-[#FF7A00]/25 group-hover:shadow-[0_0_12px_rgba(255,122,0,0.35)] transition-all duration-300 uppercase">
               {course.difficulty || 'DEFENSIVE CYBER'}
             </span>
 
             {/* Inset Cyber Icon Badge */}
-            <div className="relative p-1.5 rounded-lg bg-emerald-950/40 border border-emerald-500/35 group-hover:border-[#65F58A] group-hover:bg-[#65F58A]/15 group-hover:shadow-[0_0_14px_rgba(101,245,138,0.4)] transition-all duration-300 overflow-hidden flex items-center justify-center">
+            <div className="relative p-1.5 rounded-lg bg-black/60 border border-[#FF7A00]/35 group-hover:border-[#FFA439] group-hover:bg-[#FF7A00]/15 group-hover:shadow-[0_0_14px_rgba(255,122,0,0.4)] transition-all duration-300 overflow-hidden flex items-center justify-center">
               <span 
-                className="absolute inset-0 rounded-lg bg-[#65F58A]/25 opacity-0 group-hover:opacity-100 group-hover:animate-ping pointer-events-none" 
+                className="absolute inset-0 rounded-lg bg-[#FF7A00]/25 opacity-0 group-hover:opacity-100 group-hover:animate-ping pointer-events-none" 
                 style={{ animationDuration: '2.5s' }} 
                 aria-hidden="true"
               />
-              <Terminal className="w-4 h-4 text-[#65F58A] group-hover:text-[#35E6B5] transition-all duration-300 relative z-10 drop-shadow-[0_0_6px_rgba(101,245,138,0.85)]" />
+              <Terminal className="w-4 h-4 text-[#FFA439] group-hover:text-white transition-all duration-300 relative z-10 drop-shadow-[0_0_6px_rgba(255,122,0,0.85)]" />
             </div>
           </div>
 
           {/* Title */}
-          <h3 className="text-base sm:text-[17px] font-bold font-royal text-white mb-1.5 group-hover:text-[#65F58A] transition-colors leading-snug">
+          <h3 className="text-base sm:text-[17px] font-bold font-royal text-white mb-1.5 group-hover:text-[#FFA439] transition-colors leading-snug">
             {title}
           </h3>
 
@@ -66,7 +66,7 @@ export default function CircuitTraceCard({
               {tags.slice(0, 3).map((tag) => (
                 <span
                   key={tag}
-                  className="text-[10px] font-mono px-2 py-0.5 rounded bg-black/60 text-emerald-200/90 border border-emerald-500/25 group-hover:border-emerald-500/40 transition-colors whitespace-nowrap"
+                  className="text-[10px] font-mono px-2 py-0.5 rounded bg-black/50 text-[#FFA439]/90 border border-[#FF7A00]/25 group-hover:border-[#FF7A00]/40 transition-colors whitespace-nowrap"
                 >
                   {tag}
                 </span>
@@ -78,11 +78,11 @@ export default function CircuitTraceCard({
           {(course.estimated_hours || course.total_hours) && (
             <div className="flex items-center gap-3 text-[10px] font-mono text-slate-400 mt-1">
               <span className="inline-flex items-center gap-1">
-                <Clock className="w-3 h-3 text-[#35E6B5]" />
+                <Clock className="w-3 h-3 text-[#FFA439]" />
                 {course.estimated_hours || course.total_hours} Hours
               </span>
               {course.milestone_cert && (
-                <span className="inline-flex items-center gap-1 text-[#65F58A]">
+                <span className="inline-flex items-center gap-1 text-[#FF7A00]">
                   <Award className="w-3 h-3" />
                   Cert Included
                 </span>
@@ -95,22 +95,22 @@ export default function CircuitTraceCard({
         <div className="mt-4">
           {/* Animated Progress Trace Divider */}
           <div className="relative w-full h-[1px] mb-2.5 overflow-hidden" aria-hidden="true">
-            <div className="absolute inset-0 bg-white/10 group-hover:bg-emerald-500/30 transition-colors duration-300" />
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-400/20 to-transparent" />
-            <div className="absolute inset-y-0 left-0 w-2/5 bg-gradient-to-r from-transparent via-[#65F58A] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-[0_0_10px_#65F58A]" />
+            <div className="absolute inset-0 bg-white/10 group-hover:bg-[#FF7A00]/30 transition-colors duration-300" />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#FF7A00]/20 to-transparent" />
+            <div className="absolute inset-y-0 left-0 w-2/5 bg-gradient-to-r from-transparent via-[#FFA439] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-[0_0_10px_#FFA439]" />
           </div>
 
           {/* Footer: Track Number & Direct Action Link */}
           <div className="flex items-center justify-between text-[11px] font-mono">
-            <span className="text-slate-400 group-hover:text-emerald-300 transition-colors tracking-wider">
+            <span className="text-slate-400 group-hover:text-[#FFA439] transition-colors tracking-wider">
               Track {trackNumber}
             </span>
             <Link 
               to={linkTarget}
-              className="inline-flex items-center gap-1.5 text-xs font-mono text-[#65F58A] hover:text-[#35E6B5] group-hover:underline transition-colors font-medium"
+              className="inline-flex items-center gap-1.5 text-xs font-mono text-[#FFA439] hover:text-white group-hover:underline transition-colors font-medium"
             >
               <span>{actionLabel}</span>
-              <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200" />
+              <ArrowUpRight className="w-3.5 h-3.5 text-[#FF7A00] group-hover:text-[#FFA439] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200" />
             </Link>
           </div>
         </div>
@@ -126,7 +126,7 @@ export default function CircuitTraceCard({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: false, amount: 0.15 }}
+      viewport={{ once: true, amount: 0.15 }}
       transition={{ 
         duration: 0.4, 
         delay: (idx % 3) * 0.08, 
