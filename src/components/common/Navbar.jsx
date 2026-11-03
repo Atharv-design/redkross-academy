@@ -59,11 +59,25 @@ export default function Navbar() {
   }, []);
 
   const isActive = (path) => {
-    if (path === '/') return location.pathname === '/';
+    if (path === '/') return location.pathname === '/' && !location.hash;
     return location.pathname.startsWith(path);
   };
 
   const closeMobileMenu = () => setMobileMenuOpen(false);
+
+  const handleAcademyClick = (e) => {
+    if (e) e.preventDefault();
+    closeMobileMenu();
+    if (location.pathname === '/') {
+      const el = document.getElementById('academies');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+      window.history.replaceState(null, '', '#academies');
+    } else {
+      navigate('/#academies');
+    }
+  };
 
   const handleSignOut = async () => {
     setShowProfileMenu(false);
@@ -75,17 +89,6 @@ export default function Navbar() {
       console.warn('Sign out note:', e);
     }
   };
-
-  const navLinks = [
-    { label: "Home", path: "/" },
-    { label: "Cyber Academy", path: "/academy/cybersecurity" },
-    { label: "Psychology Academy", path: "/academy/psychology" },
-    { label: "Verify Credential", path: "/verify" }
-  ];
-
-  if (currentUser && currentUser.role === 'super_admin') {
-    navLinks.push({ label: "Admin Console", path: "/admin" });
-  }
 
   const roleDisplay = String(currentUser?.role || 'student').replace('_', ' ').toUpperCase();
   const cadetId = currentUser?.cadet_id || null;
@@ -174,24 +177,62 @@ export default function Navbar() {
             </Link>
 
             {/* Desktop Horizontal Navigation - Clean Spacing & Strict Zero Collision */}
-            <nav className="hidden lg:flex items-center gap-4 xl:gap-6 2xl:gap-8 flex-shrink-0">
-              {navLinks.map((link, idx) => {
-                const active = isActive(link.path);
-                return (
-                  <Link
-                    key={link.label}
-                    to={link.path}
-                    className={`text-xs font-mono font-medium transition-colors duration-200 relative py-1 whitespace-nowrap animate-slide-left stagger-${(idx % 4) + 1} ${
-                      active ? 'text-[#FF7A00] font-bold' : 'text-[#E2D9CE] hover:text-white'
-                    }`}
-                  >
-                    {link.label}
-                    {active && (
-                      <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-gradient-to-r from-[#FF7A00] to-[#FFA439] rounded-full shadow-[0_0_8px_rgba(255,122,0,0.8)]" />
-                    )}
-                  </Link>
-                );
-              })}
+            <nav className="hidden lg:flex items-center gap-6 xl:gap-8 flex-shrink-0">
+              <Link
+                to="/"
+                onClick={closeMobileMenu}
+                className={`text-xs font-mono font-medium transition-colors duration-200 relative py-1 whitespace-nowrap ${
+                  location.pathname === '/' && !location.hash ? 'text-[#FF7A00] font-bold' : 'text-[#E2D9CE] hover:text-white'
+                }`}
+              >
+                Home
+                {location.pathname === '/' && !location.hash && (
+                  <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-gradient-to-r from-[#FF7A00] to-[#FFA439] rounded-full shadow-[0_0_8px_rgba(255,122,0,0.8)]" />
+                )}
+              </Link>
+
+              <button
+                type="button"
+                onClick={handleAcademyClick}
+                className={`text-xs font-mono font-medium transition-colors duration-200 relative py-1 whitespace-nowrap cursor-pointer ${
+                  location.pathname === '/' && location.hash === '#academies'
+                    ? 'text-[#FF7A00] font-bold'
+                    : 'text-[#E2D9CE] hover:text-[#FFA439]'
+                }`}
+              >
+                Academy
+                {location.pathname === '/' && location.hash === '#academies' && (
+                  <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-gradient-to-r from-[#FF7A00] to-[#FFA439] rounded-full shadow-[0_0_8px_rgba(255,122,0,0.8)]" />
+                )}
+              </button>
+
+              <Link
+                to="/verify"
+                onClick={closeMobileMenu}
+                className={`text-xs font-mono font-medium transition-colors duration-200 relative py-1 whitespace-nowrap ${
+                  isActive('/verify') ? 'text-[#FF7A00] font-bold' : 'text-[#E2D9CE] hover:text-white'
+                }`}
+              >
+                Verify Credential
+                {isActive('/verify') && (
+                  <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-gradient-to-r from-[#FF7A00] to-[#FFA439] rounded-full shadow-[0_0_8px_rgba(255,122,0,0.8)]" />
+                )}
+              </Link>
+
+              {currentUser && currentUser.role === 'super_admin' && (
+                <Link
+                  to="/admin"
+                  onClick={closeMobileMenu}
+                  className={`text-xs font-mono font-medium transition-colors duration-200 relative py-1 whitespace-nowrap ${
+                    isActive('/admin') ? 'text-[#FF7A00] font-bold' : 'text-[#E2D9CE] hover:text-white'
+                  }`}
+                >
+                  Admin Console
+                  {isActive('/admin') && (
+                    <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-gradient-to-r from-[#FF7A00] to-[#FFA439] rounded-full shadow-[0_0_8px_rgba(255,122,0,0.8)]" />
+                  )}
+                </Link>
+              )}
             </nav>
 
             {/* Right Action & Auth Elements */}
@@ -366,20 +407,52 @@ export default function Navbar() {
           <div className="lg:hidden px-4 pt-2 pointer-events-auto">
             <div className="liquid-glass-dropdown rounded-2xl p-4 space-y-3">
               <nav className="flex flex-col space-y-1 font-mono text-xs">
-                {navLinks.map((link) => (
+                <Link
+                  to="/"
+                  onClick={closeMobileMenu}
+                  className={`px-3 py-2 rounded-lg transition-colors ${
+                    location.pathname === '/' && !location.hash
+                      ? 'bg-[#FF7A00]/15 text-[#FFA439] font-bold border border-[#FF7A00]/30'
+                      : 'text-slate-300 hover:bg-[#1B2530] hover:text-[#FFA439]'
+                  }`}
+                >
+                  Home
+                </Link>
+                <button
+                  type="button"
+                  onClick={handleAcademyClick}
+                  className={`px-3 py-2 rounded-lg transition-colors text-left ${
+                    location.pathname === '/' && location.hash === '#academies'
+                      ? 'bg-[#FF7A00]/15 text-[#FFA439] font-bold border border-[#FF7A00]/30'
+                      : 'text-slate-300 hover:bg-[#1B2530] hover:text-[#FFA439]'
+                  }`}
+                >
+                  Academy
+                </button>
+                <Link
+                  to="/verify"
+                  onClick={closeMobileMenu}
+                  className={`px-3 py-2 rounded-lg transition-colors ${
+                    isActive('/verify')
+                      ? 'bg-[#FF7A00]/15 text-[#FFA439] font-bold border border-[#FF7A00]/30'
+                      : 'text-slate-300 hover:bg-[#1B2530] hover:text-[#FFA439]'
+                  }`}
+                >
+                  Verify Credential
+                </Link>
+                {currentUser && currentUser.role === 'super_admin' && (
                   <Link
-                    key={link.label}
-                    to={link.path}
+                    to="/admin"
                     onClick={closeMobileMenu}
                     className={`px-3 py-2 rounded-lg transition-colors ${
-                      isActive(link.path)
+                      isActive('/admin')
                         ? 'bg-[#FF7A00]/15 text-[#FFA439] font-bold border border-[#FF7A00]/30'
                         : 'text-slate-300 hover:bg-[#1B2530] hover:text-[#FFA439]'
                     }`}
                   >
-                    {link.label}
+                    Admin Console
                   </Link>
-                ))}
+                )}
               </nav>
             </div>
           </div>

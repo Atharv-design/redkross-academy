@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   Shield,
@@ -25,6 +25,21 @@ import CyberCircuitFrame from '../../components/cyber/CyberCircuitFrame';
 export default function HomePage() {
   const [isHoveredCyber, setIsHoveredCyber] = useState(false);
   const [isHoveredPsych, setIsHoveredPsych] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    const scrollToAcademies = () => {
+      const el = document.getElementById('academies');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+
+    if (location.hash === '#academies' || window.location.hash === '#academies') {
+      setTimeout(scrollToAcademies, 80);
+      setTimeout(scrollToAcademies, 300);
+    }
+  }, [location.hash]);
 
   return (
     <div className="min-h-screen relative z-10 select-none pb-20">
@@ -95,7 +110,7 @@ export default function HomePage() {
       </section>
 
       {/* 2. DUAL-DIVISION GATEWAY SHOWCASE (Symmetrical Split Layout with Staggered Scroll) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
+      <section id="academies" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative scroll-mt-28">
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}

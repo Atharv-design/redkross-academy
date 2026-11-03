@@ -27,20 +27,20 @@
   color-scheme: dark;
 }
 
-/* Division Scoped Theme: Cybersecurity */
+/* Division Scoped Theme: Cybersecurity - Pure Amber Orange & Nocturnal Black */
 [data-academy-theme="cybersecurity"] {
-  --bg: #030906;
-  --card: rgba(4, 16, 10, 0.72);
-  --surface-2: rgba(6, 24, 15, 0.85);
-  --nav: rgba(3, 9, 6, 0.92);
-  --accent: #65F58A;
-  --accent-2: #35E6B5;
-  --glow: #00FFA3;
+  --bg: transparent;
+  --card: rgba(18, 14, 8, 0.65);
+  --surface-2: rgba(26, 19, 10, 0.82);
+  --nav: rgba(10, 8, 5, 0.92);
+  --accent: #FF7A00;
+  --accent-2: #FFA439;
+  --glow: rgba(255, 122, 0, 0.45);
   --text: #F1F5F9;
-  --text-2: #B8E6CE;
-  --border: rgba(101, 245, 138, 0.24);
-  --muted: #72A88E;
-  --progress: #45F5A1;
+  --text-2: #E2D9CE;
+  --border: rgba(255, 122, 0, 0.28);
+  --muted: #A3907C;
+  --progress: #FF7A00;
 }
 
 /* Division Scoped Theme: Psychology */
