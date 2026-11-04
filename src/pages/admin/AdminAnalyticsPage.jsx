@@ -14,12 +14,9 @@ export default function AdminAnalyticsPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [lastSocketEvent, setLastSocketEvent] = useState(null);
 
-  // Live Database & Socket.io Real-Time Telemetry Synchronization
   useEffect(() => {
-    // Immediate load for selected date range
     setAnalytics(mockEngine.getLearningAnalytics(dateRange));
 
-    // Listen to real-time events broadcast via Socket.io & BroadcastChannel bus
     const handleSocketEvent = (data) => {
       const eventName = typeof data === 'object' && data?.event ? data.event : 'TELEMETRY_SYNC';
       setLastSocketEvent({
@@ -46,7 +43,6 @@ export default function AdminAnalyticsPage() {
     setTimeout(() => setRefreshing(false), 400);
   };
 
-  // Export Real Telemetry CSV
   const handleExportReport = () => {
     if (!analytics) return;
 

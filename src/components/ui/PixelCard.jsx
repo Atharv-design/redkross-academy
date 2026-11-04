@@ -1,5 +1,4 @@
 /* eslint-disable */
-// Pixel Card — Originkit (Adapted for RedKross Academy)
 
 import React, { useEffect, useRef } from "react";
 
@@ -21,7 +20,6 @@ class Pixel {
         this.color = color;
         this.speed = this.getRandomValue(0.1, 0.9) * speed;
         this.size = 0;
-        // Scale the original 0.5–2px range by the chosen particle size.
         const factor = maxPx / 2;
         this.sizeStep = Math.random() * 0.4 * factor;
         this.minSize = 0.5 * factor;
@@ -164,7 +162,6 @@ function makeEase(transition) {
     return cubicBezier(0, 0, 0.58, 1); // default easeOut
 }
 
-// RedKross Academy Emerald Cyber Theme Defaults (0% blue, 0% pink)
 export const REDKROSS_PIXEL_COLORS = [
     "#FF7A00", // RedKross Signature Neon Green
     "#FFA439", // Mint Cyber Accent

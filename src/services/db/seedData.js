@@ -51,7 +51,6 @@ export const INITIAL_LEARNING_PATHS = [
   ...PSYCHOLOGY_LEARNING_PATHS
 ];
 
-// Master Unified Curricula (Cybersecurity & Psychology Divisions)
 export const INITIAL_COURSES = [
   ...CYBER_COURSES,
   ...PSYCHOLOGY_COURSES

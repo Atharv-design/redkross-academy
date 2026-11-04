@@ -29,7 +29,6 @@ export const apiClient = {
     return token ? { Authorization: `Bearer ${token}` } : {};
   },
 
-  // AUTH SYNC (Phase 2 & 5)
   async syncUser(userData) {
     try {
       const res = await fetch(`${API_BASE}/auth`, {
@@ -54,7 +53,6 @@ export const apiClient = {
     }
   },
 
-  // COURSES (Phase 3 & Phase 7)
   async getCourses(preview = false) {
     try {
       const url = preview ? `${API_BASE}/courses?preview=admin` : `${API_BASE}/courses`;
@@ -128,7 +126,6 @@ export const apiClient = {
     }
   },
 
-  // CREATE COURSE (Phase 4 & Phase 7.4 Random Variant Assignment)
   async createCourse(coursePayload) {
     try {
       const res = await fetch(`${API_BASE}/courses`, {
@@ -150,7 +147,6 @@ export const apiClient = {
     }
   },
 
-  // DELETE COURSE (Full Cascade & PostgreSQL Synchronization)
   async deleteCourse(courseId) {
     try {
       const res = await fetch(`${API_BASE}/courses?id=${encodeURIComponent(courseId)}`, {
@@ -172,7 +168,6 @@ export const apiClient = {
     }
   },
 
-  // UPDATE COURSE (Metadata, Syllabus, Questions in PostgreSQL)
   async updateCourse(courseId, coursePayload) {
     try {
       const res = await fetch(`${API_BASE}/courses`, {
@@ -194,7 +189,6 @@ export const apiClient = {
     }
   },
 
-  // CATALOG VISIBILITY TOGGLE (Phase 3.3 & Phase 4.1)
   async toggleCatalogVisibility(enabled) {
     try {
       const res = await fetch(`${API_BASE}/courses`, {
@@ -219,7 +213,6 @@ export const apiClient = {
     }
   },
 
-  // LEARNING PATHS (Phase 3.2)
   async getLearningPaths() {
     try {
       const res = await fetch(`${API_BASE}/courses?type=learning_paths`);
@@ -258,7 +251,6 @@ export const apiClient = {
     };
   },
 
-  // ENROLMENTS (Phase 2 Mandatory Authentication & Dynamic Automation Dispatch)
   async enrol(userId, courseId, userMetadata = {}) {
     let serverEnrolment = null;
     const localUser = mockEngine.getDb().users?.find((u) => u.id === userId);
@@ -289,8 +281,6 @@ export const apiClient = {
       console.warn('Fallback local enrolment:', apiErr.message);
     }
 
-    // Direct asynchronous event dispatch to n8n automation hub
-    // Ensures the email is delivered to the exact logged-in user's email address
     if (email) {
       try {
         const course = mockEngine.getCourseById(courseId);
@@ -386,7 +376,6 @@ export const apiClient = {
     }
   },
 
-  // LESSON PROGRESS
   async completeLesson(enrolmentId, lessonId) {
     try {
       const res = await fetch(`${API_BASE}/progress`, {
@@ -407,7 +396,6 @@ export const apiClient = {
     }
   },
 
-  // QUIZ & EXAM
   async getQuiz(quizId, enrolmentId) {
     try {
       const res = await fetch(`${API_BASE}/quiz?id=${encodeURIComponent(quizId)}&enrolmentId=${encodeURIComponent(enrolmentId || '')}`, {
@@ -444,7 +432,6 @@ export const apiClient = {
     return data;
   },
 
-  // PROCTORING VIOLATION
   async recordViolation(enrolmentId, quizId, strikeCount, reason, userId, attemptId) {
     try {
       const res = await fetch(`${API_BASE}/violation`, {
@@ -472,7 +459,6 @@ export const apiClient = {
     }
   },
 
-  // VERIFY CREDENTIAL
   async verifyCredential(verificationId) {
     try {
       const res = await fetch(`${API_BASE}/verify?id=${encodeURIComponent(verificationId)}`);
@@ -488,7 +474,6 @@ export const apiClient = {
     }
   },
 
-  // WALLET
   async getWallet(userId) {
     try {
       const res = await fetch(`${API_BASE}/wallet?userId=${encodeURIComponent(userId)}`, {
@@ -505,7 +490,6 @@ export const apiClient = {
     }
   },
 
-  // SUPPORT TICKETS
   async createSupportTicket(ticketData) {
     try {
       const res = await fetch(`${API_BASE}/support-tickets`, {
@@ -539,7 +523,6 @@ export const apiClient = {
     }
   },
 
-  // ADMIN ANALYTICS & LOGS (Requires super_admin Bearer token)
   async getAdminMetrics() {
     try {
       const res = await fetch(`${API_BASE}/admin`, {
@@ -569,7 +552,6 @@ export const apiClient = {
     }
   },
 
-  // SUPER ADMIN CURRICULUM STUDIO CLIENT API
   async reorderModules(courseId, modules) {
     try {
       const res = await fetch(`${API_BASE}/admin`, {
@@ -668,7 +650,6 @@ export const apiClient = {
     }
   },
 
-  // SUPER ADMIN STUDENT LIFECYCLE CLIENT API
   async resetStudentProgress(userId, courseId, lessonId = null, reason = '') {
     try {
       const res = await fetch(`${API_BASE}/admin`, {
@@ -715,7 +696,6 @@ export const apiClient = {
     return mockEngine.enrolStudent(userId, courseId);
   },
 
-  // SUPER ADMIN SECURITY POLICY CLIENT API
   async getGlobalSecurityPolicy() {
     return mockEngine.getGlobalSecurityPolicy();
   },
@@ -736,7 +716,6 @@ export const apiClient = {
     return mockEngine.adminResetCooldown(enrolmentId, quizId, reason, adminEmail);
   },
 
-  // UNIFIED INTEGRATION API EXTENSIONS (Phase 10: Admin-Student Synchronization)
   async getStudents() {
     try {
       const res = await fetch(`${API_BASE}/admin`, {

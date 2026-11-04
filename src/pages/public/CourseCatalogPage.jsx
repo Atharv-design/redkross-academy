@@ -41,7 +41,6 @@ export default function CourseCatalogPage() {
 
     fetchCatalog();
 
-    // Real-Time Event Sync: Admin course deletion, creation, and embargo toggle
     const unsubSocket = socketClient.on('course:mutation', fetchCatalog);
     const unsubEmbargo = socketClient.on('catalog:visibility', fetchCatalog);
     const unsubMock = mockEngine.subscribe(fetchCatalog);
@@ -77,7 +76,6 @@ export default function CourseCatalogPage() {
     });
   }, [courses, searchQuery, selectedDifficulty, selectedCategory, selectedPricing, selectedDivision]);
 
-  // Loading state
   if (loading) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center">
@@ -91,7 +89,6 @@ export default function CourseCatalogPage() {
     );
   }
 
-  // Strict Phase 3.1 & 3.3: Empty-State when Catalog is Disabled
   if (!catalogEnabled) {
     return (
       <div className="min-h-[82vh] flex items-center justify-center py-16 px-4 sm:px-6 lg:px-8 relative z-10">
@@ -233,7 +230,6 @@ export default function CourseCatalogPage() {
     );
   }
 
-  // Active Catalog View (when explicitly enabled by Super Admin)
   return (
     <div className="min-h-screen py-12 relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">

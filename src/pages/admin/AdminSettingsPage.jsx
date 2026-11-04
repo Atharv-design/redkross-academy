@@ -49,7 +49,6 @@ export default function AdminSettingsPage() {
         payload: { system_settings: settings, public_catalog_enabled: !settings.catalog_embargo }
       });
 
-      // Synchronize with PostgreSQL & WebSocket Bus
       apiClient.toggleCatalogVisibility(!settings.catalog_embargo).catch(console.warn);
       socketClient.emit('catalog:visibility', { enabled: !settings.catalog_embargo });
 
@@ -81,7 +80,6 @@ export default function AdminSettingsPage() {
         payload: { public_catalog_enabled: !nextEmbargo, embargo: nextEmbargo }
       });
 
-      // Synchronize with PostgreSQL & WebSocket Bus
       apiClient.toggleCatalogVisibility(!nextEmbargo).catch(console.warn);
       socketClient.emit('catalog:visibility', { enabled: !nextEmbargo });
 

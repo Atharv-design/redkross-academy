@@ -28,7 +28,6 @@ export default function CyberCloudsBackground() {
           gyroControls: false,
           minHeight: 200.0,
           minWidth: 200.0,
-          // Amber + Black Blending Combo (Strictly zero red)
           backgroundColor: 0x000000,
           skyColor: 0x040406,          // Deep nocturnal pitch black sky
           cloudColor: 0x2e1503,        // Rich Amber / Burnt Orange volumetric cloud vapors

@@ -34,7 +34,6 @@ export default function CyberAcademyNavbar() {
           </Link>
         </div>
 
-        {/* Center / Navigation Links */}
         <nav className="hidden md:flex items-center gap-6 text-xs font-mono">
           <Link 
             to="/" 
@@ -51,7 +50,7 @@ export default function CyberAcademyNavbar() {
             <span>Cyber Tracks</span>
           </Link>
           <Link 
-            to="/student" 
+            to="/academy/cybersecurity/student" 
             className="text-slate-300 hover:text-white transition-colors flex items-center gap-1.5"
           >
             <Shield className="w-3.5 h-3.5 text-[#FFA439]" />
@@ -66,22 +65,21 @@ export default function CyberAcademyNavbar() {
           </Link>
           <Link 
             to="/academy/psychology" 
-            className="text-slate-400 hover:text-teal-300 transition-colors flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/10"
+            className="text-slate-400 hover:text-[#FFA439] transition-colors flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/10"
             title="Switch to Psychology Academy"
           >
-            <Brain className="w-3.5 h-3.5 text-teal-400" />
+            <Brain className="w-3.5 h-3.5 text-[#FF7A00]" />
             <span>Psychology Academy</span>
           </Link>
         </nav>
 
-        {/* Right CTA */}
         <div className="flex items-center gap-3">
           <Link
-            to="/student"
+            to="/academy/cybersecurity/student"
             className="px-4 py-2 rounded-full bg-[#FF7A00]/15 border border-[#FF7A00]/40 text-[#FFA439] hover:bg-[#FF7A00]/25 hover:border-[#FFA439] text-xs font-mono font-bold tracking-wider transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(255,122,0,0.2)]"
           >
             <UserCheck className="w-3.5 h-3.5 text-[#FFA439]" />
-            <span>Cadet Portal</span>
+            <span>Student Dashboard</span>
           </Link>
         </div>
       </div>

@@ -1,25 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
 
-/* Font Stack for RedKross Academy */
+/* Font Stack for RedKross Academy — Universal Lora Standard */
 
 :root {
   --font-display: 'Lora', Georgia, serif;
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'Space Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-sans: 'Lora', Georgia, serif;
+  --font-mono: 'Lora', Georgia, serif;
 }
 
-/* Font Classes for Tailwind */
+/* Font Classes for Tailwind — 100% Lora Enforcement */
 
-.font-royal, .font-lora {
-  font-family: var(--font-display) !important;
-}
-
-.font-mono, .mono, .tabular-nums {
-  font-family: var(--font-mono) !important;
-}
-
-.font-sans {
-  font-family: var(--font-sans) !important;
+.font-royal, .font-lora, .font-mono, .mono, .tabular-nums, .font-sans, .font-cinzel, .font-orbitron, .font-plus-jakarta, .royal {
+  font-family: 'Lora', Georgia, serif !important;
 }
 
 /* Font Weights */

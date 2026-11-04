@@ -6,7 +6,6 @@ import ErrorBoundary from './components/common/ErrorBoundary.jsx';
 import './index.css';
 import './styles/liquid-glass.css';
 
-// Purge any stale or foreign service workers from localhost port collisions (e.g. Workbox)
 if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
   if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
     navigator.serviceWorker.getRegistrations().then((registrations) => {

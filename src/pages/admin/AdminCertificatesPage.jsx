@@ -80,18 +80,15 @@ export default function AdminCertificatesPage() {
   const signatureInputRef = useRef(null);
   const sealInputRef = useRef(null);
 
-  // Student search inside Studio
   const [studentSearch, setStudentSearch] = useState('');
   const [selectedStudentId, setSelectedStudentId] = useState('');
 
-  // Template Master Configuration state
   const [masterConfig, setMasterConfig] = useState({
     issuing_institution: 'RedKross Defensive Cyber Academy',
     authorized_signatory: 'Dr. Robert H. Vance, CISSP',
     signatory_title: 'Director of Cyber Defense Academics'
   });
 
-  // Form state for Certificate Customization (based on RedKross Official Letter Template)
   const [studioForm, setStudioForm] = useState({
     student_name: 'Student Candidate',
     student_email: '',
@@ -217,7 +214,6 @@ export default function AdminCertificatesPage() {
     reader.readAsDataURL(file);
   };
 
-  // Resolves dynamic merge tags: {{STUDENT_NAME}}, {{COURSE_NAME}}, etc.
   const resolveDynamicTags = (text) => {
     if (!text) return '';
     return text
@@ -280,7 +276,6 @@ export default function AdminCertificatesPage() {
         }
       });
 
-      // Synchronize with PostgreSQL & WebSockets
       apiClient.dispatchCertificate({
         id: newCredId,
         verification_id: newCredId,
@@ -365,7 +360,6 @@ export default function AdminCertificatesPage() {
         }
       });
 
-      // Synchronize with PostgreSQL & WebSockets
       apiClient.dispatchCertificate({
         id: newCredId,
         verification_id: newCredId,

@@ -29,7 +29,12 @@ import {
   ListOrdered,
   Share2,
   Copy,
-  Check
+  Check,
+  Calendar,
+  Globe,
+  Coins,
+  Gift,
+  XCircle
 } from 'lucide-react';
 import CyberCloudsBackground from '../../components/common/CyberCloudsBackground';
 import CyberShaderBackground from '../../components/ui/CyberShaderBackground';
@@ -55,13 +60,15 @@ export default function CyberCourseDetailPage() {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
 
-  // Active HUD Telemetry Tab (6 Tabs)
   const [activeTab, setActiveTab] = useState('overview');
   const [expandedModules, setExpandedModules] = useState({ 0: true, 1: true });
   const [enrolling, setEnrolling] = useState(false);
   const [copiedHash, setCopiedHash] = useState(false);
+  const [showGrantModal, setShowGrantModal] = useState(false);
+  const [couponCode, setCouponCode] = useState('');
+  const [grantSuccess, setGrantSuccess] = useState(false);
+  const [grantError, setGrantError] = useState('');
 
-  // Resolve Course
   const [course, setCourse] = useState(() => {
     return (
       mockEngine.getCourseBySlug(slug) ||
@@ -89,14 +96,12 @@ export default function CyberCourseDetailPage() {
     }
   }, [slug]);
 
-  // Check enrollment status for current cadet
   const enrolment = useMemo(() => {
     if (!currentUser?.id || !course?.id) return null;
     const enrolments = mockEngine.getEnrolmentsForUser(currentUser.id, 'cybersecurity');
     return enrolments.find((e) => e.course_id === course.id) || null;
   }, [currentUser, course]);
 
-  // Toggle Module Accordion
   const toggleModule = (idx) => {
     setExpandedModules((prev) => ({
       ...prev,
@@ -116,7 +121,6 @@ export default function CyberCourseDetailPage() {
     setExpandedModules({});
   };
 
-  // Enrolment handler
   const handleEnrol = async () => {
     if (!currentUser) {
       navigate(`/login?redirect=/academy/cybersecurity/courses/${course.slug}`);
@@ -132,6 +136,32 @@ export default function CyberCourseDetailPage() {
       console.error('Enrolment error:', err);
     } finally {
       setEnrolling(false);
+    }
+  };
+
+  const handleCancelEnrolment = () => {
+    if (window.confirm("Are you sure you want to cancel your free enrolment for this course?")) {
+      if (enrolment?.id) {
+        mockEngine.deleteEnrolment?.(enrolment.id);
+        window.location.reload();
+      }
+    }
+  };
+
+  const handleApplyCoupon = (e) => {
+    e.preventDefault();
+    if (couponCode.trim().toUpperCase() === 'GRANT100' || couponCode.trim().toUpperCase() === 'REDKROSS2026') {
+      setGrantSuccess(true);
+      setGrantError('');
+      if (currentUser) {
+        mockEngine.enrolStudent(currentUser.id, course.id);
+      }
+      setTimeout(() => {
+        setShowGrantModal(false);
+        navigate(`/student/course/${course.id}`);
+      }, 1200);
+    } else {
+      setGrantError('Invalid or expired grant/coupon code. Try "GRANT100"');
     }
   };
 
@@ -178,7 +208,7 @@ export default function CyberCourseDetailPage() {
         </div>
 
         {/* HERO BANNER: Cyber Telemetry Header */}
-        <div className="relative mb-10 p-6 sm:p-10 rounded-3xl bg-gradient-to-br from-[#1A1208]/85 via-[#0E0C09]/90 to-[#070503]/95 backdrop-blur-2xl border border-[#FF7A00]/35 shadow-[0_0_40px_rgba(255,122,0,0.2)] overflow-hidden">
+        <div className="relative mb-10 p-6 sm:p-10 rounded-3xl bg-black/35 backdrop-blur-2xl border border-[#FF7A00]/30 hover:border-[#FFA439]/50 shadow-[0_0_40px_rgba(255,122,0,0.15)] overflow-hidden">
           <div className="absolute top-0 right-0 w-96 h-96 bg-[#FF7A00]/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -208,9 +238,9 @@ export default function CyberCourseDetailPage() {
                 {course.overview}
               </p>
 
-              {/* Key Highlights Metrics Row */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3">
-                <div className="p-3 rounded-xl bg-black/50 border border-white/10">
+              {/* Key Highlights Metrics Row - Clean 3-Column Glass Layout */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3">
+                <div className="p-3.5 rounded-xl bg-black/35 backdrop-blur-xl border border-[#FF7A00]/25 hover:border-[#FF7A00]/50 transition-colors">
                   <div className="text-[10px] font-mono text-[#FFA439] uppercase">DURATION</div>
                   <div className="text-base sm:text-lg font-bold font-mono text-white">
                     {course.estimated_duration || '12 Weeks'}
@@ -218,7 +248,7 @@ export default function CyberCourseDetailPage() {
                   <div className="text-[10px] text-slate-400">6–8 hrs / week</div>
                 </div>
 
-                <div className="p-3 rounded-xl bg-black/50 border border-white/10">
+                <div className="p-3.5 rounded-xl bg-black/35 backdrop-blur-xl border border-[#FF7A00]/25 hover:border-[#FF7A00]/50 transition-colors">
                   <div className="text-[10px] font-mono text-[#FFA439] uppercase">SYLLABUS</div>
                   <div className="text-base sm:text-lg font-bold font-mono text-white">
                     {course.modules?.length || 12} Modules
@@ -226,97 +256,198 @@ export default function CyberCourseDetailPage() {
                   <div className="text-[10px] text-slate-400">{totalLessonsCount} Lessons</div>
                 </div>
 
-                <div className="p-3 rounded-xl bg-black/50 border border-white/10">
+                <div className="p-3.5 rounded-xl bg-black/35 backdrop-blur-xl border border-[#FF7A00]/25 hover:border-[#FF7A00]/50 transition-colors">
                   <div className="text-[10px] font-mono text-[#FFA439] uppercase">EXAM GATES</div>
                   <div className="text-base sm:text-lg font-bold font-mono text-white">
                     12 Quizzes + Final
                   </div>
                   <div className="text-[10px] text-slate-400">50-MCQ Proctored</div>
                 </div>
-
-                <div className="p-3 rounded-xl bg-black/50 border border-white/10">
-                  <div className="text-[10px] font-mono text-[#FFA439] uppercase">CREDENTIAL</div>
-                  <div className="text-base sm:text-lg font-bold font-mono text-white truncate">
-                    SHA-256 Proof
-                  </div>
-                  <div className="text-[10px] text-slate-400">Verifiable Online</div>
-                </div>
               </div>
             </div>
 
-            {/* Right 4 Cols: Enrolment Action Box (Sticky Liquid Glass) */}
-            <div className="lg:col-span-4 p-6 rounded-2xl bg-black/60 border border-[#FF7A00]/40 shadow-xl shadow-black/60 space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-white/10">
-                <div className="text-xs font-mono text-[#FFA439] uppercase font-bold">
-                  INSTITUTIONAL ACCESS
+            {/* Right 4 Cols: DEFENSIVE CREDENTIALING AUTHORITY CARD */}
+            <div className="lg:col-span-4 p-6 sm:p-7 rounded-3xl bg-black/35 backdrop-blur-2xl border border-[#FF7A00]/30 hover:border-[#FFA439]/50 shadow-[0_0_35px_rgba(255,122,0,0.15)] space-y-5">
+              {/* Official RedKross Crest & Institutional Credentialing Authority Seal */}
+              <div className="flex items-center gap-3.5 pb-4 border-b border-white/10">
+                <div className="w-12 h-12 rounded-full bg-black border border-[#FF7A00]/60 flex items-center justify-center p-1 shadow-[0_0_15px_rgba(255,122,0,0.4)] flex-shrink-0">
+                  <img src="/assets/crest-clean-circle.png" alt="RedKross Crest" className="w-full h-full object-cover" />
                 </div>
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#FF7A00]/20 text-[#FFA439] border border-[#FF7A00]/40">
-                  100% FREE
-                </span>
+                <div>
+                  <h3 className="font-royal text-base font-bold text-white flex items-center gap-1.5">
+                    <span>RedKross</span>
+                    <span className="text-[#FF7A00]">Academy</span>
+                  </h3>
+                  <p className="text-[10px] font-mono text-[#A3907C] uppercase tracking-wider">
+                    Defensive Credentialing Authority
+                  </p>
+                </div>
               </div>
 
-              {/* Status & CTA */}
-              {enrolment ? (
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 p-2.5 rounded-lg bg-[#FF7A00]/10 border border-[#FF7A00]/30 text-xs font-mono text-[#FFA439]">
-                    <CheckCircle2 className="w-4 h-4 text-[#FFA439] flex-shrink-0" />
-                    <span>Cadet Enrolment Active: {enrolment.id}</span>
-                  </div>
-
-                  <Link
-                    to={`/student/course/${course.id}`}
-                    className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#FF7A00] to-[#E56A00] text-black font-mono font-bold text-xs hover:brightness-110 shadow-[0_0_20px_rgba(255,122,0,0.4)] transition-all flex items-center justify-center gap-2"
-                  >
-                    <Terminal className="w-4 h-4 text-black" />
-                    <span>Enter Cyber Classroom</span>
-                  </Link>
-
-                  <Link
-                    to="/academy/cybersecurity/student"
-                    className="w-full py-2.5 px-4 rounded-xl bg-black/60 border border-[#FF7A00]/40 text-slate-200 hover:text-white hover:border-[#FFA439] font-mono text-xs transition-all flex items-center justify-center gap-2"
-                  >
-                    <Activity className="w-4 h-4 text-[#FFA439]" />
-                    <span>Open Cyber Cadet Dashboard</span>
-                  </Link>
+              {/* Access & Tuition Header */}
+              <div className="space-y-1.5">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-[#FFA439] font-bold">
+                  Access &amp; Tuition
+                </span>
+                <div className="flex items-baseline gap-2.5">
+                  <span className="font-royal text-3xl font-extrabold text-white">
+                    Free Access
+                  </span>
+                  <span className="text-xs font-mono text-[#FF7A00] font-bold">
+                    100% Curriculum
+                  </span>
                 </div>
-              ) : (
-                <div className="space-y-3">
-                  <div className="text-xs text-slate-300 font-sans leading-relaxed">
-                    Instant enrolment binds your unified RK Cadet profile, granting immediate access to the 12 modules, interactive code lessons, and virtual Kali sandbox.
-                  </div>
+                <p className="text-xs text-slate-300 leading-relaxed font-sans">
+                  Start learning immediately. Certificate exam unlocked after completion of all core units.
+                </p>
+              </div>
 
-                  <button
-                    type="button"
-                    onClick={handleEnrol}
-                    disabled={enrolling}
-                    className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#FF7A00] to-[#E56A00] text-black font-mono font-bold text-xs hover:brightness-110 shadow-[0_0_20px_rgba(255,122,0,0.4)] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-                  >
-                    <Zap className="w-4 h-4 text-black" />
-                    <span>{enrolling ? 'INITIALIZING CADET ID...' : 'Instant Enrolment (Free)'}</span>
-                  </button>
+              {/* Action Buttons: Enrolled vs Unenrolled */}
+              <div className="space-y-2.5">
+                {enrolment ? (
+                  <>
+                    <Link
+                      to={`/student/course/${course.id}`}
+                      className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#FF7A00] to-[#E56A00] text-black font-mono font-bold text-xs hover:brightness-110 shadow-[0_0_20px_rgba(255,122,0,0.4)] transition-all flex items-center justify-center gap-2 text-center"
+                    >
+                      <BookOpen className="w-4 h-4 text-black" />
+                      <span>View Course in Classroom</span>
+                    </Link>
 
-                  <div className="text-[10px] font-mono text-slate-400 text-center">
-                    Unified RK ID • 50-MCQ Anti-Cheat Proctored Final
-                  </div>
-                </div>
-              )}
+                    <button
+                      type="button"
+                      onClick={handleCancelEnrolment}
+                      className="w-full py-2.5 px-4 rounded-xl bg-black/60 border border-rose-500/30 text-rose-300 hover:text-white hover:border-rose-500/60 font-mono text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <XCircle className="w-3.5 h-3.5 text-rose-400" />
+                      <span>Cancel Enrolment (Free Track)</span>
+                    </button>
 
-              {/* Author & Lab Assurance */}
-              <div className="pt-3 border-t border-white/10 space-y-2 text-[11px] font-sans">
-                <div className="flex items-center gap-2 text-slate-300">
-                  <ShieldCheck className="w-4 h-4 text-[#FFA439] flex-shrink-0" />
-                  <span>Lead Architect: {course.lead_author?.name || 'Alex Rivera'}</span>
+                    <button
+                      type="button"
+                      onClick={() => setShowGrantModal(true)}
+                      className="w-full py-2.5 px-4 rounded-xl bg-black/60 border border-[#FF7A00]/30 text-slate-200 hover:text-white hover:border-[#FFA439] font-mono text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <Gift className="w-3.5 h-3.5 text-[#FFA439]" />
+                      <span>Apply Academic Grant / Coupon</span>
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handleEnrol}
+                      disabled={enrolling}
+                      className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#FF7A00] to-[#E56A00] text-black font-mono font-bold text-xs hover:brightness-110 shadow-[0_0_20px_rgba(255,122,0,0.4)] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 text-center"
+                    >
+                      <Zap className="w-4 h-4 text-black" />
+                      <span>{enrolling ? 'INITIALIZING CADET ID...' : 'Instant Enrolment (Free Track)'}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setShowGrantModal(true)}
+                      className="w-full py-2.5 px-4 rounded-xl bg-black/60 border border-[#FF7A00]/30 text-slate-200 hover:text-white hover:border-[#FFA439] font-mono text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <Gift className="w-3.5 h-3.5 text-[#FFA439]" />
+                      <span>Apply Academic Grant / Coupon</span>
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {/* Course Specifications List */}
+              <div className="pt-3 border-t border-white/10 space-y-2 text-xs font-mono">
+                <div className="flex items-center justify-between text-slate-300">
+                  <span className="flex items-center gap-2 text-slate-400">
+                    <Clock className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Effort</span>
+                  </span>
+                  <span className="font-bold text-white">{course.estimated_duration || '12 Weeks'}</span>
                 </div>
-                <div className="flex items-center gap-2 text-slate-300">
-                  <Terminal className="w-4 h-4 text-[#00AEEF] flex-shrink-0" />
-                  <span>Integrated Kali Linux 2026.1 Desktop Simulator</span>
+
+                <div className="flex items-center justify-between text-slate-300">
+                  <span className="flex items-center gap-2 text-slate-400">
+                    <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Length</span>
+                  </span>
+                  <span className="font-bold text-white">{course.estimated_duration || '12 Weeks'}</span>
                 </div>
+
+                <div className="flex items-center justify-between text-slate-300">
+                  <span className="flex items-center gap-2 text-slate-400">
+                    <Layers className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Level</span>
+                  </span>
+                  <span className="font-bold text-[#FFA439]">{course.difficulty || 'Beginner to Advanced'}</span>
+                </div>
+
+                <div className="flex items-center justify-between text-slate-300">
+                  <span className="flex items-center gap-2 text-slate-400">
+                    <Globe className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Pace</span>
+                  </span>
+                  <span className="font-bold text-white">Self-Paced with Proctoring</span>
+                </div>
+
+                <div className="flex items-center justify-between text-slate-300">
+                  <span className="flex items-center gap-2 text-slate-400">
+                    <Award className="w-3.5 h-3.5 text-[#FFA439]" />
+                    <span>Certificate</span>
+                  </span>
+                  <span className="font-bold text-[#FF7A00]">Verifiable On-Chain</span>
+                </div>
+
+                <div className="flex items-center justify-between text-slate-300">
+                  <span className="flex items-center gap-2 text-slate-400">
+                    <Coins className="w-3.5 h-3.5 text-[#FFA439]" />
+                    <span>Bounty</span>
+                  </span>
+                  <span className="font-bold text-[#FFA439]">+1200 Tokens</span>
+                </div>
+              </div>
+
+              {/* Social / Channel Icons Row */}
+              <div className="pt-3 border-t border-white/10 flex items-center justify-center gap-3">
+                <a
+                  href="https://redkross.org.in"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Parent Foundation"
+                  className="w-10 h-10 rounded-xl bg-black/80 border border-[#FF7A00]/30 hover:border-[#FF7A00] flex items-center justify-center p-2 transition-all group shadow-sm"
+                >
+                  <img src="/assets/crest-clean-circle.png" alt="Foundation" className="w-full h-full object-contain group-hover:scale-105 transition-transform" />
+                </a>
+
+                <a
+                  href="https://whatsapp.com/channel/0029VbBbRCn7tkj2M1Sj7f3Z"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="WhatsApp Channel"
+                  className="w-10 h-10 rounded-xl bg-black/80 border border-[#FF7A00]/30 hover:border-[#25D366] flex items-center justify-center p-2 text-[#25D366] transition-all group shadow-sm"
+                >
+                  <svg className="w-5 h-5 fill-current group-hover:scale-105 transition-transform" viewBox="0 0 24 24">
+                    <path d="M12.04 2C6.507 2 2.019 6.488 2.019 12.02c0 1.768.461 3.494 1.336 5.011L2 22l5.12-1.343c1.465.798 3.12 1.22 4.92 1.22 5.533 0 10.021-4.488 10.021-10.02S17.573 2 12.04 2zm0 18.337c-1.579 0-3.125-.424-4.47-1.225l-.32-.19-3.322.871.887-3.238-.208-.331c-.88-1.399-1.344-3.031-1.344-4.704 0-4.606 3.748-8.354 8.357-8.354 4.608 0 8.356 3.748 8.356 8.354 0 4.606-3.748 8.354-8.356 8.354zm4.992-6.195c-.276-.138-1.633-.806-1.886-.899-.253-.092-.437-.138-.621.138-.184.276-.713.899-.874 1.083-.161.184-.322.207-.598.069-.276-.138-1.166-.43-2.221-1.371-.821-.732-1.375-1.637-1.536-1.913-.161-.276-.017-.425.121-.562.124-.124.276-.322.414-.483.138-.161.184-.276.276-.46.092-.184.046-.345-.023-.483-.069-.138-.621-1.495-.851-2.048-.224-.54-.452-.467-.621-.475-.161-.008-.345-.009-.529-.009-.184 0-.483.069-.736.345-.253.276-.966.943-.966 2.3 0 1.357.989 2.668 1.127 2.852.138.184 1.945 2.97 4.712 4.165.658.284 1.172.454 1.573.581.661.21 1.262.18 1.737.109.53-.079 1.633-.667 1.863-1.312.23-.645.23-1.197.161-1.312-.069-.115-.253-.184-.529-.322z"/>
+                  </svg>
+                </a>
+
+                <a
+                  href="https://www.instagram.com/redkross_research_foundation?utm_source=ig_web_button_share_sheet&psln=ZDNlZDc0MzIxNw=="
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Instagram"
+                  className="w-10 h-10 rounded-xl bg-black/80 border border-[#FF7A00]/30 hover:border-[#E1306C] flex items-center justify-center p-2 text-[#E1306C] transition-all group shadow-sm"
+                >
+                  <svg className="w-5 h-5 fill-current group-hover:scale-105 transition-transform" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                  </svg>
+                </a>
               </div>
             </div>
           </div>
         </div>
 
-        {/* 6 HUD TELEMETRY TABS NAVIGATION BAR */}
+        {/* HUD TELEMETRY TABS NAVIGATION BAR */}
         <div className="mb-8">
           <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none border-b border-[#FF7A00]/25">
             {[
@@ -324,8 +455,7 @@ export default function CyberCourseDetailPage() {
               { id: 'outcomes', label: '02 // OUTCOMES', icon: Shield },
               { id: 'syllabus', label: '03 // SYLLABUS OUTLINE', icon: ListOrdered },
               { id: 'eligibility', label: '04 // ELIGIBILITY', icon: CheckCircle2 },
-              { id: 'certification', label: '05 // CERTIFICATION', icon: Award },
-              { id: 'faqs', label: '06 // FAQS', icon: HelpCircle }
+              { id: 'faqs', label: '05 // FAQS', icon: HelpCircle }
             ].map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -525,9 +655,9 @@ export default function CyberCourseDetailPage() {
                         className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-white/[0.02] transition-colors cursor-pointer"
                       >
                         <div className="flex items-center gap-3">
-                          <span className="px-2.5 py-1 rounded bg-[#FF7A00]/15 border border-[#FF7A00]/30 text-xs font-mono font-bold text-[#FFA439]">
-                            MODULE {String(idx + 1).padStart(2, '0')}
-                          </span>
+                          <div className="w-8 h-8 rounded-lg bg-[#FF7A00]/15 border border-[#FF7A00]/30 text-[#FFA439] font-mono text-xs flex items-center justify-center font-bold flex-shrink-0">
+                            {String(idx + 1).padStart(2, '0')}
+                          </div>
                           <div>
                             <h4 className="text-sm sm:text-base font-bold font-royal text-white">
                               {mod.title}
@@ -654,79 +784,7 @@ export default function CyberCourseDetailPage() {
             </motion.div>
           )}
 
-          {/* TAB 5: CERTIFICATION */}
-          {activeTab === 'certification' && (
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className="space-y-6"
-            >
-              <div className="p-6 sm:p-8 rounded-2xl bg-black/60 backdrop-blur-xl border border-[#FF7A00]/25 shadow-lg space-y-6">
-                <div>
-                  <h3 className="text-xl sm:text-2xl font-bold font-royal text-white mb-2">
-                    50-MCQ Anti-Cheat Proctored Final &amp; SHA-256 Proofs
-                  </h3>
-                  <p className="text-sm text-slate-300 font-sans leading-relaxed">
-                    Earn an immutable, tamper-proof credential verified against the RedKross public cryptographic ledger.
-                  </p>
-                </div>
-
-                {/* Exam Specs Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="p-4 rounded-xl bg-black/40 border border-white/10">
-                    <div className="text-[10px] font-mono text-[#FFA439] uppercase">QUESTION SUITE</div>
-                    <div className="text-lg font-bold font-mono text-white">50 MCQs</div>
-                    <div className="text-xs text-slate-400">Randomized across 12 modules</div>
-                  </div>
-                  <div className="p-4 rounded-xl bg-black/40 border border-white/10">
-                    <div className="text-[10px] font-mono text-[#FFA439] uppercase">TIME RESTRICTION</div>
-                    <div className="text-lg font-bold font-mono text-white">60 Minutes</div>
-                    <div className="text-xs text-slate-400">Strict countdown timer</div>
-                  </div>
-                  <div className="p-4 rounded-xl bg-black/40 border border-white/10">
-                    <div className="text-[10px] font-mono text-[#FFA439] uppercase">PASSING CRITERIA</div>
-                    <div className="text-lg font-bold font-mono text-white">80% (40/50)</div>
-                    <div className="text-xs text-slate-400">Anti-cheat blur lockout active</div>
-                  </div>
-                </div>
-
-                {/* Cryptographic SHA-256 Proof Box */}
-                <div className="p-5 rounded-xl bg-gradient-to-r from-black/80 via-[#181108]/90 to-black/80 border border-[#FF7A00]/40 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-mono font-bold text-[#FFA439] uppercase flex items-center gap-1.5">
-                      <Lock className="w-3.5 h-3.5" />
-                      <span>CRYPTOGRAPHIC DIGITAL SIGNATURE ARCHITECTURE</span>
-                    </span>
-                    <span className="text-[10px] font-mono text-slate-400">ECDSA / SHA-256</span>
-                  </div>
-
-                  <p className="text-xs text-slate-300 font-sans leading-relaxed">
-                    Upon exam passage, a digital certificate is allocated with a unique hash derived from cadet ID, completion timestamp, module metrics, and cryptographic salt.
-                  </p>
-
-                  <div className="p-3 rounded-lg bg-black/80 border border-white/10 font-mono text-xs flex items-center justify-between gap-2 overflow-x-auto">
-                    <span className="text-[#FFA439] truncate">{sampleSha256}</span>
-                    <button
-                      type="button"
-                      onClick={copyHashToClipboard}
-                      className="px-2 py-1 rounded bg-[#FF7A00]/20 hover:bg-[#FF7A00]/40 text-[#FFA439] text-[10px] flex items-center gap-1 shrink-0 cursor-pointer transition-colors"
-                    >
-                      {copiedHash ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                      <span>{copiedHash ? 'COPIED' : 'COPY HASH'}</span>
-                    </button>
-                  </div>
-
-                  <div className="text-[10px] font-mono text-slate-400 flex items-center gap-2">
-                    <CheckCircle2 className="w-3 h-3 text-[#FFA439]" />
-                    <span>Publicly verifiable at /verify/:credentialId</span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {/* TAB 6: FAQS */}
+          {/* TAB 5: FAQS */}
           {activeTab === 'faqs' && (
             <motion.div
               initial={{ opacity: 0, y: 15 }}
@@ -776,6 +834,47 @@ export default function CyberCourseDetailPage() {
 
       {/* Cyber In-Branch Footer */}
       <Footer />
+
+      {/* Grant / Coupon Modal */}
+      {showGrantModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+          <div className="p-6 sm:p-8 rounded-2xl bg-[#0E0C09]/95 border border-[#FF7A00]/50 shadow-[0_0_40px_rgba(255,122,0,0.25)] max-w-md w-full space-y-4">
+            <h3 className="font-royal text-lg font-bold text-white flex items-center gap-2">
+              <Gift className="w-5 h-5 text-[#FF7A00]" />
+              <span>Apply Academic Grant / Coupon</span>
+            </h3>
+            <p className="text-xs text-slate-300 font-sans leading-relaxed">
+              Enter your student sponsorship token or promotional coupon code to activate immediate sponsored enrollment.
+            </p>
+            <form onSubmit={handleApplyCoupon} className="space-y-4">
+              <input
+                type="text"
+                placeholder="Enter Code (e.g. GRANT100)"
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl bg-black border border-[#FF7A00]/40 text-sm text-white font-mono uppercase focus:outline-none focus:border-[#FFA439]"
+              />
+              {grantError && <div className="text-xs text-rose-400 font-mono">{grantError}</div>}
+              {grantSuccess && <div className="text-xs text-[#FFA439] font-mono">Grant Verified! Enrolling...</div>}
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowGrantModal(false)}
+                  className="px-4 py-2 rounded-xl bg-black text-xs font-mono text-slate-300 border border-white/20 hover:text-white cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#FF7A00] to-[#E56A00] text-black font-royal font-bold text-xs cursor-pointer shadow-[0_0_15px_rgba(255,122,0,0.4)] hover:brightness-110"
+                >
+                  Redeem
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

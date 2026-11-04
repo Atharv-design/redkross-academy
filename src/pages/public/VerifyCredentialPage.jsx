@@ -64,7 +64,6 @@ export default function VerifyCredentialPage() {
     setDossier(null);
 
     try {
-      // 1. First check if targetId matches a Cadet Unique Identifier (e.g. RK-89421)
       const cadetDossier = mockEngine.getCadetDossier(targetId);
       if (cadetDossier) {
         setDossier(cadetDossier);
@@ -73,7 +72,6 @@ export default function VerifyCredentialPage() {
         return;
       }
 
-      // 2. Otherwise look up specific certificate / credential
       const res = await apiClient.verifyCredential(targetId);
       if (res && res.found) {
         setCredential(res.credential);

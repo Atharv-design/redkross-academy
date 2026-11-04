@@ -23,7 +23,6 @@ export const ART_PRESETS = [
  * Resolves artwork, position, shape cut, and accent for any course.
  */
 export function resolveCourseDesign(course, index = 0) {
-  // If variant string like 'variant-03' is present
   let resolvedIndex = index;
   if (course?.card_variant) {
     const match = course.card_variant.match(/variant-?(\d+)/i);
@@ -31,7 +30,6 @@ export function resolveCourseDesign(course, index = 0) {
       resolvedIndex = (parseInt(match[1], 10) - 1) % ART_PRESETS.length;
     }
   } else if (course?.id) {
-    // Generate deterministic hash from id
     let hash = 0;
     for (let i = 0; i < course.id.length; i++) {
       hash = (hash << 5) - hash + course.id.charCodeAt(i);
@@ -103,14 +101,12 @@ export default function AcademicKitCard({
 
   if (!course) return null;
 
-  // Resolve artwork and design parameters
   const design = resolveCourseDesign(course, index);
   const resolvedArt = art || design.art;
   const resolvedArtPos = artPos || design.artPos;
   const resolvedClip = shape || design.clip;
   const isMint = design.accent === 'mint';
 
-  // Format meta (duration and weeks)
   const durationRaw = course.estimated_duration || '14 Hours';
   const hours = durationRaw.toLowerCase().includes('hour')
     ? durationRaw.replace(/Hours?/i, 'hrs').trim()
@@ -119,14 +115,12 @@ export default function AcademicKitCard({
     ? `${course.estimated_weeks} weeks`
     : '8 weeks';
 
-  // Format skills
   const skills = (course.skills && course.skills.length > 0)
     ? course.skills.slice(0, 4)
     : (course.learning_objectives && course.learning_objectives.length > 0)
       ? course.learning_objectives.slice(0, 4).map((s) => s.split(':')[0].substring(0, 22).trim())
       : ['SIEM / Splunk', 'Log Analysis', 'Incident Triage', 'Threat Intel'];
 
-  // Format milestone credential
   const credential = course.milestone_cert ||
     course.credential_name ||
     `Certified ${course.title?.split(' ')[0] || 'Cyber'} Specialist`;

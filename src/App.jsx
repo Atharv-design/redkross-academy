@@ -28,7 +28,6 @@ import TokenWalletPage from './pages/student/TokenWalletPage';
 import FinalCertificationPage from './pages/student/FinalCertificationPage';
 import CourseHomePage from './pages/student/CourseHomePage';
 
-// Admin Workstation Pages (Strict Functional Specification)
 import AdminLayout from './pages/admin/AdminLayout';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import AdminCoursesPage from './pages/admin/AdminCoursesPage';
@@ -140,7 +139,7 @@ export default function App() {
           />
         </Route>
 
-        {/* Dedicated Desktop-Only Admin Workstation (min-w-[1280px], fixed 260px sidebar & 64px header) */}
+        {/* Dedicated Desktop-Only Admin Dashboard (min-w-[1280px], fixed 260px sidebar & 64px header) */}
         <Route
           path="admin"
           element={

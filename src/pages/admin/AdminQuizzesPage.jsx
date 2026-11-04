@@ -36,7 +36,6 @@ export default function AdminQuizzesPage() {
   const [questionModalOpen, setQuestionModalOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState(null);
 
-  // Question Editor state
   const [questionForm, setQuestionForm] = useState({
     prompt: '',
     type: 'single_choice', // single_choice | multiple_choice | true_false | short_text | code_analysis
@@ -46,7 +45,6 @@ export default function AdminQuizzesPage() {
     explanation: ''
   });
 
-  // Mock attempts data for proctoring & score override
   const [attempts, setAttempts] = useState([
     {
       id: 'ATT-9021',
@@ -88,11 +86,9 @@ export default function AdminQuizzesPage() {
   const [overrideScore, setOverrideScore] = useState('');
   const [overrideReason, setOverrideReason] = useState('');
 
-  // Initial load
   useEffect(() => {
     try {
       const db = mockEngine.getDb();
-      // Gather quizzes or seed default ones if none exist
       const loaded = [
         {
           id: 'QUIZ-DEF-01',

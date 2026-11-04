@@ -62,7 +62,6 @@ export default function CourseHomePage() {
     let userEnrolments = mockEngine.getEnrolmentsForUser(currentUser.id);
     let enr = userEnrolments.find((e) => e.course_id === c.id);
     if (!enr) {
-      // Auto-register enrolment so newly enrolled students are never bounced back
       enr = mockEngine.enrolStudent(currentUser.id, c.id);
     }
     setEnrolment(enr);
@@ -70,7 +69,6 @@ export default function CourseHomePage() {
     const prog = mockEngine.getCourseProgress(enr.id);
     setProgressData(prog);
 
-    // Default expand first module
     if (c.modules?.length) {
       setExpandedModules({ 0: true });
     }
@@ -107,14 +105,12 @@ export default function CourseHomePage() {
     );
   }
 
-  // Find next uncompleted lesson to resume
   const allLessons = (course.modules || []).flatMap((m) => m.lessons || []);
   const completedSet = new Set(progressData.completedLessonIds || []);
   const nextLesson = allLessons.find((l) => !completedSet.has(l.id)) || allLessons[0];
   const isStarted = completedSet.size > 0;
   const isComplete = progressData.percentage === 100;
 
-  // Grade Calculations for Progress Tab
   const passingScore = 70;
   const currentGrade = progressData.percentage;
   const isPassing = currentGrade >= passingScore;

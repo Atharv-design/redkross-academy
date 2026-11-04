@@ -35,7 +35,6 @@ export default function TokenWalletPage() {
     );
   }
 
-  // Compute metrics
   const totalEarned = transactions
     .filter((tx) => tx.amount > 0)
     .reduce((sum, tx) => sum + tx.amount, 0);

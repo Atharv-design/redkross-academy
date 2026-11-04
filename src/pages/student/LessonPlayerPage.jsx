@@ -62,6 +62,8 @@ import MovablePracticeTerminal from '../../components/student/MovablePracticeTer
 import CockpitToolStrip from '../../components/student/CockpitToolStrip';
 import CyberLabDesktopWindow from '../../components/student/CyberLabDesktopWindow';
 import PsychologyToolStrip from '../../components/student/PsychologyToolStrip';
+import BlockNoteLessonViewer from '../../components/student/BlockNoteLessonViewer';
+import { MODULE_1_BLOCK_NOTES } from '../../services/db/module1BlockNotes';
 
 /**
  * Open edX-Inspired Courseware & Learning Workspace
@@ -86,7 +88,6 @@ export default function LessonPlayerPage() {
   const course = enrolment ? mockEngine.getCourseById(enrolment.course_id) : null;
   const isPsychology = (course?.division || '').toLowerCase() === 'psychology';
 
-  // Build flattened sequential units (lessons + module quizzes + final assessment)
   const allUnits = [];
   if (course && course.modules) {
     course.modules.forEach((mod, modIdx) => {
@@ -112,7 +113,6 @@ export default function LessonPlayerPage() {
       }
     });
 
-    // Add Final Certification Assessment as the ultimate sequential milestone
     if (course.final_assessment) {
       allUnits.push({
         id: course.final_assessment.id,
@@ -125,7 +125,6 @@ export default function LessonPlayerPage() {
     }
   }
 
-  // Active unit state (handles both ?unitId= and ?lessonId=)
   const queryParamUnitId = searchParams.get('unitId') || searchParams.get('lessonId');
   const [activeUnitId, setActiveUnitId] = useState(queryParamUnitId || allUnits[0]?.id || null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -197,7 +196,6 @@ export default function LessonPlayerPage() {
     setIsMacTerminalMinimized(false);
   };
 
-  // Global Ctrl+K / Cmd+K listener to toggle Tactical Terminal
   useEffect(() => {
     const handleKeyDown = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
@@ -211,9 +209,7 @@ export default function LessonPlayerPage() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
-  const [reflectionNote, setReflectionNote] = useState('');
 
-  // Video & Multi-Media State
   const videoRef = useRef(null);
   const [playbackSpeed, setPlaybackSpeed] = useState(1.0);
   const [watchProgressMap, setWatchProgressMap] = useState({});
@@ -222,13 +218,11 @@ export default function LessonPlayerPage() {
   const [selectedVideoIndex, setSelectedVideoIndex] = useState(0);
   const [lightboxImage, setLightboxImage] = useState(null);
 
-  // PDF Assignment Submission State
   const [assignmentSubmission, setAssignmentSubmission] = useState(null);
   const [uploadingFileName, setUploadingFileName] = useState('');
   const [uploadingDataUrl, setUploadingDataUrl] = useState('');
   const [submittingPdf, setSubmittingPdf] = useState(false);
 
-  // Quiz / Exam State
   const [quizAnswers, setQuizAnswers] = useState({}); // { [questionId]: optionId }
   const [quizSubmitted, setQuizSubmitted] = useState(false);
   const [quizResult, setQuizResult] = useState(null);
@@ -242,7 +236,6 @@ export default function LessonPlayerPage() {
     }
   });
 
-  // Anti-Cheat Proctoring & 24-Hour Lockdown State (initialized synchronously to prevent any unrendered unlocked flash)
   const initialLockout = (() => {
     if (!enrolmentId) return { isLocked: false, remainingHours: 0, remainingMinutes: 0 };
     try {
@@ -259,15 +252,12 @@ export default function LessonPlayerPage() {
   });
   const [proctorWarningVisible, setProctorWarningVisible] = useState(false);
 
-  // Certificate Request Modal State
   const [certRequestModalOpen, setCertRequestModalOpen] = useState(false);
   const [certRequestSubmitted, setCertRequestSubmitted] = useState(false);
   const [certCadetNotes, setCertCadetNotes] = useState('');
 
-  // Pre-Flight Exam Rules Modal State (tracks acknowledged rules per quiz id)
   const [hasAcknowledgedExamRules, setHasAcknowledgedExamRules] = useState({});
 
-  // Module Unlock Celebration Modal State
   const [unlockCelebrationModal, setUnlockCelebrationModal] = useState({
     isOpen: false,
     type: 'module', // 'module' | 'final_round'
@@ -278,7 +268,6 @@ export default function LessonPlayerPage() {
     nextUnitId: null
   });
 
-  // ---------------- MODULE GATING LOGIC ----------------
   const isModuleUnlocked = (modIndex) => {
     if (modIndex === 0) return true;
     const completedLessons = currentEnrolment?.completed_mandatory_lessons || enrolment?.completed_mandatory_lessons || [];
@@ -314,7 +303,6 @@ export default function LessonPlayerPage() {
 
   const isFinalExamUnlocked = areAllModulesCompleted();
 
-  // Synchronize Enrolment and Progress from mockEngine Event Stream
   useEffect(() => {
     const syncEnrolment = () => {
       const updated = mockEngine.getEnrolment(enrolmentId);
@@ -337,7 +325,6 @@ export default function LessonPlayerPage() {
   return () => unsub();
   }, [enrolmentId]);
 
-  // Initialize and load saved bookmarks from localStorage
   useEffect(() => {
     try {
       const stored = localStorage.getItem(`rk_bookmarks_${enrolmentId}`);
@@ -359,7 +346,6 @@ export default function LessonPlayerPage() {
     });
   };
 
-  // Handle active unit resolution
   const activeUnit = allUnits.find((u) => u.id === activeUnitId) || allUnits[0];
   const activeIndex = allUnits.findIndex((u) => u.id === activeUnit?.id);
   const activeLesson = activeUnit?.type === 'lesson' ? activeUnit.lesson : null;
@@ -373,18 +359,15 @@ export default function LessonPlayerPage() {
     : false;
   const isAssignment = activeLesson?.type === 'assignment';
 
-  // Pre-flight Exam Rules Gate calculation
   const isExamUnit = (activeUnit?.type === 'quiz' || activeUnit?.type === 'final_exam') && !!activeQuiz;
   const isExamRulesAcknowledged = activeQuiz ? !!hasAcknowledgedExamRules[activeQuiz.id] : false;
   const showExamRulesGate = isExamUnit && !isQuizPassed && !quizSubmitted && !isLockoutActive && !isExamRulesAcknowledged;
 
-  // Sync active unit on load or URL param change (supports unitId & lessonId, and resumes saved reading progress)
   useEffect(() => {
     const targetUnitId = searchParams.get('unitId') || searchParams.get('lessonId');
     if (targetUnitId && allUnits.some((u) => u.id === targetUnitId)) {
       setActiveUnitId(targetUnitId);
     } else if (allUnits.length > 0 && (!activeUnitId || !allUnits.some((u) => u.id === activeUnitId))) {
-      // Check persistently saved reading progress from enrolment
       const savedUnitId = currentEnrolment?.last_visited_unit_id || enrolment?.last_visited_unit_id || localStorage.getItem(`rk_last_unit_${enrolmentId}`);
       if (savedUnitId && allUnits.some((u) => u.id === savedUnitId)) {
         setActiveUnitId(savedUnitId);
@@ -398,14 +381,12 @@ export default function LessonPlayerPage() {
     }
   }, [searchParams, allUnits.length, enrolmentId]);
 
-  // Auto-save reading progress (current unit position) whenever activeUnit changes
   useEffect(() => {
     if (activeUnit?.id && enrolmentId) {
       mockEngine.saveLastVisitedUnit(enrolmentId, activeUnit.id);
     }
   }, [activeUnit?.id, enrolmentId]);
 
-  // Load progress and expand current module
   useEffect(() => {
     if (enrolmentId) {
       setProgressData(mockEngine.getCourseProgress(enrolmentId));
@@ -416,7 +397,6 @@ export default function LessonPlayerPage() {
     }
   }, [enrolmentId, activeUnitId]);
 
-  // Check 24-Hour Lockdown on active unit change
   const checkLockoutStatus = () => {
     if (!enrolmentId) return;
     try {
@@ -458,7 +438,6 @@ export default function LessonPlayerPage() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, [enrolmentId, activeUnitId, activeUnit?.id, activeQuiz?.id]);
 
-  // Periodic refresh of lockout countdown while locked
   useEffect(() => {
     if (!isLockoutActive) return;
     const interval = setInterval(() => {
@@ -467,12 +446,10 @@ export default function LessonPlayerPage() {
     return () => clearInterval(interval);
   }, [isLockoutActive, enrolmentId, activeUnitId]);
 
-  // Reset selected video index when lesson changes
   useEffect(() => {
     setSelectedVideoIndex(0);
   }, [activeLesson?.id]);
 
-  // Resolve video URL when active lesson or selected video changes
   useEffect(() => {
     let active = true;
     const currentVideos = activeLesson?.videos && activeLesson.videos.length > 0
@@ -493,7 +470,6 @@ export default function LessonPlayerPage() {
     };
   }, [activeLesson?.video_url, activeLesson?.videos, activeLesson?.id, selectedVideoIndex]);
 
-  // Reset or load quiz state when switching to quiz/final_exam
   useEffect(() => {
     if (activeQuiz) {
       setQuizSubmitted(isQuizPassed);
@@ -506,14 +482,12 @@ export default function LessonPlayerPage() {
           isPassed: true
         });
       } else if (!isQuizPassed) {
-        // Start live countdown timer: 20 mins for module quiz, 60 mins for final assessment
         const totalMinutes = activeUnit?.type === 'final_exam' ? 60 : 20;
         setExamTimeRemaining(totalMinutes * 60);
       }
     }
   }, [activeQuiz?.id, isQuizPassed, activeUnit?.type]);
 
-  // Live Exam Countdown Timer
   useEffect(() => {
     if (!activeQuiz || quizSubmitted || isLockoutActive || examTimeRemaining === null || examTimeRemaining <= 0) return;
     if (!hasAcknowledgedExamRules[activeQuiz.id] && !isQuizPassed) return; // Wait until rules are acknowledged
@@ -522,7 +496,6 @@ export default function LessonPlayerPage() {
       setExamTimeRemaining((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          // Auto submit on time expiry
           handleSubmitQuiz();
           return 0;
         }
@@ -533,7 +506,6 @@ export default function LessonPlayerPage() {
     return () => clearInterval(timer);
   }, [activeQuiz?.id, quizSubmitted, isLockoutActive, examTimeRemaining, hasAcknowledgedExamRules, isQuizPassed]);
 
-  // ---------------- ANTI-CHEAT PROTOCOL: TAB SWITCH ATTEMPT DECREMENTS 1 ATTEMPT ----------------
   const triggerProctorViolation = (violationType) => {
     if (quizSubmitted || isLockoutActive || !activeQuiz) return;
     if (!hasAcknowledgedExamRules[activeQuiz.id] && !isQuizPassed) return; // Only monitor after official commencement
@@ -541,7 +513,6 @@ export default function LessonPlayerPage() {
     try {
       const targetQuizId = activeQuiz?.id || activeUnit?.id;
 
-      // Decrement 1 attempt (e.g. 3 -> 2 -> 1, then 24h cooldown if 0)
       const forfeitResult = mockEngine.forfeitQuizAttempt({
         enrolmentId,
         quizId: targetQuizId,
@@ -584,7 +555,6 @@ export default function LessonPlayerPage() {
     };
   }, [activeQuiz?.id, quizSubmitted, isLockoutActive]);
 
-  // Load assignment submissions
   const loadAssignmentSubmission = () => {
     if (!enrolmentId) return;
     const subs = mockEngine.getAssignmentSubmissions({ enrolment_id: enrolmentId });
@@ -629,7 +599,6 @@ export default function LessonPlayerPage() {
     );
   }
 
-  // ---------------- MID-EXAM FORFEIT DETECTION & WINDOW LIFECYCLE ----------------
   useEffect(() => {
     const handleBeforeUnload = (e) => {
       const isExamInProgress =
@@ -656,11 +625,9 @@ export default function LessonPlayerPage() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [activeUnit?.id, activeQuiz?.id, quizSubmitted, isLockoutActive, quizAnswers, examTimeRemaining, enrolmentId, hasAcknowledgedExamRules]);
 
-  // Navigation handlers
   const handleSelectUnit = (unit) => {
     if (!unit) return;
 
-    // 1. Check if user is abandoning an active unsubmitted exam
     const isExamInProgress =
       (activeUnit?.type === 'quiz' || activeUnit?.type === 'final_exam') &&
       !quizSubmitted &&
@@ -677,7 +644,6 @@ export default function LessonPlayerPage() {
         return; // Cadet cancels, stays on exam
       }
 
-      // Forfeit 1 attempt
       const targetQuizId = activeQuiz?.id || activeUnit?.id;
       const forfeitResult = mockEngine.forfeitQuizAttempt({
         enrolmentId,
@@ -703,7 +669,6 @@ export default function LessonPlayerPage() {
       setExamTimeRemaining(null);
     }
 
-    // 2. If unit belongs to a locked module, disallow navigation
     if (unit.type === 'final_exam') {
       if (!isFinalExamUnlocked) {
         alert('Final Assessment Locked: You must complete all prior course modules and score >= 80% on each knowledge check.');
@@ -724,7 +689,6 @@ export default function LessonPlayerPage() {
       setSearchParams({ unitId: unit.id });
     }
 
-    // Synchronously check if the target unit is locked
     const targetQuizId = unit.quiz?.id || unit.id;
     const lockCheck = mockEngine.isExamLocked(enrolmentId, targetQuizId);
     if (lockCheck.isLocked) {
@@ -753,7 +717,6 @@ export default function LessonPlayerPage() {
     }
   };
 
-  // Mark lesson completed
   const handleMarkLessonComplete = async () => {
     if (!activeLesson || isLessonCompleted || savingProgress) return;
     setSavingProgress(true);
@@ -772,7 +735,13 @@ export default function LessonPlayerPage() {
     }
   };
 
-  // Download Chapter Study Notes Document
+  const handleCompleteAndNext = async () => {
+    if (!isLessonCompleted && activeLesson) {
+      await handleMarkLessonComplete();
+    }
+    handleNextUnit();
+  };
+
   const handleDownloadChapterNotes = () => {
     if (!activeLesson) return;
     const docContent = `# REDKROSS ACADEMY // CHAPTER STUDY NOTES\n\n` +
@@ -802,7 +771,6 @@ export default function LessonPlayerPage() {
     URL.revokeObjectURL(url);
   };
 
-  // Download Admin-Attached PDF
   const handleDownloadAdminPdf = async (attachment) => {
     if (!attachment?.url) return;
     try {
@@ -822,7 +790,6 @@ export default function LessonPlayerPage() {
     }
   };
 
-  // PDF Lab Upload
   const handlePdfUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -889,7 +856,6 @@ export default function LessonPlayerPage() {
     }
   };
 
-  // Quiz Handling: 20-Question Module Knowledge Check & 50-Question Final Assessment
   const handleSelectQuizOption = (questionId, optionId) => {
     if (quizSubmitted) return;
     setQuizAnswers((prev) => ({ ...prev, [questionId]: optionId }));
@@ -950,7 +916,6 @@ export default function LessonPlayerPage() {
     });
     setQuizSubmitted(true);
 
-    // Record attempt in engine (decrements 3 -> 2 -> 1 -> 0, applies 24h lockout if 3 attempts used and not passed)
     const updatedStatus = mockEngine.recordQuizAttemptSubmission({
       enrolmentId,
       quizId: activeQuiz.id,
@@ -968,14 +933,12 @@ export default function LessonPlayerPage() {
       });
     }
 
-    // Refresh enrolment state immediately so UI updates
     const refreshedEnrolment = mockEngine.getEnrolment(enrolmentId);
     if (refreshedEnrolment) {
       setCurrentEnrolment({ ...refreshedEnrolment });
     }
 
     if (isPassed) {
-      // 1. Auto-complete all lessons of this module in enrolment so subsequent modules unlock
       const currentMod = course?.modules?.find(
         (m) => m.quiz?.id === activeQuiz.id || m.id === activeUnit?.moduleId
       );
@@ -989,7 +952,6 @@ export default function LessonPlayerPage() {
         }
       }
 
-      // 2. Fire celebratory confetti
       confetti({
         particleCount: 120,
         spread: 80,
@@ -997,7 +959,6 @@ export default function LessonPlayerPage() {
         colors: ['#FF7A00', '#FFA439', '#FF7A00', '#FFD700']
       });
 
-      // 3. Check if final assessment vs intermediate module vs last module before final exam
       if (activeUnit?.type === 'final_exam') {
         const db = mockEngine.getDb();
         const enr = db.enrolments.find((e) => e.id === enrolmentId);
@@ -1016,7 +977,6 @@ export default function LessonPlayerPage() {
         const isLastModule = currentModIdx >= totalModules - 1;
 
         if (isLastModule) {
-          // Passed Module 12 (Final Module)! Final exam unlocked!
           const finalExamUnit = allUnits.find((u) => u.type === 'final_exam');
           setUnlockCelebrationModal({
             isOpen: true,
@@ -1028,7 +988,6 @@ export default function LessonPlayerPage() {
             nextUnitId: finalExamUnit?.id || null
           });
         } else {
-          // Passed intermediate module (Module 1, 2, ...)!
           const nextModIdx = currentModIdx + 1;
           const nextModule = course?.modules?.[nextModIdx];
           const nextUnit =
@@ -1144,7 +1103,6 @@ export default function LessonPlayerPage() {
     });
   };
 
-  // Submit Certificate Request
   const handleSubmitCertificateRequest = async () => {
     try {
       mockEngine.requestCertificate(enrolmentId, certCadetNotes);
@@ -1179,7 +1137,6 @@ export default function LessonPlayerPage() {
 
   const isCurrentUnitBookmarked = Boolean(bookmarkedUnits[activeUnit?.id]);
 
-  // Format Timer
   const formatTime = (secs) => {
     if (secs === null || secs < 0) return '00:00';
     const m = Math.floor(secs / 60);
@@ -1187,7 +1144,6 @@ export default function LessonPlayerPage() {
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
-    // Render Section 3: Right Sticky Tactical Notes & Lab Inspector
   const renderTacticalInspector = () => (
     <aside className="w-84 xl:w-96 sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto custom-scrollbar border-l border-[#FF7A00]/20 bg-[#0E0C09]/95 backdrop-blur-xl hidden xl:flex flex-col p-4 space-y-4 flex-shrink-0 z-20 self-start animate-fade-in">
       {/* Header */}
@@ -1680,7 +1636,6 @@ export default function LessonPlayerPage() {
     </aside>
   );
 
-  // Render Course Outline Sidebar Content (shared between Desktop & Mobile Slide-Over Drawer)
   const renderSidebarContent = () => (
     <div className="flex flex-col h-full">
       {/* Sidebar Header */}
@@ -1977,19 +1932,17 @@ export default function LessonPlayerPage() {
 
 
   return (
-    <div className="w-full min-h-screen bg-[#071018] text-[#F1F5F9] font-lora relative flex flex-col overflow-x-hidden">
+    <div className="w-full min-h-screen bg-black text-[#F1F5F9] font-lora relative flex flex-col overflow-x-hidden">
       <CyberCloudsBackground />
       <PixelBackground opacity={0.25} />
 
-      {/* ================= 1. OPEN EDX TOP SUB-NAVBAR & TABS ================= */}
-      <header className="sticky top-0 z-30 bg-[#071018]/95 backdrop-blur-xl border-b border-[#FF7A00]/20 px-4 sm:px-6 lg:px-8 py-3">
+      <header className="sticky top-0 z-30 bg-transparent backdrop-blur-md border-b border-[#FF7A00]/25 px-4 sm:px-6 lg:px-8 py-3">
         <div className="w-full flex items-center justify-between gap-4">
-          {/* Left: Outline Toggle Button [ |< ] + Breadcrumb */}
           <div className="flex items-center space-x-3 truncate min-w-0">
             <button
               type="button"
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 rounded-xl border border-[#FF7A00]/30 bg-[#1A1208] text-[#FF7A00] hover:bg-[#FF7A00]/20 transition-all cursor-pointer flex-shrink-0"
+              className="p-2 rounded-xl border border-[#FF7A00]/30 bg-black/60 text-[#FFA439] hover:bg-[#FF7A00]/20 transition-all cursor-pointer flex-shrink-0"
               title={sidebarOpen ? 'Hide Course Outline' : 'Show Course Outline'}
             >
               <Menu className="w-4 h-4" />
@@ -2001,45 +1954,41 @@ export default function LessonPlayerPage() {
             </div>
           </div>
 
-          {/* Right: Open edX Sub-Tabs & Live Progress */}
           <div className="flex items-center space-x-4 flex-shrink-0">
             <div className="hidden sm:flex items-center space-x-4 text-xs font-mono">
               <Link
                 to={`/student/course/${course.id}?tab=course`}
-                className="text-[#FF7A00] hover:underline"
+                className="text-[#FFA439] hover:underline font-bold"
               >
                 Course
               </Link>
               <Link
                 to={`/student/course/${course.id}?tab=progress`}
-                className="text-[#8BA2B5] hover:text-white transition-colors"
+                className="text-[#E2D9CE] hover:text-[#FFA439] transition-colors"
               >
                 Progress
               </Link>
             </div>
 
-            {/* Quick Completion / Grade Pill */}
-            <div className="flex items-center space-x-2 pl-3 border-l border-[#FF7A00]/20 text-xs font-mono">
+            <div className="flex items-center space-x-2 pl-3 border-l border-[#FF7A00]/25 text-xs font-mono">
               <span className="text-[#A3907C] hidden sm:inline">Progress:</span>
-              <span className="px-2.5 py-1 rounded-full bg-[#1A1208] border border-[#FF7A00]/30 text-[#FF7A00] font-bold">
+              <span className="px-2.5 py-1 rounded-full bg-black/50 border border-[#FF7A00]/35 text-[#FFA439] font-bold">
                 {progressData.percentage}%
               </span>
             </div>
 
-            {/* Glowing +150 Tokens Bounty Pill */}
-            <span className="px-3 py-1 rounded-full bg-[#FF7A00]/15 border border-[#FF7A00]/30 text-[#FF7A00] font-bold text-xs font-mono hidden md:inline">
+            <span className="px-3 py-1 rounded-full bg-[#FF7A00]/15 border border-[#FF7A00]/35 text-[#FFA439] font-bold text-xs font-mono hidden md:inline">
               +150 Tokens
             </span>
 
-            {/* Toggle Tactical Tools Strip */}
             {activeUnit?.type === 'lesson' && (
               <button
                 type="button"
                 onClick={() => setToolsStripOpen(!toolsStripOpen)}
                 className={`p-2 rounded-xl border text-xs font-mono transition-all cursor-pointer flex items-center space-x-1.5 ${
                   toolsStripOpen
-                    ? 'bg-[#FF7A00]/20 text-[#FF7A00] border-[#FF7A00]/40 shadow-[0_0_12px_rgba(255,122,0,0.2)]'
-                    : 'bg-[#1A1208] text-[#8BA2B5] border-[#FF7A00]/20 hover:text-white'
+                    ? 'bg-[#FF7A00]/25 text-[#FFA439] border-[#FF7A00]/50 shadow-[0_0_12px_rgba(255,122,0,0.3)]'
+                    : 'bg-black/60 text-[#E2D9CE] border-[#FF7A00]/25 hover:text-white'
                 }`}
                 title={toolsStripOpen ? 'Collapse Tools Strip' : 'Show Tools Strip'}
               >
@@ -2051,32 +2000,26 @@ export default function LessonPlayerPage() {
         </div>
       </header>
 
-      {/* ================= 2. MAIN COURSEWARE WORKSPACE ================= */}
-      {/* Container with items-start so sticky sidebar sticks within viewport */}
       <div className="flex-1 flex w-full relative items-start">
-        {/* ================= LEFT: STICKY COURSE OUTLINE SIDEBAR ================= */}
-        {/* Desktop Sticky Course Outline Sidebar */}
         {sidebarOpen && (
-          <aside className="w-72 lg:w-80 xl:w-84 sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto custom-scrollbar border-r border-[#FF7A00]/20 bg-[#0E0C09]/95 backdrop-blur-xl hidden lg:flex flex-col flex-shrink-0 transition-all duration-300 z-20 self-start">
+          <aside className="w-72 lg:w-80 xl:w-84 sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto custom-scrollbar border-r border-[#FF7A00]/25 bg-[#080604]/95 backdrop-blur-2xl hidden lg:flex flex-col flex-shrink-0 transition-all duration-300 z-20 self-start">
             {renderSidebarContent()}
           </aside>
         )}
 
-        {/* Mobile Slide-Over Touch Drawer */}
         {sidebarOpen && (
           <div className="fixed inset-0 z-50 lg:hidden animate-fadeIn">
             <div
               className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
               onClick={() => setSidebarOpen(false)}
             />
-            <aside className="fixed inset-y-0 left-0 w-[85vw] max-w-sm bg-[#0E0C09] border-r border-[#FF7A00]/30 shadow-2xl flex flex-col h-full z-10 animate-fade-in">
+            <aside className="fixed inset-y-0 left-0 w-[85vw] max-w-sm bg-[#080604] border-r border-[#FF7A00]/30 shadow-2xl flex flex-col h-full z-10 animate-fade-in">
               {renderSidebarContent()}
             </aside>
           </div>
         )}
 
-        {/* ================= RIGHT: SCROLLABLE MAIN CONTENT WORKSPACE ================= */}
-        <main className="flex-1 min-w-0 h-[calc(100vh-3.5rem)] overflow-y-auto custom-scrollbar p-4 sm:p-6 lg:p-7 space-y-6 bg-[#040907]/90 pb-24">
+        <main className="flex-1 min-w-0 h-[calc(100vh-3.5rem)] overflow-y-auto custom-scrollbar p-4 sm:p-6 lg:p-7 space-y-6 bg-black/95 backdrop-blur-xl pb-24">
           <div className="w-full space-y-6">
             {/* Top Unit Title Bar & Bookmark Toggle */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#FF7A00]/20 gap-3">
@@ -2268,13 +2211,21 @@ export default function LessonPlayerPage() {
                 {/* Tab 1: Chapter Notes */}
                 {activeTab === 'notes' && (
                   <div className="space-y-4">
-                    <div className="cyber-glass-panel p-6 rounded-2xl border border-[#FF7A00]/20 max-h-[450px] overflow-y-auto custom-scrollbar prose prose-invert prose-sm max-w-none">
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: renderMarkdownToHtml(activeLesson.content || 'Defensive laboratory briefing and operational objectives.')
-                        }}
+                    {MODULE_1_BLOCK_NOTES && MODULE_1_BLOCK_NOTES[activeLesson.id] ? (
+                      <BlockNoteLessonViewer
+                        lessonId={activeLesson.id}
+                        initialBlocks={MODULE_1_BLOCK_NOTES[activeLesson.id]}
+                        lessonTitle={activeLesson.title}
                       />
-                    </div>
+                    ) : (
+                      <div className="cyber-glass-panel p-6 sm:p-8 rounded-2xl border border-[#FF7A00]/25 min-h-[580px] max-h-[850px] overflow-y-auto custom-scrollbar prose prose-invert prose-sm max-w-none">
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: renderMarkdownToHtml(activeLesson.content || 'Defensive laboratory briefing and operational objectives.')
+                          }}
+                        />
+                      </div>
+                    )}
 
                     {/* Admin Attached PDF Reference Resources */}
                     {activeLesson.pdf_resources && activeLesson.pdf_resources.length > 0 && (
@@ -2389,54 +2340,6 @@ export default function LessonPlayerPage() {
                     )}
                   </div>
                 )}
-
-                
-                {/* Interactive Reflection / Observation Bar (matching reference cockpit) */}
-                <div className="p-4 rounded-2xl bg-[#0E0C09] border border-[#FF7A00]/20 flex items-center space-x-3 shadow-lg">
-                  <input
-                    type="text"
-                    value={reflectionNote}
-                    onChange={(e) => setReflectionNote(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && reflectionNote.trim()) {
-                        alert('Reflection logged in telemetry: ' + reflectionNote);
-                        setReflectionNote('');
-                      }
-                    }}
-                    placeholder="Write a technical reflection or lab observation..."
-                    className="flex-1 bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-xs font-mono text-white placeholder-gray-500 focus:outline-none focus:border-[#FF7A00]/50 transition-colors"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (reflectionNote.trim()) {
-                        alert('Reflection logged in telemetry: ' + reflectionNote);
-                        setReflectionNote('');
-                      }
-                    }}
-                    className="px-4 py-2.5 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-bold text-xs font-mono transition-all flex items-center space-x-1.5 cursor-pointer shadow-md"
-                  >
-                    <Send className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">Log</span>
-                  </button>
-                </div>
-
-                {/* Mark Complete Action Button */}
-                <div className="flex justify-end pt-2">
-                  <button
-                    type="button"
-                    onClick={handleMarkLessonComplete}
-                    disabled={isLessonCompleted || savingProgress}
-                    className={`px-6 py-2.5 rounded-xl font-bold font-mono text-xs flex items-center space-x-2 transition-all cursor-pointer ${
-                      isLessonCompleted
-                        ? 'bg-[#1A1208] text-[#FF7A00] border border-[#FF7A00]/40'
-                        : 'bg-[#FF7A00] text-[#071018] hover:bg-[#FFA439]'
-                    }`}
-                  >
-                    <Check className="w-4 h-4 stroke-[3]" />
-                    <span>{isLessonCompleted ? 'Unit Completed' : savingProgress ? 'Saving...' : 'Mark Complete'}</span>
-                  </button>
-                </div>
               </div>
             )}
 
@@ -2480,30 +2383,40 @@ export default function LessonPlayerPage() {
                   Unit {activeIndex + 1} of {allUnits.length}
                 </span>
 
-                {/* End-of-Course Final Assessment CTA */}
+                {/* Unified Progression Action Button */}
                 {activeIndex === allUnits.length - 2 && course?.final_assessment ? (
                   <button
                     type="button"
-                    onClick={handleNextUnit}
+                    onClick={handleCompleteAndNext}
                     className="px-6 py-2.5 rounded-xl text-xs font-mono font-bold flex items-center space-x-2 border border-[#FF7A00] bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] cursor-pointer shadow-[0_0_20px_rgba(255,122,0,0.5)] transition-all animate-pulse"
                   >
                     <Shield className="w-4 h-4" />
-                    <span>Take Final Assessment (50 MCQs)</span>
+                    <span>Complete Unit &amp; Enter Final Exam (50 MCQs)</span>
                     <ChevronRight className="w-4 h-4 stroke-[3]" />
                   </button>
                 ) : activeIndex >= allUnits.length - 1 ? (
-                  <div className="flex items-center space-x-2">
-                    <span className="text-xs font-mono text-[#FF7A00] font-bold">
-                      Curriculum Completed
-                    </span>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={handleMarkLessonComplete}
+                    disabled={isLessonCompleted || savingProgress}
+                    className={`px-5 py-2.5 rounded-xl text-xs font-mono font-bold flex items-center space-x-2 border transition-all ${
+                      isLessonCompleted
+                        ? 'bg-[#1A1208] text-[#FF7A00] border-[#FF7A00]/40'
+                        : 'border-[#FF7A00] bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] cursor-pointer shadow-[0_0_15px_rgba(255,122,0,0.3)]'
+                    }`}
+                  >
+                    <Check className="w-4 h-4 stroke-[3]" />
+                    <span>{isLessonCompleted ? 'Unit Completed' : savingProgress ? 'Saving...' : 'Complete Unit'}</span>
+                  </button>
                 ) : (
                   <button
                     type="button"
-                    onClick={handleNextUnit}
-                    className="px-5 py-2.5 rounded-xl text-xs font-mono font-bold flex items-center space-x-2 border border-[#FF7A00] bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] cursor-pointer shadow-[0_0_15px_rgba(255,122,0,0.3)] transition-all"
+                    onClick={handleCompleteAndNext}
+                    disabled={savingProgress}
+                    className="px-5 py-2.5 rounded-xl text-xs font-mono font-bold flex items-center space-x-2 border border-[#FF7A00] bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] cursor-pointer shadow-[0_0_18px_rgba(255,122,0,0.35)] transition-all"
                   >
-                    <span>Next</span>
+                    <Check className="w-4 h-4 stroke-[3]" />
+                    <span>{isLessonCompleted ? 'Unit Completed • Next' : savingProgress ? 'Saving...' : 'Complete & Next'}</span>
                     <ChevronRight className="w-4 h-4 stroke-[3]" />
                   </button>
                 )}

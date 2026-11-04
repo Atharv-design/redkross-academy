@@ -149,13 +149,11 @@ export default function CyberLabDesktopWindow({
   onMinimize,
   onRestore
 }) {
-  // Sizing & Position State
   const [isMaximized, setIsMaximized] = useState(false);
   const [position, setPosition] = useState({ x: 70, y: 35 });
   const [isDragging, setIsDragging] = useState(false);
   const dragRef = useRef({ startX: 0, startY: 0, initialPosX: 0, initialPosY: 0 });
 
-  // Boot Screen State (Authentic system startup on first load or reboot)
   const [isBooting, setIsBooting] = useState(true);
   const [bootProgress, setBootProgress] = useState(15);
   const [bootLogLines, setBootLogLines] = useState([
@@ -163,7 +161,6 @@ export default function CyberLabDesktopWindow({
     '[  OK  ] Initializing lab-isolated bridge (Subnet: 10.10.11.0/24)...'
   ]);
 
-  // Active Applications on Desktop Canvas (CLEAN BY DEFAULT: null means no window is open)
   const [activeWindow, setActiveWindow] = useState(null); // null | 'terminal' | 'browser'
   const [activeWorkspace, setActiveWorkspace] = useState(1);
   const [isApplicationsMenuOpen, setIsApplicationsMenuOpen] = useState(false);
@@ -171,7 +168,6 @@ export default function CyberLabDesktopWindow({
   const [appSearchQuery, setAppSearchQuery] = useState('');
   const [appMenuCategory, setAppMenuCategory] = useState('favorites');
 
-  // Real Desktop Folders & Files (Working folder & file creation)
   const [desktopItems, setDesktopItems] = useState([
     { id: 'trash', name: 'Trash', type: 'trash' },
     { id: 'filesystem', name: 'File System', type: 'system' },
@@ -179,10 +175,8 @@ export default function CyberLabDesktopWindow({
   ]);
   const [selectedDesktopItemId, setSelectedDesktopItemId] = useState(null);
 
-  // Desktop Context Menu (Right Click)
   const [contextMenu, setContextMenu] = useState(null); // { x, y }
 
-  // Live Dynamic Clock (Formatted like Image 2: "Nov 3  01:00")
   const [currentTimeStr, setCurrentTimeStr] = useState('Nov 3  01:00');
 
   useEffect(() => {
@@ -199,13 +193,11 @@ export default function CyberLabDesktopWindow({
     return () => clearInterval(interval);
   }, []);
 
-  // In-Desktop Web Browser (Target Range: Juice Shop, DVWA, WebGoat, VAmPI)
   const [browserTab, setBrowserTab] = useState('juiceshop'); // 'juiceshop' | 'dvwa' | 'webgoat' | 'vampi'
   const [juiceSearchQuery, setJuiceSearchQuery] = useState('');
   const [juiceCartCount, setJuiceCartCount] = useState(0);
   const [juiceNotification, setJuiceNotification] = useState(null);
 
-  // DVWA Interactive States
   const [dvwaUsername, setDvwaUsername] = useState('admin');
   const [dvwaPassword, setDvwaPassword] = useState('password');
   const [dvwaIsLoggedIn, setDvwaIsLoggedIn] = useState(false);
@@ -213,7 +205,6 @@ export default function CyberLabDesktopWindow({
   const [dvwaSqliId, setDvwaSqliId] = useState('1');
   const [dvwaSqliResult, setDvwaSqliResult] = useState(null);
 
-  // In-Desktop Kali Terminal State (Authentic fastfetch neofetch on launch)
   const [terminalHistory, setTerminalHistory] = useState([
     {
       type: 'neofetch',
@@ -241,7 +232,6 @@ export default function CyberLabDesktopWindow({
   const terminalScrollRef = useRef(null);
   const terminalInputRef = useRef(null);
 
-  // Center window on initial viewport mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const defaultX = Math.max(16, Math.floor((window.innerWidth - 960) / 2));
@@ -250,7 +240,6 @@ export default function CyberLabDesktopWindow({
     }
   }, []);
 
-  // Boot sequence simulation
   useEffect(() => {
     if (!isOpen) return;
     if (isBooting) {
@@ -284,7 +273,6 @@ export default function CyberLabDesktopWindow({
 
       const timer4 = setTimeout(() => {
         setIsBooting(false);
-        // Ensure desktop starts completely clean!
         setActiveWindow(null);
       }, 1250);
 
@@ -297,7 +285,6 @@ export default function CyberLabDesktopWindow({
     }
   }, [isOpen, isBooting]);
 
-  // Restart / Reboot Kali function
   const handleRebootKali = () => {
     setIsBooting(true);
     setBootProgress(10);
@@ -311,7 +298,6 @@ export default function CyberLabDesktopWindow({
     setContextMenu(null);
   };
 
-  // Close context menu on global click
   useEffect(() => {
     const handleGlobalClick = (e) => {
       if (!e.target.closest('#desktop-context-menu')) {
@@ -328,14 +314,12 @@ export default function CyberLabDesktopWindow({
     return () => window.removeEventListener('click', handleGlobalClick);
   }, []);
 
-  // Auto-scroll terminal
   useEffect(() => {
     if (terminalScrollRef.current) {
       terminalScrollRef.current.scrollTop = terminalScrollRef.current.scrollHeight;
     }
   }, [terminalHistory, terminalExecuting]);
 
-  // Pointer dragging handlers for title bar
   const handlePointerDown = (e) => {
     if (isMaximized) return;
     if (e.target.closest('button') || e.target.closest('input')) return;
@@ -370,7 +354,6 @@ export default function CyberLabDesktopWindow({
     }
   };
 
-  // Desktop Right Click handler (Opens authentic desktop context menu)
   const handleDesktopContextMenu = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -384,7 +367,6 @@ export default function CyberLabDesktopWindow({
     });
   };
 
-  // Real Folder & File Creation on Desktop
   const handleCreateFolder = () => {
     const folderCount = desktopItems.filter((i) => i.type === 'folder').length;
     const folderName = folderCount === 0 ? 'New Folder' : `New Folder (${folderCount})`;
@@ -419,14 +401,12 @@ export default function CyberLabDesktopWindow({
     }
   };
 
-  // Curved Autocomplete Suggestions for ALL 143+ Commands
   const suggestions = useMemo(() => {
     const q = terminalInput.trim().toLowerCase();
     if (!q) return [];
 
     const matches = [];
 
-    // All 143 Scribd & Lab Commands
     const allKnownCmds = [
       { cmd: 'ls', desc: 'List directory contents', cat: 'Basic' },
       { cmd: 'ls -la', desc: 'List all files including hidden with permissions', cat: 'Basic' },
@@ -522,7 +502,6 @@ export default function CyberLabDesktopWindow({
       }
     });
 
-    // Also pull matches from verified 340+ command vault
     const vaultMatches = searchCyberCommands({ query: q }).slice(0, 8);
     vaultMatches.forEach((vc) => {
       if (!matches.some((m) => m.command === vc.command)) {
@@ -538,7 +517,6 @@ export default function CyberLabDesktopWindow({
     return matches.slice(0, 6);
   }, [terminalInput]);
 
-  // Terminal submission
   const handleTerminalSubmit = (e) => {
     e?.preventDefault();
     const cmd = terminalInput.trim();
@@ -627,7 +605,6 @@ export default function CyberLabDesktopWindow({
     }, 180);
   };
 
-  // Keyboard navigation for suggestions
   const handleTerminalKeyDown = (e) => {
     if (suggestions.length > 0) {
       if (e.key === 'ArrowDown') {
@@ -651,7 +628,6 @@ export default function CyberLabDesktopWindow({
     }
   };
 
-  // Run quick helper command
   const runQuickCommand = (cmd) => {
     setActiveWindow('terminal');
     setTerminalInput(cmd);
@@ -671,7 +647,6 @@ export default function CyberLabDesktopWindow({
     }, 180);
   };
 
-  // Handle DVWA Login
   const handleDvwaLogin = (e) => {
     e.preventDefault();
     if (dvwaUsername.trim() === 'admin' && dvwaPassword.trim() === 'password') {
@@ -681,7 +656,6 @@ export default function CyberLabDesktopWindow({
     }
   };
 
-  // Handle DVWA SQLi submit
   const handleDvwaSqliSubmit = (e) => {
     e.preventDefault();
     const val = dvwaSqliId.trim();
@@ -702,13 +676,11 @@ export default function CyberLabDesktopWindow({
     }
   };
 
-  // Filtered Juice Shop products
   const filteredJuiceProducts = JUICE_SHOP_PRODUCTS.filter((p) =>
     p.name.toLowerCase().includes(juiceSearchQuery.toLowerCase()) ||
     p.description.toLowerCase().includes(juiceSearchQuery.toLowerCase())
   );
 
-  // MITRE / Kali categories from Whisker menu
   const WHISKER_CATEGORIES = [
     { id: 'favorites', label: 'Favorites', icon: Star },
     { id: 'recent', label: 'Recently Used', icon: Clock },
@@ -726,7 +698,6 @@ export default function CyberLabDesktopWindow({
 
   if (!isOpen) return null;
 
-  // Minimized Floating Pill at Bottom Dock
   if (isMinimized) {
     return (
       <div className="fixed bottom-5 right-24 z-50 animate-fadeIn">

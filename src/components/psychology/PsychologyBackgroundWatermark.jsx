@@ -17,42 +17,42 @@ export default function PsychologyBackgroundWatermark() {
       className="fixed inset-0 pointer-events-none z-0 overflow-hidden flex items-center justify-center select-none"
     >
       {/* 1. Subtle Center Ambient Glow Blooms */}
-      <div className="absolute w-[580px] h-[580px] bg-[#2dd4bf]/[0.035] rounded-full blur-[140px]" />
-      <div className="absolute w-[440px] h-[440px] bg-[#0d9488]/[0.04] rounded-full blur-[120px]" />
+      <div className="absolute w-[580px] h-[580px] bg-[#FF7A00]/[0.04] rounded-full blur-[140px]" />
+      <div className="absolute w-[440px] h-[440px] bg-[#FFA439]/[0.03] rounded-full blur-[120px]" />
 
       {/* 2. Zen Hairline Crosshair Axes */}
-      <div className="absolute w-full h-[1px] bg-gradient-to-r from-transparent via-teal-400/[0.08] to-transparent" />
-      <div className="absolute h-full w-[1px] bg-gradient-to-b from-transparent via-teal-400/[0.08] to-transparent" />
+      <div className="absolute w-full h-[1px] bg-gradient-to-r from-transparent via-[#FF7A00]/[0.12] to-transparent" />
+      <div className="absolute h-full w-[1px] bg-gradient-to-b from-transparent via-[#FF7A00]/[0.12] to-transparent" />
 
       {/* 3. Outer Concentric Zen Ripple Ring (680px diameter) */}
-      <div className="absolute w-[680px] h-[680px] rounded-full border border-teal-400/[0.12] shadow-[0_0_20px_rgba(45,212,191,0.05)] animate-[spin_320s_linear_infinite]">
+      <div className="absolute w-[680px] h-[680px] rounded-full border border-[#FF7A00]/[0.15] shadow-[0_0_20px_rgba(255,122,0,0.05)] animate-[spin_320s_linear_infinite]">
         {/* Cardinal Axis Markers */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3 h-[2px] bg-teal-400/50 shadow-[0_0_6px_rgba(45,212,191,0.6)]" />
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3 h-[2px] bg-teal-400/50 shadow-[0_0_6px_rgba(45,212,191,0.6)]" />
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 h-3 w-[2px] bg-teal-400/50 shadow-[0_0_6px_rgba(45,212,191,0.6)]" />
-        <div className="absolute right-0 top-1/2 -translate-y-1/2 h-3 w-[2px] bg-teal-400/50 shadow-[0_0_6px_rgba(45,212,191,0.6)]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3 h-[2px] bg-[#FF7A00]/60 shadow-[0_0_6px_rgba(255,122,0,0.6)]" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3 h-[2px] bg-[#FF7A00]/60 shadow-[0_0_6px_rgba(255,122,0,0.6)]" />
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 h-3 w-[2px] bg-[#FF7A00]/60 shadow-[0_0_6px_rgba(255,122,0,0.6)]" />
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 h-3 w-[2px] bg-[#FF7A00]/60 shadow-[0_0_6px_rgba(255,122,0,0.6)]" />
       </div>
 
       {/* 4. Middle Concentric Ring (Faint Dashed Guide - 520px) */}
-      <div className="absolute w-[520px] h-[520px] rounded-full border border-teal-400/[0.08] border-dashed" />
+      <div className="absolute w-[520px] h-[520px] rounded-full border border-[#FF7A00]/[0.10] border-dashed" />
 
       {/* 5. Inner Orbit Ring (380px) */}
-      <div className="absolute w-[380px] h-[380px] rounded-full border border-teal-400/[0.10]" />
+      <div className="absolute w-[380px] h-[380px] rounded-full border border-[#FF7A00]/[0.12]" />
 
       {/* 6. Soft Bottom Arc Laser Tangent Line */}
       <div 
-        className="absolute w-[720px] h-[1px] bg-gradient-to-r from-transparent via-teal-400/20 to-transparent pointer-events-none"
+        className="absolute w-[720px] h-[1px] bg-gradient-to-r from-transparent via-[#FF7A00]/25 to-transparent pointer-events-none"
         style={{ transform: 'translateY(340px)' }}
       />
 
-      {/* 7. Centered RedKross Psychology Crest Watermark (Strictly in Turquoise/Teal Theme) */}
+      {/* 7. Centered RedKross Psychology Crest Watermark */}
       <div className="relative z-10 flex items-center justify-center">
         <img 
           src="/assets/logo-psychology-watermark.png" 
           alt=""
-          className="w-[280px] sm:w-[420px] md:w-[500px] lg:w-[580px] h-auto object-contain opacity-[0.22] transition-opacity duration-1000 pointer-events-none"
+          className="w-[280px] sm:w-[420px] md:w-[500px] lg:w-[580px] h-auto object-contain opacity-[0.25] transition-opacity duration-1000 pointer-events-none"
           style={{
-            filter: 'drop-shadow(0 0 45px rgba(45, 212, 191, 0.45)) drop-shadow(0 0 90px rgba(13, 148, 136, 0.3))',
+            filter: 'drop-shadow(0 0 45px rgba(255, 122, 0, 0.45)) drop-shadow(0 0 90px rgba(255, 164, 57, 0.25))',
             maskImage: 'radial-gradient(circle at center, black 50%, transparent 85%)',
             WebkitMaskImage: 'radial-gradient(circle at center, black 50%, transparent 85%)'
           }}

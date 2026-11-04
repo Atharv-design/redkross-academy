@@ -46,7 +46,6 @@ export default function CockpitTerminalPanel({
   injectedCommand = null,
   onClearInjectedCommand = () => {}
 }) {
-  // Multi-terminal tabs state
   const [terminals, setTerminals] = useState([
     {
       id: 'term_1',
@@ -66,7 +65,6 @@ export default function CockpitTerminalPanel({
   ]);
   const [activeTermId, setActiveTermId] = useState('term_1');
 
-  // Modals & Drawers
   const [isVaultOpen, setIsVaultOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [copiedCmd, setCopiedCmd] = useState(null);
@@ -75,7 +73,6 @@ export default function CockpitTerminalPanel({
   const terminalEndRef = useRef(null);
   const inputRef = useRef(null);
 
-  // Global Ctrl+K / Cmd+K listener to toggle Command Vault
   useEffect(() => {
     const handleKeyDown = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
@@ -87,12 +84,10 @@ export default function CockpitTerminalPanel({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Auto-scroll to bottom on new terminal output
   useEffect(() => {
     terminalEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [activeTerminal?.history]);
 
-  // Handle injected command from external clicks
   useEffect(() => {
     if (injectedCommand && activeTerminal) {
       executeCommand(injectedCommand);
@@ -100,12 +95,10 @@ export default function CockpitTerminalPanel({
     }
   }, [injectedCommand]);
 
-  // Focus input when tab changes
   useEffect(() => {
     inputRef.current?.focus();
   }, [activeTermId]);
 
-  // Add new terminal instance
   const handleAddTerminal = () => {
     const newIdx = terminals.length + 1;
     const newTerm = {
@@ -127,7 +120,6 @@ export default function CockpitTerminalPanel({
     setActiveTermId(newTerm.id);
   };
 
-  // Close a terminal tab
   const handleCloseTerminal = (termIdToClose, e) => {
     e.stopPropagation();
     if (terminals.length <= 1) return; // Keep at least one
@@ -141,12 +133,10 @@ export default function CockpitTerminalPanel({
     });
   };
 
-  // Execute command via E2B Cloud Gateway
   const executeCommand = async (cmdToRun = null) => {
     const cmd = (cmdToRun !== null ? cmdToRun : activeTerminal.input).trim();
     if (!cmd) return;
 
-    // Reset input and add command line to history
     setTerminals((prev) =>
       prev.map((t) => {
         if (t.id === activeTermId) {
@@ -163,7 +153,6 @@ export default function CockpitTerminalPanel({
       })
     );
 
-    // Client-side built-ins
     if (cmd === 'clear') {
       setTerminals((prev) =>
         prev.map((t) => (t.id === activeTermId ? { ...t, history: [], isExecuting: false } : t))
@@ -285,7 +274,6 @@ Shortcut: Press Ctrl+K (or Cmd+K) to open the interactive Command Vault with 1-c
     }
   };
 
-  // Insert command into input field without executing
   const handleInsertCommand = (cmd) => {
     setTerminals((prev) =>
       prev.map((t) => (t.id === activeTermId ? { ...t, input: cmd } : t))
@@ -293,7 +281,6 @@ Shortcut: Press Ctrl+K (or Cmd+K) to open the interactive Command Vault with 1-c
     inputRef.current?.focus();
   };
 
-  // Keyboard navigation for command history (ArrowUp / ArrowDown)
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       executeCommand();
@@ -333,7 +320,6 @@ Shortcut: Press Ctrl+K (or Cmd+K) to open the interactive Command Vault with 1-c
     }
   };
 
-  // Dynamic chapter exercises derived from authoritative 340+ command vault
   const chapterCommands = getCommandsForModule(activeUnit?.moduleIndex ?? 0);
 
   return (

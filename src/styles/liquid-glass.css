@@ -18,7 +18,7 @@
 /* 2. Liquid Glass Navbar */
 .liquid-glass-nav,
 .ultra-glass-nav {
-  background: transparent;
+  background: transparent !important;
   backdrop-filter: blur(24px) saturate(190%);
   -webkit-backdrop-filter: blur(24px) saturate(190%);
   border-bottom: 1px solid rgba(255, 122, 0, 0.25);
@@ -282,3 +282,65 @@
 .ambient-aurora-bg {
   display: none;
 }
+
+/* =========================================================================
+   RedKross BlockNote Obsidian x Amber Orange Theme Overrides
+   ========================================================================= */
+.blocknote-redkross-theme .bn-container,
+.blocknote-redkross-theme .bn-editor {
+  background: transparent !important;
+  color: #F1F5F9 !important;
+  font-family: 'Lora', Georgia, serif !important;
+}
+
+.blocknote-redkross-theme .bn-block-content h1,
+.blocknote-redkross-theme .bn-block-content h2,
+.blocknote-redkross-theme .bn-block-content h3 {
+  color: #FFFFFF !important;
+  font-family: 'Lora', Georgia, serif !important;
+  font-weight: 700 !important;
+}
+
+.blocknote-redkross-theme .bn-block-content h1 {
+  font-size: 1.75rem !important;
+  color: #FFA439 !important;
+  margin-top: 1rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.blocknote-redkross-theme .bn-block-content h2 {
+  font-size: 1.35rem !important;
+  color: #FFFFFF !important;
+  border-bottom: 1px solid rgba(255, 122, 0, 0.2) !important;
+  padding-bottom: 0.35rem !important;
+  margin-top: 1.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.blocknote-redkross-theme .bn-block-content h3 {
+  font-size: 1.1rem !important;
+  color: #FFA439 !important;
+  margin-top: 1rem !important;
+}
+
+.blocknote-redkross-theme .bn-block-content[data-content-type="codeBlock"] pre {
+  background: rgba(8, 6, 4, 0.95) !important;
+  border: 1px solid rgba(255, 122, 0, 0.3) !important;
+  border-radius: 0.75rem !important;
+  color: #FFA439 !important;
+  padding: 1rem !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6) !important;
+}
+
+.blocknote-redkross-theme .bn-block-content[data-content-type="quote"] blockquote {
+  border-left: 3px solid #FF7A00 !important;
+  background: rgba(255, 122, 0, 0.08) !important;
+  color: #E2D9CE !important;
+  padding: 0.75rem 1rem !important;
+  border-radius: 0 0.5rem 0.5rem 0 !important;
+}
+
+.blocknote-redkross-theme .bn-block-content[data-content-type="checkListItem"] {
+  accent-color: #FF7A00 !important;
+}
+

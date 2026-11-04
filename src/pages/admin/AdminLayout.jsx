@@ -44,7 +44,6 @@ export default function AdminLayout() {
     securityAlerts: 1
   });
 
-  // Calculate live badge counts from mockEngine database
   const refreshLiveCounts = () => {
     try {
       const db = mockEngine.getDb();
@@ -75,7 +74,6 @@ export default function AdminLayout() {
     return () => unsubscribe();
   }, [location.pathname]);
 
-  // Global Cmd/Ctrl + K command palette listener
   useEffect(() => {
     const handleKeyDown = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
@@ -91,7 +89,6 @@ export default function AdminLayout() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Determine current page title in Lora Serif
   const getPageTitle = () => {
     const path = location.pathname;
     if (path.includes('/admin/courses')) return 'Course Management & Curriculum';
@@ -107,7 +104,6 @@ export default function AdminLayout() {
     return 'Executive Overview Dashboard';
   };
 
-  // Canonical admin tree items with live counts
   const treeNavItems = [
     {
       label: 'Overview',
@@ -175,7 +171,6 @@ export default function AdminLayout() {
     }
   ];
 
-  // Resolve active path for TreeNav
   const currentActivePath =
     location.pathname === '/admin' ? '/admin/dashboard' : location.pathname;
 
@@ -205,7 +200,7 @@ export default function AdminLayout() {
                 </span>
               </span>
               <span className="text-[10px] font-mono text-[#E2D9CE] tracking-widest block uppercase">
-                CYBER WORKSTATION
+                ADMIN CONSOLE
               </span>
             </div>
           </div>
@@ -213,7 +208,7 @@ export default function AdminLayout() {
           {/* TreeNav Section */}
           <div className="p-4 overflow-y-auto max-h-[calc(100vh-170px)] scrollbar-thin">
             <div className="mb-2 px-3 text-[10px] font-mono uppercase tracking-widest text-[#E2D9CE]/80 font-bold flex items-center justify-between">
-              <span>WORKSTATION DIRECTORY</span>
+              <span>ADMIN DIRECTORY</span>
               <span className="text-[9px] text-[#FF7A00] font-semibold">11 SECTIONS</span>
             </div>
 
@@ -275,7 +270,7 @@ export default function AdminLayout() {
               className="flex items-center gap-3 px-3 py-1.5 rounded-xl cyber-glass-input text-xs font-mono text-[#94A3B8] hover:text-white transition-all shadow-inner"
             >
               <Search className="w-3.5 h-3.5 text-[#FF7A00]" />
-              <span className="hidden sm:inline">Search Workstation...</span>
+              <span className="hidden sm:inline">Search Dashboard...</span>
               <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] rounded bg-white/[0.08] border border-white/[0.1] text-slate-300">
                 ⌘K
               </kbd>

@@ -37,12 +37,15 @@ import PsychologyAcademyNavbar from '../../components/psychology/PsychologyAcade
 import PsychologyAcademyFooter from '../../components/psychology/PsychologyAcademyFooter';
 import PsychologyBackgroundWatermark from '../../components/psychology/PsychologyBackgroundWatermark';
 import AmbienceAudioPlayer from '../../components/psychology/AmbienceAudioPlayer';
+import CyberCloudsBackground from '../../components/common/CyberCloudsBackground';
+import CyberShaderBackground from '../../components/ui/CyberShaderBackground';
+import Footer from '../../components/common/Footer';
 import { mockEngine } from '../../services/db/mockEngine';
 import { useAuth } from '../../services/auth/authContext';
 import { PSYCHOLOGY_COURSES } from '../../services/db/psychologyCourses';
 
 /**
- * PsychologyStudentDashboard — Dedicated In-Branch Clinical Practitioner Workstation
+ * PsychologyStudentDashboard — Dedicated In-Branch Clinical Student Dashboard
  * Route: /academy/psychology/student
  * Features:
  * - Strict Academic Partitioning:
@@ -62,7 +65,6 @@ export default function PsychologyStudentDashboard() {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
 
-  // State
   const [stats, setStats] = useState({
     activeCourses: 0,
     completedLessons: 0,
@@ -75,7 +77,6 @@ export default function PsychologyStudentDashboard() {
   const [loading, setLoading] = useState(true);
   const [copiedHash, setCopiedHash] = useState(null);
 
-  // Reflection Journal State
   const [reflectionText, setReflectionText] = useState('');
   const [reflectionCategory, setReflectionCategory] = useState('Cognitive Formulation');
   const [reflectionEntries, setReflectionEntries] = useState([
@@ -94,16 +95,13 @@ export default function PsychologyStudentDashboard() {
   ]);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
-  // Calming Audio Ambience Launcher State
   const [audioFreq, setAudioFreq] = useState('528');
   const [isAudioActive, setIsAudioActive] = useState(false);
 
-  // Load Enrolments and Stats strictly scoped to 'psychology'
   const loadPractitionerData = () => {
     if (!currentUser?.id) return;
     try {
       setLoading(true);
-      // STRICT ACADEMIC PARTITIONING: Scoped strictly to 'psychology'
       const psychEnrolments = mockEngine.getEnrolmentsForUser(currentUser.id, 'psychology');
       const psychStats = mockEngine.getStudentStatsByDivision(currentUser.id, 'psychology');
 
@@ -127,14 +125,12 @@ export default function PsychologyStudentDashboard() {
     loadPractitionerData();
   }, [currentUser]);
 
-  // Copy SHA-256 Hash Helper
   const copyHash = (hash, id) => {
     navigator.clipboard?.writeText(hash);
     setCopiedHash(id);
     setTimeout(() => setCopiedHash(null), 2000);
   };
 
-  // Add Reflection Journal Entry
   const handleAddReflection = (e) => {
     e.preventDefault();
     if (!reflectionText.trim()) return;
@@ -152,7 +148,6 @@ export default function PsychologyStudentDashboard() {
     setTimeout(() => setSaveSuccess(false), 2500);
   };
 
-  // Active courses resolved from enrolments
   const activeCourseItems = useMemo(() => {
     return enrolments.map((enr) => {
       const course =
@@ -175,14 +170,17 @@ export default function PsychologyStudentDashboard() {
     });
   }, [enrolments]);
 
-  // Sample hash for deterministic certification proof when none awarded yet
   const sampleCertSha256 = '8c2f1d9a4e3b7c0f5a6b8d9e2f1a0b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a';
 
   return (
     <div
       data-academy-theme="psychology"
-      className="min-h-screen relative bg-[#06101B] text-slate-100 flex flex-col font-sans selection:bg-[#2DD4BF]/30 selection:text-white overflow-x-clip"
+      className="min-h-screen relative bg-transparent text-slate-100 flex flex-col font-sans selection:bg-[#FF7A00]/30 selection:text-white overflow-x-clip select-none"
     >
+      {/* 1. 3D Vanta Volumetric Clouds (Amber + Black Blending) */}
+      <CyberCloudsBackground />
+      {/* 2. WebGL Ray-Marching Fractal Particles (Amber + Black Blending) */}
+      <CyberShaderBackground />
       {/* 24/7 Crisis Help Strip */}
       <UrgentHelpStrip />
 
@@ -202,29 +200,29 @@ export default function PsychologyStudentDashboard() {
         <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
           <Link
             to="/academy/psychology"
-            className="hover:text-teal-300 transition-colors"
+            className="hover:text-[#FFA439] transition-colors"
           >
             Psychology Academy
           </Link>
           <span className="text-slate-600">/</span>
-          <span className="text-teal-300">Practitioner Workstation</span>
+          <span className="text-[#FFA439]">Student Dashboard</span>
         </div>
 
         {/* 1. PRACTITIONER TELEMETRY BANNER */}
-        <div className="relative p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#081726]/90 via-[#06121E]/95 to-[#040A12]/98 backdrop-blur-2xl border border-teal-500/30 shadow-[0_0_35px_rgba(45,212,191,0.15)] overflow-hidden">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#1A1208]/85 via-[#0E0C09]/90 to-[#070503]/95 backdrop-blur-2xl border border-[#FF7A00]/30 shadow-[0_0_35px_rgba(255,122,0,0.2)] overflow-hidden">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-[#FF7A00]/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             {/* Left: Practitioner Profile Identity */}
             <div className="space-y-3">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-950/70 border border-teal-500/35 text-[10px] font-mono font-bold text-teal-300 uppercase tracking-wider shadow-[0_0_12px_rgba(45,212,191,0.2)]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
-                  <span>PRACTITIONER WORKSTATION // CLINICAL PORTAL</span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1A1208]/70 border border-[#FF7A00]/35 text-[10px] font-mono font-bold text-[#FFA439] uppercase tracking-wider shadow-[0_0_12px_rgba(255,122,0,0.3)]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#FFA439] animate-pulse" />
+                  <span>STUDENT DASHBOARD // CLINICAL PORTAL</span>
                 </span>
-                <span className="px-2.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-[#06101B]/80 border border-teal-500/20 text-slate-300 flex items-center gap-1">
-                  <UserCheck className="w-3 h-3 text-teal-400" />
+                <span className="px-2.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-[#0E0C09]/80 border border-[#FF7A00]/20 text-slate-300 flex items-center gap-1">
+                  <UserCheck className="w-3 h-3 text-[#FFA439]" />
                   <span>VERIFIED DIVISION: CLINICAL PSYCHOLOGY &amp; BEHAVIORAL HEALTH</span>
                 </span>
               </div>
@@ -233,41 +231,41 @@ export default function PsychologyStudentDashboard() {
                 <h1 className="font-royal text-2xl sm:text-3xl lg:text-4xl font-black text-white">
                   {currentUser?.full_name || 'Clinical Practitioner'}
                 </h1>
-                <div className="text-xs font-mono text-teal-300/80 pt-1 flex items-center gap-3">
-                  <span>UNIFIED ID: <strong className="text-teal-200">{currentUser?.cadet_id || currentUser?.id || 'RK-CLIN-PRACTITIONER'}</strong></span>
+                <div className="text-xs font-mono text-[#FFA439]/80 pt-1 flex items-center gap-3">
+                  <span>UNIFIED ID: <strong className="text-amber-200">{currentUser?.cadet_id || currentUser?.id || 'RK-CLIN-PRACTITIONER'}</strong></span>
                   <span className="text-slate-600">•</span>
-                  <span>DIVISION: <strong className="text-teal-200">PSYCHOLOGY</strong></span>
+                  <span>DIVISION: <strong className="text-amber-200">PSYCHOLOGY</strong></span>
                 </div>
               </div>
             </div>
 
             {/* Right: Scoped Telemetry Telemetric Chips */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 lg:min-w-[480px]">
-              <div className="p-3.5 rounded-xl bg-[#06101B]/90 border border-teal-500/20 text-center">
-                <div className="text-[10px] font-mono text-teal-400 uppercase">ACTIVE COURSES</div>
+              <div className="p-3.5 rounded-xl bg-[#0E0C09]/90 border border-[#FF7A00]/20 text-center">
+                <div className="text-[10px] font-mono text-[#FFA439] uppercase">ACTIVE COURSES</div>
                 <div className="text-xl sm:text-2xl font-bold font-mono text-white mt-0.5">
                   {stats.activeCourses}
                 </div>
                 <div className="text-[10px] text-slate-400">Clinical Practicums</div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-[#06101B]/90 border border-teal-500/20 text-center">
-                <div className="text-[10px] font-mono text-teal-400 uppercase">COMPLETED UNITS</div>
+              <div className="p-3.5 rounded-xl bg-[#0E0C09]/90 border border-[#FF7A00]/20 text-center">
+                <div className="text-[10px] font-mono text-[#FFA439] uppercase">COMPLETED UNITS</div>
                 <div className="text-xl sm:text-2xl font-bold font-mono text-white mt-0.5">
                   {stats.completedLessons}
                 </div>
                 <div className="text-[10px] text-slate-400">Clinical Lessons</div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-[#06101B]/90 border border-teal-500/20 text-center">
-                <div className="text-[10px] font-mono text-teal-400 uppercase">CLINICAL SCORE</div>
-                <div className="text-xl sm:text-2xl font-bold font-mono text-teal-300 mt-0.5">
+              <div className="p-3.5 rounded-xl bg-[#0E0C09]/90 border border-[#FF7A00]/20 text-center">
+                <div className="text-[10px] font-mono text-[#FFA439] uppercase">CLINICAL SCORE</div>
+                <div className="text-xl sm:text-2xl font-bold font-mono text-[#FFA439] mt-0.5">
                   {stats.averageScore ? `${stats.averageScore}%` : '—'}
                 </div>
                 <div className="text-[10px] text-slate-400">Quiz &amp; Exam Mean</div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-[#06101B]/90 border border-teal-500/20 text-center">
+              <div className="p-3.5 rounded-xl bg-[#0E0C09]/90 border border-[#FF7A00]/20 text-center">
                 <div className="text-[10px] font-mono text-amber-400 uppercase">CREDENTIALS</div>
                 <div className="text-xl sm:text-2xl font-bold font-mono text-amber-300 mt-0.5">
                   {stats.certificatesCount || (stats.certificates ? stats.certificates.length : 0)}
@@ -282,17 +280,17 @@ export default function PsychologyStudentDashboard() {
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Brain className="w-5 h-5 text-teal-400" />
+              <Brain className="w-5 h-5 text-[#FFA439]" />
               <h2 className="font-royal text-xl sm:text-2xl font-bold text-white">
                 Active Clinical Practicum Progress
               </h2>
             </div>
             <Link
               to="/academy/psychology"
-              className="text-xs font-mono text-teal-300 hover:text-white flex items-center gap-1 transition-colors"
+              className="text-xs font-mono text-[#FFA439] hover:text-white flex items-center gap-1 transition-colors"
             >
               <span>Explore All Psychology Tracks</span>
-              <ArrowRight className="w-3.5 h-3.5 text-teal-400" />
+              <ArrowRight className="w-3.5 h-3.5 text-[#FFA439]" />
             </Link>
           </div>
 
@@ -301,11 +299,11 @@ export default function PsychologyStudentDashboard() {
               {activeCourseItems.map(({ enrolment, course, progress, completedCount }) => (
                 <div
                   key={enrolment.id}
-                  className="p-6 rounded-2xl bg-[#081524]/85 backdrop-blur-xl border border-teal-500/25 hover:border-teal-400/40 transition-all shadow-xl shadow-black/40 space-y-4 flex flex-col justify-between"
+                  className="p-6 rounded-2xl bg-[#0E0C09]/85 backdrop-blur-xl border border-[#FF7A00]/25 hover:border-[#FFA439]/40 transition-all shadow-xl shadow-black/40 space-y-4 flex flex-col justify-between"
                 >
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-xs font-mono">
-                      <span className="px-2.5 py-0.5 rounded bg-teal-950/60 text-teal-300 border border-teal-500/30">
+                      <span className="px-2.5 py-0.5 rounded bg-[#1A1208]/60 text-[#FFA439] border border-[#FF7A00]/30">
                         {course.difficulty || 'Intermediate'}
                       </span>
                       <span className="text-slate-400 font-mono text-[11px]">
@@ -326,11 +324,11 @@ export default function PsychologyStudentDashboard() {
                   <div className="space-y-2 pt-2">
                     <div className="flex items-center justify-between text-xs font-mono">
                       <span className="text-slate-300">Practicum Syllabus Progress</span>
-                      <span className="text-teal-300 font-bold">{progress}%</span>
+                      <span className="text-[#FFA439] font-bold">{progress}%</span>
                     </div>
-                    <div className="w-full h-2 rounded-full bg-[#06101B] overflow-hidden border border-teal-500/20">
+                    <div className="w-full h-2 rounded-full bg-[#0E0C09] overflow-hidden border border-[#FF7A00]/20">
                       <div
-                        className="h-full bg-gradient-to-r from-teal-500 to-teal-400 rounded-full transition-all duration-500"
+                        className="h-full bg-gradient-to-r from-[#FF7A00] to-[#FFA439] rounded-full transition-all duration-500"
                         style={{ width: `${progress}%` }}
                       />
                     </div>
@@ -341,10 +339,10 @@ export default function PsychologyStudentDashboard() {
                   </div>
 
                   {/* Actions Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2 border-t border-teal-500/15">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2 border-t border-[#FF7A00]/15">
                     <Link
                       to={`/student/course/${course.id}`}
-                      className="py-2.5 px-3 rounded-xl bg-teal-500 text-[#06101B] font-mono font-bold text-xs hover:bg-teal-400 transition-colors flex items-center justify-center gap-1.5 shadow-md shadow-teal-950/50"
+                      className="py-2.5 px-3 rounded-xl bg-gradient-to-r from-[#FF7A00] to-[#E56A00] text-black font-mono font-bold text-xs hover:bg-[#FFA439] transition-colors flex items-center justify-center gap-1.5 shadow-md shadow-black/50"
                     >
                       <Play className="w-3.5 h-3.5 text-[#06101B] fill-current" />
                       <span>Enter Classroom</span>
@@ -352,9 +350,9 @@ export default function PsychologyStudentDashboard() {
 
                     <Link
                       to={`/academy/psychology/courses/${course.slug || course.id}`}
-                      className="py-2.5 px-3 rounded-xl bg-[#06101B]/80 border border-teal-500/30 text-slate-300 hover:text-white hover:border-teal-400 font-mono text-xs transition-colors flex items-center justify-center gap-1.5"
+                      className="py-2.5 px-3 rounded-xl bg-[#0E0C09]/80 border border-[#FF7A00]/30 text-slate-300 hover:text-white hover:border-[#FFA439] font-mono text-xs transition-colors flex items-center justify-center gap-1.5"
                     >
-                      <BookOpen className="w-3.5 h-3.5 text-teal-400" />
+                      <BookOpen className="w-3.5 h-3.5 text-[#FFA439]" />
                       <span>Syllabus</span>
                     </Link>
 
@@ -370,8 +368,8 @@ export default function PsychologyStudentDashboard() {
               ))}
             </div>
           ) : (
-            <div className="p-8 rounded-2xl bg-[#081524]/85 backdrop-blur-xl border border-teal-500/25 text-center space-y-4">
-              <Brain className="w-12 h-12 text-teal-400 mx-auto opacity-70" />
+            <div className="p-8 rounded-2xl bg-[#0E0C09]/85 backdrop-blur-xl border border-[#FF7A00]/25 text-center space-y-4">
+              <Brain className="w-12 h-12 text-[#FFA439] mx-auto opacity-70" />
               <div className="space-y-1">
                 <h3 className="font-royal text-lg font-bold text-white">
                   No Active Clinical Enrolments Found
@@ -382,7 +380,7 @@ export default function PsychologyStudentDashboard() {
               </div>
               <Link
                 to="/academy/psychology/courses/cognitive-behavioral-therapy-foundations-practice"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-teal-500 text-[#06101B] font-mono font-bold text-xs hover:bg-teal-400 transition-colors shadow-lg shadow-teal-950/50"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#FF7A00] to-[#E56A00] text-black font-mono font-bold text-xs hover:bg-[#FFA439] transition-colors shadow-lg shadow-black/50"
               >
                 <span>Enrol in CBT Foundations Track (Free)</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -394,7 +392,7 @@ export default function PsychologyStudentDashboard() {
         {/* 3. CLINICAL REFLECTION & CASE NOTES WORKSPACE SECTION */}
         <section className="space-y-6">
           <div className="flex items-center gap-2">
-            <Feather className="w-5 h-5 text-teal-400" />
+            <Feather className="w-5 h-5 text-[#FFA439]" />
             <h2 className="font-royal text-xl sm:text-2xl font-bold text-white">
               Clinical Reflection &amp; Case Notes Workspace
             </h2>
@@ -403,10 +401,10 @@ export default function PsychologyStudentDashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Left 7 Cols: Reflection Journal Quick Entry & Recent Entries */}
             <div className="lg:col-span-7 space-y-4">
-              <div className="p-6 rounded-2xl bg-[#081524]/85 backdrop-blur-xl border border-teal-500/25 space-y-4">
+              <div className="p-6 rounded-2xl bg-[#0E0C09]/85 backdrop-blur-xl border border-[#FF7A00]/25 space-y-4">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-xs font-mono text-teal-300 font-bold uppercase">
-                    <FileText className="w-4 h-4 text-teal-400" />
+                  <div className="flex items-center gap-2 text-xs font-mono text-[#FFA439] font-bold uppercase">
+                    <FileText className="w-4 h-4 text-[#FFA439]" />
                     <span>Clinical Reflection Journal</span>
                   </div>
                   <span className="text-[10px] font-mono text-slate-400">
@@ -424,8 +422,8 @@ export default function PsychologyStudentDashboard() {
                         onClick={() => setReflectionCategory(cat)}
                         className={`px-2.5 py-1 rounded-md text-[10px] font-mono transition-colors cursor-pointer ${
                           reflectionCategory === cat
-                            ? 'bg-teal-500/25 text-teal-200 border border-teal-400/50'
-                            : 'bg-[#06101B]/80 text-slate-400 border border-white/5 hover:text-white'
+                            ? 'bg-[#FF7A00]/25 text-amber-200 border border-[#FFA439]/50'
+                            : 'bg-[#0E0C09]/80 text-slate-400 border border-white/5 hover:text-white'
                         }`}
                       >
                         {cat}
@@ -438,18 +436,18 @@ export default function PsychologyStudentDashboard() {
                     value={reflectionText}
                     onChange={(e) => setReflectionText(e.target.value)}
                     placeholder="Document clinical insights, Socratic dialogue observations, or Beckian formulation dilemmas for peer supervision..."
-                    className="w-full p-3.5 rounded-xl bg-[#06101B]/90 border border-teal-500/20 text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-teal-400/60 font-sans leading-relaxed resize-none"
+                    className="w-full p-3.5 rounded-xl bg-[#0E0C09]/90 border border-[#FF7A00]/20 text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-[#FFA439]/60 font-sans leading-relaxed resize-none"
                   />
 
                   <div className="flex items-center justify-between pt-1">
-                    <div className="text-[11px] font-mono text-teal-400/80">
+                    <div className="text-[11px] font-mono text-[#FFA439]/80">
                       {saveSuccess && <span>✓ Reflection saved to local supervisory record</span>}
                     </div>
 
                     <button
                       type="submit"
                       disabled={!reflectionText.trim()}
-                      className="px-4 py-2 rounded-xl bg-teal-500 hover:bg-teal-400 text-[#06101B] font-mono font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-40"
+                      className="px-4 py-2 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-[#06101B] font-mono font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-40"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       <span>Save Clinical Note</span>
@@ -467,10 +465,10 @@ export default function PsychologyStudentDashboard() {
                 {reflectionEntries.map((entry) => (
                   <div
                     key={entry.id}
-                    className="p-4 rounded-xl bg-[#081524]/60 border border-teal-500/15 space-y-1.5"
+                    className="p-4 rounded-xl bg-[#0E0C09]/60 border border-[#FF7A00]/15 space-y-1.5"
                   >
                     <div className="flex items-center justify-between text-[11px] font-mono">
-                      <span className="px-2 py-0.5 rounded bg-teal-950/60 text-teal-300 border border-teal-500/30">
+                      <span className="px-2 py-0.5 rounded bg-[#1A1208]/60 text-[#FFA439] border border-[#FF7A00]/30">
                         {entry.category}
                       </span>
                       <span className="text-slate-500">{entry.date}</span>
@@ -486,10 +484,10 @@ export default function PsychologyStudentDashboard() {
             {/* Right 5 Cols: Case Formulation Organizer & Calming Audio Ambience */}
             <div className="lg:col-span-5 space-y-4">
               {/* Case Formulation Organizer */}
-              <div className="p-6 rounded-2xl bg-[#081524]/85 backdrop-blur-xl border border-teal-500/25 space-y-4">
+              <div className="p-6 rounded-2xl bg-[#0E0C09]/85 backdrop-blur-xl border border-[#FF7A00]/25 space-y-4">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-xs font-mono text-teal-300 font-bold uppercase">
-                    <Compass className="w-4 h-4 text-teal-400" />
+                  <div className="flex items-center gap-2 text-xs font-mono text-[#FFA439] font-bold uppercase">
+                    <Compass className="w-4 h-4 text-[#FFA439]" />
                     <span>Case Study Notes Organizer</span>
                   </div>
                   <span className="text-[10px] font-mono text-amber-300">
@@ -497,7 +495,7 @@ export default function PsychologyStudentDashboard() {
                   </span>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-[#06101B]/90 border border-teal-500/20 space-y-2">
+                <div className="p-3.5 rounded-xl bg-[#0E0C09]/90 border border-[#FF7A00]/20 space-y-2">
                   <div className="text-xs font-bold text-white flex items-center justify-between font-royal">
                     <span>Case #2026-A // Generalized Anxiety</span>
                     <span className="text-[10px] font-mono text-slate-400">28y F</span>
@@ -505,10 +503,10 @@ export default function PsychologyStudentDashboard() {
 
                   <div className="space-y-1.5 text-[11px] font-sans text-slate-300">
                     <div>
-                      <strong className="text-teal-300">Beckian Triad:</strong> Self: "I am fragile" • World: "Demands are catastrophic" • Future: "I will inevitably burn out"
+                      <strong className="text-[#FFA439]">Beckian Triad:</strong> Self: "I am fragile" • World: "Demands are catastrophic" • Future: "I will inevitably burn out"
                     </div>
                     <div>
-                      <strong className="text-teal-300">Identified Distortions:</strong> Catastrophizing &amp; Black-and-White Thinking
+                      <strong className="text-[#FFA439]">Identified Distortions:</strong> Catastrophizing &amp; Black-and-White Thinking
                     </div>
                     <div>
                       <strong className="text-amber-300">Intervention:</strong> 7-Column Thought Record + Graded In-Vivo Exposure (SUDS 45 → 15)
@@ -522,13 +520,13 @@ export default function PsychologyStudentDashboard() {
               </div>
 
               {/* Calming Therapeutic Audio Ambience Launcher */}
-              <div className="p-6 rounded-2xl bg-[#081524]/85 backdrop-blur-xl border border-teal-500/25 space-y-4">
+              <div className="p-6 rounded-2xl bg-[#0E0C09]/85 backdrop-blur-xl border border-[#FF7A00]/25 space-y-4">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-xs font-mono text-teal-300 font-bold uppercase">
-                    <Music className="w-4 h-4 text-teal-400" />
+                  <div className="flex items-center gap-2 text-xs font-mono text-[#FFA439] font-bold uppercase">
+                    <Music className="w-4 h-4 text-[#FFA439]" />
                     <span>Therapeutic Audio Ambience</span>
                   </div>
-                  <span className="text-[10px] font-mono text-teal-400 flex items-center gap-1">
+                  <span className="text-[10px] font-mono text-[#FFA439] flex items-center gap-1">
                     <Volume2 className="w-3 h-3" />
                     <span>Active Synthesizer</span>
                   </span>
@@ -551,8 +549,8 @@ export default function PsychologyStudentDashboard() {
                       onClick={() => setAudioFreq(item.freq)}
                       className={`p-2.5 rounded-xl text-center transition-colors border cursor-pointer ${
                         audioFreq === item.freq
-                          ? 'bg-teal-500/20 border-teal-400/50 text-teal-200'
-                          : 'bg-[#06101B]/80 border-white/5 text-slate-400 hover:text-white'
+                          ? 'bg-[#FF7A00]/20 border-[#FFA439]/50 text-amber-200'
+                          : 'bg-[#0E0C09]/80 border-white/5 text-slate-400 hover:text-white'
                       }`}
                     >
                       <div className="text-xs font-mono font-bold">{item.label}</div>
@@ -561,9 +559,9 @@ export default function PsychologyStudentDashboard() {
                   ))}
                 </div>
 
-                <div className="p-3 rounded-xl bg-teal-950/40 border border-teal-500/25 flex items-center justify-between text-xs font-mono text-teal-200">
+                <div className="p-3 rounded-xl bg-[#1A1208]/40 border border-[#FF7A00]/25 flex items-center justify-between text-xs font-mono text-amber-200">
                   <span className="flex items-center gap-2">
-                    <Sparkles className="w-3.5 h-3.5 text-teal-400" />
+                    <Sparkles className="w-3.5 h-3.5 text-[#FFA439]" />
                     <span>Ambience Master: 72% Default Vol</span>
                   </span>
                   <span className="text-[10px] text-slate-400">Floating Docked Player</span>
@@ -577,17 +575,17 @@ export default function PsychologyStudentDashboard() {
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Award className="w-5 h-5 text-teal-400" />
+              <Award className="w-5 h-5 text-[#FFA439]" />
               <h2 className="font-royal text-xl sm:text-2xl font-bold text-white">
                 Clinical Practitioner Credentials &amp; Certifications
               </h2>
             </div>
             <Link
               to="/verify"
-              className="text-xs font-mono text-teal-300 hover:text-white flex items-center gap-1 transition-colors"
+              className="text-xs font-mono text-[#FFA439] hover:text-white flex items-center gap-1 transition-colors"
             >
               <span>Public Credential Ledger</span>
-              <ExternalLink className="w-3 h-3 text-teal-400" />
+              <ExternalLink className="w-3 h-3 text-[#FFA439]" />
             </Link>
           </div>
 
@@ -596,10 +594,10 @@ export default function PsychologyStudentDashboard() {
               {stats.certificates.map((cert) => (
                 <div
                   key={cert.id}
-                  className="p-6 rounded-2xl bg-[#081524]/85 backdrop-blur-xl border border-teal-500/35 hover:border-teal-400/50 transition-all shadow-xl shadow-black/50 space-y-4"
+                  className="p-6 rounded-2xl bg-[#0E0C09]/85 backdrop-blur-xl border border-[#FF7A00]/35 hover:border-[#FFA439]/50 transition-all shadow-xl shadow-black/50 space-y-4"
                 >
                   <div className="flex items-center justify-between text-xs font-mono">
-                    <span className="px-2.5 py-0.5 rounded bg-teal-950/60 text-teal-300 border border-teal-500/30">
+                    <span className="px-2.5 py-0.5 rounded bg-[#1A1208]/60 text-[#FFA439] border border-[#FF7A00]/30">
                       VERIFIED CREDENTIAL
                     </span>
                     <span className="text-slate-400">
@@ -611,34 +609,34 @@ export default function PsychologyStudentDashboard() {
                     <h3 className="font-royal text-lg font-bold text-white">
                       {cert.credential_title || cert.course_title || 'Certified Clinical Counseling Practitioner'}
                     </h3>
-                    <div className="text-xs font-mono text-teal-300/80 pt-0.5">
+                    <div className="text-xs font-mono text-[#FFA439]/80 pt-0.5">
                       Issued to: {cert.student_name || currentUser?.full_name} • Grade: {cert.grade_percentage || 88}%
                     </div>
                   </div>
 
                   {/* Tamper-Proof Cryptographic Signature Hash */}
-                  <div className="p-3 rounded-lg bg-black/60 border border-teal-500/25 space-y-1.5">
+                  <div className="p-3 rounded-lg bg-black/60 border border-[#FF7A00]/25 space-y-1.5">
                     <div className="flex items-center justify-between text-[10px] font-mono text-slate-400">
                       <span>SHA-256 DIGITAL SIGNATURE PROOF</span>
                       <button
                         type="button"
                         onClick={() => copyHash(cert.hash || sampleCertSha256, cert.id)}
-                        className="text-teal-300 hover:text-white flex items-center gap-1 cursor-pointer"
+                        className="text-[#FFA439] hover:text-white flex items-center gap-1 cursor-pointer"
                       >
                         {copiedHash === cert.id ? (
                           <>
-                            <Check className="w-3 h-3 text-teal-300" />
+                            <Check className="w-3 h-3 text-[#FFA439]" />
                             <span>COPIED</span>
                           </>
                         ) : (
                           <>
-                            <Copy className="w-3 h-3 text-teal-400" />
+                            <Copy className="w-3 h-3 text-[#FFA439]" />
                             <span>COPY HASH</span>
                           </>
                         )}
                       </button>
                     </div>
-                    <code className="text-xs font-mono text-teal-300 block truncate">
+                    <code className="text-xs font-mono text-[#FFA439] block truncate">
                       {cert.hash || sampleCertSha256}
                     </code>
                   </div>
@@ -646,10 +644,10 @@ export default function PsychologyStudentDashboard() {
                   <div className="pt-2 flex items-center justify-between">
                     <Link
                       to={`/verify/${cert.verification_id || cert.id}`}
-                      className="text-xs font-mono text-teal-300 hover:text-white flex items-center gap-1.5 transition-colors"
+                      className="text-xs font-mono text-[#FFA439] hover:text-white flex items-center gap-1.5 transition-colors"
                     >
                       <span>Inspect Public Verification Proof</span>
-                      <ExternalLink className="w-3.5 h-3.5 text-teal-400" />
+                      <ExternalLink className="w-3.5 h-3.5 text-[#FFA439]" />
                     </Link>
                     <span className="text-[10px] font-mono text-slate-500">
                       RCI-Aligned Ledger
@@ -659,10 +657,10 @@ export default function PsychologyStudentDashboard() {
               ))}
             </div>
           ) : (
-            <div className="p-6 sm:p-8 rounded-2xl bg-[#081524]/85 backdrop-blur-xl border border-teal-500/25 space-y-5">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-teal-500/15">
+            <div className="p-6 sm:p-8 rounded-2xl bg-[#0E0C09]/85 backdrop-blur-xl border border-[#FF7A00]/25 space-y-5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#FF7A00]/15">
                 <div>
-                  <div className="text-xs font-mono text-teal-400 uppercase">
+                  <div className="text-xs font-mono text-[#FFA439] uppercase">
                     CLINICAL CREDENTIAL REQUIREMENTS // STATUS PENDING
                   </div>
                   <h3 className="font-royal text-lg font-bold text-white pt-1">
@@ -673,40 +671,40 @@ export default function PsychologyStudentDashboard() {
                   </p>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-[#06101B]/90 border border-teal-500/20 text-center sm:min-w-[140px] flex-shrink-0">
-                  <div className="text-[10px] font-mono text-teal-400 uppercase">FINAL EXAM PASS</div>
-                  <div className="text-xl font-bold font-mono text-teal-300">≥ 80%</div>
+                <div className="p-3.5 rounded-xl bg-[#0E0C09]/90 border border-[#FF7A00]/20 text-center sm:min-w-[140px] flex-shrink-0">
+                  <div className="text-[10px] font-mono text-[#FFA439] uppercase">FINAL EXAM PASS</div>
+                  <div className="text-xl font-bold font-mono text-[#FFA439]">≥ 80%</div>
                   <div className="text-[10px] text-slate-400">Proctored Benchmark</div>
                 </div>
               </div>
 
               {/* Sample Credential Verification Proof */}
-              <div className="p-4 rounded-xl bg-[#06101B]/90 border border-teal-500/25 space-y-2">
+              <div className="p-4 rounded-xl bg-[#0E0C09]/90 border border-[#FF7A00]/25 space-y-2">
                 <div className="flex items-center justify-between text-xs font-mono text-slate-300">
-                  <span className="text-teal-300 font-bold flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-teal-400" />
+                  <span className="text-[#FFA439] font-bold flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-[#FFA439]" />
                     <span>DETERMINISTIC SHA-256 SIGNATURE DEMO</span>
                   </span>
                   <span className="text-[10px] text-slate-400">RedKross Cryptographic Ledger</span>
                 </div>
 
-                <div className="p-2.5 rounded-lg bg-black/60 border border-teal-500/20 flex items-center justify-between gap-3">
-                  <code className="text-xs font-mono text-teal-300 truncate">
+                <div className="p-2.5 rounded-lg bg-black/60 border border-[#FF7A00]/20 flex items-center justify-between gap-3">
+                  <code className="text-xs font-mono text-[#FFA439] truncate">
                     {sampleCertSha256}
                   </code>
                   <button
                     type="button"
                     onClick={() => copyHash(sampleCertSha256, 'sample')}
-                    className="px-2.5 py-1 rounded bg-teal-500/20 hover:bg-teal-500/30 text-teal-300 text-xs font-mono flex items-center gap-1 transition-colors flex-shrink-0 cursor-pointer"
+                    className="px-2.5 py-1 rounded bg-[#FF7A00]/20 hover:bg-[#FF7A00]/30 text-[#FFA439] text-xs font-mono flex items-center gap-1 transition-colors flex-shrink-0 cursor-pointer"
                   >
                     {copiedHash === 'sample' ? (
                       <>
-                        <Check className="w-3 h-3 text-teal-300" />
+                        <Check className="w-3 h-3 text-[#FFA439]" />
                         <span>COPIED</span>
                       </>
                     ) : (
                       <>
-                        <Copy className="w-3 h-3 text-teal-400" />
+                        <Copy className="w-3 h-3 text-[#FFA439]" />
                         <span>COPY PROOF</span>
                       </>
                     )}
@@ -714,10 +712,10 @@ export default function PsychologyStudentDashboard() {
                 </div>
 
                 <div className="flex items-center justify-between text-[11px] font-mono text-slate-400 pt-1">
-                  <span>Public verification endpoint: <code className="text-teal-400">/verify/:id</code></span>
-                  <Link to="/verify" className="text-teal-300 hover:text-white flex items-center gap-1">
+                  <span>Public verification endpoint: <code className="text-[#FFA439]">/verify/:id</code></span>
+                  <Link to="/verify" className="text-[#FFA439] hover:text-white flex items-center gap-1">
                     <span>Ledger Gateway</span>
-                    <ExternalLink className="w-3 h-3 text-teal-400" />
+                    <ExternalLink className="w-3 h-3 text-[#FFA439]" />
                   </Link>
                 </div>
               </div>
@@ -727,7 +725,7 @@ export default function PsychologyStudentDashboard() {
       </main>
 
       {/* Psychology In-Branch Footer */}
-      <PsychologyAcademyFooter />
+      <Footer />
     </div>
   );
 }

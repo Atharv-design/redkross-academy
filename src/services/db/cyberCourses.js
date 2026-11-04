@@ -23,7 +23,6 @@ export const CYBER_LEARNING_PATHS = [
   }
 ];
 
-// SIRF FULL STACK EK COURSE RAKHA HAI PER USER DIRECTIVE
 export const CYBER_COURSES = [
   {
     ...fullStackCourseJson,

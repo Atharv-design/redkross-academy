@@ -16,7 +16,6 @@ export default function CourseCardVariant({
 }) {
   if (!course) return null;
 
-  // Resolve stable variant index (0-9) from variantId ('variant-01' ... 'variant-10') or persistent card_variant
   const resolveVariantIndex = () => {
     const raw = variantId || course.card_variant;
     if (typeof raw === 'string') {

@@ -16,20 +16,17 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  // Destination protection: resolve safe internal return path
   const rawDestination = location.state?.from?.pathname || '/student';
   const safeDestination = rawDestination.startsWith('/') && !rawDestination.startsWith('//')
     ? rawDestination
     : '/student';
 
-  // If already authenticated, redirect immediately
   React.useEffect(() => {
     if (currentUser) {
       navigate(safeDestination, { replace: true });
     }
   }, [currentUser, navigate, safeDestination]);
 
-  // Triggers official Google OAuth browser popup directly
   const handleGoogleSignIn = async () => {
     setErrorMsg('');
     setLoading(true);

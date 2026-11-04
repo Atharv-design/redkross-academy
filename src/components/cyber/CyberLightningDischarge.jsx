@@ -41,12 +41,10 @@ export default function CyberLightningDischarge({ theme = 'amber' }) {
     handleResize();
     window.addEventListener('resize', handleResize);
 
-    // Cinematic Timing Constants
     const CYCLE_DURATION = 4200;      // 4.2 seconds total cycle
     const TRAVEL_OUT_DURATION = 2100; // 2.1 seconds smooth travel from middle to outer ring
     const ECHO_DURATION = 1300;       // 1.3 seconds soft return dissolve
 
-    // Procedural Lightning Bolt Generator (fine, delicate segments)
     function createBolt(startX, startY, targetX, targetY, displacement, iterations) {
       let segments = [{
         start: { x: startX, y: startY },
@@ -89,7 +87,6 @@ export default function CyberLightningDischarge({ theme = 'amber' }) {
             isBranch: seg.isBranch
           });
 
-          // Delicate small branch fork
           if (!seg.isBranch && Math.random() < 0.20 && i >= 1 && i <= 2) {
             const branchAngle = Math.atan2(dy, dx) + (Math.random() - 0.5) * 0.8;
             const branchLen = len * (0.28 + Math.random() * 0.28);
@@ -117,10 +114,8 @@ export default function CyberLightningDischarge({ theme = 'amber' }) {
 
     function spawnLightningCycle(centerX, centerY, outerR) {
       const bolts = [];
-      // "Middle se nikal": starts from the middle ring (approx 190px to 210px)
       const middleStartRadius = outerR * 0.58;
 
-      // 1. Primary downward bolts shooting from middle ring to the bottom outer arc
       const downwardAngles = [
         Math.PI * 0.40,
         Math.PI * 0.45,
@@ -135,7 +130,6 @@ export default function CyberLightningDischarge({ theme = 'amber' }) {
         const targetX = centerX + Math.cos(jitterAngle) * targetR;
         const targetY = centerY + Math.sin(jitterAngle) * targetR;
 
-        // Origin at the middle ring
         const startX = centerX + Math.cos(jitterAngle) * middleStartRadius;
         const startY = centerY + Math.sin(jitterAngle) * middleStartRadius;
 
@@ -147,7 +141,6 @@ export default function CyberLightningDischarge({ theme = 'amber' }) {
         });
       });
 
-      // 2. Radial ambient bolts in all other directions from the middle ring
       const radialAngles = [
         Math.PI * 0.12,
         Math.PI * 0.88,
@@ -174,7 +167,6 @@ export default function CyberLightningDischarge({ theme = 'amber' }) {
         });
       });
 
-      // 3. Ambient soft arc segments along the bottom outer curve
       const arcPoints = [];
       const startArcAngle = Math.PI * 0.36;
       const endArcAngle = Math.PI * 0.64;
@@ -198,7 +190,6 @@ export default function CyberLightningDischarge({ theme = 'amber' }) {
       return { bolts, arcSegs };
     }
 
-    // Initial setup
     const initialCenterX = width / 2;
     const initialCenterY = height / 2;
     const initialScale = Math.min(1, Math.max(0.65, (width - 40) / 680));
@@ -207,13 +198,11 @@ export default function CyberLightningDischarge({ theme = 'amber' }) {
     activeBolts = initialData.bolts;
     bottomArcSegments = initialData.arcSegs;
 
-    // Render Loop
     const render = (time) => {
       animId = requestAnimationFrame(render);
 
       const elapsed = time - lastCycleTime;
 
-      // Cycle restart at 4.2 seconds
       if (elapsed >= CYCLE_DURATION) {
         lastCycleTime = time;
         const cx = width / 2;
@@ -240,12 +229,10 @@ export default function CyberLightningDischarge({ theme = 'amber' }) {
       let travelProgress = 0;
       let baseAlpha = 0;
 
-      // Capped at ultra-faint ambient level ("halka kr": max ~0.13)
       const MAX_ALPHA = 0.13;
 
       if (cycleElapsed <= TRAVEL_OUT_DURATION) {
         const tNorm = cycleElapsed / TRAVEL_OUT_DURATION;
-        // Smooth sine ease-in-out
         travelProgress = 0.5 - 0.5 * Math.cos(Math.PI * tNorm);
         baseAlpha = Math.min(MAX_ALPHA, tNorm * MAX_ALPHA * 1.2);
       } else if (cycleElapsed <= TRAVEL_OUT_DURATION + ECHO_DURATION) {
@@ -261,7 +248,6 @@ export default function CyberLightningDischarge({ theme = 'amber' }) {
         return;
       }
 
-      // Very soft, gentle sine shimmer
       const shimmer = 0.92 + Math.sin(time * 0.006) * 0.08;
       const finalAlpha = baseAlpha * shimmer;
 
@@ -270,7 +256,6 @@ export default function CyberLightningDischarge({ theme = 'amber' }) {
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
 
-      // PASS 1: Ultra-Light Ambient Glow Filament
       ctx.shadowColor = glowOuter;
       ctx.shadowBlur = 8;
       ctx.strokeStyle = filamentColor;
@@ -289,7 +274,6 @@ export default function CyberLightningDischarge({ theme = 'amber' }) {
         ctx.stroke();
       }
 
-      // PASS 2: Delicate Faint Hairline Core
       ctx.shadowColor = coreGlow;
       ctx.shadowBlur = 3;
       ctx.strokeStyle = coreFilament;
@@ -308,7 +292,6 @@ export default function CyberLightningDischarge({ theme = 'amber' }) {
         ctx.stroke();
       }
 
-      // PASS 3: Soft Bottom Outer Arc Pulse (Only when wave reaches outer boundary)
       if (travelProgress > 0.8) {
         const arcProgress = (travelProgress - 0.8) / 0.2;
         const arcAlpha = finalAlpha * arcProgress * 0.6;

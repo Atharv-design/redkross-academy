@@ -49,12 +49,10 @@ export default function MovablePracticeTerminal({
   const [isMaximized, setIsMaximized] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  // Position & Dragging State
   const [position, setPosition] = useState({ x: 120, y: 70 });
   const [isDragging, setIsDragging] = useState(false);
   const dragRef = useRef({ startX: 0, startY: 0, initialPosX: 0, initialPosY: 0 });
 
-  // Multi-terminal tabs
   const [terminals, setTerminals] = useState([
     {
       id: 'term_1',
@@ -79,7 +77,6 @@ export default function MovablePracticeTerminal({
   const inputRef = useRef(null);
   const activeTerminal = terminals.find((t) => t.id === activeTermId) || terminals[0];
 
-  // Center window on initial load
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const defaultX = Math.max(16, Math.floor((window.innerWidth - 780) / 2));
@@ -88,7 +85,6 @@ export default function MovablePracticeTerminal({
     }
   }, []);
 
-  // Handle Injected Command from External triggers
   useEffect(() => {
     if (injectedCommand && activeTerminal) {
       setTerminals((prev) =>
@@ -107,21 +103,18 @@ export default function MovablePracticeTerminal({
     }
   }, [injectedCommand]);
 
-  // Auto-scroll terminal history to bottom
   useEffect(() => {
     if (terminalScrollRef.current) {
       terminalScrollRef.current.scrollTop = terminalScrollRef.current.scrollHeight;
     }
   }, [activeTerminal?.history, activeTerminal?.isExecuting]);
 
-  // Compute live command suggestions as cadet types
   const suggestions = useMemo(() => {
     const rawInput = (activeTerminal?.input || '').trimStart();
     if (!rawInput || rawInput.length === 0) return [];
 
     const lower = rawInput.toLowerCase();
 
-    // Standard built-in commands
     const builtins = [
       { command: 'commands', name: 'List all 9 categories & 340+ verified commands', category: 'help' },
       { command: 'commands recon', name: 'Network Reconnaissance & Scanning (35 commands)', category: 'recon' },
@@ -143,12 +136,10 @@ export default function MovablePracticeTerminal({
       { command: 'cat flag.txt', name: 'Inspect capture-the-flag artifact', category: 'system' }
     ];
 
-    // Filter built-ins
     const matchingBuiltins = builtins.filter((b) =>
       b.command.toLowerCase().includes(lower)
     );
 
-    // Filter 340+ vault commands
     const matchingVault = (CYBER_COMMAND_VAULT || []).filter((item) => {
       const cmdMatch = item.command.toLowerCase().includes(lower);
       const nameMatch = item.name.toLowerCase().includes(lower);
@@ -156,7 +147,6 @@ export default function MovablePracticeTerminal({
       return cmdMatch || nameMatch || tagMatch;
     });
 
-    // Merge and sort: commands starting with query rank higher
     const combined = [...matchingBuiltins, ...matchingVault];
     combined.sort((a, b) => {
       const aStarts = a.command.toLowerCase().startsWith(lower);
@@ -169,12 +159,10 @@ export default function MovablePracticeTerminal({
     return combined.slice(0, 5);
   }, [activeTerminal?.input]);
 
-  // Reset active suggestion selection when suggestions change
   useEffect(() => {
     setActiveSuggestionIndex(0);
   }, [suggestions.length]);
 
-  // Pointer dragging handlers for title bar
   const handlePointerDown = (e) => {
     if (isMaximized) return;
     if (e.target.closest('button')) return;
@@ -209,7 +197,6 @@ export default function MovablePracticeTerminal({
     }
   };
 
-  // Add a new terminal instance tab
   const handleAddTerminal = () => {
     const nextIdx = terminals.length + 1;
     const newTerm = {
@@ -231,7 +218,6 @@ export default function MovablePracticeTerminal({
     setActiveTermId(newTerm.id);
   };
 
-  // Close an extra terminal instance
   const handleCloseTerminal = (idToClose, e) => {
     e.stopPropagation();
     if (terminals.length <= 1) return;
@@ -242,7 +228,6 @@ export default function MovablePracticeTerminal({
     }
   };
 
-  // Apply auto-suggested command to input
   const handleApplySuggestion = (cmdString) => {
     setTerminals((prev) =>
       prev.map((t) =>
@@ -256,12 +241,10 @@ export default function MovablePracticeTerminal({
     }
   };
 
-  // Comprehensive command execution engine
   const handleExecuteCommand = async (directCmd = null) => {
     const cmd = directCmd !== null ? directCmd.trim() : activeTerminal.input.trim();
     if (!cmd) return;
 
-    // Append to command history
     setTerminals((prev) =>
       prev.map((t) => {
         if (t.id === activeTermId) {
@@ -286,7 +269,6 @@ export default function MovablePracticeTerminal({
 
     const lowerCmd = cmd.toLowerCase();
 
-    // 1. Built-in: clear
     if (lowerCmd === 'clear') {
       setTerminals((prev) =>
         prev.map((t) => (t.id === activeTermId ? { ...t, history: [], isExecuting: false } : t))
@@ -294,7 +276,6 @@ export default function MovablePracticeTerminal({
       return;
     }
 
-    // 2. Built-in: reset
     if (lowerCmd === 'reset') {
       setTerminals((prev) =>
         prev.map((t) =>
@@ -315,7 +296,6 @@ export default function MovablePracticeTerminal({
       return;
     }
 
-    // 3. Built-in: help
     if (lowerCmd === 'help') {
       setTerminals((prev) =>
         prev.map((t) =>
@@ -350,7 +330,6 @@ Cadet Target: ${targetIp} | Organization: REDKROSS RESEARCH FOUNDATION`
       return;
     }
 
-    // 4. Built-in: commands (The core request)
     if (lowerCmd === 'commands' || lowerCmd.startsWith('commands ')) {
       const parts = cmd.split(/\s+/);
       const sub = (parts[1] || '').toLowerCase();
@@ -385,7 +364,6 @@ Tip: As you type commands, live suggestions appear! Hit [Tab] to autocomplete.`;
         });
         outputText = lines.join('\n');
       } else {
-        // Find matching category or keyword search
         const matchedCategory = CYBER_CATEGORIES.find(
           (cat) => cat.id.toLowerCase() === sub || cat.label.toLowerCase().includes(sub)
         );
@@ -434,7 +412,6 @@ Tip: As you type commands, live suggestions appear! Hit [Tab] to autocomplete.`;
       return;
     }
 
-    // 5. Try real execution via /api/e2b with safe parsing & cyber shell fallback
     try {
       let data = null;
 
@@ -459,11 +436,9 @@ Tip: As you type commands, live suggestions appear! Hit [Tab] to autocomplete.`;
           }
         }
       } catch (networkErr) {
-        // Backend not running on local or network blocked, proceed to realistic cyber shell
         data = null;
       }
 
-      // If backend returned valid output, use it
       let outputText = '';
       let isError = false;
 
@@ -475,7 +450,6 @@ Tip: As you type commands, live suggestions appear! Hit [Tab] to autocomplete.`;
         }
         isError = data.exitCode !== 0;
       } else {
-        // Local high-fidelity cyber shell fallback (instant, zero crash, realistic outputs)
         const fallback = generateCyberShellOutput(cmd, targetIp);
         outputText = fallback.text;
         isError = fallback.isError;
@@ -524,9 +498,7 @@ Tip: As you type commands, live suggestions appear! Hit [Tab] to autocomplete.`;
     }
   };
 
-  // Keyboard navigation for suggestions and history
   const handleKeyDown = (e) => {
-    // Autocomplete with Tab or ArrowRight
     if (e.key === 'Tab' || (e.key === 'ArrowRight' && activeTerminal.input.length > 0)) {
       if (suggestions.length > 0) {
         e.preventDefault();
@@ -536,7 +508,6 @@ Tip: As you type commands, live suggestions appear! Hit [Tab] to autocomplete.`;
       }
     }
 
-    // Navigate suggestions with ArrowUp / ArrowDown when suggestions are open
     if (suggestions.length > 0 && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
       if (e.key === 'ArrowDown') {
         e.preventDefault();
@@ -590,7 +561,6 @@ Tip: As you type commands, live suggestions appear! Hit [Tab] to autocomplete.`;
 
   if (!isOpen) return null;
 
-  // Minimized Dock Pill at bottom-right
   if (isMinimized) {
     return (
       <div className="fixed bottom-5 right-6 z-50 animate-fadeIn">
@@ -610,7 +580,6 @@ Tip: As you type commands, live suggestions appear! Hit [Tab] to autocomplete.`;
     );
   }
 
-  // Calculate inline ghost text if top suggestion starts with what user typed
   const topSuggestion = suggestions[0];
   const currentInput = activeTerminal?.input || '';
   let ghostRemainder = '';
@@ -1066,7 +1035,6 @@ Parameter: id (GET)
     };
   }
 
-  // Default clean output
   return {
     text: `[+] Command dispatched in RedKross MicroVM Sandbox: [${clean}]
 [+] Execution completed successfully with exit code 0.

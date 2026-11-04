@@ -46,16 +46,12 @@ export default function PsychologyToolStrip({
   activeUnit,
   onCollapse
 }) {
-  // Active drawer / modal state
   const [activeDrawer, setActiveDrawer] = useState(null); // 'reflection' | 'casestudy' | 'ambience' | null
   const [isMinimized, setIsMinimized] = useState(false);
 
-  // ---------------------------------------------------------------------------
-  // 1. Clinical Reflection Journal State
-  // ---------------------------------------------------------------------------
   const REFLECTION_CATEGORIES = [
-    { id: 'cognitive_formulation', label: 'Cognitive Formulation', color: '#2DD4BF' },
-    { id: 'therapeutic_alliance', label: 'Therapeutic Alliance', color: '#38BDF8' },
+    { id: 'cognitive_formulation', label: 'Cognitive Formulation', color: '#FF7A00' },
+    { id: 'therapeutic_alliance', label: 'Therapeutic Alliance', color: '#FFA439' },
     { id: 'ethical_deliberation', label: 'Ethical Deliberation', color: '#F59E0B' },
     { id: 'countertransference', label: 'Countertransference', color: '#A78BFA' }
   ];
@@ -112,9 +108,6 @@ export default function PsychologyToolStrip({
     }
   };
 
-  // ---------------------------------------------------------------------------
-  // 2. Case Study Notes State & Vignettes
-  // ---------------------------------------------------------------------------
   const CASE_STUDIES = [
     {
       id: 'case_cbt_01',
@@ -187,9 +180,6 @@ export default function PsychologyToolStrip({
   const [activeCaseIndex, setActiveCaseIndex] = useState(0);
   const currentCase = CASE_STUDIES[activeCaseIndex];
 
-  // ---------------------------------------------------------------------------
-  // 3. Acoustic / Audio Ambience Player (Web Audio API Synthesizer)
-  // ---------------------------------------------------------------------------
   const [isPlayingAmbience, setIsPlayingAmbience] = useState(false);
   const [selectedFrequency, setSelectedFrequency] = useState('528'); // '528' | '432' | 'theta'
   const [volume, setVolume] = useState(0.25);
@@ -229,7 +219,6 @@ export default function PsychologyToolStrip({
     }
   ];
 
-  // Stop current Web Audio nodes smoothly
   const stopAudio = () => {
     try {
       if (gainNodeRef.current && audioCtxRef.current) {
@@ -251,7 +240,6 @@ export default function PsychologyToolStrip({
     setIsPlayingAmbience(false);
   };
 
-  // Start synthesis based on selected frequency
   const startAudio = async (presetId = selectedFrequency) => {
     stopAudio();
 
@@ -273,7 +261,6 @@ export default function PsychologyToolStrip({
       const ctx = audioCtxRef.current;
       const now = ctx.currentTime;
 
-      // Master Gain Node
       const masterGain = ctx.createGain();
       masterGain.gain.setValueAtTime(0.0001, now);
       masterGain.gain.linearRampToValueAtTime(volume * 0.15, now + 0.5); // Safe, gentle volume
@@ -284,7 +271,6 @@ export default function PsychologyToolStrip({
       const newOscs = [];
 
       if (preset.id === 'theta') {
-        // Binaural beat synthesis: Left channel = 216Hz, Right channel = 220Hz (4Hz Theta differential)
         const merger = ctx.createChannelMerger(2);
 
         const oscLeft = ctx.createOscillator();
@@ -303,7 +289,6 @@ export default function PsychologyToolStrip({
         oscRight.start(now);
         newOscs.push(oscLeft, oscRight);
       } else {
-        // Pure harmonic sine synthesis with warm undertone
         const fundamental = ctx.createOscillator();
         fundamental.type = 'sine';
         fundamental.frequency.setValueAtTime(preset.baseFreq, now);
@@ -334,7 +319,6 @@ export default function PsychologyToolStrip({
     }
   };
 
-  // Adjust live volume
   useEffect(() => {
     if (gainNodeRef.current && audioCtxRef.current && isPlayingAmbience) {
       const now = audioCtxRef.current.currentTime;
@@ -342,7 +326,6 @@ export default function PsychologyToolStrip({
     }
   }, [volume, isPlayingAmbience]);
 
-  // Clean up audio nodes on unmount
   useEffect(() => {
     return () => {
       stopAudio();
@@ -369,20 +352,17 @@ export default function PsychologyToolStrip({
     }
   };
 
-  // ---------------------------------------------------------------------------
-  // RENDER: Collapsed Minimalist Floating Strip
-  // ---------------------------------------------------------------------------
   if (isMinimized) {
     return (
       <div className="fixed right-0 top-1/2 -translate-y-1/2 z-40">
         <button
           onClick={() => setIsMinimized(false)}
-          className="flex items-center gap-1.5 px-2.5 py-3 rounded-l-xl bg-[#081524]/90 backdrop-blur-xl border-y border-l border-[#2DD4BF]/40 text-[#2DD4BF] hover:bg-[#0F766E]/30 hover:border-[#2DD4BF] transition-all shadow-[0_4px_20px_rgba(0,0,0,0.5)] group"
+          className="flex items-center gap-1.5 px-2.5 py-3 rounded-l-xl bg-[#0E0C09]/95 backdrop-blur-xl border-y border-l border-[#FF7A00]/40 text-[#FFA439] hover:bg-[#FF7A00]/25 hover:border-[#FFA439] transition-all shadow-[0_4px_20px_rgba(0,0,0,0.5)] group"
           title="Expand Clinical Psychology Tools"
           aria-label="Expand Clinical Psychology Tools"
         >
           <ChevronLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-          <Brain className="w-4 h-4 text-[#2DD4BF]" />
+          <Brain className="w-4 h-4 text-[#FFA439]" />
           <span className="text-[11px] font-royal uppercase tracking-wider writing-vertical select-none font-semibold">
             Clinical Tools
           </span>
@@ -391,21 +371,18 @@ export default function PsychologyToolStrip({
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // RENDER: Full Clinical Psychology Tool Strip
-  // ---------------------------------------------------------------------------
   return (
     <>
       {/* Floating Vertical Tool Strip */}
       <aside
-        className="fixed right-4 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-2 p-2 rounded-2xl bg-[#06101B]/95 backdrop-blur-2xl border border-[#2DD4BF]/30 shadow-[0_8px_32px_rgba(0,0,0,0.6),inset_0_0_20px_rgba(45,212,191,0.06)] animate-fade-in select-none"
+        className="fixed right-4 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-2 p-2 rounded-2xl bg-[#0E0C09]/95 backdrop-blur-2xl border border-[#FF7A00]/30 shadow-[0_8px_32px_rgba(0,0,0,0.6),inset_0_0_20px_rgba(255,122,0,0.08)] animate-fade-in select-none"
         aria-label="Clinical Psychology Classroom Tools"
       >
         {/* Strip Header */}
-        <div className="flex items-center justify-between pb-2 px-1 border-b border-[#2DD4BF]/20 mb-1">
+        <div className="flex items-center justify-between pb-2 px-1 border-b border-[#FF7A00]/20 mb-1">
           <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-[#2DD4BF] animate-pulse" />
-            <span className="text-[10px] font-royal uppercase tracking-widest text-[#2DD4BF] font-semibold">
+            <span className="w-2 h-2 rounded-full bg-[#FF7A00] animate-pulse" />
+            <span className="text-[10px] font-royal uppercase tracking-widest text-[#FFA439] font-semibold">
               Clinical
             </span>
           </div>
@@ -438,16 +415,16 @@ export default function PsychologyToolStrip({
             onClick={() => setActiveDrawer(activeDrawer === 'reflection' ? null : 'reflection')}
             className={`relative group flex flex-col items-center justify-center p-3 rounded-xl transition-all border ${
               activeDrawer === 'reflection'
-                ? 'bg-[#2DD4BF]/20 border-[#2DD4BF] text-[#2DD4BF] shadow-[0_0_16px_rgba(45,212,191,0.3)]'
-                : 'bg-[#081524]/80 border-slate-700/60 text-slate-300 hover:border-[#2DD4BF]/50 hover:text-white hover:bg-[#0F766E]/20'
+                ? 'bg-[#FF7A00]/20 border-[#FFA439] text-[#FFA439] shadow-[0_0_16px_rgba(255,122,0,0.35)]'
+                : 'bg-[#0E0C09]/90 border-slate-700/60 text-slate-300 hover:border-[#FFA439]/50 hover:text-white hover:bg-[#FF7A00]/15'
             }`}
             title="Open Clinical Reflection Journal"
             aria-label="Clinical Reflection Journal"
           >
-            <BookOpen className="w-5 h-5 mb-1 text-[#2DD4BF] group-hover:scale-110 transition-transform" />
+            <BookOpen className="w-5 h-5 mb-1 text-[#FFA439] group-hover:scale-110 transition-transform" />
             <span className="text-[10px] font-royal uppercase tracking-wider font-semibold">Journal</span>
             {savedNotes.length > 0 && (
-              <span className="absolute -top-1 -right-1 px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-[#2DD4BF] text-[#06101B]">
+              <span className="absolute -top-1 -right-1 px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-[#FF7A00] text-black">
                 {savedNotes.length}
               </span>
             )}
@@ -459,7 +436,7 @@ export default function PsychologyToolStrip({
             className={`relative group flex flex-col items-center justify-center p-3 rounded-xl transition-all border ${
               activeDrawer === 'casestudy'
                 ? 'bg-[#FFA439]/20 border-[#FFA439] text-[#FFA439] shadow-[0_0_16px_rgba(255,164,57,0.3)]'
-                : 'bg-[#081524]/80 border-slate-700/60 text-slate-300 hover:border-[#FFA439]/50 hover:text-white hover:bg-[#FFA439]/10'
+                : 'bg-[#0E0C09]/90 border-slate-700/60 text-slate-300 hover:border-[#FFA439]/50 hover:text-white hover:bg-[#FFA439]/10'
             }`}
             title="Open Case Study Formulations"
             aria-label="Case Study Formulations"
@@ -476,30 +453,30 @@ export default function PsychologyToolStrip({
             onClick={() => setActiveDrawer(activeDrawer === 'ambience' ? null : 'ambience')}
             className={`relative group flex flex-col items-center justify-center p-3 rounded-xl transition-all border ${
               activeDrawer === 'ambience' || isPlayingAmbience
-                ? 'bg-[#0F766E]/30 border-[#2DD4BF] text-[#2DD4BF] shadow-[0_0_16px_rgba(45,212,191,0.25)]'
-                : 'bg-[#081524]/80 border-slate-700/60 text-slate-300 hover:border-[#2DD4BF]/50 hover:text-white hover:bg-[#0F766E]/20'
+                ? 'bg-[#FF7A00]/25 border-[#FFA439] text-[#FFA439] shadow-[0_0_16px_rgba(255,122,0,0.3)]'
+                : 'bg-[#0E0C09]/90 border-slate-700/60 text-slate-300 hover:border-[#FFA439]/50 hover:text-white hover:bg-[#FF7A00]/15'
             }`}
             title="Open Acoustic Ambience Player"
             aria-label="Acoustic Ambience Player"
           >
-            <Headphones className={`w-5 h-5 mb-1 text-[#2DD4BF] group-hover:scale-110 transition-transform ${isPlayingAmbience ? 'animate-pulse' : ''}`} />
+            <Headphones className={`w-5 h-5 mb-1 text-[#FFA439] group-hover:scale-110 transition-transform ${isPlayingAmbience ? 'animate-pulse' : ''}`} />
             <span className="text-[10px] font-royal uppercase tracking-wider font-semibold">Ambience</span>
             {isPlayingAmbience && (
-              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#2DD4BF] animate-ping" />
+              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#FF7A00] animate-ping" />
             )}
           </button>
         </div>
 
         {/* Ambient Frequency Indicator Pill */}
         {isPlayingAmbience && (
-          <div className="mt-2 pt-2 border-t border-[#2DD4BF]/20 flex flex-col items-center">
-            <span className="text-[9px] font-mono text-[#2DD4BF] font-bold tracking-wider">
+          <div className="mt-2 pt-2 border-t border-[#FF7A00]/20 flex flex-col items-center">
+            <span className="text-[9px] font-mono text-[#FFA439] font-bold tracking-wider">
               {selectedFrequency === 'theta' ? '4Hz THETA' : `${selectedFrequency}Hz`}
             </span>
             <div className="flex items-center gap-0.5 mt-1">
-              <span className="w-1 h-3 bg-[#2DD4BF] rounded-full animate-bounce [animation-delay:0ms]" />
-              <span className="w-1 h-4 bg-[#2DD4BF] rounded-full animate-bounce [animation-delay:150ms]" />
-              <span className="w-1 h-2 bg-[#2DD4BF] rounded-full animate-bounce [animation-delay:300ms]" />
+              <span className="w-1 h-3 bg-[#FF7A00] rounded-full animate-bounce [animation-delay:0ms]" />
+              <span className="w-1 h-4 bg-[#FF7A00] rounded-full animate-bounce [animation-delay:150ms]" />
+              <span className="w-1 h-2 bg-[#FF7A00] rounded-full animate-bounce [animation-delay:300ms]" />
             </div>
           </div>
         )}
@@ -509,11 +486,11 @@ export default function PsychologyToolStrip({
           DRAWER 1: Clinical Reflection Journal
           ===================================================================== */}
       {activeDrawer === 'reflection' && (
-        <div className="fixed inset-y-0 right-20 z-50 w-full max-w-lg bg-[#06101B]/95 backdrop-blur-2xl border-l border-y border-[#2DD4BF]/30 shadow-[-16px_0_40px_rgba(0,0,0,0.7)] flex flex-col animate-slide-left">
+        <div className="fixed inset-y-0 right-20 z-50 w-full max-w-lg bg-[#0E0C09]/95 backdrop-blur-2xl border-l border-y border-[#FF7A00]/30 shadow-[-16px_0_40px_rgba(0,0,0,0.7)] flex flex-col animate-slide-left">
           {/* Header */}
-          <div className="p-5 border-b border-[#2DD4BF]/20 flex items-center justify-between bg-[#081524]/60">
+          <div className="p-5 border-b border-[#FF7A00]/20 flex items-center justify-between bg-[#0E0C09]/80">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-[#2DD4BF]/15 border border-[#2DD4BF]/40 flex items-center justify-center text-[#2DD4BF]">
+              <div className="w-9 h-9 rounded-xl bg-[#FF7A00]/15 border border-[#FF7A00]/40 flex items-center justify-center text-[#FFA439]">
                 <BookOpen className="w-5 h-5" />
               </div>
               <div>
@@ -539,7 +516,7 @@ export default function PsychologyToolStrip({
             {/* Context Badge */}
             <div className="p-3 rounded-xl bg-[#081524] border border-slate-800 text-xs text-slate-300 flex items-center justify-between">
               <span className="text-slate-400">Current Unit:</span>
-              <span className="font-royal text-[#2DD4BF] truncate max-w-[280px]">
+              <span className="font-royal text-[#FFA439] truncate max-w-[280px]">
                 {activeUnit?.lesson?.title || activeUnit?.moduleTitle || course?.title || 'Clinical Lesson'}
               </span>
             </div>
@@ -559,8 +536,8 @@ export default function PsychologyToolStrip({
                       onClick={() => setSelectedCategory(cat.id)}
                       className={`px-3 py-2 rounded-xl text-xs font-royal transition-all text-left border flex items-center gap-2 ${
                         isSelected
-                          ? 'bg-[#2DD4BF]/20 border-[#2DD4BF] text-white shadow-[0_0_12px_rgba(45,212,191,0.2)]'
-                          : 'bg-[#081524]/60 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                          ? 'bg-[#FF7A00]/20 border-[#FFA439] text-white shadow-[0_0_12px_rgba(45,212,191,0.2)]'
+                          : 'bg-[#0E0C09]/80 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
                       }`}
                     >
                       <span
@@ -584,7 +561,7 @@ export default function PsychologyToolStrip({
                 value={patientContext}
                 onChange={(e) => setPatientContext(e.target.value)}
                 placeholder="e.g. Case 402 — Somatic Panic Anticipation"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#081524] border border-slate-800 text-slate-200 text-xs placeholder:text-slate-500 focus:outline-none focus:border-[#2DD4BF] transition-colors font-sans"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#081524] border border-slate-800 text-slate-200 text-xs placeholder:text-slate-500 focus:outline-none focus:border-[#FFA439] transition-colors font-sans"
               />
             </div>
 
@@ -598,14 +575,14 @@ export default function PsychologyToolStrip({
                 value={noteContent}
                 onChange={(e) => setNoteContent(e.target.value)}
                 placeholder="Record qualitative reflection: cognitive distortion identified, behavioral hypotheses, countertransference awareness, or ethical considerations..."
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#081524] border border-slate-800 text-slate-200 text-xs placeholder:text-slate-500 focus:outline-none focus:border-[#2DD4BF] transition-colors font-sans resize-none leading-relaxed"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#081524] border border-slate-800 text-slate-200 text-xs placeholder:text-slate-500 focus:outline-none focus:border-[#FFA439] transition-colors font-sans resize-none leading-relaxed"
               />
             </div>
 
             {/* Save Button */}
             <div className="flex items-center justify-between pt-1">
               {saveSuccess ? (
-                <div className="flex items-center gap-1.5 text-xs text-[#2DD4BF] font-royal font-medium">
+                <div className="flex items-center gap-1.5 text-xs text-[#FFA439] font-royal font-medium">
                   <Check className="w-4 h-4" />
                   <span>Saved to practitioner portfolio</span>
                 </div>
@@ -617,7 +594,7 @@ export default function PsychologyToolStrip({
               <button
                 onClick={handleSaveReflection}
                 disabled={!noteContent.trim()}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-royal uppercase tracking-wider font-bold bg-[#2DD4BF] text-[#06101B] hover:bg-[#26bba7] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-[0_4px_16px_rgba(45,212,191,0.3)]"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-royal uppercase tracking-wider font-bold bg-[#FF7A00] text-black hover:bg-[#26bba7] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-[0_4px_16px_rgba(255,122,0,0.35)]"
               >
                 <Save className="w-4 h-4" />
                 <span>Save Note</span>
@@ -633,7 +610,7 @@ export default function PsychologyToolStrip({
               </div>
 
               {savedNotes.length === 0 ? (
-                <div className="p-6 rounded-xl bg-[#081524]/60 border border-slate-800/80 text-center">
+                <div className="p-6 rounded-xl bg-[#0E0C09]/80 border border-slate-800/80 text-center">
                   <FileText className="w-8 h-8 text-slate-600 mx-auto mb-2" />
                   <p className="text-xs text-slate-400 font-sans">
                     No reflections recorded for this lesson yet.
@@ -706,9 +683,9 @@ export default function PsychologyToolStrip({
           DRAWER 2: Case Study Notes Quick View
           ===================================================================== */}
       {activeDrawer === 'casestudy' && (
-        <div className="fixed inset-y-0 right-20 z-50 w-full max-w-xl bg-[#06101B]/95 backdrop-blur-2xl border-l border-y border-[#FFA439]/30 shadow-[-16px_0_40px_rgba(0,0,0,0.7)] flex flex-col animate-slide-left">
+        <div className="fixed inset-y-0 right-20 z-50 w-full max-w-xl bg-[#0E0C09]/95 backdrop-blur-2xl border-l border-y border-[#FFA439]/30 shadow-[-16px_0_40px_rgba(0,0,0,0.7)] flex flex-col animate-slide-left">
           {/* Header */}
-          <div className="p-5 border-b border-[#FFA439]/20 flex items-center justify-between bg-[#081524]/60">
+          <div className="p-5 border-b border-[#FFA439]/20 flex items-center justify-between bg-[#0E0C09]/80">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-[#FFA439]/15 border border-[#FFA439]/40 flex items-center justify-center text-[#FFA439]">
                 <Brain className="w-5 h-5" />
@@ -732,7 +709,7 @@ export default function PsychologyToolStrip({
           </div>
 
           {/* Case Navigation Tabs */}
-          <div className="px-5 pt-3 pb-2 border-b border-slate-800/80 bg-[#06101B] flex gap-2">
+          <div className="px-5 pt-3 pb-2 border-b border-slate-800/80 bg-[#0E0C09] flex gap-2">
             {CASE_STUDIES.map((c, idx) => {
               const isSelected = activeCaseIndex === idx;
               return (
@@ -742,7 +719,7 @@ export default function PsychologyToolStrip({
                   className={`flex-1 py-2 px-3 rounded-xl text-xs font-royal font-bold transition-all border text-center ${
                     isSelected
                       ? 'bg-[#FFA439]/20 border-[#FFA439] text-[#FFA439] shadow-[0_0_12px_rgba(255,164,57,0.2)]'
-                      : 'bg-[#081524]/60 border-slate-800 text-slate-400 hover:text-slate-200'
+                      : 'bg-[#0E0C09]/80 border-slate-800 text-slate-400 hover:text-slate-200'
                   }`}
                 >
                   <span className="block text-[10px] opacity-75 font-mono">{c.code.split('//')[1]?.trim()}</span>
@@ -770,7 +747,7 @@ export default function PsychologyToolStrip({
               <p className="text-xs text-slate-400 font-sans mb-3">
                 {currentCase.patientDemographics}
               </p>
-              <div className="p-3 rounded-lg bg-[#06101B] border border-slate-800/80">
+              <div className="p-3 rounded-lg bg-[#0E0C09] border border-slate-800/80">
                 <div className="text-[11px] font-royal text-[#FFA439] font-semibold mb-1">
                   Presenting Clinical Complaint:
                 </div>
@@ -783,7 +760,7 @@ export default function PsychologyToolStrip({
             {/* Beckian Cognitive Triad Decomposition */}
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <Activity className="w-4 h-4 text-[#2DD4BF]" />
+                <Activity className="w-4 h-4 text-[#FFA439]" />
                 <h5 className="text-xs font-royal uppercase tracking-wider text-slate-200 font-bold">
                   Beckian Cognitive Triad Decomposition
                 </h5>
@@ -793,7 +770,7 @@ export default function PsychologyToolStrip({
                 {/* 1. Self */}
                 <div className="p-3.5 rounded-xl bg-[#081524] border border-slate-800/80">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[11px] font-royal text-[#2DD4BF] font-semibold">
+                    <span className="text-[11px] font-royal text-[#FFA439] font-semibold">
                       1. Schema Regarding Self
                     </span>
                     <span className="text-[10px] text-slate-500 font-mono">Core Belief</span>
@@ -843,7 +820,7 @@ export default function PsychologyToolStrip({
                 {currentCase.distortions.map((dist, dIdx) => (
                   <div
                     key={dIdx}
-                    className="p-3 rounded-xl bg-[#081524]/60 border border-slate-800 text-xs text-slate-300 font-sans leading-relaxed"
+                    className="p-3 rounded-xl bg-[#0E0C09]/80 border border-slate-800 text-xs text-slate-300 font-sans leading-relaxed"
                   >
                     {dist}
                   </div>
@@ -854,7 +831,7 @@ export default function PsychologyToolStrip({
             {/* Active Exposure & Behavioral Interventions */}
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <HeartPulse className="w-4 h-4 text-[#2DD4BF]" />
+                <HeartPulse className="w-4 h-4 text-[#FFA439]" />
                 <h5 className="text-xs font-royal uppercase tracking-wider text-slate-200 font-bold">
                   Active Exposure & Behavioral Interventions
                 </h5>
@@ -863,9 +840,9 @@ export default function PsychologyToolStrip({
                 {currentCase.exposureInterventions.map((exp, eIdx) => (
                   <div
                     key={eIdx}
-                    className="p-3 rounded-xl bg-[#081524] border border-[#2DD4BF]/20 flex items-start gap-2.5"
+                    className="p-3 rounded-xl bg-[#081524] border border-[#FF7A00]/20 flex items-start gap-2.5"
                   >
-                    <span className="w-5 h-5 rounded-full bg-[#2DD4BF]/15 border border-[#2DD4BF]/40 text-[#2DD4BF] text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+                    <span className="w-5 h-5 rounded-full bg-[#FF7A00]/15 border border-[#FF7A00]/40 text-[#FFA439] text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
                       {eIdx + 1}
                     </span>
                     <p className="text-xs text-slate-300 font-sans leading-relaxed">
@@ -883,11 +860,11 @@ export default function PsychologyToolStrip({
           DRAWER 3: Acoustic / Audio Ambience Player
           ===================================================================== */}
       {activeDrawer === 'ambience' && (
-        <div className="fixed inset-y-0 right-20 z-50 w-full max-w-md bg-[#06101B]/95 backdrop-blur-2xl border-l border-y border-[#2DD4BF]/30 shadow-[-16px_0_40px_rgba(0,0,0,0.7)] flex flex-col animate-slide-left">
+        <div className="fixed inset-y-0 right-20 z-50 w-full max-w-md bg-[#0E0C09]/95 backdrop-blur-2xl border-l border-y border-[#FF7A00]/30 shadow-[-16px_0_40px_rgba(0,0,0,0.7)] flex flex-col animate-slide-left">
           {/* Header */}
-          <div className="p-5 border-b border-[#2DD4BF]/20 flex items-center justify-between bg-[#081524]/60">
+          <div className="p-5 border-b border-[#FF7A00]/20 flex items-center justify-between bg-[#0E0C09]/80">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-[#2DD4BF]/15 border border-[#2DD4BF]/40 flex items-center justify-center text-[#2DD4BF]">
+              <div className="w-9 h-9 rounded-xl bg-[#FF7A00]/15 border border-[#FF7A00]/40 flex items-center justify-center text-[#FFA439]">
                 <Headphones className="w-5 h-5" />
               </div>
               <div>
@@ -911,14 +888,14 @@ export default function PsychologyToolStrip({
           {/* Controls & Frequency Selector */}
           <div className="flex-1 overflow-y-auto p-5 space-y-6 custom-scrollbar">
             {/* Master Play / Pause Deck */}
-            <div className="p-6 rounded-2xl bg-gradient-to-b from-[#081524] to-[#06101B] border border-[#2DD4BF]/30 text-center shadow-[inset_0_0_24px_rgba(45,212,191,0.08)]">
-              <div className="w-20 h-20 mx-auto rounded-full bg-[#2DD4BF]/10 border-2 border-[#2DD4BF]/50 flex items-center justify-center mb-4 relative">
+            <div className="p-6 rounded-2xl bg-gradient-to-b from-[#081524] to-[#06101B] border border-[#FF7A00]/30 text-center shadow-[inset_0_0_24px_rgba(45,212,191,0.08)]">
+              <div className="w-20 h-20 mx-auto rounded-full bg-[#FF7A00]/10 border-2 border-[#FFA439]/50 flex items-center justify-center mb-4 relative">
                 {isPlayingAmbience && (
-                  <div className="absolute inset-0 rounded-full border-2 border-[#2DD4BF] animate-ping opacity-25" />
+                  <div className="absolute inset-0 rounded-full border-2 border-[#FFA439] animate-ping opacity-25" />
                 )}
                 <button
                   onClick={toggleAmbiencePlay}
-                  className="w-14 h-14 rounded-full bg-[#2DD4BF] text-[#06101B] flex items-center justify-center hover:bg-[#26bba7] hover:scale-105 active:scale-95 transition-all shadow-[0_0_24px_rgba(45,212,191,0.5)]"
+                  className="w-14 h-14 rounded-full bg-[#FF7A00] text-black flex items-center justify-center hover:bg-[#26bba7] hover:scale-105 active:scale-95 transition-all shadow-[0_0_24px_rgba(45,212,191,0.5)]"
                   title={isPlayingAmbience ? 'Pause Ambience' : 'Play Therapeutic Tone'}
                   aria-label={isPlayingAmbience ? 'Pause Ambience' : 'Play Therapeutic Tone'}
                 >
@@ -960,7 +937,7 @@ export default function PsychologyToolStrip({
                       onClick={() => handleSelectFrequency(preset.id)}
                       className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
                         isSelected
-                          ? 'bg-[#2DD4BF]/15 border-[#2DD4BF] shadow-[0_0_16px_rgba(45,212,191,0.2)]'
+                          ? 'bg-[#FF7A00]/15 border-[#FFA439] shadow-[0_0_16px_rgba(45,212,191,0.2)]'
                           : 'bg-[#081524] border-slate-800 hover:border-slate-700'
                       }`}
                     >
@@ -968,11 +945,11 @@ export default function PsychologyToolStrip({
                         <span className="text-xs font-royal font-bold text-white">
                           {preset.name}
                         </span>
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#2DD4BF]/20 text-[#2DD4BF] border border-[#2DD4BF]/40">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#FF7A00]/20 text-[#FFA439] border border-[#FF7A00]/40">
                           {preset.tag}
                         </span>
                       </div>
-                      <div className="text-[11px] font-royal text-[#2DD4BF] mb-1">
+                      <div className="text-[11px] font-royal text-[#FFA439] mb-1">
                         {preset.subtitle}
                       </div>
                       <p className="text-xs text-slate-400 font-sans leading-relaxed">
@@ -988,10 +965,10 @@ export default function PsychologyToolStrip({
             <div className="p-4 rounded-xl bg-[#081524] border border-slate-800">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-royal uppercase tracking-wider text-slate-300 font-semibold flex items-center gap-2">
-                  <Volume2 className="w-4 h-4 text-[#2DD4BF]" />
+                  <Volume2 className="w-4 h-4 text-[#FFA439]" />
                   Acoustic Output Level
                 </span>
-                <span className="text-xs font-mono text-[#2DD4BF] font-bold">
+                <span className="text-xs font-mono text-[#FFA439] font-bold">
                   {Math.round(volume * 100)}%
                 </span>
               </div>
@@ -1002,7 +979,7 @@ export default function PsychologyToolStrip({
                 step="0.01"
                 value={volume}
                 onChange={(e) => setVolume(parseFloat(e.target.value))}
-                className="w-full accent-[#2DD4BF] cursor-pointer"
+                className="w-full accent-[#FF7A00] cursor-pointer"
                 aria-label="Volume Slider"
               />
               <div className="flex justify-between text-[10px] text-slate-500 font-mono mt-1">

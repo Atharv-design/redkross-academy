@@ -34,7 +34,6 @@ export default function QuizAssessmentPage() {
   const enrolment = mockEngine.getEnrolment(enrolmentId);
   const course = enrolment ? mockEngine.getCourseById(enrolment.course_id) : null;
 
-  // Find quiz metadata
   let quizMeta = null;
   if (course && course.modules) {
     for (const mod of course.modules) {
@@ -45,12 +44,10 @@ export default function QuizAssessmentPage() {
     }
   }
 
-  // Pre-exam protocol modal state
   const [showPreExamModal, setShowPreExamModal] = useState(false);
   const [cameraWarningModal, setCameraWarningModal] = useState(null); // { message: string }
   const [cameraDropCount, setCameraDropCount] = useState(0);
 
-  // Exam runtime states
   const [activeAttempt, setActiveAttempt] = useState(null);
   const [userAnswers, setUserAnswers] = useState({});
   const [submissionResult, setSubmissionResult] = useState(null);
@@ -58,15 +55,12 @@ export default function QuizAssessmentPage() {
   const [timerSeconds, setTimerSeconds] = useState(900); // 15 mins
   const [timerPaused, setTimerPaused] = useState(false);
 
-  // Camera video stream ref
   const videoRef = useRef(null);
   const streamRef = useRef(null);
 
-  // 24-Hour Lockout State
   const [lockoutState, setLockoutState] = useState({ isLocked: false, remainingHours: 0, remainingMinutes: 0 });
   const [countdownString, setCountdownString] = useState('');
 
-  // Refresh lockout check
   const checkLockout = () => {
     if (enrolmentId && quizId) {
       const lock = mockEngine.isExamLocked(enrolmentId, quizId);
@@ -80,7 +74,6 @@ export default function QuizAssessmentPage() {
     checkLockout();
   }, [enrolmentId, quizId]);
 
-  // Live countdown timer for 24-hour lockout
   useEffect(() => {
     if (!lockoutState.isLocked || !lockoutState.lockedUntil) return;
 
@@ -105,7 +98,6 @@ export default function QuizAssessmentPage() {
     return () => clearInterval(interval);
   }, [lockoutState]);
 
-  // Exam Countdown Timer
   useEffect(() => {
     if (!examStarted || timerPaused || submissionResult) return;
 
@@ -123,7 +115,6 @@ export default function QuizAssessmentPage() {
     return () => clearInterval(timer);
   }, [examStarted, timerPaused, submissionResult]);
 
-  // Cleanup camera stream
   const stopCameraStream = () => {
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((track) => track.stop());
@@ -140,7 +131,6 @@ export default function QuizAssessmentPage() {
     };
   }, []);
 
-  // Termination handler for proctor violations
   const terminateExamWithLockout = (violationType, details) => {
     setExamStarted(false);
     stopCameraStream();
@@ -186,7 +176,6 @@ export default function QuizAssessmentPage() {
     refreshBalance();
   };
 
-  // Rule 2: Strict Tab Switching & Window Blur Enforcement
   useEffect(() => {
     if (!examStarted || submissionResult) return;
 
@@ -212,7 +201,6 @@ export default function QuizAssessmentPage() {
     };
   }, [examStarted, submissionResult, activeAttempt]);
 
-  // Rule 1: Camera Disconnect Monitoring (1 warning, second disconnect terminates)
   const handleCameraInterruption = () => {
     if (!examStarted || submissionResult) return;
 
@@ -220,14 +208,12 @@ export default function QuizAssessmentPage() {
     setCameraDropCount(nextCount);
 
     if (nextCount === 1) {
-      // First disconnect: Warning
       setTimerPaused(true);
       setCameraWarningModal({
         title: 'CAMERA FEED DISCONNECTED — WARNING 1 OF 2',
         message: 'Your proctored camera stream was interrupted. You must keep your camera ON at all times. If your camera turns off one more time, your exam will be IMMEDIATELY TERMINATED with a mandatory 24-Hour Lockout.'
       });
     } else {
-      // Second disconnect: Immediate Termination + 24h Lockout
       setCameraWarningModal(null);
       terminateExamWithLockout(
         'CAMERA_DISCONNECT_X2',
@@ -236,7 +222,6 @@ export default function QuizAssessmentPage() {
     }
   };
 
-  // Start exam and initialize camera stream
   const initializeCameraAndStart = async () => {
     setShowPreExamModal(false);
 
@@ -248,7 +233,6 @@ export default function QuizAssessmentPage() {
 
       streamRef.current = stream;
 
-      // Monitor camera tracks for ending
       const videoTrack = stream.getVideoTracks()[0];
       if (videoTrack) {
         videoTrack.onended = () => {
@@ -263,7 +247,6 @@ export default function QuizAssessmentPage() {
         videoRef.current.srcObject = stream;
       }
 
-      // Initialize attempt in state
       const attempt = mockEngine.startQuizAttempt(enrolmentId, quizId);
       setActiveAttempt(attempt);
       setExamStarted(true);
@@ -273,7 +256,6 @@ export default function QuizAssessmentPage() {
       setCameraDropCount(0);
     } catch (err) {
       console.warn('Webcam permission not granted or device missing:', err);
-      // Fallback: If hardware camera is blocked by browser policy, prompt user
       alert('Camera access is strictly required to launch this proctored examination. Please grant camera permission.');
       setShowPreExamModal(true);
     }

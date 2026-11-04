@@ -51,7 +51,6 @@ export default function ExamCBTInterface({
   const attemptedCount = Object.keys(answers).length;
   const unattemptedCount = Math.max(0, totalQuestions - attemptedCount);
 
-  // Format Timer string MM:SS
   const formatTimer = (secs) => {
     if (secs === null || secs === undefined || secs < 0) return '00:00';
     const m = Math.floor(secs / 60);
@@ -59,7 +58,6 @@ export default function ExamCBTInterface({
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
-  // Next / Previous Navigation Handlers
   const handlePrevQuestion = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex((prev) => prev - 1);
@@ -70,7 +68,6 @@ export default function ExamCBTInterface({
     if (currentQuestionIndex < totalQuestions - 1) {
       setCurrentQuestionIndex((prev) => prev + 1);
     } else {
-      // At the last question index: check if there are unattempted questions earlier
       const firstUnanswered = questions.findIndex((q) => !answers[q.id]);
       if (firstUnanswered !== -1 && firstUnanswered !== currentQuestionIndex) {
         setCurrentQuestionIndex(firstUnanswered);
@@ -90,7 +87,6 @@ export default function ExamCBTInterface({
   const attemptsRemaining = attemptsStatus?.attemptsRemaining ?? 3;
   const attemptsUsed = attemptsStatus?.attemptsUsed ?? 0;
 
-  // Determine Attempt Counter Badge Style
   const getAttemptBadge = () => {
     if (isLockoutActive || attemptsRemaining === 0) {
       return {
@@ -118,9 +114,6 @@ export default function ExamCBTInterface({
 
   const attemptBadge = getAttemptBadge();
 
-  // -------------------------------------------------------------
-  // 1. ACTIVE 24-HOUR PROCTORING LOCKOUT HUD (COOLDOWN IN EFFECT)
-  // -------------------------------------------------------------
   if (isLockoutActive || (attemptsRemaining === 0 && !isSubmitted)) {
     return (
       <div className="w-full p-6 sm:p-8 rounded-2xl bg-rose-950/70 border border-rose-500/50 space-y-5 shadow-2xl animate-fade-in">
@@ -156,9 +149,6 @@ export default function ExamCBTInterface({
     );
   }
 
-  // -------------------------------------------------------------
-  // 2. POST-EXAM RESULTS & REMEDIATION SCREEN
-  // -------------------------------------------------------------
   if (isSubmitted && submissionResult) {
     const isPassed = submissionResult.isPassed || submissionResult.is_passed;
     const scorePct = submissionResult.score ?? submissionResult.score_percentage ?? 0;
@@ -334,9 +324,6 @@ export default function ExamCBTInterface({
     );
   }
 
-  // -------------------------------------------------------------
-  // 3. ACTIVE CBT EXAMINATION INTERFACE (EDGE-TO-EDGE FULL-SCREEN COCKPIT)
-  // -------------------------------------------------------------
   return (
     <div className="w-full space-y-5 animate-fade-in">
       {/* ----------------- TOP META & ASSESSMENT HUD ----------------- */}

@@ -73,7 +73,6 @@ export default function CourseDetailPage() {
     );
   }
 
-  // Check if active user is enrolled
   const enrolments = currentUser ? mockEngine.getEnrolmentsForUser(currentUser.id) : [];
   const activeEnrolment = enrolments.find((e) => e.course_id === course.id);
   const isEnrolled = Boolean(activeEnrolment);
@@ -83,7 +82,6 @@ export default function CourseDetailPage() {
   };
 
   const handleEnrol = async () => {
-    // Open edX Catch: If user is not logged in, redirect straight to login
     if (!currentUser) {
       navigate('/login', {
         state: {
@@ -93,7 +91,6 @@ export default function CourseDetailPage() {
       return;
     }
 
-    // If already enrolled, navigate straight to the Enrolled Course Home
     if (isEnrolled) {
       navigate(`/student/course/${course.id}`);
       return;
@@ -176,7 +173,6 @@ export default function CourseDetailPage() {
     }
   };
 
-  // Robust fallback resolution for objectives and prerequisites
   const rawObjectives = (course.what_you_will_learn && course.what_you_will_learn.length > 0)
     ? course.what_you_will_learn
     : (course.learning_objectives && course.learning_objectives.length > 0)

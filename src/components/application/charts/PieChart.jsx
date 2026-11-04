@@ -9,7 +9,6 @@ import {
 } from 'recharts';
 import { ChartLegendContent, ChartTooltipContent } from './charts-base';
 
-// RedKross Academy Canonical Cyber Palette (Zero Blue Tokens)
 export const DEFAULT_THEME_PALETTE = [
   '#FF7A00', // Primary Emerald Green
   '#FFA439', // Electric Mint
@@ -34,7 +33,6 @@ const defaultPieChartData = [
  * Customized for RedKross Cyber Theme with Zero Blue Tokens
  */
 export const PieChartXxs = ({ data = defaultPieChartData, height = 130, className = 'max-w-56' }) => {
-  // Normalize data ensuring color attribute is defined
   const normalizedData = data.map((item, idx) => ({
     ...item,
     color: item.color || DEFAULT_THEME_PALETTE[idx % DEFAULT_THEME_PALETTE.length]
@@ -107,7 +105,6 @@ export const RedKrossDonutChart = ({
 }) => {
   const [activeIndex, setActiveIndex] = useState(null);
 
-  // Calculate total for percentages
   const totalValue = data.reduce((acc, curr) => acc + (Number(curr.value) || 0), 0);
 
   const normalizedData = data.map((item, idx) => {

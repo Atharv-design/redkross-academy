@@ -19,17 +19,14 @@ export default function AdminStudentsPage() {
   const [tokenAction, setTokenAction] = useState('GRANT'); // GRANT | DEDUCT
   const [tokenReason, setTokenReason] = useState('Merit bounty for lab excellence');
 
-  // Sorting State matching Table01DividerLineSm specification
   const [sortDescriptor, setSortDescriptor] = useState({
     column: 'cadet_id',
     direction: 'ascending'
   });
 
-  // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
-  // Permanent Delete Modal State
   const [studentToDelete, setStudentToDelete] = useState(null);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
@@ -50,7 +47,6 @@ export default function AdminStudentsPage() {
   useEffect(() => {
     loadStudents();
 
-    // Live Socket & DB event sync
     const unsubEnrol = socketClient.on('student:enrolled', loadStudents);
     const unsubReg = socketClient.on('user:registered', loadStudents);
     const unsubStatus = socketClient.on('user:status_changed', loadStudents);
@@ -77,7 +73,6 @@ export default function AdminStudentsPage() {
     };
   }, []);
 
-  // Permanent student deletion with email blacklisting
   const handleConfirmPermanentDelete = async () => {
     if (!studentToDelete) return;
     if (deleteConfirmText.trim().toUpperCase() !== 'DELETE') return;
@@ -98,7 +93,6 @@ export default function AdminStudentsPage() {
     }
   };
 
-  // Suspend / Reactivate account
   const handleToggleStatus = async (student) => {
     const isSuspended = student.status === 'SUSPENDED';
     const nextStatus = isSuspended ? 'ACTIVE' : 'SUSPENDED';
@@ -112,7 +106,6 @@ export default function AdminStudentsPage() {
     }
   };
 
-  // Adjust token balance
   const handleAdjustTokens = async () => {
     if (!selectedStudent || !tokenAmount) return;
     const delta = tokenAction === 'GRANT' ? parseInt(tokenAmount) : -parseInt(tokenAmount);
@@ -130,7 +123,6 @@ export default function AdminStudentsPage() {
     }
   };
 
-  // Reset student curriculum progress
   const handleResetProgress = async (student) => {
     if (confirm(`Reset all curriculum lab progress for ${student.name || student.full_name}? This will zero out completion telemetry.`)) {
       try {
@@ -144,7 +136,6 @@ export default function AdminStudentsPage() {
     }
   };
 
-  // CSV Export
   const handleExportCSV = () => {
     const headers = ['Cadet_ID,Name,Email,Status,Tokens,Enrolled_Tracks\n'];
     const rows = sortedAndFilteredStudents.map(
@@ -159,7 +150,6 @@ export default function AdminStudentsPage() {
     a.click();
   };
 
-  // Handle Sort Toggle
   const handleSort = (columnKey) => {
     setSortDescriptor((prev) => ({
       column: columnKey,
@@ -167,7 +157,6 @@ export default function AdminStudentsPage() {
     }));
   };
 
-  // Filtered & Sorted items
   const sortedAndFilteredStudents = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
     const filtered = students.filter((s) => {
@@ -213,7 +202,6 @@ export default function AdminStudentsPage() {
     });
   }, [students, searchQuery, statusFilter, sortDescriptor]);
 
-  // Paginated Slice
   const totalPages = Math.max(1, Math.ceil(sortedAndFilteredStudents.length / itemsPerPage));
   const paginatedStudents = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;

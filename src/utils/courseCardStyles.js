@@ -168,7 +168,6 @@ export function getCardStyleById(styleId) {
   const found = COURSE_CARD_STYLES.find((s) => s.id === styleId);
   if (found) return found;
 
-  // Fallback hash
   let sum = 0;
   for (let i = 0; i < styleId.length; i++) {
     sum += styleId.charCodeAt(i);

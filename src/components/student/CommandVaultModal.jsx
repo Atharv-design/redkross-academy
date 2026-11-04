@@ -52,7 +52,6 @@ export default function CommandVaultModal({
   const [selectedDifficulty, setSelectedDifficulty] = useState('all');
   const [copiedId, setCopiedId] = useState(null);
 
-  // Keyboard shortcut listener: ESC to close
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape' && isOpen) {
@@ -63,7 +62,6 @@ export default function CommandVaultModal({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  // Filter commands
   const filteredCommands = useMemo(() => {
     return searchCyberCommands({
       query: searchQuery,

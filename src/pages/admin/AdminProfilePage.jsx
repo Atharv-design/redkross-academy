@@ -67,7 +67,7 @@ export default function AdminProfilePage() {
               </span>
             </div>
             <p className="text-xs text-[#8BA2B5] font-mono mt-0.5">
-              {currentUser?.email || 'admin@redkross.org.in'} • Workstation Node #01
+              {currentUser?.email || 'admin@redkross.org.in'} • Console Node #01
             </p>
           </div>
         </div>
@@ -159,7 +159,7 @@ export default function AdminProfilePage() {
 
       {/* Active Sessions Telemetry */}
       <div className="p-5 cyber-glass-panel rounded-xl space-y-3">
-        <h4 className="text-sm font-bold text-white font-lora">Active Workstation Sessions</h4>
+        <h4 className="text-sm font-bold text-white font-lora">Active Dashboard Sessions</h4>
         <div className="p-3 cyber-glass-card rounded-lg flex items-center justify-between text-xs font-mono">
           <div>
             <div className="flex items-center space-x-2">

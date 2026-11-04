@@ -20,7 +20,6 @@ export function AuthProvider({ children }) {
   const [isLoading, setIsLoading] = useState(true);
   const [authError, setAuthError] = useState(null);
 
-  // Sync Firebase user with backend Neon database
   const syncFirebaseUser = async (firebaseUser) => {
     if (!firebaseUser) {
       setCurrentUser(null);
@@ -36,7 +35,6 @@ export function AuthProvider({ children }) {
       localStorage.setItem('redkross_academy_auth_token', token);
       localStorage.setItem('redkross_academy_active_user', firebaseUser.uid);
 
-      // Deterministic Cadet identity generation and synchronization
       const cadetUser = mockEngine.getOrCreateCadetUser({
         uid: firebaseUser.uid,
         email: firebaseUser.email,
@@ -47,7 +45,6 @@ export function AuthProvider({ children }) {
       setCurrentUser(cadetUser);
       setTokenBalance(cadetUser.token_balance || 150);
 
-      // Persist authenticated student directly into Neon PostgreSQL so records show up in Admin CRM
       apiClient.syncUser({
         uid: firebaseUser.uid,
         email: firebaseUser.email,
@@ -68,7 +65,6 @@ export function AuthProvider({ children }) {
       }).catch((e) => console.warn('Neon DB user sync note:', e.message));
     } catch (err) {
       console.error('Failed to sync user session:', err);
-      // Fallback local student profile with deterministic cadet ID
       const fallbackUser = mockEngine.getOrCreateCadetUser({
         uid: firebaseUser.uid,
         email: firebaseUser.email,
@@ -83,7 +79,6 @@ export function AuthProvider({ children }) {
   };
 
   useEffect(() => {
-    // Check if 1-click dev super admin session is active
     if (localStorage.getItem('redkross_academy_dev_admin') === 'true') {
       setCurrentUser({
         id: 'usr_super_admin_dev',
@@ -100,7 +95,6 @@ export function AuthProvider({ children }) {
       return;
     }
 
-    // Check if dev cadet session is active
     const savedDevCadet = localStorage.getItem('redkross_academy_dev_cadet');
     if (savedDevCadet) {
       try {
@@ -114,7 +108,6 @@ export function AuthProvider({ children }) {
       }
     }
 
-    // Listen to Firebase Auth state
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (localStorage.getItem('redkross_academy_dev_admin') === 'true' || localStorage.getItem('redkross_academy_dev_cadet')) {
         return;
@@ -122,7 +115,6 @@ export function AuthProvider({ children }) {
       await syncFirebaseUser(firebaseUser);
     });
 
-    // Background backfill: sync any existing local cadet students to Neon DB
     try {
       const db = mockEngine.getDb();
       if (Array.isArray(db.users)) {
@@ -143,7 +135,6 @@ export function AuthProvider({ children }) {
     return () => unsubscribe();
   }, []);
 
-  // Live Event Bus & Socket.io subscription for instant cross-tab and cross-page sync
   useEffect(() => {
     if (!currentUser) return;
 
@@ -210,7 +201,6 @@ export function AuthProvider({ children }) {
     };
   }, [currentUser]);
 
-  // 1-Click Dev Cadet Creator / Switcher
   const devLoginAsCadet = (cadetData = {}) => {
     const email = cadetData.email || 'student@redkross.org.in';
     const uid = cadetData.uid || cadetData.id || 'usr_student_01';
@@ -231,7 +221,6 @@ export function AuthProvider({ children }) {
     return studentUser;
   };
 
-  // Login after selecting Google Account in Chooser Modal
   const loginWithSelectedGoogleAccount = async (account) => {
     setAuthError(null);
     setIsLoading(true);
@@ -273,7 +262,6 @@ export function AuthProvider({ children }) {
     return cadet;
   };
 
-  // 1-Click Super Admin Dev Creator / Switcher
   const devLoginAsAdmin = () => {
     const adminUser = {
       id: 'usr_super_admin_dev',

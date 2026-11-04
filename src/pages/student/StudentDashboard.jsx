@@ -99,7 +99,6 @@ export default function StudentDashboard() {
       setDownloadingCertId(certId);
       setActivePdfCred(cred);
 
-      // Brief delay to allow offscreen DOM rendering with high-res assets
       await new Promise((resolve) => setTimeout(resolve, 350));
 
       const filename = `RedKross_Certificate_${cred.cadet_id || cadetId}_${certId}.pdf`;

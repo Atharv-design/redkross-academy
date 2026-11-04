@@ -39,7 +39,7 @@ import { useAuth } from '../../services/auth/authContext';
 import { CYBER_COURSES } from '../../services/db/cyberCourses';
 
 /**
- * CyberStudentDashboard — Dedicated In-Branch Cybersecurity Cadet Workstation
+ * CyberStudentDashboard — Dedicated In-Branch Cybersecurity Student Dashboard
  * Route: /academy/cybersecurity/student
  * Features:
  * - Lists active cyber enrollments strictly isolated via mockEngine.getEnrolmentsForUser(cadetId, 'cybersecurity')
@@ -52,12 +52,10 @@ export default function CyberStudentDashboard() {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
 
-  // Kali CyberLab State
   const [isLabOpen, setIsLabOpen] = useState(false);
   const [isLabMinimized, setIsLabMinimized] = useState(false);
   const [copiedHash, setCopiedHash] = useState(null);
 
-  // Load Enrolments and Stats strictly scoped to Cybersecurity
   const [stats, setStats] = useState({
     activeCourses: 0,
     completedLessons: 0,
@@ -73,7 +71,6 @@ export default function CyberStudentDashboard() {
     if (!currentUser?.id) return;
     try {
       setLoading(true);
-      // STRICT ACADEMIC PARTITIONING: Scoped strictly to 'cybersecurity'
       const cyberEnrolments = mockEngine.getEnrolmentsForUser(currentUser.id, 'cybersecurity');
       const cyberStats = mockEngine.getStudentStatsByDivision(currentUser.id, 'cybersecurity');
 
@@ -97,20 +94,17 @@ export default function CyberStudentDashboard() {
     loadCadetData();
   }, [currentUser]);
 
-  // Copy SHA-256 hash helper
   const handleCopyHash = (hash, id) => {
     navigator.clipboard?.writeText(hash);
     setCopiedHash(id);
     setTimeout(() => setCopiedHash(null), 2000);
   };
 
-  // Launch Kali CyberLab
   const handleLaunchLab = () => {
     setIsLabOpen(true);
     setIsLabMinimized(false);
   };
 
-  // Fallback / Sample SHA-256 proof spec if no certificate yet issued
   const sampleVerificationHash = '3a7f8b9c2e1d0f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a';
 
   return (
@@ -147,11 +141,11 @@ export default function CyberStudentDashboard() {
               </div>
 
               <h1 className="text-2xl sm:text-4xl font-black font-royal text-white tracking-tight">
-                Defensive Cyber Workstation
+                Cyber Student Dashboard
               </h1>
 
               <p className="text-xs sm:text-sm text-slate-300 font-sans max-w-2xl leading-relaxed">
-                Welcome, Cadet <span className="text-white font-semibold">{currentUser?.name || currentUser?.full_name || 'Operator'}</span>. Your defensive curriculum, Kali sandbox containers, and cryptographic certifications are isolated to this secure workstation.
+                Welcome, Cadet <span className="text-white font-semibold">{currentUser?.name || currentUser?.full_name || 'Operator'}</span>. Your defensive curriculum, Kali sandbox containers, and cryptographic certifications are isolated to this secure student dashboard.
               </p>
             </div>
 

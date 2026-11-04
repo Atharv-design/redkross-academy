@@ -64,29 +64,13 @@ html {
   background-color: #000000;
 }
 
-/* Typography Standard */
-body, p, span, a, li, blockquote, label {
-  font-family: 'Lora', Georgia, serif;
-}
-
-.font-cinzel {
-  font-family: 'Cinzel', serif !important;
-}
-
-.font-orbitron {
-  font-family: 'Orbitron', 'Space Mono', sans-serif !important;
-}
-
-.font-plus-jakarta {
-  font-family: 'Plus Jakarta Sans', sans-serif !important;
-}
-
-code, pre, kbd, samp, .font-mono, .mono, .tabular-nums {
-  font-family: 'Space Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+/* Typography Standard — Universal Lora Standard Across All Pages & Divisions */
+*, *::before, *::after, html, body, p, span, a, li, blockquote, label, h1, h2, h3, h4, h5, h6, input, textarea, select, button, code, pre, kbd, samp, .font-mono, .mono, .tabular-nums, .font-sans, .font-royal, .font-lora, .font-cinzel, .font-orbitron, .font-plus-jakarta {
+  font-family: 'Lora', Georgia, serif !important;
 }
 
 input, textarea, select, button {
-  font-family: inherit;
+  font-family: 'Lora', Georgia, serif !important;
 }
 
 /* Universal Typography & Word-Wrap Standard */

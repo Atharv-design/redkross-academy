@@ -72,14 +72,14 @@ export default {
         }
       },
       fontFamily: {
-        sans: ['"Plus Jakarta Sans"', '"Inter"', 'sans-serif'],
-        royal: ['"Cinzel"', '"Lora"', 'serif'],
+        sans: ['"Lora"', 'Georgia', 'serif'],
+        royal: ['"Lora"', 'Georgia', 'serif'],
         lora: ['"Lora"', 'Georgia', 'serif'],
-        cinzel: ['"Cinzel"', 'serif'],
-        orbitron: ['"Orbitron"', 'sans-serif'],
-        mono: ['"Space Mono"', '"JetBrains Mono"', 'monospace'],
+        cinzel: ['"Lora"', 'Georgia', 'serif'],
+        orbitron: ['"Lora"', 'Georgia', 'serif'],
+        mono: ['"Lora"', 'Georgia', 'serif'],
         serif: ['"Lora"', 'Georgia', 'serif'],
-        psychology: ['"Lora"', '"Playfair Display"', 'serif'],
+        psychology: ['"Lora"', 'Georgia', 'serif'],
       },
       animation: {
         'pulse-subtle': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',

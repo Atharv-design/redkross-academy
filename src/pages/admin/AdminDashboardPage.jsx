@@ -44,7 +44,6 @@ export default function AdminDashboardPage() {
 
   const loadDashboardData = async () => {
     try {
-      // First try unified API telemetry from PostgreSQL backend
       let apiData = null;
       try {
         apiData = await apiClient.getAdminTelemetry();
@@ -88,7 +87,6 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     loadDashboardData();
 
-    // Universal Event Listeners: Local Bus & Live Sockets
     const unsubMock = mockEngine.subscribe(() => {
       loadDashboardData();
     });
@@ -113,15 +111,12 @@ export default function AdminDashboardPage() {
     setEmbargoNotice('');
     try {
       const nextState = !metrics.publicCatalogEnabled;
-      // 1. Sync local memory
       mockEngine.setPublicCatalogEnabled(nextState);
-      // 2. Sync PostgreSQL backend
       try {
         await apiClient.toggleCatalogVisibility(nextState);
       } catch (apiErr) {
         console.warn('Backend catalog toggle notice:', apiErr);
       }
-      // 3. Broadcast to all student clients via WebSockets
       socketClient.emit('catalog:visibility', { enabled: nextState });
 
       setMetrics((prev) => ({ ...prev, publicCatalogEnabled: nextState }));

@@ -16,7 +16,6 @@ export async function downloadCertificatePdf(elementOrId, filename = 'RedKross_C
       return false;
     }
 
-    // Capture DOM at 2.5x resolution for sharp text and graphics
     const canvas = await html2canvas(element, {
       scale: 2.5,
       useCORS: true,
@@ -31,7 +30,6 @@ export async function downloadCertificatePdf(elementOrId, filename = 'RedKross_C
     const canvasWidth = canvas.width;
     const canvasHeight = canvas.height;
 
-    // Portrait A4 matches the 949 x 1343 template aspect ratio (~1:1.41)
     const orientation = canvasWidth > canvasHeight ? 'landscape' : 'portrait';
     const pdf = new jsPDF({
       orientation,
@@ -43,7 +41,6 @@ export async function downloadCertificatePdf(elementOrId, filename = 'RedKross_C
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = pdf.internal.pageSize.getHeight();
 
-    // Scale precisely into the A4 printable area
     const widthRatio = pdfWidth / canvasWidth;
     const heightRatio = pdfHeight / canvasHeight;
     const ratio = Math.min(widthRatio, heightRatio);
@@ -58,7 +55,6 @@ export async function downloadCertificatePdf(elementOrId, filename = 'RedKross_C
     return true;
   } catch (error) {
     console.error('Failed to generate certificate PDF:', error);
-    // Fallback: trigger native window.print if html2canvas fails
     window.print();
     return false;
   }

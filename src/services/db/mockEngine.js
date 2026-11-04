@@ -118,7 +118,6 @@ class MockEngine {
       try {
         socketClient.emit(type, payload);
       } catch (err) {
-        // Ignored
       }
     }
 
@@ -183,14 +182,11 @@ class MockEngine {
     try {
       const data = safeStorage.getItem(STORAGE_KEY);
       let parsed = data ? JSON.parse(data) : null;
-      // PERMANENT PERSISTENCE FIX: Never re-initialize if courses or users are empty.
-      // An empty array is a valid user mutation (e.g. admin deleted all courses).
       if (!parsed || !parsed._initialized) {
         this.initDatabase(true);
         parsed = JSON.parse(safeStorage.getItem(STORAGE_KEY));
       }
 
-      // Ensure all core collections exist as arrays
       parsed.courses = parsed.courses || [];
       parsed.users = parsed.users || [];
       parsed.enrolments = parsed.enrolments || [];
@@ -204,10 +200,8 @@ class MockEngine {
       parsed.quiz_retry_windows = parsed.quiz_retry_windows || {};
       parsed.banned_emails = parsed.banned_emails || [];
 
-      // 100% REAL DATA ENFORCEMENT: Purge any legacy fake cohorts / fake violation events
       let modified = false;
 
-      // Ensure all master courses from INITIAL_COURSES (Cybersecurity & Psychology Divisions) are populated
       parsed.admin_deleted_course_ids = parsed.admin_deleted_course_ids || [];
       const validCourseIds = INITIAL_COURSES.map((c) => c.id);
       if (parsed.courses && parsed.courses.some((c) => !validCourseIds.includes(c.id))) {
@@ -223,7 +217,6 @@ class MockEngine {
         }
       });
 
-      // Ensure all learning paths from INITIAL_LEARNING_PATHS are populated
       const validPathIds = INITIAL_LEARNING_PATHS.map((p) => p.id);
       if (parsed.learning_paths && parsed.learning_paths.some((p) => !validPathIds.includes(p.id))) {
         parsed.learning_paths = parsed.learning_paths.filter((p) => validPathIds.includes(p.id));
@@ -237,7 +230,6 @@ class MockEngine {
         }
       });
 
-      // Default public catalog visibility to true so students immediately see the active curriculum
       if (typeof parsed.public_catalog_enabled !== 'boolean') {
         parsed.public_catalog_enabled = true;
         modified = true;
@@ -259,7 +251,6 @@ class MockEngine {
         modified = true;
       }
 
-      // Purge phantom auto-enrolments from previous sessions where cadet never actually enrolled or studied
       if (parsed.enrolments && parsed.enrolments.length > 0) {
         const initialCount = parsed.enrolments.length;
         parsed.enrolments = parsed.enrolments.filter((e) => {
@@ -280,7 +271,6 @@ class MockEngine {
         }
       }
 
-      // Ensure all course lessons have a playable video_url (repair missing, BigBuckBunny 403, or expired blob URLs)
       if (parsed.courses) {
         for (const course of parsed.courses) {
           if (course.modules) {
@@ -307,7 +297,6 @@ class MockEngine {
         }
       }
 
-      // Ensure all users have a deterministic, collision-proof Cadet ID (RK-XXXXX)
       if (parsed.users) {
         for (const user of parsed.users) {
           if (!user.cadet_id) {
@@ -317,7 +306,6 @@ class MockEngine {
         }
       }
 
-      // Ensure all enrolments have required array properties
       if (parsed.enrolments) {
         for (const enr of parsed.enrolments) {
           if (!enr.status) {
@@ -356,9 +344,6 @@ class MockEngine {
     this.emit(eventMetadata.type || 'DB_MUTATED', eventMetadata.payload || {});
   }
 
-  // ==========================================
-  // ATOMIC BUSINESS LOGIC METHODS
-  // ==========================================
   grantTokens(userId, amount, reason = 'Administrative grant') {
     const db = this.getDb();
     const user = (db.users || []).find((u) => u.id === userId);
@@ -368,7 +353,6 @@ class MockEngine {
     const newBalance = Math.max(0, currentBalance + parseInt(amount));
     user.token_balance = newBalance;
 
-    // Record in reward ledger
     if (!db.reward_ledger) db.reward_ledger = [];
     const ledgerEntry = {
       id: `led_${Date.now()}`,
@@ -380,7 +364,6 @@ class MockEngine {
     };
     db.reward_ledger.unshift(ledgerEntry);
 
-    // Record audit log
     if (!db.audit_logs) db.audit_logs = [];
     db.audit_logs.unshift({
       id: `aud_${Date.now()}`,
@@ -438,24 +421,19 @@ class MockEngine {
     const targetEmail = (email || student?.email || '').trim().toLowerCase();
     const targetName = student?.name || student?.full_name || 'Cadet';
 
-    // 1. Remove user from users array
     db.users = (db.users || []).filter((u) => u.id !== userId && (targetEmail ? u.email?.toLowerCase() !== targetEmail : true));
 
-    // 2. Cascade delete enrolments
     db.enrolments = (db.enrolments || []).filter((e) => e.user_id !== userId && (student?.cadet_id ? e.cadet_id !== student.cadet_id : true));
 
-    // 3. Delete or revoke credentials
     if (db.credentials) {
       db.credentials = db.credentials.filter((c) => c.student_email?.toLowerCase() !== targetEmail && (student?.cadet_id ? c.cadet_id !== student.cadet_id : true));
     }
 
-    // 4. Blacklist email permanently so user cannot re-register
     if (!db.banned_emails) db.banned_emails = [];
     if (targetEmail && !db.banned_emails.includes(targetEmail)) {
       db.banned_emails.push(targetEmail);
     }
 
-    // 5. Audit log
     if (!db.audit_logs) db.audit_logs = [];
     db.audit_logs.unshift({
       id: `aud_${Date.now()}`,
@@ -499,9 +477,6 @@ class MockEngine {
     return this.getDb();
   }
 
-  // ==========================================
-  // USERS & CADET IDENTITY
-  // ==========================================
   getUsers() {
     return this.getDb().users;
   }
@@ -530,7 +505,6 @@ class MockEngine {
       throw err;
     }
 
-    // Check if user already exists
     let existing = db.users.find((u) =>
       (uid && u.id === uid) ||
       (email && u.email?.toLowerCase() === email)
@@ -544,7 +518,6 @@ class MockEngine {
       return existing;
     }
 
-    // Create new cadet user with deterministic collision-proof ID
     const cadetId = generateDeterministicCadetId(email, uid, db.users);
     const newUser = {
       id: uid || `usr_${Date.now()}`,
@@ -562,7 +535,6 @@ class MockEngine {
 
     db.users.push(newUser);
 
-    // Note: No automatic enrolment. New cadets start with 0 enrolments until explicitly enrolled via the course catalog.
 
     this.saveDb(db, {
       type: 'USER_CREATED',
@@ -577,7 +549,6 @@ class MockEngine {
     const cleanId = String(identifier).trim().toUpperCase();
     const db = this.getDb();
 
-    // Find cadet by cadet_id, email, or user id
     const cadet = (db.users || []).find((u) =>
       (u.cadet_id && u.cadet_id.toUpperCase() === cleanId) ||
       (u.email && u.email.toUpperCase() === cleanId) ||
@@ -586,7 +557,6 @@ class MockEngine {
 
     if (!cadet) return null;
 
-    // Check if cadet account is suspended: redact and withhold all personal data and credentials
     if (cadet.status === 'SUSPENDED' || cadet.is_suspended) {
       return {
         isSuspended: true,
@@ -607,7 +577,6 @@ class MockEngine {
       };
     }
 
-    // Get all enrollments for this cadet
     const enrolments = (db.enrolments || []).filter((e) => e.user_id === cadet.id);
     const enrichedEnrolments = enrolments.map((enr) => {
       const course = (db.courses || []).find((c) => c.id === enr.course_id);
@@ -621,7 +590,6 @@ class MockEngine {
       };
     });
 
-    // Get all credentials / certificates issued to this cadet
     const credentials = (db.credentials || []).filter((c) =>
       c.student_email?.toLowerCase() === cadet.email?.toLowerCase() ||
       c.student_name?.toLowerCase() === cadet.full_name?.toLowerCase() ||
@@ -663,9 +631,6 @@ class MockEngine {
     return null;
   }
 
-  // ==========================================
-  // CATALOGUE & LEARNING PATHS
-  // ==========================================
   isPublicCatalogEnabled() {
     const db = this.getDb();
     if (typeof db.public_catalog_enabled === 'boolean') {
@@ -753,13 +718,11 @@ class MockEngine {
   createCourse(coursePayload) {
     const db = this.getDb();
 
-    // If course with this exact ID already exists (e.g. from background API sync), return it safely
     if (coursePayload.id) {
       const byId = (db.courses || []).find((c) => c.id === coursePayload.id);
       if (byId) return byId;
     }
 
-    // DUPLICATE COURSE GUARD: Prevent duplicate course creation
     const trimmedTitle = (coursePayload.title || '').trim().toLowerCase();
     const candidateSlug = (coursePayload.slug || (coursePayload.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')).trim().toLowerCase();
     
@@ -931,13 +894,11 @@ class MockEngine {
     const courseTitle = course.title;
     db.courses = (db.courses || []).filter((c) => c.id !== courseId);
 
-    // Track explicitly deleted courses so mockEngine never resurrects them automatically
     if (!db.admin_deleted_course_ids) db.admin_deleted_course_ids = [];
     if (!db.admin_deleted_course_ids.includes(courseId)) {
       db.admin_deleted_course_ids.push(courseId);
     }
 
-    // Archive or update enrollments
     if (db.enrolments) {
       db.enrolments = db.enrolments.filter((e) => e.course_id !== courseId);
     }
@@ -1093,9 +1054,6 @@ class MockEngine {
     return { success: true, quiz: mod.quiz, ...mod.quiz };
   }
 
-  // ==========================================
-  // ENROLMENTS & LESSON PROGRESSION
-  // ==========================================
   getEnrolmentsForUser(userId, division = null) {
     const enrolments = (this.getDb().enrolments || []).filter((e) => e.user_id === userId);
     if (!division) return enrolments;
@@ -1120,11 +1078,9 @@ class MockEngine {
     const targetDivision = String(division || 'cybersecurity').trim().toLowerCase();
     const user = (db.users || []).find((u) => u.id === userId);
 
-    // Enrolments strictly scoped to this division
     const enrolments = this.getEnrolmentsForUser(userId, targetDivision);
     const activeEnrolments = enrolments.filter((e) => (e.status || 'active') === 'active');
 
-    // Completed mandatory lessons and progress percentage
     let completedLessons = 0;
     let totalProgressSum = 0;
     enrolments.forEach((e) => {
@@ -1137,7 +1093,6 @@ class MockEngine {
 
     const averageProgress = enrolments.length > 0 ? Math.round(totalProgressSum / enrolments.length) : 0;
 
-    // Certificates / Credentials strictly scoped to this division
     const allCreds = db.credentials || [];
     const divisionCreds = allCreds.filter((c) => {
       if (c.revoked) return false;
@@ -1152,7 +1107,6 @@ class MockEngine {
       return credDivision === targetDivision;
     });
 
-    // Score calculations from credentials, quiz attempts, or course progress
     let scoreSum = 0;
     let scoreCount = 0;
 
@@ -1178,7 +1132,6 @@ class MockEngine {
 
     const averageScore = scoreCount > 0 ? Math.round(scoreSum / scoreCount) : averageProgress;
 
-    // Array of certificates supporting both Array methods (.map, .length) and numeric coercion
     const certsArray = [...divisionCreds];
     certsArray.valueOf = function() { return this.length; };
 
@@ -1220,7 +1173,6 @@ class MockEngine {
 
     db.enrolments.push(newEnrolment);
 
-    // Audit log
     db.audit_logs.push({
       id: `aud_${Date.now()}`,
       actor_id: userId,
@@ -1243,15 +1195,12 @@ class MockEngine {
     }
     const course = (db.courses || []).find((c) => c.id === enrolment.course_id);
 
-    // Strict Institutional Policy Guard: Paid courses are non-refundable and cannot be cancelled
     if (course && typeof course.price === 'number' && course.price > 0) {
       throw new Error('Institutional Policy: Paid course tracks are non-refundable and cannot be cancelled.');
     }
 
-    // Remove enrolment from active enrolments
     db.enrolments = (db.enrolments || []).filter((e) => e.id !== enrolmentId);
 
-    // Clean up attempts and retry windows for this enrolment
     if (db.quiz_retry_windows) {
       Object.keys(db.quiz_retry_windows).forEach((key) => {
         if (key.startsWith(`${enrolmentId}_`)) {
@@ -1260,7 +1209,6 @@ class MockEngine {
       });
     }
 
-    // Audit log cancellation
     if (!db.audit_logs) db.audit_logs = [];
     db.audit_logs.push({
       id: `aud_${Date.now()}`,
@@ -1321,7 +1269,6 @@ class MockEngine {
       const prevProgress = this.getCourseProgress(enrolmentId).percentage;
       enrolment.completed_mandatory_lessons.push(lessonId);
 
-      // Save last visited unit as well for seamless resume
       enrolment.last_visited_unit_id = lessonId;
       enrolment.last_accessed_at = new Date().toISOString();
       safeStorage.setItem(`rk_last_unit_${enrolmentId}`, lessonId);
@@ -1329,7 +1276,6 @@ class MockEngine {
 
       const newProgress = this.getCourseProgress(enrolmentId).percentage;
 
-      // PRD Section 8: Check for Milestone crossings: 20%, 50%, 80%, 100%
       const milestones = [20, 50, 80, 100];
       milestones.forEach((m) => {
         if (prevProgress < m && newProgress >= m) {
@@ -1398,13 +1344,11 @@ class MockEngine {
       windowData.locked_until = null;
     }
 
-    // Increment attempts used by 1 (consuming 1 attempt on mid-way abandonment)
     windowData.attempts_used = Math.min(3, (windowData.attempts_used || 0) + 1);
     const attemptsRemaining = Math.max(0, 3 - windowData.attempts_used);
 
     const enrolment = (db.enrolments || []).find((e) => e.id === enrolmentId);
 
-    // If all 3 attempts are now exhausted -> enforce strict 24-HOUR LOCKOUT!
     if (windowData.attempts_used >= 3) {
       const lockedUntil = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
       windowData.locked_until = lockedUntil;
@@ -1447,9 +1391,6 @@ class MockEngine {
     };
   }
 
-  // ==========================================
-  // ASSESSMENT & 24H RETRY WINDOW ENGINE
-  // ==========================================
   getRetryWindow(enrolmentId, quizId) {
     const db = this.getDb();
     const key = `${enrolmentId}_${quizId}`;
@@ -1467,9 +1408,7 @@ class MockEngine {
       db.quiz_retry_windows[key] = windowData;
       this.saveDb(db);
     } else {
-      // Check if cooldown has expired
       if (windowData.locked_until && new Date() >= new Date(windowData.locked_until)) {
-        // Automatically start fresh evaluation window with 3 attempts
         windowData.window_number = (windowData.window_number || 1) + 1;
         windowData.attempts_used = 0;
         windowData.locked_until = null;
@@ -1541,7 +1480,6 @@ class MockEngine {
       windowData.locked_until = null;
     }
 
-    // Increment attempts used in current window
     windowData.attempts_used = Math.min(3, (windowData.attempts_used || 0) + 1);
     const attemptsRemaining = Math.max(0, 3 - windowData.attempts_used);
 
@@ -1556,7 +1494,6 @@ class MockEngine {
         enrolment.quiz_scores = enrolment.quiz_scores || {};
         enrolment.quiz_scores[quizId] = scorePercentage;
 
-        // Auto-complete all lessons of this module in enrolment so subsequent modules and final exam unlock immediately
         const course = (db.courses || []).find((c) => c.id === enrolment.course_id);
         if (course && course.modules) {
           const mod = course.modules.find((m) => m.quiz?.id === quizId);
@@ -1576,7 +1513,6 @@ class MockEngine {
         enrolment.quiz_scores[quizId] = scorePercentage;
       }
 
-      // If all 3 attempts have been exhausted without passing -> apply strict 24-HOUR LOCKOUT!
       if (windowData.attempts_used >= 3) {
         const lockedUntil = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
         windowData.locked_until = lockedUntil;
@@ -1584,7 +1520,6 @@ class MockEngine {
           enrolment.exam_lockout_until = lockedUntil;
         }
 
-        // Multi-layer persistent backup in safeStorage
         if (enrolmentId && quizId) {
           safeStorage.setItem(`rk_proctor_lock_${enrolmentId}_${quizId}`, lockedUntil);
         }
@@ -1655,7 +1590,6 @@ class MockEngine {
         message: 'STRIKE 1: Tab switch / focus loss detected. Timer paused. Please acknowledge to resume.',
       };
     } else if (currentStrike === 2) {
-      // PRD Rule: Strike 2 = 50 Token deduction logged to ledger
       const enrolment = db.enrolments.find((e) => e.id === attempt.enrolment_id);
       const idempotencyKey = `idemp_penalty_strike2_${attemptId}`;
 
@@ -1679,19 +1613,16 @@ class MockEngine {
         message: 'STRIKE 2: Second focus loss detected! 50 RedKross Tokens have been deducted from your wallet.',
       };
     } else if (currentStrike >= 3) {
-      // PRD Rule: Strike 3 = Immediate termination, failed attempt, 24h lockout
       attempt.status = 'terminated';
       attempt.submitted_at = new Date().toISOString();
       attempt.is_passed = false;
 
-      // Lock current window for 24 hours
       const key = `${attempt.enrolment_id}_${attempt.quiz_id}`;
       if (db.quiz_retry_windows[key]) {
         db.quiz_retry_windows[key].attempts_used = 3;
         db.quiz_retry_windows[key].locked_until = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
       }
 
-      // Log incident to Admin queue
       db.exam_violation_events.push({
         id: `inc_${Date.now()}`,
         attempt_id: attemptId,
@@ -1721,7 +1652,6 @@ class MockEngine {
       throw new Error('Attempt cannot be submitted: invalid state or already evaluated.');
     }
 
-    // Grade attempt against answer keys
     let totalPoints = 0;
     let earnedPoints = 0;
 
@@ -1745,12 +1675,10 @@ class MockEngine {
 
     const enrolment = db.enrolments.find((e) => e.id === attempt.enrolment_id);
 
-    // If passed, record quiz in enrolment passed list
     if (isPassed && enrolment) {
       if (!enrolment.passed_quizzes.includes(attempt.quiz_id)) {
         enrolment.passed_quizzes.push(attempt.quiz_id);
 
-        // One-time passing Token Reward (+100 Tokens)
         const idempotencyKey = `idemp_quiz_pass_${attempt.quiz_id}_${enrolment.id}`;
         if (!db.reward_ledger.some((tx) => tx.idempotency_key === idempotencyKey)) {
           db.reward_ledger.push({
@@ -1763,7 +1691,6 @@ class MockEngine {
             created_at: new Date().toISOString(),
           });
 
-          // Bonus +50 Tokens if scored >= 90%
           if (scorePercentage >= 90) {
             db.reward_ledger.push({
               id: `tx_${Date.now()}_bonus`,
@@ -1778,7 +1705,6 @@ class MockEngine {
         }
       }
     } else {
-      // If failed and attempts_used == 3, lock for 24 hours
       const key = `${attempt.enrolment_id}_${attempt.quiz_id}`;
       const windowData = db.quiz_retry_windows[key];
       if (windowData && windowData.attempts_used >= 3) {
@@ -1792,9 +1718,6 @@ class MockEngine {
 
 
 
-  // ==========================================
-  // FINAL ASSESSMENT UNLOCK GATE (PRD Section 5 & 21)
-  // ==========================================
   checkFinalAssessmentUnlock(enrolmentId) {
     const enrolment = this.getEnrolment(enrolmentId);
     if (!enrolment) return { is_unlocked: false, reasons: ['Enrolment not found'] };
@@ -1804,13 +1727,11 @@ class MockEngine {
 
     const reasons = [];
 
-    // Gate 1: 100% Mandatory Lessons Complete
     const progress = this.getCourseProgress(enrolmentId);
     if (progress.percentage < 100) {
       reasons.push(`Incomplete Lessons: Course progress is currently ${progress.percentage}%. 100% required.`);
     }
 
-    // Gate 2: All Required Chapter Quizzes Passed
     const requiredQuizIds = (course.modules || [])
       .filter((m) => m.quiz)
       .map((m) => m.quiz.id);
@@ -1820,7 +1741,6 @@ class MockEngine {
       reasons.push(`Unpassed Quizzes: ${unpassedQuizzes.length} required chapter evaluation(s) pending.`);
     }
 
-    // Gate 3: 80% Course Quiz Tokens Earned
     const totalPossibleQuizTokens = (course.modules || []).reduce(
       (sum, m) => sum + (m.quiz?.token_bounty || 100),
       0
@@ -1841,9 +1761,6 @@ class MockEngine {
     };
   }
 
-  // ==========================================
-  // CREDENTIALS & PUBLIC VERIFICATION
-  // ==========================================
   issueCredential(enrolmentId, studentName, finalScore) {
     const db = this.getDb();
     const enrolment = db.enrolments.find((e) => e.id === enrolmentId);
@@ -1881,7 +1798,6 @@ class MockEngine {
     db.credentials.push(newCredential);
     enrolment.credential_id = newCredential.id;
 
-    // Audit log
     db.audit_logs.push({
       id: `aud_${Date.now()}`,
       actor_id: enrolment.user_id,
@@ -1907,9 +1823,6 @@ class MockEngine {
     });
   }
 
-  // ==========================================
-  // TOKEN ECONOMY
-  // ==========================================
   getTokenBalance(userId) {
     const db = this.getDb();
     return db.reward_ledger
@@ -1924,9 +1837,6 @@ class MockEngine {
       .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   }
 
-  // ==========================================
-  // ADMIN & OPERATIONS CONSOLE
-  // ==========================================
   getOperationsMetrics() {
     const db = this.getDb();
     const totalStudents = db.users.filter((u) => u.role === 'student').length;
@@ -2034,7 +1944,6 @@ class MockEngine {
     const course = (db.courses || []).find((c) => c.id === courseId);
     if (!course || !course.modules || !course.modules[moduleIndex - 1]) return true;
 
-    // Previous module must have its quiz passed (or all lessons completed if no quiz exists)
     const prevMod = course.modules[moduleIndex - 1];
     const prevLessons = prevMod.lessons || [];
     const allPrevLessonsCompleted = prevLessons.every((l) =>
@@ -2047,9 +1956,6 @@ class MockEngine {
     return prevMod.quiz ? prevQuizPassed : allPrevLessonsCompleted;
   }
 
-  // ==========================================
-  // SUPER ADMIN CURRICULUM STUDIO MUTATIONS
-  // ==========================================
   reorderModulesAndLessons(courseId, modulesPayload, adminEmail = 'usr_admin') {
     const db = this.getDb();
     const course = db.courses.find((c) => c.id === courseId);
@@ -2123,7 +2029,6 @@ class MockEngine {
       uploaded_at: new Date().toISOString(),
     };
 
-    // If associated with a lesson, also attach it to that lesson object directly
     if (newAsset.lesson_id && course.modules) {
       for (const m of course.modules) {
         const targetLesson = (m.lessons || []).find((l) => l.id === newAsset.lesson_id);
@@ -2160,7 +2065,6 @@ class MockEngine {
 
     course.video_assets = course.video_assets.filter((a) => a.id !== assetId);
 
-    // Unlink from lessons if bound
     if (course.modules) {
       for (const m of course.modules) {
         for (const l of m.lessons || []) {
@@ -2196,7 +2100,6 @@ class MockEngine {
     const asset = course.video_assets.find((a) => a.id === assetId);
     if (!asset) return null;
 
-    // Unbind from previous lesson
     if (course.modules) {
       for (const m of course.modules) {
         for (const l of m.lessons || []) {
@@ -2213,7 +2116,6 @@ class MockEngine {
     asset.lesson_id = newLessonId || null;
     let targetLessonName = 'Unassigned';
 
-    // Bind to new target lesson
     if (newLessonId && course.modules) {
       for (const m of course.modules) {
         const targetLesson = (m.lessons || []).find((l) => l.id === newLessonId);
@@ -2248,7 +2150,6 @@ class MockEngine {
     const course = db.courses.find((c) => c.id === courseId);
     if (!course) return null;
 
-    // Bump version: 1.0 -> 1.1, 1.1 -> 1.2
     const currentVer = parseFloat(course.version || '1.0');
     const newVer = (currentVer + 0.1).toFixed(1);
     course.version = newVer;
@@ -2277,21 +2178,16 @@ class MockEngine {
     return course;
   }
 
-  // ==========================================
-  // SUPER ADMIN STUDENT LIFECYCLE MANAGEMENT
-  // ==========================================
   resetStudentProgress(userId, courseId, lessonId = null, reason = '', adminEmail = 'usr_admin') {
     const db = this.getDb();
     const enrolment = db.enrolments.find((e) => e.user_id === userId && e.course_id === courseId);
     if (!enrolment) return false;
 
     if (lessonId) {
-      // Reset specific lesson
       enrolment.completed_mandatory_lessons = (enrolment.completed_mandatory_lessons || []).filter(
         (id) => id !== lessonId
       );
     } else {
-      // Full course progress reset
       enrolment.completed_mandatory_lessons = [];
       enrolment.passed_quizzes = [];
       enrolment.final_assessment_attempt_id = null;
@@ -2319,7 +2215,6 @@ class MockEngine {
     const asset = course.video_assets.find((a) => a.id === assetId);
     if (!asset) return null;
 
-    // Unbind from previous lesson
     if (course.modules) {
       for (const m of course.modules) {
         for (const l of m.lessons || []) {
@@ -2336,7 +2231,6 @@ class MockEngine {
     asset.lesson_id = newLessonId || null;
     let targetLessonName = 'Unassigned';
 
-    // Bind to new target lesson
     if (newLessonId && course.modules) {
       for (const m of course.modules) {
         const targetLesson = (m.lessons || []).find((l) => l.id === newLessonId);
@@ -2448,9 +2342,6 @@ class MockEngine {
     return credential;
   }
 
-  // ==========================================
-  // GLOBAL SECURITY POLICY & TRACKING
-  // ==========================================
   getGlobalSecurityPolicy() {
     const db = this.getDb();
     return db.security_policy || {
@@ -2489,7 +2380,6 @@ class MockEngine {
     const students = db.users.filter((u) => u.role === 'student');
 
     return students.map((s) => {
-      // Check if student has an active strike-3 lockout
       let isLockedOut = false;
       let lockoutUntil = null;
       for (const [key, windowData] of Object.entries(db.quiz_retry_windows || {})) {
@@ -2502,7 +2392,6 @@ class MockEngine {
         }
       }
 
-      // Check if student has in-progress quiz attempts
       const inExam = (db.quiz_attempts || []).some(
         (a) => a.user_id === s.id && a.state === 'in_progress'
       );
@@ -2519,15 +2408,11 @@ class MockEngine {
     });
   }
 
-  // ==========================================
-  // REAL-TIME PROCTORING & STRICT 24-HOUR LOCKOUT ENGINE
-  // ==========================================
   recordProctorViolation({ enrolmentId, quizId, attemptId, cadetId, studentName, violationType, reason, details }) {
     const db = this.getDb();
     const lockedUntil = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
     const finalViolation = violationType || reason || 'TAB_SWITCH_BLUR';
 
-    // 1. Lock retry window for this quiz & enrolment for 24 hours
     const windowKey = `${enrolmentId}_${quizId}`;
     if (!db.quiz_retry_windows) db.quiz_retry_windows = {};
     db.quiz_retry_windows[windowKey] = {
@@ -2539,7 +2424,6 @@ class MockEngine {
       last_violation_at: new Date().toISOString()
     };
 
-    // 2. Lock enrolment object
     const enrolment = (db.enrolments || []).find((e) => e.id === enrolmentId);
     if (enrolment) {
       enrolment.exam_lockout_until = lockedUntil;
@@ -2550,7 +2434,6 @@ class MockEngine {
       };
     }
 
-    // 3. Mark attempt as terminated
     if (attemptId && db.quiz_attempts) {
       const attempt = db.quiz_attempts.find((a) => a.id === attemptId);
       if (attempt) {
@@ -2560,7 +2443,6 @@ class MockEngine {
       }
     }
 
-    // 4. Log incident to exam_violation_events
     if (!db.exam_violation_events) db.exam_violation_events = [];
     const eventId = `viol_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
     const violationEvent = {
@@ -2577,7 +2459,6 @@ class MockEngine {
     };
     db.exam_violation_events.unshift(violationEvent);
 
-    // 5. Persistent fallback in safeStorage (multi-layer survivability against browser navigation)
     if (enrolmentId && quizId) {
       safeStorage.setItem(`rk_proctor_lock_${enrolmentId}_${quizId}`, lockedUntil);
     }
@@ -2588,7 +2469,6 @@ class MockEngine {
       safeStorage.setItem(`rk_proctor_lock_${cadetId}`, lockedUntil);
     }
 
-    // 6. Audit log
     if (!db.audit_logs) db.audit_logs = [];
     db.audit_logs.unshift({
       id: `aud_${Date.now()}`,
@@ -2635,16 +2515,13 @@ class MockEngine {
       }
     };
 
-    // 1. Direct quiz window
     if (quizId && db.quiz_retry_windows) {
       const windowKey = `${enrolmentId}_${quizId}`;
       considerDate(db.quiz_retry_windows[windowKey]?.locked_until);
     }
 
-    // 2. Enrolment level proctor ban
     considerDate(enrolment?.exam_lockout_until);
 
-    // 3. Any active proctor violation or retry window for this enrolment
     if (db.quiz_retry_windows) {
       for (const w of Object.values(db.quiz_retry_windows)) {
         if (w && w.enrolment_id === enrolmentId) {
@@ -2653,7 +2530,6 @@ class MockEngine {
       }
     }
 
-    // 4. Any violation events recorded for this enrolment
     if (db.exam_violation_events) {
       for (const ev of db.exam_violation_events) {
         if (ev && ev.enrolment_id === enrolmentId) {
@@ -2662,7 +2538,6 @@ class MockEngine {
       }
     }
 
-    // 5. Multi-layer persistent storage fallback
     if (enrolmentId && quizId) {
       considerDate(safeStorage.getItem(`rk_proctor_lock_${enrolmentId}_${quizId}`));
     }
@@ -2694,9 +2569,6 @@ class MockEngine {
     return this.isExamLocked(enrolmentId, quizId);
   }
 
-  // ==========================================
-  // MANDATORY PDF ASSIGNMENT SUBMISSION & ASSESSMENT
-  // ==========================================
   submitAssignment({
     cadetId,
     userId,
@@ -2803,9 +2675,6 @@ class MockEngine {
     return submission;
   }
 
-  // ==========================================
-  // COMPLETE COURSE COMPLETION & CERTIFICATION LIFECYCLE
-  // ==========================================
   checkCourseCompletion(enrolmentId) {
     const enrolment = this.getEnrolment(enrolmentId);
     if (!enrolment) return { isComplete: false, reason: 'Enrolment not found' };
@@ -3033,9 +2902,6 @@ class MockEngine {
     return credential;
   }
 
-  // ==========================================
-  // REAL-TIME DATABASE TELEMETRY & STATS (NO FAKE DATA)
-  // ==========================================
   getRealDatabaseStats() {
     const db = this.getDb();
     const users = db.users || [];
@@ -3046,7 +2912,6 @@ class MockEngine {
     const certRequests = db.certificate_requests || [];
     const violations = db.exam_violation_events || [];
 
-    // Count only active, non-suspended students for real platform metrics
     const realActiveStudents = users.filter((u) => (u.role === 'student' || !u.role) && u.status !== 'SUSPENDED' && !u.is_suspended);
     const suspendedStudents = users.filter((u) => u.status === 'SUSPENDED' || u.is_suspended);
     const validCredentials = credentials.filter((c) => !c.revoked);
@@ -3072,9 +2937,6 @@ class MockEngine {
     };
   }
 
-  // ==========================================
-  // REAL-TIME LEARNING ANALYTICS & TELEMETRY AGGREGATION
-  // ==========================================
 
 
   getLearningAnalytics(dateRange = '30D') {
@@ -3102,7 +2964,6 @@ class MockEngine {
 
     const totalEnrolled = enrolments.length;
 
-    // Real curriculum progression headcount
     const issuedCredentialCount = credentials.filter((c) => !c.revoked).length;
     const finalExamCount = enrolments.filter(
       (e) => e.credential_id || e.final_assessment_attempt_id || e.final_assessment_passed
@@ -3117,7 +2978,6 @@ class MockEngine {
       (e) => (e.passed_quizzes || []).length >= 1 || (e.completed_mandatory_lessons || []).length >= 1
     ).length;
 
-    // 1. Progression Pie Chart Data (Replaces First Bar Diagram)
     const progressionData = [
       {
         name: 'Issued Credential (Certified)',
@@ -3157,7 +3017,6 @@ class MockEngine {
       }
     ].filter((item) => item.value > 0);
 
-    // 2. Score Buckets Pie Chart Data (Replaces Second Bar Diagram)
     const highHonors = credentials.filter((c) => (c.grade_percentage || 85) >= 90).length;
     const passed = credentials.filter((c) => (c.grade_percentage || 85) >= 80 && (c.grade_percentage || 85) < 90).length;
     const borderline = credentials.filter((c) => (c.grade_percentage || 85) >= 70 && (c.grade_percentage || 85) < 80).length;
@@ -3192,11 +3051,9 @@ class MockEngine {
       }
     ];
 
-    // Top 4 Real Academic KPIs
     const completionRate = totalEnrolled > 0 ? ((issuedCredentialCount / totalEnrolled) * 100).toFixed(1) : '0.0';
     const firstAttemptPass = totalExaminees > 0 ? (((highHonors + passed) / totalExaminees) * 100).toFixed(1) : '0.0';
 
-    // Compute actual median time to certification across issued credentials
     let medianTimeToCert = '0.0 Days';
     const certDurations = credentials
       .map((c) => {
@@ -3221,7 +3078,6 @@ class MockEngine {
     const tokenVelocity = ledger.reduce((acc, tx) => acc + Math.abs(tx.amount || 0), 0) +
       users.reduce((acc, u) => acc + (u.token_balance || 0), 0);
 
-    // Real Proctoring Telemetry
     const totalExams = totalExaminees;
     const tabSwitchCount = violations.filter((v) => (v.violation_type || '').includes('TAB') || (v.details || '').includes('TAB')).length;
     const revokedCount = credentials.filter((c) => c.revoked).length;

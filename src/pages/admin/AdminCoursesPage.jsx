@@ -71,7 +71,7 @@ function generate20ModuleQuestions(moduleTitle = 'Core Defensive Security') {
         { id: 'opt_3', text: 'Event ID 1102 (Audit log cleared)', is_correct: false },
         { id: 'opt_4', text: 'Event ID 7045 (New Service installed)', is_correct: false }
       ],
-      explanation: 'Event ID 4625 logs failed authentication attempts, providing the logon type, failure reason, and requesting workstation IP.'
+      explanation: 'Event ID 4625 logs failed authentication attempts, providing the logon type, failure reason, and requesting client machine IP.'
     },
     {
       id: `q_${Date.now()}_5`,
@@ -303,7 +303,6 @@ export default function AdminCoursesPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [successModalData, setSuccessModalData] = useState(null);
 
-  // Course Form State
   const [courseFormData, setCourseFormData] = useState({
     title: '',
     slug: '',
@@ -331,14 +330,12 @@ export default function AdminCoursesPage() {
     modules: []
   });
 
-  // Media Upload States
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [videoPreviewUrl, setVideoPreviewUrl] = useState('');
   const imageInputRef = useRef(null);
   const videoInputRef = useRef(null);
 
-  // Module and Lesson Modals
   const [activeModuleIndex, setActiveModuleIndex] = useState(0);
   const [moduleModalOpen, setModuleModalOpen] = useState(false);
   const [editingModuleIdx, setEditingModuleIdx] = useState(null);
@@ -363,7 +360,6 @@ export default function AdminCoursesPage() {
   const lessonVideoRef = useRef(null);
   const lessonImageRef = useRef(null);
 
-  // Manual Question Builder State (No Forced Auto-Generation)
   const [questionModalOpen, setQuestionModalOpen] = useState(false);
   const [editingQuestionIdx, setEditingQuestionIdx] = useState(null);
   const [questionForm, setQuestionForm] = useState({
@@ -377,7 +373,6 @@ export default function AdminCoursesPage() {
     explanation: ''
   });
 
-  // Load courses from database
   const loadCourses = async () => {
     try {
       let serverCourses = null;
@@ -458,7 +453,6 @@ export default function AdminCoursesPage() {
     }
   };
 
-  // Safe Audit Logger
   const safeLogAction = (entry) => {
     try {
       if (typeof mockEngine?.logAction === 'function') {
@@ -481,7 +475,6 @@ export default function AdminCoursesPage() {
     }
   };
 
-  // Save changes to database
   const persistCourses = async (updatedCourses, auditMsg = 'Admin updated courses') => {
     try {
       const db = mockEngine.getDb();
@@ -516,7 +509,6 @@ export default function AdminCoursesPage() {
     }
   };
 
-  // Direct Course Deletion with Permanent Database Purge & Live Student Sync
   const handleDeleteCourse = async (courseId) => {
     const target = courses.find((c) => c.id === courseId);
     const courseTitle = target?.title || 'this course';
@@ -524,14 +516,12 @@ export default function AdminCoursesPage() {
       return;
     }
 
-    // 1. Delete from PostgreSQL API
     try {
       await apiClient.deleteCourse(courseId);
     } catch (apiErr) {
       console.warn('Backend course deletion warning:', apiErr.message);
     }
 
-    // 2. Delete from local state engine
     const res = mockEngine.deleteCourse(courseId, 'usr_admin');
     if (res && res.success !== false) {
       const remaining = courses.filter((c) => c.id !== courseId);
@@ -547,7 +537,6 @@ export default function AdminCoursesPage() {
         }
       }
 
-      // 3. Broadcast deletion event to all active student browsers
       if (socketClient && typeof socketClient.emit === 'function') {
         socketClient.emit('course:mutation', { type: 'DELETE', courseId });
       }
@@ -556,7 +545,6 @@ export default function AdminCoursesPage() {
     }
   };
 
-  // Handle Image Upload (Base64 Data URL)
   const handleImageFileUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -577,7 +565,6 @@ export default function AdminCoursesPage() {
     reader.readAsDataURL(file);
   };
 
-  // Handle Video Upload (IndexedDB Storage)
   const handleVideoFileUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -600,7 +587,6 @@ export default function AdminCoursesPage() {
     }
   };
 
-  // Handle Lesson PDF Upload
   const handleLessonPdfUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -633,7 +619,6 @@ export default function AdminCoursesPage() {
     }
   };
 
-  // Handle Direct System Upload of Lesson Videos (IndexedDB Persistent)
   const handleLessonVideoUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -679,7 +664,6 @@ export default function AdminCoursesPage() {
     });
   };
 
-  // Handle Direct System Upload of Lesson Images/Diagrams
   const handleLessonImageUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -724,7 +708,6 @@ export default function AdminCoursesPage() {
     }));
   };
 
-  // Handle Launch or Update Course
   const handleSaveCourse = async (e) => {
     e?.preventDefault();
     if (!courseFormData.title.trim()) {
@@ -739,7 +722,6 @@ export default function AdminCoursesPage() {
     setIsSaving(true);
 
     try {
-      // Determine if we are updating an existing course in the repository or creating new
       const isExistingCourse = Boolean(
         !isCreatingNew &&
         selectedCourse &&
@@ -748,7 +730,6 @@ export default function AdminCoursesPage() {
       );
 
       if (!isExistingCourse) {
-        // Check for duplicate course
         const isDuplicate = courses.some(
           (c) => c.title?.toLowerCase() === courseFormData.title.trim().toLowerCase() || c.slug === formattedSlug
         );
@@ -758,7 +739,6 @@ export default function AdminCoursesPage() {
           return;
         }
 
-        // Default module with 20 questions if none created
         const defaultModules = (courseFormData.modules && courseFormData.modules.length > 0)
           ? courseFormData.modules
           : [
@@ -817,17 +797,14 @@ export default function AdminCoursesPage() {
           modules: defaultModules
         };
 
-        // 1. Create in local database engine
         const created = mockEngine.createCourse(newCoursePayload);
 
-        // 2. Persist to PostgreSQL database API
         try {
           await apiClient.createCourse({ ...newCoursePayload, id: created?.id });
         } catch (apiErr) {
           console.warn('Backend course creation API notice:', apiErr.message);
         }
 
-        // 3. Update state
         const db = mockEngine.getDb();
         const updatedCourseList = [...(db.courses || [])];
         setCourses(updatedCourseList);
@@ -836,12 +813,10 @@ export default function AdminCoursesPage() {
         setIsCreatingNew(false);
         setIsEditingCourse(false);
 
-        // 4. Broadcast live Socket.io event to all student interfaces
         if (socketClient && typeof socketClient.emit === 'function') {
           socketClient.emit('course:mutation', { type: 'CREATE', course: savedCourse });
         }
 
-        // 5. Audit log
         safeLogAction({
           action: 'COURSE_CREATED',
           category: 'COURSE_MUTATION',
@@ -849,7 +824,6 @@ export default function AdminCoursesPage() {
           severity: 'INFO'
         });
 
-        // 6. Confetti celebration
         try {
           confetti({
             particleCount: 110,
@@ -859,7 +833,6 @@ export default function AdminCoursesPage() {
           });
         } catch (_) {}
 
-        // 7. Pop-up Success Confirmation
         setSuccessModalData({
           isOpen: true,
           isNew: true,
@@ -869,7 +842,6 @@ export default function AdminCoursesPage() {
         });
 
       } else {
-        // Updating existing course in repository
         const updated = courses.map((c) =>
           c.id === selectedCourse.id
             ? {
@@ -908,7 +880,6 @@ export default function AdminCoursesPage() {
         await persistCourses(updated, `Admin updated course: ${courseFormData.title}`);
         setIsEditingCourse(false);
 
-        // Confetti celebration
         try {
           confetti({
             particleCount: 80,
@@ -918,7 +889,6 @@ export default function AdminCoursesPage() {
           });
         } catch (_) {}
 
-        // Pop-up Success Confirmation
         setSuccessModalData({
           isOpen: true,
           isNew: false,
@@ -935,7 +905,6 @@ export default function AdminCoursesPage() {
     }
   };
 
-  // Module Actions
   const handleAddModule = () => {
     if (!moduleTitleInput.trim()) return;
     const newMod = {
@@ -972,7 +941,6 @@ export default function AdminCoursesPage() {
     }
   };
 
-  // Manual Question Builder Handlers (User Specification: No auto-generation required)
   const handleOpenAddQuestion = () => {
     setEditingQuestionIdx(null);
     setQuestionForm({
@@ -1067,7 +1035,6 @@ export default function AdminCoursesPage() {
     setCourseFormData((prev) => ({ ...prev, modules: updatedMods }));
     setQuestionModalOpen(false);
 
-    // Immediate DB synchronization
     if (selectedCourse?.id && currentMod.id) {
       mockEngine.saveQuizQuestions(selectedCourse.id, currentMod.id, updatedQuestions, 'usr_admin');
     }
@@ -1098,7 +1065,6 @@ export default function AdminCoursesPage() {
     }
   };
 
-  // Optional: Auto-Generate 20 Questions fallback
   const handleGenerate20Questions = () => {
     const currentMod = courseFormData.modules?.[activeModuleIndex];
     if (!currentMod) return;
@@ -1123,7 +1089,6 @@ export default function AdminCoursesPage() {
     alert(`Generated default questions for ${currentMod.title}. You can now edit each question manually.`);
   };
 
-  // Lesson Save Action
   const handleSaveLesson = () => {
     if (!lessonForm.title.trim()) {
       alert('Lesson title is required.');
@@ -1171,7 +1136,6 @@ export default function AdminCoursesPage() {
     }
   };
 
-  // Filtered courses
   const filteredCourses = courses.filter((c) => {
     const matchesSearch = c.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           c.category?.toLowerCase().includes(searchQuery.toLowerCase());

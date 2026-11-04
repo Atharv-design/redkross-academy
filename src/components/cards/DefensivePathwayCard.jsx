@@ -46,7 +46,6 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
 
   if (!path) return null;
 
-  // Configuration per pathway index (0: SOC Analyst, 1: Threat Hunter, 2: Defensive Architect)
   const configs = [
     {
       art: '/assets/course-art/art-01.jpg',
@@ -85,9 +84,6 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
 
   const cfg = configs[index % configs.length];
 
-  // ==========================================
-  // VARIANT 0: WIDE STRETCH RECTANGLE (2 COLS)
-  // ==========================================
   if (index === 0) {
     return (
       <div
@@ -207,9 +203,6 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
     );
   }
 
-  // ==========================================
-  // VARIANT 1: TALL COMPACT CYBER CARD (1 COL)
-  // ==========================================
   if (index === 1) {
     return (
       <div
@@ -322,9 +315,6 @@ export default function DefensivePathwayCard({ path, index = 0 }) {
     );
   }
 
-  // ==========================================
-  // VARIANT 2: PANORAMIC COMMAND DECK (3 COLS)
-  // ==========================================
   return (
     <div
       ref={cardRef}

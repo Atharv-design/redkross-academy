@@ -106,7 +106,6 @@ export default function FinalCertificationPage() {
       const status = mockEngine.checkFinalAssessmentUnlock(enrolmentId);
       setGateStatus(status);
 
-      // Check if already credentialed
       if (enrolment?.credential_id) {
         const cred = mockEngine.getDb().credentials.find((c) => c.id === enrolment.credential_id);
         if (cred) setIssuedCredential(cred);
@@ -114,7 +113,6 @@ export default function FinalCertificationPage() {
     }
   }, [enrolmentId]);
 
-  // Exam Timer
   useEffect(() => {
     if (!examStarted || timerPaused || examResult) return;
 
@@ -132,7 +130,6 @@ export default function FinalCertificationPage() {
     return () => clearInterval(timer);
   }, [examStarted, timerPaused, examResult]);
 
-  // Exam Focus Tracking
   useEffect(() => {
     if (!examStarted || examResult) return;
 

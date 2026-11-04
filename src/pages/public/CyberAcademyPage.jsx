@@ -13,7 +13,9 @@ import {
   Activity,
   CheckCircle2,
   Clock,
-  Sparkles
+  Sparkles,
+  Shield,
+  UserCheck
 } from 'lucide-react';
 import CyberCloudsBackground from '../../components/common/CyberCloudsBackground';
 import CyberShaderBackground from '../../components/ui/CyberShaderBackground';
@@ -23,8 +25,10 @@ import CyberDivisionWatermark from '../../components/cyber/CyberDivisionWatermar
 import CyberLearningCard from '../../components/cyber/CyberLearningCard';
 import { apiClient } from '../../services/apiClient';
 import { socketClient } from '../../services/socket/socketClient';
+import { useAuth } from '../../services/auth/authContext';
 
 export default function CyberAcademyPage() {
+  const { currentUser } = useAuth();
   const [courses, setCourses] = useState([]);
   const [learningPaths, setLearningPaths] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -53,7 +57,6 @@ export default function CyberAcademyPage() {
     };
   }, []);
 
-  // Authoritative Full Stack Career Track & Curriculum Data
   const masterTrack = learningPaths[0] || {
     id: 'path_fullstack_career',
     division: 'cybersecurity',
@@ -142,16 +145,101 @@ export default function CyberAcademyPage() {
                 <span>Explore Cyber Course</span>
               </a>
               <Link 
-                to="/student"
+                to="/academy/cybersecurity/student"
                 className="px-6 py-3 rounded-full bg-black/60 border border-[#FF7A00]/35 text-slate-200 hover:text-white hover:border-[#FF7A00]/70 font-mono text-xs hover:bg-[#FF7A00]/10 transition-all flex items-center gap-2 shadow-lg shadow-black/40"
               >
                 <Cpu className="w-4 h-4 text-[#FFA439]" />
-                <span>Open Student Workstation</span>
+                <span>Open Student Dashboard</span>
               </Link>
             </motion.div>
           </section>
 
-          {/* DEDICATED CYBER COURSES CATALOGUE */}
+          {/* ================= 1. BRANCH OVERVIEW & MISSION ARCHITECTURE (BEFORE CURRICULUM) ================= */}
+          <motion.section
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="mb-20 space-y-8"
+          >
+            {/* Section Header */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-[#FF7A00]/25">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF7A00]/15 border border-[#FF7A00]/30 text-[10px] font-mono text-[#FFA439] uppercase font-bold tracking-wider mb-2">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#FFA439]" />
+                  <span>DIVISION BLUEPRINT // DEFENSIVE OPERATIONS &amp; MANAGEMENT</span>
+                </div>
+                <h2 className="text-2xl sm:text-4xl font-black font-royal text-white tracking-tight">
+                  What Happens in this Branch
+                </h2>
+              </div>
+              <p className="text-xs sm:text-sm font-mono text-slate-400 max-w-md">
+                An institutional defense wing dedicated to applied engineering, threat resilience, and verifiable operational mastery.
+              </p>
+            </div>
+
+            {/* 3 Pillars Grid: What Happens Here, How You Learn, What Possibilities Exist */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Pillar 1: What Happens Here */}
+              <div className="p-6 sm:p-7 rounded-2xl bg-black/40 backdrop-blur-xl border border-[#FF7A00]/25 hover:border-[#FF7A00]/50 transition-all duration-300 flex flex-col justify-between group shadow-lg shadow-black/40">
+                <div className="space-y-3">
+                  <div className="w-10 h-10 rounded-xl bg-[#FF7A00]/15 border border-[#FF7A00]/30 flex items-center justify-center text-[#FFA439] group-hover:scale-105 transition-transform shadow-[0_0_12px_rgba(255,122,0,0.25)]">
+                    <Layers className="w-5 h-5 text-[#FFA439]" />
+                  </div>
+                  <h3 className="font-royal text-lg font-bold text-white group-hover:text-[#FFA439] transition-colors">
+                    Defensive Engineering &amp; Operations
+                  </h3>
+                  <p className="text-xs text-slate-300 font-sans leading-relaxed">
+                    This division focuses entirely on the architecture of resilience. Practitioners learn how complex systems fail, how unauthorized vectors manifest, and how to construct unbreakable server infrastructures, application firewalls, and cryptographic trust boundaries.
+                  </p>
+                </div>
+                <div className="pt-4 border-t border-white/5 mt-4 text-[11px] font-mono text-[#FFA439]/90 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#FF7A00]" />
+                  <span>Proactive Threat Mitigation</span>
+                </div>
+              </div>
+
+              {/* Pillar 2: How You Learn */}
+              <div className="p-6 sm:p-7 rounded-2xl bg-black/40 backdrop-blur-xl border border-[#FF7A00]/25 hover:border-[#FF7A00]/50 transition-all duration-300 flex flex-col justify-between group shadow-lg shadow-black/40">
+                <div className="space-y-3">
+                  <div className="w-10 h-10 rounded-xl bg-[#FF7A00]/15 border border-[#FF7A00]/30 flex items-center justify-center text-[#FFA439] group-hover:scale-105 transition-transform shadow-[0_0_12px_rgba(255,122,0,0.25)]">
+                    <Terminal className="w-5 h-5 text-[#FFA439]" />
+                  </div>
+                  <h3 className="font-royal text-lg font-bold text-white group-hover:text-[#FFA439] transition-colors">
+                    Hands-On Telemetry &amp; Live Sandboxes
+                  </h3>
+                  <p className="text-xs text-slate-300 font-sans leading-relaxed">
+                    No passive lectures or multiple-guess shortcuts. Learning here occurs inside isolated terminal sandboxes, real packet analysis pipelines, and proctored computer-based test engines with active anti-cheat telemetry and rigorous milestone checks.
+                  </p>
+                </div>
+                <div className="pt-4 border-t border-white/5 mt-4 text-[11px] font-mono text-[#FFA439]/90 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#FF7A00]" />
+                  <span>Zero-Fabrication Rigor</span>
+                </div>
+              </div>
+
+              {/* Pillar 3: What You Can Achieve */}
+              <div className="p-6 sm:p-7 rounded-2xl bg-black/40 backdrop-blur-xl border border-[#FF7A00]/25 hover:border-[#FF7A00]/50 transition-all duration-300 flex flex-col justify-between group shadow-lg shadow-black/40">
+                <div className="space-y-3">
+                  <div className="w-10 h-10 rounded-xl bg-[#FF7A00]/15 border border-[#FF7A00]/30 flex items-center justify-center text-[#FFA439] group-hover:scale-105 transition-transform shadow-[0_0_12px_rgba(255,122,0,0.25)]">
+                    <Award className="w-5 h-5 text-[#FFA439]" />
+                  </div>
+                  <h3 className="font-royal text-lg font-bold text-white group-hover:text-[#FFA439] transition-colors">
+                    Cryptographic Authority &amp; Leadership
+                  </h3>
+                  <p className="text-xs text-slate-300 font-sans leading-relaxed">
+                    Graduates emerge equipped to conduct defensive code audits, lead secure DevOps deployments, and spearhead enterprise incident response. Every milestone credential is permanently anchored with SHA-256 digital signature proofs verifiable anywhere in the world.
+                  </p>
+                </div>
+                <div className="pt-4 border-t border-white/5 mt-4 text-[11px] font-mono text-[#FFA439]/90 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#FF7A00]" />
+                  <span>Verifiable Global Proof</span>
+                </div>
+              </div>
+            </div>
+          </motion.section>
+
+          {/* ================= 2. DEDICATED CYBER COURSES CATALOGUE ================= */}
           <section id="courses" className="mb-20">
             {/* Section Header */}
             <motion.div 
@@ -166,7 +254,7 @@ export default function CyberAcademyPage() {
                   Cybersecurity Course Curriculum
                 </h2>
                 <p className="text-xs sm:text-sm font-mono text-slate-400 mt-1">
-                  Hands-on course with cryptographic verification, real code assessments, and lab workstations.
+                  Hands-on course with cryptographic verification, real code assessments, and interactive laboratories.
                 </p>
               </div>
               <span className="text-xs font-mono text-[#FFA439] hidden sm:block">
@@ -174,8 +262,8 @@ export default function CyberAcademyPage() {
               </span>
             </motion.div>
 
-            {/* Official Master Curriculum Card (Themed HUD Plate) */}
-            <div className="max-w-2xl mx-auto">
+            {/* Official Master Curriculum Card (Left-Aligned, Horizontally Compact, Vertically Expanded) */}
+            <div className="max-w-xl text-left">
               <CyberLearningCard 
                 track={masterTrack} 
                 idx={0} 
@@ -183,34 +271,66 @@ export default function CyberAcademyPage() {
             </div>
           </section>
 
-          {/* KALI CYBERLAB CALLOUT BANNER */}
+          {/* ================= 3. TRANSPARENT STUDENT DASHBOARD LAUNCHER ================= */}
           <motion.section 
             initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="p-8 sm:p-10 rounded-3xl bg-gradient-to-r from-[#1A1208]/85 via-[#0E0C09]/90 to-[#070503]/95 backdrop-blur-2xl border border-[#FF7A00]/35 hover:border-[#FFA439]/70 relative overflow-hidden shadow-[0_0_35px_rgba(255,122,0,0.2)] transition-all"
+            className="p-8 sm:p-10 rounded-3xl bg-black/35 backdrop-blur-2xl border border-[#FF7A00]/30 hover:border-[#FFA439]/60 relative overflow-hidden shadow-[0_0_40px_rgba(255,122,0,0.15)] transition-all"
           >
-            <div className="absolute -right-10 -bottom-10 w-72 h-72 bg-[#FF7A00]/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -right-10 -bottom-10 w-80 h-80 bg-[#FF7A00]/10 rounded-full blur-3xl pointer-events-none" />
             
-            <div className="max-w-2xl relative z-10 space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF7A00]/15 border border-[#FF7A00]/35 text-[10px] font-mono text-[#FFA439] uppercase font-bold">
-                <Terminal className="w-3.5 h-3.5 text-[#FFA439]" />
-                <span>Integrated Virtual CyberLab V3</span>
+            <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+              {/* Left: Enrollment Telemetry & Information */}
+              <div className="max-w-2xl space-y-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF7A00]/15 border border-[#FF7A00]/35 text-[10px] font-mono text-[#FFA439] uppercase font-bold tracking-wider">
+                  <Terminal className="w-3.5 h-3.5 text-[#FFA439]" />
+                  <span>IN-BRANCH STUDENT DASHBOARD // DEFENSIVE OPERATIONS</span>
+                </div>
+
+                <h3 className="text-2xl sm:text-4xl font-bold font-royal text-white leading-tight">
+                  Cyber Student Dashboard &amp; Telemetry
+                </h3>
+
+                <p className="text-xs sm:text-sm text-slate-300 font-sans leading-relaxed">
+                  Access your personal enrollment telemetry, active course units, terminal exercises, and verifiable defensive credentials. Isolated within this division to ensure zero distraction and zero cross-academy data leakage.
+                </p>
+
+                {/* Live Telemetry Chips */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
+                  <div className="p-3 rounded-xl bg-black/40 border border-[#FF7A00]/20">
+                    <div className="text-[10px] font-mono text-[#FFA439] uppercase">CADET CLEARANCE</div>
+                    <div className="text-xs sm:text-sm font-bold font-mono text-white mt-0.5 truncate">
+                      {currentUser?.cadet_id || 'RK-CADET-ACTIVE'}
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-black/40 border border-[#FF7A00]/20">
+                    <div className="text-[10px] font-mono text-[#FFA439] uppercase">CYBERLAB STATUS</div>
+                    <div className="text-xs sm:text-sm font-bold font-mono text-[#FFA439] mt-0.5 flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-[#FF7A00] animate-pulse" />
+                      <span>ONLINE // V3</span>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-black/40 border border-[#FF7A00]/20 col-span-2 sm:col-span-1">
+                    <div className="text-[10px] font-mono text-[#FFA439] uppercase">ACADEMIC TUITION</div>
+                    <div className="text-xs sm:text-sm font-bold font-mono text-white mt-0.5">
+                      100% Zero-Cost Free
+                    </div>
+                  </div>
+                </div>
               </div>
-              <h3 className="text-2xl sm:text-3xl font-bold font-royal text-white">
-                Authentic Kali Linux Desktop &amp; 143+ Terminal Commands
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-300 font-sans leading-relaxed">
-                Practice real Nmap network sweeps, Wireshark packet analysis, Hydra brute-force simulation, and OWASP Juice Shop web attacks directly inside your student workstation.
-              </p>
-              <div className="pt-2">
+
+              {/* Right: Direct Launch Actions */}
+              <div className="flex flex-col gap-3 shrink-0 lg:w-72">
                 <Link
-                  to="/student"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[#FF7A00] to-[#E56A00] text-black font-mono font-bold text-xs hover:brightness-110 transition-all shadow-[0_0_20px_rgba(255,122,0,0.35)]"
+                  to="/academy/cybersecurity/student"
+                  className="w-full py-4 px-6 rounded-full bg-gradient-to-r from-[#FF7A00] to-[#E56A00] text-black font-mono font-bold text-xs uppercase tracking-wider hover:brightness-110 transition-all shadow-[0_0_25px_rgba(255,122,0,0.4)] flex items-center justify-center gap-2.5 text-center group"
                 >
-                  <span>Launch Student Workstation &amp; CyberLab</span>
-                  <ArrowRight className="w-4 h-4 text-black" />
+                  <span>Launch Student Dashboard</span>
+                  <ArrowRight className="w-4 h-4 text-black group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
             </div>

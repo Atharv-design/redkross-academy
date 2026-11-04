@@ -26,9 +26,7 @@ export default function AdminRoute({ children }) {
     );
   }
 
-  // 1. Unauthenticated Visitor Handling
   if (!currentUser) {
-    // In local development, provide 1-click entrance for rapid testing
     if (import.meta.env.DEV) {
       return (
         <div className="min-h-[80vh] flex items-center justify-center px-4 py-16 relative z-10 font-lora">
@@ -78,11 +76,9 @@ export default function AdminRoute({ children }) {
       );
     }
 
-    // In production, unauthenticated users are directed to /login
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // 2. Authenticated Non-Admin Handling
   const isSuperAdmin = currentUser.role === 'super_admin' || (import.meta.env.DEV && localStorage.getItem('redkross_academy_dev_admin') === 'true');
 
   if (!isSuperAdmin) {
@@ -101,7 +97,7 @@ export default function AdminRoute({ children }) {
               Access Restricted
             </h1>
             <p className="text-xs font-lora text-[#94A3B8] leading-relaxed">
-              Your active cadet identity ({currentUser.email || currentUser.id}) does not possess institutional Super Admin clearances to enter this workstation.
+              Your active cadet identity ({currentUser.email || currentUser.id}) does not possess institutional Super Admin clearances to enter this admin dashboard.
             </p>
           </div>
 

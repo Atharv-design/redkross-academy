@@ -51,7 +51,6 @@ export default function AdminAssignmentsPage() {
   const [adminFeedback, setAdminFeedback] = useState('Excellent initial discovery of C2 telemetry.');
   const [gradeStatus, setGradeStatus] = useState('PASSED');
 
-  // PDF Preview Modal State
   const [previewPdfModalSub, setPreviewPdfModalSub] = useState(null);
   const [resolvedPdfPreviewUrl, setResolvedPdfPreviewUrl] = useState('');
 
@@ -114,13 +113,12 @@ export default function AdminAssignmentsPage() {
 
   /**
    * PDF Download Handler for Admin
-   * Guarantees that the administrator can download the submitted PDF file to their workstation
+   * Guarantees that the administrator can download the submitted PDF file locally
    */
   const handleDownloadSubmittedPdf = async (sub) => {
     if (!sub) return;
     const fileName = sub.file_name || 'Cadet_Investigation_Report.pdf';
 
-    // 1. Direct or resolved file URL
     if (sub.file_url) {
       try {
         let downloadUrl = sub.file_url;
@@ -142,8 +140,6 @@ export default function AdminAssignmentsPage() {
       }
     }
 
-    // 2. High-fidelity Fallback: Generate an authentic, official RedKross Cyber Defense PDF
-    // so the admin can ALWAYS download and review the student's investigation findings!
     const docText = `%PDF-1.4\n%REDKROSS ACADEMY - STUDENT LABORATORY SUBMISSION REPORT\n\n` +
       `======================================================================\n` +
       `REDKROSS DEFENSIVE CYBER ACADEMY — CADET LAB REPORT CERTIFICATION\n` +

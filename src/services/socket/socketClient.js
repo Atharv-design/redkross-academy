@@ -2,7 +2,7 @@ import { io } from 'socket.io-client';
 /**
  * RedKross Academy — Real-Time Bidirectional Socket.io & Event Telemetry Engine
  * 
- * Provides unified real-time event distribution between Student Portals and Admin Workstation:
+ * Provides unified real-time event distribution between Student Portals and Admin Dashboard:
  * - Proctoring Violations (Webcam disconnect, tab switch, strict 24-hr lockout)
  * - PDF Assignment Submissions & Rubric Evaluation
  * - Course Completion & Certificate Requests
@@ -50,7 +50,6 @@ class SocketClient {
   async tryConnectSocket() {
     if (typeof window === 'undefined') return;
     try {
-      // Connect to Socket.io server via window.location.origin (proxied through Vite in dev)
       const socketFactory = io || window.io;
       if (typeof socketFactory === 'function') {
         this.socket = socketFactory({
@@ -74,7 +73,6 @@ class SocketClient {
         });
       }
     } catch (e) {
-      // Fallback cleanly to BroadcastChannel and EventBus
       console.warn('[SocketClient] Running on resilient BroadcastChannel bus.');
     }
   }
@@ -86,7 +84,6 @@ class SocketClient {
     }
     this.listeners.get(event).add(callback);
 
-    // If real socket is connected, bind to it as well
     if (this.socket) {
       this.socket.on(event, callback);
     }
@@ -114,7 +111,6 @@ class SocketClient {
       });
     }
 
-    // Also notify wildcard listeners
     if (this.listeners.has('*')) {
       this.listeners.get('*').forEach((cb) => {
         try {
@@ -127,10 +123,8 @@ class SocketClient {
   }
 
   emit(event, payload = {}) {
-    // 1. Notify local in-memory listeners
     this.notify(event, payload);
 
-    // 2. Broadcast across tabs and windows
     if (this.channel) {
       try {
         this.channel.postMessage({ event, payload, timestamp: Date.now() });
@@ -139,7 +133,6 @@ class SocketClient {
       }
     }
 
-    // 3. Dispatch window custom event
     if (typeof window !== 'undefined') {
       try {
         window.dispatchEvent(
@@ -148,11 +141,9 @@ class SocketClient {
           })
         );
       } catch (e) {
-        // Ignored
       }
     }
 
-    // 4. Send over physical socket connection if active
     if (this.socket && this.socket.connected) {
       try {
         this.socket.emit(event, payload);
@@ -162,7 +153,6 @@ class SocketClient {
     }
   }
 
-  // Domain Event Shortcuts
   emitProctorViolation(payload) {
     this.emit('exam:violation', {
       ...payload,

@@ -94,7 +94,6 @@ export const FileUploadProgressBar = ({
         return;
       }
 
-      // Valid PDF file: Add with 0 progress and start real FileReader + Progressive Animation
       const newFileItem = {
         id: fileId,
         name: file.name,
@@ -107,7 +106,6 @@ export const FileUploadProgressBar = ({
 
       setUploadedFiles((prev) => [newFileItem, ...prev]);
 
-      // Read file content
       const reader = new FileReader();
       reader.onload = (e) => {
         const dataUrl = e.target.result;

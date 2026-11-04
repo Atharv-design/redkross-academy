@@ -34,7 +34,6 @@ export default function ProtectedRoute({ children }) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // SUSPENSION ACCESS LOCK: Suspended students cannot access lessons, exams, or student dashboard
   if (currentUser.status === 'SUSPENDED' || currentUser.is_suspended) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#071018] px-4">

@@ -44,7 +44,6 @@ export default function CockpitToolStrip({
 }) {
   const [hoveredTool, setHoveredTool] = useState(null);
 
-  // Tools currently pinned to this strip
   const tools = [
     {
       id: 'terminal',
@@ -55,8 +54,8 @@ export default function CockpitToolStrip({
       isActive: isTerminalOpen,
       badge: isTerminalOpen ? 'ACTIVE' : '340+',
       badgeColor: isTerminalOpen
-        ? 'bg-[#FF7A00] text-[#071018] font-bold'
-        : 'bg-[#1A1208] text-[#FF7A00] border border-[#FF7A00]/40'
+        ? 'bg-[#FF7A00] text-black font-bold'
+        : 'bg-[#1A1208] text-[#FFA439] border border-[#FF7A00]/40'
     },
     {
       id: 'cyberlab',
@@ -67,14 +66,14 @@ export default function CockpitToolStrip({
       isActive: isCyberLabOpen,
       badge: isCyberLabOpen ? 'ACTIVE' : 'V3',
       badgeColor: isCyberLabOpen
-        ? 'bg-[#FFA439] text-[#071018] font-bold'
-        : 'bg-[#0b1b26] text-[#FFA439] border border-[#FFA439]/40'
+        ? 'bg-[#FFA439] text-black font-bold'
+        : 'bg-black/60 text-[#FFA439] border border-[#FFA439]/40'
     }
   ];
 
   return (
     <aside
-      className="w-14 lg:w-16 sticky top-14 h-[calc(100vh-3.5rem)] flex flex-col items-center justify-between py-4 bg-[#0C0A07]/95 backdrop-blur-xl border-l border-[#FF7A00]/20 flex-shrink-0 z-20 transition-all font-mono select-none shadow-2xl"
+      className="w-14 lg:w-16 sticky top-14 h-[calc(100vh-3.5rem)] flex flex-col items-center justify-between py-4 bg-[#080604]/95 backdrop-blur-2xl border-l border-[#FF7A00]/25 flex-shrink-0 z-20 transition-all font-mono select-none shadow-2xl"
       aria-label="Tactical Cockpit Tool Strip"
     >
       {/* Top Header Logo */}

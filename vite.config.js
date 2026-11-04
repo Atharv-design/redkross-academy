@@ -38,4 +38,17 @@ export default defineConfig({
       overlay: true,
     },
   },
+  build: {
+    chunkSizeWarningLimit: 1200,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-three': ['three', 'vanta'],
+          'vendor-blocknote': ['@blocknote/core', '@blocknote/react', '@blocknote/mantine'],
+          'vendor-charts': ['recharts', 'canvas-confetti'],
+        },
+      },
+    },
+  },
 });

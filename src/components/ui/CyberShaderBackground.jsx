@@ -1,7 +1,4 @@
 /* eslint-disable */
-// CyberShaderBackground — RedKross Academy Ray-Marching Fractal WebGL Engine
-// Implements the user's custom fragment shader mapped strictly to Amber / Burnt Orange (#FF7A00)
-// and Crimson Red (#DC2626) over dark carbon canvas (#050608).
 
 import React, { useEffect, useRef } from 'react';
 
@@ -28,7 +25,6 @@ const float zoomSpeed = 10.0;
 const int layers = 8;
 const int octaves = 4;
 
-// Amber + Black Blending Palette (Strictly Zero Red)
 const vec3 C_AMBER      = vec3(1.0, 0.48, 0.0);   // Amber / Burnt Orange #FF7A00
 const vec3 C_AMBER_DEEP = vec3(0.68, 0.22, 0.0);  // Deep Burnt Amber #AD3800
 const vec3 C_GOLD       = vec3(1.0, 0.75, 0.24);  // Warm Amber Gold #FFBF3D
@@ -124,7 +120,6 @@ void main() {
 
     float n = fbm((uv + vec2(sin(u_time * 0.08), u_time * 0.06)) * 2.0 - 2.0);
 
-    // Color mixing in vibrant Amber / Burnt Orange and Golden Highlights
     vec3 baseColour = mix(C_DARK, mix(C_AMBER_DEEP * 0.40, C_AMBER * 0.75, n), n);
 
     vec3 layerColour = domain(uv);
@@ -139,7 +134,6 @@ void main() {
 
     baseColour /= (opacity_sum * 0.75);
 
-    // Final color clamp with amber luminescence & soft alpha blending
     vec3 finalGlow = clamp(baseColour * 4.6, 0.0, 1.0);
     float alpha = clamp(length(finalGlow) * 1.85, 0.0, 0.95);
     gl_FragColor = vec4(finalGlow, alpha);
@@ -157,7 +151,6 @@ export default function CyberShaderBackground({
         const canvas = canvasRef.current;
         if (!canvas) return;
 
-        // Try getting WebGL context
         const gl = canvas.getContext('webgl', { alpha: true, antialias: false, powerPreference: 'low-power' })
             || canvas.getContext('experimental-webgl');
 
@@ -166,7 +159,6 @@ export default function CyberShaderBackground({
             return;
         }
 
-        // Compile helper
         const compileShader = (type, source) => {
             const shader = gl.createShader(type);
             gl.shaderSource(shader, source);
@@ -196,7 +188,6 @@ export default function CyberShaderBackground({
 
         gl.useProgram(program);
 
-        // Quad geometry
         const positionBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
         const positions = new Float32Array([
@@ -213,13 +204,11 @@ export default function CyberShaderBackground({
         gl.enableVertexAttribArray(positionLocation);
         gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
-        // Uniform locations
         const uResolution = gl.getUniformLocation(program, 'u_resolution');
         const uMouse = gl.getUniformLocation(program, 'u_mouse');
         const uTime = gl.getUniformLocation(program, 'u_time');
         const uNoise = gl.getUniformLocation(program, 'u_noise');
 
-        // Create 256x256 procedural noise texture
         const noiseSize = 256;
         const noiseData = new Uint8Array(noiseSize * noiseSize * 4);
         for (let i = 0; i < noiseData.length; i += 4) {

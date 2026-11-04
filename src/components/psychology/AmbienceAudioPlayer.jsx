@@ -29,7 +29,6 @@ export default function AmbienceAudioPlayer() {
   const leaveTimerRef = useRef(null);
   const containerRef = useRef(null);
 
-  // Web Audio API Synthesizer as resilient fallback
   const startSynth = () => {
     try {
       if (synthRef.current) return;
@@ -37,27 +36,22 @@ export default function AmbienceAudioPlayer() {
       if (!AudioContext) return;
       const ctx = new AudioContext();
 
-      // Master Gain
       const masterGain = ctx.createGain();
       const currentVol = isMuted ? 0 : volume;
       masterGain.gain.setValueAtTime(currentVol * 0.45, ctx.currentTime);
 
-      // Lowpass Filter for silky acoustic smoothness
       const filter = ctx.createBiquadFilter();
       filter.type = 'lowpass';
       filter.frequency.setValueAtTime(1200, ctx.currentTime);
 
-      // 528 Hz Fundamental (Left Ear)
       const osc528 = ctx.createOscillator();
       osc528.type = 'sine';
       osc528.frequency.setValueAtTime(528, ctx.currentTime);
 
-      // 524 Hz (Right Ear - 4 Hz Theta Binaural Calm)
       const osc524 = ctx.createOscillator();
       osc524.type = 'sine';
       osc524.frequency.setValueAtTime(524, ctx.currentTime);
 
-      // 264 Hz Warm Fundamental Undertone
       const osc264 = ctx.createOscillator();
       osc264.type = 'sine';
       osc264.frequency.setValueAtTime(264, ctx.currentTime);
@@ -66,7 +60,6 @@ export default function AmbienceAudioPlayer() {
       osc264.connect(gain264);
       gain264.connect(filter);
 
-      // 132 Hz Grounding Velvety Base
       const osc132 = ctx.createOscillator();
       osc132.type = 'sine';
       osc132.frequency.setValueAtTime(132, ctx.currentTime);
@@ -104,7 +97,6 @@ export default function AmbienceAudioPlayer() {
     }
   };
 
-  // Toggle Play / Pause - Deterministic and instant
   const togglePlay = () => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -128,7 +120,6 @@ export default function AmbienceAudioPlayer() {
     }
   };
 
-  // Handle Volume Change
   const handleVolumeChange = (newVol) => {
     setVolume(newVol);
     setIsMuted(newVol === 0);
@@ -141,7 +132,6 @@ export default function AmbienceAudioPlayer() {
     }
   };
 
-  // Toggle Mute
   const toggleMute = (e) => {
     e.stopPropagation();
     if (isMuted) {
@@ -157,7 +147,6 @@ export default function AmbienceAudioPlayer() {
     }
   };
 
-  // Mouse Enter with timer cancellation
   const handleMouseEnter = () => {
     if (leaveTimerRef.current) {
       clearTimeout(leaveTimerRef.current);
@@ -166,7 +155,6 @@ export default function AmbienceAudioPlayer() {
     setShowVolumeSlider(true);
   };
 
-  // Mouse Leave with 450ms grace timeout
   const handleMouseLeave = () => {
     if (isPinned) return; // If user clicked to pin, keep it open
     if (leaveTimerRef.current) clearTimeout(leaveTimerRef.current);
@@ -175,7 +163,6 @@ export default function AmbienceAudioPlayer() {
     }, 450);
   };
 
-  // Toggle Pin on volume icon click
   const toggleVolumePopover = (e) => {
     e.stopPropagation();
     if (leaveTimerRef.current) {
@@ -191,7 +178,6 @@ export default function AmbienceAudioPlayer() {
     }
   };
 
-  // Click outside to close if pinned or open
   useEffect(() => {
     const handleDocumentClick = (e) => {
       if (containerRef.current && !containerRef.current.contains(e.target)) {
@@ -231,14 +217,14 @@ export default function AmbienceAudioPlayer() {
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          <div className="p-3.5 rounded-2xl bg-[#06101B]/95 backdrop-blur-2xl border border-teal-500/40 shadow-[0_12px_40px_rgba(0,0,0,0.85)] flex flex-col gap-2.5 min-w-[190px] animate-in fade-in slide-in-from-bottom-2 duration-200">
+          <div className="p-3.5 rounded-2xl bg-[#0E0C09]/95 backdrop-blur-2xl border border-[#FF7A00]/40 shadow-[0_12px_40px_rgba(0,0,0,0.85)] flex flex-col gap-2.5 min-w-[190px] animate-in fade-in slide-in-from-bottom-2 duration-200">
             {/* Header with Volume Label and Percentage */}
             <div className="flex items-center justify-between text-[11px] font-royal uppercase tracking-wider text-slate-300">
-              <span className="text-teal-300 font-bold flex items-center gap-1.5">
-                <Sliders className="w-3 h-3 text-teal-400" />
+              <span className="text-[#FFA439] font-bold flex items-center gap-1.5">
+                <Sliders className="w-3 h-3 text-[#FF7A00]" />
                 <span>Audio Volume</span>
               </span>
-              <span className="font-mono text-xs text-teal-200 font-semibold">
+              <span className="font-mono text-xs text-amber-200 font-semibold">
                 {isMuted ? 'Muted' : `${Math.round(volume * 100)}%`}
               </span>
             </div>
@@ -247,15 +233,15 @@ export default function AmbienceAudioPlayer() {
             <div className="flex items-center gap-2 pt-0.5">
               <button
                 onClick={toggleMute}
-                className="text-slate-400 hover:text-teal-300 transition-colors p-1 rounded-lg hover:bg-teal-500/10 focus:outline-none"
+                className="text-slate-400 hover:text-[#FFA439] transition-colors p-1 rounded-lg hover:bg-[#FF7A00]/10 focus:outline-none"
                 title={isMuted ? "Unmute" : "Mute"}
               >
                 {isMuted || volume === 0 ? (
                   <VolumeX className="w-4 h-4 text-rose-400" />
                 ) : volume < 0.5 ? (
-                  <Volume1 className="w-4 h-4 text-teal-400" />
+                  <Volume1 className="w-4 h-4 text-[#FFA439]" />
                 ) : (
-                  <Volume2 className="w-4 h-4 text-teal-400" />
+                  <Volume2 className="w-4 h-4 text-[#FFA439]" />
                 )}
               </button>
               <input
@@ -265,12 +251,12 @@ export default function AmbienceAudioPlayer() {
                 step="0.05"
                 value={isMuted ? 0 : volume}
                 onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
-                className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-teal-400 focus:outline-none"
+                className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-[#FF7A00] focus:outline-none"
               />
             </div>
 
             {/* Quick Preset Buttons */}
-            <div className="flex justify-between gap-1 pt-1.5 border-t border-teal-500/20">
+            <div className="flex justify-between gap-1 pt-1.5 border-t border-[#FF7A00]/20">
               {[
                 { label: 'Mute', val: 0 },
                 { label: '40%', val: 0.40 },
@@ -287,7 +273,7 @@ export default function AmbienceAudioPlayer() {
                     }}
                     className={`text-[10px] font-mono px-2 py-1 rounded-md transition-all ${
                       isActive
-                        ? 'bg-teal-500/30 text-teal-200 border border-teal-400/60 font-bold' 
+                        ? 'bg-[#FF7A00]/30 text-amber-200 border border-[#FFA439]/60 font-bold' 
                         : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10'
                     }`}
                   >
@@ -301,15 +287,15 @@ export default function AmbienceAudioPlayer() {
       )}
 
       {/* Main Glassmorphic Control Pill - Pure Icon Minimal Design */}
-      <div className="flex items-center p-1.5 rounded-full bg-[#081524]/95 backdrop-blur-2xl border border-teal-500/40 hover:border-teal-300 shadow-[0_8px_32px_rgba(0,0,0,0.65)] hover:shadow-[0_0_25px_rgba(45,212,191,0.35)] transition-all duration-300 ring-1 ring-white/5">
+      <div className="flex items-center p-1.5 rounded-full bg-[#0E0C09]/95 backdrop-blur-2xl border border-[#FF7A00]/40 hover:border-[#FFA439] shadow-[0_8px_32px_rgba(0,0,0,0.65)] hover:shadow-[0_0_25px_rgba(255,122,0,0.35)] transition-all duration-300 ring-1 ring-white/5">
         
         {/* Play / Pause Circular Icon Button */}
         <button
           onClick={togglePlay}
           className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer focus:outline-none ${
             isPlaying 
-              ? 'bg-teal-400 text-[#08121E] shadow-[0_0_15px_rgba(45,212,191,0.6)] scale-105' 
-              : 'bg-teal-500/20 text-teal-300 border border-teal-500/40 hover:bg-teal-500/30 hover:scale-105'
+              ? 'bg-gradient-to-r from-[#FF7A00] to-[#E56A00] text-black shadow-[0_0_15px_rgba(255,122,0,0.6)] scale-105' 
+              : 'bg-[#FF7A00]/20 text-[#FFA439] border border-[#FF7A00]/40 hover:bg-[#FF7A00]/30 hover:scale-105'
           }`}
           title={isPlaying ? "Pause 528 Hz Ambience" : "Play 528 Hz Ambience"}
           aria-label={isPlaying ? "Pause 528 Hz Ambience" : "Play 528 Hz Ambience"}
@@ -322,13 +308,13 @@ export default function AmbienceAudioPlayer() {
         </button>
 
         {/* Vertical Divider */}
-        <div className="w-[1px] h-5 bg-teal-500/25 mx-1" />
+        <div className="w-[1px] h-5 bg-[#FF7A00]/25 mx-1" />
 
         {/* Dedicated Volume Icon Button */}
         <button
           onClick={toggleVolumePopover}
-          className={`w-9 h-9 rounded-full text-slate-300 hover:text-teal-200 hover:bg-teal-500/15 transition-all focus:outline-none cursor-pointer flex items-center justify-center ${
-            showVolumeSlider ? 'text-teal-300 bg-teal-500/20' : ''
+          className={`w-9 h-9 rounded-full text-slate-300 hover:text-amber-200 hover:bg-[#FF7A00]/15 transition-all focus:outline-none cursor-pointer flex items-center justify-center ${
+            showVolumeSlider ? 'text-[#FFA439] bg-[#FF7A00]/20' : ''
           }`}
           title="Adjust Volume"
           aria-label="Adjust Volume"
@@ -336,9 +322,9 @@ export default function AmbienceAudioPlayer() {
           {isMuted || volume === 0 ? (
             <VolumeX className="w-4 h-4 text-rose-400" />
           ) : volume < 0.5 ? (
-            <Volume1 className="w-4 h-4 text-teal-400" />
+            <Volume1 className="w-4 h-4 text-[#FFA439]" />
           ) : (
-            <Volume2 className="w-4 h-4 text-teal-400" />
+            <Volume2 className="w-4 h-4 text-[#FFA439]" />
           )}
         </button>
       </div>
