@@ -247,26 +247,26 @@ export default function AdminAssignmentsPage() {
         {assignments.map((asn) => (
           <div
             key={asn.id}
-            className="p-5 cyber-glass-panel rounded-2xl border border-[#65F58A]/25 flex items-center justify-between"
+            className="p-5 cyber-glass-panel rounded-2xl border border-[#FF7A00]/25 flex items-center justify-between"
           >
             <div>
               <div className="flex items-center space-x-2 mb-1">
-                <span className="text-[10px] font-mono text-[#65F58A] bg-[#092218] px-2 py-0.5 rounded border border-[#65F58A]/30">
+                <span className="text-[10px] font-mono text-[#FF7A00] bg-[#1A1208] px-2 py-0.5 rounded border border-[#FF7A00]/30">
                   {asn.id}
                 </span>
-                <span className="text-xs font-mono text-[#72A88E]">Due: {asn.due_date}</span>
+                <span className="text-xs font-mono text-[#A3907C]">Due: {asn.due_date}</span>
               </div>
               <h4 className="text-sm font-bold text-white mb-1">{asn.title}</h4>
-              <p className="text-[11px] text-[#72A88E] font-mono">
+              <p className="text-[11px] text-[#A3907C] font-mono">
                 Allowed: {asn.allowed_types} (Max {asn.max_size_mb} MB)
               </p>
             </div>
 
             <div className="text-right">
-              <span className="text-xl font-bold text-[#35E6B5] font-mono">
+              <span className="text-xl font-bold text-[#FFA439] font-mono">
                 {asn.pending_review}
               </span>
-              <span className="block text-[10px] font-mono text-[#72A88E]">PENDING REVIEW</span>
+              <span className="block text-[10px] font-mono text-[#A3907C]">PENDING REVIEW</span>
             </div>
           </div>
         ))}
@@ -275,25 +275,25 @@ export default function AdminAssignmentsPage() {
       {/* Split Screen Grading Studio */}
       <div className="grid grid-cols-12 gap-6 min-h-[640px]">
         {/* Left Submissions Column (List + Details) */}
-        <div className="col-span-12 lg:col-span-6 cyber-glass-panel rounded-2xl flex flex-col overflow-hidden border border-[#65F58A]/25 backdrop-blur-xl bg-[#081a13]/60 max-h-[680px]">
+        <div className="col-span-12 lg:col-span-6 cyber-glass-panel rounded-2xl flex flex-col overflow-hidden border border-[#FF7A00]/25 backdrop-blur-xl bg-[#120E09]/60 max-h-[680px]">
           {/* Submissions List Header */}
-          <div className="p-4 bg-[#071912]/80 border-b border-[#65F58A]/20 flex items-center justify-between">
-            <span className="text-xs font-mono text-[#B8E6CE]">
+          <div className="p-4 bg-[#120E09]/80 border-b border-[#FF7A00]/20 flex items-center justify-between">
+            <span className="text-xs font-mono text-[#E2D9CE]">
               STUDENT SUBMISSIONS QUEUE ({submissions.length})
             </span>
-            <span className="text-[10px] font-mono text-[#65F58A]">Live Sync</span>
+            <span className="text-[10px] font-mono text-[#FF7A00]">Live Sync</span>
           </div>
 
           {/* Submissions Queue List */}
-          <div className="p-3 border-b border-[#65F58A]/15 space-y-2 max-h-56 overflow-y-auto custom-scrollbar">
+          <div className="p-3 border-b border-[#FF7A00]/15 space-y-2 max-h-56 overflow-y-auto custom-scrollbar">
             {submissions.map((sub) => (
               <div
                 key={sub.id}
                 onClick={() => handleSelectSubmission(sub)}
                 className={`p-3 rounded-xl border cursor-pointer transition-all flex items-center justify-between ${
                   selectedSub?.id === sub.id
-                    ? 'bg-[#0c2e1f]/80 border-[#65F58A] shadow-[0_0_15px_rgba(101,245,138,0.2)]'
-                    : 'bg-[#05140e]/60 border-[#65F58A]/20 hover:border-[#65F58A]/40'
+                    ? 'bg-[#0c2e1f]/80 border-[#FF7A00] shadow-[0_0_15px_rgba(255,122,0,0.2)]'
+                    : 'bg-[#0C0A07]/60 border-[#FF7A00]/20 hover:border-[#FF7A00]/40'
                 }`}
               >
                 <div>
@@ -302,7 +302,7 @@ export default function AdminAssignmentsPage() {
                     <span
                       className={`text-[9px] font-mono px-1.5 py-0.2 rounded border ${
                         sub.status === 'PASSED'
-                          ? 'bg-[#65F58A]/10 text-[#65F58A] border-[#65F58A]/30'
+                          ? 'bg-[#FF7A00]/10 text-[#FF7A00] border-[#FF7A00]/30'
                           : sub.status === 'NEEDS_REVISION'
                           ? 'bg-[#EF4444]/10 text-[#EF4444] border-[#EF4444]/30'
                           : 'bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/30'
@@ -311,14 +311,14 @@ export default function AdminAssignmentsPage() {
                       {sub.status}
                     </span>
                   </div>
-                  <span className="text-[10px] font-mono text-[#B8E6CE]">
+                  <span className="text-[10px] font-mono text-[#E2D9CE]">
                     {sub.file_name} • {sub.submitted_at}
                   </span>
                 </div>
 
                 <div className="flex items-center space-x-2 flex-shrink-0">
                   {sub.final_grade !== null && (
-                    <span className="text-xs font-mono font-bold text-[#65F58A]">
+                    <span className="text-xs font-mono font-bold text-[#FF7A00]">
                       {sub.final_grade}/100
                     </span>
                   )}
@@ -329,7 +329,7 @@ export default function AdminAssignmentsPage() {
                       e.stopPropagation();
                       handleDownloadSubmittedPdf(sub);
                     }}
-                    className="p-1.5 rounded-lg bg-[#092218] hover:bg-[#0c2a1e] text-[#65F58A] border border-[#65F58A]/30 transition-colors cursor-pointer"
+                    className="p-1.5 rounded-lg bg-[#1A1208] hover:bg-[#0c2a1e] text-[#FF7A00] border border-[#FF7A00]/30 transition-colors cursor-pointer"
                     title="Download Submitted PDF"
                   >
                     <Download className="w-3.5 h-3.5" />
@@ -342,17 +342,17 @@ export default function AdminAssignmentsPage() {
           {/* Submission Inspection Preview with Prominent Download & View Actions */}
           {selectedSub && (
             <div className="p-5 flex-1 overflow-y-auto max-h-[380px] custom-scrollbar space-y-4">
-              <div className="border border-[#65F58A]/30 bg-[#061912]/80 rounded-2xl p-5 space-y-4 shadow-lg">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#65F58A]/20">
+              <div className="border border-[#FF7A00]/30 bg-[#061912]/80 rounded-2xl p-5 space-y-4 shadow-lg">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#FF7A00]/20">
                   <div className="flex items-center space-x-3 truncate pr-2">
-                    <div className="w-10 h-10 rounded-xl bg-[#092218] border border-[#65F58A]/40 flex items-center justify-center text-[#65F58A] flex-shrink-0">
+                    <div className="w-10 h-10 rounded-xl bg-[#1A1208] border border-[#FF7A00]/40 flex items-center justify-center text-[#FF7A00] flex-shrink-0">
                       <FileCheck className="w-5 h-5" />
                     </div>
                     <div className="truncate">
                       <span className="text-xs font-mono font-bold text-white block truncate">
                         {selectedSub.file_name}
                       </span>
-                      <span className="text-[10px] font-mono text-[#72A88E]">
+                      <span className="text-[10px] font-mono text-[#A3907C]">
                         Submitted by {selectedSub.student_name} • {selectedSub.submitted_at}
                       </span>
                     </div>
@@ -363,7 +363,7 @@ export default function AdminAssignmentsPage() {
                     <button
                       type="button"
                       onClick={() => handleOpenPdfPreview(selectedSub)}
-                      className="px-3.5 py-2 rounded-xl bg-[#092218] hover:bg-[#0c2a1e] text-[#35E6B5] border border-[#35E6B5]/40 text-xs font-mono font-bold flex items-center space-x-1.5 transition-colors cursor-pointer"
+                      className="px-3.5 py-2 rounded-xl bg-[#1A1208] hover:bg-[#0c2a1e] text-[#FFA439] border border-[#FFA439]/40 text-xs font-mono font-bold flex items-center space-x-1.5 transition-colors cursor-pointer"
                       title="Inspect PDF in browser viewer"
                     >
                       <Eye className="w-3.5 h-3.5" />
@@ -373,7 +373,7 @@ export default function AdminAssignmentsPage() {
                     <button
                       type="button"
                       onClick={() => handleDownloadSubmittedPdf(selectedSub)}
-                      className="px-4 py-2 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-mono font-bold text-xs flex items-center space-x-1.5 transition-all shadow-[0_0_15px_rgba(101,245,138,0.35)] cursor-pointer"
+                      className="px-4 py-2 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-mono font-bold text-xs flex items-center space-x-1.5 transition-all shadow-[0_0_15px_rgba(255,122,0,0.35)] cursor-pointer"
                       title="Download PDF to your computer"
                     >
                       <Download className="w-3.5 h-3.5 stroke-[2.5]" />
@@ -383,17 +383,17 @@ export default function AdminAssignmentsPage() {
                 </div>
 
                 <div className="pt-1">
-                  <label className="text-[10px] font-mono text-[#72A88E] block mb-1 font-bold">
+                  <label className="text-[10px] font-mono text-[#A3907C] block mb-1 font-bold">
                     STUDENT EXECUTIVE SUMMARY & REPORT FINDINGS:
                   </label>
-                  <p className="text-xs text-[#C9EFE0] bg-[#040e0a] p-3.5 rounded-xl border border-[#65F58A]/15 leading-relaxed font-lora">
+                  <p className="text-xs text-[#E2D9CE] bg-[#080705] p-3.5 rounded-xl border border-[#FF7A00]/15 leading-relaxed font-lora">
                     {selectedSub.text_summary}
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between text-[10px] font-mono text-[#72A88E] pt-1">
+                <div className="flex items-center justify-between text-[10px] font-mono text-[#A3907C] pt-1">
                   <span>Cryptographic Proof: Signed Lab Report</span>
-                  <span className="text-[#65F58A]">Ready for Rubric Assessment</span>
+                  <span className="text-[#FF7A00]">Ready for Rubric Assessment</span>
                 </div>
               </div>
             </div>
@@ -401,12 +401,12 @@ export default function AdminAssignmentsPage() {
         </div>
 
         {/* Right Split Screen: Rubric Grading & Publication */}
-        <div className="col-span-12 lg:col-span-6 cyber-glass-panel rounded-2xl flex flex-col overflow-hidden border border-[#65F58A]/25 backdrop-blur-xl bg-[#081a13]/60 max-h-[680px]">
-          <div className="p-4 bg-[#071912]/80 border-b border-[#65F58A]/20">
+        <div className="col-span-12 lg:col-span-6 cyber-glass-panel rounded-2xl flex flex-col overflow-hidden border border-[#FF7A00]/25 backdrop-blur-xl bg-[#120E09]/60 max-h-[680px]">
+          <div className="p-4 bg-[#120E09]/80 border-b border-[#FF7A00]/20">
             <h3 className="text-sm font-bold text-white">
               Rubric Assessment & Grade Certification
             </h3>
-            <span className="text-[11px] font-mono text-[#B8E6CE]">
+            <span className="text-[11px] font-mono text-[#E2D9CE]">
               Grading: {selectedSub?.student_name} ({selectedSub?.id})
             </span>
           </div>
@@ -416,7 +416,7 @@ export default function AdminAssignmentsPage() {
             <div className="space-y-1.5">
               <div className="flex justify-between items-center text-xs font-mono">
                 <span className="text-white font-bold">1. Technical IOC Correctness</span>
-                <span className="text-[#65F58A]">{rubricScores.correctness} / 40 Pts</span>
+                <span className="text-[#FF7A00]">{rubricScores.correctness} / 40 Pts</span>
               </div>
               <input
                 type="range"
@@ -426,9 +426,9 @@ export default function AdminAssignmentsPage() {
                 onChange={(e) =>
                   setRubricScores({ ...rubricScores, correctness: parseInt(e.target.value) })
                 }
-                className="w-full accent-[#65F58A]"
+                className="w-full accent-[#FF7A00]"
               />
-              <span className="text-[10px] text-[#72A88E] block">
+              <span className="text-[10px] text-[#A3907C] block">
                 Identification of C2 beacons, packet signatures, and accurate IP attribution.
               </span>
             </div>
@@ -437,7 +437,7 @@ export default function AdminAssignmentsPage() {
             <div className="space-y-1.5">
               <div className="flex justify-between items-center text-xs font-mono">
                 <span className="text-white font-bold">2. Investigation Methodology</span>
-                <span className="text-[#35E6B5]">{rubricScores.methodology} / 30 Pts</span>
+                <span className="text-[#FFA439]">{rubricScores.methodology} / 30 Pts</span>
               </div>
               <input
                 type="range"
@@ -447,9 +447,9 @@ export default function AdminAssignmentsPage() {
                 onChange={(e) =>
                   setRubricScores({ ...rubricScores, methodology: parseInt(e.target.value) })
                 }
-                className="w-full accent-[#35E6B5]"
+                className="w-full accent-[#FFA439]"
               />
-              <span className="text-[10px] text-[#72A88E] block">
+              <span className="text-[10px] text-[#A3907C] block">
                 Evidence of structured Wireshark filtering, carving, and repeatable forensic steps.
               </span>
             </div>
@@ -458,7 +458,7 @@ export default function AdminAssignmentsPage() {
             <div className="space-y-1.5">
               <div className="flex justify-between items-center text-xs font-mono">
                 <span className="text-white font-bold">3. Incident Reporting & Mitigation</span>
-                <span className="text-[#65F58A]">{rubricScores.reporting} / 30 Pts</span>
+                <span className="text-[#FF7A00]">{rubricScores.reporting} / 30 Pts</span>
               </div>
               <input
                 type="range"
@@ -468,17 +468,17 @@ export default function AdminAssignmentsPage() {
                 onChange={(e) =>
                   setRubricScores({ ...rubricScores, reporting: parseInt(e.target.value) })
                 }
-                className="w-full accent-[#65F58A]"
+                className="w-full accent-[#FF7A00]"
               />
-              <span className="text-[10px] text-[#72A88E] block">
+              <span className="text-[10px] text-[#A3907C] block">
                 Professionalism of executive summary and firewall blocking recommendations.
               </span>
             </div>
 
             {/* Total Calculated Grade */}
-            <div className="p-3.5 rounded-xl bg-[#061510] border border-[#65F58A]/20 flex items-center justify-between">
-              <span className="text-xs font-mono text-[#72A88E]">AGGREGATE RUBRIC SCORE:</span>
-              <span className="text-xl font-bold font-mono text-[#65F58A]">
+            <div className="p-3.5 rounded-xl bg-[#0E0C09] border border-[#FF7A00]/20 flex items-center justify-between">
+              <span className="text-xs font-mono text-[#A3907C]">AGGREGATE RUBRIC SCORE:</span>
+              <span className="text-xl font-bold font-mono text-[#FF7A00]">
                 {(parseInt(rubricScores.correctness) || 0) +
                   (parseInt(rubricScores.methodology) || 0) +
                   (parseInt(rubricScores.reporting) || 0)}
@@ -488,7 +488,7 @@ export default function AdminAssignmentsPage() {
 
             {/* Pass vs Revision Toggle */}
             <div>
-              <label className="text-xs font-mono text-[#72A88E] block mb-1.5">
+              <label className="text-xs font-mono text-[#A3907C] block mb-1.5">
                 VERDICT DECISION:
               </label>
               <div className="grid grid-cols-2 gap-3">
@@ -497,8 +497,8 @@ export default function AdminAssignmentsPage() {
                   onClick={() => setGradeStatus('PASSED')}
                   className={`py-2.5 rounded-xl text-xs font-mono font-bold border transition-all cursor-pointer ${
                     gradeStatus === 'PASSED'
-                      ? 'bg-[#65F58A]/20 border-[#65F58A] text-[#65F58A] shadow-sm'
-                      : 'bg-[#061510] border-[#65F58A]/15 text-[#72A88E]'
+                      ? 'bg-[#FF7A00]/20 border-[#FF7A00] text-[#FF7A00] shadow-sm'
+                      : 'bg-[#0E0C09] border-[#FF7A00]/15 text-[#A3907C]'
                   }`}
                 >
                   ✓ CERTIFY PASS
@@ -509,7 +509,7 @@ export default function AdminAssignmentsPage() {
                   className={`py-2.5 rounded-xl text-xs font-mono font-bold border transition-all cursor-pointer ${
                     gradeStatus === 'NEEDS_REVISION'
                       ? 'bg-[#EF4444]/20 border-[#EF4444] text-[#EF4444] shadow-sm'
-                      : 'bg-[#061510] border-[#65F58A]/15 text-[#72A88E]'
+                      : 'bg-[#0E0C09] border-[#FF7A00]/15 text-[#A3907C]'
                   }`}
                 >
                   ⚠ REQUEST REVISION
@@ -519,7 +519,7 @@ export default function AdminAssignmentsPage() {
 
             {/* Instructor Feedback */}
             <div>
-              <label className="text-xs font-mono text-[#72A88E] block mb-1.5">
+              <label className="text-xs font-mono text-[#A3907C] block mb-1.5">
                 INSTRUCTOR FEEDBACK & ADVISORY:
               </label>
               <textarea
@@ -527,19 +527,19 @@ export default function AdminAssignmentsPage() {
                 value={adminFeedback}
                 onChange={(e) => setAdminFeedback(e.target.value)}
                 placeholder="Provide constructive feedback for student portal visibility..."
-                className="w-full bg-[#061510] rounded-xl p-3 text-xs text-white border border-[#65F58A]/25 focus:outline-none focus:border-[#65F58A]"
+                className="w-full bg-[#0E0C09] rounded-xl p-3 text-xs text-white border border-[#FF7A00]/25 focus:outline-none focus:border-[#FF7A00]"
               />
             </div>
           </div>
 
           {/* Action Footer */}
-          <div className="p-4 bg-[#071912]/90 border-t border-[#65F58A]/20 flex items-center justify-between">
-            <span className="text-[11px] font-mono text-[#72A88E]">
+          <div className="p-4 bg-[#120E09]/90 border-t border-[#FF7A00]/20 flex items-center justify-between">
+            <span className="text-[11px] font-mono text-[#A3907C]">
               Grades sync immediately to Student Portal.
             </span>
             <button
               onClick={handlePublishGrade}
-              className="flex items-center space-x-2 px-5 py-2.5 bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-bold text-xs rounded-xl shadow-[0_0_15px_rgba(101,245,138,0.3)] transition-all cursor-pointer"
+              className="flex items-center space-x-2 px-5 py-2.5 bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-bold text-xs rounded-xl shadow-[0_0_15px_rgba(255,122,0,0.3)] transition-all cursor-pointer"
             >
               <Send className="w-3.5 h-3.5" />
               <span>Publish Grade & Notify</span>
@@ -551,15 +551,15 @@ export default function AdminAssignmentsPage() {
       {/* ================= MODAL: LIVE PDF REPORT PREVIEW ================= */}
       {previewPdfModalSub && (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="max-w-4xl w-full p-6 rounded-2xl bg-[#061510] border border-[#65F58A]/40 space-y-4 shadow-2xl flex flex-col max-h-[92vh]">
-            <div className="flex items-center justify-between pb-3 border-b border-[#65F58A]/20">
+          <div className="max-w-4xl w-full p-6 rounded-2xl bg-[#0E0C09] border border-[#FF7A00]/40 space-y-4 shadow-2xl flex flex-col max-h-[92vh]">
+            <div className="flex items-center justify-between pb-3 border-b border-[#FF7A00]/20">
               <div className="flex items-center space-x-3">
-                <FileCheck className="w-5 h-5 text-[#65F58A]" />
+                <FileCheck className="w-5 h-5 text-[#FF7A00]" />
                 <div>
                   <h3 className="font-bold text-sm text-white">
                     {previewPdfModalSub.file_name}
                   </h3>
-                  <span className="text-[11px] font-mono text-[#72A88E]">
+                  <span className="text-[11px] font-mono text-[#A3907C]">
                     Cadet: {previewPdfModalSub.student_name} • Submitted: {previewPdfModalSub.submitted_at}
                   </span>
                 </div>
@@ -569,7 +569,7 @@ export default function AdminAssignmentsPage() {
                 <button
                   type="button"
                   onClick={() => handleDownloadSubmittedPdf(previewPdfModalSub)}
-                  className="px-3.5 py-1.5 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] text-xs font-mono font-bold flex items-center space-x-1.5 cursor-pointer shadow-sm"
+                  className="px-3.5 py-1.5 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] text-xs font-mono font-bold flex items-center space-x-1.5 cursor-pointer shadow-sm"
                 >
                   <Download className="w-3.5 h-3.5 stroke-[2.5]" />
                   <span>Download</span>
@@ -577,7 +577,7 @@ export default function AdminAssignmentsPage() {
                 <button
                   type="button"
                   onClick={() => setPreviewPdfModalSub(null)}
-                  className="p-1.5 rounded-lg text-[#72A88E] hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+                  className="p-1.5 rounded-lg text-[#A3907C] hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -585,7 +585,7 @@ export default function AdminAssignmentsPage() {
             </div>
 
             {/* Embedded PDF Viewer or Formatted Report */}
-            <div className="flex-1 overflow-hidden rounded-xl border border-[#65F58A]/25 bg-black min-h-[480px] flex flex-col">
+            <div className="flex-1 overflow-hidden rounded-xl border border-[#FF7A00]/25 bg-black min-h-[480px] flex flex-col">
               {resolvedPdfPreviewUrl && (resolvedPdfPreviewUrl.startsWith('data:application/pdf') || resolvedPdfPreviewUrl.startsWith('blob:')) ? (
                 <iframe
                   src={resolvedPdfPreviewUrl}
@@ -593,12 +593,12 @@ export default function AdminAssignmentsPage() {
                   className="w-full h-full flex-1 border-0"
                 />
               ) : (
-                <div className="p-6 overflow-y-auto custom-scrollbar space-y-4 font-lora text-xs leading-relaxed text-[#C9EFE0]">
-                  <div className="p-4 rounded-xl bg-[#092218] border border-[#65F58A]/30 space-y-2 font-mono">
-                    <span className="text-[#65F58A] font-bold block text-sm">
+                <div className="p-6 overflow-y-auto custom-scrollbar space-y-4 font-lora text-xs leading-relaxed text-[#E2D9CE]">
+                  <div className="p-4 rounded-xl bg-[#1A1208] border border-[#FF7A00]/30 space-y-2 font-mono">
+                    <span className="text-[#FF7A00] font-bold block text-sm">
                       REDKROSS ACADEMY // CADET INVESTIGATION REPORT
                     </span>
-                    <div className="text-[11px] text-[#72A88E] space-y-0.5">
+                    <div className="text-[11px] text-[#A3907C] space-y-0.5">
                       <div>File: {previewPdfModalSub.file_name}</div>
                       <div>Cadet ID: {previewPdfModalSub.student_name}</div>
                       <div>Submission Date: {previewPdfModalSub.submitted_at}</div>
@@ -608,14 +608,14 @@ export default function AdminAssignmentsPage() {
 
                   <div className="space-y-2">
                     <h4 className="font-bold text-white text-sm">Cadet Executive Summary & Investigative Narrative:</h4>
-                    <p className="bg-[#040e0a] p-4 rounded-xl border border-white/5 text-[#CBD5E1] whitespace-pre-wrap">
+                    <p className="bg-[#080705] p-4 rounded-xl border border-white/5 text-[#CBD5E1] whitespace-pre-wrap">
                       {previewPdfModalSub.text_summary}
                     </p>
                   </div>
 
                   <div className="space-y-2 pt-2">
                     <h4 className="font-bold text-white text-sm">Technical Indicators of Compromise (IOCs) & Telemetry:</h4>
-                    <div className="bg-[#040e0a] p-4 rounded-xl border border-white/5 font-mono text-[11px] text-[#35E6B5] space-y-1">
+                    <div className="bg-[#080705] p-4 rounded-xl border border-white/5 font-mono text-[11px] text-[#FFA439] space-y-1">
                       <div>• Wireshark PCAP Filter: tcp.port == 443 || udp.port == 53</div>
                       <div>• C2 Domain Extraction: bad-actor-telemetry.xyz (High Entropy DNS)</div>
                       <div>• MITRE ATT&CK Mapping: T1071.004 (DNS Tunneling), T1059 (PowerShell)</div>

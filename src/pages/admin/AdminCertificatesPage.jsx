@@ -457,13 +457,13 @@ export default function AdminCertificatesPage() {
       {/* Top Header Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 liquid-glass-panel p-5 rounded-2xl">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center">
-            <FileBadge className="w-5 h-5 text-[#65F58A]" />
+          <div className="w-10 h-10 rounded-xl bg-[#FF7A00]/10 border border-[#FF7A00]/30 flex items-center justify-center">
+            <FileBadge className="w-5 h-5 text-[#FF7A00]" />
           </div>
           <div>
             <h2 className="text-base font-bold text-white font-royal flex items-center gap-2">
               <span>Official Certification Center</span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#FF7A00]/10 text-[#FF7A00] border border-[#FF7A00]/30">
                 REDKROSS MASTER TEMPLATE
               </span>
             </h2>
@@ -479,7 +479,7 @@ export default function AdminCertificatesPage() {
             onClick={() => setActiveTab('template_designer')}
             className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 ${
               activeTab === 'template_designer'
-                ? 'liquid-glass-button shadow-[0_0_15px_rgba(101,245,138,0.3)]'
+                ? 'liquid-glass-button shadow-[0_0_15px_rgba(255,122,0,0.3)]'
                 : 'liquid-glass-button-secondary'
             }`}
           >
@@ -490,7 +490,7 @@ export default function AdminCertificatesPage() {
             onClick={() => setActiveTab('pending_requests')}
             className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 ${
               activeTab === 'pending_requests'
-                ? 'liquid-glass-button shadow-[0_0_15px_rgba(101,245,138,0.3)]'
+                ? 'liquid-glass-button shadow-[0_0_15px_rgba(255,122,0,0.3)]'
                 : 'liquid-glass-button-secondary'
             }`}
           >
@@ -501,7 +501,7 @@ export default function AdminCertificatesPage() {
             onClick={() => setActiveTab('registry')}
             className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-2 ${
               activeTab === 'registry'
-                ? 'liquid-glass-button shadow-[0_0_15px_rgba(101,245,138,0.3)]'
+                ? 'liquid-glass-button shadow-[0_0_15px_rgba(255,122,0,0.3)]'
                 : 'liquid-glass-button-secondary'
             }`}
           >
@@ -513,15 +513,15 @@ export default function AdminCertificatesPage() {
 
       {/* Dispatch Success Alert Banner */}
       {dispatchSuccess && (
-        <div className="p-4 rounded-2xl bg-[#65F58A]/10 border border-[#65F58A]/40 flex items-center justify-between animate-fadeIn text-xs font-mono liquid-glass-panel">
+        <div className="p-4 rounded-2xl bg-[#FF7A00]/10 border border-[#FF7A00]/40 flex items-center justify-between animate-fadeIn text-xs font-mono liquid-glass-panel">
           <div className="flex items-center gap-3">
-            <CheckCircle className="w-5 h-5 text-[#65F58A] flex-shrink-0" />
+            <CheckCircle className="w-5 h-5 text-[#FF7A00] flex-shrink-0" />
             <div>
               <span className="font-bold text-white">Certificate Successfully Dispatched!</span>
               <div className="text-[#8BA2B5] mt-0.5">
-                Issued credential <strong className="text-[#65F58A]">{dispatchSuccess.id}</strong> to{' '}
+                Issued credential <strong className="text-[#FF7A00]">{dispatchSuccess.id}</strong> to{' '}
                 <strong className="text-white">{dispatchSuccess.student_name}</strong> (Cadet ID:{' '}
-                <span className="text-[#35E6B5]">{dispatchSuccess.cadet_id}</span>). It is immediately active on their portal and verified publicly.
+                <span className="text-[#FFA439]">{dispatchSuccess.cadet_id}</span>). It is immediately active on their portal and verified publicly.
               </div>
             </div>
           </div>
@@ -550,7 +550,7 @@ export default function AdminCertificatesPage() {
                 Cadets who successfully cleared the Final Comprehensive Assessment (80%+ threshold).
               </p>
             </div>
-            <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30">
+            <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-[#FF7A00]/10 text-[#FF7A00] border border-[#FF7A00]/30">
               {certRequests.filter((r) => r.status === 'pending_review' || r.status === 'PENDING').length} Action Items
             </span>
           </div>
@@ -579,7 +579,7 @@ export default function AdminCertificatesPage() {
                     .filter((r) => r.status === 'pending_review' || r.status === 'PENDING')
                     .map((req) => (
                       <tr key={req.id} className="hover:bg-[#08121A]/50 transition-colors">
-                        <td className="p-3.5 font-bold text-[#65F58A]">
+                        <td className="p-3.5 font-bold text-[#FF7A00]">
                           {req.id}
                         </td>
                         <td className="p-3.5">
@@ -592,7 +592,7 @@ export default function AdminCertificatesPage() {
                           {req.course_title || 'SOC Analyst L1 & L2 Defensive Operations'}
                         </td>
                         <td className="p-3.5">
-                          <span className="px-2.5 py-1 rounded bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30 font-bold">
+                          <span className="px-2.5 py-1 rounded bg-[#FF7A00]/10 text-[#FF7A00] border border-[#FF7A00]/30 font-bold">
                             {req.score || 92}% PASSED
                           </span>
                         </td>
@@ -603,7 +603,7 @@ export default function AdminCertificatesPage() {
                           <button
                             type="button"
                             onClick={() => handleApproveRequest(req)}
-                            className="px-4 py-2 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-bold text-xs font-mono shadow-[0_0_15px_rgba(101,245,138,0.3)] transition-all cursor-pointer"
+                            className="px-4 py-2 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-bold text-xs font-mono shadow-[0_0_15px_rgba(255,122,0,0.3)] transition-all cursor-pointer"
                           >
                             Approve & Dispatch
                           </button>
@@ -660,9 +660,9 @@ export default function AdminCertificatesPage() {
                 ) : (
                   filteredCredentials.map((cred) => (
                     <tr key={cred.id} className="hover:bg-[#071018]/50 transition-colors">
-                      <td className="p-3.5 font-bold text-[#65F58A]">
+                      <td className="p-3.5 font-bold text-[#FF7A00]">
                         <div className="flex items-center space-x-1.5">
-                          <Award className="w-4 h-4 text-[#65F58A]" />
+                          <Award className="w-4 h-4 text-[#FF7A00]" />
                           <span>{cred.id}</span>
                         </div>
                       </td>
@@ -671,7 +671,7 @@ export default function AdminCertificatesPage() {
                         <div className="text-[10px] text-[#8BA2B5] flex items-center gap-1.5 mt-0.5">
                           <span>{cred.student_email || 'Verified Candidate'}</span>
                           {cred.cadet_id && (
-                            <span className="px-1.5 py-0.2 rounded bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/30 font-bold text-[9px]">
+                            <span className="px-1.5 py-0.2 rounded bg-[#FF7A00]/15 text-[#FF7A00] border border-[#FF7A00]/30 font-bold text-[9px]">
                               {cred.cadet_id}
                             </span>
                           )}
@@ -686,7 +686,7 @@ export default function AdminCertificatesPage() {
                             <span>REVOKED</span>
                           </span>
                         ) : (
-                          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30">
+                          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FF7A00]/10 text-[#FF7A00] border border-[#FF7A00]/30">
                             <ShieldCheck className="w-3 h-3" />
                             <span>VALID & VERIFIED</span>
                           </span>
@@ -697,7 +697,7 @@ export default function AdminCertificatesPage() {
                           type="button"
                           disabled={exportingPdf}
                           onClick={() => handleDownloadRegistryPdf(cred)}
-                          className="inline-flex items-center space-x-1 px-2.5 py-1 liquid-glass-button rounded-lg text-[11px] text-[#65F58A] hover:text-[#35E6B5]"
+                          className="inline-flex items-center space-x-1 px-2.5 py-1 liquid-glass-button rounded-lg text-[11px] text-[#FF7A00] hover:text-[#FFA439]"
                           title="Download Authentic RedKross Official PDF"
                         >
                           <Download className="w-3 h-3" />
@@ -743,10 +743,10 @@ export default function AdminCertificatesPage() {
             <div className="liquid-glass-panel rounded-2xl p-5 space-y-4 border border-[#263440]">
               <div className="flex items-center justify-between pb-2 border-b border-[#263440]">
                 <h3 className="font-royal text-sm font-bold text-white flex items-center gap-2">
-                  <Sliders className="w-4 h-4 text-[#65F58A]" />
+                  <Sliders className="w-4 h-4 text-[#FF7A00]" />
                   <span>Template Master Configuration</span>
                 </h3>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#FF7A00]/10 text-[#FF7A00] border border-[#FF7A00]/30">
                   Global Issuer Policy
                 </span>
               </div>
@@ -789,28 +789,28 @@ export default function AdminCertificatesPage() {
 
               {/* Supported Dynamic Merge Tags Infobox (Exact User Spec) */}
               <div className="p-3.5 rounded-xl bg-[#071018]/80 border border-[#263440] space-y-2">
-                <span className="text-[10px] font-mono font-bold text-[#65F58A] uppercase tracking-wider block">
+                <span className="text-[10px] font-mono font-bold text-[#FF7A00] uppercase tracking-wider block">
                   SUPPORTED DYNAMIC MERGE TAGS:
                 </span>
                 <ul className="text-[11px] font-mono text-[#8BA2B5] space-y-1">
                   <li className="flex items-center gap-1.5">
-                    <span className="text-[#65F58A]">• &#123;&#123;STUDENT_NAME&#125;&#125;</span>
+                    <span className="text-[#FF7A00]">• &#123;&#123;STUDENT_NAME&#125;&#125;</span>
                     <span>- Student Full Legal Name</span>
                   </li>
                   <li className="flex items-center gap-1.5">
-                    <span className="text-[#65F58A]">• &#123;&#123;COURSE_NAME&#125;&#125;</span>
+                    <span className="text-[#FF7A00]">• &#123;&#123;COURSE_NAME&#125;&#125;</span>
                     <span>- Master Curriculum Title</span>
                   </li>
                   <li className="flex items-center gap-1.5">
-                    <span className="text-[#65F58A]">• &#123;&#123;COMPLETION_DATE&#125;&#125;</span>
+                    <span className="text-[#FF7A00]">• &#123;&#123;COMPLETION_DATE&#125;&#125;</span>
                     <span>- Timestamp ISO Date</span>
                   </li>
                   <li className="flex items-center gap-1.5">
-                    <span className="text-[#65F58A]">• &#123;&#123;CREDENTIAL_ID&#125;&#125;</span>
+                    <span className="text-[#FF7A00]">• &#123;&#123;CREDENTIAL_ID&#125;&#125;</span>
                     <span>- Unique RK-CERT Identifier</span>
                   </li>
                   <li className="flex items-center gap-1.5">
-                    <span className="text-[#65F58A]">• &#123;&#123;VERIFY_URL&#125;&#125;</span>
+                    <span className="text-[#FF7A00]">• &#123;&#123;VERIFY_URL&#125;&#125;</span>
                     <span>- Public Authenticity Destination</span>
                   </li>
                 </ul>
@@ -820,8 +820,8 @@ export default function AdminCertificatesPage() {
             {/* 2. Student Search & Quick Selection Box */}
             <div className="liquid-glass-panel rounded-2xl p-5 space-y-3">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-mono font-bold text-[#65F58A] uppercase flex items-center gap-2">
-                  <UserCheck className="w-4 h-4 text-[#65F58A]" />
+                <label className="text-xs font-mono font-bold text-[#FF7A00] uppercase flex items-center gap-2">
+                  <UserCheck className="w-4 h-4 text-[#FF7A00]" />
                   <span>Select Cadet (Live Search)</span>
                 </label>
                 <span className="text-[10px] font-mono text-[#8BA2B5]">
@@ -857,12 +857,12 @@ export default function AdminCertificatesPage() {
                         onClick={() => handleSelectStudent(st)}
                         className={`w-full text-left p-2.5 rounded-xl transition-all flex items-center justify-between ${
                           isSelected
-                            ? 'bg-[#65F58A]/15 border border-[#65F58A]/40 text-white shadow-sm'
-                            : 'liquid-glass-card hover:border-[#65F58A]/30 text-[#CBD5E1]'
+                            ? 'bg-[#FF7A00]/15 border border-[#FF7A00]/40 text-white shadow-sm'
+                            : 'liquid-glass-card hover:border-[#FF7A00]/30 text-[#CBD5E1]'
                         }`}
                       >
                         <div className="flex items-center gap-2.5 truncate">
-                          <div className="w-7 h-7 rounded-full bg-[#1B2530] border border-[#263440] flex items-center justify-center text-xs font-mono font-bold text-[#65F58A] flex-shrink-0">
+                          <div className="w-7 h-7 rounded-full bg-[#1B2530] border border-[#263440] flex items-center justify-center text-xs font-mono font-bold text-[#FF7A00] flex-shrink-0">
                             {(st.full_name || st.name || 'S').charAt(0)}
                           </div>
                           <div className="truncate">
@@ -876,10 +876,10 @@ export default function AdminCertificatesPage() {
                         </div>
 
                         <div className="flex items-center gap-2 flex-shrink-0 pl-2">
-                          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30">
+                          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#FF7A00]/10 text-[#FF7A00] border border-[#FF7A00]/30">
                             {st.cadet_id || 'RK-89421'}
                           </span>
-                          {isSelected && <Check className="w-3.5 h-3.5 text-[#65F58A]" />}
+                          {isSelected && <Check className="w-3.5 h-3.5 text-[#FF7A00]" />}
                         </div>
                       </button>
                     );
@@ -890,8 +890,8 @@ export default function AdminCertificatesPage() {
 
             {/* 3. Certificate Content & Middle Section Controls */}
             <form onSubmit={handleDispatchCertificate} className="liquid-glass-panel rounded-2xl p-5 space-y-4">
-              <label className="text-xs font-mono font-bold text-[#35E6B5] uppercase flex items-center gap-2">
-                <FileBadge className="w-4 h-4 text-[#35E6B5]" />
+              <label className="text-xs font-mono font-bold text-[#FFA439] uppercase flex items-center gap-2">
+                <FileBadge className="w-4 h-4 text-[#FFA439]" />
                 <span>Certificate Text & Parameters</span>
               </label>
 
@@ -917,7 +917,7 @@ export default function AdminCertificatesPage() {
                     required
                     value={studioForm.cadet_id}
                     onChange={(e) => setStudioForm({ ...studioForm, cadet_id: e.target.value })}
-                    className="w-full liquid-glass-input rounded-xl p-2.5 text-xs text-[#65F58A] font-mono font-bold"
+                    className="w-full liquid-glass-input rounded-xl p-2.5 text-xs text-[#FF7A00] font-mono font-bold"
                   />
                 </div>
               </div>
@@ -963,7 +963,7 @@ export default function AdminCertificatesPage() {
 
               {/* Middle Section Custom Description */}
               <div>
-                <label className="text-[11px] font-mono text-[#65F58A] font-bold block mb-1 flex items-center justify-between">
+                <label className="text-[11px] font-mono text-[#FF7A00] font-bold block mb-1 flex items-center justify-between">
                   <span>Middle Section Citation Description *</span>
                   <span className="text-[10px] text-[#8BA2B5] font-normal">Supports Dynamic Tags</span>
                 </label>
@@ -972,7 +972,7 @@ export default function AdminCertificatesPage() {
                   value={studioForm.description}
                   onChange={(e) => setStudioForm({ ...studioForm, description: e.target.value })}
                   placeholder="e.g. {{STUDENT_NAME}} has successfully completed {{COURSE_NAME}}..."
-                  className="w-full liquid-glass-input rounded-xl p-2.5 text-xs text-white focus:border-[#65F58A] focus:outline-none leading-relaxed"
+                  className="w-full liquid-glass-input rounded-xl p-2.5 text-xs text-white focus:border-[#FF7A00] focus:outline-none leading-relaxed"
                 />
               </div>
 
@@ -1009,7 +1009,7 @@ export default function AdminCertificatesPage() {
 
               {/* 4. Digital Seal & Signature Uploaders */}
               <div className="pt-3 border-t border-[#1B2530] space-y-3">
-                <label className="text-xs font-mono font-bold text-[#65F58A] uppercase flex items-center justify-between">
+                <label className="text-xs font-mono font-bold text-[#FF7A00] uppercase flex items-center justify-between">
                   <span>Digital Seal & Digital Signature Uploads</span>
                   <span className="text-[10px] text-[#8BA2B5] font-normal">PNG / JPG / SVG</span>
                 </label>
@@ -1115,7 +1115,7 @@ export default function AdminCertificatesPage() {
               <div className="pt-4 border-t border-[#1B2530]">
                 <button
                   type="submit"
-                  className="w-full py-3.5 rounded-xl liquid-glass-button font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(101,245,138,0.4)]"
+                  className="w-full py-3.5 rounded-xl liquid-glass-button font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(255,122,0,0.4)]"
                 >
                   <Send className="w-4 h-4" />
                   <span>DISPATCH OFFICIAL CERTIFICATE TO STUDENT</span>
@@ -1131,15 +1131,15 @@ export default function AdminCertificatesPage() {
           <div className="col-span-12 xl:col-span-7 sticky top-4">
             <div className="liquid-glass-panel rounded-2xl p-4 sm:p-5 shadow-2xl">
               <div className="flex items-center justify-between mb-3 px-2">
-                <span className="text-[11px] font-mono text-[#65F58A] font-bold flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-[#65F58A] animate-pulse" />
+                <span className="text-[11px] font-mono text-[#FF7A00] font-bold flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-[#FF7A00] animate-pulse" />
                   <span>AUTHENTIC REDKROSS CERTIFICATE (LIVE HIGH-RES PREVIEW)</span>
                 </span>
                 <button
                   type="button"
                   disabled={exportingPdf}
                   onClick={handleDownloadPreviewPdf}
-                  className="px-3 py-1.5 rounded-lg liquid-glass-button text-xs font-mono font-bold text-[#65F58A] hover:text-[#35E6B5] flex items-center gap-1.5 transition-all shadow-[0_0_12px_rgba(101,245,138,0.25)]"
+                  className="px-3 py-1.5 rounded-lg liquid-glass-button text-xs font-mono font-bold text-[#FF7A00] hover:text-[#FFA439] flex items-center gap-1.5 transition-all shadow-[0_0_12px_rgba(255,122,0,0.25)]"
                 >
                   {exportingPdf ? (
                     <>

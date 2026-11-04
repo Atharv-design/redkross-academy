@@ -249,12 +249,12 @@ export default function FinalCertificationPage() {
 
         {/* ISSUED CREDENTIAL SHOWCASE */}
         {issuedCredential ? (
-          <div className="bg-surface-card border border-emerald-500/40 rounded-xl p-8 shadow-2xl space-y-8">
+          <div className="bg-surface-card border border-[#FF7A00]/40 rounded-xl p-8 shadow-2xl space-y-8">
             <div className="text-center space-y-3 pb-6 border-b border-surface-border">
-              <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mx-auto">
+              <div className="w-16 h-16 rounded-full bg-[#FF7A00]/10 border border-[#FF7A00]/30 flex items-center justify-center text-[#FFA439] mx-auto">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
-              <div className="text-xs font-mono text-emerald-400 uppercase tracking-widest font-bold">
+              <div className="text-xs font-mono text-[#FFA439] uppercase tracking-widest font-bold">
                 OFFICIAL CERTIFICATION GRANTED
               </div>
               <h1 className="text-3xl font-extrabold text-white">{issuedCredential.credential_title}</h1>
@@ -268,7 +268,7 @@ export default function FinalCertificationPage() {
               <RedKrossOfficialCertificate
                 credential={issuedCredential}
                 containerId="student-final-certificate-canvas"
-                className="max-w-[760px] shadow-[0_0_40px_rgba(101,245,138,0.15)] rounded-2xl"
+                className="max-w-[760px] shadow-[0_0_40px_rgba(255,122,0,0.15)] rounded-2xl"
               />
             </div>
 
@@ -278,7 +278,7 @@ export default function FinalCertificationPage() {
                 to={`/verify/${issuedCredential.verification_id}`}
                 className="w-full sm:w-auto px-6 py-3 rounded-xl bg-surface-100 hover:bg-surface-200 border border-surface-border text-white text-xs font-semibold flex items-center justify-center space-x-2 transition-all"
               >
-                <Award className="w-4 h-4 text-cyber-emerald" />
+                <Award className="w-4 h-4 text-[#FFA439]" />
                 <span>Open Public Verification Page</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </Link>
@@ -287,7 +287,7 @@ export default function FinalCertificationPage() {
                 type="button"
                 disabled={downloadingPdf}
                 onClick={handleDownloadPdf}
-                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-bold text-xs tracking-wider flex items-center justify-center space-x-2 shadow-[0_0_20px_rgba(101,245,138,0.4)] transition-all cursor-pointer disabled:opacity-60"
+                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-bold text-xs tracking-wider flex items-center justify-center space-x-2 shadow-[0_0_20px_rgba(255,122,0,0.4)] transition-all cursor-pointer disabled:opacity-60"
               >
                 {downloadingPdf ? (
                   <>
@@ -351,13 +351,13 @@ export default function FinalCertificationPage() {
           </div>
         ) : !examStarted ? (
           /* UNLOCKED GATE — START BRIEFING */
-          <div className="bg-surface-card border border-emerald-500/40 rounded-xl p-8 shadow-2xl space-y-6">
+          <div className="bg-surface-card border border-[#FF7A00]/40 rounded-xl p-8 shadow-2xl space-y-6">
             <div className="flex items-center space-x-3 pb-4 border-b border-surface-border">
-              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+              <div className="w-12 h-12 rounded-xl bg-[#FF7A00]/10 border border-[#FF7A00]/30 flex items-center justify-center text-[#FFA439]">
                 <Sparkles className="w-6 h-6" />
               </div>
               <div>
-                <div className="text-xs font-mono text-emerald-400 font-bold uppercase">All Prerequisites Satisfied</div>
+                <div className="text-xs font-mono text-[#FFA439] font-bold uppercase">All Prerequisites Satisfied</div>
                 <h1 className="text-2xl font-bold text-white">{examMeta.title}</h1>
               </div>
             </div>

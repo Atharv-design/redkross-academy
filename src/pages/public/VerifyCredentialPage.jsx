@@ -178,26 +178,26 @@ export default function VerifyCredentialPage() {
           ) : (
             <div className="space-y-6 animate-slide-left stagger-2">
               {/* Cadet Master Profile Card */}
-            <div className="ultra-glass-card rounded-2xl p-6 sm:p-8 relative overflow-hidden border border-[#65F58A]/40 shadow-[0_0_30px_rgba(101,245,138,0.15)]">
+            <div className="ultra-glass-card rounded-2xl p-6 sm:p-8 relative overflow-hidden border border-[#FF7A00]/40 shadow-[0_0_30px_rgba(255,122,0,0.15)]">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-[#263440] gap-4">
                 <div className="flex items-center space-x-4">
                   <img
                     src={dossier.cadet.avatar}
                     alt={dossier.cadet.full_name}
-                    className="w-16 h-16 rounded-2xl border-2 border-[#65F58A] object-cover shadow-lg"
+                    className="w-16 h-16 rounded-2xl border-2 border-[#FF7A00] object-cover shadow-lg"
                   />
                   <div>
                     <div className="flex items-center space-x-2">
                       <h2 className="text-xl sm:text-2xl font-bold text-white font-lora">
                         {dossier.cadet.full_name}
                       </h2>
-                      <span className="flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/30 text-[10px] font-mono font-bold">
+                      <span className="flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-[#FF7A00]/15 text-[#FF7A00] border border-[#FF7A00]/30 text-[10px] font-mono font-bold">
                         <CheckCircle2 className="w-3 h-3" />
                         <span>VERIFIED OPERATOR</span>
                       </span>
                     </div>
                     <div className="flex items-center space-x-3 text-xs font-mono text-[#8BA2B5] mt-1">
-                      <span className="text-[#65F58A] font-bold">
+                      <span className="text-[#FF7A00] font-bold">
                         CADET ID: {dossier.cadet.cadet_id}
                       </span>
                       <span>•</span>
@@ -225,13 +225,13 @@ export default function VerifyCredentialPage() {
                 </div>
                 <div className="p-3 bg-[#0B131C] border border-[#1B2530] rounded-xl">
                   <span className="text-[10px] text-[#8BA2B5] block uppercase">Completed Tracks</span>
-                  <span className="text-xl font-bold text-[#65F58A] mt-1 block">
+                  <span className="text-xl font-bold text-[#FF7A00] mt-1 block">
                     {dossier.metrics.totalCompleted}
                   </span>
                 </div>
                 <div className="p-3 bg-[#0B131C] border border-[#1B2530] rounded-xl">
                   <span className="text-[10px] text-[#8BA2B5] block uppercase">Verified Diplomas</span>
-                  <span className="text-xl font-bold text-[#65F58A] mt-1 block">
+                  <span className="text-xl font-bold text-[#FF7A00] mt-1 block">
                     {dossier.metrics.totalCredentials}
                   </span>
                 </div>
@@ -246,7 +246,7 @@ export default function VerifyCredentialPage() {
               {/* Verified Diplomas Section */}
               <div className="pt-6 space-y-4">
                 <div className="flex items-center space-x-2 text-white font-lora font-bold text-base">
-                  <Award className="w-5 h-5 text-[#65F58A]" />
+                  <Award className="w-5 h-5 text-[#FF7A00]" />
                   <span>Issued Professional Certifications & Diplomas ({dossier.credentials.length})</span>
                 </div>
 
@@ -259,11 +259,11 @@ export default function VerifyCredentialPage() {
                     {dossier.credentials.map((cred) => (
                       <div
                         key={cred.id}
-                        className="p-4 bg-[#0B131C] border border-[#1B2530] hover:border-[#65F58A]/50 rounded-xl space-y-2 transition-all"
+                        className="p-4 bg-[#0B131C] border border-[#1B2530] hover:border-[#FF7A00]/50 rounded-xl space-y-2 transition-all"
                       >
                         <div className="flex items-start justify-between">
                           <div>
-                            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30">
+                            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#FF7A00]/10 text-[#FF7A00] border border-[#FF7A00]/30">
                               {cred.id}
                             </span>
                             <h4 className="text-sm font-bold text-white font-lora mt-1.5">
@@ -276,7 +276,7 @@ export default function VerifyCredentialPage() {
                         </div>
                         <div className="flex items-center justify-between text-[11px] font-mono text-[#8BA2B5] pt-2 border-t border-[#1B2530]">
                           <span>Issued: {cred.issued_at || '2026-10-15'}</span>
-                          <span className="text-[#65F58A]">ANCHORED ON REGISTRY</span>
+                          <span className="text-[#FF7A00]">ANCHORED ON REGISTRY</span>
                         </div>
                       </div>
                     ))}
@@ -304,7 +304,7 @@ export default function VerifyCredentialPage() {
                         </span>
                       </div>
                       <div className="text-right font-mono">
-                        <span className="text-xs font-bold text-[#65F58A]">
+                        <span className="text-xs font-bold text-[#FF7A00]">
                           {enr.progress_percentage}%
                         </span>
                         <span className="text-[10px] text-[#8BA2B5] block">Completed</span>
@@ -319,7 +319,7 @@ export default function VerifyCredentialPage() {
                 <div className="text-[10px] text-[#94A3B8] uppercase tracking-wider">
                   Tamper-Evident Cadet Identity Hash
                 </div>
-                <div className="text-[#65F58A] break-all select-all font-mono">
+                <div className="text-[#FF7A00] break-all select-all font-mono">
                   SHA256: 0x{Array.from({ length: 48 }, () => Math.floor(Math.random() * 16).toString(16)).join('')}
                 </div>
                 <div className="text-[10px] text-slate-500 pt-1">
@@ -375,15 +375,15 @@ export default function VerifyCredentialPage() {
             {/* Top Security Banner */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-[#263440] gap-4">
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 rounded-2xl bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center text-[#65F58A]">
+                <div className="w-12 h-12 rounded-2xl bg-[#FF7A00]/10 border border-[#FF7A00]/30 flex items-center justify-center text-[#FF7A00]">
                   <CheckCircle2 className="w-7 h-7" />
                 </div>
                 <div>
                   <div className="flex items-center space-x-2">
-                    <span className="text-xs sm:text-sm font-bold text-[#65F58A] font-mono tracking-wider">
+                    <span className="text-xs sm:text-sm font-bold text-[#FF7A00] font-mono tracking-wider">
                       CRYPTOGRAPHICALLY VERIFIED RECORD
                     </span>
-                    <span className="w-2 h-2 rounded-full bg-[#65F58A] animate-pulse" />
+                    <span className="w-2 h-2 rounded-full bg-[#FF7A00] animate-pulse" />
                   </div>
                   <div className="text-xs text-[#94A3B8] font-mono">
                     Official Registry Status: <span className="text-white font-semibold">{credential.status || 'Active & Valid'}</span>
@@ -397,7 +397,7 @@ export default function VerifyCredentialPage() {
                   type="button"
                   disabled={downloadingPdf}
                   onClick={() => handleDownloadPdf(credential)}
-                  className="px-3.5 py-2 rounded-xl liquid-glass-button text-xs font-mono font-bold text-[#65F58A] hover:text-[#35E6B5] flex items-center gap-1.5 transition-transform hover:scale-[1.02] shadow-[0_0_15px_rgba(101,245,138,0.25)]"
+                  className="px-3.5 py-2 rounded-xl liquid-glass-button text-xs font-mono font-bold text-[#FF7A00] hover:text-[#FFA439] flex items-center gap-1.5 transition-transform hover:scale-[1.02] shadow-[0_0_15px_rgba(255,122,0,0.25)]"
                 >
                   {downloadingPdf ? (
                     <>
@@ -426,13 +426,13 @@ export default function VerifyCredentialPage() {
               <div className="p-4 rounded-xl bg-[#1B2530]/60 border border-[#263440] space-y-1">
                 <div className="text-[10px] text-[#94A3B8] uppercase tracking-wider">Certified Recipient</div>
                 <div className="font-royal text-lg font-bold text-white">{credential.student_name}</div>
-                <div className="text-[11px] text-[#65F58A]">Defensive Cyber Candidate</div>
+                <div className="text-[11px] text-[#FF7A00]">Defensive Cyber Candidate</div>
               </div>
 
               <div className="p-4 rounded-xl bg-[#1B2530]/60 border border-[#263440] space-y-1">
                 <div className="text-[10px] text-[#94A3B8] uppercase tracking-wider">Credential Issued</div>
                 <div className="font-royal text-lg font-bold text-white">{credential.credential_title || credential.course_title}</div>
-                <div className="text-[11px] text-[#35E6B5]">{credential.course_title}</div>
+                <div className="text-[11px] text-[#FFA439]">{credential.course_title}</div>
               </div>
 
               <div className="p-4 rounded-xl bg-[#1B2530]/60 border border-[#263440] space-y-1">
@@ -446,7 +446,7 @@ export default function VerifyCredentialPage() {
                 <div className="text-xs font-semibold text-white">
                   Issued: {credential.issue_date || credential.issued_at || '2026-10-15'}
                 </div>
-                <div className="text-[11px] text-[#65F58A] font-bold">Grade Achieved: {credential.grade_percentage || credential.grade || '95%'}</div>
+                <div className="text-[11px] text-[#FF7A00] font-bold">Grade Achieved: {credential.grade_percentage || credential.grade || '95%'}</div>
               </div>
             </div>
 
@@ -466,7 +466,7 @@ export default function VerifyCredentialPage() {
                   navigate(`/verify/${targetQuery}`);
                   lookupRecord(targetQuery);
                 }}
-                className="px-4 py-2 bg-[#65F58A] text-[#071018] font-bold text-xs rounded-lg hover:bg-[#52d674] flex items-center space-x-1.5 font-mono shadow-sm"
+                className="px-4 py-2 bg-[#FF7A00] text-[#071018] font-bold text-xs rounded-lg hover:bg-[#52d674] flex items-center space-x-1.5 font-mono shadow-sm"
               >
                 <span>View Cadet Dossier</span>
                 <ArrowRight className="w-3.5 h-3.5" />

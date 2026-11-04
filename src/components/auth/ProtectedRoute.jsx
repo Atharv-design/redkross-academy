@@ -18,9 +18,9 @@ export default function ProtectedRoute({ children }) {
         <div className="flex flex-col items-center space-y-4">
           <div className="relative">
             <div className="w-16 h-16 rounded-2xl bg-[#101923] border border-[#263440] flex items-center justify-center">
-              <Shield className="w-8 h-8 text-[#65F58A] animate-pulse" />
+              <Shield className="w-8 h-8 text-[#FF7A00] animate-pulse" />
             </div>
-            <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-[#65F58A]/20 to-[#35E6B5]/20 blur-sm -z-10 animate-pulse" />
+            <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-[#FF7A00]/20 to-[#FFA439]/20 blur-sm -z-10 animate-pulse" />
           </div>
           <div className="text-xs font-mono text-[#94A3B8] tracking-widest uppercase">
             Verifying Cryptographic Clearance...

@@ -61,6 +61,7 @@ import ExamCBTInterface from '../../components/student/ExamCBTInterface';
 import MovablePracticeTerminal from '../../components/student/MovablePracticeTerminal';
 import CockpitToolStrip from '../../components/student/CockpitToolStrip';
 import CyberLabDesktopWindow from '../../components/student/CyberLabDesktopWindow';
+import PsychologyToolStrip from '../../components/student/PsychologyToolStrip';
 
 /**
  * Open edX-Inspired Courseware & Learning Workspace
@@ -83,6 +84,7 @@ export default function LessonPlayerPage() {
   const [currentEnrolment, setCurrentEnrolment] = useState(() => mockEngine.getEnrolment(enrolmentId));
   const enrolment = currentEnrolment || mockEngine.getEnrolment(enrolmentId);
   const course = enrolment ? mockEngine.getCourseById(enrolment.course_id) : null;
+  const isPsychology = (course?.division || '').toLowerCase() === 'psychology';
 
   // Build flattened sequential units (lessons + module quizzes + final assessment)
   const allUnits = [];
@@ -200,8 +202,10 @@ export default function LessonPlayerPage() {
     const handleKeyDown = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
-        setIsMacTerminalOpen((prev) => !prev);
-        setIsMacTerminalMinimized(false);
+        if (!isPsychology) {
+          setIsMacTerminalOpen((prev) => !prev);
+          setIsMacTerminalMinimized(false);
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -608,14 +612,14 @@ export default function LessonPlayerPage() {
   if (!enrolment || !course) {
     return (
       <div className="min-h-screen bg-[#071018] py-24 text-center px-4 flex items-center justify-center font-lora">
-        <div className="max-w-md p-8 rounded-2xl cyber-glass-card border border-[#65F58A]/30 space-y-4">
+        <div className="max-w-md p-8 rounded-2xl cyber-glass-card border border-[#FF7A00]/30 space-y-4">
           <h2 className="text-xl font-bold text-white">Enrolment Not Found</h2>
-          <p className="text-xs text-[#B8E6CE] font-mono">
+          <p className="text-xs text-[#E2D9CE] font-mono">
             Please verify that you are actively enrolled in this training course.
           </p>
           <Link
             to="/student"
-            className="px-5 py-2.5 bg-[#65F58A] rounded-xl text-[#071018] text-xs font-bold font-mono inline-flex items-center space-x-2"
+            className="px-5 py-2.5 bg-[#FF7A00] rounded-xl text-[#071018] text-xs font-bold font-mono inline-flex items-center space-x-2"
           >
             <ChevronLeft className="w-4 h-4" />
             <span>Return to Classroom</span>
@@ -990,7 +994,7 @@ export default function LessonPlayerPage() {
         particleCount: 120,
         spread: 80,
         origin: { y: 0.6 },
-        colors: ['#65F58A', '#35E6B5', '#00FFA3', '#FFD700']
+        colors: ['#FF7A00', '#FFA439', '#FF7A00', '#FFD700']
       });
 
       // 3. Check if final assessment vs intermediate module vs last module before final exam
@@ -1185,21 +1189,21 @@ export default function LessonPlayerPage() {
 
     // Render Section 3: Right Sticky Tactical Notes & Lab Inspector
   const renderTacticalInspector = () => (
-    <aside className="w-84 xl:w-96 sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto custom-scrollbar border-l border-[#65F58A]/20 bg-[#061510]/95 backdrop-blur-xl hidden xl:flex flex-col p-4 space-y-4 flex-shrink-0 z-20 self-start animate-fade-in">
+    <aside className="w-84 xl:w-96 sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto custom-scrollbar border-l border-[#FF7A00]/20 bg-[#0E0C09]/95 backdrop-blur-xl hidden xl:flex flex-col p-4 space-y-4 flex-shrink-0 z-20 self-start animate-fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between pb-2.5 border-b border-[#65F58A]/20">
+      <div className="flex items-center justify-between pb-2.5 border-b border-[#FF7A00]/20">
         <div className="flex items-center space-x-2">
-          <Shield className="w-4 h-4 text-[#65F58A]" />
+          <Shield className="w-4 h-4 text-[#FF7A00]" />
           <h4 className="font-lora font-bold text-sm text-white">Tactical Recon Hub</h4>
         </div>
         <div className="flex items-center space-x-2">
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/30 font-bold">
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#FF7A00]/15 text-[#FF7A00] border border-[#FF7A00]/30 font-bold">
             +150 Tokens
           </span>
           <button
             type="button"
             onClick={() => setInspectorOpen(false)}
-            className="p-1 rounded-lg text-[#72A88E] hover:text-[#65F58A] transition-colors cursor-pointer"
+            className="p-1 rounded-lg text-[#A3907C] hover:text-[#FF7A00] transition-colors cursor-pointer"
             title="Collapse Inspector"
           >
             <X className="w-4 h-4" />
@@ -1214,7 +1218,7 @@ export default function LessonPlayerPage() {
           setIsMacTerminalOpen(true);
           setIsMacTerminalMinimized(false);
         }}
-        className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-[#0a1f16] to-[#071018] border border-[#35E6B5]/40 text-[#35E6B5] hover:border-[#65F58A] transition-all group cursor-pointer shadow-lg"
+        className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-[#1A1208] to-[#071018] border border-[#FFA439]/40 text-[#FFA439] hover:border-[#FF7A00] transition-all group cursor-pointer shadow-lg"
       >
         <div className="flex items-center space-x-2.5">
           <div className="flex items-center gap-1.5">
@@ -1222,22 +1226,22 @@ export default function LessonPlayerPage() {
             <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]" />
             <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F]" />
           </div>
-          <span className="font-mono text-xs font-bold text-white group-hover:text-[#65F58A]">macOS Terminal Pop-Up</span>
+          <span className="font-mono text-xs font-bold text-white group-hover:text-[#FF7A00]">macOS Terminal Pop-Up</span>
         </div>
-        <div className="flex items-center space-x-1 text-[11px] font-mono text-[#65F58A]">
+        <div className="flex items-center space-x-1 text-[11px] font-mono text-[#FF7A00]">
           <span>Launch ⤢</span>
         </div>
       </button>
 
       {/* 4 Segmented Tactical Tabs */}
-      <div className="grid grid-cols-4 gap-1 p-1 rounded-xl bg-black/60 border border-[#65F58A]/20 text-[11px] font-mono">
+      <div className="grid grid-cols-4 gap-1 p-1 rounded-xl bg-black/60 border border-[#FF7A00]/20 text-[11px] font-mono">
         <button
           type="button"
           onClick={() => setInspectorTab('target')}
           className={`py-1.5 rounded-lg font-bold transition-all text-center cursor-pointer ${
             inspectorTab === 'target'
-              ? 'bg-[#65F58A] text-[#071018] shadow-sm'
-              : 'text-[#72A88E] hover:text-white'
+              ? 'bg-[#FF7A00] text-[#071018] shadow-sm'
+              : 'text-[#A3907C] hover:text-white'
           }`}
           title="Target Machine HUD"
         >
@@ -1248,8 +1252,8 @@ export default function LessonPlayerPage() {
           onClick={() => setInspectorTab('flags')}
           className={`py-1.5 rounded-lg font-bold transition-all text-center cursor-pointer ${
             inspectorTab === 'flags'
-              ? 'bg-[#65F58A] text-[#071018] shadow-sm'
-              : 'text-[#72A88E] hover:text-white'
+              ? 'bg-[#FF7A00] text-[#071018] shadow-sm'
+              : 'text-[#A3907C] hover:text-white'
           }`}
           title="Mission Flags"
         >
@@ -1260,8 +1264,8 @@ export default function LessonPlayerPage() {
           onClick={() => setInspectorTab('payloads')}
           className={`py-1.5 rounded-lg font-bold transition-all text-center cursor-pointer ${
             inspectorTab === 'payloads'
-              ? 'bg-[#65F58A] text-[#071018] shadow-sm'
-              : 'text-[#72A88E] hover:text-white'
+              ? 'bg-[#FF7A00] text-[#071018] shadow-sm'
+              : 'text-[#A3907C] hover:text-white'
           }`}
           title="Payloads Arsenal"
         >
@@ -1272,8 +1276,8 @@ export default function LessonPlayerPage() {
           onClick={() => setInspectorTab('notes')}
           className={`py-1.5 rounded-lg font-bold transition-all text-center cursor-pointer ${
             inspectorTab === 'notes'
-              ? 'bg-[#65F58A] text-[#071018] shadow-sm'
-              : 'text-[#72A88E] hover:text-white'
+              ? 'bg-[#FF7A00] text-[#071018] shadow-sm'
+              : 'text-[#A3907C] hover:text-white'
           }`}
           title="Tactical Notes & PDF"
         >
@@ -1285,13 +1289,13 @@ export default function LessonPlayerPage() {
       {inspectorTab === 'target' && (
         <div className="space-y-3.5">
           {/* Target Host Card */}
-          <div className="p-3.5 rounded-xl bg-[#092218]/60 border border-[#65F58A]/30 space-y-2.5">
+          <div className="p-3.5 rounded-xl bg-[#1A1208]/60 border border-[#FF7A00]/30 space-y-2.5">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono text-[#72A88E] uppercase tracking-wider">
+              <span className="text-[10px] font-mono text-[#A3907C] uppercase tracking-wider">
                 Assigned Target Host
               </span>
-              <span className="flex items-center space-x-1.5 px-2 py-0.5 rounded-full bg-[#65F58A]/15 border border-[#65F58A]/30 text-[10px] font-mono text-[#65F58A] font-bold">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#65F58A] animate-pulse" />
+              <span className="flex items-center space-x-1.5 px-2 py-0.5 rounded-full bg-[#FF7A00]/15 border border-[#FF7A00]/30 text-[10px] font-mono text-[#FF7A00] font-bold">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#FF7A00] animate-pulse" />
                 <span>ONLINE - 18ms</span>
               </span>
             </div>
@@ -1305,10 +1309,10 @@ export default function LessonPlayerPage() {
                 <button
                   type="button"
                   onClick={handleCopyIp}
-                  className="px-2.5 py-1 rounded-lg bg-black/40 border border-[#35E6B5]/30 text-[#35E6B5] hover:text-white hover:border-[#65F58A] text-xs font-mono flex items-center space-x-1 transition-all cursor-pointer"
+                  className="px-2.5 py-1 rounded-lg bg-black/40 border border-[#FFA439]/30 text-[#FFA439] hover:text-white hover:border-[#FF7A00] text-xs font-mono flex items-center space-x-1 transition-all cursor-pointer"
                   title="Copy IP Address"
                 >
-                  {copiedIp ? <Check className="w-3 h-3 text-[#65F58A]" /> : <Copy className="w-3 h-3" />}
+                  {copiedIp ? <Check className="w-3 h-3 text-[#FF7A00]" /> : <Copy className="w-3 h-3" />}
                   <span>{copiedIp ? 'Copied' : 'Copy'}</span>
                 </button>
               </div>
@@ -1316,7 +1320,7 @@ export default function LessonPlayerPage() {
 
             {/* Target Machine Controls */}
             <div className="pt-2 border-t border-white/10 flex items-center justify-between text-xs font-mono">
-              <span className="text-[11px] text-[#72A88E]">Ubuntu 22.04 LTS (x86_64)</span>
+              <span className="text-[11px] text-[#A3907C]">Ubuntu 22.04 LTS (x86_64)</span>
               <button
                 type="button"
                 onClick={handleRevertTarget}
@@ -1329,7 +1333,7 @@ export default function LessonPlayerPage() {
             </div>
 
             {revertToast && (
-              <div className="p-2 rounded-lg bg-[#65F58A]/15 border border-[#65F58A]/40 text-[#65F58A] text-[10px] font-mono animate-fade-in">
+              <div className="p-2 rounded-lg bg-[#FF7A00]/15 border border-[#FF7A00]/40 text-[#FF7A00] text-[10px] font-mono animate-fade-in">
                 {revertToast}
               </div>
             )}
@@ -1339,10 +1343,10 @@ export default function LessonPlayerPage() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-mono font-bold text-white flex items-center gap-1.5">
-                <Activity className="w-3.5 h-3.5 text-[#35E6B5]" />
+                <Activity className="w-3.5 h-3.5 text-[#FFA439]" />
                 <span>Discovered Service Matrix</span>
               </span>
-              <span className="text-[10px] font-mono text-[#72A88E]">4 Open Ports</span>
+              <span className="text-[10px] font-mono text-[#A3907C]">4 Open Ports</span>
             </div>
 
             <div className="space-y-1.5">
@@ -1354,10 +1358,10 @@ export default function LessonPlayerPage() {
               ].map((p, idx) => (
                 <div
                   key={idx}
-                  className="p-2.5 rounded-xl bg-black/40 border border-[#35E6B5]/20 hover:border-[#65F58A]/40 transition-all flex items-center justify-between text-xs font-mono group"
+                  className="p-2.5 rounded-xl bg-black/40 border border-[#FFA439]/20 hover:border-[#FF7A00]/40 transition-all flex items-center justify-between text-xs font-mono group"
                 >
                   <div className="flex items-center space-x-2.5 truncate">
-                    <span className="px-1.5 py-0.5 rounded bg-[#65F58A]/20 text-[#65F58A] font-bold text-[10px]">
+                    <span className="px-1.5 py-0.5 rounded bg-[#FF7A00]/20 text-[#FF7A00] font-bold text-[10px]">
                       {p.port}
                     </span>
                     <span className="text-[#E6F4EA] truncate text-[11px]">{p.service}</span>
@@ -1366,7 +1370,7 @@ export default function LessonPlayerPage() {
                   <button
                     type="button"
                     onClick={() => handleInjectPayload(p.cmd)}
-                    className="p-1 rounded bg-black/60 text-[#72A88E] group-hover:text-[#65F58A] hover:bg-[#65F58A]/20 transition-all flex-shrink-0 cursor-pointer"
+                    className="p-1 rounded bg-black/60 text-[#A3907C] group-hover:text-[#FF7A00] hover:bg-[#FF7A00]/20 transition-all flex-shrink-0 cursor-pointer"
                     title="Probe service in Mac Terminal"
                   >
                     <Zap className="w-3.5 h-3.5" />
@@ -1382,24 +1386,24 @@ export default function LessonPlayerPage() {
       {inspectorTab === 'flags' && (
         <div className="space-y-3.5">
           {/* Mission Progress Card */}
-          <div className="p-3.5 rounded-xl bg-[#092218]/60 border border-[#65F58A]/30 space-y-2">
+          <div className="p-3.5 rounded-xl bg-[#1A1208]/60 border border-[#FF7A00]/30 space-y-2">
             <div className="flex items-center justify-between text-xs font-mono">
-              <span className="text-[#72A88E]">Operational Status:</span>
-              <span className="text-[#65F58A] font-bold">2 / 3 Objectives Cleared</span>
+              <span className="text-[#A3907C]">Operational Status:</span>
+              <span className="text-[#FF7A00] font-bold">2 / 3 Objectives Cleared</span>
             </div>
             <div className="w-full h-2 rounded-full bg-black/60 overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-[#35E6B5] to-[#65F58A] rounded-full w-[66%]" />
+              <div className="h-full bg-gradient-to-r from-[#FFA439] to-[#FF7A00] rounded-full w-[66%]" />
             </div>
           </div>
 
           {/* Objective 1: User Flag */}
-          <div className="p-3 rounded-xl bg-[#061510] border border-[#65F58A]/40 text-xs font-mono space-y-1.5">
+          <div className="p-3 rounded-xl bg-[#0E0C09] border border-[#FF7A00]/40 text-xs font-mono space-y-1.5">
             <div className="flex items-center justify-between">
               <span className="text-white font-bold flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#65F58A]" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#FF7A00]" />
                 <span>Objective 1: User Foothold</span>
               </span>
-              <span className="px-2 py-0.5 rounded-full bg-[#65F58A]/20 text-[#65F58A] text-[10px] font-bold">
+              <span className="px-2 py-0.5 rounded-full bg-[#FF7A00]/20 text-[#FF7A00] text-[10px] font-bold">
                 CLAIMED (+25 Tokens)
               </span>
             </div>
@@ -1409,7 +1413,7 @@ export default function LessonPlayerPage() {
           </div>
 
           {/* Objective 2: Root Flag Submission */}
-          <div className="p-3.5 rounded-xl bg-black/40 border border-[#35E6B5]/30 space-y-2.5">
+          <div className="p-3.5 rounded-xl bg-black/40 border border-[#FFA439]/30 space-y-2.5">
             <div className="flex items-center justify-between">
               <span className="text-white font-bold font-mono text-xs flex items-center gap-1.5">
                 <Flag className="w-3.5 h-3.5 text-[#FFBD2E]" />
@@ -1421,7 +1425,7 @@ export default function LessonPlayerPage() {
             </div>
 
             <p className="text-[11px] font-mono text-[#8BA2B5] leading-relaxed">
-              Exploit misconfigured SUID binaries or sudo permissions to extract the root flag from <code className="text-[#65F58A]">/root/proof.txt</code>.
+              Exploit misconfigured SUID binaries or sudo permissions to extract the root flag from <code className="text-[#FF7A00]">/root/proof.txt</code>.
             </p>
 
             <form onSubmit={handleFlagSubmit} className="space-y-2">
@@ -1431,11 +1435,11 @@ export default function LessonPlayerPage() {
                   value={flagInput}
                   onChange={(e) => setFlagInput(e.target.value)}
                   placeholder="rk_flag{...}"
-                  className="flex-1 px-3 py-2 rounded-xl bg-[#071018] border border-[#35E6B5]/30 text-white font-mono text-xs outline-none focus:border-[#65F58A]"
+                  className="flex-1 px-3 py-2 rounded-xl bg-[#071018] border border-[#FFA439]/30 text-white font-mono text-xs outline-none focus:border-[#FF7A00]"
                 />
                 <button
                   type="submit"
-                  className="px-3.5 py-2 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-mono font-bold text-xs transition-all cursor-pointer shadow-md flex items-center space-x-1"
+                  className="px-3.5 py-2 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-mono font-bold text-xs transition-all cursor-pointer shadow-md flex items-center space-x-1"
                 >
                   <Send className="w-3 h-3" />
                   <span>Submit</span>
@@ -1446,7 +1450,7 @@ export default function LessonPlayerPage() {
                 <div
                   className={`p-2.5 rounded-xl text-xs font-mono flex items-center space-x-2 ${
                     flagFeedback.success
-                      ? 'bg-[#65F58A]/15 border border-[#65F58A]/40 text-[#65F58A]'
+                      ? 'bg-[#FF7A00]/15 border border-[#FF7A00]/40 text-[#FF7A00]'
                       : 'bg-[#FF5F56]/15 border border-[#FF5F56]/40 text-[#FF5F56]'
                   }`}
                 >
@@ -1461,15 +1465,15 @@ export default function LessonPlayerPage() {
               <button
                 type="button"
                 onClick={() => setHintUnlocked(!hintUnlocked)}
-                className="text-[11px] font-mono text-[#72A88E] hover:text-[#35E6B5] flex items-center space-x-1 cursor-pointer"
+                className="text-[11px] font-mono text-[#A3907C] hover:text-[#FFA439] flex items-center space-x-1 cursor-pointer"
               >
                 <span>{hintUnlocked ? 'Hide Tactical Hint ▴' : 'Unlock Tactical Hint ▾'}</span>
               </button>
 
               {hintUnlocked && (
-                <div className="mt-2 p-2.5 rounded-lg bg-[#071018] border border-white/10 text-[11px] font-mono text-[#B8E6CE] space-y-1">
+                <div className="mt-2 p-2.5 rounded-lg bg-[#071018] border border-white/10 text-[11px] font-mono text-[#E2D9CE] space-y-1">
                   <p>Hint: Check binaries with SUID permission set:</p>
-                  <code className="text-[#65F58A] block bg-black/50 p-1.5 rounded">
+                  <code className="text-[#FF7A00] block bg-black/50 p-1.5 rounded">
                     find / -perm -u=s -type f 2&gt;/dev/null
                   </code>
                 </div>
@@ -1484,7 +1488,7 @@ export default function LessonPlayerPage() {
         <div className="space-y-3">
           <div className="flex items-center justify-between pb-1">
             <span className="text-xs font-mono font-bold text-white">Lesson Tactical Arsenal</span>
-            <span className="text-[10px] font-mono text-[#72A88E]">1-Click Mac Injection</span>
+            <span className="text-[10px] font-mono text-[#A3907C]">1-Click Mac Injection</span>
           </div>
 
           {[
@@ -1511,15 +1515,15 @@ export default function LessonPlayerPage() {
           ].map((item, idx) => (
             <div
               key={idx}
-              className="p-3 rounded-xl bg-black/40 border border-[#35E6B5]/20 hover:border-[#65F58A]/40 transition-all space-y-2"
+              className="p-3 rounded-xl bg-black/40 border border-[#FFA439]/20 hover:border-[#FF7A00]/40 transition-all space-y-2"
             >
               <div className="flex items-center justify-between">
                 <span className="text-xs font-mono font-bold text-white">{item.title}</span>
-                <span className="text-[10px] font-mono text-[#72A88E]">Payload #{idx + 1}</span>
+                <span className="text-[10px] font-mono text-[#A3907C]">Payload #{idx + 1}</span>
               </div>
               <p className="text-[11px] font-mono text-[#8BA2B5]">{item.desc}</p>
 
-              <div className="p-2 rounded-lg bg-[#071018] border border-white/10 font-mono text-xs text-[#65F58A] break-all select-all">
+              <div className="p-2 rounded-lg bg-[#071018] border border-white/10 font-mono text-xs text-[#FF7A00] break-all select-all">
                 {item.cmd}
               </div>
 
@@ -1527,7 +1531,7 @@ export default function LessonPlayerPage() {
                 <button
                   type="button"
                   onClick={() => navigator.clipboard.writeText(item.cmd)}
-                  className="px-2.5 py-1 rounded-lg bg-black/50 border border-white/10 hover:border-[#35E6B5] text-[#8BA2B5] hover:text-white text-[11px] font-mono transition-all cursor-pointer flex items-center space-x-1"
+                  className="px-2.5 py-1 rounded-lg bg-black/50 border border-white/10 hover:border-[#FFA439] text-[#8BA2B5] hover:text-white text-[11px] font-mono transition-all cursor-pointer flex items-center space-x-1"
                 >
                   <Copy className="w-3 h-3" />
                   <span>Copy</span>
@@ -1535,7 +1539,7 @@ export default function LessonPlayerPage() {
                 <button
                   type="button"
                   onClick={() => handleInjectPayload(item.cmd)}
-                  className="px-3 py-1 rounded-lg bg-[#65F58A]/20 hover:bg-[#65F58A]/30 border border-[#65F58A]/40 text-[#65F58A] font-bold text-[11px] font-mono transition-all cursor-pointer flex items-center space-x-1.5 shadow-sm"
+                  className="px-3 py-1 rounded-lg bg-[#FF7A00]/20 hover:bg-[#FF7A00]/30 border border-[#FF7A00]/40 text-[#FF7A00] font-bold text-[11px] font-mono transition-all cursor-pointer flex items-center space-x-1.5 shadow-sm"
                   title="Inject directly into macOS Floating Terminal"
                 >
                   <Zap className="w-3 h-3 fill-current" />
@@ -1550,8 +1554,8 @@ export default function LessonPlayerPage() {
       {/* ================= TAB 4: TACTICAL NOTES & LAB INSPECTOR ================= */}
       {inspectorTab === 'notes' && (
         <div className="space-y-4">
-          <div className="p-3.5 rounded-xl bg-[#092218]/50 border border-[#65F58A]/20 space-y-2">
-            <div className="flex items-center space-x-2 text-xs font-mono text-[#65F58A] font-bold">
+          <div className="p-3.5 rounded-xl bg-[#1A1208]/50 border border-[#FF7A00]/20 space-y-2">
+            <div className="flex items-center space-x-2 text-xs font-mono text-[#FF7A00] font-bold">
               <FileCheck className="w-4 h-4" />
               <span>Lab Findings & Forensics</span>
             </div>
@@ -1585,8 +1589,8 @@ export default function LessonPlayerPage() {
                 disabled={submittingPdf || !uploadingDataUrl}
                 className={`w-full py-2.5 rounded-xl font-bold font-mono text-xs flex items-center justify-center space-x-2 transition-all cursor-pointer ${
                   uploadingDataUrl && !submittingPdf
-                    ? 'bg-[#65F58A] text-[#071018] hover:bg-[#35E6B5] shadow-[0_0_15px_rgba(101,245,138,0.4)]'
-                    : 'bg-[#092218] text-[#8BA2B5] border border-white/10 opacity-50 cursor-not-allowed'
+                    ? 'bg-[#FF7A00] text-[#071018] hover:bg-[#FFA439] shadow-[0_0_15px_rgba(255,122,0,0.4)]'
+                    : 'bg-[#1A1208] text-[#8BA2B5] border border-white/10 opacity-50 cursor-not-allowed'
                 }`}
               >
                 {submittingPdf ? (
@@ -1603,16 +1607,16 @@ export default function LessonPlayerPage() {
               </button>
 
               {assignmentSubmission && (
-                <div className="p-3.5 rounded-xl bg-[#061510] border border-[#65F58A]/30 text-xs font-mono space-y-2">
+                <div className="p-3.5 rounded-xl bg-[#0E0C09] border border-[#FF7A00]/30 text-xs font-mono space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[#65F58A] font-bold flex items-center gap-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-[#65F58A]" />
+                    <span className="text-[#FF7A00] font-bold flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#FF7A00]" />
                       <span>Verified On File</span>
                     </span>
                     <span
                       className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold ${
                         assignmentSubmission.status === 'passed'
-                          ? 'bg-[#65F58A]/20 text-[#65F58A] border border-[#65F58A]/30'
+                          ? 'bg-[#FF7A00]/20 text-[#FF7A00] border border-[#FF7A00]/30'
                           : 'bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30'
                       }`}
                     >
@@ -1620,7 +1624,7 @@ export default function LessonPlayerPage() {
                     </span>
                   </div>
                   <p className="text-white truncate font-medium text-[11px]">{assignmentSubmission.file_name}</p>
-                  <div className="flex items-center justify-between text-[10px] text-[#72A88E] pt-1 border-t border-white/5">
+                  <div className="flex items-center justify-between text-[10px] text-[#A3907C] pt-1 border-t border-white/5">
                     <span>Submitted: {new Date(assignmentSubmission.submitted_at).toLocaleDateString()}</span>
                     {assignmentSubmission.grade && (
                       <span className="text-white font-bold">Grade: {assignmentSubmission.grade}%</span>
@@ -1632,7 +1636,7 @@ export default function LessonPlayerPage() {
           ) : (
             <div className="p-4 rounded-xl bg-black/40 border border-white/10 text-xs font-mono text-gray-400 space-y-2">
               <span className="text-white font-bold block">Standard Laboratory Unit</span>
-              <p className="text-[11px] text-[#72A88E] leading-relaxed">
+              <p className="text-[11px] text-[#A3907C] leading-relaxed">
                 Review the core operational principles in the main stage. No external PDF dispatch is required for this unit.
               </p>
             </div>
@@ -1642,7 +1646,7 @@ export default function LessonPlayerPage() {
           <button
             type="button"
             onClick={handleDownloadChapterNotes}
-            className="w-full py-2.5 rounded-xl border border-[#65F58A]/30 bg-[#092218] text-[#65F58A] hover:bg-[#65F58A]/20 text-xs font-mono font-bold flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-sm"
+            className="w-full py-2.5 rounded-xl border border-[#FF7A00]/30 bg-[#1A1208] text-[#FF7A00] hover:bg-[#FF7A00]/20 text-xs font-mono font-bold flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-sm"
           >
             <Download className="w-4 h-4" />
             <span>Download Study Notes (.md)</span>
@@ -1651,7 +1655,7 @@ export default function LessonPlayerPage() {
           {/* Admin Attached PDF Reference Resources */}
           {activeLesson?.pdf_resources && activeLesson.pdf_resources.length > 0 && (
             <div className="space-y-2">
-              <span className="text-xs font-mono font-bold text-[#65F58A] block">
+              <span className="text-xs font-mono font-bold text-[#FF7A00] block">
                 Official Chapter References:
               </span>
               <div className="space-y-1.5">
@@ -1659,13 +1663,13 @@ export default function LessonPlayerPage() {
                   <button
                     key={rIdx}
                     onClick={() => handleDownloadAdminPdf(res)}
-                    className="w-full flex items-center justify-between p-2.5 rounded-lg bg-[#0a261a] border border-[#65F58A]/30 text-xs font-mono text-[#C9EFE0] hover:text-white transition-colors cursor-pointer"
+                    className="w-full flex items-center justify-between p-2.5 rounded-lg bg-[#1E1308] border border-[#FF7A00]/30 text-xs font-mono text-[#E2D9CE] hover:text-white transition-colors cursor-pointer"
                   >
                     <div className="flex items-center space-x-2 truncate">
-                      <FileDown className="w-3.5 h-3.5 text-[#65F58A] flex-shrink-0" />
+                      <FileDown className="w-3.5 h-3.5 text-[#FF7A00] flex-shrink-0" />
                       <span className="truncate">{res.name || 'Resource.pdf'}</span>
                     </div>
-                    <Download className="w-3 h-3 text-[#72A88E] flex-shrink-0" />
+                    <Download className="w-3 h-3 text-[#A3907C] flex-shrink-0" />
                   </button>
                 ))}
               </div>
@@ -1680,15 +1684,15 @@ export default function LessonPlayerPage() {
   const renderSidebarContent = () => (
     <div className="flex flex-col h-full">
       {/* Sidebar Header */}
-            <div className="p-4 border-b border-[#65F58A]/20 flex items-center justify-between">
+            <div className="p-4 border-b border-[#FF7A00]/20 flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <BookOpen className="w-4 h-4 text-[#65F58A]" />
+                <BookOpen className="w-4 h-4 text-[#FF7A00]" />
                 <h3 className="font-bold text-sm text-white">Course outline</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setSidebarOpen(false)}
-                className="p-1 rounded text-[#72A88E] hover:text-[#65F58A] transition-colors cursor-pointer"
+                className="p-1 rounded text-[#A3907C] hover:text-[#FF7A00] transition-colors cursor-pointer"
                 title="Collapse outline"
               >
                 <X className="w-4 h-4" />
@@ -1716,8 +1720,8 @@ export default function LessonPlayerPage() {
                       !isUnlocked
                         ? 'border-white/5 bg-[#030907] opacity-65'
                         : isCurrentMod
-                        ? 'border-[#65F58A]/40 bg-[#092218]/80 shadow-[0_0_15px_rgba(101,245,138,0.1)]'
-                        : 'border-[#65F58A]/15 bg-[#061510]'
+                        ? 'border-[#FF7A00]/40 bg-[#1A1208]/80 shadow-[0_0_15px_rgba(255,122,0,0.1)]'
+                        : 'border-[#FF7A00]/15 bg-[#0E0C09]'
                     }`}
                   >
                     {/* Module Accordion Header */}
@@ -1740,17 +1744,17 @@ export default function LessonPlayerPage() {
                           {!isUnlocked ? (
                             <Folder className="w-4 h-4 text-gray-500" />
                           ) : isExpanded ? (
-                            <FolderOpen className="w-4 h-4 text-[#65F58A]" />
+                            <FolderOpen className="w-4 h-4 text-[#FF7A00]" />
                           ) : (
-                            <Folder className="w-4 h-4 text-[#35E6B5]" />
+                            <Folder className="w-4 h-4 text-[#FFA439]" />
                           )}
                           <span
                             className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-mono font-bold border ${
                               !isUnlocked
                                 ? 'bg-black text-gray-500 border-gray-700'
                                 : completedCount === modLessons.length && (!mod.quiz || isModQuizPassed)
-                                ? 'bg-[#65F58A] text-[#071018] border-[#65F58A]'
-                                : 'bg-[#040e0a] text-[#65F58A] border-[#65F58A]/30'
+                                ? 'bg-[#FF7A00] text-[#071018] border-[#FF7A00]'
+                                : 'bg-[#080705] text-[#FF7A00] border-[#FF7A00]/30'
                             }`}
                           >
                             {!isUnlocked ? (
@@ -1774,7 +1778,7 @@ export default function LessonPlayerPage() {
                           </span>
                         )}
                         <ChevronDown
-                          className={`w-3.5 h-3.5 text-[#72A88E] transition-transform duration-200 ${
+                          className={`w-3.5 h-3.5 text-[#A3907C] transition-transform duration-200 ${
                             isExpanded ? 'rotate-180' : ''
                           }`}
                         />
@@ -1783,7 +1787,7 @@ export default function LessonPlayerPage() {
 
                     {/* Module Child Units */}
                     {isExpanded && isUnlocked && (
-                      <div className="p-2 space-y-1 bg-[#040e0a]/80 border-t border-[#65F58A]/15">
+                      <div className="p-2 space-y-1 bg-[#080705]/80 border-t border-[#FF7A00]/15">
                         {/* 1. Lessons in Module */}
                         {modLessons.map((les) => {
                           const isDone = (currentEnrolment?.completed_mandatory_lessons || enrolment?.completed_mandatory_lessons || []).includes(les.id);
@@ -1796,8 +1800,8 @@ export default function LessonPlayerPage() {
                               onClick={() => handleSelectUnit({ id: les.id, type: 'lesson', lesson: les, moduleIndex: modIdx })}
                               className={`w-full text-left p-2 rounded-lg text-xs flex items-center justify-between transition-all cursor-pointer ${
                                 isActive
-                                  ? 'bg-[#65F58A] text-[#071018] font-bold shadow-sm'
-                                  : 'text-[#C9EFE0] hover:bg-[#092218] hover:text-white'
+                                  ? 'bg-[#FF7A00] text-[#071018] font-bold shadow-sm'
+                                  : 'text-[#E2D9CE] hover:bg-[#1A1208] hover:text-white'
                               }`}
                             >
                               <div className="flex items-center space-x-2 truncate pr-2">
@@ -1806,8 +1810,8 @@ export default function LessonPlayerPage() {
                                     isActive
                                       ? 'text-[#071018]'
                                       : isDone
-                                      ? 'text-[#65F58A]'
-                                      : 'text-[#72A88E]'
+                                      ? 'text-[#FF7A00]'
+                                      : 'text-[#A3907C]'
                                   }`}
                                 />
                                 <span className="truncate">{les.title}</span>
@@ -1816,13 +1820,13 @@ export default function LessonPlayerPage() {
                                 {isDone && (
                                   <CheckCircle2
                                     className={`w-3 h-3 ${
-                                      isActive ? 'text-[#071018]' : 'text-[#65F58A]'
+                                      isActive ? 'text-[#071018]' : 'text-[#FF7A00]'
                                     }`}
                                   />
                                 )}
                                 <span
                                   className={`text-[10px] font-mono ${
-                                    isActive ? 'text-[#071018]' : 'text-[#72A88E]'
+                                    isActive ? 'text-[#071018]' : 'text-[#A3907C]'
                                   }`}
                                 >
                                   {les.duration || '15 mins'}
@@ -1852,12 +1856,12 @@ export default function LessonPlayerPage() {
                               }
                               className={`w-full text-left p-2.5 rounded-lg text-xs flex items-center justify-between transition-all mt-1 cursor-pointer border ${
                                 activeUnit?.id === mod.quiz.id
-                                  ? 'bg-[#65F58A] text-[#071018] font-bold border-[#65F58A] shadow-sm'
+                                  ? 'bg-[#FF7A00] text-[#071018] font-bold border-[#FF7A00] shadow-sm'
                                   : isQuizLocked
                                   ? 'bg-rose-950/70 text-rose-300 border-rose-500/50 hover:bg-rose-900/60'
                                   : isModQuizPassed
-                                  ? 'bg-[#092218]/90 text-[#65F58A] border-[#65F58A]/30 hover:bg-[#0c2a1e]'
-                                  : 'bg-[#092218]/40 text-amber-300 border-amber-500/30 hover:bg-[#092218]'
+                                  ? 'bg-[#1A1208]/90 text-[#FF7A00] border-[#FF7A00]/30 hover:bg-[#0c2a1e]'
+                                  : 'bg-[#1A1208]/40 text-amber-300 border-amber-500/30 hover:bg-[#1A1208]'
                               }`}
                             >
                               <div className="flex items-center space-x-2 truncate pr-2">
@@ -1869,7 +1873,7 @@ export default function LessonPlayerPage() {
                                       activeUnit?.id === mod.quiz.id
                                         ? 'text-[#071018]'
                                         : isModQuizPassed
-                                        ? 'text-[#65F58A]'
+                                        ? 'text-[#FF7A00]'
                                         : 'text-amber-400'
                                     }`}
                                   />
@@ -1881,11 +1885,11 @@ export default function LessonPlayerPage() {
                               <span
                                 className={`text-[9px] font-mono px-1.5 py-0.5 rounded ${
                                   activeUnit?.id === mod.quiz.id
-                                    ? 'bg-[#071018] text-[#65F58A]'
+                                    ? 'bg-[#071018] text-[#FF7A00]'
                                     : isQuizLocked
                                     ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold'
                                     : isModQuizPassed
-                                    ? 'bg-[#65F58A]/15 text-[#65F58A]'
+                                    ? 'bg-[#FF7A00]/15 text-[#FF7A00]'
                                     : 'bg-amber-500/15 text-amber-300'
                                 }`}
                               >
@@ -1905,7 +1909,7 @@ export default function LessonPlayerPage() {
                 const isFinalLocked = mockEngine.isExamLocked(enrolmentId, course.final_assessment.id).isLocked;
                 const finalAttemptStatus = mockEngine.getQuizAttemptStatus(enrolmentId, course.final_assessment.id);
                 return (
-                  <div className="pt-3 border-t border-[#65F58A]/20">
+                  <div className="pt-3 border-t border-[#FF7A00]/20">
                     <button
                       type="button"
                       onClick={() => {
@@ -1924,12 +1928,12 @@ export default function LessonPlayerPage() {
                       }}
                       className={`w-full text-left p-3 rounded-xl text-xs flex items-center justify-between transition-all cursor-pointer border ${
                         activeUnit?.id === course.final_assessment.id
-                          ? 'bg-[#65F58A] text-[#071018] font-bold border-[#65F58A] shadow-md'
+                          ? 'bg-[#FF7A00] text-[#071018] font-bold border-[#FF7A00] shadow-md'
                           : isFinalLocked
                           ? 'bg-rose-950/70 text-rose-300 border-rose-500/50 hover:bg-rose-900/60'
                           : isFinalExamUnlocked
-                          ? 'bg-[#092218] text-[#65F58A] border-[#65F58A]/40 hover:bg-[#0c2a1e]'
-                          : 'bg-[#040e0a] text-gray-500 border-gray-800 cursor-not-allowed opacity-60'
+                          ? 'bg-[#1A1208] text-[#FF7A00] border-[#FF7A00]/40 hover:bg-[#0c2a1e]'
+                          : 'bg-[#080705] text-gray-500 border-gray-800 cursor-not-allowed opacity-60'
                       }`}
                     >
                       <div className="flex items-center space-x-2 truncate pr-2">
@@ -1945,11 +1949,11 @@ export default function LessonPlayerPage() {
                       <span
                         className={`text-[9px] font-mono px-2 py-0.5 rounded border ${
                           activeUnit?.id === course.final_assessment.id
-                            ? 'bg-[#071018] text-[#65F58A] border-[#071018]'
+                            ? 'bg-[#071018] text-[#FF7A00] border-[#071018]'
                             : isFinalLocked
                             ? 'bg-rose-500/20 text-rose-300 border-rose-500/40 font-bold'
                             : enrolment?.final_assessment_passed
-                            ? 'bg-[#65F58A]/15 text-[#65F58A] border-[#65F58A]/30'
+                            ? 'bg-[#FF7A00]/15 text-[#FF7A00] border-[#FF7A00]/30'
                             : isFinalExamUnlocked
                             ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
                             : 'border-white/10 text-gray-400'
@@ -1978,21 +1982,21 @@ export default function LessonPlayerPage() {
       <PixelBackground opacity={0.25} />
 
       {/* ================= 1. OPEN EDX TOP SUB-NAVBAR & TABS ================= */}
-      <header className="sticky top-0 z-30 bg-[#071018]/95 backdrop-blur-xl border-b border-[#65F58A]/20 px-4 sm:px-6 lg:px-8 py-3">
+      <header className="sticky top-0 z-30 bg-[#071018]/95 backdrop-blur-xl border-b border-[#FF7A00]/20 px-4 sm:px-6 lg:px-8 py-3">
         <div className="w-full flex items-center justify-between gap-4">
           {/* Left: Outline Toggle Button [ |< ] + Breadcrumb */}
           <div className="flex items-center space-x-3 truncate min-w-0">
             <button
               type="button"
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 rounded-xl border border-[#65F58A]/30 bg-[#092218] text-[#65F58A] hover:bg-[#65F58A]/20 transition-all cursor-pointer flex-shrink-0"
+              className="p-2 rounded-xl border border-[#FF7A00]/30 bg-[#1A1208] text-[#FF7A00] hover:bg-[#FF7A00]/20 transition-all cursor-pointer flex-shrink-0"
               title={sidebarOpen ? 'Hide Course Outline' : 'Show Course Outline'}
             >
               <Menu className="w-4 h-4" />
             </button>
 
             <div className="truncate text-xs font-mono min-w-0">
-              <span className="text-[#72A88E] hidden md:inline">Course / </span>
+              <span className="text-[#A3907C] hidden md:inline">Course / </span>
               <span className="text-white font-bold truncate">{course.title}</span>
             </div>
           </div>
@@ -2002,7 +2006,7 @@ export default function LessonPlayerPage() {
             <div className="hidden sm:flex items-center space-x-4 text-xs font-mono">
               <Link
                 to={`/student/course/${course.id}?tab=course`}
-                className="text-[#65F58A] hover:underline"
+                className="text-[#FF7A00] hover:underline"
               >
                 Course
               </Link>
@@ -2015,15 +2019,15 @@ export default function LessonPlayerPage() {
             </div>
 
             {/* Quick Completion / Grade Pill */}
-            <div className="flex items-center space-x-2 pl-3 border-l border-[#65F58A]/20 text-xs font-mono">
-              <span className="text-[#72A88E] hidden sm:inline">Progress:</span>
-              <span className="px-2.5 py-1 rounded-full bg-[#092218] border border-[#65F58A]/30 text-[#65F58A] font-bold">
+            <div className="flex items-center space-x-2 pl-3 border-l border-[#FF7A00]/20 text-xs font-mono">
+              <span className="text-[#A3907C] hidden sm:inline">Progress:</span>
+              <span className="px-2.5 py-1 rounded-full bg-[#1A1208] border border-[#FF7A00]/30 text-[#FF7A00] font-bold">
                 {progressData.percentage}%
               </span>
             </div>
 
             {/* Glowing +150 Tokens Bounty Pill */}
-            <span className="px-3 py-1 rounded-full bg-[#65F58A]/15 border border-[#65F58A]/30 text-[#65F58A] font-bold text-xs font-mono hidden md:inline">
+            <span className="px-3 py-1 rounded-full bg-[#FF7A00]/15 border border-[#FF7A00]/30 text-[#FF7A00] font-bold text-xs font-mono hidden md:inline">
               +150 Tokens
             </span>
 
@@ -2034,12 +2038,12 @@ export default function LessonPlayerPage() {
                 onClick={() => setToolsStripOpen(!toolsStripOpen)}
                 className={`p-2 rounded-xl border text-xs font-mono transition-all cursor-pointer flex items-center space-x-1.5 ${
                   toolsStripOpen
-                    ? 'bg-[#65F58A]/20 text-[#65F58A] border-[#65F58A]/40 shadow-[0_0_12px_rgba(101,245,138,0.2)]'
-                    : 'bg-[#092218] text-[#8BA2B5] border-[#65F58A]/20 hover:text-white'
+                    ? 'bg-[#FF7A00]/20 text-[#FF7A00] border-[#FF7A00]/40 shadow-[0_0_12px_rgba(255,122,0,0.2)]'
+                    : 'bg-[#1A1208] text-[#8BA2B5] border-[#FF7A00]/20 hover:text-white'
                 }`}
                 title={toolsStripOpen ? 'Collapse Tools Strip' : 'Show Tools Strip'}
               >
-                <Zap className="w-4 h-4 text-[#65F58A]" />
+                <Zap className="w-4 h-4 text-[#FF7A00]" />
                 <span className="text-[11px] font-bold hidden sm:inline">Tools</span>
               </button>
             )}
@@ -2053,7 +2057,7 @@ export default function LessonPlayerPage() {
         {/* ================= LEFT: STICKY COURSE OUTLINE SIDEBAR ================= */}
         {/* Desktop Sticky Course Outline Sidebar */}
         {sidebarOpen && (
-          <aside className="w-72 lg:w-80 xl:w-84 sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto custom-scrollbar border-r border-[#65F58A]/20 bg-[#061510]/95 backdrop-blur-xl hidden lg:flex flex-col flex-shrink-0 transition-all duration-300 z-20 self-start">
+          <aside className="w-72 lg:w-80 xl:w-84 sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto custom-scrollbar border-r border-[#FF7A00]/20 bg-[#0E0C09]/95 backdrop-blur-xl hidden lg:flex flex-col flex-shrink-0 transition-all duration-300 z-20 self-start">
             {renderSidebarContent()}
           </aside>
         )}
@@ -2065,7 +2069,7 @@ export default function LessonPlayerPage() {
               className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
               onClick={() => setSidebarOpen(false)}
             />
-            <aside className="fixed inset-y-0 left-0 w-[85vw] max-w-sm bg-[#061510] border-r border-[#65F58A]/30 shadow-2xl flex flex-col h-full z-10 animate-fade-in">
+            <aside className="fixed inset-y-0 left-0 w-[85vw] max-w-sm bg-[#0E0C09] border-r border-[#FF7A00]/30 shadow-2xl flex flex-col h-full z-10 animate-fade-in">
               {renderSidebarContent()}
             </aside>
           </div>
@@ -2075,9 +2079,9 @@ export default function LessonPlayerPage() {
         <main className="flex-1 min-w-0 h-[calc(100vh-3.5rem)] overflow-y-auto custom-scrollbar p-4 sm:p-6 lg:p-7 space-y-6 bg-[#040907]/90 pb-24">
           <div className="w-full space-y-6">
             {/* Top Unit Title Bar & Bookmark Toggle */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#65F58A]/20 gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#FF7A00]/20 gap-3">
               <div>
-                <span className="text-[11px] font-mono text-[#72A88E] uppercase tracking-wider block">
+                <span className="text-[11px] font-mono text-[#A3907C] uppercase tracking-wider block">
                   {activeUnit?.moduleTitle || 'Curriculum Module'}
                 </span>
                 <h2 className="text-xl sm:text-2xl font-bold text-white font-lora tracking-tight">
@@ -2091,8 +2095,8 @@ export default function LessonPlayerPage() {
                 onClick={() => toggleBookmark(activeUnit?.id)}
                 className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border text-xs font-mono transition-all cursor-pointer self-start sm:self-center ${
                   isCurrentUnitBookmarked
-                    ? 'bg-[#65F58A]/15 text-[#65F58A] border-[#65F58A]/40'
-                    : 'bg-[#061510] text-[#72A88E] border-[#65F58A]/20 hover:text-white'
+                    ? 'bg-[#FF7A00]/15 text-[#FF7A00] border-[#FF7A00]/40'
+                    : 'bg-[#0E0C09] text-[#A3907C] border-[#FF7A00]/20 hover:text-white'
                 }`}
               >
                 <Bookmark className={`w-3.5 h-3.5 ${isCurrentUnitBookmarked ? 'fill-current' : ''}`} />
@@ -2141,8 +2145,8 @@ export default function LessonPlayerPage() {
                 {/* Multi-Video Selector (If Lesson has Multiple Video Recordings) */}
                 {activeLesson.videos && activeLesson.videos.length > 1 && (
                   <div className="flex items-center space-x-2 overflow-x-auto pb-1 custom-scrollbar">
-                    <span className="text-[11px] font-mono text-[#72A88E] flex items-center gap-1 mr-1 flex-shrink-0">
-                      <Film className="w-3.5 h-3.5 text-[#65F58A]" />
+                    <span className="text-[11px] font-mono text-[#A3907C] flex items-center gap-1 mr-1 flex-shrink-0">
+                      <Film className="w-3.5 h-3.5 text-[#FF7A00]" />
                       <span>RECORDINGS ({activeLesson.videos.length}):</span>
                     </span>
                     {activeLesson.videos.map((vid, idx) => (
@@ -2152,8 +2156,8 @@ export default function LessonPlayerPage() {
                         onClick={() => setSelectedVideoIndex(idx)}
                         className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold flex items-center space-x-1.5 transition-all cursor-pointer flex-shrink-0 ${
                           selectedVideoIndex === idx
-                            ? 'bg-[#65F58A] text-[#071018] shadow-[0_0_15px_rgba(101,245,138,0.4)]'
-                            : 'bg-[#092218] text-[#72A88E] hover:text-white border border-[#65F58A]/30'
+                            ? 'bg-[#FF7A00] text-[#071018] shadow-[0_0_15px_rgba(255,122,0,0.4)]'
+                            : 'bg-[#1A1208] text-[#A3907C] hover:text-white border border-[#FF7A00]/30'
                         }`}
                       >
                         <Play className="w-3 h-3 fill-current" />
@@ -2164,7 +2168,7 @@ export default function LessonPlayerPage() {
                 )}
 
                 {/* Video Player */}
-                <div className="rounded-2xl overflow-hidden border border-[#65F58A]/30 bg-black aspect-video relative shadow-2xl">
+                <div className="rounded-2xl overflow-hidden border border-[#FF7A00]/30 bg-black aspect-video relative shadow-2xl">
                   {resolvedVideoUrl.includes('youtube.com') || resolvedVideoUrl.includes('youtu.be') ? (
                     <iframe
                       src={resolvedVideoUrl}
@@ -2185,13 +2189,13 @@ export default function LessonPlayerPage() {
 
                 {/* Multi-Image / Architecture Diagrams Gallery (If Lesson has Images) */}
                 {activeLesson.images && activeLesson.images.length > 0 && (
-                  <div className="p-4 rounded-2xl bg-[#061510] border border-[#35E6B5]/25 space-y-3">
+                  <div className="p-4 rounded-2xl bg-[#0E0C09] border border-[#FFA439]/25 space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2 text-xs font-mono text-white font-bold">
-                        <ImageIcon className="w-4 h-4 text-[#35E6B5]" />
+                        <ImageIcon className="w-4 h-4 text-[#FFA439]" />
                         <span>INSTRUCTIONAL DIAGRAMS & VISUAL EVIDENCE ({activeLesson.images.length})</span>
                       </div>
-                      <span className="text-[10px] font-mono text-[#72A88E]">Click diagram to inspect in full-resolution</span>
+                      <span className="text-[10px] font-mono text-[#A3907C]">Click diagram to inspect in full-resolution</span>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
@@ -2199,7 +2203,7 @@ export default function LessonPlayerPage() {
                         <div
                           key={img.id || iIdx}
                           onClick={() => setLightboxImage(img)}
-                          className="group relative rounded-xl overflow-hidden border border-[#35E6B5]/20 bg-black cursor-pointer hover:border-[#35E6B5]/60 transition-all shadow-md"
+                          className="group relative rounded-xl overflow-hidden border border-[#FFA439]/20 bg-black cursor-pointer hover:border-[#FFA439]/60 transition-all shadow-md"
                         >
                           <div className="aspect-video w-full overflow-hidden bg-black/60 flex items-center justify-center">
                             <img
@@ -2208,11 +2212,11 @@ export default function LessonPlayerPage() {
                               className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
                             />
                           </div>
-                          <div className="p-2.5 bg-[#092218]/90 border-t border-[#35E6B5]/15">
+                          <div className="p-2.5 bg-[#1A1208]/90 border-t border-[#FFA439]/15">
                             <span className="text-xs font-mono font-bold text-white block truncate">
                               {img.caption || img.name}
                             </span>
-                            <span className="text-[10px] text-[#72A88E] font-mono">
+                            <span className="text-[10px] text-[#A3907C] font-mono">
                               {img.size || 'Inspection Diagram'}
                             </span>
                           </div>
@@ -2223,15 +2227,15 @@ export default function LessonPlayerPage() {
                 )}
 
                 {/* Sub-Tabs: Notes vs Assignment */}
-                <div className="flex items-center justify-between border-b border-[#65F58A]/20 pb-2">
+                <div className="flex items-center justify-between border-b border-[#FF7A00]/20 pb-2">
                   <div className="flex items-center space-x-4 text-xs font-mono">
                     <button
                       type="button"
                       onClick={() => setActiveTab('notes')}
                       className={`pb-2 border-b-2 font-bold transition-all cursor-pointer ${
                         activeTab === 'notes'
-                          ? 'border-[#65F58A] text-[#65F58A]'
-                          : 'border-transparent text-[#72A88E] hover:text-white'
+                          ? 'border-[#FF7A00] text-[#FF7A00]'
+                          : 'border-transparent text-[#A3907C] hover:text-white'
                       }`}
                     >
                       Chapter Notes & Synthesis
@@ -2242,8 +2246,8 @@ export default function LessonPlayerPage() {
                         onClick={() => setActiveTab('assignment')}
                         className={`pb-2 border-b-2 font-bold transition-all cursor-pointer ${
                           activeTab === 'assignment'
-                            ? 'border-[#65F58A] text-[#65F58A]'
-                            : 'border-transparent text-[#72A88E] hover:text-white'
+                            ? 'border-[#FF7A00] text-[#FF7A00]'
+                            : 'border-transparent text-[#A3907C] hover:text-white'
                         }`}
                       >
                         PDF Laboratory Submission
@@ -2254,7 +2258,7 @@ export default function LessonPlayerPage() {
                   <button
                     type="button"
                     onClick={handleDownloadChapterNotes}
-                    className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-[#65F58A]/30 bg-[#092218] text-[#65F58A] hover:bg-[#65F58A]/20 text-xs font-mono transition-colors"
+                    className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-[#FF7A00]/30 bg-[#1A1208] text-[#FF7A00] hover:bg-[#FF7A00]/20 text-xs font-mono transition-colors"
                   >
                     <Download className="w-3.5 h-3.5" />
                     <span>Download Study Notes</span>
@@ -2264,7 +2268,7 @@ export default function LessonPlayerPage() {
                 {/* Tab 1: Chapter Notes */}
                 {activeTab === 'notes' && (
                   <div className="space-y-4">
-                    <div className="cyber-glass-panel p-6 rounded-2xl border border-[#65F58A]/20 max-h-[450px] overflow-y-auto custom-scrollbar prose prose-invert prose-sm max-w-none">
+                    <div className="cyber-glass-panel p-6 rounded-2xl border border-[#FF7A00]/20 max-h-[450px] overflow-y-auto custom-scrollbar prose prose-invert prose-sm max-w-none">
                       <div
                         dangerouslySetInnerHTML={{
                           __html: renderMarkdownToHtml(activeLesson.content || 'Defensive laboratory briefing and operational objectives.')
@@ -2274,8 +2278,8 @@ export default function LessonPlayerPage() {
 
                     {/* Admin Attached PDF Reference Resources */}
                     {activeLesson.pdf_resources && activeLesson.pdf_resources.length > 0 && (
-                      <div className="p-4 rounded-xl bg-[#061510] border border-[#65F58A]/30 space-y-2">
-                        <span className="text-xs font-mono font-bold text-[#65F58A] block">
+                      <div className="p-4 rounded-xl bg-[#0E0C09] border border-[#FF7A00]/30 space-y-2">
+                        <span className="text-xs font-mono font-bold text-[#FF7A00] block">
                           Official Chapter Reference Documents (.pdf):
                         </span>
                         <div className="flex flex-wrap gap-2">
@@ -2283,9 +2287,9 @@ export default function LessonPlayerPage() {
                             <button
                               key={rIdx}
                               onClick={() => handleDownloadAdminPdf(res)}
-                              className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-[#0a261a] border border-[#65F58A]/30 text-xs font-mono text-[#C9EFE0] hover:text-white transition-colors"
+                              className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-[#1E1308] border border-[#FF7A00]/30 text-xs font-mono text-[#E2D9CE] hover:text-white transition-colors"
                             >
-                              <FileDown className="w-3.5 h-3.5 text-[#65F58A]" />
+                              <FileDown className="w-3.5 h-3.5 text-[#FF7A00]" />
                               <span>{res.name || 'Resource.pdf'}</span>
                             </button>
                           ))}
@@ -2297,10 +2301,10 @@ export default function LessonPlayerPage() {
 
                 {/* Tab 2: PDF Laboratory Assignment */}
                 {activeTab === 'assignment' && isAssignment && (
-                  <div className="cyber-glass-panel p-6 rounded-2xl border border-[#65F58A]/25 space-y-5 shadow-2xl">
-                    <div className="border-b border-[#65F58A]/20 pb-3">
+                  <div className="cyber-glass-panel p-6 rounded-2xl border border-[#FF7A00]/25 space-y-5 shadow-2xl">
+                    <div className="border-b border-[#FF7A00]/20 pb-3">
                       <div className="flex items-center space-x-2">
-                        <FileCheck className="w-5 h-5 text-[#65F58A]" />
+                        <FileCheck className="w-5 h-5 text-[#FF7A00]" />
                         <h4 className="font-bold text-base text-white font-lora">
                           Submit Laboratory Findings & Forensics Report
                         </h4>
@@ -2328,7 +2332,7 @@ export default function LessonPlayerPage() {
 
                     {/* Submit Confirmation Bar */}
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-white/5">
-                      <span className="text-[11px] font-mono text-[#72A88E]">
+                      <span className="text-[11px] font-mono text-[#A3907C]">
                         {uploadingDataUrl
                           ? `Report verified & ready: ${uploadingFileName}`
                           : 'Upload your completed lab PDF to enable assessment dispatch.'}
@@ -2340,8 +2344,8 @@ export default function LessonPlayerPage() {
                         disabled={submittingPdf || !uploadingDataUrl}
                         className={`px-6 py-2.5 rounded-xl font-bold font-mono text-xs flex items-center space-x-2 transition-all cursor-pointer ${
                           uploadingDataUrl && !submittingPdf
-                            ? 'bg-[#65F58A] text-[#071018] hover:bg-[#35E6B5] shadow-[0_0_15px_rgba(101,245,138,0.4)]'
-                            : 'bg-[#092218] text-[#8BA2B5] border border-white/10 opacity-50 cursor-not-allowed'
+                            ? 'bg-[#FF7A00] text-[#071018] hover:bg-[#FFA439] shadow-[0_0_15px_rgba(255,122,0,0.4)]'
+                            : 'bg-[#1A1208] text-[#8BA2B5] border border-white/10 opacity-50 cursor-not-allowed'
                         }`}
                       >
                         {submittingPdf ? (
@@ -2360,22 +2364,22 @@ export default function LessonPlayerPage() {
 
                     {/* Existing Submission Records */}
                     {assignmentSubmission && (
-                      <div className="p-4 rounded-xl bg-[#061510] border border-[#65F58A]/30 text-xs font-mono space-y-2">
+                      <div className="p-4 rounded-xl bg-[#0E0C09] border border-[#FF7A00]/30 text-xs font-mono space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="text-[#65F58A] font-bold flex items-center gap-1.5">
-                            <CheckCircle2 className="w-4 h-4 text-[#65F58A]" />
+                          <span className="text-[#FF7A00] font-bold flex items-center gap-1.5">
+                            <CheckCircle2 className="w-4 h-4 text-[#FF7A00]" />
                             <span>Verified Lab Submission On File</span>
                           </span>
                           <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold ${
                             assignmentSubmission.status === 'passed'
-                              ? 'bg-[#65F58A]/20 text-[#65F58A] border border-[#65F58A]/30'
+                              ? 'bg-[#FF7A00]/20 text-[#FF7A00] border border-[#FF7A00]/30'
                               : 'bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30'
                           }`}>
                             {assignmentSubmission.status}
                           </span>
                         </div>
                         <p className="text-white truncate font-medium">{assignmentSubmission.file_name}</p>
-                        <div className="flex items-center justify-between text-[11px] text-[#72A88E] pt-1 border-t border-white/5">
+                        <div className="flex items-center justify-between text-[11px] text-[#A3907C] pt-1 border-t border-white/5">
                           <span>Submitted: {new Date(assignmentSubmission.submitted_at).toLocaleDateString()}</span>
                           {assignmentSubmission.grade && (
                             <span className="text-white font-bold">Grade: {assignmentSubmission.grade}%</span>
@@ -2388,7 +2392,7 @@ export default function LessonPlayerPage() {
 
                 
                 {/* Interactive Reflection / Observation Bar (matching reference cockpit) */}
-                <div className="p-4 rounded-2xl bg-[#061510] border border-[#65F58A]/20 flex items-center space-x-3 shadow-lg">
+                <div className="p-4 rounded-2xl bg-[#0E0C09] border border-[#FF7A00]/20 flex items-center space-x-3 shadow-lg">
                   <input
                     type="text"
                     value={reflectionNote}
@@ -2400,7 +2404,7 @@ export default function LessonPlayerPage() {
                       }
                     }}
                     placeholder="Write a technical reflection or lab observation..."
-                    className="flex-1 bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-xs font-mono text-white placeholder-gray-500 focus:outline-none focus:border-[#65F58A]/50 transition-colors"
+                    className="flex-1 bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-xs font-mono text-white placeholder-gray-500 focus:outline-none focus:border-[#FF7A00]/50 transition-colors"
                   />
                   <button
                     type="button"
@@ -2410,7 +2414,7 @@ export default function LessonPlayerPage() {
                         setReflectionNote('');
                       }
                     }}
-                    className="px-4 py-2.5 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-bold text-xs font-mono transition-all flex items-center space-x-1.5 cursor-pointer shadow-md"
+                    className="px-4 py-2.5 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-bold text-xs font-mono transition-all flex items-center space-x-1.5 cursor-pointer shadow-md"
                   >
                     <Send className="w-3.5 h-3.5" />
                     <span className="hidden sm:inline">Log</span>
@@ -2425,8 +2429,8 @@ export default function LessonPlayerPage() {
                     disabled={isLessonCompleted || savingProgress}
                     className={`px-6 py-2.5 rounded-xl font-bold font-mono text-xs flex items-center space-x-2 transition-all cursor-pointer ${
                       isLessonCompleted
-                        ? 'bg-[#092218] text-[#65F58A] border border-[#65F58A]/40'
-                        : 'bg-[#65F58A] text-[#071018] hover:bg-[#35E6B5]'
+                        ? 'bg-[#1A1208] text-[#FF7A00] border border-[#FF7A00]/40'
+                        : 'bg-[#FF7A00] text-[#071018] hover:bg-[#FFA439]'
                     }`}
                   >
                     <Check className="w-4 h-4 stroke-[3]" />
@@ -2457,22 +2461,22 @@ export default function LessonPlayerPage() {
 
             {/* ================= 3. BOTTOM SEQUENTIAL NAVIGATION BAR (Hidden during active CBT examination to prevent navigation conflict) ================= */}
             {!((activeUnit?.type === 'quiz' || activeUnit?.type === 'final_exam') && !quizSubmitted) && (
-              <div className="pt-8 pb-10 border-t border-[#65F58A]/20 flex flex-wrap items-center justify-between gap-4">
+              <div className="pt-8 pb-10 border-t border-[#FF7A00]/20 flex flex-wrap items-center justify-between gap-4">
                 <button
                   type="button"
                   onClick={handlePrevUnit}
                   disabled={activeIndex <= 0}
                   className={`px-5 py-2.5 rounded-xl text-xs font-mono font-bold flex items-center space-x-2 border transition-all ${
                     activeIndex > 0
-                      ? 'bg-[#092218] hover:bg-[#0c2a1e] text-[#65F58A] border-[#65F58A]/30 cursor-pointer shadow-sm'
-                      : 'bg-[#040e0a] text-[#72A88E]/40 border-white/5 cursor-not-allowed'
+                      ? 'bg-[#1A1208] hover:bg-[#0c2a1e] text-[#FF7A00] border-[#FF7A00]/30 cursor-pointer shadow-sm'
+                      : 'bg-[#080705] text-[#A3907C]/40 border-white/5 cursor-not-allowed'
                   }`}
                 >
                   <ChevronLeft className="w-4 h-4" />
                   <span>Previous</span>
                 </button>
 
-                <span className="text-xs font-mono text-[#72A88E] hidden sm:inline">
+                <span className="text-xs font-mono text-[#A3907C] hidden sm:inline">
                   Unit {activeIndex + 1} of {allUnits.length}
                 </span>
 
@@ -2481,7 +2485,7 @@ export default function LessonPlayerPage() {
                   <button
                     type="button"
                     onClick={handleNextUnit}
-                    className="px-6 py-2.5 rounded-xl text-xs font-mono font-bold flex items-center space-x-2 border border-[#65F58A] bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] cursor-pointer shadow-[0_0_20px_rgba(101,245,138,0.5)] transition-all animate-pulse"
+                    className="px-6 py-2.5 rounded-xl text-xs font-mono font-bold flex items-center space-x-2 border border-[#FF7A00] bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] cursor-pointer shadow-[0_0_20px_rgba(255,122,0,0.5)] transition-all animate-pulse"
                   >
                     <Shield className="w-4 h-4" />
                     <span>Take Final Assessment (50 MCQs)</span>
@@ -2489,7 +2493,7 @@ export default function LessonPlayerPage() {
                   </button>
                 ) : activeIndex >= allUnits.length - 1 ? (
                   <div className="flex items-center space-x-2">
-                    <span className="text-xs font-mono text-[#65F58A] font-bold">
+                    <span className="text-xs font-mono text-[#FF7A00] font-bold">
                       Curriculum Completed
                     </span>
                   </div>
@@ -2497,7 +2501,7 @@ export default function LessonPlayerPage() {
                   <button
                     type="button"
                     onClick={handleNextUnit}
-                    className="px-5 py-2.5 rounded-xl text-xs font-mono font-bold flex items-center space-x-2 border border-[#65F58A] bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] cursor-pointer shadow-[0_0_15px_rgba(101,245,138,0.3)] transition-all"
+                    className="px-5 py-2.5 rounded-xl text-xs font-mono font-bold flex items-center space-x-2 border border-[#FF7A00] bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] cursor-pointer shadow-[0_0_15px_rgba(255,122,0,0.3)] transition-all"
                   >
                     <span>Next</span>
                     <ChevronRight className="w-4 h-4 stroke-[3]" />
@@ -2510,75 +2514,85 @@ export default function LessonPlayerPage() {
 
         {/* ================= SECTION 3: VERTICAL TACTICAL TOOL STRIP ================= */}
         {toolsStripOpen && activeUnit?.type === 'lesson' && (
-          <CockpitToolStrip
-            onOpenTerminal={() => {
-              setIsMacTerminalOpen(true);
-              setIsMacTerminalMinimized(false);
-            }}
-            isTerminalOpen={isMacTerminalOpen && !isMacTerminalMinimized}
-            onOpenCyberLab={() => {
-              setIsCyberLabOpen(true);
-              setIsCyberLabMinimized(false);
-            }}
-            isCyberLabOpen={isCyberLabOpen && !isCyberLabMinimized}
-            onCollapse={() => setToolsStripOpen(false)}
-          />
+          isPsychology ? (
+            <PsychologyToolStrip
+              course={course}
+              enrolment={enrolment}
+              enrolmentId={enrolmentId}
+              activeUnit={activeUnit}
+              onCollapse={() => setToolsStripOpen(false)}
+            />
+          ) : (
+            <CockpitToolStrip
+              onOpenTerminal={() => {
+                setIsMacTerminalOpen(true);
+                setIsMacTerminalMinimized(false);
+              }}
+              isTerminalOpen={isMacTerminalOpen && !isMacTerminalMinimized}
+              onOpenCyberLab={() => {
+                setIsCyberLabOpen(true);
+                setIsCyberLabMinimized(false);
+              }}
+              isCyberLabOpen={isCyberLabOpen && !isCyberLabMinimized}
+              onCollapse={() => setToolsStripOpen(false)}
+            />
+          )
         )}
       </div>
 
       {/* ================= 4. CERTIFICATE REQUEST MODAL ================= */}
       {certRequestModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fadeIn">
-          <div className="max-w-lg w-full cyber-glass-panel rounded-2xl p-6 sm:p-8 border border-[#65F58A]/50 space-y-5 bg-[#081a13] shadow-[0_0_30px_rgba(101,245,138,0.2)]">
-            <div className="flex items-center space-x-3 pb-3 border-b border-[#65F58A]/20">
-              <div className="w-10 h-10 rounded-full bg-[#65F58A]/20 border border-[#65F58A]/40 flex items-center justify-center text-[#65F58A]">
+          <div className="max-w-lg w-full cyber-glass-panel rounded-2xl p-6 sm:p-8 border border-[#FF7A00]/50 space-y-5 bg-[#120E09] shadow-[0_0_30px_rgba(255,122,0,0.2)]">
+            <div className="flex items-center space-x-3 pb-3 border-b border-[#FF7A00]/20">
+              <div className="w-10 h-10 rounded-full bg-[#FF7A00]/20 border border-[#FF7A00]/40 flex items-center justify-center text-[#FF7A00]">
                 <Award className="w-6 h-6" />
               </div>
               <div>
                 <h3 className="text-lg font-bold text-white font-lora">Request Official Certificate</h3>
-                <p className="text-xs font-mono text-[#65F58A]">
+                <p className="text-xs font-mono text-[#FF7A00]">
                   Final Assessment Cleared ({quizResult?.score || 92}%)
                 </p>
               </div>
             </div>
 
             {certRequestSubmitted ? (
-              <div className="p-6 rounded-xl bg-[#092218] border border-[#65F58A]/40 text-center space-y-3">
-                <Check className="w-10 h-10 text-[#65F58A] mx-auto stroke-[3]" />
+              <div className="p-6 rounded-xl bg-[#1A1208] border border-[#FF7A00]/40 text-center space-y-3">
+                <Check className="w-10 h-10 text-[#FF7A00] mx-auto stroke-[3]" />
                 <h4 className="font-bold text-white font-lora text-base">Request Dispatched to Academic Director</h4>
-                <p className="text-xs text-[#B8E6CE] font-mono leading-relaxed">
+                <p className="text-xs text-[#E2D9CE] font-mono leading-relaxed">
                   Your certified passing score has been forwarded to the Academy Administration queue. Once certified, your cryptographic credential will appear in your Student Portal for direct download.
                 </p>
               </div>
             ) : (
               <div className="space-y-4 font-mono text-xs">
-                <p className="text-[#C9EFE0] leading-relaxed">
+                <p className="text-[#E2D9CE] leading-relaxed">
                   Congratulations on successfully clearing the {course.title} Final Comprehensive Examination. Confirm your details to request official certification dispatch.
                 </p>
 
-                <div className="p-4 rounded-xl bg-[#05140e] border border-[#65F58A]/20 space-y-2">
+                <div className="p-4 rounded-xl bg-[#0C0A07] border border-[#FF7A00]/20 space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-[#72A88E]">Cadet Operator:</span>
+                    <span className="text-[#A3907C]">Cadet Operator:</span>
                     <span className="text-white font-bold">{currentUser?.name || currentUser?.full_name || 'Cadet'}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#72A88E]">Cadet ID:</span>
-                    <span className="text-[#65F58A] font-bold">{currentUser?.cadet_id || enrolment?.cadet_id || 'RK-89421'}</span>
+                    <span className="text-[#A3907C]">Cadet ID:</span>
+                    <span className="text-[#FF7A00] font-bold">{currentUser?.cadet_id || enrolment?.cadet_id || 'RK-89421'}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#72A88E]">Credential Title:</span>
+                    <span className="text-[#A3907C]">Credential Title:</span>
                     <span className="text-white font-bold">{course.final_assessment?.credential_title || 'RedKross Certified SOC Analyst (RCSA)'}</span>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[#72A88E] mb-1">Candidate Notes (Optional)</label>
+                  <label className="block text-[#A3907C] mb-1">Candidate Notes (Optional)</label>
                   <textarea
                     rows={3}
                     value={certCadetNotes}
                     onChange={(e) => setCertCadetNotes(e.target.value)}
                     placeholder="Provide any additional institutional verification requests or employer reference notes..."
-                    className="w-full bg-[#05140e] border border-[#65F58A]/30 rounded-lg p-2.5 text-white focus:outline-none focus:border-[#65F58A]"
+                    className="w-full bg-[#0C0A07] border border-[#FF7A00]/30 rounded-lg p-2.5 text-white focus:outline-none focus:border-[#FF7A00]"
                   />
                 </div>
 
@@ -2586,14 +2600,14 @@ export default function LessonPlayerPage() {
                   <button
                     type="button"
                     onClick={() => setCertRequestModalOpen(false)}
-                    className="px-4 py-2 rounded-lg border border-[#65F58A]/30 text-[#B8E6CE] hover:text-white"
+                    className="px-4 py-2 rounded-lg border border-[#FF7A00]/30 text-[#E2D9CE] hover:text-white"
                   >
                     Close
                   </button>
                   <button
                     type="button"
                     onClick={handleSubmitCertificateRequest}
-                    className="px-5 py-2 rounded-lg bg-[#65F58A] text-[#071018] font-bold shadow-md hover:bg-[#35E6B5]"
+                    className="px-5 py-2 rounded-lg bg-[#FF7A00] text-[#071018] font-bold shadow-md hover:bg-[#FFA439]"
                   >
                     Submit Certificate Request
                   </button>
@@ -2613,18 +2627,18 @@ export default function LessonPlayerPage() {
           onClick={() => setLightboxImage(null)}
         >
           <div
-            className="relative max-w-5xl max-h-[90vh] flex flex-col bg-[#071018] border border-[#35E6B5]/40 rounded-2xl shadow-2xl overflow-hidden"
+            className="relative max-w-5xl max-h-[90vh] flex flex-col bg-[#071018] border border-[#FFA439]/40 rounded-2xl shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#35E6B5]/25 bg-[#061510]">
+            <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#FFA439]/25 bg-[#0E0C09]">
               <div className="flex items-center space-x-3 min-w-0">
-                <ImageIcon className="w-5 h-5 text-[#35E6B5] flex-shrink-0" />
+                <ImageIcon className="w-5 h-5 text-[#FFA439] flex-shrink-0" />
                 <div className="truncate">
                   <h3 className="text-sm font-bold font-mono text-white truncate">
                     {lightboxImage.caption || lightboxImage.name || 'Inspection Diagram'}
                   </h3>
-                  <p className="text-[11px] font-mono text-[#72A88E]">
+                  <p className="text-[11px] font-mono text-[#A3907C]">
                     {lightboxImage.name} • {lightboxImage.size || 'Local High-Res Asset'}
                   </p>
                 </div>
@@ -2633,7 +2647,7 @@ export default function LessonPlayerPage() {
               <button
                 type="button"
                 onClick={() => setLightboxImage(null)}
-                className="p-2 rounded-xl text-[#72A88E] hover:text-white hover:bg-white/10 transition-colors"
+                className="p-2 rounded-xl text-[#A3907C] hover:text-white hover:bg-white/10 transition-colors"
                 title="Close Lightbox (Esc)"
               >
                 <X className="w-5 h-5" />
@@ -2650,14 +2664,14 @@ export default function LessonPlayerPage() {
             </div>
 
             {/* Modal Footer */}
-            <div className="px-5 py-2.5 border-t border-[#35E6B5]/20 bg-[#061510] flex items-center justify-between text-xs font-mono">
-              <span className="text-[#72A88E]">
+            <div className="px-5 py-2.5 border-t border-[#FFA439]/20 bg-[#0E0C09] flex items-center justify-between text-xs font-mono">
+              <span className="text-[#A3907C]">
                 High-Fidelity Instructional Evidence & Diagram
               </span>
               <button
                 type="button"
                 onClick={() => setLightboxImage(null)}
-                className="px-4 py-1.5 rounded-lg bg-[#092218] hover:bg-[#0c2a1e] text-[#65F58A] border border-[#65F58A]/30 transition-colors"
+                className="px-4 py-1.5 rounded-lg bg-[#1A1208] hover:bg-[#0c2a1e] text-[#FF7A00] border border-[#FF7A00]/30 transition-colors"
               >
                 Done
               </button>
@@ -2669,17 +2683,17 @@ export default function LessonPlayerPage() {
       {/* ================= PRE-FLIGHT EXAM RULES MODAL ================= */}
       {showExamRulesGate && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-fadeIn">
-          <div className="max-w-xl w-full cyber-glass-panel rounded-2xl p-6 sm:p-8 border border-[#65F58A]/50 space-y-6 bg-[#081a13] shadow-[0_0_35px_rgba(101,245,138,0.25)]">
+          <div className="max-w-xl w-full cyber-glass-panel rounded-2xl p-6 sm:p-8 border border-[#FF7A00]/50 space-y-6 bg-[#120E09] shadow-[0_0_35px_rgba(255,122,0,0.25)]">
             {/* Header */}
-            <div className="flex items-center space-x-3.5 pb-4 border-b border-[#65F58A]/20">
-              <div className="w-11 h-11 rounded-xl bg-[#65F58A]/15 border border-[#65F58A]/40 flex items-center justify-center text-[#65F58A] flex-shrink-0">
+            <div className="flex items-center space-x-3.5 pb-4 border-b border-[#FF7A00]/20">
+              <div className="w-11 h-11 rounded-xl bg-[#FF7A00]/15 border border-[#FF7A00]/40 flex items-center justify-center text-[#FF7A00] flex-shrink-0">
                 <ShieldAlert className="w-6 h-6" />
               </div>
               <div className="min-w-0">
                 <h3 className="text-lg font-bold text-white font-lora">
                   Official Examination Protocols & Integrity Rules
                 </h3>
-                <p className="text-xs font-mono text-[#65F58A] truncate">
+                <p className="text-xs font-mono text-[#FF7A00] truncate">
                   {activeUnit?.type === 'final_exam'
                     ? 'Final Comprehensive Certification Assessment (50 MCQs)'
                     : `${activeUnit?.moduleTitle || 'Module'} Knowledge Check (20 MCQs)`}
@@ -2689,43 +2703,43 @@ export default function LessonPlayerPage() {
 
             {/* Protocol Items */}
             <div className="space-y-3 font-mono text-xs">
-              <div className="p-3.5 rounded-xl bg-[#05140e] border border-[#65F58A]/20 flex items-start space-x-3">
-                <Award className="w-4 h-4 text-[#65F58A] mt-0.5 flex-shrink-0" />
+              <div className="p-3.5 rounded-xl bg-[#0C0A07] border border-[#FF7A00]/20 flex items-start space-x-3">
+                <Award className="w-4 h-4 text-[#FF7A00] mt-0.5 flex-shrink-0" />
                 <div>
                   <span className="text-white font-bold block">80% Passing Threshold Required</span>
-                  <p className="text-[#72A88E] text-[11px] mt-0.5 leading-relaxed">
+                  <p className="text-[#A3907C] text-[11px] mt-0.5 leading-relaxed">
                     You must achieve a minimum score of 80% to successfully clear this evaluation and unlock subsequent operational modules.
                   </p>
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-[#05140e] border border-[#65F58A]/20 flex items-start space-x-3">
-                <Clock className="w-4 h-4 text-[#35E6B5] mt-0.5 flex-shrink-0" />
+              <div className="p-3.5 rounded-xl bg-[#0C0A07] border border-[#FF7A00]/20 flex items-start space-x-3">
+                <Clock className="w-4 h-4 text-[#FFA439] mt-0.5 flex-shrink-0" />
                 <div>
                   <span className="text-white font-bold block">
                     Strict Time Limit: {activeUnit?.type === 'final_exam' ? '60 Minutes (50 MCQs)' : '20 Minutes (20 MCQs)'}
                   </span>
-                  <p className="text-[#72A88E] text-[11px] mt-0.5 leading-relaxed">
+                  <p className="text-[#A3907C] text-[11px] mt-0.5 leading-relaxed">
                     The exam timer runs continuously once initiated. If the timer expires before manual submission, your completed answers will be auto-submitted.
                   </p>
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-[#05140e] border border-amber-500/20 flex items-start space-x-3">
+              <div className="p-3.5 rounded-xl bg-[#0C0A07] border border-amber-500/20 flex items-start space-x-3">
                 <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5 flex-shrink-0" />
                 <div>
                   <span className="text-amber-300 font-bold block">Tab Switch & Proctor Integrity Protocol</span>
-                  <p className="text-[#72A88E] text-[11px] mt-0.5 leading-relaxed">
+                  <p className="text-[#A3907C] text-[11px] mt-0.5 leading-relaxed">
                     Switching browser tabs, minimizing the screen, or navigating away during active testing will trigger an immediate proctor violation and forfeit 1 evaluation attempt.
                   </p>
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-[#05140e] border border-rose-500/20 flex items-start space-x-3">
+              <div className="p-3.5 rounded-xl bg-[#0C0A07] border border-rose-500/20 flex items-start space-x-3">
                 <Lock className="w-4 h-4 text-rose-400 mt-0.5 flex-shrink-0" />
                 <div>
                   <span className="text-rose-300 font-bold block">3-Strike Policy & 24-Hour Security Lockdown</span>
-                  <p className="text-[#72A88E] text-[11px] mt-0.5 leading-relaxed">
+                  <p className="text-[#A3907C] text-[11px] mt-0.5 leading-relaxed">
                     Cadets are granted 3 attempts. If all 3 attempts are exhausted through failing scores or proctor violations, a mandatory 24-hour security lockout is automatically enforced.
                   </p>
                 </div>
@@ -2733,7 +2747,7 @@ export default function LessonPlayerPage() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 pt-3 border-t border-[#65F58A]/20">
+            <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 pt-3 border-t border-[#FF7A00]/20">
               <button
                 type="button"
                 onClick={handleCancelExamRules}
@@ -2744,7 +2758,7 @@ export default function LessonPlayerPage() {
               <button
                 type="button"
                 onClick={handleAcknowledgeExamRules}
-                className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-bold font-mono text-xs shadow-[0_0_20px_rgba(101,245,138,0.4)] flex items-center justify-center space-x-2 transition-all cursor-pointer"
+                className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-bold font-mono text-xs shadow-[0_0_20px_rgba(255,122,0,0.4)] flex items-center justify-center space-x-2 transition-all cursor-pointer"
               >
                 <span>I Understand the Rules & Begin Exam</span>
                 <ArrowRight className="w-4 h-4 stroke-[3]" />
@@ -2755,38 +2769,42 @@ export default function LessonPlayerPage() {
       )}
 
       {/* ================= 5. MOVABLE TACTICAL PRACTICE TERMINAL ================= */}
-      <MovablePracticeTerminal
-        isOpen={isMacTerminalOpen}
-        onClose={() => setIsMacTerminalOpen(false)}
-        isMinimized={isMacTerminalMinimized}
-        onMinimize={() => setIsMacTerminalMinimized(true)}
-        onRestore={() => setIsMacTerminalMinimized(false)}
-        injectedCommand={injectedTerminalCommand}
-        onClearInjectedCommand={() => setInjectedTerminalCommand(null)}
-        targetIp={targetIp}
-        lessonId={activeLesson?.id}
-      />
+      {!isPsychology && (
+        <MovablePracticeTerminal
+          isOpen={isMacTerminalOpen}
+          onClose={() => setIsMacTerminalOpen(false)}
+          isMinimized={isMacTerminalMinimized}
+          onMinimize={() => setIsMacTerminalMinimized(true)}
+          onRestore={() => setIsMacTerminalMinimized(false)}
+          injectedCommand={injectedTerminalCommand}
+          onClearInjectedCommand={() => setInjectedTerminalCommand(null)}
+          targetIp={targetIp}
+          lessonId={activeLesson?.id}
+        />
+      )}
 
       {/* ================= 6. MOVABLE CYBERLAB V3 KALI DESKTOP ================= */}
-      <CyberLabDesktopWindow
-        isOpen={isCyberLabOpen}
-        onClose={() => setIsCyberLabOpen(false)}
-        isMinimized={isCyberLabMinimized}
-        onMinimize={() => setIsCyberLabMinimized(true)}
-        onRestore={() => setIsCyberLabMinimized(false)}
-      />
+      {!isPsychology && (
+        <CyberLabDesktopWindow
+          isOpen={isCyberLabOpen}
+          onClose={() => setIsCyberLabOpen(false)}
+          isMinimized={isCyberLabMinimized}
+          onMinimize={() => setIsCyberLabMinimized(true)}
+          onRestore={() => setIsCyberLabMinimized(false)}
+        />
+      )}
 
       {/* ================= MODULE UNLOCK CELEBRATION MODAL ================= */}
       {unlockCelebrationModal.isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-fadeIn">
-          <div className="max-w-lg w-full cyber-glass-panel rounded-2xl p-6 sm:p-8 border border-[#65F58A]/60 space-y-6 bg-[#081a13] shadow-[0_0_40px_rgba(101,245,138,0.3)] text-center">
+          <div className="max-w-lg w-full cyber-glass-panel rounded-2xl p-6 sm:p-8 border border-[#FF7A00]/60 space-y-6 bg-[#120E09] shadow-[0_0_40px_rgba(255,122,0,0.3)] text-center">
             {/* Visual Icon Badge */}
             {unlockCelebrationModal.type === 'final_round' ? (
               <div className="w-16 h-16 rounded-2xl bg-[#FFD700]/20 border border-[#FFD700]/50 flex items-center justify-center text-[#FFD700] mx-auto shadow-[0_0_30px_rgba(255,215,0,0.4)] animate-pulse">
                 <Award className="w-8 h-8" />
               </div>
             ) : (
-              <div className="w-16 h-16 rounded-2xl bg-[#65F58A]/20 border border-[#65F58A]/50 flex items-center justify-center text-[#65F58A] mx-auto shadow-[0_0_30px_rgba(101,245,138,0.4)] animate-bounce">
+              <div className="w-16 h-16 rounded-2xl bg-[#FF7A00]/20 border border-[#FF7A00]/50 flex items-center justify-center text-[#FF7A00] mx-auto shadow-[0_0_30px_rgba(255,122,0,0.4)] animate-bounce">
                 <Trophy className="w-8 h-8" />
               </div>
             )}
@@ -2797,10 +2815,10 @@ export default function LessonPlayerPage() {
                 <h3 className="text-2xl font-bold text-white font-lora">
                   Get ready for the final round!
                 </h3>
-                <p className="text-sm font-bold font-mono text-[#65F58A]">
+                <p className="text-sm font-bold font-mono text-[#FF7A00]">
                   All the best, Cadet! 🎖️
                 </p>
-                <p className="text-xs text-[#B8E6CE] font-mono leading-relaxed pt-1">
+                <p className="text-xs text-[#E2D9CE] font-mono leading-relaxed pt-1">
                   Phenomenal execution! You have conquered all operational modules of the curriculum. The comprehensive Final Certification Examination (50 MCQs) is now unlocked.
                 </p>
               </div>
@@ -2809,30 +2827,30 @@ export default function LessonPlayerPage() {
                 <h3 className="text-2xl font-bold text-white font-lora">
                   Congratulations Cadet! 🎉
                 </h3>
-                <p className="text-sm font-bold font-mono text-[#65F58A]">
+                <p className="text-sm font-bold font-mono text-[#FF7A00]">
                   You've Unlocked Module {unlockCelebrationModal.unlockedModuleIndex}!
                 </p>
-                <p className="text-xs text-[#B8E6CE] font-mono leading-relaxed pt-1">
+                <p className="text-xs text-[#E2D9CE] font-mono leading-relaxed pt-1">
                   Outstanding operational performance! You passed with a score of <span className="text-white font-bold">{unlockCelebrationModal.score}%</span>. We're proud of your dedicated progress—keep the momentum surging!
                 </p>
               </div>
             )}
 
             {/* Telemetry Stats Card */}
-            <div className="p-4 rounded-xl bg-[#05140e] border border-[#65F58A]/30 flex items-center justify-around font-mono text-xs">
+            <div className="p-4 rounded-xl bg-[#0C0A07] border border-[#FF7A00]/30 flex items-center justify-around font-mono text-xs">
               <div>
-                <span className="text-[10px] text-[#72A88E] block uppercase">Exam Score</span>
+                <span className="text-[10px] text-[#A3907C] block uppercase">Exam Score</span>
                 <span className="text-white font-bold text-sm">{unlockCelebrationModal.score}%</span>
               </div>
               <div className="h-8 w-px bg-white/10" />
               <div>
-                <span className="text-[10px] text-[#72A88E] block uppercase">Reward</span>
-                <span className="text-[#65F58A] font-bold text-sm">+100 RK Tokens</span>
+                <span className="text-[10px] text-[#A3907C] block uppercase">Reward</span>
+                <span className="text-[#FF7A00] font-bold text-sm">+100 RK Tokens</span>
               </div>
               <div className="h-8 w-px bg-white/10" />
               <div>
-                <span className="text-[10px] text-[#72A88E] block uppercase">Status</span>
-                <span className="text-[#35E6B5] font-bold text-sm">PASSED</span>
+                <span className="text-[10px] text-[#A3907C] block uppercase">Status</span>
+                <span className="text-[#FFA439] font-bold text-sm">PASSED</span>
               </div>
             </div>
 
@@ -2848,7 +2866,7 @@ export default function LessonPlayerPage() {
               <button
                 type="button"
                 onClick={handleProceedFromCelebration}
-                className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-bold font-mono text-xs shadow-[0_0_20px_rgba(101,245,138,0.4)] flex items-center justify-center space-x-2 transition-all cursor-pointer"
+                className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-bold font-mono text-xs shadow-[0_0_20px_rgba(255,122,0,0.4)] flex items-center justify-center space-x-2 transition-all cursor-pointer"
               >
                 <span>
                   {unlockCelebrationModal.type === 'final_round'

@@ -367,7 +367,7 @@ export default function QuizAssessmentPage() {
       {/* Floating Real-Time Proctoring HUD (Camera Feed) */}
       {examStarted && !submissionResult && (
         <div className="fixed top-20 right-6 z-40 flex flex-col items-end space-y-2 pointer-events-none">
-          <div className="relative rounded-2xl overflow-hidden border-2 border-[#65F58A]/50 shadow-[0_0_30px_rgba(101,245,138,0.25)] bg-black w-44 h-32">
+          <div className="relative rounded-2xl overflow-hidden border-2 border-[#FF7A00]/50 shadow-[0_0_30px_rgba(255,122,0,0.25)] bg-black w-44 h-32">
             <video
               ref={videoRef}
               autoPlay
@@ -375,8 +375,8 @@ export default function QuizAssessmentPage() {
               muted
               className="w-full h-full object-cover mirror"
             />
-            <div className="absolute top-2 left-2 flex items-center space-x-1 px-2 py-0.5 rounded-full bg-black/70 backdrop-blur-md border border-[#65F58A]/40 text-[9px] font-mono text-[#65F58A]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#65F58A] animate-ping" />
+            <div className="absolute top-2 left-2 flex items-center space-x-1 px-2 py-0.5 rounded-full bg-black/70 backdrop-blur-md border border-[#FF7A00]/40 text-[9px] font-mono text-[#FF7A00]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#FF7A00] animate-ping" />
               <span>LIVE PROCTOR</span>
             </div>
             {cameraDropCount > 0 && (
@@ -466,7 +466,7 @@ export default function QuizAssessmentPage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono">
               <div className="p-3.5 rounded-lg bg-surface-100 border border-surface-border">
                 <div className="text-[10px] text-slate-400 uppercase">Proctor Status</div>
-                <div className="text-sm font-bold text-[#65F58A]">Webcam Enforced</div>
+                <div className="text-sm font-bold text-[#FF7A00]">Webcam Enforced</div>
               </div>
               <div className="p-3.5 rounded-lg bg-surface-100 border border-surface-border">
                 <div className="text-[10px] text-slate-400 uppercase">Focus Policy</div>
@@ -494,7 +494,7 @@ export default function QuizAssessmentPage() {
           <div className="bg-surface-card border border-surface-border rounded-xl p-8 shadow-2xl space-y-6">
             <div className="text-center space-y-2">
               {submissionResult.is_passed ? (
-                <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mx-auto">
+                <div className="w-16 h-16 rounded-full bg-[#FF7A00]/10 border border-[#FF7A00]/30 flex items-center justify-center text-[#FFA439] mx-auto">
                   <CheckCircle2 className="w-8 h-8" />
                 </div>
               ) : (
@@ -526,7 +526,7 @@ export default function QuizAssessmentPage() {
                   <div
                     key={q.id}
                     className={`p-4 rounded-lg border text-xs space-y-2 ${
-                      isCorrect ? 'bg-emerald-950/10 border-emerald-500/30' : 'bg-rose-950/10 border-rose-500/30'
+                      isCorrect ? 'bg-[#1A1208] border-[#FF7A00]/30' : 'bg-rose-950/10 border-rose-500/30'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-2">
@@ -534,7 +534,7 @@ export default function QuizAssessmentPage() {
                         {idx + 1}. {q.text}
                       </span>
                       {isCorrect ? (
-                        <span className="text-emerald-400 font-mono text-[10px] uppercase font-bold flex-shrink-0">
+                        <span className="text-[#FFA439] font-mono text-[10px] uppercase font-bold flex-shrink-0">
                           + {q.points} Pts Correct
                         </span>
                       ) : (
@@ -589,12 +589,12 @@ export default function QuizAssessmentPage() {
         {/* ==================================================== */}
         {showPreExamModal && (
           <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl flex items-center justify-center p-4">
-            <div className="ultra-glass-dropdown max-w-lg w-full rounded-3xl p-8 border border-[#65F58A]/40 shadow-2xl space-y-6 relative overflow-hidden shimmer-lr animate-slide-left">
-              <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-[#65F58A]/10 to-transparent rounded-full blur-2xl -z-10" />
+            <div className="ultra-glass-dropdown max-w-lg w-full rounded-3xl p-8 border border-[#FF7A00]/40 shadow-2xl space-y-6 relative overflow-hidden shimmer-lr animate-slide-left">
+              <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-[#FF7A00]/10 to-transparent rounded-full blur-2xl -z-10" />
 
               {/* Header */}
               <div className="text-center space-y-1.5">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#65F58A]/10 border border-[#65F58A]/30 text-[#65F58A] text-[10px] font-mono uppercase tracking-wider">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FF7A00]/10 border border-[#FF7A00]/30 text-[#FF7A00] text-[10px] font-mono uppercase tracking-wider">
                   <ShieldAlert className="w-3.5 h-3.5" />
                   <span>Mandatory Examination Proctor Rules</span>
                 </div>
@@ -638,7 +638,7 @@ export default function QuizAssessmentPage() {
 
               {/* Center Highlight: "All the best" */}
               <div className="py-4 text-center border-y border-[#263440]">
-                <div className="font-royal text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#65F58A] via-[#35E6B5] to-emerald-400 drop-shadow-[0_0_20px_rgba(101,245,138,0.5)] tracking-wide">
+                <div className="font-royal text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#FF7A00] via-[#FFA439] to-[#FFA439] drop-shadow-[0_0_20px_rgba(255,122,0,0.5)] tracking-wide">
                   All the best
                 </div>
                 <p className="text-[11px] text-[#94A3B8] font-mono mt-1">
@@ -658,7 +658,7 @@ export default function QuizAssessmentPage() {
                 <button
                   type="button"
                   onClick={initializeCameraAndStart}
-                  className="flex-[2] py-3 rounded-xl bg-gradient-to-r from-[#65F58A] to-[#35E6B5] text-[#071018] font-royal font-bold text-xs uppercase tracking-wider shadow-[0_0_20px_rgba(101,245,138,0.35)] hover:scale-[1.02] transition-all cursor-pointer"
+                  className="flex-[2] py-3 rounded-xl bg-gradient-to-r from-[#FF7A00] to-[#FFA439] text-[#071018] font-royal font-bold text-xs uppercase tracking-wider shadow-[0_0_20px_rgba(255,122,0,0.35)] hover:scale-[1.02] transition-all cursor-pointer"
                 >
                   Enable Camera & Launch Exam
                 </button>

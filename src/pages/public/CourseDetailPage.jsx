@@ -62,9 +62,9 @@ export default function CourseDetailPage() {
   if (!course) {
     return (
       <div className="min-h-screen py-24 text-center relative z-10 flex items-center justify-center">
-        <div className="max-w-md p-8 rounded-2xl cyber-glass-card border border-[#65F58A]/30 space-y-4">
+        <div className="max-w-md p-8 rounded-2xl cyber-glass-card border border-[#FF7A00]/30 space-y-4">
           <h2 className="font-royal text-2xl font-bold text-white mb-2">Course Not Found</h2>
-          <p className="text-[#B8E6CE] text-sm mb-6 font-mono">The requested course does not exist in our catalog.</p>
+          <p className="text-[#E2D9CE] text-sm mb-6 font-mono">The requested course does not exist in our catalog.</p>
           <Link to="/courses" className="px-5 py-2.5 glass-button-primary font-royal font-bold text-xs rounded-xl inline-flex items-center gap-2">
             <span>Return to Catalog</span>
           </Link>
@@ -224,7 +224,7 @@ export default function CourseDetailPage() {
           <span className="flex-shrink-0">/</span>
           <Link to="/courses" className="hover:text-white transition-colors flex-shrink-0">Courses</Link>
           <span className="flex-shrink-0">/</span>
-          <span className="text-[#65F58A] flex-shrink-0">{course.category || 'Specialist Training'}</span>
+          <span className="text-[#FF7A00] flex-shrink-0">{course.category || 'Specialist Training'}</span>
           <span className="flex-shrink-0">/</span>
           <span className="text-slate-200 truncate font-semibold">{course.title}</span>
         </div>
@@ -236,15 +236,15 @@ export default function CourseDetailPage() {
           <div className="lg:col-span-2 space-y-8 min-w-0">
             
             {/* Header Hero Section */}
-            <div className="cyber-glass-panel rounded-2xl p-6 sm:p-8 space-y-4 border border-[#65F58A]/30 overflow-hidden min-w-0">
+            <div className="cyber-glass-panel rounded-2xl p-6 sm:p-8 space-y-4 border border-[#FF7A00]/30 overflow-hidden min-w-0">
               <div className="flex flex-wrap items-center gap-2.5">
-                <span className="text-[11px] font-mono px-3 py-1 rounded-full bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/40 font-bold uppercase tracking-wider">
+                <span className="text-[11px] font-mono px-3 py-1 rounded-full bg-[#FF7A00]/15 text-[#FF7A00] border border-[#FF7A00]/40 font-bold uppercase tracking-wider">
                   {course.category}
                 </span>
                 <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-white/[0.04] text-slate-300 border border-white/10">
                   Version {course.version || '1.0'}
                 </span>
-                <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-white/[0.04] text-[#35E6B5] border border-[#35E6B5]/30">
+                <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-white/[0.04] text-[#FFA439] border border-[#FFA439]/30">
                   {course.difficulty || 'Intermediate'}
                 </span>
               </div>
@@ -253,22 +253,22 @@ export default function CourseDetailPage() {
                 {course.title}
               </h1>
 
-              <p className="text-[#C9EFE0] text-sm sm:text-base leading-relaxed break-words max-w-full">
+              <p className="text-[#E2D9CE] text-sm sm:text-base leading-relaxed break-words max-w-full">
                 {course.overview || course.description}
               </p>
 
               {/* Author / Instructor Strip */}
-              <div className="flex items-center space-x-4 pt-4 border-t border-[#65F58A]/20 min-w-0">
+              <div className="flex items-center space-x-4 pt-4 border-t border-[#FF7A00]/20 min-w-0">
                 <img
                   src={course.lead_author?.avatar || 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=256&q=80'}
                   alt={course.lead_author?.name || 'Instructor'}
-                  className="w-12 h-12 rounded-full border border-[#65F58A]/50 object-cover shadow-[0_0_12px_rgba(101,245,138,0.3)] flex-shrink-0"
+                  className="w-12 h-12 rounded-full border border-[#FF7A00]/50 object-cover shadow-[0_0_12px_rgba(255,122,0,0.3)] flex-shrink-0"
                 />
                 <div className="min-w-0 overflow-hidden">
                   <div className="font-royal text-sm font-bold text-white truncate">
                     {course.lead_author?.name || 'Sarah Chen, CISSP'}
                   </div>
-                  <div className="text-xs text-[#72A88E] font-mono truncate">
+                  <div className="text-xs text-[#A3907C] font-mono truncate">
                     {course.lead_author?.title || 'Principal Defensive Handler • RedKross Cyber Lab'}
                   </div>
                 </div>
@@ -277,27 +277,27 @@ export default function CourseDetailPage() {
 
             {/* Course Details & Scope Section (if description is distinct from overview) */}
             {course.description && course.description !== course.overview && (
-              <div className="cyber-glass-panel rounded-2xl p-6 sm:p-8 space-y-3 border border-[#65F58A]/25 overflow-hidden min-w-0">
+              <div className="cyber-glass-panel rounded-2xl p-6 sm:p-8 space-y-3 border border-[#FF7A00]/25 overflow-hidden min-w-0">
                 <h2 className="font-royal text-lg sm:text-xl font-bold text-white flex items-center gap-2.5">
-                  <BookOpen className="w-5 h-5 text-[#65F58A]" />
+                  <BookOpen className="w-5 h-5 text-[#FF7A00]" />
                   <span>Course Details & Scope</span>
                 </h2>
-                <p className="text-[#C9EFE0] text-xs sm:text-sm leading-relaxed whitespace-pre-line break-words max-w-full font-mono">
+                <p className="text-[#E2D9CE] text-xs sm:text-sm leading-relaxed whitespace-pre-line break-words max-w-full font-mono">
                   {course.description}
                 </p>
               </div>
             )}
 
             {/* "What You'll Learn" / Learning Competencies Section */}
-            <div className="cyber-glass-panel rounded-2xl p-6 sm:p-8 space-y-4 border border-[#65F58A]/25 overflow-hidden min-w-0">
+            <div className="cyber-glass-panel rounded-2xl p-6 sm:p-8 space-y-4 border border-[#FF7A00]/25 overflow-hidden min-w-0">
               <h2 className="font-royal text-lg sm:text-xl font-bold text-white flex items-center gap-2.5">
-                <Sparkles className="w-5 h-5 text-[#65F58A]" />
+                <Sparkles className="w-5 h-5 text-[#FF7A00]" />
                 <span>What You'll Learn</span>
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 min-w-0">
                 {finalObjectives.map((obj, idx) => (
-                  <div key={idx} className="flex items-start gap-2.5 p-3 rounded-xl bg-[#092218]/40 border border-[#65F58A]/15 text-xs text-[#C9EFE0] leading-relaxed min-w-0 overflow-hidden">
-                    <CheckCircle2 className="w-4 h-4 text-[#65F58A] flex-shrink-0 mt-0.5" />
+                  <div key={idx} className="flex items-start gap-2.5 p-3 rounded-xl bg-[#1A1208]/40 border border-[#FF7A00]/15 text-xs text-[#E2D9CE] leading-relaxed min-w-0 overflow-hidden">
+                    <CheckCircle2 className="w-4 h-4 text-[#FF7A00] flex-shrink-0 mt-0.5" />
                     <span className="break-words [overflow-wrap:anywhere] break-all">{obj}</span>
                   </div>
                 ))}
@@ -305,64 +305,64 @@ export default function CourseDetailPage() {
             </div>
 
             {/* Course Syllabus & Outline Accordion */}
-            <div className="cyber-glass-panel rounded-2xl p-6 sm:p-8 space-y-5 border border-[#65F58A]/25 overflow-hidden min-w-0">
-              <div className="flex items-center justify-between pb-3 border-b border-[#65F58A]/20">
+            <div className="cyber-glass-panel rounded-2xl p-6 sm:p-8 space-y-5 border border-[#FF7A00]/25 overflow-hidden min-w-0">
+              <div className="flex items-center justify-between pb-3 border-b border-[#FF7A00]/20">
                 <div>
                   <h2 className="font-royal text-lg sm:text-xl font-bold text-white">
                     Course Syllabus & Modules
                   </h2>
-                  <p className="text-xs text-[#72A88E] font-mono mt-0.5">Structured sequential modules, practical reports & knowledge checks</p>
+                  <p className="text-xs text-[#A3907C] font-mono mt-0.5">Structured sequential modules, practical reports & knowledge checks</p>
                 </div>
-                <span className="text-xs font-mono text-[#65F58A] px-2.5 py-1 rounded-md bg-[#65F58A]/10 border border-[#65F58A]/30 font-bold">
+                <span className="text-xs font-mono text-[#FF7A00] px-2.5 py-1 rounded-md bg-[#FF7A00]/10 border border-[#FF7A00]/30 font-bold">
                   {(course.modules || []).length} Modules
                 </span>
               </div>
 
               <div className="space-y-3.5">
                 {(course.modules || []).map((module, modIdx) => (
-                  <div key={module.id || modIdx} className="rounded-xl border border-[#65F58A]/20 bg-[#061510]/60 overflow-hidden">
+                  <div key={module.id || modIdx} className="rounded-xl border border-[#FF7A00]/20 bg-[#0E0C09]/60 overflow-hidden">
                     <button
                       type="button"
                       onClick={() => toggleModule(modIdx)}
                       className="w-full p-4 text-left flex items-center justify-between hover:bg-[#0c2a1e]/60 transition-colors cursor-pointer"
                     >
                       <div className="flex items-center gap-3 min-w-0 overflow-hidden pr-2">
-                        <span className="w-6 h-6 rounded-full bg-[#0a2318] text-[#65F58A] border border-[#65F58A]/40 flex items-center justify-center text-xs font-mono font-bold shadow-[0_0_8px_rgba(101,245,138,0.2)] flex-shrink-0">
+                        <span className="w-6 h-6 rounded-full bg-[#0a2318] text-[#FF7A00] border border-[#FF7A00]/40 flex items-center justify-center text-xs font-mono font-bold shadow-[0_0_8px_rgba(255,122,0,0.2)] flex-shrink-0">
                           {modIdx + 1}
                         </span>
                         <span className="font-royal font-bold text-sm text-white break-words [overflow-wrap:anywhere]">{module.title}</span>
                       </div>
                       <div className="flex items-center gap-3 flex-shrink-0">
-                        <span className="text-[11px] font-mono text-[#72A88E] hidden sm:inline">
+                        <span className="text-[11px] font-mono text-[#A3907C] hidden sm:inline">
                           {(module.lessons || []).length} Lessons
                         </span>
                         {expandedModules[modIdx] ? (
-                          <ChevronUp className="w-4 h-4 text-[#65F58A]" />
+                          <ChevronUp className="w-4 h-4 text-[#FF7A00]" />
                         ) : (
-                          <ChevronDown className="w-4 h-4 text-[#72A88E]" />
+                          <ChevronDown className="w-4 h-4 text-[#A3907C]" />
                         )}
                       </div>
                     </button>
 
                     {expandedModules[modIdx] && (
-                      <div className="p-3.5 border-t border-[#65F58A]/15 space-y-2 bg-[#040e0a]/80">
+                      <div className="p-3.5 border-t border-[#FF7A00]/15 space-y-2 bg-[#080705]/80">
                         {(module.lessons || []).map((lesson, lIdx) => (
                           <div
                             key={lesson.id || lIdx}
-                            className="p-3 rounded-lg bg-[#071912]/80 border border-[#65F58A]/15 flex items-center justify-between text-xs transition-colors"
+                            className="p-3 rounded-lg bg-[#120E09]/80 border border-[#FF7A00]/15 flex items-center justify-between text-xs transition-colors"
                           >
                             <div className="flex items-center gap-2.5 truncate min-w-0 pr-2">
-                              <BookOpen className="w-3.5 h-3.5 text-[#35E6B5] flex-shrink-0" />
-                              <span className="text-[#C9EFE0] truncate font-medium break-words">
+                              <BookOpen className="w-3.5 h-3.5 text-[#FFA439] flex-shrink-0" />
+                              <span className="text-[#E2D9CE] truncate font-medium break-words">
                                 {lesson.title}
                               </span>
                               {lesson.is_mandatory && (
-                                <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30 flex-shrink-0 font-bold">
+                                <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-[#FF7A00]/10 text-[#FF7A00] border border-[#FF7A00]/30 flex-shrink-0 font-bold">
                                   REQUIRED
                                 </span>
                               )}
                             </div>
-                            <div className="flex items-center gap-2 font-mono text-[11px] text-[#72A88E] flex-shrink-0 pl-2">
+                            <div className="flex items-center gap-2 font-mono text-[11px] text-[#A3907C] flex-shrink-0 pl-2">
                               <Clock className="w-3 h-3" />
                               <span>{lesson.duration || '20 mins'}</span>
                             </div>
@@ -376,15 +376,15 @@ export default function CourseDetailPage() {
             </div>
 
             {/* Prerequisites & Technical Requirements */}
-            <div className="cyber-glass-panel rounded-2xl p-6 sm:p-8 space-y-4 border border-[#65F58A]/25 overflow-hidden min-w-0">
+            <div className="cyber-glass-panel rounded-2xl p-6 sm:p-8 space-y-4 border border-[#FF7A00]/25 overflow-hidden min-w-0">
               <h2 className="font-royal text-lg sm:text-xl font-bold text-white flex items-center gap-2.5">
-                <Shield className="w-5 h-5 text-[#65F58A]" />
+                <Shield className="w-5 h-5 text-[#FF7A00]" />
                 <span>Prerequisites & Requirements</span>
               </h2>
-              <ul className="space-y-2.5 text-xs text-[#C9EFE0] font-mono min-w-0">
+              <ul className="space-y-2.5 text-xs text-[#E2D9CE] font-mono min-w-0">
                 {finalPrerequisites.map((req, idx) => (
                   <li key={idx} className="flex items-start gap-2.5 min-w-0 overflow-hidden">
-                    <span className="text-[#65F58A] font-bold flex-shrink-0">&bull;</span>
+                    <span className="text-[#FF7A00] font-bold flex-shrink-0">&bull;</span>
                     <span className="break-words">{req}</span>
                   </li>
                 ))}
@@ -394,19 +394,19 @@ export default function CourseDetailPage() {
 
           {/* ================= RIGHT STICKY SIDEBAR (Open edX Rail) ================= */}
           <div className="lg:col-span-1 lg:sticky lg:top-28 h-fit self-start space-y-6 min-w-0 z-20">
-            <div className="cyber-glass-card rounded-2xl p-6 sm:p-7 space-y-6 border border-[#65F58A]/35 shadow-[0_0_30px_rgba(101,245,138,0.12)] overflow-hidden min-w-0">
+            <div className="cyber-glass-card rounded-2xl p-6 sm:p-7 space-y-6 border border-[#FF7A00]/35 shadow-[0_0_30px_rgba(255,122,0,0.12)] overflow-hidden min-w-0">
               
               {/* Official RedKross Crest & Institutional Seal */}
-              <div className="flex items-center gap-3.5 pb-4 border-b border-[#65F58A]/20">
-                <div className="w-12 h-12 rounded-full bg-black border border-[#65F58A]/60 flex items-center justify-center p-1 shadow-[0_0_15px_rgba(101,245,138,0.4)] flex-shrink-0">
+              <div className="flex items-center gap-3.5 pb-4 border-b border-[#FF7A00]/20">
+                <div className="w-12 h-12 rounded-full bg-black border border-[#FF7A00]/60 flex items-center justify-center p-1 shadow-[0_0_15px_rgba(255,122,0,0.4)] flex-shrink-0">
                   <img src="/assets/crest-clean-circle.png" alt="RedKross Crest" className="w-full h-full object-cover" />
                 </div>
                 <div>
                   <h3 className="font-royal text-sm font-bold text-white flex items-center gap-1.5">
                     <span>RedKross</span>
-                    <span className="text-[#65F58A]">Academy</span>
+                    <span className="text-[#FF7A00]">Academy</span>
                   </h3>
-                  <p className="text-[10px] font-mono text-[#72A88E] uppercase tracking-wider">
+                  <p className="text-[10px] font-mono text-[#A3907C] uppercase tracking-wider">
                     Defensive Credentialing Authority
                   </p>
                 </div>
@@ -414,16 +414,16 @@ export default function CourseDetailPage() {
 
               {/* Pricing & Value Proposition */}
               <div className="space-y-1.5">
-                <span className="text-[10px] font-mono uppercase tracking-wider text-[#72A88E] font-bold">Access & Tuition</span>
+                <span className="text-[10px] font-mono uppercase tracking-wider text-[#A3907C] font-bold">Access & Tuition</span>
                 <div className="flex items-baseline gap-2">
                   <span className="font-royal text-3xl font-extrabold text-white">
                     {course.price === 0 ? 'Free Access' : `₹${course.price?.toLocaleString('en-IN')}`}
                   </span>
-                  <span className="text-xs font-mono text-[#65F58A] font-semibold">
+                  <span className="text-xs font-mono text-[#FF7A00] font-semibold">
                     100% Curriculum
                   </span>
                 </div>
-                <p className="text-xs text-[#B8E6CE] leading-relaxed">
+                <p className="text-xs text-[#E2D9CE] leading-relaxed">
                   Start learning immediately. Certificate exam unlocked after completion of all core units.
                 </p>
               </div>
@@ -439,7 +439,7 @@ export default function CourseDetailPage() {
                     <button
                       type="button"
                       onClick={() => navigate('/login', { state: { from: { pathname: `/courses/${slug || course.id}`, autoEnrol: true } } })}
-                      className="w-full py-3.5 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] active:scale-[0.99] text-[#071018] font-royal font-bold text-xs tracking-wider flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(101,245,138,0.4)] transition-all cursor-pointer"
+                      className="w-full py-3.5 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] active:scale-[0.99] text-[#071018] font-royal font-bold text-xs tracking-wider flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(255,122,0,0.4)] transition-all cursor-pointer"
                     >
                       <Lock className="w-4 h-4" />
                       <span>Sign In with Google to Enrol</span>
@@ -450,7 +450,7 @@ export default function CourseDetailPage() {
                     <button
                       type="button"
                       onClick={() => navigate(`/student/course/${course.id}`)}
-                      className="w-full py-3.5 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] active:scale-[0.99] text-[#071018] font-royal font-bold text-xs tracking-wider flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(101,245,138,0.4)] transition-all cursor-pointer"
+                      className="w-full py-3.5 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] active:scale-[0.99] text-[#071018] font-royal font-bold text-xs tracking-wider flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(255,122,0,0.4)] transition-all cursor-pointer"
                     >
                       <BookOpen className="w-4 h-4" />
                       <span>View Course in Classroom</span>
@@ -479,7 +479,7 @@ export default function CourseDetailPage() {
                     type="button"
                     onClick={handleEnrol}
                     disabled={enrolling}
-                    className="w-full py-3.5 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] active:scale-[0.99] text-[#071018] font-royal font-bold text-xs tracking-wider flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(101,245,138,0.4)] transition-all cursor-pointer"
+                    className="w-full py-3.5 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] active:scale-[0.99] text-[#071018] font-royal font-bold text-xs tracking-wider flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(255,122,0,0.4)] transition-all cursor-pointer"
                   >
                     <CheckCircle2 className="w-4 h-4" />
                     <span>{enrolling ? 'Enrolling...' : 'Enrol in Course (Instant)'}</span>
@@ -496,7 +496,7 @@ export default function CourseDetailPage() {
                       setShowGrantModal(true);
                     }
                   }}
-                  className="w-full py-2.5 rounded-xl bg-[#092218] hover:bg-[#0c2d20] border border-[#65F58A]/25 text-xs font-mono text-[#65F58A] flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                  className="w-full py-2.5 rounded-xl bg-[#1A1208] hover:bg-[#0c2d20] border border-[#FF7A00]/25 text-xs font-mono text-[#FF7A00] flex items-center justify-center gap-2 transition-colors cursor-pointer"
                 >
                   <Gift className="w-4 h-4" />
                   <span>Apply Academic Grant / Coupon</span>
@@ -504,35 +504,35 @@ export default function CourseDetailPage() {
               </div>
 
               {/* Course Specifications Table (Open edX Style) */}
-              <div className="pt-4 border-t border-[#65F58A]/20 space-y-3 text-xs font-mono">
-                <div className="flex justify-between items-center text-[#72A88E]">
+              <div className="pt-4 border-t border-[#FF7A00]/20 space-y-3 text-xs font-mono">
+                <div className="flex justify-between items-center text-[#A3907C]">
                   <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> Effort</span>
                   <span className="text-white font-semibold">{course.estimated_duration || '14 Hours'}</span>
                 </div>
-                <div className="flex justify-between items-center text-[#72A88E]">
+                <div className="flex justify-between items-center text-[#A3907C]">
                   <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> Length</span>
                   <span className="text-white font-semibold">{course.estimated_weeks || 8} Weeks</span>
                 </div>
-                <div className="flex justify-between items-center text-[#72A88E]">
+                <div className="flex justify-between items-center text-[#A3907C]">
                   <span className="flex items-center gap-1.5"><Layers className="w-3.5 h-3.5" /> Level</span>
-                  <span className="text-[#35E6B5] font-semibold">{course.difficulty || 'Intermediate'}</span>
+                  <span className="text-[#FFA439] font-semibold">{course.difficulty || 'Intermediate'}</span>
                 </div>
-                <div className="flex justify-between items-center text-[#72A88E]">
+                <div className="flex justify-between items-center text-[#A3907C]">
                   <span className="flex items-center gap-1.5"><Globe className="w-3.5 h-3.5" /> Pace</span>
                   <span className="text-white">Self-Paced with Proctoring</span>
                 </div>
-                <div className="flex justify-between items-center text-[#72A88E]">
+                <div className="flex justify-between items-center text-[#A3907C]">
                   <span className="flex items-center gap-1.5"><Award className="w-3.5 h-3.5" /> Certificate</span>
-                  <span className="text-[#65F58A] font-bold">Verifiable On-Chain</span>
+                  <span className="text-[#FF7A00] font-bold">Verifiable On-Chain</span>
                 </div>
-                <div className="flex justify-between items-center text-[#72A88E]">
+                <div className="flex justify-between items-center text-[#A3907C]">
                   <span className="flex items-center gap-1.5"><Coins className="w-3.5 h-3.5" /> Bounty</span>
-                  <span className="text-[#65F58A] font-bold">+{course.total_tokens_reward || 450} Tokens</span>
+                  <span className="text-[#FF7A00] font-bold">+{course.total_tokens_reward || 450} Tokens</span>
                 </div>
               </div>
 
               {/* Connected Network Channels (RedKross Foundation, WhatsApp, Instagram) */}
-              <div className="pt-4 border-t border-[#65F58A]/20">
+              <div className="pt-4 border-t border-[#FF7A00]/20">
                 <div className="flex items-center justify-center gap-3 sm:gap-4">
                   {/* 1. RedKross Foundation Main Website */}
                   <a
@@ -540,7 +540,7 @@ export default function CourseDetailPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="RedKross Research Foundation"
-                    className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#071912] border border-[#65F58A]/30 hover:border-[#65F58A] hover:bg-[#0c2a1e] flex items-center justify-center p-2 transition-all shadow-[0_0_12px_rgba(101,245,138,0.15)] hover:shadow-[0_0_20px_rgba(101,245,138,0.35)] hover:scale-105 group"
+                    className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#120E09] border border-[#FF7A00]/30 hover:border-[#FF7A00] hover:bg-[#0c2a1e] flex items-center justify-center p-2 transition-all shadow-[0_0_12px_rgba(255,122,0,0.15)] hover:shadow-[0_0_20px_rgba(255,122,0,0.35)] hover:scale-105 group"
                   >
                     <img
                       src="/assets/crest-clean-circle.png"
@@ -555,7 +555,7 @@ export default function CourseDetailPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="RedKross WhatsApp Channel"
-                    className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#071912] border border-[#65F58A]/30 hover:border-[#25D366] hover:bg-[#0c2a1e] flex items-center justify-center p-2.5 transition-all shadow-[0_0_12px_rgba(101,245,138,0.15)] hover:shadow-[0_0_20px_rgba(37,211,102,0.35)] hover:scale-105 group"
+                    className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#120E09] border border-[#FF7A00]/30 hover:border-[#25D366] hover:bg-[#0c2a1e] flex items-center justify-center p-2.5 transition-all shadow-[0_0_12px_rgba(255,122,0,0.15)] hover:shadow-[0_0_20px_rgba(37,211,102,0.35)] hover:scale-105 group"
                   >
                     <svg
                       className="w-6 h-6 text-[#25D366] fill-current group-hover:scale-110 transition-transform"
@@ -571,7 +571,7 @@ export default function CourseDetailPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="RedKross Instagram"
-                    className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#071912] border border-[#65F58A]/30 hover:border-[#E1306C] hover:bg-[#0c2a1e] flex items-center justify-center p-2.5 transition-all shadow-[0_0_12px_rgba(101,245,138,0.15)] hover:shadow-[0_0_20px_rgba(225,48,108,0.35)] hover:scale-105 group"
+                    className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#120E09] border border-[#FF7A00]/30 hover:border-[#E1306C] hover:bg-[#0c2a1e] flex items-center justify-center p-2.5 transition-all shadow-[0_0_12px_rgba(255,122,0,0.15)] hover:shadow-[0_0_20px_rgba(225,48,108,0.35)] hover:scale-105 group"
                   >
                     <svg
                       className="w-6 h-6 text-[#E1306C] fill-current group-hover:scale-110 transition-transform"
@@ -590,12 +590,12 @@ export default function CourseDetailPage() {
       {/* Grant / Coupon Modal */}
       {showGrantModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
-          <div className="cyber-glass-card rounded-2xl p-6 sm:p-8 max-w-md w-full space-y-4 border border-[#65F58A]/40 shadow-[0_0_40px_rgba(101,245,138,0.2)]">
+          <div className="cyber-glass-card rounded-2xl p-6 sm:p-8 max-w-md w-full space-y-4 border border-[#FF7A00]/40 shadow-[0_0_40px_rgba(255,122,0,0.2)]">
             <h3 className="font-royal text-lg font-bold text-white flex items-center gap-2">
-              <Gift className="w-5 h-5 text-[#65F58A]" />
+              <Gift className="w-5 h-5 text-[#FF7A00]" />
               <span>Apply Academic Grant / Coupon</span>
             </h3>
-            <p className="text-xs text-[#B8E6CE]">
+            <p className="text-xs text-[#E2D9CE]">
               Enter your student sponsorship token or promotional coupon code to activate immediate sponsored enrollment.
             </p>
             <form onSubmit={handleApplyCoupon} className="space-y-4">
@@ -604,21 +604,21 @@ export default function CourseDetailPage() {
                 placeholder="Enter Code (e.g. GRANT100)"
                 value={couponCode}
                 onChange={(e) => setCouponCode(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-[#040e0a] border border-[#65F58A]/30 text-sm text-white font-mono uppercase focus:outline-none focus:border-[#65F58A]"
+                className="w-full px-4 py-2.5 rounded-xl bg-[#080705] border border-[#FF7A00]/30 text-sm text-white font-mono uppercase focus:outline-none focus:border-[#FF7A00]"
               />
               {grantError && <div className="text-xs text-rose-400 font-mono">{grantError}</div>}
-              {grantSuccess && <div className="text-xs text-[#65F58A] font-mono">Grant Verified! Enrolling...</div>}
+              {grantSuccess && <div className="text-xs text-[#FF7A00] font-mono">Grant Verified! Enrolling...</div>}
               <div className="flex justify-end gap-2 pt-2">
                 <button
                   type="button"
                   onClick={() => setShowGrantModal(false)}
-                  className="px-4 py-2 rounded-xl bg-[#0a2318] text-xs font-mono text-slate-300 border border-[#65F58A]/20 cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-[#0a2318] text-xs font-mono text-slate-300 border border-[#FF7A00]/20 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-[#65F58A] text-[#071018] font-royal font-bold text-xs cursor-pointer shadow-[0_0_15px_rgba(101,245,138,0.3)]"
+                  className="px-5 py-2 rounded-xl bg-[#FF7A00] text-[#071018] font-royal font-bold text-xs cursor-pointer shadow-[0_0_15px_rgba(255,122,0,0.3)]"
                 >
                   Redeem
                 </button>

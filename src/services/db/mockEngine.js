@@ -1096,8 +1096,103 @@ class MockEngine {
   // ==========================================
   // ENROLMENTS & LESSON PROGRESSION
   // ==========================================
-  getEnrolmentsForUser(userId) {
-    return this.getDb().enrolments.filter((e) => e.user_id === userId);
+  getEnrolmentsForUser(userId, division = null) {
+    const enrolments = (this.getDb().enrolments || []).filter((e) => e.user_id === userId);
+    if (!division) return enrolments;
+
+    const targetDivision = String(division).trim().toLowerCase();
+    return enrolments.filter((e) => {
+      if (e.division && String(e.division).trim().toLowerCase() === targetDivision) {
+        return true;
+      }
+      const course = this.getCourseById(e.course_id);
+      const courseDivision = String(course?.division || e.division || 'cybersecurity').trim().toLowerCase();
+      return courseDivision === targetDivision;
+    });
+  }
+
+  getUserEnrolments(userId, division = null) {
+    return this.getEnrolmentsForUser(userId, division);
+  }
+
+  getStudentStatsByDivision(userId, division) {
+    const db = this.getDb();
+    const targetDivision = String(division || 'cybersecurity').trim().toLowerCase();
+    const user = (db.users || []).find((u) => u.id === userId);
+
+    // Enrolments strictly scoped to this division
+    const enrolments = this.getEnrolmentsForUser(userId, targetDivision);
+    const activeEnrolments = enrolments.filter((e) => (e.status || 'active') === 'active');
+
+    // Completed mandatory lessons and progress percentage
+    let completedLessons = 0;
+    let totalProgressSum = 0;
+    enrolments.forEach((e) => {
+      if (Array.isArray(e.completed_mandatory_lessons)) {
+        completedLessons += e.completed_mandatory_lessons.length;
+      }
+      const prog = this.getCourseProgress(e.id);
+      totalProgressSum += (prog?.percentage || 0);
+    });
+
+    const averageProgress = enrolments.length > 0 ? Math.round(totalProgressSum / enrolments.length) : 0;
+
+    // Certificates / Credentials strictly scoped to this division
+    const allCreds = db.credentials || [];
+    const divisionCreds = allCreds.filter((c) => {
+      if (c.revoked) return false;
+      const isUserMatch =
+        c.user_id === userId ||
+        (user && user.cadet_id && c.cadet_id === user.cadet_id) ||
+        (user && user.email && c.student_email && c.student_email.toLowerCase() === user.email.toLowerCase());
+      if (!isUserMatch) return false;
+
+      const course = this.getCourseById(c.course_id);
+      const credDivision = String(course?.division || c.division || 'cybersecurity').trim().toLowerCase();
+      return credDivision === targetDivision;
+    });
+
+    // Score calculations from credentials, quiz attempts, or course progress
+    let scoreSum = 0;
+    let scoreCount = 0;
+
+    divisionCreds.forEach((c) => {
+      if (typeof c.grade_percentage === 'number' && !isNaN(c.grade_percentage)) {
+        scoreSum += c.grade_percentage;
+        scoreCount++;
+      }
+    });
+
+    const divisionEnrolmentIds = new Set(enrolments.map((e) => e.id));
+    if (Array.isArray(db.quiz_attempts)) {
+      db.quiz_attempts.forEach((a) => {
+        if (divisionEnrolmentIds.has(a.enrolment_id)) {
+          const score = typeof a.score_percentage === 'number' ? a.score_percentage : (typeof a.score === 'number' ? a.score : null);
+          if (score !== null && !isNaN(score)) {
+            scoreSum += score;
+            scoreCount++;
+          }
+        }
+      });
+    }
+
+    const averageScore = scoreCount > 0 ? Math.round(scoreSum / scoreCount) : averageProgress;
+
+    // Array of certificates supporting both Array methods (.map, .length) and numeric coercion
+    const certsArray = [...divisionCreds];
+    certsArray.valueOf = function() { return this.length; };
+
+    return {
+      division: targetDivision,
+      activeCourses: activeEnrolments.length,
+      completedLessons,
+      averageScore,
+      averageProgress,
+      certificates: certsArray,
+      certificatesCount: divisionCreds.length,
+      certificatesList: divisionCreds,
+      enrolments
+    };
   }
 
   getEnrolment(enrolmentId) {

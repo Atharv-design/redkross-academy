@@ -345,17 +345,17 @@ Shortcut: Press Ctrl+K (or Cmd+K) to open the interactive Command Vault with 1-c
         aria-hidden="true"
       />
 
-      <aside className="fixed inset-y-0 right-0 w-full sm:w-[420px] z-50 xl:z-20 xl:static xl:sticky xl:top-14 h-full xl:h-[calc(100vh-3.5rem)] xl:w-80 2xl:w-[420px] flex flex-col flex-shrink-0 bg-[#061510]/98 xl:bg-[#061510]/95 backdrop-blur-xl border-l border-[#65F58A]/20 transition-all self-start shadow-2xl overflow-hidden font-lora animate-fadeIn">
+      <aside className="fixed inset-y-0 right-0 w-full sm:w-[420px] z-50 xl:z-20 xl:static xl:sticky xl:top-14 h-full xl:h-[calc(100vh-3.5rem)] xl:w-80 2xl:w-[420px] flex flex-col flex-shrink-0 bg-[#0E0C09]/98 xl:bg-[#0E0C09]/95 backdrop-blur-xl border-l border-[#FF7A00]/20 transition-all self-start shadow-2xl overflow-hidden font-lora animate-fadeIn">
         {/* ================= 1. CLEAN TERMINAL HEADER ================= */}
-        <div className="p-3.5 border-b border-[#65F58A]/20 flex items-center justify-between bg-[#071912]/80 flex-shrink-0">
+        <div className="p-3.5 border-b border-[#FF7A00]/20 flex items-center justify-between bg-[#120E09]/80 flex-shrink-0">
           <div className="flex items-center space-x-2.5">
-            <div className="w-7 h-7 rounded-lg bg-[#65F58A]/15 border border-[#65F58A]/30 flex items-center justify-center text-[#65F58A]">
+            <div className="w-7 h-7 rounded-lg bg-[#FF7A00]/15 border border-[#FF7A00]/30 flex items-center justify-center text-[#FF7A00]">
               <TerminalIcon className="w-4 h-4" />
             </div>
             <div>
               <h3 className="font-bold text-sm text-white font-lora leading-tight">Terminal</h3>
-              <div className="flex items-center space-x-1.5 text-[10px] font-mono text-[#65F58A]">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#65F58A] animate-pulse" />
+              <div className="flex items-center space-x-1.5 text-[10px] font-mono text-[#FF7A00]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#FF7A00] animate-pulse" />
                 <span>E2B Cloud MicroVM</span>
               </div>
             </div>
@@ -366,7 +366,7 @@ Shortcut: Press Ctrl+K (or Cmd+K) to open the interactive Command Vault with 1-c
             <button
               type="button"
               onClick={() => setIsVaultOpen(true)}
-              className="px-2.5 py-1 rounded-lg border border-[#65F58A]/40 bg-[#65F58A]/15 text-[#65F58A] hover:bg-[#65F58A] hover:text-[#071018] text-xs font-mono font-bold flex items-center space-x-1 transition-all cursor-pointer shadow-[0_0_10px_rgba(101,245,138,0.2)]"
+              className="px-2.5 py-1 rounded-lg border border-[#FF7A00]/40 bg-[#FF7A00]/15 text-[#FF7A00] hover:bg-[#FF7A00] hover:text-[#071018] text-xs font-mono font-bold flex items-center space-x-1 transition-all cursor-pointer shadow-[0_0_10px_rgba(255,122,0,0.2)]"
               title="Open 340+ Cybersecurity Command Vault (Ctrl+K)"
             >
               <Shield className="w-3.5 h-3.5" />
@@ -380,8 +380,8 @@ Shortcut: Press Ctrl+K (or Cmd+K) to open the interactive Command Vault with 1-c
               onClick={() => setIsHelpOpen(!isHelpOpen)}
               className={`px-2.5 py-1 rounded-lg border text-xs font-mono flex items-center space-x-1 transition-all cursor-pointer ${
                 isHelpOpen
-                  ? 'bg-[#65F58A] text-[#071018] font-bold border-[#65F58A]'
-                  : 'bg-[#092218] text-[#65F58A] border-[#65F58A]/30 hover:bg-[#65F58A]/20'
+                  ? 'bg-[#FF7A00] text-[#071018] font-bold border-[#FF7A00]'
+                  : 'bg-[#1A1208] text-[#FF7A00] border-[#FF7A00]/30 hover:bg-[#FF7A00]/20'
               }`}
               title="Toggle Chapter Help & Commands"
             >
@@ -394,7 +394,7 @@ Shortcut: Press Ctrl+K (or Cmd+K) to open the interactive Command Vault with 1-c
               <button
                 type="button"
                 onClick={onPopOut}
-                className="p-1.5 rounded-lg border border-[#65F58A]/30 bg-[#092218] text-[#72A88E] hover:text-[#65F58A] hover:bg-[#65F58A]/20 transition-all cursor-pointer"
+                className="p-1.5 rounded-lg border border-[#FF7A00]/30 bg-[#1A1208] text-[#A3907C] hover:text-[#FF7A00] hover:bg-[#FF7A00]/20 transition-all cursor-pointer"
                 title="Pop out into floating window"
               >
                 <ExternalLink className="w-3.5 h-3.5" />
@@ -406,7 +406,7 @@ Shortcut: Press Ctrl+K (or Cmd+K) to open the interactive Command Vault with 1-c
               <button
                 type="button"
                 onClick={onClose}
-                className="p-1.5 rounded-lg border border-[#65F58A]/20 bg-[#092218] text-[#72A88E] hover:text-[#65F58A] transition-all cursor-pointer"
+                className="p-1.5 rounded-lg border border-[#FF7A00]/20 bg-[#1A1208] text-[#A3907C] hover:text-[#FF7A00] transition-all cursor-pointer"
                 title="Close Terminal Panel"
               >
                 <X className="w-3.5 h-3.5" />
@@ -416,7 +416,7 @@ Shortcut: Press Ctrl+K (or Cmd+K) to open the interactive Command Vault with 1-c
         </div>
 
         {/* ================= 2. MULTI-TERMINAL TAB BAR ================= */}
-        <div className="flex items-center justify-between px-3 py-1.5 bg-[#040e0a] border-b border-[#65F58A]/15 flex-shrink-0 overflow-x-auto custom-scrollbar">
+        <div className="flex items-center justify-between px-3 py-1.5 bg-[#080705] border-b border-[#FF7A00]/15 flex-shrink-0 overflow-x-auto custom-scrollbar">
           <div className="flex items-center space-x-1 min-w-0">
             {terminals.map((t) => {
               const isActive = t.id === activeTermId;
@@ -426,8 +426,8 @@ Shortcut: Press Ctrl+K (or Cmd+K) to open the interactive Command Vault with 1-c
                   onClick={() => setActiveTermId(t.id)}
                   className={`group flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-mono cursor-pointer transition-all border ${
                     isActive
-                      ? 'bg-[#092218] text-[#65F58A] border-[#65F58A]/40 font-bold shadow-sm'
-                      : 'bg-[#061510] text-[#72A88E] border-transparent hover:text-white hover:bg-[#071912]'
+                      ? 'bg-[#1A1208] text-[#FF7A00] border-[#FF7A00]/40 font-bold shadow-sm'
+                      : 'bg-[#0E0C09] text-[#A3907C] border-transparent hover:text-white hover:bg-[#120E09]'
                   }`}
                 >
                   <TerminalIcon className="w-3 h-3 flex-shrink-0" />
@@ -452,7 +452,7 @@ Shortcut: Press Ctrl+K (or Cmd+K) to open the interactive Command Vault with 1-c
             <button
               type="button"
               onClick={() => executeCommand('rk-lab start web')}
-              className="p-1 rounded-lg bg-[#092218] border border-[#65F58A]/30 text-[#72A88E] hover:text-[#65F58A] hover:bg-[#65F58A]/20 transition-all cursor-pointer"
+              className="p-1 rounded-lg bg-[#1A1208] border border-[#FF7A00]/30 text-[#A3907C] hover:text-[#FF7A00] hover:bg-[#FF7A00]/20 transition-all cursor-pointer"
               title="Quick Start Vulnerable Web Lab (:8080)"
             >
               <FlaskConical className="w-3.5 h-3.5" />
@@ -461,7 +461,7 @@ Shortcut: Press Ctrl+K (or Cmd+K) to open the interactive Command Vault with 1-c
             <button
               type="button"
               onClick={handleAddTerminal}
-              className="p-1 rounded-lg bg-[#092218] border border-[#65F58A]/30 text-[#65F58A] hover:bg-[#65F58A]/20 transition-all cursor-pointer"
+              className="p-1 rounded-lg bg-[#1A1208] border border-[#FF7A00]/30 text-[#FF7A00] hover:bg-[#FF7A00]/20 transition-all cursor-pointer"
               title="Open new terminal instance"
             >
               <Plus className="w-3.5 h-3.5" />
@@ -471,16 +471,16 @@ Shortcut: Press Ctrl+K (or Cmd+K) to open the interactive Command Vault with 1-c
 
         {/* ================= 3. CHAPTER-AWARE HELP & COMMANDS DRAWER ================= */}
         {isHelpOpen && (
-          <div className="p-3.5 bg-[#081f16] border-b border-[#65F58A]/25 space-y-3 max-h-72 overflow-y-auto custom-scrollbar flex-shrink-0 animate-fadeIn">
+          <div className="p-3.5 bg-[#081f16] border-b border-[#FF7A00]/25 space-y-3 max-h-72 overflow-y-auto custom-scrollbar flex-shrink-0 animate-fadeIn">
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2 text-xs font-mono text-[#65F58A] font-bold">
-                <Sparkles className="w-3.5 h-3.5 text-[#65F58A]" />
+              <div className="flex items-center space-x-2 text-xs font-mono text-[#FF7A00] font-bold">
+                <Sparkles className="w-3.5 h-3.5 text-[#FF7A00]" />
                 <span>Chapter Suggested Exercises</span>
               </div>
               <button
                 type="button"
                 onClick={() => setIsVaultOpen(true)}
-                className="text-[10px] font-mono text-[#72A88E] hover:text-[#65F58A] underline cursor-pointer"
+                className="text-[10px] font-mono text-[#A3907C] hover:text-[#FF7A00] underline cursor-pointer"
               >
                 View all 340+
               </button>
@@ -490,7 +490,7 @@ Shortcut: Press Ctrl+K (or Cmd+K) to open the interactive Command Vault with 1-c
               {chapterCommands.map((item) => (
                 <div
                   key={item.id}
-                  className="p-2.5 rounded-xl bg-[#040e0a] border border-[#65F58A]/20 space-y-1.5 hover:border-[#65F58A]/40 transition-all"
+                  className="p-2.5 rounded-xl bg-[#080705] border border-[#FF7A00]/20 space-y-1.5 hover:border-[#FF7A00]/40 transition-all"
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-mono font-bold text-white truncate">
@@ -504,11 +504,11 @@ Shortcut: Press Ctrl+K (or Cmd+K) to open the interactive Command Vault with 1-c
                           setCopiedCmd(item.command);
                           setTimeout(() => setCopiedCmd(null), 1500);
                         }}
-                        className="p-1 rounded text-[#72A88E] hover:text-[#65F58A] transition-colors"
+                        className="p-1 rounded text-[#A3907C] hover:text-[#FF7A00] transition-colors"
                         title="Copy command"
                       >
                         {copiedCmd === item.command ? (
-                          <Check className="w-3 h-3 text-[#65F58A]" />
+                          <Check className="w-3 h-3 text-[#FF7A00]" />
                         ) : (
                           <Copy className="w-3 h-3" />
                         )}
@@ -516,7 +516,7 @@ Shortcut: Press Ctrl+K (or Cmd+K) to open the interactive Command Vault with 1-c
                       <button
                         type="button"
                         onClick={() => executeCommand(item.command)}
-                        className="px-2 py-0.5 rounded bg-[#65F58A] text-[#071018] font-mono text-[10px] font-bold flex items-center space-x-1 hover:bg-[#35E6B5] transition-colors cursor-pointer"
+                        className="px-2 py-0.5 rounded bg-[#FF7A00] text-[#071018] font-mono text-[10px] font-bold flex items-center space-x-1 hover:bg-[#FFA439] transition-colors cursor-pointer"
                         title="Execute in terminal"
                       >
                         <Play className="w-2.5 h-2.5 fill-current" />
@@ -525,7 +525,7 @@ Shortcut: Press Ctrl+K (or Cmd+K) to open the interactive Command Vault with 1-c
                     </div>
                   </div>
 
-                  <div className="p-1.5 rounded-lg bg-black/60 font-mono text-[11px] text-[#65F58A] truncate border border-white/5 select-all">
+                  <div className="p-1.5 rounded-lg bg-black/60 font-mono text-[11px] text-[#FF7A00] truncate border border-white/5 select-all">
                     $ {item.command}
                   </div>
 
@@ -543,27 +543,27 @@ Shortcut: Press Ctrl+K (or Cmd+K) to open the interactive Command Vault with 1-c
           {activeTerminal.history.map((entry, idx) => (
             <div key={idx} className="space-y-1">
               {entry.type === 'system' && (
-                <div className="p-2.5 rounded-lg bg-[#061510] border border-[#65F58A]/25 text-[#72A88E] text-[11px] leading-relaxed whitespace-pre-wrap">
+                <div className="p-2.5 rounded-lg bg-[#0E0C09] border border-[#FF7A00]/25 text-[#A3907C] text-[11px] leading-relaxed whitespace-pre-wrap">
                   {entry.text}
                 </div>
               )}
 
               {entry.type === 'command' && (
                 <div className="flex items-start space-x-1.5 text-white font-bold pt-1">
-                  <span className="text-[#65F58A] select-none">$</span>
-                  <span className="text-[#65F58A]">{entry.text.replace(/^\$\s*/, '')}</span>
+                  <span className="text-[#FF7A00] select-none">$</span>
+                  <span className="text-[#FF7A00]">{entry.text.replace(/^\$\s*/, '')}</span>
                 </div>
               )}
 
               {entry.type === 'output' && (
-                <div className="text-gray-200 pl-3 border-l-2 border-[#65F58A]/30 whitespace-pre-wrap font-mono text-[11px] leading-relaxed overflow-x-auto custom-scrollbar">
+                <div className="text-gray-200 pl-3 border-l-2 border-[#FF7A00]/30 whitespace-pre-wrap font-mono text-[11px] leading-relaxed overflow-x-auto custom-scrollbar">
                   {entry.text}
                   {entry.executionTimeMs !== undefined && (
-                    <div className="text-[9px] text-[#72A88E]/70 pt-1 flex items-center space-x-1.5 select-none">
+                    <div className="text-[9px] text-[#A3907C]/70 pt-1 flex items-center space-x-1.5 select-none">
                       <Clock className="w-2.5 h-2.5" />
                       <span>{entry.executionTimeMs}ms</span>
                       {entry.isRealMicroVM && (
-                        <span className="text-[#65F58A] font-bold">● E2B Cloud Container</span>
+                        <span className="text-[#FF7A00] font-bold">● E2B Cloud Container</span>
                       )}
                     </div>
                   )}
@@ -579,7 +579,7 @@ Shortcut: Press Ctrl+K (or Cmd+K) to open the interactive Command Vault with 1-c
           ))}
 
           {activeTerminal.isExecuting && (
-            <div className="flex items-center space-x-2 text-xs text-[#65F58A] pl-3 animate-pulse">
+            <div className="flex items-center space-x-2 text-xs text-[#FF7A00] pl-3 animate-pulse">
               <Cpu className="w-3.5 h-3.5 animate-spin" />
               <span>Executing in E2B Ubuntu MicroVM...</span>
             </div>
@@ -589,8 +589,8 @@ Shortcut: Press Ctrl+K (or Cmd+K) to open the interactive Command Vault with 1-c
         </div>
 
         {/* ================= 5. INTERACTIVE COMMAND INPUT PROMPT ================= */}
-        <div className="p-2.5 bg-[#071912] border-t border-[#65F58A]/20 flex items-center space-x-2 flex-shrink-0">
-          <span className="text-[#65F58A] font-mono text-sm font-bold pl-1 select-none">$</span>
+        <div className="p-2.5 bg-[#120E09] border-t border-[#FF7A00]/20 flex items-center space-x-2 flex-shrink-0">
+          <span className="text-[#FF7A00] font-mono text-sm font-bold pl-1 select-none">$</span>
           <input
             ref={inputRef}
             type="text"
@@ -604,14 +604,14 @@ Shortcut: Press Ctrl+K (or Cmd+K) to open the interactive Command Vault with 1-c
             onKeyDown={handleKeyDown}
             disabled={activeTerminal.isExecuting}
             placeholder="Type command (nmap, openssl, whois, rk-vault) or press Ctrl+K..."
-            className="flex-1 bg-transparent text-white font-mono text-xs focus:outline-none placeholder-[#72A88E]/50 disabled:opacity-50"
+            className="flex-1 bg-transparent text-white font-mono text-xs focus:outline-none placeholder-[#A3907C]/50 disabled:opacity-50"
             autoFocus
           />
           <button
             type="button"
             onClick={() => executeCommand()}
             disabled={activeTerminal.isExecuting || !activeTerminal.input.trim()}
-            className="px-2.5 py-1.5 rounded-lg bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-mono text-xs font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer flex items-center space-x-1"
+            className="px-2.5 py-1.5 rounded-lg bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-mono text-xs font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer flex items-center space-x-1"
             title="Execute Command (Enter)"
           >
             <Play className="w-3 h-3 fill-current" />

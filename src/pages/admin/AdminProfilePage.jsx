@@ -54,7 +54,7 @@ export default function AdminProfilePage() {
       {/* Top Banner */}
       <div className="cyber-glass-panel p-5 rounded-xl flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <div className="w-14 h-14 rounded-full bg-[#1B2530] border border-[#65F58A] flex items-center justify-center font-bold text-xl text-white">
+          <div className="w-14 h-14 rounded-full bg-[#1B2530] border border-[#FF7A00] flex items-center justify-center font-bold text-xl text-white">
             {currentUser?.name?.charAt(0) || 'A'}
           </div>
           <div>
@@ -62,7 +62,7 @@ export default function AdminProfilePage() {
               <h3 className="text-lg font-bold text-white font-lora">
                 {currentUser?.name || 'Super Admin Operations'}
               </h3>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/40 font-bold">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#FF7A00]/15 text-[#FF7A00] border border-[#FF7A00]/40 font-bold">
                 SUPER ADMIN
               </span>
             </div>
@@ -85,7 +85,7 @@ export default function AdminProfilePage() {
       <div className="p-5 cyber-glass-panel rounded-xl space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <Smartphone className="w-5 h-5 text-[#65F58A]" />
+            <Smartphone className="w-5 h-5 text-[#FF7A00]" />
             <div>
               <h4 className="text-sm font-bold text-white font-lora">
                 Hardware & TOTP Two-Factor Authentication
@@ -96,7 +96,7 @@ export default function AdminProfilePage() {
             </div>
           </div>
 
-          <span className="text-[11px] font-mono font-bold px-2.5 py-1 rounded bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30">
+          <span className="text-[11px] font-mono font-bold px-2.5 py-1 rounded bg-[#FF7A00]/10 text-[#FF7A00] border border-[#FF7A00]/30">
             ENFORCED & ACTIVE
           </span>
         </div>
@@ -108,12 +108,12 @@ export default function AdminProfilePage() {
         className="p-5 cyber-glass-panel rounded-xl space-y-4"
       >
         <div className="flex items-center space-x-2 text-white font-lora font-bold text-sm">
-          <KeyRound className="w-4 h-4 text-[#65F58A]" />
+          <KeyRound className="w-4 h-4 text-[#FF7A00]" />
           <span>Rotate Operator Master Credentials</span>
         </div>
 
         {passwordSuccess && (
-          <div className="p-3 bg-[#65F58A]/10 border border-[#65F58A]/30 rounded text-xs text-[#65F58A] font-mono flex items-center space-x-2">
+          <div className="p-3 bg-[#FF7A00]/10 border border-[#FF7A00]/30 rounded text-xs text-[#FF7A00] font-mono flex items-center space-x-2">
             <CheckCircle2 className="w-4 h-4" />
             <span>Master password updated successfully.</span>
           </div>
@@ -150,7 +150,7 @@ export default function AdminProfilePage() {
         <div className="flex justify-end pt-2">
           <button
             type="submit"
-            className="px-4 py-2 bg-[#65F58A] text-[#071018] font-bold text-xs rounded-lg hover:bg-[#52d674]"
+            className="px-4 py-2 bg-[#FF7A00] text-[#071018] font-bold text-xs rounded-lg hover:bg-[#52d674]"
           >
             Update Credentials
           </button>
@@ -164,7 +164,7 @@ export default function AdminProfilePage() {
           <div>
             <div className="flex items-center space-x-2">
               <span className="text-white font-bold">Chrome 130 on Windows (This Machine)</span>
-              <span className="text-[10px] bg-[#65F58A]/10 text-[#65F58A] px-1.5 rounded">CURRENT</span>
+              <span className="text-[10px] bg-[#FF7A00]/10 text-[#FF7A00] px-1.5 rounded">CURRENT</span>
             </div>
             <span className="text-[10px] text-[#8BA2B5]">IP: 103.21.244.12 • Signed in 42 mins ago</span>
           </div>

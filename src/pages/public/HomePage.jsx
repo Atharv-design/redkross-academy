@@ -21,6 +21,7 @@ import {
   Monitor
 } from 'lucide-react';
 import CyberCircuitFrame from '../../components/cyber/CyberCircuitFrame';
+import StudentGuidanceSection from '../../components/common/StudentGuidanceSection';
 
 export default function HomePage() {
   const [isHoveredCyber, setIsHoveredCyber] = useState(false);
@@ -108,6 +109,9 @@ export default function HomePage() {
           </motion.div>
         </div>
       </section>
+
+      {/* STUDENT GUIDANCE: THE EDUCATIONAL JOURNEY (4-Step Progressive Timeline) */}
+      <StudentGuidanceSection />
 
       {/* 2. DUAL-DIVISION GATEWAY SHOWCASE (Symmetrical Split Layout with Staggered Scroll) */}
       <section id="academies" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative scroll-mt-28">

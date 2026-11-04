@@ -46,9 +46,9 @@ export default function AcademicSafeguardCard({ safeguard, index = 0 }) {
     {
       art: '/assets/course-art/art-01.jpg',
       artPos: '88% 25%',
-      accent: '#65F58A',
-      accentBg: 'rgba(101, 245, 138, 0.12)',
-      accentBorder: 'rgba(101, 245, 138, 0.45)',
+      accent: '#FF7A00',
+      accentBg: 'rgba(255,122,0, 0.12)',
+      accentBorder: 'rgba(255,122,0, 0.45)',
       protocol: 'PROCTOR PROTOCOL §01',
       badge: 'ACTIVE PROCTORING',
       icon: Zap,
@@ -63,9 +63,9 @@ export default function AcademicSafeguardCard({ safeguard, index = 0 }) {
     {
       art: '/assets/course-art/art-06.jpg',
       artPos: '92% 20%',
-      accent: '#35E6B5',
-      accentBg: 'rgba(53, 230, 181, 0.12)',
-      accentBorder: 'rgba(53, 230, 181, 0.45)',
+      accent: '#FFA439',
+      accentBg: 'rgba(255,164,57, 0.12)',
+      accentBorder: 'rgba(255,164,57, 0.45)',
       protocol: 'COOLDOWN RULE §02',
       badge: 'SERVER-SIDE COOLDOWN',
       icon: Clock,
@@ -80,9 +80,9 @@ export default function AcademicSafeguardCard({ safeguard, index = 0 }) {
     {
       art: '/assets/course-art/art-02.jpg',
       artPos: '88% 28%',
-      accent: '#00FFA3',
-      accentBg: 'rgba(0, 255, 163, 0.12)',
-      accentBorder: 'rgba(0, 255, 163, 0.45)',
+      accent: '#FF7A00',
+      accentBg: 'rgba(255,122,0, 0.12)',
+      accentBorder: 'rgba(255,122,0, 0.45)',
       protocol: 'CRYPTOGRAPHIC SEAL §03',
       badge: 'IMMUTABLE SHA-256',
       icon: ShieldCheck,
@@ -107,7 +107,7 @@ export default function AcademicSafeguardCard({ safeguard, index = 0 }) {
       }`}
       style={{
         backgroundColor: 'rgba(4, 20, 13, 0.65)',
-        borderColor: 'rgba(101, 245, 138, 0.22)',
+        borderColor: 'rgba(255,122,0, 0.22)',
         transitionDelay: `${index * 160}ms`
       }}
     >
@@ -140,13 +140,13 @@ export default function AcademicSafeguardCard({ safeguard, index = 0 }) {
       <div 
         className="absolute inset-0 rounded-2xl pointer-events-none transition-all duration-300 opacity-0 group-hover:opacity-100"
         style={{
-          boxShadow: `inset 0 0 0 1px ${config.accent}, inset 0 0 28px rgba(0, 255, 163, 0.20)`
+          boxShadow: `inset 0 0 0 1px ${config.accent}, inset 0 0 28px rgba(255,122,0, 0.20)`
         }}
         aria-hidden="true"
       />
 
       {/* Top Header Row: Protocol Stamp & Glowing Badge */}
-      <div className="relative z-10 flex items-center justify-between gap-3 pb-4 border-b border-[#65F58A]/20">
+      <div className="relative z-10 flex items-center justify-between gap-3 pb-4 border-b border-[#FF7A00]/20">
         <div className="flex items-center gap-2">
           <span 
             className="w-2 h-2 rounded-full animate-pulse"
@@ -183,7 +183,7 @@ export default function AcademicSafeguardCard({ safeguard, index = 0 }) {
         </div>
 
         <div>
-          <h3 className="font-royal text-lg sm:text-xl font-bold text-white tracking-tight leading-snug group-hover:text-[#65F58A] transition-colors">
+          <h3 className="font-royal text-lg sm:text-xl font-bold text-white tracking-tight leading-snug group-hover:text-[#FF7A00] transition-colors">
             {safeguard.title}
           </h3>
           <p className="text-xs sm:text-[13px] text-[#94A3B8] leading-relaxed mt-2.5">
@@ -200,7 +200,7 @@ export default function AcademicSafeguardCard({ safeguard, index = 0 }) {
             {config.steps.map((step, sIdx) => (
               <div 
                 key={sIdx}
-                className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-[#051c12]/70 border border-[#65F58A]/18 text-[11px] font-mono text-slate-300 group-hover:border-[#65F58A]/30 transition-colors"
+                className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-[#051c12]/70 border border-[#FF7A00]/18 text-[11px] font-mono text-slate-300 group-hover:border-[#FF7A00]/30 transition-colors"
               >
                 <CheckCircle2 
                   className="w-3.5 h-3.5 flex-shrink-0"
@@ -214,9 +214,9 @@ export default function AcademicSafeguardCard({ safeguard, index = 0 }) {
       </div>
 
       {/* Bottom Footer: Enforcement Engine & Active Indicator */}
-      <div className="relative z-10 pt-4 mt-4 border-t border-[#65F58A]/20 flex items-center justify-between text-[11px] font-mono text-[#94A3B8]">
+      <div className="relative z-10 pt-4 mt-4 border-t border-[#FF7A00]/20 flex items-center justify-between text-[11px] font-mono text-[#94A3B8]">
         <div className="flex items-center gap-1.5 truncate">
-          <Cpu className="w-3.5 h-3.5 text-[#35E6B5]" />
+          <Cpu className="w-3.5 h-3.5 text-[#FFA439]" />
           <span className="truncate">{config.footerTag}</span>
         </div>
 

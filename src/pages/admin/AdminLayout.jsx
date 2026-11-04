@@ -184,27 +184,27 @@ export default function AdminLayout() {
       {/* Cyber Theme Ambient Shimmer Pixel Grid */}
       <PixelBackground opacity={0.32} gap={22} pixelSize={2} />
       {/* Cyber Grid Texture */}
-      <div className="absolute inset-0 bg-[radial-gradient(#65f58a0a_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none z-0 opacity-40" />
+      <div className="absolute inset-0 bg-[radial-gradient(#ff7a000a_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none z-0 opacity-40" />
 
       {/* LEFT ULTRA-GLASS SIDEBAR WITH CYBER TREE-NAV */}
-      <aside className="w-72 cyber-glass-panel border-r border-[#65F58A]/25 flex flex-col justify-between flex-shrink-0 z-30 relative">
+      <aside className="w-72 cyber-glass-panel border-r border-[#FF7A00]/25 flex flex-col justify-between flex-shrink-0 z-30 relative">
         {/* Top Brand Header */}
         <div>
-          <div className="h-20 flex items-center gap-3 px-6 border-b border-[#65F58A]/20">
+          <div className="h-20 flex items-center gap-3 px-6 border-b border-[#FF7A00]/20">
             <div className="relative">
-              <div className="w-10 h-10 rounded-xl cyber-glass-card flex items-center justify-center border border-[#65F58A]/40 shadow-[0_0_15px_rgba(101,245,138,0.25)]">
-                <Shield className="w-5 h-5 text-[#65F58A]" />
+              <div className="w-10 h-10 rounded-xl cyber-glass-card flex items-center justify-center border border-[#FF7A00]/40 shadow-[0_0_15px_rgba(255,122,0,0.25)]">
+                <Shield className="w-5 h-5 text-[#FF7A00]" />
               </div>
-              <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#65F58A] ring-2 ring-[#060B11] animate-pulse" />
+              <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#FF7A00] ring-2 ring-[#060B11] animate-pulse" />
             </div>
             <div>
               <span className="font-bold tracking-wider text-sm font-sans block text-white flex items-center gap-1.5">
                 <span>REDKROSS</span>
-                <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/30 font-bold">
+                <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[#FF7A00]/15 text-[#FF7A00] border border-[#FF7A00]/30 font-bold">
                   ADMIN
                 </span>
               </span>
-              <span className="text-[10px] font-mono text-[#B8E6CE] tracking-widest block uppercase">
+              <span className="text-[10px] font-mono text-[#E2D9CE] tracking-widest block uppercase">
                 CYBER WORKSTATION
               </span>
             </div>
@@ -212,9 +212,9 @@ export default function AdminLayout() {
 
           {/* TreeNav Section */}
           <div className="p-4 overflow-y-auto max-h-[calc(100vh-170px)] scrollbar-thin">
-            <div className="mb-2 px-3 text-[10px] font-mono uppercase tracking-widest text-[#B8E6CE]/80 font-bold flex items-center justify-between">
+            <div className="mb-2 px-3 text-[10px] font-mono uppercase tracking-widest text-[#E2D9CE]/80 font-bold flex items-center justify-between">
               <span>WORKSTATION DIRECTORY</span>
-              <span className="text-[9px] text-[#65F58A] font-semibold">11 SECTIONS</span>
+              <span className="text-[9px] text-[#FF7A00] font-semibold">11 SECTIONS</span>
             </div>
 
             {/* High-Craft Cyber Glass TreeNav */}
@@ -228,20 +228,20 @@ export default function AdminLayout() {
         </div>
 
         {/* Bottom User Clearance Strip & Back to Academy */}
-        <div className="p-4 border-t border-[#65F58A]/20 cyber-glass-nav">
-          <div className="cyber-glass-card rounded-xl p-3 flex items-center justify-between mb-2 border border-[#65F58A]/25">
+        <div className="p-4 border-t border-[#FF7A00]/20 cyber-glass-nav">
+          <div className="cyber-glass-card rounded-xl p-3 flex items-center justify-between mb-2 border border-[#FF7A00]/25">
             <div className="flex items-center gap-2 text-xs font-mono">
-              <span className="w-2 h-2 rounded-full bg-[#65F58A] animate-ping" />
-              <span className="text-[#B8E6CE] text-[11px]">Security Clearance:</span>
+              <span className="w-2 h-2 rounded-full bg-[#FF7A00] animate-ping" />
+              <span className="text-[#E2D9CE] text-[11px]">Security Clearance:</span>
             </div>
-            <span className="text-[10px] font-mono font-bold text-[#65F58A] px-2 py-0.5 rounded-md bg-[#65F58A]/15 border border-[#65F58A]/40">
+            <span className="text-[10px] font-mono font-bold text-[#FF7A00] px-2 py-0.5 rounded-md bg-[#FF7A00]/15 border border-[#FF7A00]/40">
               LEVEL 5 SEC
             </span>
           </div>
 
           <Link
             to="/"
-            className="flex items-center justify-center gap-2 w-full py-2 px-3 rounded-xl cyber-glass-card text-xs font-mono text-[#B8E6CE] hover:text-[#65F58A] transition-all border border-[#65F58A]/20"
+            className="flex items-center justify-center gap-2 w-full py-2 px-3 rounded-xl cyber-glass-card text-xs font-mono text-[#E2D9CE] hover:text-[#FF7A00] transition-all border border-[#FF7A00]/20"
           >
             <ExternalLink className="w-3.5 h-3.5" />
             <span>Public Academy Portal</span>
@@ -252,16 +252,16 @@ export default function AdminLayout() {
       {/* RIGHT CONTENT WORKSPACE */}
       <div className="flex-1 flex flex-col min-w-0 overflow-y-auto relative z-10">
         {/* TOP ULTRA-GLASS NAVBAR */}
-        <header className="h-20 border-b border-[#65F58A]/25 cyber-glass-nav sticky top-0 z-40 px-8 flex items-center justify-between flex-shrink-0">
+        <header className="h-20 border-b border-[#FF7A00]/25 cyber-glass-nav sticky top-0 z-40 px-8 flex items-center justify-between flex-shrink-0">
           <div>
             <h1 className="text-xl font-bold font-lora text-white flex items-center gap-2">
               <span>{getPageTitle()}</span>
             </h1>
-            <p className="text-xs text-[#B8E6CE] font-mono flex items-center gap-2 mt-0.5">
+            <p className="text-xs text-[#E2D9CE] font-mono flex items-center gap-2 mt-0.5">
               <span>Host: academy.redkross.org.in</span>
-              <span className="text-[#65F58A]/40">•</span>
-              <span className="text-[#65F58A] flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#65F58A] animate-pulse" />
+              <span className="text-[#FF7A00]/40">•</span>
+              <span className="text-[#FF7A00] flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#FF7A00] animate-pulse" />
                 <span>Live Synchronized Engine</span>
               </span>
             </p>
@@ -274,7 +274,7 @@ export default function AdminLayout() {
               onClick={() => setCommandPaletteOpen(true)}
               className="flex items-center gap-3 px-3 py-1.5 rounded-xl cyber-glass-input text-xs font-mono text-[#94A3B8] hover:text-white transition-all shadow-inner"
             >
-              <Search className="w-3.5 h-3.5 text-[#65F58A]" />
+              <Search className="w-3.5 h-3.5 text-[#FF7A00]" />
               <span className="hidden sm:inline">Search Workstation...</span>
               <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] rounded bg-white/[0.08] border border-white/[0.1] text-slate-300">
                 ⌘K
@@ -301,14 +301,14 @@ export default function AdminLayout() {
             <div className="relative">
               <button
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                className="flex items-center gap-2.5 p-1.5 pr-3 rounded-full cyber-glass-card hover:border-[#65F58A]/40 text-xs text-white transition-all"
+                className="flex items-center gap-2.5 p-1.5 pr-3 rounded-full cyber-glass-card hover:border-[#FF7A00]/40 text-xs text-white transition-all"
               >
-                <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#65F58A] to-[#35E6B5] flex items-center justify-center font-bold text-[#071018] text-xs shadow-md">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#FF7A00] to-[#FFA439] flex items-center justify-center font-bold text-[#071018] text-xs shadow-md">
                   A
                 </div>
                 <div className="text-left font-mono hidden md:block">
                   <span className="block text-xs font-bold leading-none text-white">Super Admin</span>
-                  <span className="text-[10px] text-[#65F58A] font-semibold leading-none">Verified</span>
+                  <span className="text-[10px] text-[#FF7A00] font-semibold leading-none">Verified</span>
                 </div>
                 <ChevronDown className="w-3 h-3 text-[#94A3B8]" />
               </button>
@@ -324,7 +324,7 @@ export default function AdminLayout() {
                     onClick={() => setProfileDropdownOpen(false)}
                     className="flex items-center gap-2 p-2 rounded-lg text-[#94A3B8] hover:text-white hover:bg-white/[0.08] transition-colors"
                   >
-                    <UserCheck className="w-3.5 h-3.5 text-[#35E6B5]" />
+                    <UserCheck className="w-3.5 h-3.5 text-[#FFA439]" />
                     <span>My Account & 2FA</span>
                   </NavLink>
                   <NavLink
@@ -332,7 +332,7 @@ export default function AdminLayout() {
                     onClick={() => setProfileDropdownOpen(false)}
                     className="flex items-center gap-2 p-2 rounded-lg text-[#94A3B8] hover:text-white hover:bg-white/[0.08] transition-colors"
                   >
-                    <Settings className="w-3.5 h-3.5 text-[#65F58A]" />
+                    <Settings className="w-3.5 h-3.5 text-[#FF7A00]" />
                     <span>Platform Settings</span>
                   </NavLink>
                   <div className="my-1 border-t border-white/[0.08]" />
@@ -364,7 +364,7 @@ export default function AdminLayout() {
         <div className="fixed inset-0 z-50 flex items-start justify-center pt-24 p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
           <div className="w-full max-w-xl cyber-glass-panel rounded-2xl shadow-2xl overflow-hidden font-mono text-xs border border-white/[0.15]">
             <div className="p-4 border-b border-white/[0.08] flex items-center gap-3 bg-white/[0.03]">
-              <Search className="w-4 h-4 text-[#65F58A]" />
+              <Search className="w-4 h-4 text-[#FF7A00]" />
               <input
                 type="text"
                 autoFocus
@@ -402,7 +402,7 @@ export default function AdminLayout() {
                       setCommandPaletteOpen(false);
                       setSearchQuery('');
                     }}
-                    className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-white/[0.08] text-[#94A3B8] hover:text-[#65F58A] transition-colors text-left"
+                    className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-white/[0.08] text-[#94A3B8] hover:text-[#FF7A00] transition-colors text-left"
                   >
                     <span>{r.name}</span>
                     <span className="text-[10px] text-slate-500">{r.path}</span>

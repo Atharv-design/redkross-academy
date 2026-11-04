@@ -11,10 +11,10 @@ import { ChartLegendContent, ChartTooltipContent } from './charts-base';
 
 // RedKross Academy Canonical Cyber Palette (Zero Blue Tokens)
 export const DEFAULT_THEME_PALETTE = [
-  '#65F58A', // Primary Emerald Green
-  '#35E6B5', // Electric Mint
-  '#00FFA3', // Neon Cyber Green
-  '#10B981', // Deep Mint / Teal
+  '#FF7A00', // Primary Emerald Green
+  '#FFA439', // Electric Mint
+  '#FF7A00', // Neon Cyber Green
+  '#FF7A00', // Deep Mint / Teal
   '#F59E0B', // Amber Alert / Warning
   '#EF4444', // Tactical Red / Remediation
   '#059669', // Dark Emerald
@@ -22,10 +22,10 @@ export const DEFAULT_THEME_PALETTE = [
 ];
 
 const defaultPieChartData = [
-  { name: 'Completed & Certified', value: 350, color: '#65F58A' },
-  { name: 'Final Exam Stage', value: 200, color: '#35E6B5' },
-  { name: 'Midterm Lab Hands-On', value: 180, color: '#00FFA3' },
-  { name: 'Module Progressing', value: 120, color: '#10B981' },
+  { name: 'Completed & Certified', value: 350, color: '#FF7A00' },
+  { name: 'Final Exam Stage', value: 200, color: '#FFA439' },
+  { name: 'Midterm Lab Hands-On', value: 180, color: '#FF7A00' },
+  { name: 'Module Progressing', value: 120, color: '#FF7A00' },
   { name: 'Foundation Enrolled', value: 100, color: '#059669' }
 ];
 
@@ -182,7 +182,7 @@ export const RedKrossDonutChart = ({
             }}
           >
             {centerMetric && (
-              <span className="text-xl md:text-2xl font-bold font-mono text-[#65F58A] tracking-tight drop-shadow-[0_0_10px_rgba(101,245,138,0.4)]">
+              <span className="text-xl md:text-2xl font-bold font-mono text-[#FF7A00] tracking-tight drop-shadow-[0_0_10px_rgba(255,122,0,0.4)]">
                 {centerMetric}
               </span>
             )}

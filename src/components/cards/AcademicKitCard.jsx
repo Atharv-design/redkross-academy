@@ -60,7 +60,7 @@ export function resolveCourseDesign(course, index = 0) {
  * - Subdued neon edge glow highlight on hover/focus
  * - Smooth 4px hover lift with art scaling (1.07)
  * - Staggered entrance animation via IntersectionObserver (--i)
- * - Zero-blue strict dark EdTech palette: #071018, #101923, #1B2530, #65F58A, #35E6B5, #00FFA3
+ * - Zero-blue strict dark EdTech palette: #071018, #101923, #1B2530, #FF7A00, #FFA439, #FF7A00
  */
 export default function AcademicKitCard({
   course,
@@ -153,7 +153,7 @@ export default function AcademicKitCard({
         <span
           className={`acad-badge ${
             isMint
-              ? '!text-[#35E6B5] !bg-[#35E6B5]/10 !border-[#35E6B5]/35'
+              ? '!text-[#FFA439] !bg-[#FFA439]/10 !border-[#FFA439]/35'
               : ''
           }`}
         >
@@ -186,7 +186,7 @@ export default function AcademicKitCard({
         <div className="acad-cred">
           <Shield
             className={`w-5 h-5 flex-none ${
-              isMint ? 'text-[#35E6B5]' : 'text-[#65F58A]'
+              isMint ? 'text-[#FFA439]' : 'text-[#FF7A00]'
             }`}
           />
           <div className="truncate pr-2">
@@ -198,7 +198,7 @@ export default function AcademicKitCard({
         <span
           className={`acad-go ${
             isMint
-              ? '!text-[#35E6B5] hover:!border-[#35E6B5]/60 hover:!bg-[#35E6B5]/15'
+              ? '!text-[#FFA439] hover:!border-[#FFA439]/60 hover:!bg-[#FFA439]/15'
               : ''
           }`}
           aria-label="Open course"

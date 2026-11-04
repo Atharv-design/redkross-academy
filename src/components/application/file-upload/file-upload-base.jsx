@@ -87,10 +87,10 @@ const DropZone = ({
       }}
       className={`relative group rounded-2xl p-6 sm:p-8 text-center transition-all cursor-pointer border-2 border-dashed ${
         isDisabled
-          ? 'opacity-50 cursor-not-allowed border-white/10 bg-[#05140e]/40'
+          ? 'opacity-50 cursor-not-allowed border-white/10 bg-[#0C0A07]/40'
           : isDragOver
-            ? 'border-[#65F58A] bg-[#092218]/90 shadow-[0_0_25px_rgba(101,245,138,0.25)] scale-[1.01]'
-            : 'border-[#65F58A]/30 bg-[#040e0a]/80 hover:border-[#65F58A]/70 hover:bg-[#071811] shadow-lg'
+            ? 'border-[#FF7A00] bg-[#1A1208]/90 shadow-[0_0_25px_rgba(255,122,0,0.25)] scale-[1.01]'
+            : 'border-[#FF7A00]/30 bg-[#080705]/80 hover:border-[#FF7A00]/70 hover:bg-[#071811] shadow-lg'
       } ${className}`}
     >
       <input
@@ -106,25 +106,25 @@ const DropZone = ({
         {/* Upload Icon with Glowing Aura */}
         <div className={`p-3.5 rounded-2xl transition-transform duration-300 ${
           isDragOver
-            ? 'bg-[#65F58A] text-[#071018] scale-110 shadow-[0_0_20px_rgba(101,245,138,0.6)]'
-            : 'bg-[#092218] text-[#65F58A] border border-[#65F58A]/30 group-hover:scale-105 group-hover:border-[#65F58A]/60'
+            ? 'bg-[#FF7A00] text-[#071018] scale-110 shadow-[0_0_20px_rgba(255,122,0,0.6)]'
+            : 'bg-[#1A1208] text-[#FF7A00] border border-[#FF7A00]/30 group-hover:scale-105 group-hover:border-[#FF7A00]/60'
         }`}>
           <UploadCloud className="w-7 h-7 stroke-[2]" />
         </div>
 
         {/* Main Directive */}
         <div className="space-y-1">
-          <p className="text-sm font-lora font-bold text-white group-hover:text-[#C9EFE0] transition-colors">
+          <p className="text-sm font-lora font-bold text-white group-hover:text-[#E2D9CE] transition-colors">
             {title}
           </p>
           <p className="text-xs font-mono text-[#8BA2B5]">
-            or <span className="text-[#65F58A] underline decoration-[#65F58A]/50 font-semibold group-hover:text-[#35E6B5]">browse files</span> from your local system
+            or <span className="text-[#FF7A00] underline decoration-[#FF7A00]/50 font-semibold group-hover:text-[#FFA439]">browse files</span> from your local system
           </p>
         </div>
 
         {/* Requirements Tag */}
-        <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#061510] border border-white/10 text-[11px] font-mono text-[#72A88E]">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#65F58A]" />
+        <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#0E0C09] border border-white/10 text-[11px] font-mono text-[#A3907C]">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#FF7A00]" />
           <span>{subtitle}</span>
         </div>
       </div>
@@ -169,8 +169,8 @@ const ListItemProgressBar = ({
         failed
           ? 'bg-[#1a0808]/80 border-[#EF4444]/40 shadow-[0_0_15px_rgba(239,68,68,0.15)]'
           : isDone
-            ? 'bg-[#061510] border-[#65F58A]/35 shadow-[0_0_15px_rgba(101,245,138,0.15)]'
-            : 'bg-[#061510]/90 border-[#35E6B5]/30'
+            ? 'bg-[#0E0C09] border-[#FF7A00]/35 shadow-[0_0_15px_rgba(255,122,0,0.15)]'
+            : 'bg-[#0E0C09]/90 border-[#FFA439]/30'
       } ${className}`}
     >
       {/* Top Row: File Details & Actions */}
@@ -181,20 +181,20 @@ const ListItemProgressBar = ({
             failed
               ? 'bg-[#EF4444]/20 text-[#EF4444]'
               : isDone
-                ? 'bg-[#65F58A]/20 text-[#65F58A]'
-                : 'bg-[#35E6B5]/20 text-[#35E6B5]'
+                ? 'bg-[#FF7A00]/20 text-[#FF7A00]'
+                : 'bg-[#FFA439]/20 text-[#FFA439]'
           }`}>
             <FileText className="w-5 h-5 stroke-[2]" />
           </div>
 
           <div className="min-w-0 truncate">
-            <h5 className="text-xs font-mono font-bold text-white truncate group-hover:text-[#C9EFE0] transition-colors">
+            <h5 className="text-xs font-mono font-bold text-white truncate group-hover:text-[#E2D9CE] transition-colors">
               {name}
             </h5>
             <div className="flex items-center space-x-2 text-[10px] font-mono text-[#8BA2B5] mt-0.5">
               <span>{displaySize}</span>
               <span>&bull;</span>
-              <span className="uppercase text-[#72A88E]">{type || 'PDF'}</span>
+              <span className="uppercase text-[#A3907C]">{type || 'PDF'}</span>
               {failed && (
                 <>
                   <span>&bull;</span>
@@ -214,12 +214,12 @@ const ListItemProgressBar = ({
               <span>Failed</span>
             </span>
           ) : isDone ? (
-            <span className="px-2 py-0.5 rounded-md bg-[#65F58A]/20 border border-[#65F58A]/30 text-[#65F58A] text-[10px] font-mono font-bold flex items-center gap-1">
+            <span className="px-2 py-0.5 rounded-md bg-[#FF7A00]/20 border border-[#FF7A00]/30 text-[#FF7A00] text-[10px] font-mono font-bold flex items-center gap-1">
               <CheckCircle2 className="w-3 h-3" />
               <span>100% Uploaded</span>
             </span>
           ) : (
-            <span className="text-xs font-mono font-bold text-[#35E6B5] tabular-nums">
+            <span className="text-xs font-mono font-bold text-[#FFA439] tabular-nums">
               {Math.round(progress)}%
             </span>
           )}
@@ -252,14 +252,14 @@ const ListItemProgressBar = ({
 
       {/* Bottom Row: Animated Progress Bar */}
       <div className="pt-2">
-        <div className="w-full bg-[#040e0a] h-1.5 rounded-full overflow-hidden border border-white/5 relative">
+        <div className="w-full bg-[#080705] h-1.5 rounded-full overflow-hidden border border-white/5 relative">
           <div
             className={`h-full rounded-full transition-all duration-300 ease-out ${
               failed
                 ? 'bg-[#EF4444]'
                 : isDone
-                  ? 'bg-[#65F58A] shadow-[0_0_8px_rgba(101,245,138,0.7)]'
-                  : 'bg-gradient-to-r from-[#65F58A] to-[#35E6B5] shadow-[0_0_10px_rgba(53,230,181,0.5)]'
+                  ? 'bg-[#FF7A00] shadow-[0_0_8px_rgba(255,122,0,0.7)]'
+                  : 'bg-gradient-to-r from-[#FF7A00] to-[#FFA439] shadow-[0_0_10px_rgba(255,164,57,0.5)]'
             }`}
             style={{ width: `${failed ? 100 : Math.min(100, Math.max(0, progress))}%` }}
           />

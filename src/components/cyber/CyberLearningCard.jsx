@@ -6,10 +6,14 @@ import CyberProjectCircuitFrame from './CyberProjectCircuitFrame';
 
 export default function CyberLearningCard({ 
   track,
+  course,
   idx = 0 
 }) {
   const [isHovered, setIsHovered] = useState(false);
-  if (!track) return null;
+  const item = course || track;
+  if (!item) return null;
+
+  const courseSlug = item.slug || item.id || 'crs_full_stack_web_dev';
 
   return (
     <motion.div
@@ -35,10 +39,10 @@ export default function CyberLearningCard({
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono tracking-wider font-semibold border border-[#FF7A00]/40 text-[#FFA439] bg-[#FF7A00]/15 uppercase">
-                {track.difficulty || 'CAREER TRACK'}
+                {item.difficulty || 'CAREER TRACK'}
               </span>
               <span className="text-xs font-mono text-slate-400">
-                {track.estimated_weeks ? `${track.estimated_weeks} Weeks` : 'Self-Paced'}
+                {item.estimated_weeks ? `${item.estimated_weeks} Weeks` : 'Self-Paced'}
               </span>
             </div>
 
@@ -50,18 +54,18 @@ export default function CyberLearningCard({
 
           {/* Title */}
           <h3 className="text-xl sm:text-2xl font-bold font-royal text-white mb-2 leading-tight group-hover:text-[#FFA439] transition-colors">
-            {track.title}
+            {item.title}
           </h3>
 
           {/* Description */}
           <p className="text-xs text-slate-300 font-sans leading-relaxed mb-4 line-clamp-3">
-            {track.short_desc}
+            {item.short_desc}
           </p>
 
           {/* Key Skills */}
-          {track.skills && track.skills.length > 0 && (
+          {item.skills && item.skills.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-4">
-              {track.skills.map((skill) => (
+              {item.skills.map((skill) => (
                 <span
                   key={skill}
                   className="text-[10px] font-mono px-2 py-0.5 rounded bg-black/50 text-[#FFA439]/90 border border-[#FF7A00]/25"
@@ -73,10 +77,10 @@ export default function CyberLearningCard({
           )}
 
           {/* Milestone Cert */}
-          {track.milestone_cert && (
+          {item.milestone_cert && (
             <div className="p-2.5 rounded-lg bg-black/50 border border-white/10 group-hover:border-[#FF7A00]/30 transition-colors text-[11px] mb-3">
               <div className="text-[10px] font-mono text-[#FFA439] font-bold">MILESTONE CREDENTIAL</div>
-              <div className="text-slate-300 font-sans truncate">{track.milestone_cert}</div>
+              <div className="text-slate-300 font-sans truncate">{item.milestone_cert}</div>
             </div>
           )}
         </div>
@@ -90,7 +94,7 @@ export default function CyberLearningCard({
           </div>
 
           <Link
-            to="/courses/crs_full_stack_web_dev"
+            to={`/academy/cybersecurity/courses/${courseSlug}`}
             className="inline-flex items-center gap-2 text-xs font-mono font-bold text-[#FFA439] hover:text-white group-hover:underline transition-colors"
           >
             <span>Review Track Curriculum &amp; Labs</span>

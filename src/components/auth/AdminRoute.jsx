@@ -17,7 +17,7 @@ export default function AdminRoute({ children }) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#071018]">
         <div className="flex flex-col items-center space-y-4">
-          <Shield className="w-10 h-10 text-[#65F58A] animate-pulse" />
+          <Shield className="w-10 h-10 text-[#FF7A00] animate-pulse" />
           <div className="text-xs font-mono text-[#94A3B8] tracking-wider uppercase">
             Verifying Super Admin Cryptographic Clearance...
           </div>
@@ -33,7 +33,7 @@ export default function AdminRoute({ children }) {
       return (
         <div className="min-h-[80vh] flex items-center justify-center px-4 py-16 relative z-10 font-lora">
           <div className="max-w-md w-full bg-[#101923] border border-[#263440] rounded-2xl p-8 text-center space-y-6 shadow-2xl">
-            <div className="w-16 h-16 mx-auto rounded-2xl bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center text-[#65F58A]">
+            <div className="w-16 h-16 mx-auto rounded-2xl bg-[#FF7A00]/10 border border-[#FF7A00]/30 flex items-center justify-center text-[#FF7A00]">
               <Shield className="w-8 h-8" />
             </div>
 
@@ -52,7 +52,7 @@ export default function AdminRoute({ children }) {
             <button
               type="button"
               onClick={() => devLoginAsAdmin()}
-              className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#65F58A] to-[#35E6B5] text-[#071018] font-lora text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(101,245,138,0.3)] hover:opacity-90 cursor-pointer"
+              className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#FF7A00] to-[#FFA439] text-[#071018] font-lora text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(255,122,0,0.3)] hover:opacity-90 cursor-pointer"
             >
               <Zap className="w-4 h-4 fill-[#071018]" />
               <span>⚡ [DEV ONLY] Enter as Super Admin</span>
@@ -68,7 +68,7 @@ export default function AdminRoute({ children }) {
               </Link>
               <Link
                 to="/"
-                className="flex-1 py-2 rounded-xl bg-[#071018] border border-[#263440] text-xs font-lora text-[#65F58A] hover:underline flex items-center justify-center"
+                className="flex-1 py-2 rounded-xl bg-[#071018] border border-[#263440] text-xs font-lora text-[#FF7A00] hover:underline flex items-center justify-center"
               >
                 <span>Academy Home</span>
               </Link>
@@ -108,7 +108,7 @@ export default function AdminRoute({ children }) {
           <div className="pt-2 flex flex-col sm:flex-row gap-3">
             <Link
               to="/student"
-              className="flex-1 py-2.5 rounded-xl bg-[#65F58A]/10 border border-[#65F58A]/30 text-xs font-lora text-[#65F58A] hover:bg-[#65F58A]/20 transition-colors flex items-center justify-center gap-1.5 font-bold"
+              className="flex-1 py-2.5 rounded-xl bg-[#FF7A00]/10 border border-[#FF7A00]/30 text-xs font-lora text-[#FF7A00] hover:bg-[#FF7A00]/20 transition-colors flex items-center justify-center gap-1.5 font-bold"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Return to Cadet Portal</span>

@@ -89,15 +89,15 @@ export default function AdminAnalyticsPage() {
   return (
     <div className="space-y-6 animate-slide-left select-none">
       {/* ================= TOP TELEMETRY BAR ================= */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 cyber-glass-panel p-4 rounded-xl border border-[#65F58A]/20">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 cyber-glass-panel p-4 rounded-xl border border-[#FF7A00]/20">
         <div>
           <div className="flex items-center space-x-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#65F58A] animate-pulse" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#FF7A00] animate-pulse" />
             <h3 className="text-sm font-bold text-white font-lora tracking-wide">
               Executive Academic Telemetry & Real-Time Analytics
             </h3>
-            <span className="hidden sm:inline-flex items-center space-x-1.5 px-2 py-0.5 rounded-md bg-[#092218] border border-[#65F58A]/30 text-[10px] font-mono text-[#65F58A]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#65F58A] animate-ping" />
+            <span className="hidden sm:inline-flex items-center space-x-1.5 px-2 py-0.5 rounded-md bg-[#1A1208] border border-[#FF7A00]/30 text-[10px] font-mono text-[#FF7A00]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#FF7A00] animate-ping" />
               <span>Socket.io Live Sync</span>
             </span>
           </div>
@@ -110,14 +110,14 @@ export default function AdminAnalyticsPage() {
 
         <div className="flex items-center space-x-2.5">
           {/* Date Range Selector */}
-          <div className="flex items-center space-x-1 cyber-glass-card p-1 rounded-lg border border-[#65F58A]/20">
+          <div className="flex items-center space-x-1 cyber-glass-card p-1 rounded-lg border border-[#FF7A00]/20">
             {['7D', '30D', '90D', 'ALL'].map((range) => (
               <button
                 key={range}
                 onClick={() => setDateRange(range)}
                 className={`px-3 py-1 text-xs font-mono rounded-md transition-all cursor-pointer ${
                   dateRange === range
-                    ? 'bg-[#092218] text-[#65F58A] font-bold border border-[#65F58A]/40 shadow-[0_0_10px_rgba(101,245,138,0.2)]'
+                    ? 'bg-[#1A1208] text-[#FF7A00] font-bold border border-[#FF7A00]/40 shadow-[0_0_10px_rgba(255,122,0,0.2)]'
                     : 'text-[#8BA2B5] hover:text-white'
                 }`}
               >
@@ -129,7 +129,7 @@ export default function AdminAnalyticsPage() {
           {/* Refresh Button */}
           <button
             onClick={handleManualRefresh}
-            className="p-1.5 rounded-lg border border-[#65F58A]/30 text-[#65F58A] hover:bg-[#65F58A]/10 transition-colors"
+            className="p-1.5 rounded-lg border border-[#FF7A00]/30 text-[#FF7A00] hover:bg-[#FF7A00]/10 transition-colors"
             title="Refresh Live Data"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
@@ -138,7 +138,7 @@ export default function AdminAnalyticsPage() {
           {/* Export Report */}
           <button
             onClick={handleExportReport}
-            className="flex items-center space-x-1.5 px-3.5 py-1.5 bg-[#65F58A] text-[#071018] font-bold text-xs font-mono rounded-lg hover:bg-[#35E6B5] transition-all shadow-[0_0_12px_rgba(101,245,138,0.3)] cursor-pointer"
+            className="flex items-center space-x-1.5 px-3.5 py-1.5 bg-[#FF7A00] text-[#071018] font-bold text-xs font-mono rounded-lg hover:bg-[#FFA439] transition-all shadow-[0_0_12px_rgba(255,122,0,0.3)] cursor-pointer"
           >
             <Download className="w-3.5 h-3.5 stroke-[2.5]" />
             <span>Export Analytics CSV</span>
@@ -149,33 +149,33 @@ export default function AdminAnalyticsPage() {
       {/* ================= TOP 4 REAL KPI CARDS ================= */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* KPI 1 */}
-        <div className="p-4 cyber-glass-panel rounded-xl border border-[#65F58A]/20 relative overflow-hidden group hover:border-[#65F58A]/40 transition-all">
+        <div className="p-4 cyber-glass-panel rounded-xl border border-[#FF7A00]/20 relative overflow-hidden group hover:border-[#FF7A00]/40 transition-all">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-mono text-[#8BA2B5] uppercase tracking-wider">
               Aggregate Completion Rate
             </span>
-            <Award className="w-4 h-4 text-[#65F58A] opacity-70" />
+            <Award className="w-4 h-4 text-[#FF7A00] opacity-70" />
           </div>
-          <span className="text-2xl font-bold font-mono text-[#65F58A] mt-2 block tracking-tight">
+          <span className="text-2xl font-bold font-mono text-[#FF7A00] mt-2 block tracking-tight">
             {analytics.completionRate}
           </span>
-          <span className="text-[10px] text-[#72A88E] font-mono mt-1 block">
+          <span className="text-[10px] text-[#A3907C] font-mono mt-1 block">
             {analytics.issuedCredentialCount} of {analytics.totalEnrolled} learners certified
           </span>
         </div>
 
         {/* KPI 2 */}
-        <div className="p-4 cyber-glass-panel rounded-xl border border-[#35E6B5]/20 relative overflow-hidden group hover:border-[#35E6B5]/40 transition-all">
+        <div className="p-4 cyber-glass-panel rounded-xl border border-[#FFA439]/20 relative overflow-hidden group hover:border-[#FFA439]/40 transition-all">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-mono text-[#8BA2B5] uppercase tracking-wider">
               Median Time To Certification
             </span>
-            <Clock className="w-4 h-4 text-[#35E6B5] opacity-70" />
+            <Clock className="w-4 h-4 text-[#FFA439] opacity-70" />
           </div>
-          <span className="text-2xl font-bold font-mono text-[#35E6B5] mt-2 block tracking-tight">
+          <span className="text-2xl font-bold font-mono text-[#FFA439] mt-2 block tracking-tight">
             {analytics.medianTimeToCert}
           </span>
-          <span className="text-[10px] text-[#72A88E] font-mono mt-1 block">
+          <span className="text-[10px] text-[#A3907C] font-mono mt-1 block">
             Across active institutional cohorts
           </span>
         </div>
@@ -191,35 +191,35 @@ export default function AdminAnalyticsPage() {
           <span className="text-2xl font-bold font-mono text-[#F59E0B] mt-2 block tracking-tight">
             {analytics.firstAttemptPass}
           </span>
-          <span className="text-[10px] text-[#72A88E] font-mono mt-1 block">
+          <span className="text-[10px] text-[#A3907C] font-mono mt-1 block">
             Strict passing threshold &ge; 80%
           </span>
         </div>
 
         {/* KPI 4 */}
-        <div className="p-4 cyber-glass-panel rounded-xl border border-[#00FFA3]/20 relative overflow-hidden group hover:border-[#00FFA3]/40 transition-all">
+        <div className="p-4 cyber-glass-panel rounded-xl border border-[#FF7A00]/20 relative overflow-hidden group hover:border-[#FF7A00]/40 transition-all">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-mono text-[#8BA2B5] uppercase tracking-wider">
               Token Circulation Velocity
             </span>
-            <Zap className="w-4 h-4 text-[#00FFA3] opacity-70" />
+            <Zap className="w-4 h-4 text-[#FF7A00] opacity-70" />
           </div>
-          <span className="text-2xl font-bold font-mono text-[#00FFA3] mt-2 block tracking-tight flex items-center gap-1">
+          <span className="text-2xl font-bold font-mono text-[#FF7A00] mt-2 block tracking-tight flex items-center gap-1">
             <span>{analytics.tokenCirculationVelocity}</span>
-            <span className="text-sm font-normal text-[#65F58A]">&#9889;</span>
+            <span className="text-sm font-normal text-[#FF7A00]">&#9889;</span>
           </span>
-          <span className="text-[10px] text-[#72A88E] font-mono mt-1 block">
+          <span className="text-[10px] text-[#A3907C] font-mono mt-1 block">
             Bounties in active cadet circulation
           </span>
         </div>
       </div>
 
       {/* ================= SECTION 1: CURRICULUM PROGRESSION PIE / DONUT (REPLACES FIRST BAR DIAGRAM) ================= */}
-      <div className="p-6 cyber-glass-panel rounded-xl border border-[#65F58A]/25 space-y-5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#65F58A]/15 pb-4">
+      <div className="p-6 cyber-glass-panel rounded-xl border border-[#FF7A00]/25 space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#FF7A00]/15 pb-4">
           <div>
             <div className="flex items-center space-x-2">
-              <Layers className="w-4 h-4 text-[#65F58A]" />
+              <Layers className="w-4 h-4 text-[#FF7A00]" />
               <h4 className="text-base font-bold text-white font-lora">
                 Curriculum Progression & Retention Distribution
               </h4>
@@ -230,7 +230,7 @@ export default function AdminAnalyticsPage() {
           </div>
           <div className="flex items-center space-x-2 font-mono text-xs">
             <span className="text-[#8BA2B5]">Conversion Rate:</span>
-            <span className="px-2.5 py-1 rounded-md bg-[#092218] border border-[#65F58A]/30 text-[#65F58A] font-bold">
+            <span className="px-2.5 py-1 rounded-md bg-[#1A1208] border border-[#FF7A00]/30 text-[#FF7A00] font-bold">
               {analytics.completionRate}
             </span>
           </div>
@@ -239,7 +239,7 @@ export default function AdminAnalyticsPage() {
         {/* Two-Column Layout: Left Donut Chart, Right Milestone Telemetry */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
           {/* Left: Interactive Theme Donut Chart */}
-          <div className="lg:col-span-5 flex flex-col items-center justify-center p-2 rounded-xl bg-[#061510]/50 border border-[#65F58A]/15">
+          <div className="lg:col-span-5 flex flex-col items-center justify-center p-2 rounded-xl bg-[#0E0C09]/50 border border-[#FF7A00]/15">
             {analytics.progressionData && analytics.progressionData.length > 0 ? (
               <>
                 <RedKrossDonutChart
@@ -251,13 +251,13 @@ export default function AdminAnalyticsPage() {
                   centerLabel="Certified"
                   showLegend={false}
                 />
-                <span className="text-[11px] font-mono text-[#72A88E] mt-1 text-center">
+                <span className="text-[11px] font-mono text-[#A3907C] mt-1 text-center">
                   Hover slices to inspect student headcounts & drop-off deltas
                 </span>
               </>
             ) : (
               <div className="h-[260px] flex flex-col items-center justify-center text-center p-6 space-y-2">
-                <Layers className="w-8 h-8 text-[#65F58A]/40" />
+                <Layers className="w-8 h-8 text-[#FF7A00]/40" />
                 <span className="text-xs font-mono text-white font-bold">No Active Learner Progression</span>
                 <span className="text-[11px] font-mono text-[#8BA2B5]">
                   Live student enrolments will automatically populate progression slices in real-time.
@@ -270,19 +270,19 @@ export default function AdminAnalyticsPage() {
           <div className="lg:col-span-7 space-y-2.5">
             {(analytics.rawFunnelStages || []).map((step, idx) => {
               const matchedData = analytics.progressionData.find((p) => p.name.includes(step.stage.split(' ')[0]));
-              const sliceColor = matchedData?.color || '#65F58A';
+              const sliceColor = matchedData?.color || '#FF7A00';
 
               return (
                 <div
                   key={idx}
-                  className="p-2.5 rounded-lg bg-[#061510] border border-white/5 hover:border-[#65F58A]/30 transition-all flex items-center justify-between gap-3 text-xs font-mono"
+                  className="p-2.5 rounded-lg bg-[#0E0C09] border border-white/5 hover:border-[#FF7A00]/30 transition-all flex items-center justify-between gap-3 text-xs font-mono"
                 >
                   <div className="flex items-center space-x-2.5 min-w-0">
                     <span
                       className="w-2.5 h-2.5 rounded-sm flex-shrink-0"
                       style={{ backgroundColor: sliceColor }}
                     />
-                    <span className="text-[#C9EFE0] font-medium truncate">
+                    <span className="text-[#E2D9CE] font-medium truncate">
                       {step.stage}
                     </span>
                   </div>
@@ -295,7 +295,7 @@ export default function AdminAnalyticsPage() {
                       className={`text-[11px] tabular-nums font-semibold px-2 py-0.5 rounded ${
                         step.drop.startsWith('-')
                           ? 'bg-[#EF4444]/10 text-[#EF4444] border border-[#EF4444]/20'
-                          : 'bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/20'
+                          : 'bg-[#FF7A00]/10 text-[#FF7A00] border border-[#FF7A00]/20'
                       }`}
                     >
                       {step.drop}
@@ -311,8 +311,8 @@ export default function AdminAnalyticsPage() {
       {/* ================= SECTION 2: EXAM SCORES DONUT & PROCTORING AUDIT (REPLACES SECOND BAR DIAGRAM) ================= */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Card: Final Exam Score Distribution Donut Chart */}
-        <div className="p-5 cyber-glass-panel rounded-xl border border-[#65F58A]/25 space-y-4">
-          <div className="flex items-center justify-between border-b border-[#65F58A]/15 pb-3">
+        <div className="p-5 cyber-glass-panel rounded-xl border border-[#FF7A00]/25 space-y-4">
+          <div className="flex items-center justify-between border-b border-[#FF7A00]/15 pb-3">
             <div>
               <h4 className="text-sm font-bold text-white font-lora">
                 Final Exam Score Performance Distribution
@@ -321,7 +321,7 @@ export default function AdminAnalyticsPage() {
                 Evaluations across academic honors tiers (Replaces legacy bar chart).
               </p>
             </div>
-            <span className="text-xs font-mono text-[#35E6B5] font-bold">
+            <span className="text-xs font-mono text-[#FFA439] font-bold">
               Pass Rate: {analytics.firstAttemptPass}
             </span>
           </div>
@@ -340,7 +340,7 @@ export default function AdminAnalyticsPage() {
               />
             ) : (
               <div className="h-[230px] flex flex-col items-center justify-center text-center p-6 space-y-2">
-                <ShieldCheck className="w-8 h-8 text-[#35E6B5]/40" />
+                <ShieldCheck className="w-8 h-8 text-[#FFA439]/40" />
                 <span className="text-xs font-mono text-white font-bold">No Assessment Records Yet</span>
                 <span className="text-[11px] font-mono text-[#8BA2B5]">
                   Candidate score distributions will appear automatically as evaluations are submitted.
@@ -358,14 +358,14 @@ export default function AdminAnalyticsPage() {
               return (
                 <div
                   key={idx}
-                  className="flex items-center justify-between p-2 rounded-lg bg-[#061510] border border-white/5 hover:border-[#65F58A]/20 transition-all text-xs"
+                  className="flex items-center justify-between p-2 rounded-lg bg-[#0E0C09] border border-white/5 hover:border-[#FF7A00]/20 transition-all text-xs"
                 >
                   <div className="flex items-center space-x-2 truncate">
                     <span
                       className="w-2.5 h-2.5 rounded-full flex-shrink-0"
                       style={{ backgroundColor: bucket.color }}
                     />
-                    <span className="text-[#C9EFE0] truncate font-medium">
+                    <span className="text-[#E2D9CE] truncate font-medium">
                       {bucket.name}
                     </span>
                   </div>
@@ -374,7 +374,7 @@ export default function AdminAnalyticsPage() {
                     <span className="text-white font-bold tabular-nums">
                       {bucket.value} candidates
                     </span>
-                    <span className="text-[#72A88E] text-[11px] tabular-nums">
+                    <span className="text-[#A3907C] text-[11px] tabular-nums">
                       ({pct}%)
                     </span>
                   </div>
@@ -385,17 +385,17 @@ export default function AdminAnalyticsPage() {
         </div>
 
         {/* Right Card: Proctoring Integrity Audit Telemetry */}
-        <div className="p-5 cyber-glass-panel rounded-xl border border-[#65F58A]/25 space-y-4 flex flex-col justify-between">
+        <div className="p-5 cyber-glass-panel rounded-xl border border-[#FF7A00]/25 space-y-4 flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between border-b border-[#65F58A]/15 pb-3">
+            <div className="flex items-center justify-between border-b border-[#FF7A00]/15 pb-3">
               <div className="flex items-center space-x-2">
                 <ShieldAlert className="w-4 h-4 text-[#F59E0B]" />
                 <h4 className="text-sm font-bold text-white font-lora">
                   Proctoring Integrity Audit Telemetry
                 </h4>
               </div>
-              <span className="text-[10px] font-mono text-[#65F58A] flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#65F58A] animate-ping" />
+              <span className="text-[10px] font-mono text-[#FF7A00] flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#FF7A00] animate-ping" />
                 <span>Live Anti-Cheat Active</span>
               </span>
             </div>
@@ -404,7 +404,7 @@ export default function AdminAnalyticsPage() {
             </p>
           </div>
 
-          <div className="p-4 cyber-glass-card rounded-xl border border-[#65F58A]/20 space-y-3 font-mono text-xs">
+          <div className="p-4 cyber-glass-card rounded-xl border border-[#FF7A00]/20 space-y-3 font-mono text-xs">
             <div className="flex justify-between items-center py-1.5 border-b border-[#1B2530]">
               <span className="text-[#8BA2B5]">Total Exams Administered</span>
               <span className="text-white font-bold tabular-nums">
@@ -414,7 +414,7 @@ export default function AdminAnalyticsPage() {
 
             <div className="flex justify-between items-center py-1.5 border-b border-[#1B2530]">
               <span className="text-[#8BA2B5]">Clean Sessions (0 Flags)</span>
-              <span className="text-[#65F58A] font-bold tabular-nums flex items-center gap-1">
+              <span className="text-[#FF7A00] font-bold tabular-nums flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 <span>{analytics.proctoring?.cleanSessions || 0} ({analytics.proctoring?.cleanSessionsPct || '100%'})</span>
               </span>
@@ -435,8 +435,8 @@ export default function AdminAnalyticsPage() {
             </div>
           </div>
 
-          <div className="p-3 rounded-lg bg-[#061510] border border-[#65F58A]/20 flex items-center justify-between text-[11px] font-mono">
-            <span className="text-[#72A88E]">Enforcement Protocol:</span>
+          <div className="p-3 rounded-lg bg-[#0E0C09] border border-[#FF7A00]/20 flex items-center justify-between text-[11px] font-mono">
+            <span className="text-[#A3907C]">Enforcement Protocol:</span>
             <span className="text-white font-bold">24-Hour Automated Lockout Policy</span>
           </div>
         </div>

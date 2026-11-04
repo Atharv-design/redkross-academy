@@ -23,7 +23,7 @@ function KaliDragonIcon({ className = 'w-5 h-5' }) {
         d="M 68 38 C 76 46, 85 45, 92 48 C 96 42, 92 38, 90 36 C 96 36, 102 42, 108 46 C 114 50, 110 54, 104 53 C 98 52, 92 56, 84 52 C 78 48, 70 44, 62 48 C 54 54, 52 66, 56 74 C 62 84, 76 86, 82 92 C 86 96, 84 100, 80 100 C 74 98, 68 94, 64 88 C 56 78, 52 70, 50 58 C 48 44, 56 34, 68 38 Z"
         fill="currentColor"
       />
-      <circle cx="96" cy="43" r="3" fill="#35E6B5" />
+      <circle cx="96" cy="43" r="3" fill="#FFA439" />
     </svg>
   );
 }
@@ -55,8 +55,8 @@ export default function CockpitToolStrip({
       isActive: isTerminalOpen,
       badge: isTerminalOpen ? 'ACTIVE' : '340+',
       badgeColor: isTerminalOpen
-        ? 'bg-[#65F58A] text-[#071018] font-bold'
-        : 'bg-[#092218] text-[#65F58A] border border-[#65F58A]/40'
+        ? 'bg-[#FF7A00] text-[#071018] font-bold'
+        : 'bg-[#1A1208] text-[#FF7A00] border border-[#FF7A00]/40'
     },
     {
       id: 'cyberlab',
@@ -67,26 +67,26 @@ export default function CockpitToolStrip({
       isActive: isCyberLabOpen,
       badge: isCyberLabOpen ? 'ACTIVE' : 'V3',
       badgeColor: isCyberLabOpen
-        ? 'bg-[#35E6B5] text-[#071018] font-bold'
-        : 'bg-[#0b1b26] text-[#35E6B5] border border-[#35E6B5]/40'
+        ? 'bg-[#FFA439] text-[#071018] font-bold'
+        : 'bg-[#0b1b26] text-[#FFA439] border border-[#FFA439]/40'
     }
   ];
 
   return (
     <aside
-      className="w-14 lg:w-16 sticky top-14 h-[calc(100vh-3.5rem)] flex flex-col items-center justify-between py-4 bg-[#05140e]/95 backdrop-blur-xl border-l border-[#65F58A]/20 flex-shrink-0 z-20 transition-all font-mono select-none shadow-2xl"
+      className="w-14 lg:w-16 sticky top-14 h-[calc(100vh-3.5rem)] flex flex-col items-center justify-between py-4 bg-[#0C0A07]/95 backdrop-blur-xl border-l border-[#FF7A00]/20 flex-shrink-0 z-20 transition-all font-mono select-none shadow-2xl"
       aria-label="Tactical Cockpit Tool Strip"
     >
       {/* Top Header Logo */}
       <div className="flex flex-col items-center space-y-3 w-full">
         <div
-          className="w-8 h-8 rounded-xl bg-[#65F58A]/15 border border-[#65F58A]/35 flex items-center justify-center text-[#65F58A] shadow-[0_0_12px_rgba(101,245,138,0.25)]"
+          className="w-8 h-8 rounded-xl bg-[#FF7A00]/15 border border-[#FF7A00]/35 flex items-center justify-center text-[#FF7A00] shadow-[0_0_12px_rgba(255,122,0,0.25)]"
           title="RedKross Tactical Tools"
         >
           <Zap className="w-4 h-4 fill-current" />
         </div>
 
-        <div className="w-8 h-px bg-[#65F58A]/20" />
+        <div className="w-8 h-px bg-[#FF7A00]/20" />
 
         {/* Tools Icon Stack */}
         <div className="flex flex-col items-center space-y-3.5 w-full px-2 pt-1">
@@ -103,10 +103,10 @@ export default function CockpitToolStrip({
                   onMouseLeave={() => setHoveredTool(null)}
                   className={`relative w-10 h-10 rounded-xl flex items-center justify-center transition-all cursor-pointer group ${
                     t.isActive
-                      ? 'bg-[#65F58A] text-[#071018] shadow-[0_0_15px_rgba(101,245,138,0.5)] font-bold scale-105'
+                      ? 'bg-[#FF7A00] text-[#071018] shadow-[0_0_15px_rgba(255,122,0,0.5)] font-bold scale-105'
                       : isHovered
-                      ? 'bg-[#092218] text-[#65F58A] border border-[#65F58A]/60 scale-105'
-                      : 'bg-[#030906] text-[#72A88E] border border-[#65F58A]/20 hover:text-white hover:border-[#65F58A]/40'
+                      ? 'bg-[#1A1208] text-[#FF7A00] border border-[#FF7A00]/60 scale-105'
+                      : 'bg-[#060504] text-[#A3907C] border border-[#FF7A00]/20 hover:text-white hover:border-[#FF7A00]/40'
                   }`}
                   aria-label={t.label}
                 >
@@ -114,7 +114,7 @@ export default function CockpitToolStrip({
 
                   {/* Micro Indicator Dot if Active */}
                   {t.isActive && (
-                    <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#35E6B5] border border-[#071018] animate-pulse" />
+                    <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#FFA439] border border-[#071018] animate-pulse" />
                   )}
                 </button>
 
@@ -129,17 +129,17 @@ export default function CockpitToolStrip({
 
                 {/* Instant Tooltip On Cursor Hover */}
                 {isHovered && (
-                  <div className="absolute right-full mr-3.5 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-xl bg-[#061911] border border-[#65F58A]/50 text-white shadow-2xl z-50 whitespace-nowrap pointer-events-none animate-fadeIn flex flex-col items-start">
+                  <div className="absolute right-full mr-3.5 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-xl bg-[#061911] border border-[#FF7A00]/50 text-white shadow-2xl z-50 whitespace-nowrap pointer-events-none animate-fadeIn flex flex-col items-start">
                     <div className="flex items-center space-x-1.5">
                       <span className="text-xs font-bold font-lora text-white">{t.label}</span>
                       {t.badge && (
-                        <span className="text-[9px] font-mono text-[#65F58A] font-bold">
+                        <span className="text-[9px] font-mono text-[#FF7A00] font-bold">
                           [{t.badge}]
                         </span>
                       )}
                     </div>
                     {t.desc && (
-                      <span className="text-[10px] font-mono text-[#72A88E] leading-tight pt-0.5">
+                      <span className="text-[10px] font-mono text-[#A3907C] leading-tight pt-0.5">
                         {t.desc}
                       </span>
                     )}
@@ -157,7 +157,7 @@ export default function CockpitToolStrip({
           <button
             type="button"
             onClick={onCollapse}
-            className="p-1.5 rounded-lg text-[#72A88E] hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+            className="p-1.5 rounded-lg text-[#A3907C] hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
             title="Collapse Tool Strip"
           >
             <ChevronRight className="w-4 h-4" />

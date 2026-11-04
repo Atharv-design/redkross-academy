@@ -99,9 +99,9 @@ export default function CourseHomePage() {
   if (!course || !enrolment) {
     return (
       <div className="min-h-screen py-24 text-center relative z-10 flex items-center justify-center font-sans">
-        <div className="max-w-md p-8 rounded-2xl cyber-glass-card border border-[#65F58A]/30 space-y-4">
+        <div className="max-w-md p-8 rounded-2xl cyber-glass-card border border-[#FF7A00]/30 space-y-4">
           <h2 className="font-royal text-xl font-bold text-white">Loading Courseware...</h2>
-          <p className="text-xs text-[#B8E6CE] font-mono">Verifying student credentials and telemetry.</p>
+          <p className="text-xs text-[#E2D9CE] font-mono">Verifying student credentials and telemetry.</p>
         </div>
       </div>
     );
@@ -124,13 +124,13 @@ export default function CourseHomePage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
         {/* ================= 1. OPEN EDX TOP SUB-NAVBAR & TABS ================= */}
-        <div className="border-b border-[#65F58A]/20 pb-4">
+        <div className="border-b border-[#FF7A00]/20 pb-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-1 min-w-0">
-              <div className="flex items-center space-x-2 text-xs font-mono text-[#72A88E] min-w-0 overflow-hidden">
+              <div className="flex items-center space-x-2 text-xs font-mono text-[#A3907C] min-w-0 overflow-hidden">
                 <Link to="/student" className="hover:text-white transition-colors flex-shrink-0">Classroom</Link>
                 <span className="flex-shrink-0">/</span>
-                <span className="text-[#65F58A] flex-shrink-0">{course.category}</span>
+                <span className="text-[#FF7A00] flex-shrink-0">{course.category}</span>
                 <span className="flex-shrink-0">/</span>
                 <span className="text-white font-semibold truncate">{course.title}</span>
               </div>
@@ -143,7 +143,7 @@ export default function CourseHomePage() {
             <div className="flex items-center gap-3">
               <Link
                 to={`/student/learn/${enrolment.id}`}
-                className="px-4 py-2 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-royal font-bold text-xs tracking-wider flex items-center gap-2 shadow-[0_0_15px_rgba(101,245,138,0.35)] transition-all cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-royal font-bold text-xs tracking-wider flex items-center gap-2 shadow-[0_0_15px_rgba(255,122,0,0.35)] transition-all cursor-pointer"
               >
                 <Play className="w-3.5 h-3.5 fill-current" />
                 <span>{isStarted ? 'Resume Courseware' : 'Begin Learning'}</span>
@@ -158,13 +158,13 @@ export default function CourseHomePage() {
               onClick={() => handleTabChange('course')}
               className={`pb-3 font-royal text-sm font-bold tracking-wide transition-all relative cursor-pointer ${
                 activeTab === 'course'
-                  ? 'text-[#65F58A]'
+                  ? 'text-[#FF7A00]'
                   : 'text-[#8BA2B5] hover:text-white'
               }`}
             >
               <span>Course</span>
               {activeTab === 'course' && (
-                <span className="absolute bottom-0 left-0 w-full h-[2.5px] bg-[#65F58A] rounded-full shadow-[0_0_8px_#65F58A]" />
+                <span className="absolute bottom-0 left-0 w-full h-[2.5px] bg-[#FF7A00] rounded-full shadow-[0_0_8px_#FF7A00]" />
               )}
             </button>
 
@@ -173,13 +173,13 @@ export default function CourseHomePage() {
               onClick={() => handleTabChange('progress')}
               className={`pb-3 font-royal text-sm font-bold tracking-wide transition-all relative cursor-pointer ${
                 activeTab === 'progress'
-                  ? 'text-[#65F58A]'
+                  ? 'text-[#FF7A00]'
                   : 'text-[#8BA2B5] hover:text-white'
               }`}
             >
               <span>Progress</span>
               {activeTab === 'progress' && (
-                <span className="absolute bottom-0 left-0 w-full h-[2.5px] bg-[#65F58A] rounded-full shadow-[0_0_8px_#65F58A]" />
+                <span className="absolute bottom-0 left-0 w-full h-[2.5px] bg-[#FF7A00] rounded-full shadow-[0_0_8px_#FF7A00]" />
               )}
             </button>
           </div>
@@ -192,9 +192,9 @@ export default function CourseHomePage() {
           <div className="space-y-6 animate-slide-left">
             
             {/* Top Banner: "Begin your course today" / "Resume course" */}
-            <div className="cyber-glass-panel rounded-2xl p-6 sm:p-7 border border-[#65F58A]/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-[0_0_25px_rgba(101,245,138,0.08)]">
+            <div className="cyber-glass-panel rounded-2xl p-6 sm:p-7 border border-[#FF7A00]/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-[0_0_25px_rgba(255,122,0,0.08)]">
               <div className="space-y-1">
-                <span className="text-[11px] font-mono text-[#65F58A] font-bold tracking-widest uppercase block">
+                <span className="text-[11px] font-mono text-[#FF7A00] font-bold tracking-widest uppercase block">
                   {isStarted ? 'ACTIVE OPERATOR TRAINING' : 'CURRICULUM UNLOCKED'}
                 </span>
                 <h2 className="font-royal text-xl sm:text-2xl font-bold text-white">
@@ -202,7 +202,7 @@ export default function CourseHomePage() {
                     ? `Continue: ${nextLesson?.title || 'Next Lesson'}`
                     : 'Begin your course today'}
                 </h2>
-                <p className="text-xs text-[#C9EFE0] max-w-xl">
+                <p className="text-xs text-[#E2D9CE] max-w-xl">
                   {isStarted
                     ? `You've completed ${completedSet.size} of ${allLessons.length} units (${progressData.percentage}%). Jump directly back into your active module.`
                     : 'Structured defensive cybersecurity syllabus. Complete mandatory modules and practical labs to qualify for the final certification exam.'}
@@ -211,7 +211,7 @@ export default function CourseHomePage() {
 
               <Link
                 to={`/student/learn/${enrolment.id}${nextLesson ? `?lessonId=${nextLesson.id}` : ''}`}
-                className="px-6 py-3.5 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] active:scale-[0.99] text-[#071018] font-royal font-extrabold text-xs tracking-wider flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(101,245,138,0.4)] transition-all cursor-pointer flex-shrink-0"
+                className="px-6 py-3.5 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] active:scale-[0.99] text-[#071018] font-royal font-extrabold text-xs tracking-wider flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(255,122,0,0.4)] transition-all cursor-pointer flex-shrink-0"
               >
                 <Play className="w-4 h-4 fill-current" />
                 <span>{isStarted ? 'Resume Course' : 'Start course'}</span>
@@ -232,7 +232,7 @@ export default function CourseHomePage() {
                   <button
                     type="button"
                     onClick={toggleExpandAll}
-                    className="px-3 py-1.5 rounded-lg cyber-glass-card border border-[#65F58A]/25 text-xs font-mono text-[#65F58A] hover:bg-[#65F58A]/10 transition-colors cursor-pointer"
+                    className="px-3 py-1.5 rounded-lg cyber-glass-card border border-[#FF7A00]/25 text-xs font-mono text-[#FF7A00] hover:bg-[#FF7A00]/10 transition-colors cursor-pointer"
                   >
                     {allExpanded ? 'Collapse all' : 'Expand all'}
                   </button>
@@ -249,7 +249,7 @@ export default function CourseHomePage() {
                     return (
                       <div
                         key={mod.id || modIdx}
-                        className="rounded-xl border border-[#65F58A]/20 bg-[#061510]/70 overflow-hidden transition-all"
+                        className="rounded-xl border border-[#FF7A00]/20 bg-[#0E0C09]/70 overflow-hidden transition-all"
                       >
                         {/* Module Header Bar */}
                         <button
@@ -261,10 +261,10 @@ export default function CourseHomePage() {
                             <span
                               className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-mono font-bold flex-shrink-0 border ${
                                 isModAllDone
-                                  ? 'bg-[#65F58A] text-[#071018] border-[#65F58A] shadow-[0_0_8px_#65F58A]'
+                                  ? 'bg-[#FF7A00] text-[#071018] border-[#FF7A00] shadow-[0_0_8px_#FF7A00]'
                                   : modCompleted > 0
-                                  ? 'bg-[#092218] text-[#35E6B5] border-[#35E6B5]/50'
-                                  : 'bg-[#040e0a] text-[#72A88E] border-[#65F58A]/20'
+                                  ? 'bg-[#1A1208] text-[#FFA439] border-[#FFA439]/50'
+                                  : 'bg-[#080705] text-[#A3907C] border-[#FF7A00]/20'
                               }`}
                             >
                               {isModAllDone ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : modIdx + 1}
@@ -275,10 +275,10 @@ export default function CourseHomePage() {
                           </div>
 
                           <div className="flex items-center gap-3 flex-shrink-0 pl-2">
-                            <span className="text-[11px] font-mono text-[#72A88E] hidden sm:inline">
+                            <span className="text-[11px] font-mono text-[#A3907C] hidden sm:inline">
                               {modCompleted}/{modLessons.length} Completed
                             </span>
-                            <span className="w-6 h-6 rounded-md bg-white/[0.03] border border-white/10 flex items-center justify-center text-xs text-[#65F58A]">
+                            <span className="w-6 h-6 rounded-md bg-white/[0.03] border border-white/10 flex items-center justify-center text-xs text-[#FF7A00]">
                               {isExpanded ? '-' : '+'}
                             </span>
                           </div>
@@ -286,7 +286,7 @@ export default function CourseHomePage() {
 
                         {/* Expanded Module Lessons / Units */}
                         {isExpanded && (
-                          <div className="p-3 border-t border-[#65F58A]/15 space-y-1.5 bg-[#040e0a]/90">
+                          <div className="p-3 border-t border-[#FF7A00]/15 space-y-1.5 bg-[#080705]/90">
                             {modLessons.map((les, lIdx) => {
                               const isDone = completedSet.has(les.id);
                               return (
@@ -295,16 +295,16 @@ export default function CourseHomePage() {
                                   to={`/student/learn/${enrolment.id}?lessonId=${les.id}`}
                                   className={`p-3 rounded-lg border flex items-center justify-between text-xs transition-all group ${
                                     isDone
-                                      ? 'bg-[#071912]/60 border-[#65F58A]/20 hover:border-[#65F58A]/50'
-                                      : 'bg-[#061510] border-white/5 hover:border-[#65F58A]/40'
+                                      ? 'bg-[#120E09]/60 border-[#FF7A00]/20 hover:border-[#FF7A00]/50'
+                                      : 'bg-[#0E0C09] border-white/5 hover:border-[#FF7A00]/40'
                                   }`}
                                 >
                                   <div className="flex items-center gap-3 truncate">
                                     <span
                                       className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] flex-shrink-0 ${
                                         isDone
-                                          ? 'bg-[#65F58A]/20 text-[#65F58A]'
-                                          : 'bg-white/[0.04] text-[#72A88E]'
+                                          ? 'bg-[#FF7A00]/20 text-[#FF7A00]'
+                                          : 'bg-white/[0.04] text-[#A3907C]'
                                       }`}
                                     >
                                       {isDone ? (
@@ -316,20 +316,20 @@ export default function CourseHomePage() {
                                     <span
                                       className={`truncate font-medium transition-colors ${
                                         isDone
-                                          ? 'text-[#C9EFE0] group-hover:text-white'
-                                          : 'text-slate-300 group-hover:text-[#65F58A]'
+                                          ? 'text-[#E2D9CE] group-hover:text-white'
+                                          : 'text-slate-300 group-hover:text-[#FF7A00]'
                                       }`}
                                     >
                                       {les.title}
                                     </span>
                                     {les.is_mandatory && (
-                                      <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30 flex-shrink-0 font-bold">
+                                      <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-[#FF7A00]/10 text-[#FF7A00] border border-[#FF7A00]/30 flex-shrink-0 font-bold">
                                         REQUIRED
                                       </span>
                                     )}
                                   </div>
 
-                                  <div className="flex items-center gap-2 font-mono text-[11px] text-[#72A88E] flex-shrink-0 pl-2">
+                                  <div className="flex items-center gap-2 font-mono text-[11px] text-[#A3907C] flex-shrink-0 pl-2">
                                     <Clock className="w-3 h-3" />
                                     <span>{les.duration || '15 mins'}</span>
                                   </div>
@@ -348,45 +348,45 @@ export default function CourseHomePage() {
               <div className="space-y-6">
                 
                 {/* Course Tools */}
-                <div className="cyber-glass-panel rounded-2xl p-5 border border-[#65F58A]/25 space-y-3">
-                  <h4 className="font-royal text-xs font-mono uppercase tracking-wider text-[#65F58A] font-bold">
+                <div className="cyber-glass-panel rounded-2xl p-5 border border-[#FF7A00]/25 space-y-3">
+                  <h4 className="font-royal text-xs font-mono uppercase tracking-wider text-[#FF7A00] font-bold">
                     Course Tools
                   </h4>
                   <div className="space-y-2 text-xs font-mono">
                     <button
                       type="button"
                       onClick={() => navigate(`/student/learn/${enrolment.id}`)}
-                      className="w-full p-2.5 rounded-xl bg-[#092218]/40 border border-[#65F58A]/20 hover:border-[#65F58A]/50 flex items-center justify-between text-[#C9EFE0] transition-colors cursor-pointer"
+                      className="w-full p-2.5 rounded-xl bg-[#1A1208]/40 border border-[#FF7A00]/20 hover:border-[#FF7A00]/50 flex items-center justify-between text-[#E2D9CE] transition-colors cursor-pointer"
                     >
                       <span className="flex items-center gap-2">
-                        <Bookmark className="w-3.5 h-3.5 text-[#35E6B5]" />
+                        <Bookmark className="w-3.5 h-3.5 text-[#FFA439]" />
                         <span>Bookmarked Units</span>
                       </span>
-                      <ChevronRight className="w-3.5 h-3.5 text-[#72A88E]" />
+                      <ChevronRight className="w-3.5 h-3.5 text-[#A3907C]" />
                     </button>
 
                     <button
                       type="button"
                       onClick={() => navigate(`/student/learn/${enrolment.id}`)}
-                      className="w-full p-2.5 rounded-xl bg-[#092218]/40 border border-[#65F58A]/20 hover:border-[#65F58A]/50 flex items-center justify-between text-[#C9EFE0] transition-colors cursor-pointer"
+                      className="w-full p-2.5 rounded-xl bg-[#1A1208]/40 border border-[#FF7A00]/20 hover:border-[#FF7A00]/50 flex items-center justify-between text-[#E2D9CE] transition-colors cursor-pointer"
                     >
                       <span className="flex items-center gap-2">
-                        <FileText className="w-3.5 h-3.5 text-[#65F58A]" />
+                        <FileText className="w-3.5 h-3.5 text-[#FF7A00]" />
                         <span>Download Study Notes</span>
                       </span>
-                      <ChevronRight className="w-3.5 h-3.5 text-[#72A88E]" />
+                      <ChevronRight className="w-3.5 h-3.5 text-[#A3907C]" />
                     </button>
                   </div>
                 </div>
 
                 {/* Important Dates */}
-                <div className="cyber-glass-panel rounded-2xl p-5 border border-[#65F58A]/25 space-y-3">
-                  <h4 className="font-royal text-xs font-mono uppercase tracking-wider text-[#65F58A] font-bold">
+                <div className="cyber-glass-panel rounded-2xl p-5 border border-[#FF7A00]/25 space-y-3">
+                  <h4 className="font-royal text-xs font-mono uppercase tracking-wider text-[#FF7A00] font-bold">
                     Important Dates
                   </h4>
                   <div className="space-y-3 text-xs font-mono">
                     <div className="space-y-0.5">
-                      <div className="flex items-center gap-1.5 text-[#72A88E]">
+                      <div className="flex items-center gap-1.5 text-[#A3907C]">
                         <Calendar className="w-3.5 h-3.5" />
                         <span>Enrollment Date</span>
                       </div>
@@ -396,7 +396,7 @@ export default function CourseHomePage() {
                     </div>
 
                     <div className="space-y-0.5">
-                      <div className="flex items-center gap-1.5 text-[#72A88E]">
+                      <div className="flex items-center gap-1.5 text-[#A3907C]">
                         <Clock className="w-3.5 h-3.5" />
                         <span>Course Pace</span>
                       </div>
@@ -406,11 +406,11 @@ export default function CourseHomePage() {
                     </div>
 
                     <div className="space-y-0.5">
-                      <div className="flex items-center gap-1.5 text-[#72A88E]">
+                      <div className="flex items-center gap-1.5 text-[#A3907C]">
                         <Award className="w-3.5 h-3.5" />
                         <span>Certification Exam</span>
                       </div>
-                      <div className="text-[#35E6B5] font-semibold pl-5">
+                      <div className="text-[#FFA439] font-semibold pl-5">
                         Available upon 100% completion
                       </div>
                     </div>
@@ -418,9 +418,9 @@ export default function CourseHomePage() {
                 </div>
 
                 {/* Academic Division Charter Seal */}
-                <div className="p-4 rounded-xl bg-[#061510] border border-[#65F58A]/15 text-[11px] font-mono text-[#72A88E] space-y-1">
+                <div className="p-4 rounded-xl bg-[#0E0C09] border border-[#FF7A00]/15 text-[11px] font-mono text-[#A3907C] space-y-1">
                   <div className="flex items-center gap-2 text-white font-bold">
-                    <Shield className="w-4 h-4 text-[#65F58A]" />
+                    <Shield className="w-4 h-4 text-[#FF7A00]" />
                     <span>RedKross Academic Registry</span>
                   </div>
                   <p>All progress, time-on-unit, and proctoring telemetry are cryptographically signed.</p>
@@ -435,14 +435,14 @@ export default function CourseHomePage() {
           <div className="space-y-8 animate-slide-left">
             
             {/* Overall Course Grade Progress Bar with Passing Threshold */}
-            <div className="cyber-glass-panel rounded-2xl p-6 sm:p-8 border border-[#65F58A]/30 space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#65F58A]/20">
+            <div className="cyber-glass-panel rounded-2xl p-6 sm:p-8 border border-[#FF7A00]/30 space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#FF7A00]/20">
                 <div>
                   <h3 className="font-royal text-xl font-bold text-white">
                     Course Grade & Assessment Summary
                   </h3>
-                  <p className="text-xs text-[#72A88E] font-mono mt-0.5">
-                    Required passing threshold: <span className="text-[#65F58A] font-bold">{passingScore}%</span>
+                  <p className="text-xs text-[#A3907C] font-mono mt-0.5">
+                    Required passing threshold: <span className="text-[#FF7A00] font-bold">{passingScore}%</span>
                   </p>
                 </div>
                 <div className="flex items-baseline gap-2">
@@ -451,7 +451,7 @@ export default function CourseHomePage() {
                   </span>
                   <span className={`text-xs font-mono font-bold px-2.5 py-1 rounded-md border ${
                     isPassing
-                      ? 'bg-[#65F58A]/15 text-[#65F58A] border-[#65F58A]/40'
+                      ? 'bg-[#FF7A00]/15 text-[#FF7A00] border-[#FF7A00]/40'
                       : 'bg-amber-500/15 text-amber-400 border-amber-500/40'
                   }`}>
                     {isPassing ? 'PASSING' : 'IN PROGRESS'}
@@ -461,10 +461,10 @@ export default function CourseHomePage() {
 
               {/* Visual Horizontal Gauge with 70% Cutoff Line */}
               <div className="space-y-2">
-                <div className="relative w-full h-7 bg-[#061510] rounded-xl overflow-hidden border border-[#65F58A]/25 p-1">
+                <div className="relative w-full h-7 bg-[#0E0C09] rounded-xl overflow-hidden border border-[#FF7A00]/25 p-1">
                   {/* Progress Fill */}
                   <div
-                    className="h-full rounded-lg bg-gradient-to-r from-[#10B981] via-[#35E6B5] to-[#65F58A] transition-all duration-700 shadow-[0_0_15px_rgba(101,245,138,0.5)]"
+                    className="h-full rounded-lg bg-gradient-to-r from-[#FF7A00] via-[#FFA439] to-[#FF7A00] transition-all duration-700 shadow-[0_0_15px_rgba(255,122,0,0.5)]"
                     style={{ width: `${Math.min(100, currentGrade)}%` }}
                   />
 
@@ -481,7 +481,7 @@ export default function CourseHomePage() {
                   </div>
                 </div>
 
-                <div className="flex justify-between text-[11px] font-mono text-[#72A88E] pt-1">
+                <div className="flex justify-between text-[11px] font-mono text-[#A3907C] pt-1">
                   <span>0% (Start)</span>
                   <span>70% (Certificate Qualifying Line)</span>
                   <span>100% (Complete)</span>
@@ -490,16 +490,16 @@ export default function CourseHomePage() {
             </div>
 
             {/* Assessment Breakdown Table (Open edX Style) */}
-            <div className="cyber-glass-panel rounded-2xl p-6 sm:p-8 border border-[#65F58A]/25 space-y-4">
+            <div className="cyber-glass-panel rounded-2xl p-6 sm:p-8 border border-[#FF7A00]/25 space-y-4">
               <h3 className="font-royal text-lg font-bold text-white flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-[#65F58A]" />
+                <TrendingUp className="w-5 h-5 text-[#FF7A00]" />
                 <span>Detailed Assessment Breakdown</span>
               </h3>
 
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs font-mono border-collapse">
                   <thead>
-                    <tr className="border-b border-[#65F58A]/20 text-[#72A88E] uppercase tracking-wider text-[11px]">
+                    <tr className="border-b border-[#FF7A00]/20 text-[#A3907C] uppercase tracking-wider text-[11px]">
                       <th className="py-3 px-4">Evaluation Component</th>
                       <th className="py-3 px-4">Total Weight</th>
                       <th className="py-3 px-4">Units / Questions</th>
@@ -507,18 +507,18 @@ export default function CourseHomePage() {
                       <th className="py-3 px-4 text-right">Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#65F58A]/10 text-[#C9EFE0]">
+                  <tbody className="divide-y divide-[#FF7A00]/10 text-[#E2D9CE]">
                     {/* Row 1: Core Units */}
                     <tr>
                       <td className="py-3.5 px-4 font-bold text-white flex items-center gap-2">
-                        <BookOpen className="w-4 h-4 text-[#35E6B5]" />
+                        <BookOpen className="w-4 h-4 text-[#FFA439]" />
                         <span>Core Curriculum Units</span>
                       </td>
                       <td className="py-3.5 px-4">40%</td>
                       <td className="py-3.5 px-4">{allLessons.length} Modules</td>
                       <td className="py-3.5 px-4 font-bold text-white">{completedSet.size}/{allLessons.length} Done</td>
                       <td className="py-3.5 px-4 text-right">
-                        <span className="px-2 py-0.5 rounded bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30">
+                        <span className="px-2 py-0.5 rounded bg-[#FF7A00]/10 text-[#FF7A00] border border-[#FF7A00]/30">
                           {progressData.percentage}%
                         </span>
                       </td>
@@ -527,7 +527,7 @@ export default function CourseHomePage() {
                     {/* Row 2: Module Knowledge Checks */}
                     <tr>
                       <td className="py-3.5 px-4 font-bold text-white flex items-center gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-[#65F58A]" />
+                        <CheckCircle2 className="w-4 h-4 text-[#FF7A00]" />
                         <span>Module Knowledge Checks</span>
                       </td>
                       <td className="py-3.5 px-4">25%</td>
@@ -536,7 +536,7 @@ export default function CourseHomePage() {
                         {isStarted ? `${Math.round(currentGrade * 0.9)}% Average` : 'Pending'}
                       </td>
                       <td className="py-3.5 px-4 text-right">
-                        <span className="px-2 py-0.5 rounded bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30">
+                        <span className="px-2 py-0.5 rounded bg-[#FF7A00]/10 text-[#FF7A00] border border-[#FF7A00]/30">
                           Active
                         </span>
                       </td>
@@ -545,14 +545,14 @@ export default function CourseHomePage() {
                     {/* Row 3: Practical Lab Assignments */}
                     <tr>
                       <td className="py-3.5 px-4 font-bold text-white flex items-center gap-2">
-                        <FileText className="w-4 h-4 text-[#35E6B5]" />
+                        <FileText className="w-4 h-4 text-[#FFA439]" />
                         <span>Practical Lab Reports</span>
                       </td>
                       <td className="py-3.5 px-4">15%</td>
                       <td className="py-3.5 px-4">SOC Telemetry PCAP</td>
                       <td className="py-3.5 px-4 font-bold text-white">100 / 100 Pts</td>
                       <td className="py-3.5 px-4 text-right">
-                        <span className="px-2 py-0.5 rounded bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30">
+                        <span className="px-2 py-0.5 rounded bg-[#FF7A00]/10 text-[#FF7A00] border border-[#FF7A00]/30">
                           Evaluated
                         </span>
                       </td>
@@ -561,7 +561,7 @@ export default function CourseHomePage() {
                     {/* Row 4: Final Proctored Exam */}
                     <tr>
                       <td className="py-3.5 px-4 font-bold text-white flex items-center gap-2">
-                        <Award className="w-4 h-4 text-[#65F58A]" />
+                        <Award className="w-4 h-4 text-[#FF7A00]" />
                         <span>Proctored Final Exam</span>
                       </td>
                       <td className="py-3.5 px-4">20%</td>
@@ -572,8 +572,8 @@ export default function CourseHomePage() {
                       <td className="py-3.5 px-4 text-right">
                         <span className={`px-2 py-0.5 rounded border ${
                           isComplete
-                            ? 'bg-[#65F58A]/15 text-[#65F58A] border-[#65F58A]/40'
-                            : 'bg-white/5 text-[#72A88E] border-white/10'
+                            ? 'bg-[#FF7A00]/15 text-[#FF7A00] border-[#FF7A00]/40'
+                            : 'bg-white/5 text-[#A3907C] border-white/10'
                         }`}>
                           {isComplete ? 'Eligible' : 'Locked'}
                         </span>
@@ -587,15 +587,15 @@ export default function CourseHomePage() {
             {/* Certificate Status Banner */}
             <div className={`p-6 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
               isPassing
-                ? 'bg-[#092218]/80 border-[#65F58A]/40 shadow-[0_0_25px_rgba(101,245,138,0.15)]'
-                : 'bg-[#061510] border-white/10'
+                ? 'bg-[#1A1208]/80 border-[#FF7A00]/40 shadow-[0_0_25px_rgba(255,122,0,0.15)]'
+                : 'bg-[#0E0C09] border-white/10'
             }`}>
               <div className="space-y-1">
                 <div className="flex items-center gap-2 text-white font-royal font-bold text-base">
-                  <Award className={`w-5 h-5 ${isPassing ? 'text-[#65F58A]' : 'text-[#72A88E]'}`} />
+                  <Award className={`w-5 h-5 ${isPassing ? 'text-[#FF7A00]' : 'text-[#A3907C]'}`} />
                   <span>Institutional Credential Qualification</span>
                 </div>
-                <p className="text-xs text-[#C9EFE0] max-w-xl">
+                <p className="text-xs text-[#E2D9CE] max-w-xl">
                   {isPassing
                     ? 'Congratulations! You have crossed the 70% passing threshold. Complete remaining units and challenge the final exam to mint your immutable on-chain credential.'
                     : 'A minimum aggregate score of 70% across lessons and assessments is required to claim your institutional digital certificate.'}
@@ -605,7 +605,7 @@ export default function CourseHomePage() {
               {isComplete ? (
                 <Link
                   to={`/student/final-exam/${enrolment.id}`}
-                  className="px-5 py-3 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-royal font-bold text-xs tracking-wider flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(101,245,138,0.4)] transition-all cursor-pointer flex-shrink-0"
+                  className="px-5 py-3 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-royal font-bold text-xs tracking-wider flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(255,122,0,0.4)] transition-all cursor-pointer flex-shrink-0"
                 >
                   <Award className="w-4 h-4" />
                   <span>Take Certification Exam</span>
@@ -614,7 +614,7 @@ export default function CourseHomePage() {
                 <button
                   type="button"
                   onClick={() => handleTabChange('course')}
-                  className="px-5 py-3 rounded-xl bg-[#092218] border border-[#65F58A]/30 text-[#65F58A] font-royal font-bold text-xs tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer flex-shrink-0"
+                  className="px-5 py-3 rounded-xl bg-[#1A1208] border border-[#FF7A00]/30 text-[#FF7A00] font-royal font-bold text-xs tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer flex-shrink-0"
                 >
                   <span>Continue Curriculum</span>
                 </button>

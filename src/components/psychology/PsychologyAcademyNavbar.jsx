@@ -55,10 +55,10 @@ export default function PsychologyAcademyNavbar() {
           </Link>
           <Link 
             to="/academy/cybersecurity" 
-            className="text-slate-400 hover:text-[#65F58A] transition-colors flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/10"
+            className="text-slate-400 hover:text-[#FF7A00] transition-colors flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-white/10"
             title="Switch to Cybersecurity Academy"
           >
-            <Terminal className="w-3.5 h-3.5 text-[#65F58A]" />
+            <Terminal className="w-3.5 h-3.5 text-[#FF7A00]" />
             <span>Cyber Academy</span>
           </Link>
         </nav>

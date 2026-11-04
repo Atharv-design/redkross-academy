@@ -67,7 +67,7 @@ export default function PsychologyThemedCard({
   // If course object is supplied, resolve fields automatically
   const resolvedTitle = course?.title || title || 'Psychology Specialization';
   const resolvedDesc = course?.short_desc || course?.description || description || 'Rigorous evidence-based psychological training and certification.';
-  const resolvedLink = course?.slug ? `/courses/${course.slug}` : ctaLink;
+  const resolvedLink = course?.slug ? `/academy/psychology/courses/${course.slug}` : ctaLink;
   const resolvedVariant = course?.motifVariant || variant;
 
   const motifIndex = typeof resolvedVariant === 'number' 

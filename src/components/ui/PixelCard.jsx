@@ -166,10 +166,10 @@ function makeEase(transition) {
 
 // RedKross Academy Emerald Cyber Theme Defaults (0% blue, 0% pink)
 export const REDKROSS_PIXEL_COLORS = [
-    "#65F58A", // RedKross Signature Neon Green
-    "#35E6B5", // Mint Cyber Accent
-    "#00FFA3", // High-Intensity Emerald Glow
-    "#10B981", // Deep Matrix Green
+    "#FF7A00", // RedKross Signature Neon Green
+    "#FFA439", // Mint Cyber Accent
+    "#FF7A00", // High-Intensity Emerald Glow
+    "#FF7A00", // Deep Matrix Green
 ];
 
 const COMPONENT_DEFAULTS = {
@@ -181,7 +181,7 @@ const COMPONENT_DEFAULTS = {
     padding: 0,
     transition: { type: "tween", duration: 0.8, ease: "easeOut" },
     backgroundColor: "#071018",
-    borderColor: "rgba(101, 245, 138, 0.2)",
+    borderColor: "rgba(255,122,0, 0.2)",
     borderWidth: 1,
     radius: 16,
     showLabel: false,
@@ -207,7 +207,7 @@ export default function PixelCard(props) {
         transition = { type: "tween", duration: 0.8, ease: "easeOut" },
         backgroundColor = "#071018",
         padding = 0,
-        borderColor = "rgba(101, 245, 138, 0.2)",
+        borderColor = "rgba(255,122,0, 0.2)",
         borderWidth = 1,
         radius = 16,
         showLabel = false,

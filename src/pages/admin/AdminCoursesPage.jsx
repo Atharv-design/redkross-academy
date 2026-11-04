@@ -855,7 +855,7 @@ export default function AdminCoursesPage() {
             particleCount: 110,
             spread: 75,
             origin: { y: 0.6 },
-            colors: ['#65F58A', '#35E6B5', '#00FFA3']
+            colors: ['#FF7A00', '#FFA439', '#FF7A00']
           });
         } catch (_) {}
 
@@ -914,7 +914,7 @@ export default function AdminCoursesPage() {
             particleCount: 80,
             spread: 60,
             origin: { y: 0.6 },
-            colors: ['#65F58A', '#35E6B5', '#00FFA3']
+            colors: ['#FF7A00', '#FFA439', '#FF7A00']
           });
         } catch (_) {}
 
@@ -1184,20 +1184,20 @@ export default function AdminCoursesPage() {
   return (
     <div className="space-y-6 animate-slide-left font-lora">
       {/* ================= TOP SEARCH & ACTION HEADER ================= */}
-      <div className="cyber-glass-panel p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-[#65F58A]/30">
+      <div className="cyber-glass-panel p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-[#FF7A00]/30">
         <div className="flex items-center space-x-3">
           <div className="relative w-72">
-            <Search className="w-4 h-4 text-[#72A88E] absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-[#A3907C] absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search catalog by title or track..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#061510] text-xs font-lora text-white pl-9 pr-3 py-2.5 rounded-xl border border-[#65F58A]/25 focus:outline-none focus:border-[#65F58A]"
+              className="w-full bg-[#0E0C09] text-xs font-lora text-white pl-9 pr-3 py-2.5 rounded-xl border border-[#FF7A00]/25 focus:outline-none focus:border-[#FF7A00]"
             />
           </div>
 
-          <div className="flex items-center space-x-1.5 p-1 rounded-xl bg-[#061510] border border-[#65F58A]/20">
+          <div className="flex items-center space-x-1.5 p-1 rounded-xl bg-[#0E0C09] border border-[#FF7A00]/20">
             {['ALL', 'PUBLISHED', 'DRAFT'].map((status) => (
               <button
                 key={status}
@@ -1205,7 +1205,7 @@ export default function AdminCoursesPage() {
                 onClick={() => setStatusFilter(status)}
                 className={`px-3 py-1 text-xs font-mono rounded-lg transition-colors cursor-pointer ${
                   statusFilter === status
-                    ? 'bg-[#65F58A] text-[#071018] font-bold'
+                    ? 'bg-[#FF7A00] text-[#071018] font-bold'
                     : 'text-[#8BA2B5] hover:text-white'
                 }`}
               >
@@ -1249,7 +1249,7 @@ export default function AdminCoursesPage() {
               modules: []
             });
           }}
-          className="px-5 py-2.5 bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-bold text-xs rounded-xl flex items-center space-x-2 transition-all shadow-[0_0_15px_rgba(101,245,138,0.35)] cursor-pointer flex-shrink-0"
+          className="px-5 py-2.5 bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-bold text-xs rounded-xl flex items-center space-x-2 transition-all shadow-[0_0_15px_rgba(255,122,0,0.35)] cursor-pointer flex-shrink-0"
         >
           <Plus className="w-4 h-4 stroke-[3]" />
           <span>Create New Course</span>
@@ -1260,9 +1260,9 @@ export default function AdminCoursesPage() {
       <div className="grid grid-cols-12 gap-6 min-h-[750px]">
         {/* LEFT 4 COLUMNS: Transparent Liquid Glass Course Cards Repository */}
         <div className="col-span-12 lg:col-span-4 space-y-4 max-h-[820px] overflow-y-auto custom-scrollbar pr-2">
-          <div className="flex items-center justify-between text-xs font-mono text-[#72A88E] px-1">
+          <div className="flex items-center justify-between text-xs font-mono text-[#A3907C] px-1">
             <span>COURSES IN REPOSITORY ({filteredCourses.length})</span>
-            <span className="text-[#65F58A]">Transparent Emerald Glass</span>
+            <span className="text-[#FF7A00]">Transparent Emerald Glass</span>
           </div>
 
           {filteredCourses.map((c, idx) => {
@@ -1282,19 +1282,19 @@ export default function AdminCoursesPage() {
                 }}
                 className={`p-5 rounded-2xl border transition-all cursor-pointer backdrop-blur-xl ${
                   isSelected
-                    ? 'border-[#65F58A] bg-[#092218]/90 shadow-[0_0_20px_rgba(101,245,138,0.25)] scale-[1.01]'
-                    : 'border-[#65F58A]/20 bg-[#061510]/80 hover:border-[#65F58A]/40'
+                    ? 'border-[#FF7A00] bg-[#1A1208]/90 shadow-[0_0_20px_rgba(255,122,0,0.25)] scale-[1.01]'
+                    : 'border-[#FF7A00]/20 bg-[#0E0C09]/80 hover:border-[#FF7A00]/40'
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#65F58A]/30 text-[#65F58A] bg-[#071018]/60">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#FF7A00]/30 text-[#FF7A00] bg-[#071018]/60">
                     {c.level || 'Intermediate'}
                   </span>
                   <div className="flex items-center space-x-1.5">
                     <span
                       className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
                         c.status === 'PUBLISHED'
-                          ? 'bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/30'
+                          ? 'bg-[#FF7A00]/15 text-[#FF7A00] border border-[#FF7A00]/30'
                           : 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
                       }`}
                     >
@@ -1317,22 +1317,22 @@ export default function AdminCoursesPage() {
                 <h4 className="text-base font-bold text-white mb-1.5 leading-snug line-clamp-1">
                   {c.title}
                 </h4>
-                <p className="text-xs text-[#C9EFE0] line-clamp-2 mb-3">
+                <p className="text-xs text-[#E2D9CE] line-clamp-2 mb-3">
                   {c.overview || c.description || 'Defensive cybersecurity training curriculum.'}
                 </p>
 
-                <div className="flex items-center justify-between text-[11px] font-mono pt-3 border-t border-[#65F58A]/15 text-[#72A88E]">
+                <div className="flex items-center justify-between text-[11px] font-mono pt-3 border-t border-[#FF7A00]/15 text-[#A3907C]">
                   <div className="flex items-center space-x-3">
                     <span className="flex items-center space-x-1">
-                      <Layers className="w-3.5 h-3.5 text-[#65F58A]" />
+                      <Layers className="w-3.5 h-3.5 text-[#FF7A00]" />
                       <span>{moduleCount} Modules</span>
                     </span>
                     <span className="flex items-center space-x-1">
-                      <Video className="w-3.5 h-3.5 text-[#35E6B5]" />
+                      <Video className="w-3.5 h-3.5 text-[#FFA439]" />
                       <span>{lessonCount} Lessons</span>
                     </span>
                   </div>
-                  <span className="text-[#65F58A] font-semibold">{c.duration || '4 Weeks'}</span>
+                  <span className="text-[#FF7A00] font-semibold">{c.duration || '4 Weeks'}</span>
                 </div>
               </div>
             );
@@ -1340,11 +1340,11 @@ export default function AdminCoursesPage() {
         </div>
 
         {/* RIGHT 8 COLUMNS: 10-Second Intuitive Course Wizard & Studio */}
-        <div className="col-span-12 lg:col-span-8 cyber-glass-panel rounded-2xl border border-[#65F58A]/30 flex flex-col overflow-hidden shadow-2xl">
+        <div className="col-span-12 lg:col-span-8 cyber-glass-panel rounded-2xl border border-[#FF7A00]/30 flex flex-col overflow-hidden shadow-2xl">
           {/* Studio Header Bar */}
-          <div className="p-5 border-b border-[#65F58A]/20 bg-[#061510] flex items-center justify-between gap-4">
+          <div className="p-5 border-b border-[#FF7A00]/20 bg-[#0E0C09] flex items-center justify-between gap-4">
             <div>
-              <span className="text-[10px] font-mono text-[#65F58A] uppercase tracking-wider block">
+              <span className="text-[10px] font-mono text-[#FF7A00] uppercase tracking-wider block">
                 {isCreatingNew || !selectedCourse ? 'NEW COURSE STUDIO' : 'COURSE BUILDER & MANAGER'}
               </span>
               <h3 className="text-lg font-bold text-white">
@@ -1368,7 +1368,7 @@ export default function AdminCoursesPage() {
                 type="button"
                 disabled={isSaving}
                 onClick={handleSaveCourse}
-                className="px-5 py-2 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] disabled:opacity-60 text-[#071018] font-bold text-xs font-mono flex items-center space-x-1.5 transition-all shadow-[0_0_15px_rgba(101,245,138,0.3)] cursor-pointer"
+                className="px-5 py-2 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] disabled:opacity-60 text-[#071018] font-bold text-xs font-mono flex items-center space-x-1.5 transition-all shadow-[0_0_15px_rgba(255,122,0,0.3)] cursor-pointer"
               >
                 {isSaving ? (
                   <>
@@ -1386,7 +1386,7 @@ export default function AdminCoursesPage() {
           </div>
 
           {/* 4-Step Intuitive Navigation Pills (Understandable in 10 Seconds!) */}
-          <div className="grid grid-cols-4 border-b border-[#65F58A]/20 bg-[#071018]">
+          <div className="grid grid-cols-4 border-b border-[#FF7A00]/20 bg-[#071018]">
             {[
               { step: 1, title: '1. Course Info & About' },
               { step: 2, title: '2. Media (Image & Video)' },
@@ -1399,8 +1399,8 @@ export default function AdminCoursesPage() {
                 onClick={() => setBuilderStep(s.step)}
                 className={`py-3 px-3 text-center text-xs font-mono font-bold transition-all border-b-2 cursor-pointer ${
                   builderStep === s.step
-                    ? 'border-[#65F58A] text-[#65F58A] bg-[#092218]/40'
-                    : 'border-transparent text-[#72A88E] hover:text-white'
+                    ? 'border-[#FF7A00] text-[#FF7A00] bg-[#1A1208]/40'
+                    : 'border-transparent text-[#A3907C] hover:text-white'
                 }`}
               >
                 {s.title}
@@ -1415,36 +1415,36 @@ export default function AdminCoursesPage() {
               <div className="space-y-4 animate-slide-left">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-mono text-[#72A88E]">Course Title *</label>
+                    <label className="text-xs font-mono text-[#A3907C]">Course Title *</label>
                     <input
                       type="text"
                       required
                       value={courseFormData.title}
                       onChange={(e) => setCourseFormData({ ...courseFormData, title: e.target.value })}
                       placeholder="e.g. Advanced Network Defense & Packet Inspection"
-                      className="w-full bg-[#061510] rounded-xl p-3 text-xs text-white border border-[#65F58A]/25 focus:outline-none focus:border-[#65F58A]"
+                      className="w-full bg-[#0E0C09] rounded-xl p-3 text-xs text-white border border-[#FF7A00]/25 focus:outline-none focus:border-[#FF7A00]"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-mono text-[#72A88E]">URL Slug</label>
+                    <label className="text-xs font-mono text-[#A3907C]">URL Slug</label>
                     <input
                       type="text"
                       value={courseFormData.slug}
                       onChange={(e) => setCourseFormData({ ...courseFormData, slug: e.target.value })}
                       placeholder="e.g. advanced-network-defense"
-                      className="w-full bg-[#061510] rounded-xl p-3 text-xs text-white border border-[#65F58A]/25 focus:outline-none focus:border-[#65F58A]"
+                      className="w-full bg-[#0E0C09] rounded-xl p-3 text-xs text-white border border-[#FF7A00]/25 focus:outline-none focus:border-[#FF7A00]"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-mono text-[#72A88E]">Difficulty Level</label>
+                    <label className="text-xs font-mono text-[#A3907C]">Difficulty Level</label>
                     <select
                       value={courseFormData.level}
                       onChange={(e) => setCourseFormData({ ...courseFormData, level: e.target.value })}
-                      className="w-full bg-[#061510] rounded-xl p-3 text-xs text-white border border-[#65F58A]/25 focus:outline-none focus:border-[#65F58A]"
+                      className="w-full bg-[#0E0C09] rounded-xl p-3 text-xs text-white border border-[#FF7A00]/25 focus:outline-none focus:border-[#FF7A00]"
                     >
                       <option value="Beginner">Beginner</option>
                       <option value="Intermediate">Intermediate</option>
@@ -1454,72 +1454,72 @@ export default function AdminCoursesPage() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-mono text-[#72A88E]">Duration & Effort</label>
+                    <label className="text-xs font-mono text-[#A3907C]">Duration & Effort</label>
                     <input
                       type="text"
                       value={courseFormData.duration}
                       onChange={(e) => setCourseFormData({ ...courseFormData, duration: e.target.value })}
                       placeholder="e.g. 4 Weeks (14 Hours)"
-                      className="w-full bg-[#061510] rounded-xl p-3 text-xs text-white border border-[#65F58A]/25 focus:outline-none focus:border-[#65F58A]"
+                      className="w-full bg-[#0E0C09] rounded-xl p-3 text-xs text-white border border-[#FF7A00]/25 focus:outline-none focus:border-[#FF7A00]"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-mono text-[#72A88E]">Price / Access Model</label>
+                    <label className="text-xs font-mono text-[#A3907C]">Price / Access Model</label>
                     <input
                       type="text"
                       value={courseFormData.price}
                       onChange={(e) => setCourseFormData({ ...courseFormData, price: e.target.value })}
                       placeholder="e.g. Free Institutional Access"
-                      className="w-full bg-[#061510] rounded-xl p-3 text-xs text-white border border-[#65F58A]/25 focus:outline-none focus:border-[#65F58A]"
+                      className="w-full bg-[#0E0C09] rounded-xl p-3 text-xs text-white border border-[#FF7A00]/25 focus:outline-none focus:border-[#FF7A00]"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-mono text-[#72A88E]">Short Pitch Overview (For Cards & Hero)</label>
+                  <label className="text-xs font-mono text-[#A3907C]">Short Pitch Overview (For Cards & Hero)</label>
                   <textarea
                     rows={2}
                     value={courseFormData.overview}
                     onChange={(e) => setCourseFormData({ ...courseFormData, overview: e.target.value })}
                     placeholder="Concise overview of what operators will achieve in this syllabus."
-                    className="w-full bg-[#061510] rounded-xl p-3 text-xs text-white border border-[#65F58A]/25 focus:outline-none focus:border-[#65F58A]"
+                    className="w-full bg-[#0E0C09] rounded-xl p-3 text-xs text-white border border-[#FF7A00]/25 focus:outline-none focus:border-[#FF7A00]"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-mono text-[#72A88E]">Full Course About Section (Open edX Format)</label>
+                  <label className="text-xs font-mono text-[#A3907C]">Full Course About Section (Open edX Format)</label>
                   <textarea
                     rows={4}
                     value={courseFormData.description}
                     onChange={(e) => setCourseFormData({ ...courseFormData, description: e.target.value })}
                     placeholder="Comprehensive description of the course, laboratory environments, and defense strategies."
-                    className="w-full bg-[#061510] rounded-xl p-3 text-xs text-white border border-[#65F58A]/25 focus:outline-none focus:border-[#65F58A]"
+                    className="w-full bg-[#0E0C09] rounded-xl p-3 text-xs text-white border border-[#FF7A00]/25 focus:outline-none focus:border-[#FF7A00]"
                   />
                 </div>
 
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-mono text-[#72A88E]">What You'll Learn (1 Learning Competency per line)</label>
-                    <span className="text-[10px] font-mono text-[#65F58A]/80">Displayed in Course Overview</span>
+                    <label className="text-xs font-mono text-[#A3907C]">What You'll Learn (1 Learning Competency per line)</label>
+                    <span className="text-[10px] font-mono text-[#FF7A00]/80">Displayed in Course Overview</span>
                   </div>
                   <textarea
                     rows={4}
                     value={Array.isArray(courseFormData.what_you_will_learn) ? courseFormData.what_you_will_learn.join('\n') : (courseFormData.what_you_will_learn || '')}
                     onChange={(e) => setCourseFormData({ ...courseFormData, what_you_will_learn: e.target.value.split('\n') })}
                     placeholder="Master continuous host and network telemetry inspection&#10;Execute MITRE ATT&CK adversary mapping and threat detection&#10;Isolate compromised endpoints without disrupting forensic tunnels&#10;Conduct RFC 3227 compliant evidence acquisition"
-                    className="w-full bg-[#061510] rounded-xl p-3 text-xs text-white border border-[#65F58A]/25 focus:outline-none focus:border-[#65F58A] font-mono placeholder:text-slate-600"
+                    className="w-full bg-[#0E0C09] rounded-xl p-3 text-xs text-white border border-[#FF7A00]/25 focus:outline-none focus:border-[#FF7A00] font-mono placeholder:text-slate-600"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-mono text-[#72A88E]">Prerequisites</label>
+                  <label className="text-xs font-mono text-[#A3907C]">Prerequisites</label>
                   <input
                     type="text"
                     value={courseFormData.prerequisites}
                     onChange={(e) => setCourseFormData({ ...courseFormData, prerequisites: e.target.value })}
                     placeholder="e.g. Working knowledge of Linux terminal commands and TCP/IP."
-                    className="w-full bg-[#061510] rounded-xl p-3 text-xs text-white border border-[#65F58A]/25 focus:outline-none focus:border-[#65F58A]"
+                    className="w-full bg-[#0E0C09] rounded-xl p-3 text-xs text-white border border-[#FF7A00]/25 focus:outline-none focus:border-[#FF7A00]"
                   />
                 </div>
 
@@ -1527,7 +1527,7 @@ export default function AdminCoursesPage() {
                   <button
                     type="button"
                     onClick={() => setBuilderStep(2)}
-                    className="px-5 py-2.5 bg-[#092218] hover:bg-[#0c2a1e] text-[#65F58A] border border-[#65F58A]/40 text-xs font-mono font-bold rounded-xl flex items-center space-x-2 transition-colors cursor-pointer"
+                    className="px-5 py-2.5 bg-[#1A1208] hover:bg-[#0c2a1e] text-[#FF7A00] border border-[#FF7A00]/40 text-xs font-mono font-bold rounded-xl flex items-center space-x-2 transition-colors cursor-pointer"
                   >
                     <span>Proceed to Step 2: Media Assets</span>
                     <ArrowRight className="w-4 h-4" />
@@ -1540,21 +1540,21 @@ export default function AdminCoursesPage() {
             {builderStep === 2 && (
               <div className="space-y-6 animate-slide-left">
                 {/* 1. Course Poster / Cover Image */}
-                <div className="p-5 rounded-2xl bg-[#061510] border border-[#65F58A]/25 space-y-4">
+                <div className="p-5 rounded-2xl bg-[#0E0C09] border border-[#FF7A00]/25 space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <ImageIcon className="w-4 h-4 text-[#65F58A]" />
+                      <ImageIcon className="w-4 h-4 text-[#FF7A00]" />
                       <h4 className="font-bold text-sm text-white">Course Cover Image (Poster)</h4>
                     </div>
                     {/* Toggle: Upload Image File vs Image URL */}
-                    <div className="flex items-center space-x-1 p-1 rounded-lg bg-[#040e0a] border border-[#65F58A]/20">
+                    <div className="flex items-center space-x-1 p-1 rounded-lg bg-[#080705] border border-[#FF7A00]/20">
                       <button
                         type="button"
                         onClick={() => setCourseFormData({ ...courseFormData, image_source_type: 'upload' })}
                         className={`px-3 py-1 text-xs font-mono rounded transition-colors cursor-pointer ${
                           courseFormData.image_source_type === 'upload'
-                            ? 'bg-[#65F58A] text-[#071018] font-bold'
-                            : 'text-[#72A88E] hover:text-white'
+                            ? 'bg-[#FF7A00] text-[#071018] font-bold'
+                            : 'text-[#A3907C] hover:text-white'
                         }`}
                       >
                         Upload Image File
@@ -1564,8 +1564,8 @@ export default function AdminCoursesPage() {
                         onClick={() => setCourseFormData({ ...courseFormData, image_source_type: 'url' })}
                         className={`px-3 py-1 text-xs font-mono rounded transition-colors cursor-pointer ${
                           courseFormData.image_source_type === 'url'
-                            ? 'bg-[#65F58A] text-[#071018] font-bold'
-                            : 'text-[#72A88E] hover:text-white'
+                            ? 'bg-[#FF7A00] text-[#071018] font-bold'
+                            : 'text-[#A3907C] hover:text-white'
                         }`}
                       >
                         Image URL
@@ -1574,15 +1574,15 @@ export default function AdminCoursesPage() {
                   </div>
 
                   {courseFormData.image_source_type === 'upload' ? (
-                    <div className="border-2 border-dashed border-[#65F58A]/30 hover:border-[#65F58A] rounded-xl p-6 text-center space-y-2 transition-colors">
-                      <UploadCloud className="w-8 h-8 text-[#65F58A] mx-auto" />
+                    <div className="border-2 border-dashed border-[#FF7A00]/30 hover:border-[#FF7A00] rounded-xl p-6 text-center space-y-2 transition-colors">
+                      <UploadCloud className="w-8 h-8 text-[#FF7A00] mx-auto" />
                       <div className="text-xs text-white font-medium">
                         Upload custom course artwork / poster image
                       </div>
-                      <p className="text-[10px] text-[#72A88E] font-mono">
+                      <p className="text-[10px] text-[#A3907C] font-mono">
                         PNG, JPG, or WebP (Recommended 1280x720)
                       </p>
-                      <label className="inline-block px-4 py-2 mt-2 rounded-lg bg-[#092218] hover:bg-[#0c2a1e] text-[#65F58A] border border-[#65F58A]/40 text-xs font-mono font-bold cursor-pointer transition-colors">
+                      <label className="inline-block px-4 py-2 mt-2 rounded-lg bg-[#1A1208] hover:bg-[#0c2a1e] text-[#FF7A00] border border-[#FF7A00]/40 text-xs font-mono font-bold cursor-pointer transition-colors">
                         Browse Image
                         <input
                           ref={imageInputRef}
@@ -1600,22 +1600,22 @@ export default function AdminCoursesPage() {
                         value={courseFormData.image_url}
                         onChange={(e) => setCourseFormData({ ...courseFormData, image_url: e.target.value })}
                         placeholder="https://... or /assets/course-art/art-01.jpg"
-                        className="w-full bg-[#040e0a] rounded-xl p-3 text-xs text-white border border-[#65F58A]/25 focus:outline-none focus:border-[#65F58A]"
+                        className="w-full bg-[#080705] rounded-xl p-3 text-xs text-white border border-[#FF7A00]/25 focus:outline-none focus:border-[#FF7A00]"
                       />
                     </div>
                   )}
 
                   {/* Live Image Preview */}
                   {courseFormData.image_url && (
-                    <div className="flex items-center space-x-4 p-3 bg-[#040e0a] rounded-xl border border-[#65F58A]/20">
+                    <div className="flex items-center space-x-4 p-3 bg-[#080705] rounded-xl border border-[#FF7A00]/20">
                       <img
                         src={courseFormData.image_url}
                         alt="Course Poster Preview"
-                        className="w-28 h-16 object-cover rounded-lg border border-[#65F58A]/30"
+                        className="w-28 h-16 object-cover rounded-lg border border-[#FF7A00]/30"
                       />
                       <div className="text-xs font-mono">
-                        <span className="text-[#65F58A] font-bold block">Live Poster Preview</span>
-                        <span className="text-[#72A88E] text-[10px] truncate max-w-xs block">
+                        <span className="text-[#FF7A00] font-bold block">Live Poster Preview</span>
+                        <span className="text-[#A3907C] text-[10px] truncate max-w-xs block">
                           {courseFormData.image_url.slice(0, 60)}...
                         </span>
                       </div>
@@ -1624,21 +1624,21 @@ export default function AdminCoursesPage() {
                 </div>
 
                 {/* 2. Course Intro Video / Trailer */}
-                <div className="p-5 rounded-2xl bg-[#061510] border border-[#65F58A]/25 space-y-4">
+                <div className="p-5 rounded-2xl bg-[#0E0C09] border border-[#FF7A00]/25 space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <Film className="w-4 h-4 text-[#35E6B5]" />
+                      <Film className="w-4 h-4 text-[#FFA439]" />
                       <h4 className="font-bold text-sm text-white">Course Video / Trailer</h4>
                     </div>
                     {/* Toggle: Upload Video File vs Video URL */}
-                    <div className="flex items-center space-x-1 p-1 rounded-lg bg-[#040e0a] border border-[#65F58A]/20">
+                    <div className="flex items-center space-x-1 p-1 rounded-lg bg-[#080705] border border-[#FF7A00]/20">
                       <button
                         type="button"
                         onClick={() => setCourseFormData({ ...courseFormData, video_source_type: 'upload' })}
                         className={`px-3 py-1 text-xs font-mono rounded transition-colors cursor-pointer ${
                           courseFormData.video_source_type === 'upload'
-                            ? 'bg-[#65F58A] text-[#071018] font-bold'
-                            : 'text-[#72A88E] hover:text-white'
+                            ? 'bg-[#FF7A00] text-[#071018] font-bold'
+                            : 'text-[#A3907C] hover:text-white'
                         }`}
                       >
                         Upload Video File
@@ -1648,8 +1648,8 @@ export default function AdminCoursesPage() {
                         onClick={() => setCourseFormData({ ...courseFormData, video_source_type: 'url' })}
                         className={`px-3 py-1 text-xs font-mono rounded transition-colors cursor-pointer ${
                           courseFormData.video_source_type === 'url'
-                            ? 'bg-[#65F58A] text-[#071018] font-bold'
-                            : 'text-[#72A88E] hover:text-white'
+                            ? 'bg-[#FF7A00] text-[#071018] font-bold'
+                            : 'text-[#A3907C] hover:text-white'
                         }`}
                       >
                         Video URL
@@ -1658,15 +1658,15 @@ export default function AdminCoursesPage() {
                   </div>
 
                   {courseFormData.video_source_type === 'upload' ? (
-                    <div className="border-2 border-dashed border-[#65F58A]/30 hover:border-[#65F58A] rounded-xl p-6 text-center space-y-2 transition-colors">
-                      <UploadCloud className="w-8 h-8 text-[#35E6B5] mx-auto" />
+                    <div className="border-2 border-dashed border-[#FF7A00]/30 hover:border-[#FF7A00] rounded-xl p-6 text-center space-y-2 transition-colors">
+                      <UploadCloud className="w-8 h-8 text-[#FFA439] mx-auto" />
                       <div className="text-xs text-white font-medium">
                         Upload MP4 or WebM video into persistent local storage
                       </div>
-                      <p className="text-[10px] text-[#72A88E] font-mono">
+                      <p className="text-[10px] text-[#A3907C] font-mono">
                         Fast local IndexedDB playback cache
                       </p>
-                      <label className="inline-block px-4 py-2 mt-2 rounded-lg bg-[#092218] hover:bg-[#0c2a1e] text-[#35E6B5] border border-[#35E6B5]/40 text-xs font-mono font-bold cursor-pointer transition-colors">
+                      <label className="inline-block px-4 py-2 mt-2 rounded-lg bg-[#1A1208] hover:bg-[#0c2a1e] text-[#FFA439] border border-[#FFA439]/40 text-xs font-mono font-bold cursor-pointer transition-colors">
                         Browse Video File
                         <input
                           ref={videoInputRef}
@@ -1687,15 +1687,15 @@ export default function AdminCoursesPage() {
                           setVideoPreviewUrl(e.target.value);
                         }}
                         placeholder="YouTube, Vimeo, or MP4 URL (e.g. https://www.youtube.com/watch?v=...)"
-                        className="w-full bg-[#040e0a] rounded-xl p-3 text-xs text-white border border-[#65F58A]/25 focus:outline-none focus:border-[#65F58A]"
+                        className="w-full bg-[#080705] rounded-xl p-3 text-xs text-white border border-[#FF7A00]/25 focus:outline-none focus:border-[#FF7A00]"
                       />
                     </div>
                   )}
 
                   {/* Live Video Player Preview */}
                   {videoPreviewUrl && (
-                    <div className="p-3 bg-[#040e0a] rounded-xl border border-[#65F58A]/20 space-y-2">
-                      <span className="text-xs font-mono text-[#65F58A] font-bold block">
+                    <div className="p-3 bg-[#080705] rounded-xl border border-[#FF7A00]/20 space-y-2">
+                      <span className="text-xs font-mono text-[#FF7A00] font-bold block">
                         Live Video Player Preview
                       </span>
                       <div className="relative aspect-video max-w-md bg-black rounded-lg overflow-hidden border border-white/10">
@@ -1722,14 +1722,14 @@ export default function AdminCoursesPage() {
                   <button
                     type="button"
                     onClick={() => setBuilderStep(1)}
-                    className="px-4 py-2 text-xs font-mono text-[#72A88E] hover:text-white"
+                    className="px-4 py-2 text-xs font-mono text-[#A3907C] hover:text-white"
                   >
                     ← Back to Step 1
                   </button>
                   <button
                     type="button"
                     onClick={() => setBuilderStep(3)}
-                    className="px-5 py-2.5 bg-[#092218] hover:bg-[#0c2a1e] text-[#65F58A] border border-[#65F58A]/40 text-xs font-mono font-bold rounded-xl flex items-center space-x-2 transition-colors cursor-pointer"
+                    className="px-5 py-2.5 bg-[#1A1208] hover:bg-[#0c2a1e] text-[#FF7A00] border border-[#FF7A00]/40 text-xs font-mono font-bold rounded-xl flex items-center space-x-2 transition-colors cursor-pointer"
                   >
                     <span>Proceed to Step 3: Modules</span>
                     <ArrowRight className="w-4 h-4" />
@@ -1741,7 +1741,7 @@ export default function AdminCoursesPage() {
             {/* ================= STEP 3: MODULES & LESSONS BUILDER ================= */}
             {builderStep === 3 && (
               <div className="space-y-6 animate-slide-left">
-                <div className="flex items-center justify-between pb-2 border-b border-[#65F58A]/20">
+                <div className="flex items-center justify-between pb-2 border-b border-[#FF7A00]/20">
                   <h4 className="font-bold text-sm text-white">Course Modules & Sequential Units</h4>
                   <button
                     type="button"
@@ -1749,7 +1749,7 @@ export default function AdminCoursesPage() {
                       setModuleTitleInput('');
                       setModuleModalOpen(true);
                     }}
-                    className="px-3.5 py-1.5 rounded-lg bg-[#092218] hover:bg-[#0c2a1e] text-[#65F58A] border border-[#65F58A]/30 text-xs font-mono font-bold flex items-center space-x-1.5 transition-colors cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-lg bg-[#1A1208] hover:bg-[#0c2a1e] text-[#FF7A00] border border-[#FF7A00]/30 text-xs font-mono font-bold flex items-center space-x-1.5 transition-colors cursor-pointer"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Add New Module</span>
@@ -1757,16 +1757,16 @@ export default function AdminCoursesPage() {
                 </div>
 
                 {(!courseFormData.modules || courseFormData.modules.length === 0) ? (
-                  <div className="p-8 text-center rounded-2xl bg-[#061510] border border-dashed border-[#65F58A]/25 space-y-3">
-                    <BookOpen className="w-8 h-8 text-[#72A88E] mx-auto opacity-60" />
-                    <p className="text-xs text-[#72A88E]">No modules created yet.</p>
+                  <div className="p-8 text-center rounded-2xl bg-[#0E0C09] border border-dashed border-[#FF7A00]/25 space-y-3">
+                    <BookOpen className="w-8 h-8 text-[#A3907C] mx-auto opacity-60" />
+                    <p className="text-xs text-[#A3907C]">No modules created yet.</p>
                     <button
                       type="button"
                       onClick={() => {
                         setModuleTitleInput('Module 1: Architecture & Defensive Fundamentals');
                         setModuleModalOpen(true);
                       }}
-                      className="text-xs font-mono text-[#65F58A] underline cursor-pointer"
+                      className="text-xs font-mono text-[#FF7A00] underline cursor-pointer"
                     >
                       + Create First Module
                     </button>
@@ -1776,11 +1776,11 @@ export default function AdminCoursesPage() {
                     {courseFormData.modules.map((mod, modIdx) => (
                       <div
                         key={mod.id || modIdx}
-                        className="rounded-2xl bg-[#061510] border border-[#65F58A]/25 overflow-hidden"
+                        className="rounded-2xl bg-[#0E0C09] border border-[#FF7A00]/25 overflow-hidden"
                       >
-                        <div className="p-4 bg-[#092218]/60 flex items-center justify-between border-b border-[#65F58A]/15">
+                        <div className="p-4 bg-[#1A1208]/60 flex items-center justify-between border-b border-[#FF7A00]/15">
                           <div className="flex items-center space-x-3">
-                            <span className="w-6 h-6 rounded-full bg-[#65F58A] text-[#071018] font-bold text-xs flex items-center justify-center font-mono">
+                            <span className="w-6 h-6 rounded-full bg-[#FF7A00] text-[#071018] font-bold text-xs flex items-center justify-center font-mono">
                               {modIdx + 1}
                             </span>
                             <span className="font-bold text-sm text-white">{mod.title}</span>
@@ -1804,7 +1804,7 @@ export default function AdminCoursesPage() {
                                 setEditingLessonIdx(null);
                                 setLessonModalOpen(true);
                               }}
-                              className="px-2.5 py-1 text-xs font-mono bg-[#092218] hover:bg-[#0c2a1e] text-[#65F58A] border border-[#65F58A]/30 rounded-lg flex items-center space-x-1 cursor-pointer"
+                              className="px-2.5 py-1 text-xs font-mono bg-[#1A1208] hover:bg-[#0c2a1e] text-[#FF7A00] border border-[#FF7A00]/30 rounded-lg flex items-center space-x-1 cursor-pointer"
                             >
                               <Plus className="w-3 h-3" />
                               <span>Add Lesson</span>
@@ -1826,19 +1826,19 @@ export default function AdminCoursesPage() {
                           {(mod.lessons || []).map((les, lIdx) => (
                             <div
                               key={les.id || lIdx}
-                              className="p-3 rounded-xl bg-[#040e0a] border border-white/5 flex items-center justify-between text-xs"
+                              className="p-3 rounded-xl bg-[#080705] border border-white/5 flex items-center justify-between text-xs"
                             >
                               <div className="flex items-center space-x-2.5 truncate pr-2">
-                                <Play className="w-3.5 h-3.5 text-[#65F58A] flex-shrink-0" />
+                                <Play className="w-3.5 h-3.5 text-[#FF7A00] flex-shrink-0" />
                                 <span className="text-white truncate font-medium">{les.title}</span>
                                 {les.videos?.length > 0 && (
-                                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/30 flex items-center gap-1">
+                                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#FF7A00]/15 text-[#FF7A00] border border-[#FF7A00]/30 flex items-center gap-1">
                                     <Video className="w-2.5 h-2.5" />
                                     <span>{les.videos.length} Vid{les.videos.length > 1 ? 's' : ''}</span>
                                   </span>
                                 )}
                                 {les.images?.length > 0 && (
-                                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#35E6B5]/15 text-[#35E6B5] border border-[#35E6B5]/30 flex items-center gap-1">
+                                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#FFA439]/15 text-[#FFA439] border border-[#FFA439]/30 flex items-center gap-1">
                                     <ImageIcon className="w-2.5 h-2.5" />
                                     <span>{les.images.length} Img{les.images.length > 1 ? 's' : ''}</span>
                                   </span>
@@ -1850,7 +1850,7 @@ export default function AdminCoursesPage() {
                                 )}
                               </div>
 
-                              <div className="flex items-center space-x-3 flex-shrink-0 font-mono text-[11px] text-[#72A88E]">
+                              <div className="flex items-center space-x-3 flex-shrink-0 font-mono text-[11px] text-[#A3907C]">
                                 <span>{les.duration || '15 mins'}</span>
                                 <button
                                   type="button"
@@ -1864,7 +1864,7 @@ export default function AdminCoursesPage() {
                                     });
                                     setLessonModalOpen(true);
                                   }}
-                                  className="text-[#65F58A] hover:underline cursor-pointer"
+                                  className="text-[#FF7A00] hover:underline cursor-pointer"
                                 >
                                   Edit
                                 </button>
@@ -1883,8 +1883,8 @@ export default function AdminCoursesPage() {
                           ))}
 
                           {/* Knowledge Check Indicator */}
-                          <div className="p-3 rounded-xl bg-[#092218]/50 border border-[#65F58A]/25 flex items-center justify-between text-xs font-mono">
-                            <div className="flex items-center space-x-2 text-[#65F58A] font-bold">
+                          <div className="p-3 rounded-xl bg-[#1A1208]/50 border border-[#FF7A00]/25 flex items-center justify-between text-xs font-mono">
+                            <div className="flex items-center space-x-2 text-[#FF7A00] font-bold">
                               <Award className="w-4 h-4" />
                               <span>Module Knowledge Check ({mod.quiz?.questions?.length || 20} Questions)</span>
                             </div>
@@ -1894,7 +1894,7 @@ export default function AdminCoursesPage() {
                                 setActiveModuleIndex(modIdx);
                                 setBuilderStep(4);
                               }}
-                              className="text-xs text-[#65F58A] underline cursor-pointer"
+                              className="text-xs text-[#FF7A00] underline cursor-pointer"
                             >
                               Configure Exam →
                             </button>
@@ -1909,14 +1909,14 @@ export default function AdminCoursesPage() {
                   <button
                     type="button"
                     onClick={() => setBuilderStep(2)}
-                    className="px-4 py-2 text-xs font-mono text-[#72A88E] hover:text-white"
+                    className="px-4 py-2 text-xs font-mono text-[#A3907C] hover:text-white"
                   >
                     ← Back to Step 2
                   </button>
                   <button
                     type="button"
                     onClick={() => setBuilderStep(4)}
-                    className="px-5 py-2.5 bg-[#092218] hover:bg-[#0c2a1e] text-[#65F58A] border border-[#65F58A]/40 text-xs font-mono font-bold rounded-xl flex items-center space-x-2 transition-colors cursor-pointer"
+                    className="px-5 py-2.5 bg-[#1A1208] hover:bg-[#0c2a1e] text-[#FF7A00] border border-[#FF7A00]/40 text-xs font-mono font-bold rounded-xl flex items-center space-x-2 transition-colors cursor-pointer"
                   >
                     <span>Proceed to Step 4: 20-Question Exam</span>
                     <ArrowRight className="w-4 h-4" />
@@ -1928,10 +1928,10 @@ export default function AdminCoursesPage() {
             {/* ================= STEP 4: MANUAL QUESTION BUILDER & EXAM STUDIO ================= */}
             {builderStep === 4 && (
               <div className="space-y-6 animate-slide-left">
-                <div className="p-5 rounded-2xl bg-[#061510] border border-[#65F58A]/25 space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#65F58A]/20">
+                <div className="p-5 rounded-2xl bg-[#0E0C09] border border-[#FF7A00]/25 space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#FF7A00]/20">
                     <div>
-                      <span className="text-[10px] font-mono text-[#65F58A] font-bold uppercase tracking-wider block">
+                      <span className="text-[10px] font-mono text-[#FF7A00] font-bold uppercase tracking-wider block">
                         MODULE ASSESSMENT & QUESTIONS (MANUAL BUILDER)
                       </span>
                       <h4 className="font-bold text-base text-white">
@@ -1944,7 +1944,7 @@ export default function AdminCoursesPage() {
                       <select
                         value={activeModuleIndex}
                         onChange={(e) => setActiveModuleIndex(Number(e.target.value))}
-                        className="bg-[#040e0a] text-xs font-mono text-[#65F58A] px-3 py-2 rounded-xl border border-[#65F58A]/30 focus:outline-none"
+                        className="bg-[#080705] text-xs font-mono text-[#FF7A00] px-3 py-2 rounded-xl border border-[#FF7A00]/30 focus:outline-none"
                       >
                         {(courseFormData.modules || []).map((m, idx) => (
                           <option key={m.id || idx} value={idx}>
@@ -1956,7 +1956,7 @@ export default function AdminCoursesPage() {
                       <button
                         type="button"
                         onClick={handleOpenAddQuestion}
-                        className="px-4 py-2 bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-bold text-xs font-mono rounded-xl transition-all shadow-[0_0_15px_rgba(101,245,138,0.3)] flex items-center space-x-1.5 cursor-pointer flex-shrink-0"
+                        className="px-4 py-2 bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-bold text-xs font-mono rounded-xl transition-all shadow-[0_0_15px_rgba(255,122,0,0.3)] flex items-center space-x-1.5 cursor-pointer flex-shrink-0"
                       >
                         <Plus className="w-4 h-4 stroke-[3]" />
                         <span>Add Question Manually</span>
@@ -1965,13 +1965,13 @@ export default function AdminCoursesPage() {
                   </div>
 
                   {/* Manual Question Builder Top Bar */}
-                  <div className="p-4 rounded-xl bg-[#092218] border border-[#65F58A]/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-[0_0_15px_rgba(101,245,138,0.15)]">
+                  <div className="p-4 rounded-xl bg-[#1A1208] border border-[#FF7A00]/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-[0_0_15px_rgba(255,122,0,0.15)]">
                     <div className="space-y-0.5">
                       <span className="text-xs font-bold text-white flex items-center space-x-1.5 font-mono">
-                        <CheckCircle2 className="w-4 h-4 text-[#65F58A]" />
+                        <CheckCircle2 className="w-4 h-4 text-[#FF7A00]" />
                         <span>Dedicated Manual Question Authoring</span>
                       </span>
-                      <p className="text-[11px] text-[#C9EFE0]">
+                      <p className="text-[11px] text-[#E2D9CE]">
                         Enter exact custom question statements, options A/B/C/D, specify the single verified correct option, and write technical explanations.
                       </p>
                     </div>
@@ -1980,7 +1980,7 @@ export default function AdminCoursesPage() {
                       <button
                         type="button"
                         onClick={handleOpenAddQuestion}
-                        className="px-4 py-2 bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-bold text-xs font-mono rounded-lg transition-all shadow-sm flex items-center space-x-1 cursor-pointer"
+                        className="px-4 py-2 bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-bold text-xs font-mono rounded-lg transition-all shadow-sm flex items-center space-x-1 cursor-pointer"
                       >
                         <Plus className="w-3.5 h-3.5" />
                         <span>+ New Question</span>
@@ -1988,7 +1988,7 @@ export default function AdminCoursesPage() {
                       <button
                         type="button"
                         onClick={handleGenerate20Questions}
-                        className="px-3 py-2 bg-[#040e0a] hover:bg-[#071018] text-[#72A88E] hover:text-[#65F58A] text-xs font-mono rounded-lg border border-[#65F58A]/20 transition-all cursor-pointer"
+                        className="px-3 py-2 bg-[#080705] hover:bg-[#071018] text-[#A3907C] hover:text-[#FF7A00] text-xs font-mono rounded-lg border border-[#FF7A00]/20 transition-all cursor-pointer"
                         title="Load standard baseline template questions to edit manually"
                       >
                         Load Template Questions
@@ -1998,23 +1998,23 @@ export default function AdminCoursesPage() {
 
                   {/* List of Questions in Active Module */}
                   <div className="space-y-3 pt-2">
-                    <div className="flex items-center justify-between text-xs font-mono text-[#72A88E]">
+                    <div className="flex items-center justify-between text-xs font-mono text-[#A3907C]">
                       <span>
                         EXAM QUESTIONS ({activeModule?.quiz?.questions?.length || 0} Total in Pool)
                       </span>
-                      <span className="text-[#65F58A]">
+                      <span className="text-[#FF7A00]">
                         Minimum Passing Criteria: 80%
                       </span>
                     </div>
 
                     {(!activeModule?.quiz?.questions || activeModule.quiz.questions.length === 0) ? (
-                      <div className="p-8 text-center rounded-2xl bg-[#040e0a] border border-dashed border-[#65F58A]/20 space-y-3">
-                        <HelpCircle className="w-8 h-8 text-[#72A88E] mx-auto opacity-60" />
-                        <p className="text-xs text-[#72A88E]">No questions added to this module yet.</p>
+                      <div className="p-8 text-center rounded-2xl bg-[#080705] border border-dashed border-[#FF7A00]/20 space-y-3">
+                        <HelpCircle className="w-8 h-8 text-[#A3907C] mx-auto opacity-60" />
+                        <p className="text-xs text-[#A3907C]">No questions added to this module yet.</p>
                         <button
                           type="button"
                           onClick={handleOpenAddQuestion}
-                          className="px-4 py-2 bg-[#65F58A] text-[#071018] font-bold text-xs font-mono rounded-xl hover:bg-[#35E6B5] transition-all cursor-pointer inline-flex items-center space-x-1.5"
+                          className="px-4 py-2 bg-[#FF7A00] text-[#071018] font-bold text-xs font-mono rounded-xl hover:bg-[#FFA439] transition-all cursor-pointer inline-flex items-center space-x-1.5"
                         >
                           <Plus className="w-3.5 h-3.5" />
                           <span>Add First Question Manually</span>
@@ -2024,7 +2024,7 @@ export default function AdminCoursesPage() {
                       (activeModule?.quiz?.questions || []).map((q, qIdx) => (
                         <div
                           key={q.id || qIdx}
-                          className="p-4 rounded-xl bg-[#040e0a] border border-[#65F58A]/20 space-y-3 text-xs"
+                          className="p-4 rounded-xl bg-[#080705] border border-[#FF7A00]/20 space-y-3 text-xs"
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div className="space-y-1">
@@ -2033,13 +2033,13 @@ export default function AdminCoursesPage() {
                               </span>
                             </div>
                             <div className="flex items-center space-x-2 flex-shrink-0">
-                              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30 font-bold">
+                              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#FF7A00]/10 text-[#FF7A00] border border-[#FF7A00]/30 font-bold">
                                 {q.points || 1} Point{(q.points || 1) > 1 ? 's' : ''}
                               </span>
                               <button
                                 type="button"
                                 onClick={() => handleOpenEditQuestion(q, qIdx)}
-                                className="p-1.5 rounded-lg bg-[#092218] hover:bg-[#0c2a1e] text-[#65F58A] border border-[#65F58A]/30 transition-colors"
+                                className="p-1.5 rounded-lg bg-[#1A1208] hover:bg-[#0c2a1e] text-[#FF7A00] border border-[#FF7A00]/30 transition-colors"
                                 title="Edit Question"
                               >
                                 <Edit3 className="w-3.5 h-3.5" />
@@ -2061,8 +2061,8 @@ export default function AdminCoursesPage() {
                                 key={opt.id || oIdx}
                                 className={`p-2.5 rounded-xl border text-[11px] font-mono flex items-center justify-between ${
                                   opt.is_correct
-                                    ? 'bg-[#092218] border-[#65F58A] text-[#65F58A] font-bold shadow-[0_0_10px_rgba(101,245,138,0.2)]'
-                                    : 'bg-[#061510] border-white/5 text-[#8BA2B5]'
+                                    ? 'bg-[#1A1208] border-[#FF7A00] text-[#FF7A00] font-bold shadow-[0_0_10px_rgba(255,122,0,0.2)]'
+                                    : 'bg-[#0E0C09] border-white/5 text-[#8BA2B5]'
                                 }`}
                               >
                                 <span>
@@ -2070,7 +2070,7 @@ export default function AdminCoursesPage() {
                                   {opt.text}
                                 </span>
                                 {opt.is_correct && (
-                                  <span className="text-[10px] font-bold text-[#65F58A] px-1.5 py-0.5 rounded bg-[#65F58A]/15 border border-[#65F58A]/30">
+                                  <span className="text-[10px] font-bold text-[#FF7A00] px-1.5 py-0.5 rounded bg-[#FF7A00]/15 border border-[#FF7A00]/30">
                                     CORRECT
                                   </span>
                                 )}
@@ -2078,7 +2078,7 @@ export default function AdminCoursesPage() {
                             ))}
                           </div>
 
-                          <div className="text-[11px] text-[#72A88E] font-mono p-2.5 rounded-lg bg-[#061510] border border-[#65F58A]/10">
+                          <div className="text-[11px] text-[#A3907C] font-mono p-2.5 rounded-lg bg-[#0E0C09] border border-[#FF7A00]/10">
                             <strong className="text-white">Explanation: </strong>
                             <span>{q.explanation || 'No explanation provided.'}</span>
                           </div>
@@ -2092,7 +2092,7 @@ export default function AdminCoursesPage() {
                   <button
                     type="button"
                     onClick={() => setBuilderStep(3)}
-                    className="px-4 py-2 text-xs font-mono text-[#72A88E] hover:text-white"
+                    className="px-4 py-2 text-xs font-mono text-[#A3907C] hover:text-white"
                   >
                     ← Back to Step 3
                   </button>
@@ -2100,7 +2100,7 @@ export default function AdminCoursesPage() {
                     type="button"
                     disabled={isSaving}
                     onClick={handleSaveCourse}
-                    className="px-6 py-3 bg-[#65F58A] hover:bg-[#35E6B5] disabled:opacity-60 text-[#071018] font-bold text-xs font-mono rounded-xl flex items-center space-x-2 transition-all shadow-[0_0_20px_rgba(101,245,138,0.4)] cursor-pointer"
+                    className="px-6 py-3 bg-[#FF7A00] hover:bg-[#FFA439] disabled:opacity-60 text-[#071018] font-bold text-xs font-mono rounded-xl flex items-center space-x-2 transition-all shadow-[0_0_20px_rgba(255,122,0,0.4)] cursor-pointer"
                   >
                     {isSaving ? (
                       <>
@@ -2124,16 +2124,16 @@ export default function AdminCoursesPage() {
       {/* ================= MODAL: ADD / EDIT MODULE ================= */}
       {moduleModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="max-w-md w-full p-6 rounded-2xl bg-[#061510] border border-[#65F58A]/30 space-y-4">
+          <div className="max-w-md w-full p-6 rounded-2xl bg-[#0E0C09] border border-[#FF7A00]/30 space-y-4">
             <h3 className="font-bold text-base text-white">Create New Curriculum Module</h3>
             <div className="space-y-1">
-              <label className="text-xs font-mono text-[#72A88E]">Module Title *</label>
+              <label className="text-xs font-mono text-[#A3907C]">Module Title *</label>
               <input
                 type="text"
                 value={moduleTitleInput}
                 onChange={(e) => setModuleTitleInput(e.target.value)}
                 placeholder="e.g. Module 2: Threat Detection & MITRE ATT&CK"
-                className="w-full bg-[#040e0a] rounded-xl p-3 text-xs text-white border border-[#65F58A]/25 focus:outline-none focus:border-[#65F58A]"
+                className="w-full bg-[#080705] rounded-xl p-3 text-xs text-white border border-[#FF7A00]/25 focus:outline-none focus:border-[#FF7A00]"
               />
             </div>
             <div className="flex justify-end space-x-3 pt-2">
@@ -2147,7 +2147,7 @@ export default function AdminCoursesPage() {
               <button
                 type="button"
                 onClick={handleAddModule}
-                className="px-4 py-2 rounded-xl bg-[#65F58A] text-[#071018] font-bold text-xs font-mono cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[#FF7A00] text-[#071018] font-bold text-xs font-mono cursor-pointer"
               >
                 Add Module
               </button>
@@ -2159,48 +2159,48 @@ export default function AdminCoursesPage() {
       {/* ================= MODAL: ADD / EDIT LESSON ================= */}
       {lessonModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="max-w-xl w-full p-6 rounded-2xl bg-[#061510] border border-[#65F58A]/30 space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+          <div className="max-w-xl w-full p-6 rounded-2xl bg-[#0E0C09] border border-[#FF7A00]/30 space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
             <h3 className="font-bold text-base text-white">
               {editingLessonIdx !== null ? 'Edit Lesson' : 'Add New Instructional Lesson'}
             </h3>
 
             <div className="space-y-1">
-              <label className="text-xs font-mono text-[#72A88E]">Lesson Title *</label>
+              <label className="text-xs font-mono text-[#A3907C]">Lesson Title *</label>
               <input
                 type="text"
                 value={lessonForm.title}
                 onChange={(e) => setLessonForm({ ...lessonForm, title: e.target.value })}
                 placeholder="e.g. 1.2 Telemetry Ingestion & Filtering"
-                className="w-full bg-[#040e0a] rounded-xl p-3 text-xs text-white border border-[#65F58A]/25 focus:outline-none focus:border-[#65F58A]"
+                className="w-full bg-[#080705] rounded-xl p-3 text-xs text-white border border-[#FF7A00]/25 focus:outline-none focus:border-[#FF7A00]"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-xs font-mono text-[#72A88E]">Duration</label>
+                <label className="text-xs font-mono text-[#A3907C]">Duration</label>
                 <input
                   type="text"
                   value={lessonForm.duration}
                   onChange={(e) => setLessonForm({ ...lessonForm, duration: e.target.value })}
                   placeholder="15 mins"
-                  className="w-full bg-[#040e0a] rounded-xl p-3 text-xs text-white border border-[#65F58A]/25 focus:outline-none focus:border-[#65F58A]"
+                  className="w-full bg-[#080705] rounded-xl p-3 text-xs text-white border border-[#FF7A00]/25 focus:outline-none focus:border-[#FF7A00]"
                 />
               </div>
 
             {/* 1. Multiple Local Video Uploads (Direct from Computer) */}
-            <div className="p-3.5 bg-[#040e0a] rounded-xl border border-[#65F58A]/25 space-y-3">
+            <div className="p-3.5 bg-[#080705] rounded-xl border border-[#FF7A00]/25 space-y-3">
               <div className="flex items-center justify-between">
                 <div>
                   <span className="text-xs font-mono font-bold text-white flex items-center gap-1.5">
-                    <Video className="w-4 h-4 text-[#65F58A]" />
+                    <Video className="w-4 h-4 text-[#FF7A00]" />
                     <span>Lesson Videos (Upload from Device)</span>
                   </span>
-                  <span className="text-[10px] text-[#72A88E] block">
+                  <span className="text-[10px] text-[#A3907C] block">
                     Attach multiple MP4/WebM videos directly from your system
                   </span>
                 </div>
 
-                <label className="px-3 py-1.5 bg-[#092218] hover:bg-[#0c2a1e] text-[#65F58A] border border-[#65F58A]/40 rounded-lg text-xs font-mono font-bold cursor-pointer flex items-center space-x-1.5 transition-colors">
+                <label className="px-3 py-1.5 bg-[#1A1208] hover:bg-[#0c2a1e] text-[#FF7A00] border border-[#FF7A00]/40 rounded-lg text-xs font-mono font-bold cursor-pointer flex items-center space-x-1.5 transition-colors">
                   {uploadingLessonVideo ? (
                     <>
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -2233,10 +2233,10 @@ export default function AdminCoursesPage() {
                   {lessonForm.videos.map((vid, vIdx) => (
                     <div
                       key={vid.id || vIdx}
-                      className="p-2.5 rounded-lg bg-[#061510] border border-[#65F58A]/20 flex items-center justify-between gap-3 text-xs"
+                      className="p-2.5 rounded-lg bg-[#0E0C09] border border-[#FF7A00]/20 flex items-center justify-between gap-3 text-xs"
                     >
                       <div className="flex items-center space-x-2 truncate flex-1">
-                        <Video className="w-4 h-4 text-[#65F58A] flex-shrink-0" />
+                        <Video className="w-4 h-4 text-[#FF7A00] flex-shrink-0" />
                         <div className="truncate flex-1">
                           <input
                             type="text"
@@ -2247,9 +2247,9 @@ export default function AdminCoursesPage() {
                               setLessonForm({ ...lessonForm, videos: updated });
                             }}
                             placeholder="Video Title / Caption"
-                            className="w-full bg-transparent text-xs text-white font-mono focus:outline-none focus:border-b border-[#65F58A]"
+                            className="w-full bg-transparent text-xs text-white font-mono focus:outline-none focus:border-b border-[#FF7A00]"
                           />
-                          <span className="text-[10px] text-[#72A88E] font-mono block">
+                          <span className="text-[10px] text-[#A3907C] font-mono block">
                             {vid.name} • {vid.size || 'Local File'}
                           </span>
                         </div>
@@ -2270,19 +2270,19 @@ export default function AdminCoursesPage() {
             </div>
 
             {/* 2. Multiple Local Image / Diagram Uploads (Direct from Computer) */}
-            <div className="p-3.5 bg-[#040e0a] rounded-xl border border-[#65F58A]/25 space-y-3">
+            <div className="p-3.5 bg-[#080705] rounded-xl border border-[#FF7A00]/25 space-y-3">
               <div className="flex items-center justify-between">
                 <div>
                   <span className="text-xs font-mono font-bold text-white flex items-center gap-1.5">
-                    <ImageIcon className="w-4 h-4 text-[#35E6B5]" />
+                    <ImageIcon className="w-4 h-4 text-[#FFA439]" />
                     <span>Instructional Diagrams & Images (Upload from Device)</span>
                   </span>
-                  <span className="text-[10px] text-[#72A88E] block">
+                  <span className="text-[10px] text-[#A3907C] block">
                     Attach network topologies, packet captures, and flowcharts
                   </span>
                 </div>
 
-                <label className="px-3 py-1.5 bg-[#092218] hover:bg-[#0c2a1e] text-[#35E6B5] border border-[#35E6B5]/40 rounded-lg text-xs font-mono font-bold cursor-pointer flex items-center space-x-1.5 transition-colors">
+                <label className="px-3 py-1.5 bg-[#1A1208] hover:bg-[#0c2a1e] text-[#FFA439] border border-[#FFA439]/40 rounded-lg text-xs font-mono font-bold cursor-pointer flex items-center space-x-1.5 transition-colors">
                   {uploadingLessonImage ? (
                     <>
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -2315,7 +2315,7 @@ export default function AdminCoursesPage() {
                   {lessonForm.images.map((img, iIdx) => (
                     <div
                       key={img.id || iIdx}
-                      className="p-2 rounded-lg bg-[#061510] border border-[#35E6B5]/20 flex items-center gap-2.5 text-xs"
+                      className="p-2 rounded-lg bg-[#0E0C09] border border-[#FFA439]/20 flex items-center gap-2.5 text-xs"
                     >
                       <img
                         src={img.url}
@@ -2332,9 +2332,9 @@ export default function AdminCoursesPage() {
                             setLessonForm({ ...lessonForm, images: updated });
                           }}
                           placeholder="Diagram Caption"
-                          className="w-full bg-transparent text-xs text-white font-mono focus:outline-none focus:border-b border-[#35E6B5]"
+                          className="w-full bg-transparent text-xs text-white font-mono focus:outline-none focus:border-b border-[#FFA439]"
                         />
-                        <span className="text-[10px] text-[#72A88E] font-mono block">
+                        <span className="text-[10px] text-[#A3907C] font-mono block">
                           {img.name} • {img.size || 'Image'}
                         </span>
                       </div>
@@ -2354,21 +2354,21 @@ export default function AdminCoursesPage() {
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-mono text-[#72A88E]">Instructional Notes (Markdown)</label>
+              <label className="text-xs font-mono text-[#A3907C]">Instructional Notes (Markdown)</label>
               <textarea
                 rows={4}
                 value={lessonForm.content}
                 onChange={(e) => setLessonForm({ ...lessonForm, content: e.target.value })}
                 placeholder="Markdown text, commands, and operational procedures."
-                className="w-full bg-[#040e0a] rounded-xl p-3 text-xs text-white border border-[#65F58A]/25 focus:outline-none focus:border-[#65F58A]"
+                className="w-full bg-[#080705] rounded-xl p-3 text-xs text-white border border-[#FF7A00]/25 focus:outline-none focus:border-[#FF7A00]"
               />
             </div>
 
             {/* Optional PDF Attachment */}
-            <div className="p-3 bg-[#040e0a] rounded-xl border border-[#65F58A]/20 space-y-2">
+            <div className="p-3 bg-[#080705] rounded-xl border border-[#FF7A00]/20 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-mono text-[#72A88E]">Attach Optional PDF Guide</span>
-                <label className="px-3 py-1 bg-[#092218] text-[#35E6B5] border border-[#35E6B5]/30 rounded-lg text-xs font-mono cursor-pointer">
+                <span className="text-xs font-mono text-[#A3907C]">Attach Optional PDF Guide</span>
+                <label className="px-3 py-1 bg-[#1A1208] text-[#FFA439] border border-[#FFA439]/30 rounded-lg text-xs font-mono cursor-pointer">
                   Browse PDF
                   <input
                     ref={lessonPdfRef}
@@ -2380,7 +2380,7 @@ export default function AdminCoursesPage() {
                 </label>
               </div>
               {lessonForm.pdf_attachment && (
-                <div className="text-xs font-mono text-[#35E6B5]">
+                <div className="text-xs font-mono text-[#FFA439]">
                   Attached: {lessonForm.pdf_attachment.name} ({lessonForm.pdf_attachment.size})
                 </div>
               )}
@@ -2397,7 +2397,7 @@ export default function AdminCoursesPage() {
               <button
                 type="button"
                 onClick={handleSaveLesson}
-                className="px-4 py-2 rounded-xl bg-[#65F58A] text-[#071018] font-bold text-xs font-mono cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[#FF7A00] text-[#071018] font-bold text-xs font-mono cursor-pointer"
               >
                 Save Lesson
               </button>
@@ -2408,10 +2408,10 @@ export default function AdminCoursesPage() {
       {/* ================= MODAL: ADD / EDIT QUESTION MANUALLY ================= */}
       {questionModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="max-w-2xl w-full p-6 rounded-2xl bg-[#061510] border border-[#65F58A]/30 space-y-4 max-h-[92vh] overflow-y-auto custom-scrollbar shadow-2xl">
-            <div className="flex items-center justify-between border-b border-[#65F58A]/20 pb-3">
+          <div className="max-w-2xl w-full p-6 rounded-2xl bg-[#0E0C09] border border-[#FF7A00]/30 space-y-4 max-h-[92vh] overflow-y-auto custom-scrollbar shadow-2xl">
+            <div className="flex items-center justify-between border-b border-[#FF7A00]/20 pb-3">
               <div>
-                <span className="text-[10px] font-mono text-[#65F58A] font-bold uppercase tracking-wider block">
+                <span className="text-[10px] font-mono text-[#FF7A00] font-bold uppercase tracking-wider block">
                   MANUAL QUESTION AUTHORING
                 </span>
                 <h3 className="font-bold text-base text-white">
@@ -2429,7 +2429,7 @@ export default function AdminCoursesPage() {
 
             {/* Question Statement */}
             <div className="space-y-1">
-              <label className="text-xs font-mono text-[#72A88E] flex items-center justify-between">
+              <label className="text-xs font-mono text-[#A3907C] flex items-center justify-between">
                 <span>Question Statement / Problem Text *</span>
                 <span className="text-[10px] text-slate-400">Clear & unambiguous</span>
               </label>
@@ -2439,17 +2439,17 @@ export default function AdminCoursesPage() {
                 value={questionForm.text}
                 onChange={(e) => setQuestionForm({ ...questionForm, text: e.target.value })}
                 placeholder="e.g. Which Wireshark filter syntax isolates all TCP SYN packets with no ACK flag set?"
-                className="w-full bg-[#040e0a] rounded-xl p-3 text-xs text-white border border-[#65F58A]/25 focus:outline-none focus:border-[#65F58A]"
+                className="w-full bg-[#080705] rounded-xl p-3 text-xs text-white border border-[#FF7A00]/25 focus:outline-none focus:border-[#FF7A00]"
               />
             </div>
 
             {/* Four Options with Radio Button to Designate Correct Answer */}
             <div className="space-y-3 pt-1">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-mono text-[#72A88E]">
+                <label className="text-xs font-mono text-[#A3907C]">
                   Answer Choices (Select the Radio Button for the Verified Correct Option) *
                 </label>
-                <span className="text-[10px] font-mono text-[#65F58A]">
+                <span className="text-[10px] font-mono text-[#FF7A00]">
                   Option {String.fromCharCode(65 + questionForm.correctIndex)} is designated Correct
                 </span>
               </div>
@@ -2466,8 +2466,8 @@ export default function AdminCoursesPage() {
                     key={opt.key}
                     className={`p-3 rounded-xl border transition-all ${
                       isSelected
-                        ? 'bg-[#092218] border-[#65F58A] shadow-[0_0_12px_rgba(101,245,138,0.15)]'
-                        : 'bg-[#040e0a] border-[#65F58A]/20'
+                        ? 'bg-[#1A1208] border-[#FF7A00] shadow-[0_0_12px_rgba(255,122,0,0.15)]'
+                        : 'bg-[#080705] border-[#FF7A00]/20'
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -2477,12 +2477,12 @@ export default function AdminCoursesPage() {
                         name="correct_answer_choice"
                         checked={isSelected}
                         onChange={() => setQuestionForm({ ...questionForm, correctIndex: opt.index })}
-                        className="w-4 h-4 accent-[#65F58A] cursor-pointer"
+                        className="w-4 h-4 accent-[#FF7A00] cursor-pointer"
                       />
                       <label
                         htmlFor={`radio_${opt.key}`}
                         className={`text-xs font-mono font-bold cursor-pointer w-20 flex-shrink-0 ${
-                          isSelected ? 'text-[#65F58A]' : 'text-slate-300'
+                          isSelected ? 'text-[#FF7A00]' : 'text-slate-300'
                         }`}
                       >
                         {opt.label}:
@@ -2495,7 +2495,7 @@ export default function AdminCoursesPage() {
                         className="flex-1 bg-transparent text-xs text-white placeholder-slate-500 focus:outline-none"
                       />
                       {isSelected && (
-                        <span className="text-[10px] font-mono font-bold text-[#65F58A] px-2 py-0.5 rounded bg-[#65F58A]/10 border border-[#65F58A]/30 flex-shrink-0">
+                        <span className="text-[10px] font-mono font-bold text-[#FF7A00] px-2 py-0.5 rounded bg-[#FF7A00]/10 border border-[#FF7A00]/30 flex-shrink-0">
                           CORRECT
                         </span>
                       )}
@@ -2508,19 +2508,19 @@ export default function AdminCoursesPage() {
             {/* Points & Explanation */}
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 pt-1">
               <div className="sm:col-span-1 space-y-1">
-                <label className="text-xs font-mono text-[#72A88E]">Points</label>
+                <label className="text-xs font-mono text-[#A3907C]">Points</label>
                 <input
                   type="number"
                   min={1}
                   max={100}
                   value={questionForm.points}
                   onChange={(e) => setQuestionForm({ ...questionForm, points: Number(e.target.value) || 1 })}
-                  className="w-full bg-[#040e0a] rounded-xl p-3 text-xs text-white border border-[#65F58A]/25 focus:outline-none focus:border-[#65F58A]"
+                  className="w-full bg-[#080705] rounded-xl p-3 text-xs text-white border border-[#FF7A00]/25 focus:outline-none focus:border-[#FF7A00]"
                 />
               </div>
 
               <div className="sm:col-span-3 space-y-1">
-                <label className="text-xs font-mono text-[#72A88E]">
+                <label className="text-xs font-mono text-[#A3907C]">
                   Technical Explanation / Rationale *
                 </label>
                 <textarea
@@ -2528,13 +2528,13 @@ export default function AdminCoursesPage() {
                   value={questionForm.explanation}
                   onChange={(e) => setQuestionForm({ ...questionForm, explanation: e.target.value })}
                   placeholder="Explain why the selected option is correct and why other choices are invalid."
-                  className="w-full bg-[#040e0a] rounded-xl p-3 text-xs text-white border border-[#65F58A]/25 focus:outline-none focus:border-[#65F58A]"
+                  className="w-full bg-[#080705] rounded-xl p-3 text-xs text-white border border-[#FF7A00]/25 focus:outline-none focus:border-[#FF7A00]"
                 />
               </div>
             </div>
 
             {/* Actions */}
-            <div className="flex justify-end space-x-3 pt-3 border-t border-[#65F58A]/20">
+            <div className="flex justify-end space-x-3 pt-3 border-t border-[#FF7A00]/20">
               <button
                 type="button"
                 onClick={() => setQuestionModalOpen(false)}
@@ -2545,7 +2545,7 @@ export default function AdminCoursesPage() {
               <button
                 type="button"
                 onClick={handleSaveQuestion}
-                className="px-5 py-2.5 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-bold text-xs font-mono flex items-center space-x-1.5 transition-all shadow-[0_0_15px_rgba(101,245,138,0.35)] cursor-pointer"
+                className="px-5 py-2.5 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-bold text-xs font-mono flex items-center space-x-1.5 transition-all shadow-[0_0_15px_rgba(255,122,0,0.35)] cursor-pointer"
               >
                 <Check className="w-4 h-4 stroke-[3]" />
                 <span>Save Question to Assessment</span>
@@ -2557,19 +2557,19 @@ export default function AdminCoursesPage() {
       {/* ================= MODAL: COURSE CREATED / UPDATED SUCCESS POP-UP ================= */}
       {successModalData?.isOpen && (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
-          <div className="max-w-lg w-full p-8 rounded-3xl bg-[#061510] border-2 border-[#65F58A]/50 shadow-[0_0_60px_rgba(101,245,138,0.25)] space-y-6 text-center relative overflow-hidden">
+          <div className="max-w-lg w-full p-8 rounded-3xl bg-[#0E0C09] border-2 border-[#FF7A00]/50 shadow-[0_0_60px_rgba(255,122,0,0.25)] space-y-6 text-center relative overflow-hidden">
             {/* Ambient Corner Glows */}
-            <div className="absolute -top-24 -left-24 w-48 h-48 bg-[#65F58A]/15 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-[#35E6B5]/15 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -top-24 -left-24 w-48 h-48 bg-[#FF7A00]/15 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-[#FFA439]/15 rounded-full blur-3xl pointer-events-none" />
 
             {/* Glowing Icon Badge */}
-            <div className="relative mx-auto w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#092218] to-[#0d3324] border border-[#65F58A]/50 flex items-center justify-center shadow-[0_0_25px_rgba(101,245,138,0.35)]">
-              <CheckCircle2 className="w-9 h-9 text-[#65F58A] animate-pulse" />
+            <div className="relative mx-auto w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#1A1208] to-[#0d3324] border border-[#FF7A00]/50 flex items-center justify-center shadow-[0_0_25px_rgba(255,122,0,0.35)]">
+              <CheckCircle2 className="w-9 h-9 text-[#FF7A00] animate-pulse" />
             </div>
 
             {/* Status Pill */}
-            <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full text-[11px] font-mono border border-[#65F58A]/35 bg-[#092218]/90 text-[#65F58A]">
-              <span className="w-2 h-2 rounded-full bg-[#65F58A] animate-ping" />
+            <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full text-[11px] font-mono border border-[#FF7A00]/35 bg-[#1A1208]/90 text-[#FF7A00]">
+              <span className="w-2 h-2 rounded-full bg-[#FF7A00] animate-ping" />
               <span>{successModalData.isNew ? 'CURRICULUM CREATED & PUBLISHED' : 'CURRICULUM SYNCHRONIZED'}</span>
             </div>
 
@@ -2580,24 +2580,24 @@ export default function AdminCoursesPage() {
                   ? 'Your Course Has Been Created!'
                   : 'Course Updated Successfully!'}
               </h3>
-              <p className="text-xs sm:text-sm text-[#C9EFE0] leading-relaxed font-lora">
+              <p className="text-xs sm:text-sm text-[#E2D9CE] leading-relaxed font-lora">
                 {successModalData.message}
               </p>
             </div>
 
             {/* Metadata Summary Card */}
-            <div className="p-4 rounded-xl bg-[#040e0a] border border-[#65F58A]/20 text-left space-y-2 font-mono text-xs">
+            <div className="p-4 rounded-xl bg-[#080705] border border-[#FF7A00]/20 text-left space-y-2 font-mono text-xs">
               <div className="flex justify-between items-center text-slate-400">
                 <span>Course Title:</span>
                 <span className="text-white font-bold truncate max-w-[240px] text-right">{successModalData.title}</span>
               </div>
               <div className="flex justify-between items-center text-slate-400">
                 <span>Catalog Status:</span>
-                <span className="text-[#65F58A] font-bold">PUBLISHED • ACTIVE</span>
+                <span className="text-[#FF7A00] font-bold">PUBLISHED • ACTIVE</span>
               </div>
               <div className="flex justify-between items-center text-slate-400">
                 <span>Sync Network:</span>
-                <span className="text-[#35E6B5]">PostgreSQL & Socket.io Live</span>
+                <span className="text-[#FFA439]">PostgreSQL & Socket.io Live</span>
               </div>
             </div>
 
@@ -2608,14 +2608,14 @@ export default function AdminCoursesPage() {
                   to={successModalData.slug ? `/courses/${successModalData.slug}` : '/courses'}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 py-3 rounded-xl bg-[#65F58A] hover:bg-[#35E6B5] text-[#071018] font-bold text-xs font-mono flex items-center justify-center space-x-2 transition-all shadow-[0_0_15px_rgba(101,245,138,0.3)] cursor-pointer"
+                  className="px-4 py-3 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-bold text-xs font-mono flex items-center justify-center space-x-2 transition-all shadow-[0_0_15px_rgba(255,122,0,0.3)] cursor-pointer"
                 >
                   <Eye className="w-4 h-4" />
                   <span>View in Catalog</span>
                 </Link>
                 <Link
                   to="/student"
-                  className="px-4 py-3 rounded-xl bg-[#092218] hover:bg-[#0c2a1e] border border-[#65F58A]/40 text-[#65F58A] hover:text-white font-bold text-xs font-mono flex items-center justify-center space-x-2 transition-all cursor-pointer"
+                  className="px-4 py-3 rounded-xl bg-[#1A1208] hover:bg-[#0c2a1e] border border-[#FF7A00]/40 text-[#FF7A00] hover:text-white font-bold text-xs font-mono flex items-center justify-center space-x-2 transition-all cursor-pointer"
                 >
                   <BookOpen className="w-4 h-4" />
                   <span>Student Portal</span>
@@ -2625,7 +2625,7 @@ export default function AdminCoursesPage() {
               <button
                 type="button"
                 onClick={() => setSuccessModalData(null)}
-                className="w-full py-2.5 text-xs font-mono text-[#72A88E] hover:text-white transition-colors cursor-pointer"
+                className="w-full py-2.5 text-xs font-mono text-[#A3907C] hover:text-white transition-colors cursor-pointer"
               >
                 Continue Managing in Studio
               </button>

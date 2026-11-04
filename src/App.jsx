@@ -10,7 +10,9 @@ import AdminRoute from './components/auth/AdminRoute';
 
 import HomePage from './pages/public/HomePage';
 import CyberAcademyPage from './pages/public/CyberAcademyPage';
+import CyberCourseDetailPage from './pages/public/CyberCourseDetailPage';
 import PsychologyAcademyPage from './pages/public/PsychologyAcademyPage';
+import PsychologyCourseDetailPage from './pages/public/PsychologyCourseDetailPage';
 import LearningPathsPage from './pages/public/LearningPathsPage';
 import CourseCatalogPage from './pages/public/CourseCatalogPage';
 import CourseDetailPage from './pages/public/CourseDetailPage';
@@ -18,6 +20,8 @@ import VerifyCredentialPage from './pages/public/VerifyCredentialPage';
 import LoginPage from './pages/public/LoginPage';
 
 import StudentDashboard from './pages/student/StudentDashboard';
+import CyberStudentDashboard from './pages/student/CyberStudentDashboard';
+import PsychologyStudentDashboard from './pages/student/PsychologyStudentDashboard';
 import LessonPlayerPage from './pages/student/LessonPlayerPage';
 import QuizAssessmentPage from './pages/student/QuizAssessmentPage';
 import TokenWalletPage from './pages/student/TokenWalletPage';
@@ -65,9 +69,31 @@ export default function App() {
       <Routes>
         {/* Dedicated Themed Academy Division Portals (Autonomous Themes & Layouts) */}
         <Route path="academy/cybersecurity" element={<CyberAcademyPage />} />
+        <Route path="academy/cybersecurity/courses/:slug" element={<CyberCourseDetailPage />} />
+        <Route
+          path="academy/cybersecurity/student"
+          element={
+            <ProtectedRoute>
+              <CyberStudentDashboard />
+            </ProtectedRoute>
+          }
+        />
         <Route path="academy/psychology" element={<PsychologyAcademyPage />} />
+        <Route path="academy/psychology/courses/:slug" element={<PsychologyCourseDetailPage />} />
+        <Route
+          path="academy/psychology/student"
+          element={
+            <ProtectedRoute>
+              <PsychologyStudentDashboard />
+            </ProtectedRoute>
+          }
+        />
         <Route path="cyber" element={<Navigate to="/academy/cybersecurity" replace />} />
+        <Route path="cyber/courses/:slug" element={<Navigate to="/academy/cybersecurity/courses/:slug" replace />} />
+        <Route path="cyber/student" element={<Navigate to="/academy/cybersecurity/student" replace />} />
         <Route path="psychology" element={<Navigate to="/academy/psychology" replace />} />
+        <Route path="psychology/courses/:slug" element={<Navigate to="/academy/psychology/courses/:slug" replace />} />
+        <Route path="psychology/student" element={<Navigate to="/academy/psychology/student" replace />} />
 
         {/* Public Website & Standard Student Portal Routes (Responsive) */}
         <Route path="/" element={<PublicLayout />}>

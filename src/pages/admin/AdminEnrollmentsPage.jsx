@@ -97,7 +97,7 @@ export default function AdminEnrollmentsPage() {
 
         <button
           onClick={() => setCohortModalOpen(true)}
-          className="flex items-center space-x-1.5 px-4 py-2 bg-[#65F58A] text-[#071018] font-bold text-xs rounded-lg hover:bg-[#52d674]"
+          className="flex items-center space-x-1.5 px-4 py-2 bg-[#FF7A00] text-[#071018] font-bold text-xs rounded-lg hover:bg-[#52d674]"
         >
           <Plus className="w-4 h-4" />
           <span>Create Cohort Batch</span>
@@ -113,14 +113,14 @@ export default function AdminEnrollmentsPage() {
           >
             <div className="flex items-start justify-between">
               <div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30 mb-2 inline-block">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#FF7A00]/10 text-[#FF7A00] border border-[#FF7A00]/30 mb-2 inline-block">
                   {cohort.id}
                 </span>
                 <h4 className="text-base font-bold text-white font-lora">{cohort.name}</h4>
                 <p className="text-xs text-[#8BA2B5] mt-0.5">{cohort.course_title}</p>
               </div>
 
-              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#35E6B5]/10 text-[#35E6B5] border border-[#35E6B5]/30">
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FFA439]/10 text-[#FFA439] border border-[#FFA439]/30">
                 {cohort.status}
               </span>
             </div>
@@ -137,7 +137,7 @@ export default function AdminEnrollmentsPage() {
               </div>
               <div>
                 <span className="text-[#8BA2B5] text-[10px] block">AVG PROGRESS</span>
-                <span className="text-[#65F58A] font-bold">{cohort.avg_progress}%</span>
+                <span className="text-[#FF7A00] font-bold">{cohort.avg_progress}%</span>
               </div>
             </div>
 
@@ -149,7 +149,7 @@ export default function AdminEnrollmentsPage() {
               </div>
               <div className="w-full bg-[#1B2530] h-2 rounded-full overflow-hidden">
                 <div
-                  className="bg-[#65F58A] h-full rounded-full transition-all"
+                  className="bg-[#FF7A00] h-full rounded-full transition-all"
                   style={{ width: `${cohort.avg_progress}%` }}
                 />
               </div>
@@ -214,7 +214,7 @@ export default function AdminEnrollmentsPage() {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 bg-[#65F58A] text-[#071018] text-xs font-bold rounded hover:bg-[#52d674]"
+                  className="px-4 py-1.5 bg-[#FF7A00] text-[#071018] text-xs font-bold rounded hover:bg-[#52d674]"
                 >
                   Provision Cohort
                 </button>

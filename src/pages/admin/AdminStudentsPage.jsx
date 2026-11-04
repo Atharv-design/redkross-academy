@@ -223,11 +223,11 @@ export default function AdminStudentsPage() {
   return (
     <div className="space-y-6 animate-slide-left font-lora">
       {/* Top Filter and Actions Toolbar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 cyber-glass-panel p-4 rounded-xl border border-[#65F58A]/25 backdrop-blur-xl bg-[#081a13]/70">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 cyber-glass-panel p-4 rounded-xl border border-[#FF7A00]/25 backdrop-blur-xl bg-[#120E09]/70">
         <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
           {/* Search Box */}
           <div className="relative w-full sm:w-80">
-            <Search className="w-4 h-4 text-[#B8E6CE] absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-[#E2D9CE] absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search by Cadet ID, name, email..."
@@ -236,12 +236,12 @@ export default function AdminStudentsPage() {
                 setSearchQuery(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full bg-[#05140e] border border-[#65F58A]/30 text-xs text-[#F1F5F9] pl-9 pr-3 py-2 rounded-lg focus:outline-none focus:border-[#65F58A] transition-colors font-mono"
+              className="w-full bg-[#0C0A07] border border-[#FF7A00]/30 text-xs text-[#F1F5F9] pl-9 pr-3 py-2 rounded-lg focus:outline-none focus:border-[#FF7A00] transition-colors font-mono"
             />
           </div>
 
           {/* Status Tabs */}
-          <div className="flex items-center space-x-1 bg-[#05140e] p-1 rounded-lg border border-[#65F58A]/20">
+          <div className="flex items-center space-x-1 bg-[#0C0A07] p-1 rounded-lg border border-[#FF7A00]/20">
             {['ALL', 'ACTIVE', 'SUSPENDED'].map((st) => (
               <button
                 key={st}
@@ -251,8 +251,8 @@ export default function AdminStudentsPage() {
                 }}
                 className={`px-3 py-1 text-xs font-mono rounded transition-colors cursor-pointer ${
                   statusFilter === st
-                    ? 'bg-[#0a261a] text-[#65F58A] font-bold border border-[#65F58A]/40 shadow-sm'
-                    : 'text-[#B8E6CE] hover:text-white'
+                    ? 'bg-[#1E1308] text-[#FF7A00] font-bold border border-[#FF7A00]/40 shadow-sm'
+                    : 'text-[#E2D9CE] hover:text-white'
                 }`}
               >
                 {st}
@@ -263,7 +263,7 @@ export default function AdminStudentsPage() {
 
         <button
           onClick={handleExportCSV}
-          className="flex items-center space-x-1.5 px-3.5 py-2 bg-[#0a261a]/80 text-[#C9EFE0] hover:text-[#65F58A] border border-[#65F58A]/30 font-mono text-xs rounded-lg transition-colors cursor-pointer"
+          className="flex items-center space-x-1.5 px-3.5 py-2 bg-[#1E1308]/80 text-[#E2D9CE] hover:text-[#FF7A00] border border-[#FF7A00]/30 font-mono text-xs rounded-lg transition-colors cursor-pointer"
         >
           <Download className="w-4 h-4" />
           <span>Export CSV</span>
@@ -273,17 +273,17 @@ export default function AdminStudentsPage() {
       {/* Main Dual-Pane Layout: Left Table Card + Right Inspector Drawer */}
       <div className="grid grid-cols-12 gap-6 min-h-[650px]">
         {/* Left Column: Student Directory Table Card */}
-        <div className="col-span-12 lg:col-span-8 cyber-glass-panel rounded-xl overflow-hidden flex flex-col border border-[#65F58A]/25 backdrop-blur-xl bg-[#081a13]/70">
+        <div className="col-span-12 lg:col-span-8 cyber-glass-panel rounded-xl overflow-hidden flex flex-col border border-[#FF7A00]/25 backdrop-blur-xl bg-[#120E09]/70">
           {/* TableCard Header (matching TableCard.Header) */}
-          <div className="p-4 bg-[#071912]/90 border-b border-[#65F58A]/20 flex items-center justify-between">
+          <div className="p-4 bg-[#120E09]/90 border-b border-[#FF7A00]/20 flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <h3 className="text-base font-bold text-white font-lora">Student Directory</h3>
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-[#65F58A]/10 text-[#65F58A] border border-[#65F58A]/30">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-[#FF7A00]/10 text-[#FF7A00] border border-[#FF7A00]/30">
                 {sortedAndFilteredStudents.length} cadets
               </span>
             </div>
-            <div className="flex items-center space-x-2 text-[11px] font-mono text-[#65F58A]">
-              <span className="w-2 h-2 rounded-full bg-[#65F58A] animate-pulse" />
+            <div className="flex items-center space-x-2 text-[11px] font-mono text-[#FF7A00]">
+              <span className="w-2 h-2 rounded-full bg-[#FF7A00] animate-pulse" />
               <span>Identity Synchronized</span>
             </div>
           </div>
@@ -292,11 +292,11 @@ export default function AdminStudentsPage() {
           <div className="flex-1 overflow-x-auto">
             <table className="w-full text-left border-collapse" aria-label="Student Directory Roster">
               <thead>
-                <tr className="border-b border-[#65F58A]/20 bg-[#05140e]/90 text-[11px] font-mono text-[#B8E6CE] uppercase select-none">
+                <tr className="border-b border-[#FF7A00]/20 bg-[#0C0A07]/90 text-[11px] font-mono text-[#E2D9CE] uppercase select-none">
                   {/* Column 1: CADET ID */}
                   <th
                     onClick={() => handleSort('cadet_id')}
-                    className="p-3.5 cursor-pointer hover:text-[#65F58A] transition-colors"
+                    className="p-3.5 cursor-pointer hover:text-[#FF7A00] transition-colors"
                   >
                     <div className="flex items-center space-x-1">
                       <span>Cadet ID</span>
@@ -307,7 +307,7 @@ export default function AdminStudentsPage() {
                   {/* Column 2: NAME */}
                   <th
                     onClick={() => handleSort('name')}
-                    className="p-3.5 cursor-pointer hover:text-[#65F58A] transition-colors"
+                    className="p-3.5 cursor-pointer hover:text-[#FF7A00] transition-colors"
                   >
                     <div className="flex items-center space-x-1">
                       <span>Name</span>
@@ -318,7 +318,7 @@ export default function AdminStudentsPage() {
                   {/* Column 3: EMAIL ADDRESS */}
                   <th
                     onClick={() => handleSort('email')}
-                    className="p-3.5 cursor-pointer hover:text-[#65F58A] transition-colors"
+                    className="p-3.5 cursor-pointer hover:text-[#FF7A00] transition-colors"
                   >
                     <div className="flex items-center space-x-1">
                       <span>Email address</span>
@@ -329,7 +329,7 @@ export default function AdminStudentsPage() {
                   {/* Column 4: STATUS */}
                   <th
                     onClick={() => handleSort('status')}
-                    className="p-3.5 cursor-pointer hover:text-[#65F58A] transition-colors"
+                    className="p-3.5 cursor-pointer hover:text-[#FF7A00] transition-colors"
                   >
                     <div className="flex items-center space-x-1">
                       <span>Status</span>
@@ -349,10 +349,10 @@ export default function AdminStudentsPage() {
                 </tr>
               </thead>
 
-              <tbody className="divide-y divide-[#65F58A]/15 text-xs font-mono">
+              <tbody className="divide-y divide-[#FF7A00]/15 text-xs font-mono">
                 {paginatedStudents.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="p-12 text-center text-[#B8E6CE] font-lora">
+                    <td colSpan={6} className="p-12 text-center text-[#E2D9CE] font-lora">
                       No cadets matched your search criteria.
                     </td>
                   </tr>
@@ -367,12 +367,12 @@ export default function AdminStudentsPage() {
                         key={st.id}
                         onClick={() => setSelectedStudent(st)}
                         className={`cursor-pointer transition-colors ${
-                          isSelected ? 'bg-[#0c2e1f]/80 shadow-[inset_3px_0_0_#65F58A]' : 'hover:bg-[#071912]/50'
+                          isSelected ? 'bg-[#0c2e1f]/80 shadow-[inset_3px_0_0_#FF7A00]' : 'hover:bg-[#120E09]/50'
                         }`}
                       >
                         {/* 1. Cadet ID */}
                         <td className="p-3.5 whitespace-nowrap">
-                          <span className="font-mono text-xs font-bold text-[#65F58A] bg-[#05140e] px-2.5 py-1 rounded-md border border-[#65F58A]/40 shadow-sm">
+                          <span className="font-mono text-xs font-bold text-[#FF7A00] bg-[#0C0A07] px-2.5 py-1 rounded-md border border-[#FF7A00]/40 shadow-sm">
                             {st.cadet_id || 'RK-89421'}
                           </span>
                         </td>
@@ -380,14 +380,14 @@ export default function AdminStudentsPage() {
                         {/* 2. Name with Avatar */}
                         <td className="p-3.5 whitespace-nowrap">
                           <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 rounded-full bg-[#0a261a] border border-[#65F58A]/40 flex items-center justify-center font-bold text-[#65F58A] text-xs shadow-sm">
+                            <div className="w-8 h-8 rounded-full bg-[#1E1308] border border-[#FF7A00]/40 flex items-center justify-center font-bold text-[#FF7A00] text-xs shadow-sm">
                               {studentName.charAt(0).toUpperCase()}
                             </div>
                             <div>
                               <p className="text-white font-lora font-semibold text-xs tracking-wide">
                                 {studentName}
                               </p>
-                              <span className="text-[10px] text-[#72A88E] block">
+                              <span className="text-[10px] text-[#A3907C] block">
                                 {st.role === 'admin' ? 'Super Admin' : 'Cadet Researcher'}
                               </span>
                             </div>
@@ -395,7 +395,7 @@ export default function AdminStudentsPage() {
                         </td>
 
                         {/* 3. Email */}
-                        <td className="p-3.5 whitespace-nowrap text-[#B8E6CE]">
+                        <td className="p-3.5 whitespace-nowrap text-[#E2D9CE]">
                           {st.email}
                         </td>
 
@@ -405,12 +405,12 @@ export default function AdminStudentsPage() {
                             className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold font-mono border ${
                               isSuspended
                                 ? 'bg-red-500/10 text-red-400 border-red-500/30'
-                                : 'bg-[#65F58A]/10 text-[#65F58A] border-[#65F58A]/30'
+                                : 'bg-[#FF7A00]/10 text-[#FF7A00] border-[#FF7A00]/30'
                             }`}
                           >
                             <span
                               className={`w-1.5 h-1.5 rounded-full ${
-                                isSuspended ? 'bg-red-400' : 'bg-[#65F58A] animate-pulse'
+                                isSuspended ? 'bg-red-400' : 'bg-[#FF7A00] animate-pulse'
                               }`}
                             />
                             <span>{isSuspended ? 'Suspended' : 'Active'}</span>
@@ -420,10 +420,10 @@ export default function AdminStudentsPage() {
                         {/* 5. Enrolled Courses / Learning Paths */}
                         <td className="p-3.5 whitespace-nowrap">
                           <div className="flex items-center gap-1.5 flex-wrap">
-                            <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#092218] text-[#65F58A] border border-[#65F58A]/30">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#1A1208] text-[#FF7A00] border border-[#FF7A00]/30">
                               SOC Analyst L1 & L2
                             </span>
-                            <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-[#05140e] text-[#B8E6CE] border border-[#65F58A]/20">
+                            <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-[#0C0A07] text-[#E2D9CE] border border-[#FF7A00]/20">
                               +1 Track
                             </span>
                           </div>
@@ -439,7 +439,7 @@ export default function AdminStudentsPage() {
                                 setSelectedStudent(st);
                                 setTokenModalOpen(true);
                               }}
-                              className="px-2 py-1 rounded text-[10px] font-mono border border-[#65F58A]/30 bg-[#0a261a] text-[#65F58A] hover:bg-[#65F58A]/20 transition-colors"
+                              className="px-2 py-1 rounded text-[10px] font-mono border border-[#FF7A00]/30 bg-[#1E1308] text-[#FF7A00] hover:bg-[#FF7A00]/20 transition-colors"
                               title="Adjust Utility Tokens"
                             >
                               Tokens
@@ -452,7 +452,7 @@ export default function AdminStudentsPage() {
                               }}
                               className={`px-2 py-1 rounded text-[10px] font-mono border transition-colors ${
                                 isSuspended
-                                  ? 'bg-[#65F58A]/10 text-[#65F58A] border-[#65F58A]/30 hover:bg-[#65F58A]/20'
+                                  ? 'bg-[#FF7A00]/10 text-[#FF7A00] border-[#FF7A00]/30 hover:bg-[#FF7A00]/20'
                                   : 'bg-amber-500/10 text-amber-300 border-amber-500/30 hover:bg-amber-500/20'
                               }`}
                             >
@@ -481,7 +481,7 @@ export default function AdminStudentsPage() {
           </div>
 
           {/* Minimal Pagination Card (matching PaginationCardMinimal) */}
-          <div className="p-3.5 bg-[#071912]/90 border-t border-[#65F58A]/20 flex items-center justify-between text-xs font-mono text-[#B8E6CE]">
+          <div className="p-3.5 bg-[#120E09]/90 border-t border-[#FF7A00]/20 flex items-center justify-between text-xs font-mono text-[#E2D9CE]">
             <span>
               Showing {sortedAndFilteredStudents.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0} to{' '}
               {Math.min(currentPage * itemsPerPage, sortedAndFilteredStudents.length)} of{' '}
@@ -492,7 +492,7 @@ export default function AdminStudentsPage() {
                 type="button"
                 disabled={currentPage <= 1}
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                className="px-2.5 py-1 rounded border border-[#65F58A]/30 bg-[#05140e] text-[#65F58A] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#0a261a] transition-colors"
+                className="px-2.5 py-1 rounded border border-[#FF7A00]/30 bg-[#0C0A07] text-[#FF7A00] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#1E1308] transition-colors"
               >
                 Previous
               </button>
@@ -503,7 +503,7 @@ export default function AdminStudentsPage() {
                 type="button"
                 disabled={currentPage >= totalPages}
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                className="px-2.5 py-1 rounded border border-[#65F58A]/30 bg-[#05140e] text-[#65F58A] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#0a261a] transition-colors"
+                className="px-2.5 py-1 rounded border border-[#FF7A00]/30 bg-[#0C0A07] text-[#FF7A00] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#1E1308] transition-colors"
               >
                 Next
               </button>
@@ -512,34 +512,34 @@ export default function AdminStudentsPage() {
         </div>
 
         {/* Right Column: Detailed Student Inspector Drawer */}
-        <div className="col-span-12 lg:col-span-4 cyber-glass-panel rounded-xl flex flex-col overflow-hidden border border-[#65F58A]/25 backdrop-blur-xl bg-[#081a13]/70">
+        <div className="col-span-12 lg:col-span-4 cyber-glass-panel rounded-xl flex flex-col overflow-hidden border border-[#FF7A00]/25 backdrop-blur-xl bg-[#120E09]/70">
           {selectedStudent ? (
             <>
               {/* Cadet Header */}
-              <div className="p-5 border-b border-[#65F58A]/20 bg-[#071912]/90 space-y-3">
+              <div className="p-5 border-b border-[#FF7A00]/20 bg-[#120E09]/90 space-y-3">
                 <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 rounded-full bg-[#0a261a] border border-[#65F58A]/40 flex items-center justify-center font-bold text-[#65F58A] text-lg shadow-sm">
+                  <div className="w-12 h-12 rounded-full bg-[#1E1308] border border-[#FF7A00]/40 flex items-center justify-center font-bold text-[#FF7A00] text-lg shadow-sm">
                     {(selectedStudent.name || selectedStudent.full_name || 'C').charAt(0).toUpperCase()}
                   </div>
                   <div className="truncate">
                     <h4 className="text-base font-bold text-white font-lora truncate">
                       {selectedStudent.name || selectedStudent.full_name || 'Cadet Operator'}
                     </h4>
-                    <span className="text-xs text-[#B8E6CE] font-mono block truncate">
+                    <span className="text-xs text-[#E2D9CE] font-mono block truncate">
                       {selectedStudent.email}
                     </span>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between text-xs font-mono pt-2 border-t border-[#65F58A]/20">
-                  <span className="text-[#65F58A] font-bold">
+                <div className="flex items-center justify-between text-xs font-mono pt-2 border-t border-[#FF7A00]/20">
+                  <span className="text-[#FF7A00] font-bold">
                     CADET ID: {selectedStudent.cadet_id || 'RK-89421'}
                   </span>
                   <a
                     href={`/verify/${selectedStudent.cadet_id || 'RK-89421'}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex items-center space-x-1 text-[#65F58A] hover:underline"
+                    className="flex items-center space-x-1 text-[#FF7A00] hover:underline"
                     title="Open Cadet's Public Verification Dossier"
                   >
                     <span>Public Dossier</span>
@@ -551,16 +551,16 @@ export default function AdminStudentsPage() {
               {/* Cadet Details Body */}
               <div className="p-5 flex-1 overflow-y-auto space-y-5 text-xs font-mono">
                 {/* Token Balance Card */}
-                <div className="p-4 cyber-glass-card rounded-xl flex items-center justify-between border border-[#65F58A]/20">
+                <div className="p-4 cyber-glass-card rounded-xl flex items-center justify-between border border-[#FF7A00]/20">
                   <div>
-                    <span className="text-[10px] text-[#B8E6CE] block">ACADEMIC UTILITY TOKENS</span>
-                    <span className="text-xl font-bold text-[#65F58A] mt-0.5 block">
+                    <span className="text-[10px] text-[#E2D9CE] block">ACADEMIC UTILITY TOKENS</span>
+                    <span className="text-xl font-bold text-[#FF7A00] mt-0.5 block">
                       {selectedStudent.token_balance || 0} TOKENS
                     </span>
                   </div>
                   <button
                     onClick={() => setTokenModalOpen(true)}
-                    className="px-3 py-1.5 bg-[#0a261a] text-[#65F58A] hover:bg-[#65F58A]/20 border border-[#65F58A]/30 rounded text-[11px] font-bold cursor-pointer"
+                    className="px-3 py-1.5 bg-[#1E1308] text-[#FF7A00] hover:bg-[#FF7A00]/20 border border-[#FF7A00]/30 rounded text-[11px] font-bold cursor-pointer"
                   >
                     Adjust Balance
                   </button>
@@ -568,38 +568,38 @@ export default function AdminStudentsPage() {
 
                 {/* Academic Enrollment Progress */}
                 <div className="space-y-3">
-                  <span className="text-xs font-bold text-[#B8E6CE] block">
+                  <span className="text-xs font-bold text-[#E2D9CE] block">
                     ACTIVE CURRICULUM ENROLLMENT
                   </span>
-                  <div className="p-3 cyber-glass-card rounded-lg space-y-2 border border-[#65F58A]/20">
+                  <div className="p-3 cyber-glass-card rounded-lg space-y-2 border border-[#FF7A00]/20">
                     <div className="flex justify-between">
                       <span className="text-white font-lora font-medium">SOC Analyst L1 & L2</span>
-                      <span className="text-[#65F58A]">75% Done</span>
+                      <span className="text-[#FF7A00]">75% Done</span>
                     </div>
-                    <div className="w-full bg-[#0a261a] h-1.5 rounded-full overflow-hidden border border-[#65F58A]/20">
-                      <div className="bg-[#65F58A] h-full rounded-full" style={{ width: '75%' }} />
+                    <div className="w-full bg-[#1E1308] h-1.5 rounded-full overflow-hidden border border-[#FF7A00]/20">
+                      <div className="bg-[#FF7A00] h-full rounded-full" style={{ width: '75%' }} />
                     </div>
                   </div>
 
-                  <div className="p-3 cyber-glass-card rounded-lg space-y-2 border border-[#65F58A]/20">
+                  <div className="p-3 cyber-glass-card rounded-lg space-y-2 border border-[#FF7A00]/20">
                     <div className="flex justify-between">
                       <span className="text-white font-lora font-medium">Offensive Exploitation AD</span>
-                      <span className="text-[#65F58A]">40% Done</span>
+                      <span className="text-[#FF7A00]">40% Done</span>
                     </div>
-                    <div className="w-full bg-[#0a261a] h-1.5 rounded-full overflow-hidden border border-[#65F58A]/20">
-                      <div className="bg-[#65F58A] h-full rounded-full" style={{ width: '40%' }} />
+                    <div className="w-full bg-[#1E1308] h-1.5 rounded-full overflow-hidden border border-[#FF7A00]/20">
+                      <div className="bg-[#FF7A00] h-full rounded-full" style={{ width: '40%' }} />
                     </div>
                   </div>
                 </div>
 
                 {/* Administrative Interventions */}
-                <div className="space-y-2 pt-2 border-t border-[#65F58A]/20">
-                  <span className="text-[10px] text-[#B8E6CE] block uppercase">
+                <div className="space-y-2 pt-2 border-t border-[#FF7A00]/20">
+                  <span className="text-[10px] text-[#E2D9CE] block uppercase">
                     Administrative Interventions
                   </span>
                   <button
                     onClick={() => handleResetProgress(selectedStudent)}
-                    className="w-full flex items-center justify-center space-x-2 py-2 bg-[#0a261a] text-[#C9EFE0] hover:text-[#EF4444] border border-[#65F58A]/30 rounded-lg transition-colors cursor-pointer"
+                    className="w-full flex items-center justify-center space-x-2 py-2 bg-[#1E1308] text-[#E2D9CE] hover:text-[#EF4444] border border-[#FF7A00]/30 rounded-lg transition-colors cursor-pointer"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
                     <span>Reset All Curriculum Progress</span>
@@ -610,7 +610,7 @@ export default function AdminStudentsPage() {
                       onClick={() => handleToggleStatus(selectedStudent)}
                       className={`flex items-center justify-center space-x-1.5 py-2 rounded-lg border text-xs transition-colors cursor-pointer ${
                         selectedStudent.status === 'SUSPENDED'
-                          ? 'bg-[#65F58A]/10 text-[#65F58A] border-[#65F58A]/30 hover:bg-[#65F58A]/20'
+                          ? 'bg-[#FF7A00]/10 text-[#FF7A00] border-[#FF7A00]/30 hover:bg-[#FF7A00]/20'
                           : 'bg-[#EF4444]/10 text-[#EF4444] border-[#EF4444]/30 hover:bg-[#EF4444]/20'
                       }`}
                     >
@@ -642,7 +642,7 @@ export default function AdminStudentsPage() {
               </div>
             </>
           ) : (
-            <div className="p-8 text-center text-[#B8E6CE] m-auto">
+            <div className="p-8 text-center text-[#E2D9CE] m-auto">
               Select a cadet from the directory roster to view telemetry.
             </div>
           )}
@@ -652,23 +652,23 @@ export default function AdminStudentsPage() {
       {/* Token Modal */}
       {tokenModalOpen && selectedStudent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="max-w-md w-full cyber-glass-panel rounded-2xl p-6 border border-[#65F58A]/40 space-y-4 bg-[#081a13]">
+          <div className="max-w-md w-full cyber-glass-panel rounded-2xl p-6 border border-[#FF7A00]/40 space-y-4 bg-[#120E09]">
             <h3 className="text-lg font-bold text-white font-lora">Adjust Utility Tokens</h3>
-            <p className="text-xs text-[#B8E6CE]">
+            <p className="text-xs text-[#E2D9CE]">
               Cadet: {selectedStudent.name || selectedStudent.full_name} ({selectedStudent.cadet_id})
             </p>
 
             <div className="space-y-3 font-mono text-xs">
               <div>
-                <label className="block text-[#72A88E] mb-1">Action Type</label>
+                <label className="block text-[#A3907C] mb-1">Action Type</label>
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
                     onClick={() => setTokenAction('GRANT')}
                     className={`py-2 rounded border transition-colors ${
                       tokenAction === 'GRANT'
-                        ? 'bg-[#65F58A] text-[#071018] font-bold border-[#65F58A]'
-                        : 'bg-[#05140e] text-[#B8E6CE] border-[#65F58A]/20'
+                        ? 'bg-[#FF7A00] text-[#071018] font-bold border-[#FF7A00]'
+                        : 'bg-[#0C0A07] text-[#E2D9CE] border-[#FF7A00]/20'
                     }`}
                   >
                     Grant (+)
@@ -679,7 +679,7 @@ export default function AdminStudentsPage() {
                     className={`py-2 rounded border transition-colors ${
                       tokenAction === 'DEDUCT'
                         ? 'bg-[#EF4444] text-white font-bold border-[#EF4444]'
-                        : 'bg-[#05140e] text-[#B8E6CE] border-[#65F58A]/20'
+                        : 'bg-[#0C0A07] text-[#E2D9CE] border-[#FF7A00]/20'
                     }`}
                   >
                     Deduct (-)
@@ -688,22 +688,22 @@ export default function AdminStudentsPage() {
               </div>
 
               <div>
-                <label className="block text-[#72A88E] mb-1">Amount</label>
+                <label className="block text-[#A3907C] mb-1">Amount</label>
                 <input
                   type="number"
                   value={tokenAmount}
                   onChange={(e) => setTokenAmount(e.target.value)}
-                  className="w-full bg-[#05140e] border border-[#65F58A]/30 rounded p-2 text-white focus:outline-none focus:border-[#65F58A]"
+                  className="w-full bg-[#0C0A07] border border-[#FF7A00]/30 rounded p-2 text-white focus:outline-none focus:border-[#FF7A00]"
                 />
               </div>
 
               <div>
-                <label className="block text-[#72A88E] mb-1">Administrative Reason</label>
+                <label className="block text-[#A3907C] mb-1">Administrative Reason</label>
                 <input
                   type="text"
                   value={tokenReason}
                   onChange={(e) => setTokenReason(e.target.value)}
-                  className="w-full bg-[#05140e] border border-[#65F58A]/30 rounded p-2 text-white focus:outline-none focus:border-[#65F58A]"
+                  className="w-full bg-[#0C0A07] border border-[#FF7A00]/30 rounded p-2 text-white focus:outline-none focus:border-[#FF7A00]"
                 />
               </div>
             </div>
@@ -712,14 +712,14 @@ export default function AdminStudentsPage() {
               <button
                 type="button"
                 onClick={() => setTokenModalOpen(false)}
-                className="px-4 py-2 rounded border border-[#65F58A]/20 text-[#B8E6CE] text-xs font-mono"
+                className="px-4 py-2 rounded border border-[#FF7A00]/20 text-[#E2D9CE] text-xs font-mono"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleAdjustTokens}
-                className="px-4 py-2 rounded bg-[#65F58A] text-[#071018] text-xs font-bold font-mono"
+                className="px-4 py-2 rounded bg-[#FF7A00] text-[#071018] text-xs font-bold font-mono"
               >
                 Confirm Adjustment
               </button>

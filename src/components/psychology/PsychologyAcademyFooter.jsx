@@ -16,7 +16,7 @@ export default function PsychologyAcademyFooter() {
 
         <div className="flex items-center gap-6">
           <Link to="/" className="hover:text-white transition-colors">Foundation Gateway</Link>
-          <Link to="/academy/cybersecurity" className="hover:text-[#65F58A] transition-colors">Cybersecurity Academy</Link>
+          <Link to="/academy/cybersecurity" className="hover:text-[#FF7A00] transition-colors">Cybersecurity Academy</Link>
           <Link to="/student" className="hover:text-white transition-colors">Student Portal</Link>
           <Link to="/verify" className="hover:text-amber-300 transition-colors">Credential Verification</Link>
         </div>

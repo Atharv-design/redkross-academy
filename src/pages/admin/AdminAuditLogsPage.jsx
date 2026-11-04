@@ -61,16 +61,16 @@ export default function AdminAuditLogsPage() {
   return (
     <div className="space-y-6 animate-slide-left">
       {/* Top Filter and Search */}
-      <div className="flex items-center justify-between cyber-glass-panel p-4 rounded-xl border border-[#65F58A]/25 backdrop-blur-xl bg-[#081a13]/60">
+      <div className="flex items-center justify-between cyber-glass-panel p-4 rounded-xl border border-[#FF7A00]/25 backdrop-blur-xl bg-[#120E09]/60">
         <div className="flex items-center space-x-3">
           <div className="relative w-72">
-            <Search className="w-4 h-4 text-[#B8E6CE] absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-[#E2D9CE] absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search audit trail by operator or action..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full cyber-glass-card text-xs text-[#F1F5F9] pl-9 pr-3 py-2 rounded-lg focus:outline-none focus:border-[#65F58A]"
+              className="w-full cyber-glass-card text-xs text-[#F1F5F9] pl-9 pr-3 py-2 rounded-lg focus:outline-none focus:border-[#FF7A00]"
             />
           </div>
 
@@ -78,7 +78,7 @@ export default function AdminAuditLogsPage() {
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="cyber-glass-card text-xs font-mono text-[#C9EFE0] px-3 py-2 rounded-lg focus:outline-none focus:border-[#65F58A] bg-[#071912]"
+            className="cyber-glass-card text-xs font-mono text-[#E2D9CE] px-3 py-2 rounded-lg focus:outline-none focus:border-[#FF7A00] bg-[#120E09]"
           >
             <option value="ALL">ALL CATEGORIES</option>
             <option value="AUTH">AUTH & ACCESS</option>
@@ -91,7 +91,7 @@ export default function AdminAuditLogsPage() {
           <select
             value={severityFilter}
             onChange={(e) => setSeverityFilter(e.target.value)}
-            className="cyber-glass-card text-xs font-mono text-[#C9EFE0] px-3 py-2 rounded-lg focus:outline-none focus:border-[#65F58A] bg-[#071912]"
+            className="cyber-glass-card text-xs font-mono text-[#E2D9CE] px-3 py-2 rounded-lg focus:outline-none focus:border-[#FF7A00] bg-[#120E09]"
           >
             <option value="ALL">ALL SEVERITIES</option>
             <option value="CRITICAL">CRITICAL</option>
@@ -102,7 +102,7 @@ export default function AdminAuditLogsPage() {
 
         <button
           onClick={handleExportCSV}
-          className="flex items-center space-x-1.5 px-3.5 py-2 bg-[#0a261a]/60 text-[#C9EFE0] hover:text-[#65F58A] border border-[#65F58A]/30 font-mono text-xs rounded-lg transition-colors"
+          className="flex items-center space-x-1.5 px-3.5 py-2 bg-[#1E1308]/60 text-[#E2D9CE] hover:text-[#FF7A00] border border-[#FF7A00]/30 font-mono text-xs rounded-lg transition-colors"
         >
           <Download className="w-4 h-4" />
           <span>Export Audit Trail</span>
@@ -112,12 +112,12 @@ export default function AdminAuditLogsPage() {
       {/* Main Dual-Pane Logs View */}
       <div className="grid grid-cols-12 gap-6 min-h-[650px]">
         {/* Left Column: Chronological Audit Stream */}
-        <div className="col-span-8 cyber-glass-panel rounded-xl overflow-hidden flex flex-col border border-[#65F58A]/25 backdrop-blur-xl bg-[#081a13]/60 max-h-[640px]">
-          <div className="p-3.5 bg-[#071912]/80 border-b border-[#65F58A]/20 flex items-center justify-between">
-            <span className="text-xs font-mono text-[#B8E6CE]">
+        <div className="col-span-8 cyber-glass-panel rounded-xl overflow-hidden flex flex-col border border-[#FF7A00]/25 backdrop-blur-xl bg-[#120E09]/60 max-h-[640px]">
+          <div className="p-3.5 bg-[#120E09]/80 border-b border-[#FF7A00]/20 flex items-center justify-between">
+            <span className="text-xs font-mono text-[#E2D9CE]">
               TAMPER-EVIDENT AUDIT TRAIL ({filteredLogs.length})
             </span>
-            <span className="text-[10px] font-mono text-[#65F58A] flex items-center space-x-1">
+            <span className="text-[10px] font-mono text-[#FF7A00] flex items-center space-x-1">
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>Cryptographically Sealed</span>
             </span>
@@ -126,14 +126,14 @@ export default function AdminAuditLogsPage() {
           <div className="flex-1 overflow-y-auto max-h-[580px] custom-scrollbar">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-[#65F58A]/20 bg-[#05140e]/60 text-[10px] font-mono text-[#B8E6CE]">
+                <tr className="border-b border-[#FF7A00]/20 bg-[#0C0A07]/60 text-[10px] font-mono text-[#E2D9CE]">
                   <th className="p-3">SEVERITY</th>
                   <th className="p-3">EVENT / CATEGORY</th>
                   <th className="p-3">OPERATOR</th>
                   <th className="p-3">TIMESTAMP</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#65F58A]/15 text-xs font-mono">
+              <tbody className="divide-y divide-[#FF7A00]/15 text-xs font-mono">
                 {filteredLogs.map((log, idx) => {
                   const isSelected = selectedLog?.id === log.id;
                   return (
@@ -141,7 +141,7 @@ export default function AdminAuditLogsPage() {
                       key={log.id || idx}
                       onClick={() => setSelectedLog(log)}
                       className={`cursor-pointer transition-colors ${
-                        isSelected ? 'bg-[#0c2e1f]/70' : 'hover:bg-[#071912]/40'
+                        isSelected ? 'bg-[#0c2e1f]/70' : 'hover:bg-[#120E09]/40'
                       }`}
                     >
                       <td className="p-3">
@@ -151,7 +151,7 @@ export default function AdminAuditLogsPage() {
                               ? 'bg-[#EF4444]/10 text-[#EF4444] border-[#EF4444]/30'
                               : log.severity === 'WARN'
                               ? 'bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/30'
-                              : 'bg-[#65F58A]/10 text-[#65F58A] border-[#65F58A]/30'
+                              : 'bg-[#FF7A00]/10 text-[#FF7A00] border-[#FF7A00]/30'
                           }`}
                         >
                           {log.severity || 'INFO'}
@@ -160,14 +160,14 @@ export default function AdminAuditLogsPage() {
 
                       <td className="p-3">
                         <div className="text-white font-medium">{log.action}</div>
-                        <div className="text-[10px] text-[#B8E6CE]">{log.category || 'SYSTEM'}</div>
+                        <div className="text-[10px] text-[#E2D9CE]">{log.category || 'SYSTEM'}</div>
                       </td>
 
-                      <td className="p-3 text-[#35E6B5]">
+                      <td className="p-3 text-[#FFA439]">
                         {log.user_email || 'admin@redkross.org.in'}
                       </td>
 
-                      <td className="p-3 text-[#B8E6CE]">
+                      <td className="p-3 text-[#E2D9CE]">
                         {log.timestamp || '2026-10-29 14:00'}
                       </td>
                     </tr>
@@ -179,11 +179,11 @@ export default function AdminAuditLogsPage() {
         </div>
 
         {/* Right Column: Log Event Inspector */}
-        <div className="col-span-4 cyber-glass-panel rounded-xl flex flex-col overflow-hidden border border-[#65F58A]/25 backdrop-blur-xl bg-[#081a13]/60 max-h-[640px]">
+        <div className="col-span-4 cyber-glass-panel rounded-xl flex flex-col overflow-hidden border border-[#FF7A00]/25 backdrop-blur-xl bg-[#120E09]/60 max-h-[640px]">
           {selectedLog ? (
             <>
-              <div className="p-5 border-b border-[#65F58A]/20 bg-[#071912]/80">
-                <span className="text-[10px] font-mono text-[#B8E6CE] block mb-1">
+              <div className="p-5 border-b border-[#FF7A00]/20 bg-[#120E09]/80">
+                <span className="text-[10px] font-mono text-[#E2D9CE] block mb-1">
                   EVENT IDENTIFIER: {selectedLog.id}
                 </span>
                 <h3 className="text-base font-bold text-white font-lora">
@@ -193,41 +193,41 @@ export default function AdminAuditLogsPage() {
 
               <div className="p-5 flex-1 overflow-y-auto max-h-[540px] custom-scrollbar space-y-4 text-xs font-mono">
                 <div className="space-y-2">
-                  <span className="text-[10px] text-[#B8E6CE] block uppercase">
+                  <span className="text-[10px] text-[#E2D9CE] block uppercase">
                     Execution Metadata
                   </span>
                   <div className="p-3 cyber-glass-card rounded-lg space-y-1.5">
                     <div className="flex justify-between">
-                      <span className="text-[#B8E6CE]">Operator:</span>
+                      <span className="text-[#E2D9CE]">Operator:</span>
                       <span className="text-white">{selectedLog.user_email || 'admin@redkross.org.in'}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[#B8E6CE]">Timestamp:</span>
+                      <span className="text-[#E2D9CE]">Timestamp:</span>
                       <span className="text-white">{selectedLog.timestamp}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[#B8E6CE]">Category:</span>
-                      <span className="text-[#65F58A]">{selectedLog.category || 'SYSTEM'}</span>
+                      <span className="text-[#E2D9CE]">Category:</span>
+                      <span className="text-[#FF7A00]">{selectedLog.category || 'SYSTEM'}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[#B8E6CE]">Client IP:</span>
-                      <span className="text-[#35E6B5]">127.0.0.1 (Internal Proxy)</span>
+                      <span className="text-[#E2D9CE]">Client IP:</span>
+                      <span className="text-[#FFA439]">127.0.0.1 (Internal Proxy)</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <span className="text-[10px] text-[#B8E6CE] block uppercase">
+                  <span className="text-[10px] text-[#E2D9CE] block uppercase">
                     Event Narrative & Audit Details
                   </span>
-                  <div className="p-3.5 cyber-glass-card rounded-lg text-[#C9EFE0] leading-relaxed">
+                  <div className="p-3.5 cyber-glass-card rounded-lg text-[#E2D9CE] leading-relaxed">
                     {selectedLog.details || 'Standard administrative operation completed.'}
                   </div>
                 </div>
               </div>
             </>
           ) : (
-            <div className="p-8 text-center text-[#B8E6CE] text-xs">
+            <div className="p-8 text-center text-[#E2D9CE] text-xs">
               Select an audit event from the stream to inspect.
             </div>
           )}

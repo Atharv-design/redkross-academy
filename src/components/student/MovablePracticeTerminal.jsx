@@ -597,13 +597,13 @@ Tip: As you type commands, live suggestions appear! Hit [Tab] to autocomplete.`;
         <button
           type="button"
           onClick={onRestore}
-          className="flex items-center space-x-2.5 px-4 py-2.5 rounded-2xl bg-[#061711] border border-[#65F58A]/50 text-white shadow-[0_0_25px_rgba(101,245,138,0.35)] hover:scale-105 transition-all cursor-pointer font-lora"
+          className="flex items-center space-x-2.5 px-4 py-2.5 rounded-2xl bg-[#061711] border border-[#FF7A00]/50 text-white shadow-[0_0_25px_rgba(255,122,0,0.35)] hover:scale-105 transition-all cursor-pointer font-lora"
         >
-          <span className="w-2.5 h-2.5 rounded-full bg-[#65F58A] animate-pulse" />
-          <TerminalIcon className="w-4 h-4 text-[#65F58A]" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#FF7A00] animate-pulse" />
+          <TerminalIcon className="w-4 h-4 text-[#FF7A00]" />
           <div className="flex flex-col text-left">
             <span className="text-xs font-mono font-bold text-white">Terminal Active</span>
-            <span className="text-[9px] font-mono text-[#72A88E] uppercase tracking-wider">REDKROSS RESEARCH FOUNDATION</span>
+            <span className="text-[9px] font-mono text-[#A3907C] uppercase tracking-wider">REDKROSS RESEARCH FOUNDATION</span>
           </div>
         </button>
       </div>
@@ -633,14 +633,14 @@ Tip: As you type commands, live suggestions appear! Hit [Tab] to autocomplete.`;
         isMaximized
           ? 'inset-3 w-[calc(100vw-1.5rem)] h-[calc(100vh-1.5rem)] rounded-2xl'
           : 'w-[95vw] sm:w-[780px] h-[540px] rounded-2xl max-w-[calc(100vw-20px)] max-h-[calc(100vh-50px)] shadow-[0_20px_60px_rgba(0,0,0,0.9)]'
-      } bg-[#030906]/98 border border-[#65F58A]/40 backdrop-blur-2xl`}
+      } bg-[#060504]/98 border border-[#FF7A00]/40 backdrop-blur-2xl`}
     >
       {/* ================= 1. WINDOW TITLE BAR (DRAGGABLE) ================= */}
       <div
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
-        className="h-10 px-3.5 bg-[#05140e] border-b border-[#65F58A]/25 flex items-center justify-between cursor-move flex-shrink-0"
+        className="h-10 px-3.5 bg-[#0C0A07] border-b border-[#FF7A00]/25 flex items-center justify-between cursor-move flex-shrink-0"
       >
         {/* Left: Window Control Dots */}
         <div className="flex items-center space-x-2">
@@ -675,23 +675,23 @@ Tip: As you type commands, live suggestions appear! Hit [Tab] to autocomplete.`;
 
         {/* Center: Window Title (Clean terminal title) */}
         <div className="flex items-center space-x-2 truncate px-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#65F58A]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-[#FF7A00]" />
           <span className="text-xs font-mono font-bold text-white truncate">
-            cadet@redkross-terminal : <span className="text-[#35E6B5]">~/recon</span> — zsh — 80x24
+            cadet@redkross-terminal : <span className="text-[#FFA439]">~/recon</span> — zsh — 80x24
           </span>
         </div>
 
         {/* Right: Cloud Active Badge & Watermark */}
         <div className="flex items-center space-x-2">
-          <div className="flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-[#0a261a] border border-[#65F58A]/35 text-[10px] font-mono text-[#65F58A] font-bold">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#65F58A] animate-pulse" />
+          <div className="flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-[#1E1308] border border-[#FF7A00]/35 text-[10px] font-mono text-[#FF7A00] font-bold">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#FF7A00] animate-pulse" />
             <span>E2B CLOUD // ACTIVE</span>
           </div>
         </div>
       </div>
 
       {/* ================= 2. MULTI-TERMINAL TABS BAR ================= */}
-      <div className="px-3 py-1.5 bg-[#020705] border-b border-[#65F58A]/20 flex items-center justify-between flex-shrink-0">
+      <div className="px-3 py-1.5 bg-[#020705] border-b border-[#FF7A00]/20 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center space-x-1 overflow-x-auto custom-scrollbar">
           {terminals.map((t) => {
             const isActive = t.id === activeTermId;
@@ -701,8 +701,8 @@ Tip: As you type commands, live suggestions appear! Hit [Tab] to autocomplete.`;
                 onClick={() => setActiveTermId(t.id)}
                 className={`group flex items-center space-x-1.5 px-3 py-1 rounded-lg cursor-pointer transition-all border text-xs font-mono ${
                   isActive
-                    ? 'bg-[#092218] text-[#65F58A] border-[#65F58A]/50 font-bold shadow-sm'
-                    : 'text-[#72A88E] border-transparent hover:text-white hover:bg-[#071912]'
+                    ? 'bg-[#1A1208] text-[#FF7A00] border-[#FF7A00]/50 font-bold shadow-sm'
+                    : 'text-[#A3907C] border-transparent hover:text-white hover:bg-[#120E09]'
                 }`}
               >
                 <TerminalIcon className="w-3 h-3" />
@@ -725,7 +725,7 @@ Tip: As you type commands, live suggestions appear! Hit [Tab] to autocomplete.`;
           <button
             type="button"
             onClick={handleAddTerminal}
-            className="p-1 rounded-lg bg-[#061510] border border-[#65F58A]/30 text-[#65F58A] hover:bg-[#65F58A]/20 transition-all cursor-pointer ml-1"
+            className="p-1 rounded-lg bg-[#0E0C09] border border-[#FF7A00]/30 text-[#FF7A00] hover:bg-[#FF7A00]/20 transition-all cursor-pointer ml-1"
             title="Open new terminal tab (+)"
           >
             <Plus className="w-3.5 h-3.5" />
@@ -734,7 +734,7 @@ Tip: As you type commands, live suggestions appear! Hit [Tab] to autocomplete.`;
 
         {/* Crisp Watermark explicitly requested by User */}
         <div className="flex items-center space-x-2">
-          <span className="text-[10px] font-mono text-[#65F58A] font-bold px-2 py-0.5 rounded bg-[#092218] border border-[#65F58A]/35 tracking-wider">
+          <span className="text-[10px] font-mono text-[#FF7A00] font-bold px-2 py-0.5 rounded bg-[#1A1208] border border-[#FF7A00]/35 tracking-wider">
             REDKROSS RESEARCH FOUNDATION
           </span>
         </div>
@@ -749,27 +749,27 @@ Tip: As you type commands, live suggestions appear! Hit [Tab] to autocomplete.`;
         {activeTerminal.history.map((entry, idx) => (
           <div key={idx} className="space-y-0.5">
             {entry.type === 'system' && (
-              <div className="text-[#72A88E] text-[11px] whitespace-pre-wrap leading-relaxed pb-1 border-b border-white/5">
+              <div className="text-[#A3907C] text-[11px] whitespace-pre-wrap leading-relaxed pb-1 border-b border-white/5">
                 {entry.text}
               </div>
             )}
 
             {entry.type === 'command' && (
               <div className="flex items-start space-x-1.5 text-white font-bold pt-1.5">
-                <span className="text-[#65F58A] select-none">$</span>
-                <span className="text-[#65F58A]">{entry.text.replace(/^\$\s*/, '')}</span>
+                <span className="text-[#FF7A00] select-none">$</span>
+                <span className="text-[#FF7A00]">{entry.text.replace(/^\$\s*/, '')}</span>
               </div>
             )}
 
             {entry.type === 'output' && (
-              <div className="text-gray-200 pl-3 border-l-2 border-[#65F58A]/40 whitespace-pre-wrap text-[11px] leading-relaxed overflow-x-auto custom-scrollbar">
+              <div className="text-gray-200 pl-3 border-l-2 border-[#FF7A00]/40 whitespace-pre-wrap text-[11px] leading-relaxed overflow-x-auto custom-scrollbar">
                 {entry.text}
                 {entry.executionTimeMs !== undefined && (
-                  <div className="text-[9px] text-[#72A88E]/70 pt-1 flex items-center space-x-2 select-none">
+                  <div className="text-[9px] text-[#A3907C]/70 pt-1 flex items-center space-x-2 select-none">
                     <Clock className="w-2.5 h-2.5" />
                     <span>{entry.executionTimeMs}ms</span>
                     {entry.isRealMicroVM && (
-                      <span className="text-[#65F58A]">● Real E2B Cloud MicroVM</span>
+                      <span className="text-[#FF7A00]">● Real E2B Cloud MicroVM</span>
                     )}
                   </div>
                 )}
@@ -785,8 +785,8 @@ Tip: As you type commands, live suggestions appear! Hit [Tab] to autocomplete.`;
         ))}
 
         {activeTerminal.isExecuting && (
-          <div className="flex items-center space-x-2 text-[#65F58A] text-xs pt-1">
-            <span className="w-2 h-2 rounded-full bg-[#65F58A] animate-ping" />
+          <div className="flex items-center space-x-2 text-[#FF7A00] text-xs pt-1">
+            <span className="w-2 h-2 rounded-full bg-[#FF7A00] animate-ping" />
             <span>Executing command on MicroVM sandbox...</span>
           </div>
         )}
@@ -794,14 +794,14 @@ Tip: As you type commands, live suggestions appear! Hit [Tab] to autocomplete.`;
 
       {/* ================= 4. LIVE AUTOCOMPLETE SUGGESTIONS POPUP ================= */}
       {suggestions.length > 0 && !activeTerminal.isExecuting && (
-        <div className="bg-[#051610] border-t border-b border-[#65F58A]/30 px-3 py-2 text-xs font-mono shadow-2xl flex flex-col space-y-1">
-          <div className="flex items-center justify-between text-[10px] text-[#72A88E] pb-1 border-b border-white/5">
-            <span className="flex items-center space-x-1 text-[#65F58A] font-bold">
-              <Sparkles className="w-3 h-3 text-[#65F58A]" />
+        <div className="bg-[#0E0C09] border-t border-b border-[#FF7A00]/30 px-3 py-2 text-xs font-mono shadow-2xl flex flex-col space-y-1">
+          <div className="flex items-center justify-between text-[10px] text-[#A3907C] pb-1 border-b border-white/5">
+            <span className="flex items-center space-x-1 text-[#FF7A00] font-bold">
+              <Sparkles className="w-3 h-3 text-[#FF7A00]" />
               <span>COMMAND SUGGESTIONS ({suggestions.length})</span>
             </span>
             <span className="text-gray-400">
-              Press <kbd className="px-1 py-0.5 rounded bg-black/60 text-[#65F58A] border border-white/10">Tab</kbd> or <kbd className="px-1 py-0.5 rounded bg-black/60 text-[#65F58A] border border-white/10">→</kbd> to complete, or click to apply
+              Press <kbd className="px-1 py-0.5 rounded bg-black/60 text-[#FF7A00] border border-white/10">Tab</kbd> or <kbd className="px-1 py-0.5 rounded bg-black/60 text-[#FF7A00] border border-white/10">→</kbd> to complete, or click to apply
             </span>
           </div>
 
@@ -815,21 +815,21 @@ Tip: As you type commands, live suggestions appear! Hit [Tab] to autocomplete.`;
                   onMouseEnter={() => setActiveSuggestionIndex(sIdx)}
                   className={`px-2 py-1 rounded flex items-center justify-between cursor-pointer transition-all ${
                     isSelected
-                      ? 'bg-[#092218] border border-[#65F58A]/50 text-white font-bold'
-                      : 'hover:bg-[#071912] text-gray-300'
+                      ? 'bg-[#1A1208] border border-[#FF7A00]/50 text-white font-bold'
+                      : 'hover:bg-[#120E09] text-gray-300'
                   }`}
                 >
                   <div className="flex items-center space-x-2 truncate">
-                    <span className="text-[#65F58A] select-none">$</span>
+                    <span className="text-[#FF7A00] select-none">$</span>
                     <span className="text-white truncate font-bold">{s.command}</span>
                     {s.name && (
-                      <span className="text-[#72A88E] text-[10px] truncate hidden sm:inline">
+                      <span className="text-[#A3907C] text-[10px] truncate hidden sm:inline">
                         — {s.name}
                       </span>
                     )}
                   </div>
 
-                  <span className="text-[9px] uppercase px-1.5 py-0.5 rounded bg-[#030906] border border-[#65F58A]/25 text-[#65F58A] font-bold ml-2 flex-shrink-0">
+                  <span className="text-[9px] uppercase px-1.5 py-0.5 rounded bg-[#060504] border border-[#FF7A00]/25 text-[#FF7A00] font-bold ml-2 flex-shrink-0">
                     {s.category}
                   </span>
                 </div>
@@ -840,8 +840,8 @@ Tip: As you type commands, live suggestions appear! Hit [Tab] to autocomplete.`;
       )}
 
       {/* ================= 5. INTERACTIVE COMMAND INPUT BAR ================= */}
-      <div className="p-3 bg-[#05140e] border-t border-[#65F58A]/20 flex items-center space-x-2 flex-shrink-0">
-        <span className="text-[#65F58A] font-bold select-none text-sm">$</span>
+      <div className="p-3 bg-[#0C0A07] border-t border-[#FF7A00]/20 flex items-center space-x-2 flex-shrink-0">
+        <span className="text-[#FF7A00] font-bold select-none text-sm">$</span>
 
         {/* Input Container with Inline Ghost Text Autocomplete */}
         <div className="relative flex-1 flex items-center">
@@ -858,7 +858,7 @@ Tip: As you type commands, live suggestions appear! Hit [Tab] to autocomplete.`;
             onKeyDown={handleKeyDown}
             disabled={activeTerminal.isExecuting}
             placeholder={activeTerminal.isExecuting ? 'Processing...' : "Type 'commands' or any command (nmap, curl, whoami)..."}
-            className="w-full bg-transparent text-white font-mono text-xs focus:outline-none placeholder-[#72A88E]/40 z-10"
+            className="w-full bg-transparent text-white font-mono text-xs focus:outline-none placeholder-[#A3907C]/40 z-10"
             autoFocus
             spellCheck="false"
             autoComplete="off"
@@ -880,8 +880,8 @@ Tip: As you type commands, live suggestions appear! Hit [Tab] to autocomplete.`;
           disabled={activeTerminal.isExecuting || !activeTerminal.input.trim()}
           className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center space-x-1 transition-all cursor-pointer ${
             activeTerminal.input.trim() && !activeTerminal.isExecuting
-              ? 'bg-[#65F58A] text-[#071018] hover:bg-[#35E6B5] shadow-[0_0_12px_rgba(101,245,138,0.4)]'
-              : 'bg-[#030906] text-[#72A88E]/30 border border-white/5 cursor-not-allowed'
+              ? 'bg-[#FF7A00] text-[#071018] hover:bg-[#FFA439] shadow-[0_0_12px_rgba(255,122,0,0.4)]'
+              : 'bg-[#060504] text-[#A3907C]/30 border border-white/5 cursor-not-allowed'
           }`}
           title="Run Command (Enter)"
         >
@@ -891,10 +891,10 @@ Tip: As you type commands, live suggestions appear! Hit [Tab] to autocomplete.`;
       </div>
 
       {/* ================= 6. TELEMETRY STATUS FOOTER ================= */}
-      <div className="h-8 px-4 bg-[#030906] border-t border-[#65F58A]/20 flex items-center justify-between text-[10px] font-mono text-[#72A88E] flex-shrink-0">
+      <div className="h-8 px-4 bg-[#060504] border-t border-[#FF7A00]/20 flex items-center justify-between text-[10px] font-mono text-[#A3907C] flex-shrink-0">
         <div className="flex items-center space-x-3">
-          <span className="flex items-center space-x-1 text-[#65F58A] font-bold">
-            <Activity className="w-3 h-3 text-[#65F58A]" />
+          <span className="flex items-center space-x-1 text-[#FF7A00] font-bold">
+            <Activity className="w-3 h-3 text-[#FF7A00]" />
             <span>Target: {targetIp}</span>
           </span>
           <span className="hidden sm:inline">|</span>
@@ -904,7 +904,7 @@ Tip: As you type commands, live suggestions appear! Hit [Tab] to autocomplete.`;
         </div>
 
         <div className="flex items-center space-x-3">
-          <span className="text-[9px] text-[#72A88E]/70 uppercase tracking-widest font-semibold hidden sm:inline">
+          <span className="text-[9px] text-[#A3907C]/70 uppercase tracking-widest font-semibold hidden sm:inline">
             REDKROSS RESEARCH FOUNDATION
           </span>
           <span className="text-white font-bold">RedKross E2B Engine</span>

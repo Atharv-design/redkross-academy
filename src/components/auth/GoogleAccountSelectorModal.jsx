@@ -103,7 +103,7 @@ export default function GoogleAccountSelectorModal({
               Choose an account
             </h2>
             <p className="text-xs text-[#94A3B8] font-mono">
-              to continue to <span className="text-[#65F58A] font-semibold">RedKross Academy</span>
+              to continue to <span className="text-[#FF7A00] font-semibold">RedKross Academy</span>
             </p>
           </div>
         </div>
@@ -121,8 +121,8 @@ export default function GoogleAccountSelectorModal({
                 }}
                 className={`p-3.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
                   isSelected
-                    ? 'bg-[#1B2530] border-[#65F58A] shadow-[0_0_15px_rgba(101,245,138,0.15)] ring-1 ring-[#65F58A]'
-                    : 'bg-[#14202C]/60 hover:bg-[#1B2530]/80 border-[#263440] hover:border-[#35E6B5]/60'
+                    ? 'bg-[#1B2530] border-[#FF7A00] shadow-[0_0_15px_rgba(255,122,0,0.15)] ring-1 ring-[#FF7A00]'
+                    : 'bg-[#14202C]/60 hover:bg-[#1B2530]/80 border-[#263440] hover:border-[#FFA439]/60'
                 }`}
               >
                 <div className="flex items-center gap-3 min-w-0">
@@ -140,7 +140,7 @@ export default function GoogleAccountSelectorModal({
                     <div className="text-xs text-[#94A3B8] font-mono truncate">
                       {account.email}
                     </div>
-                    <div className="text-[10px] text-[#35E6B5] font-mono mt-0.5">
+                    <div className="text-[10px] text-[#FFA439] font-mono mt-0.5">
                       {account.badge}
                     </div>
                   </div>
@@ -150,7 +150,7 @@ export default function GoogleAccountSelectorModal({
                   <div
                     className={`w-5 h-5 rounded-full border flex items-center justify-center transition-colors ${
                       isSelected
-                        ? 'border-[#65F58A] bg-[#65F58A] text-black'
+                        ? 'border-[#FF7A00] bg-[#FF7A00] text-black'
                         : 'border-[#64748B] bg-transparent'
                     }`}
                   >
@@ -166,13 +166,13 @@ export default function GoogleAccountSelectorModal({
             onClick={() => setIsCustomMode(true)}
             className={`p-3.5 rounded-xl border transition-all cursor-pointer ${
               isCustomMode
-                ? 'bg-[#1B2530] border-[#35E6B5] shadow-[0_0_15px_rgba(53,230,181,0.15)] ring-1 ring-[#35E6B5]'
-                : 'bg-[#14202C]/60 hover:bg-[#1B2530]/80 border-[#263440] hover:border-[#35E6B5]/60'
+                ? 'bg-[#1B2530] border-[#FFA439] shadow-[0_0_15px_rgba(255,164,57,0.15)] ring-1 ring-[#FFA439]'
+                : 'bg-[#14202C]/60 hover:bg-[#1B2530]/80 border-[#263440] hover:border-[#FFA439]/60'
             }`}
           >
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#071018] border border-[#263440] flex items-center justify-center text-[#35E6B5] flex-shrink-0">
+                <div className="w-10 h-10 rounded-full bg-[#071018] border border-[#263440] flex items-center justify-center text-[#FFA439] flex-shrink-0">
                   <UserPlus className="w-4 h-4" />
                 </div>
                 <div>
@@ -188,7 +188,7 @@ export default function GoogleAccountSelectorModal({
               <div
                 className={`w-5 h-5 rounded-full border flex items-center justify-center transition-colors flex-shrink-0 ${
                   isCustomMode
-                    ? 'border-[#35E6B5] bg-[#35E6B5] text-black'
+                    ? 'border-[#FFA439] bg-[#FFA439] text-black'
                     : 'border-[#64748B] bg-transparent'
                 }`}
               >
@@ -207,7 +207,7 @@ export default function GoogleAccountSelectorModal({
                     value={customName}
                     onChange={(e) => setCustomName(e.target.value)}
                     placeholder="e.g. Atharv Gupta"
-                    className="w-full px-3 py-2 rounded-lg bg-[#071018] border border-[#263440] text-white text-xs font-mono focus:outline-none focus:border-[#35E6B5]"
+                    className="w-full px-3 py-2 rounded-lg bg-[#071018] border border-[#263440] text-white text-xs font-mono focus:outline-none focus:border-[#FFA439]"
                   />
                 </div>
                 <div>
@@ -219,7 +219,7 @@ export default function GoogleAccountSelectorModal({
                     value={customEmail}
                     onChange={(e) => setCustomEmail(e.target.value)}
                     placeholder="e.g. operator@gmail.com"
-                    className="w-full px-3 py-2 rounded-lg bg-[#071018] border border-[#263440] text-white text-xs font-mono focus:outline-none focus:border-[#35E6B5]"
+                    className="w-full px-3 py-2 rounded-lg bg-[#071018] border border-[#263440] text-white text-xs font-mono focus:outline-none focus:border-[#FFA439]"
                   />
                 </div>
               </div>
@@ -235,7 +235,7 @@ export default function GoogleAccountSelectorModal({
               type="button"
               onClick={onLivePopup}
               disabled={isLoggingIn}
-              className="text-[#35E6B5] hover:text-[#65F58A] underline flex-shrink-0 text-[10px]"
+              className="text-[#FFA439] hover:text-[#FF7A00] underline flex-shrink-0 text-[10px]"
             >
               Live Popup ↗
             </button>
@@ -257,7 +257,7 @@ export default function GoogleAccountSelectorModal({
             type="button"
             onClick={handleConfirm}
             disabled={isLoggingIn || (isCustomMode && !customEmail.includes('@'))}
-            className="flex-[2] py-3 px-4 rounded-xl bg-[#65F58A] hover:bg-[#00FFA3] active:scale-[0.99] text-black font-royal font-bold text-xs tracking-wider transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(101,245,138,0.25)] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-[2] py-3 px-4 rounded-xl bg-[#FF7A00] hover:bg-[#FF7A00] active:scale-[0.99] text-black font-royal font-bold text-xs tracking-wider transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(255,122,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoggingIn ? (
               <>

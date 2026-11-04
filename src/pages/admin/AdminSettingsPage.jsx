@@ -113,7 +113,7 @@ export default function AdminSettingsPage() {
 
         <button
           type="submit"
-          className="flex items-center space-x-1.5 px-4 py-2 bg-[#65F58A] text-[#071018] font-bold text-xs rounded-lg hover:bg-[#52d674]"
+          className="flex items-center space-x-1.5 px-4 py-2 bg-[#FF7A00] text-[#071018] font-bold text-xs rounded-lg hover:bg-[#52d674]"
         >
           <Save className="w-4 h-4" />
           <span>Save Changes</span>
@@ -121,7 +121,7 @@ export default function AdminSettingsPage() {
       </div>
 
       {savedSuccess && (
-        <div className="p-3 bg-[#65F58A]/10 border border-[#65F58A]/30 rounded-xl flex items-center space-x-2 text-xs text-[#65F58A] font-mono">
+        <div className="p-3 bg-[#FF7A00]/10 border border-[#FF7A00]/30 rounded-xl flex items-center space-x-2 text-xs text-[#FF7A00] font-mono">
           <CheckCircle2 className="w-4 h-4" />
           <span>Configuration saved successfully. All changes are active.</span>
         </div>
@@ -133,7 +133,7 @@ export default function AdminSettingsPage() {
           <div className="flex items-center space-x-2 mb-1">
             <span
               className={`w-2 h-2 rounded-full ${
-                settings.catalog_embargo ? 'bg-[#F59E0B]' : 'bg-[#65F58A]'
+                settings.catalog_embargo ? 'bg-[#F59E0B]' : 'bg-[#FF7A00]'
               }`}
             />
             <span className="text-xs font-mono font-bold text-white">
@@ -155,15 +155,15 @@ export default function AdminSettingsPage() {
           onClick={handleToggleEmbargo}
           className={`group relative inline-flex items-center justify-between w-36 h-11 px-3 rounded-full transition-all duration-300 font-mono text-xs font-black cursor-pointer select-none ${
             !settings.catalog_embargo
-              ? 'bg-[#06180E] border-2 border-[#65F58A] shadow-[0_0_25px_rgba(101,245,138,0.55),0_0_50px_rgba(101,245,138,0.25),inset_0_0_15px_rgba(101,245,138,0.2)]'
+              ? 'bg-[#06180E] border-2 border-[#FF7A00] shadow-[0_0_25px_rgba(255,122,0,0.55),0_0_50px_rgba(255,122,0,0.25),inset_0_0_15px_rgba(255,122,0,0.2)]'
               : 'bg-[#121820] border-2 border-amber-500/40 hover:border-amber-500/70 shadow-[0_0_15px_rgba(245,158,11,0.15)]'
           }`}
         >
           {/* Green radiant ring/lights around button when ON */}
           {!settings.catalog_embargo && (
             <>
-              <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-[#65F58A]/40 via-[#35E6B5]/30 to-[#65F58A]/40 blur-md pointer-events-none animate-pulse" />
-              <span className="absolute -inset-2.5 rounded-full bg-[#65F58A]/15 blur-lg pointer-events-none" />
+              <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-[#FF7A00]/40 via-[#FFA439]/30 to-[#FF7A00]/40 blur-md pointer-events-none animate-pulse" />
+              <span className="absolute -inset-2.5 rounded-full bg-[#FF7A00]/15 blur-lg pointer-events-none" />
             </>
           )}
 
@@ -171,14 +171,14 @@ export default function AdminSettingsPage() {
             <div className="relative z-10 w-full flex items-center justify-between">
               <span className="flex items-center gap-1.5 pl-1.5">
                 <span className="relative flex h-2.5 w-2.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#65F58A] opacity-80" />
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#65F58A] shadow-[0_0_8px_#65F58A]" />
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FF7A00] opacity-80" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#FF7A00] shadow-[0_0_8px_#FF7A00]" />
                 </span>
-                <span className="tracking-widest text-[#65F58A] font-extrabold text-[13px] drop-shadow-[0_0_8px_rgba(101,245,138,0.9)]">
+                <span className="tracking-widest text-[#FF7A00] font-extrabold text-[13px] drop-shadow-[0_0_8px_rgba(255,122,0,0.9)]">
                   LIVE
                 </span>
               </span>
-              <span className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#65F58A] to-[#35E6B5] text-[#071018] flex items-center justify-center shadow-[0_0_15px_#65F58A] transition-transform duration-300">
+              <span className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#FF7A00] to-[#FFA439] text-[#071018] flex items-center justify-center shadow-[0_0_15px_#FF7A00] transition-transform duration-300">
                 <CheckCircle2 className="w-4 h-4 stroke-[3]" />
               </span>
             </div>
@@ -199,7 +199,7 @@ export default function AdminSettingsPage() {
       {/* Cloud Storage & Media Delivery */}
       <div className="p-5 cyber-glass-panel rounded-xl space-y-4">
         <div className="flex items-center space-x-2 text-white font-lora font-bold text-sm">
-          <Database className="w-4 h-4 text-[#65F58A]" />
+          <Database className="w-4 h-4 text-[#FF7A00]" />
           <span>Cloud Storage & Video Delivery Network</span>
         </div>
 

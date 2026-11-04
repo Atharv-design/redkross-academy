@@ -78,7 +78,7 @@ export default function StudentDashboard() {
     return (
       <div className="min-h-screen bg-transparent py-24 text-center">
         <div className="max-w-md mx-auto liquid-glass-panel rounded-2xl p-8 space-y-4">
-          <Shield className="w-10 h-10 text-[#65F58A] mx-auto animate-pulse" />
+          <Shield className="w-10 h-10 text-[#FF7A00] mx-auto animate-pulse" />
           <h2 className="text-xl font-bold text-white">Authentication Required</h2>
           <p className="text-xs text-slate-400">Please select a student identity or sign in to access your learning portal.</p>
           <Link to="/login" className="liquid-glass-button px-5 py-2.5 rounded-xl font-mono text-xs font-bold inline-block">
@@ -131,18 +131,18 @@ export default function StudentDashboard() {
     <div className="min-h-screen bg-transparent py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         {/* Welcome Header */}
-        <div className="ultra-glass-panel rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 border border-[#65F58A]/25 animate-slide-left">
+        <div className="ultra-glass-panel rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 border border-[#FF7A00]/25 animate-slide-left">
           <div className="flex items-center space-x-4">
             <div className="relative">
               <img
                 src={currentUser.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=101923&color=65F58A&bold=true`}
                 alt={fullName}
-                className="w-16 h-16 rounded-2xl border-2 border-[#65F58A]/50 object-cover shadow-[0_0_20px_rgba(101,245,138,0.25)]"
+                className="w-16 h-16 rounded-2xl border-2 border-[#FF7A00]/50 object-cover shadow-[0_0_20px_rgba(255,122,0,0.25)]"
                 onError={(e) => {
                   e.target.src = 'https://ui-avatars.com/api/?name=Cadet&background=101923&color=65F58A&bold=true';
                 }}
               />
-              <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#65F58A] border-2 border-[#071018] shadow-[0_0_8px_#65F58A]" />
+              <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#FF7A00] border-2 border-[#071018] shadow-[0_0_8px_#FF7A00]" />
             </div>
             <div>
               <div className="flex flex-wrap items-center gap-2">
@@ -150,7 +150,7 @@ export default function StudentDashboard() {
                 <span className="ultra-glass-pill text-[10px] font-mono px-2.5 py-0.5 rounded-full uppercase">
                   OPERATOR PORTAL
                 </span>
-                <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-[#65F58A]/15 text-[#65F58A] border border-[#65F58A]/40 font-bold shadow-[0_0_10px_rgba(101,245,138,0.2)]">
+                <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-[#FF7A00]/15 text-[#FF7A00] border border-[#FF7A00]/40 font-bold shadow-[0_0_10px_rgba(255,122,0,0.2)]">
                   CADET ID: {cadetId}
                 </span>
               </div>
@@ -166,7 +166,7 @@ export default function StudentDashboard() {
               className="ultra-glass-btn px-3.5 py-2 rounded-xl text-xs font-mono font-medium flex items-center gap-2"
               title="Open Public Verification Dossier"
             >
-              <Award className="w-4 h-4 text-[#65F58A]" />
+              <Award className="w-4 h-4 text-[#FF7A00]" />
               <span>Public Dossier</span>
             </Link>
 
@@ -209,8 +209,8 @@ export default function StudentDashboard() {
           <div className="ultra-glass-panel rounded-2xl p-8 relative overflow-hidden shimmer-lr animate-slide-left stagger-1">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
               <div className="space-y-3 max-w-2xl">
-                <div className="inline-flex items-center space-x-2 text-xs font-mono text-[#65F58A] font-semibold px-3 py-1 rounded-full ultra-glass-pill">
-                  <Play className="w-3 h-3 fill-[#65F58A]" />
+                <div className="inline-flex items-center space-x-2 text-xs font-mono text-[#FF7A00] font-semibold px-3 py-1 rounded-full ultra-glass-pill">
+                  <Play className="w-3 h-3 fill-[#FF7A00]" />
                   <span>RESUME ACTIVE PROGRAMME</span>
                 </div>
                 <h2 className="text-2xl font-royal font-bold text-white break-words [overflow-wrap:anywhere] break-all">{primaryCourse.title}</h2>
@@ -220,11 +220,11 @@ export default function StudentDashboard() {
                 <div className="space-y-1.5 pt-2 max-w-md">
                   <div className="flex items-center justify-between text-xs font-mono">
                     <span className="text-slate-400">Mandatory Course Progress</span>
-                    <span className="text-[#65F58A] font-bold tabular-nums">{primaryProgress?.percentage || 0}%</span>
+                    <span className="text-[#FF7A00] font-bold tabular-nums">{primaryProgress?.percentage || 0}%</span>
                   </div>
                   <div className="w-full h-2.5 rounded-full bg-surface-100 overflow-hidden border border-surface-border">
                     <div
-                      className="h-full bg-gradient-to-r from-[#65F58A] to-[#35E6B5] rounded-full transition-all duration-500 shadow-[0_0_12px_rgba(101,245,138,0.6)]"
+                      className="h-full bg-gradient-to-r from-[#FF7A00] to-[#FFA439] rounded-full transition-all duration-500 shadow-[0_0_12px_rgba(255,122,0,0.6)]"
                       style={{ width: `${primaryProgress?.percentage || 0}%` }}
                     />
                   </div>
@@ -257,10 +257,10 @@ export default function StudentDashboard() {
         <div className="space-y-4 animate-slide-left stagger-2">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-royal font-bold text-white flex items-center space-x-2">
-              <BookOpen className="w-5 h-5 text-[#65F58A]" />
+              <BookOpen className="w-5 h-5 text-[#FF7A00]" />
               <span>My Enrolments ({enrolments.length})</span>
             </h2>
-            <Link to="/courses" className="text-xs font-mono text-[#65F58A] hover:text-[#35E6B5] flex items-center space-x-1 transition-colors">
+            <Link to="/courses" className="text-xs font-mono text-[#FF7A00] hover:text-[#FFA439] flex items-center space-x-1 transition-colors">
               <span>Browse Catalog</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
@@ -269,7 +269,7 @@ export default function StudentDashboard() {
           {enrolments.length === 0 ? (
             <div className="ultra-glass-panel rounded-2xl p-10 text-center space-y-4 border border-white/5">
               <div className="w-14 h-14 rounded-2xl bg-surface-100/80 border border-surface-border flex items-center justify-center mx-auto text-slate-400">
-                <BookOpen className="w-7 h-7 text-[#65F58A]/80" />
+                <BookOpen className="w-7 h-7 text-[#FF7A00]/80" />
               </div>
               <div className="space-y-1.5 max-w-md mx-auto">
                 <h3 className="text-base font-royal font-bold text-white">No Active Enrolments Yet</h3>
@@ -302,7 +302,7 @@ export default function StudentDashboard() {
                     <div>
                       <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 mb-2">
                         <span className="px-2 py-0.5 rounded-md bg-surface-100 border border-surface-border">{crs.difficulty || 'Specialist'}</span>
-                        <span className="text-[#65F58A] font-semibold">{String(enr.status || 'ACTIVE').toUpperCase()}</span>
+                        <span className="text-[#FF7A00] font-semibold">{String(enr.status || 'ACTIVE').toUpperCase()}</span>
                       </div>
 
                       <h3 className="text-base font-royal font-bold text-white mb-2 break-words">{crs.title}</h3>
@@ -315,7 +315,7 @@ export default function StudentDashboard() {
                         </div>
                         <div className="w-full h-2 rounded-full bg-surface-100 overflow-hidden">
                           <div
-                            className="h-full bg-gradient-to-r from-[#65F58A] to-[#35E6B5] rounded-full transition-all"
+                            className="h-full bg-gradient-to-r from-[#FF7A00] to-[#FFA439] rounded-full transition-all"
                             style={{ width: `${progress.percentage || 0}%` }}
                           />
                         </div>
@@ -323,7 +323,7 @@ export default function StudentDashboard() {
 
                       {/* Passed Quizzes count */}
                       <div className="text-[11px] font-mono text-slate-400 flex items-center space-x-1.5">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-[#65F58A]" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#FF7A00]" />
                         <span>{(enr.passed_quizzes || []).length} Chapter Evaluations Passed</span>
                       </div>
                     </div>
@@ -371,12 +371,12 @@ export default function StudentDashboard() {
         <div className="space-y-4 animate-slide-left stagger-3">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-royal font-bold text-white flex items-center space-x-2">
-              <Award className="w-5 h-5 text-[#65F58A]" />
+              <Award className="w-5 h-5 text-[#FF7A00]" />
               <span>Official Institutional Credentials ({myCredentials.length})</span>
             </h2>
             <Link
               to={`/verify/${cadetId}`}
-              className="text-xs font-mono text-[#65F58A] hover:text-[#35E6B5] flex items-center space-x-1 transition-colors"
+              className="text-xs font-mono text-[#FF7A00] hover:text-[#FFA439] flex items-center space-x-1 transition-colors"
             >
               <span>Public Cadet Dossier</span>
               <ExternalLink className="w-3.5 h-3.5" />
@@ -401,11 +401,11 @@ export default function StudentDashboard() {
                   <div className="space-y-3">
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-center space-x-2.5">
-                        <div className="w-9 h-9 rounded-xl bg-[#65F58A]/10 border border-[#65F58A]/30 flex items-center justify-center text-[#65F58A]">
+                        <div className="w-9 h-9 rounded-xl bg-[#FF7A00]/10 border border-[#FF7A00]/30 flex items-center justify-center text-[#FF7A00]">
                           <Award className="w-5 h-5" />
                         </div>
                         <div>
-                          <span className="text-[10px] font-mono font-bold tracking-wider uppercase text-[#65F58A]">
+                          <span className="text-[10px] font-mono font-bold tracking-wider uppercase text-[#FF7A00]">
                             {cred.type || 'Institutional Certification'}
                           </span>
                           <h3 className="text-base font-royal font-bold text-white leading-tight">
@@ -413,7 +413,7 @@ export default function StudentDashboard() {
                           </h3>
                         </div>
                       </div>
-                      <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-[#65F58A]/15 border border-[#65F58A]/40 text-[#65F58A]">
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-[#FF7A00]/15 border border-[#FF7A00]/40 text-[#FF7A00]">
                         {cred.status || 'Active'}
                       </span>
                     </div>
@@ -421,7 +421,7 @@ export default function StudentDashboard() {
                     <div className="grid grid-cols-2 gap-3 pt-2 text-[11px] font-mono">
                       <div className="p-2.5 rounded-lg bg-[#071018]/80 border border-surface-border">
                         <span className="text-slate-400 block text-[10px]">Verification ID</span>
-                        <span className="text-[#65F58A] font-bold">{cred.verification_id || cred.id}</span>
+                        <span className="text-[#FF7A00] font-bold">{cred.verification_id || cred.id}</span>
                       </div>
                       <div className="p-2.5 rounded-lg bg-[#071018]/80 border border-surface-border">
                         <span className="text-slate-400 block text-[10px]">Issue Date</span>
@@ -441,7 +441,7 @@ export default function StudentDashboard() {
                   <div className="pt-4 border-t border-[#1e3327] flex items-center justify-between gap-3">
                     <Link
                       to={`/verify/${cred.verification_id || cred.id}`}
-                      className="text-xs font-mono text-[#65F58A] hover:text-[#35E6B5] flex items-center space-x-1 transition-colors"
+                      className="text-xs font-mono text-[#FF7A00] hover:text-[#FFA439] flex items-center space-x-1 transition-colors"
                     >
                       <ExternalLink className="w-3.5 h-3.5" />
                       <span>Verify Registry</span>
@@ -455,7 +455,7 @@ export default function StudentDashboard() {
                     >
                       {downloadingCertId === (cred.verification_id || cred.id) ? (
                         <>
-                          <Loader2 className="w-3.5 h-3.5 animate-spin text-[#65F58A]" />
+                          <Loader2 className="w-3.5 h-3.5 animate-spin text-[#FF7A00]" />
                           <span>Generating PDF...</span>
                         </>
                       ) : (
@@ -503,7 +503,7 @@ export default function StudentDashboard() {
             </div>
             <div className="text-center space-y-1.5">
               <h3 className="text-lg font-royal font-bold text-white">Cancel Course Enrolment?</h3>
-              <p className="text-xs text-[#65F58A] font-mono font-bold">{cancelModal.course?.title}</p>
+              <p className="text-xs text-[#FF7A00] font-mono font-bold">{cancelModal.course?.title}</p>
               <p className="text-xs text-slate-300 leading-relaxed pt-2">
                 This free course track will be removed from your cadet learning portal and all recorded chapter progress will be reset. You can re-enrol anytime from the curriculum catalog.
               </p>

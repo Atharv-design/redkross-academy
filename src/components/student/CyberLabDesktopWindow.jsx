@@ -1304,11 +1304,11 @@ export default function CyberLabDesktopWindow({
                       onClick={() => setBrowserTab('dvwa')}
                       className={`px-3 py-1 rounded-t-lg text-xs font-mono flex items-center space-x-1.5 transition-all cursor-pointer ${
                         browserTab === 'dvwa'
-                          ? 'bg-[#1b283a] text-white font-bold border-t-2 border-emerald-400'
+                          ? 'bg-[#1b283a] text-white font-bold border-t-2 border-[#FF7A00]'
                           : 'text-gray-400 hover:text-white'
                       }`}
                     >
-                      <Shield className="w-3.5 h-3.5 text-emerald-400" />
+                      <Shield className="w-3.5 h-3.5 text-[#FFA439]" />
                       <span>DVWA</span>
                     </button>
 
@@ -1499,7 +1499,7 @@ export default function CyberLabDesktopWindow({
                   {/* TAB 3: WEBGOAT */}
                   {browserTab === 'webgoat' && (
                     <div className="p-5 font-mono text-xs text-gray-200">
-                      <h3 className="font-bold text-sm text-emerald-400">OWASP WebGoat (10.10.11.130:8080)</h3>
+                      <h3 className="font-bold text-sm text-[#FFA439]">OWASP WebGoat (10.10.11.130:8080)</h3>
                       <p className="text-gray-400 pt-1">Java Vulnerability Benchmark</p>
                     </div>
                   )}

@@ -274,7 +274,7 @@ export default function AdminQuizzesPage() {
               const q = quizzes.find((x) => x.id === e.target.value);
               if (q) setSelectedQuiz(q);
             }}
-            className="cyber-glass-card text-xs font-bold text-white px-3 py-1.5 rounded-lg focus:outline-none focus:border-[#65F58A]"
+            className="cyber-glass-card text-xs font-bold text-white px-3 py-1.5 rounded-lg focus:outline-none focus:border-[#FF7A00]"
           >
             {quizzes.map((q) => (
               <option key={q.id} value={q.id}>
@@ -290,7 +290,7 @@ export default function AdminQuizzesPage() {
               onClick={() => setViewMode('questions')}
               className={`px-3 py-1 text-xs font-mono rounded transition-colors ${
                 viewMode === 'questions'
-                  ? 'bg-[#1B2530] text-[#65F58A] font-bold'
+                  ? 'bg-[#1B2530] text-[#FF7A00] font-bold'
                   : 'text-[#8BA2B5] hover:text-white'
               }`}
             >
@@ -300,7 +300,7 @@ export default function AdminQuizzesPage() {
               onClick={() => setViewMode('attempts')}
               className={`px-3 py-1 text-xs font-mono rounded transition-colors ${
                 viewMode === 'attempts'
-                  ? 'bg-[#1B2530] text-[#65F58A] font-bold'
+                  ? 'bg-[#1B2530] text-[#FF7A00] font-bold'
                   : 'text-[#8BA2B5] hover:text-white'
               }`}
             >
@@ -310,7 +310,7 @@ export default function AdminQuizzesPage() {
 
           <button
             onClick={() => handleOpenQuestionModal()}
-            className="flex items-center space-x-1.5 px-3.5 py-1.5 bg-[#65F58A] text-[#071018] font-bold text-xs rounded-lg hover:bg-[#52d674]"
+            className="flex items-center space-x-1.5 px-3.5 py-1.5 bg-[#FF7A00] text-[#071018] font-bold text-xs rounded-lg hover:bg-[#52d674]"
           >
             <Plus className="w-4 h-4" />
             <span>Add Question</span>
@@ -329,7 +329,7 @@ export default function AdminQuizzesPage() {
               <div className="space-y-3 text-xs font-mono">
                 <div className="flex justify-between items-center py-2 border-b border-[#1B2530]">
                   <span className="text-[#8BA2B5]">Pass Threshold</span>
-                  <span className="text-[#65F58A] font-bold">{selectedQuiz?.passing_score}% Minimum</span>
+                  <span className="text-[#FF7A00] font-bold">{selectedQuiz?.passing_score}% Minimum</span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b border-[#1B2530]">
                   <span className="text-[#8BA2B5]">Time Limit</span>
@@ -337,11 +337,11 @@ export default function AdminQuizzesPage() {
                 </div>
                 <div className="flex justify-between items-center py-2 border-b border-[#1B2530]">
                   <span className="text-[#8BA2B5]">Question Shuffling</span>
-                  <span className="text-[#65F58A]">ENABLED</span>
+                  <span className="text-[#FF7A00]">ENABLED</span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b border-[#1B2530]">
                   <span className="text-[#8BA2B5]">Proctoring Anti-Cheat</span>
-                  <span className="text-[#65F58A]">FULL SCREEN LOCK</span>
+                  <span className="text-[#FF7A00]">FULL SCREEN LOCK</span>
                 </div>
               </div>
 
@@ -366,12 +366,12 @@ export default function AdminQuizzesPage() {
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-start space-x-3">
-                    <span className="text-xs font-mono font-bold text-[#65F58A] bg-[#1B2530] px-2 py-1 rounded border border-[#263440]">
+                    <span className="text-xs font-mono font-bold text-[#FF7A00] bg-[#1B2530] px-2 py-1 rounded border border-[#263440]">
                       #{idx + 1}
                     </span>
                     <div>
                       <div className="flex items-center space-x-2 mb-1">
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#35E6B5]/10 text-[#35E6B5] border border-[#35E6B5]/30">
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#FFA439]/10 text-[#FFA439] border border-[#FFA439]/30">
                           {q.type.replace('_', ' ').toUpperCase()}
                         </span>
                         <span className="text-[10px] font-mono text-[#8BA2B5]">
@@ -392,12 +392,12 @@ export default function AdminQuizzesPage() {
                                 key={oIdx}
                                 className={`text-xs px-2.5 py-1.5 rounded border font-mono flex items-center justify-between ${
                                   isCorrect
-                                    ? 'bg-[#65F58A]/10 border-[#65F58A]/40 text-[#65F58A]'
+                                    ? 'bg-[#FF7A00]/10 border-[#FF7A00]/40 text-[#FF7A00]'
                                     : 'bg-[#071018] border-[#1B2530] text-[#8BA2B5]'
                                 }`}
                               >
                                 <span>{opt}</span>
-                                {isCorrect && <Check className="w-3.5 h-3.5 text-[#65F58A]" />}
+                                {isCorrect && <Check className="w-3.5 h-3.5 text-[#FF7A00]" />}
                               </div>
                             );
                           })}
@@ -406,7 +406,7 @@ export default function AdminQuizzesPage() {
 
                       {q.explanation && (
                         <div className="mt-2 text-[11px] font-mono text-[#8BA2B5] bg-[#071018] p-2 rounded border border-[#1B2530]">
-                          <span className="text-[#65F58A]">Rationale:</span> {q.explanation}
+                          <span className="text-[#FF7A00]">Rationale:</span> {q.explanation}
                         </div>
                       )}
                     </div>
@@ -415,7 +415,7 @@ export default function AdminQuizzesPage() {
                   <div className="flex items-center space-x-1 ml-4">
                     <button
                       onClick={() => handleOpenQuestionModal(q)}
-                      className="p-1.5 text-[#8BA2B5] hover:text-[#65F58A] bg-[#071018] rounded border border-[#1B2530]"
+                      className="p-1.5 text-[#8BA2B5] hover:text-[#FF7A00] bg-[#071018] rounded border border-[#1B2530]"
                     >
                       <Edit3 className="w-3.5 h-3.5" />
                     </button>
@@ -449,7 +449,7 @@ export default function AdminQuizzesPage() {
             <tbody className="divide-y divide-[#1B2530] text-xs font-mono">
               {attempts.map((att) => (
                 <tr key={att.id} className="hover:bg-[#071018]/50">
-                  <td className="p-3.5 text-[#65F58A] font-bold">{att.id}</td>
+                  <td className="p-3.5 text-[#FF7A00] font-bold">{att.id}</td>
                   <td className="p-3.5">
                     <div className="text-white font-sans font-medium">{att.student_name}</div>
                     <div className="text-[10px] text-[#8BA2B5]">{att.student_email}</div>
@@ -457,7 +457,7 @@ export default function AdminQuizzesPage() {
                   <td className="p-3.5">
                     <span
                       className={`text-sm font-bold ${
-                        att.passed ? 'text-[#65F58A]' : 'text-[#EF4444]'
+                        att.passed ? 'text-[#FF7A00]' : 'text-[#EF4444]'
                       }`}
                     >
                       {att.score}%
@@ -468,7 +468,7 @@ export default function AdminQuizzesPage() {
                     <span
                       className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
                         att.passed
-                          ? 'bg-[#65F58A]/10 text-[#65F58A] border-[#65F58A]/30'
+                          ? 'bg-[#FF7A00]/10 text-[#FF7A00] border-[#FF7A00]/30'
                           : 'bg-[#EF4444]/10 text-[#EF4444] border-[#EF4444]/30'
                       }`}
                     >
@@ -482,7 +482,7 @@ export default function AdminQuizzesPage() {
                         <span>{att.proctoring_flags} Incidents</span>
                       </span>
                     ) : (
-                      <span className="text-[#65F58A]">Clean (0)</span>
+                      <span className="text-[#FF7A00]">Clean (0)</span>
                     )}
                   </td>
                   <td className="p-3.5 text-[#8BA2B5]">{att.submitted_at}</td>
@@ -494,7 +494,7 @@ export default function AdminQuizzesPage() {
                         setOverrideReason('');
                         setOverrideModalOpen(true);
                       }}
-                      className="px-2.5 py-1 bg-[#1B2530] text-[#CBD5E1] hover:text-[#65F58A] border border-[#263440] rounded text-[11px]"
+                      className="px-2.5 py-1 bg-[#1B2530] text-[#CBD5E1] hover:text-[#FF7A00] border border-[#263440] rounded text-[11px]"
                     >
                       Override Score
                     </button>
@@ -524,7 +524,7 @@ export default function AdminQuizzesPage() {
                   value={questionForm.prompt}
                   onChange={(e) => setQuestionForm({ ...questionForm, prompt: e.target.value })}
                   placeholder="Formulate the assessment question..."
-                  className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#65F58A]"
+                  className="w-full cyber-glass-card rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-[#FF7A00]"
                 />
               </div>
 
@@ -575,7 +575,7 @@ export default function AdminQuizzesPage() {
                     </div>
                   ))}
                   <div>
-                    <label className="text-xs font-mono text-[#65F58A] block mt-2">
+                    <label className="text-xs font-mono text-[#FF7A00] block mt-2">
                       Exact Correct Option
                     </label>
                     <input
@@ -610,7 +610,7 @@ export default function AdminQuizzesPage() {
                 </button>
                 <button
                   onClick={handleSaveQuestion}
-                  className="px-4 py-1.5 bg-[#65F58A] text-[#071018] text-xs font-bold rounded hover:bg-[#52d674]"
+                  className="px-4 py-1.5 bg-[#FF7A00] text-[#071018] text-xs font-bold rounded hover:bg-[#52d674]"
                 >
                   Save Question
                 </button>
@@ -667,7 +667,7 @@ export default function AdminQuizzesPage() {
                 </button>
                 <button
                   onClick={handleScoreOverride}
-                  className="px-4 py-1.5 bg-[#65F58A] text-[#071018] text-xs font-bold rounded hover:bg-[#52d674]"
+                  className="px-4 py-1.5 bg-[#FF7A00] text-[#071018] text-xs font-bold rounded hover:bg-[#52d674]"
                 >
                   Apply & Log Override
                 </button>

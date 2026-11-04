@@ -11,14 +11,14 @@ export const ChartTooltipContent = ({ active, payload, isPieChart = false }) => 
 
   const item = payload[0];
   const data = item.payload || {};
-  const color = data.color || item.color || '#65F58A';
+  const color = data.color || item.color || '#FF7A00';
   const name = item.name || data.name || data.label || 'Metric';
   const value = item.value ?? data.value ?? 0;
   const percentage = data.percentage ?? (data.total ? ((value / data.total) * 100).toFixed(1) : null);
   const extraNote = data.note || data.drop || null;
 
   return (
-    <div className="z-50 min-w-[160px] rounded-xl bg-[#071018]/95 border border-[#65F58A]/35 p-3 shadow-[0_0_20px_rgba(7,16,24,0.9)] backdrop-blur-md font-mono text-xs animate-fadeIn select-none">
+    <div className="z-50 min-w-[160px] rounded-xl bg-[#071018]/95 border border-[#FF7A00]/35 p-3 shadow-[0_0_20px_rgba(7,16,24,0.9)] backdrop-blur-md font-mono text-xs animate-fadeIn select-none">
       <div className="flex items-center space-x-2 pb-1.5 border-b border-white/10">
         <span
           className="w-2.5 h-2.5 rounded-full flex-shrink-0 shadow-[0_0_8px_currentColor]"
@@ -39,8 +39,8 @@ export const ChartTooltipContent = ({ active, payload, isPieChart = false }) => 
 
         {percentage !== null && percentage !== undefined && (
           <div className="flex items-center justify-between text-xs">
-            <span className="text-[#72A88E]">Share:</span>
-            <span className="font-bold text-[#65F58A] tabular-nums">
+            <span className="text-[#A3907C]">Share:</span>
+            <span className="font-bold text-[#FF7A00] tabular-nums">
               {percentage}%
             </span>
           </div>
@@ -49,7 +49,7 @@ export const ChartTooltipContent = ({ active, payload, isPieChart = false }) => 
         {extraNote && (
           <div className="flex items-center justify-between text-[11px] pt-0.5 border-t border-white/5">
             <span className="text-[#8BA2B5]">Delta:</span>
-            <span className={String(extraNote).startsWith('-') ? 'text-[#EF4444]' : 'text-[#35E6B5]'}>
+            <span className={String(extraNote).startsWith('-') ? 'text-[#EF4444]' : 'text-[#FFA439]'}>
               {extraNote}
             </span>
           </div>
@@ -70,7 +70,7 @@ export const ChartLegendContent = ({ payload }) => {
     <div className="flex flex-col space-y-1.5 p-2 font-mono text-xs select-none">
       {payload.map((entry, index) => {
         const data = entry.payload || {};
-        const color = data.color || entry.color || '#65F58A';
+        const color = data.color || entry.color || '#FF7A00';
         const label = entry.value || data.name || data.label;
         const val = data.value;
         const pct = data.percentage;
@@ -85,7 +85,7 @@ export const ChartLegendContent = ({ payload }) => {
                 className="w-2 h-2 rounded-sm flex-shrink-0"
                 style={{ backgroundColor: color }}
               />
-              <span className="text-[#C9EFE0] truncate font-medium text-[11px]">
+              <span className="text-[#E2D9CE] truncate font-medium text-[11px]">
                 {label}
               </span>
             </div>
@@ -95,7 +95,7 @@ export const ChartLegendContent = ({ payload }) => {
                 <span className="text-white font-bold">{val}</span>
               )}
               {pct !== undefined && (
-                <span className="text-[#72A88E]">({pct}%)</span>
+                <span className="text-[#A3907C]">({pct}%)</span>
               )}
             </div>
           </div>

@@ -89,13 +89,13 @@ export default function TokenWalletPage() {
         <div className="ultra-glass-panel rounded-2xl p-8 shadow-2xl relative overflow-hidden shimmer-lr animate-slide-left">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10">
             <div className="space-y-2">
-              <div className="flex items-center space-x-2 text-xs font-mono text-[#65F58A]">
+              <div className="flex items-center space-x-2 text-xs font-mono text-[#FF7A00]">
                 <Coins className="w-4 h-4 animate-pulse" />
                 <span>NON-MONETARY REWARDS LEDGER (PRD SECTION 8)</span>
               </div>
               <div className="text-4xl sm:text-5xl font-extrabold text-white font-mono tracking-tight tabular-nums flex items-baseline space-x-3">
                 <span>{tokenBalance}</span>
-                <span className="text-lg text-[#65F58A] font-sans font-bold">RedKross Tokens</span>
+                <span className="text-lg text-[#FF7A00] font-sans font-bold">RedKross Tokens</span>
               </div>
               <p className="text-xs text-slate-300 max-w-md">
                 Tokens are earned strictly through continuous study, milestone progress, and passing evaluations. They cannot be transferred, sold, or converted into real currency.
@@ -106,7 +106,7 @@ export default function TokenWalletPage() {
             <div className="flex sm:flex-col gap-3 min-w-[180px]">
               <div className="p-3 rounded-xl ultra-glass-card text-xs font-mono">
                 <div className="text-[10px] text-slate-400 uppercase">Total Earned</div>
-                <div className="text-sm font-bold text-emerald-400">+{totalEarned} Tokens</div>
+                <div className="text-sm font-bold text-[#FFA439]">+{totalEarned} Tokens</div>
               </div>
               <div className="p-3 rounded-xl ultra-glass-card text-xs font-mono">
                 <div className="text-[10px] text-slate-400 uppercase">Proctoring Penalties</div>
@@ -117,8 +117,8 @@ export default function TokenWalletPage() {
         </div>
 
         {redemptionSuccess && (
-          <div className="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/40 text-emerald-300 text-xs font-semibold flex items-center space-x-2 animate-slide-left">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+          <div className="p-4 rounded-xl bg-[#1A1208] border border-[#FF7A00]/40 text-[#FFA439] text-xs font-semibold flex items-center space-x-2 animate-slide-left">
+            <CheckCircle2 className="w-4 h-4 text-[#FFA439] flex-shrink-0" />
             <span>{redemptionSuccess}</span>
           </div>
         )}
@@ -129,7 +129,7 @@ export default function TokenWalletPage() {
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-bold text-white flex items-center space-x-2">
-                <Coins className="w-4 h-4 text-[#65F58A]" />
+                <Coins className="w-4 h-4 text-[#FF7A00]" />
                 <span>Append-Only Ledger History</span>
               </h2>
               <span className="text-xs font-mono text-slate-400">{transactions.length} Records</span>
@@ -155,7 +155,7 @@ export default function TokenWalletPage() {
                       <div className="text-right flex-shrink-0">
                         <span
                           className={`text-sm font-bold font-mono tabular-nums ${
-                            isPositive ? 'text-emerald-400' : 'text-rose-400'
+                            isPositive ? 'text-[#FFA439]' : 'text-rose-400'
                           }`}
                         >
                           {isPositive ? `+${tx.amount}` : tx.amount} Tokens
@@ -175,7 +175,7 @@ export default function TokenWalletPage() {
           {/* Redemption Shop (Right Column) */}
           <div className="space-y-4">
             <h2 className="text-lg font-bold text-white flex items-center space-x-2">
-              <Gift className="w-4 h-4 text-[#65F58A]" />
+              <Gift className="w-4 h-4 text-[#FF7A00]" />
               <span>Token Rewards Shop</span>
             </h2>
 
@@ -183,7 +183,7 @@ export default function TokenWalletPage() {
               <div className="p-4 rounded-xl bg-surface-card border border-surface-border space-y-2">
                 <div className="flex items-center justify-between text-xs font-bold text-white">
                   <span>50% Certification Voucher</span>
-                  <span className="text-[#65F58A] font-mono">200 Tokens</span>
+                  <span className="text-[#FF7A00] font-mono">200 Tokens</span>
                 </div>
                 <p className="text-[11px] text-slate-400 leading-snug">
                   Apply a 50% discount towards any verified certification final exam.
@@ -191,7 +191,7 @@ export default function TokenWalletPage() {
                 <button
                   onClick={() => handleRedeemVoucher('50% Certification Discount Voucher', 200)}
                   disabled={tokenBalance < 200}
-                  className="w-full py-2 rounded-lg bg-surface-100 hover:bg-[#65F58A] hover:text-[#071018] disabled:opacity-40 text-xs font-semibold text-slate-300 transition-colors"
+                  className="w-full py-2 rounded-lg bg-surface-100 hover:bg-[#FF7A00] hover:text-[#071018] disabled:opacity-40 text-xs font-semibold text-slate-300 transition-colors"
                 >
                   Redeem Voucher
                 </button>
@@ -200,7 +200,7 @@ export default function TokenWalletPage() {
               <div className="p-4 rounded-xl bg-surface-card border border-surface-border space-y-2">
                 <div className="flex items-center justify-between text-xs font-bold text-white">
                   <span>Advanced Threat Lab Manual</span>
-                  <span className="text-[#65F58A] font-mono">150 Tokens</span>
+                  <span className="text-[#FF7A00] font-mono">150 Tokens</span>
                 </div>
                 <p className="text-[11px] text-slate-400 leading-snug">
                   Unlock the 80-page deep-dive incident responder malware analysis runbook.
@@ -208,7 +208,7 @@ export default function TokenWalletPage() {
                 <button
                   onClick={() => handleRedeemVoucher('Advanced Threat Lab Manual (PDF)', 150)}
                   disabled={tokenBalance < 150}
-                  className="w-full py-2 rounded-lg bg-surface-100 hover:bg-[#65F58A] hover:text-[#071018] disabled:opacity-40 text-xs font-semibold text-slate-300 transition-colors"
+                  className="w-full py-2 rounded-lg bg-surface-100 hover:bg-[#FF7A00] hover:text-[#071018] disabled:opacity-40 text-xs font-semibold text-slate-300 transition-colors"
                 >
                   Unlock Runbook
                 </button>
@@ -217,7 +217,7 @@ export default function TokenWalletPage() {
               <div className="p-4 rounded-xl bg-surface-card border border-surface-border space-y-2">
                 <div className="flex items-center justify-between text-xs font-bold text-white">
                   <span>RedKross Verified Badge Flair</span>
-                  <span className="text-[#65F58A] font-mono">100 Tokens</span>
+                  <span className="text-[#FF7A00] font-mono">100 Tokens</span>
                 </div>
                 <p className="text-[11px] text-slate-400 leading-snug">
                   Display an illuminated gold defender shield badge on your public student profile.
@@ -225,7 +225,7 @@ export default function TokenWalletPage() {
                 <button
                   onClick={() => handleRedeemVoucher('Verified Badge Flair', 100)}
                   disabled={tokenBalance < 100}
-                  className="w-full py-2 rounded-lg bg-surface-100 hover:bg-[#65F58A] hover:text-[#071018] disabled:opacity-40 text-xs font-semibold text-slate-300 transition-colors"
+                  className="w-full py-2 rounded-lg bg-surface-100 hover:bg-[#FF7A00] hover:text-[#071018] disabled:opacity-40 text-xs font-semibold text-slate-300 transition-colors"
                 >
                   Equip Badge Flair
                 </button>
