@@ -210,7 +210,7 @@ class MockEngine {
       let modified = false;
 
       // Ensure curriculum fixtures sync automatically if updated in source code
-      const CURRICULUM_VERSION = '2026.11.07.v5';
+      const CURRICULUM_VERSION = '2026.11.07.v6';
       if (parsed._curriculum_version !== CURRICULUM_VERSION) {
         parsed._curriculum_version = CURRICULUM_VERSION;
         INITIAL_COURSES.forEach((initCourse) => {
