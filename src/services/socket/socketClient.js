@@ -49,15 +49,20 @@ class SocketClient {
 
   async tryConnectSocket() {
     if (typeof window === 'undefined') return;
+    const socketUrl = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SOCKET_URL) || null;
+    if (!socketUrl) {
+      // In serverless / static deployment, use high-speed BroadcastChannel and CustomEvent bus
+      return;
+    }
     try {
       const socketFactory = io || window.io;
       if (typeof socketFactory === 'function') {
-        this.socket = socketFactory({
+        this.socket = socketFactory(socketUrl, {
           autoConnect: true,
           reconnection: true,
-          reconnectionAttempts: 10,
-          reconnectionDelay: 1000,
-          transports: ['websocket', 'polling']
+          reconnectionAttempts: 3,
+          reconnectionDelay: 2000,
+          transports: ['websocket']
         });
 
         this.socket.on('connect', () => {

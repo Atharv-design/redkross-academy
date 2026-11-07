@@ -15,7 +15,7 @@ import { MODULE_1_BLOCK_NOTES } from '../../../services/db/module1BlockNotes';
 const BlockNoteLessonViewer = React.lazy(() => import('../../../components/student/BlockNoteLessonViewer'));
 const ExamCBTInterface = React.lazy(() => import('../../../components/student/ExamCBTInterface'));
 
-export default function LessonContentPanel({
+function LessonContentPanel({
   activeUnit,
   activeLesson,
   activeQuiz,
@@ -152,6 +152,7 @@ export default function LessonContentPanel({
                   className="cyber-glass-panel p-6 sm:p-10 rounded-2xl border border-[#FF7A00]/25 min-h-[400px] overflow-visible prose prose-invert prose-sm sm:prose-base max-w-none cursor-default"
                 >
                   <div
+                    style={{ contentVisibility: 'auto' }}
                     dangerouslySetInnerHTML={{
                       __html: memoizedHtml
                     }}
@@ -298,3 +299,5 @@ export default function LessonContentPanel({
     </div>
   );
 }
+
+export default React.memo(LessonContentPanel);

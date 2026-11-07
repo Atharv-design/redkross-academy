@@ -79,6 +79,7 @@ if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
 class MockEngine {
   constructor() {
     this.listeners = new Set();
+    this._cachedDb = null;
     this.logAction = this.logAction.bind(this);
     this.logAudit = this.logAction.bind(this);
     this.initDatabase();
@@ -89,6 +90,7 @@ class MockEngine {
     if (globalBroadcastChannel) {
       globalBroadcastChannel.onmessage = (event) => {
         if (event.data && event.data.type) {
+          this._cachedDb = null;
           this.notifyListeners(event.data.type, event.data.payload);
         }
       };
@@ -97,6 +99,7 @@ class MockEngine {
     if (typeof window !== 'undefined') {
       window.addEventListener('storage', (event) => {
         if (event.key === STORAGE_KEY) {
+          this._cachedDb = null;
           this.notifyListeners('STORAGE_SYNC', { newValue: event.newValue });
         }
       });
@@ -175,16 +178,20 @@ class MockEngine {
         banned_emails: [],
       };
       safeStorage.setItem(STORAGE_KEY, JSON.stringify(initialDb));
+      this._cachedDb = initialDb;
     }
   }
 
   getDb() {
+    if (this._cachedDb) {
+      return this._cachedDb;
+    }
     try {
       const data = safeStorage.getItem(STORAGE_KEY);
       let parsed = data ? JSON.parse(data) : null;
       if (!parsed || !parsed._initialized) {
         this.initDatabase(true);
-        parsed = JSON.parse(safeStorage.getItem(STORAGE_KEY));
+        parsed = this._cachedDb || JSON.parse(safeStorage.getItem(STORAGE_KEY));
       }
 
       parsed.courses = parsed.courses || [];
@@ -203,7 +210,7 @@ class MockEngine {
       let modified = false;
 
       // Ensure curriculum fixtures sync automatically if updated in source code
-      const CURRICULUM_VERSION = '2026.11.07.v3';
+      const CURRICULUM_VERSION = '2026.11.07.v4';
       if (parsed._curriculum_version !== CURRICULUM_VERSION) {
         parsed._curriculum_version = CURRICULUM_VERSION;
         INITIAL_COURSES.forEach((initCourse) => {
@@ -255,15 +262,6 @@ class MockEngine {
         if (existingIdx === -1 && !wasDeleted) {
           parsed.courses.push(initCourse);
           modified = true;
-        } else if (existingIdx !== -1 && !wasDeleted) {
-          if (initCourse.id === 'crs_cyber_intro_01') {
-            parsed.courses[existingIdx] = {
-              ...parsed.courses[existingIdx],
-              ...initCourse,
-              modules: initCourse.modules
-            };
-            modified = true;
-          }
         }
       });
 
@@ -388,18 +386,22 @@ class MockEngine {
       }
 
       if (modified) {
-        this.saveDb(parsed);
+        safeStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
       }
 
+      this._cachedDb = parsed;
       return parsed;
     } catch (e) {
       console.error('Failed to parse database, resetting...', e);
       this.initDatabase(true);
-      return JSON.parse(safeStorage.getItem(STORAGE_KEY));
+      const fallback = JSON.parse(safeStorage.getItem(STORAGE_KEY));
+      this._cachedDb = fallback;
+      return fallback;
     }
   }
 
   saveDb(db, eventMetadata = { type: 'DB_MUTATED', payload: {} }) {
+    this._cachedDb = db;
     safeStorage.setItem(STORAGE_KEY, JSON.stringify(db));
     this.emit(eventMetadata.type || 'DB_MUTATED', eventMetadata.payload || {});
   }
