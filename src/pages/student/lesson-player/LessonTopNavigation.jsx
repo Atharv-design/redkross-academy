@@ -9,7 +9,8 @@ export default function LessonTopNavigation({
   progressData,
   activeUnit,
   toolsStripOpen,
-  setToolsStripOpen
+  setToolsStripOpen,
+  onOpenTerminal = () => {}
 }) {
   return (
     <header className="sticky top-0 z-30 bg-black/80 backdrop-blur-md border-b border-[#FF7A00]/25 px-4 sm:px-6 lg:px-8 py-3">
@@ -30,7 +31,7 @@ export default function LessonTopNavigation({
           </div>
         </div>
 
-        <div className="flex items-center space-x-4 flex-shrink-0">
+        <div className="flex items-center space-x-3 sm:space-x-4 flex-shrink-0">
           <div className="hidden sm:flex items-center space-x-4 text-xs font-mono">
             <Link
               to={`/student/course/${course?.id}?tab=course`}
@@ -64,19 +65,33 @@ export default function LessonTopNavigation({
           </div>
 
           {activeUnit?.type === 'lesson' && (
-            <button
-              type="button"
-              onClick={() => setToolsStripOpen(!toolsStripOpen)}
-              className={`p-2 rounded-xl border text-xs font-mono transition-all cursor-pointer flex items-center space-x-1.5 ${
-                toolsStripOpen
-                  ? 'bg-[#FF7A00]/25 text-[#FFA439] border-[#FF7A00]/50 shadow-[0_0_12px_rgba(255,122,0,0.3)]'
-                  : 'bg-black/60 text-[#E2D9CE] border-[#FF7A00]/25 hover:text-white'
-              }`}
-              title={toolsStripOpen ? 'Collapse Tools Strip' : 'Show Tools Strip'}
-            >
-              <Zap className="w-4 h-4 text-[#FF7A00]" />
-              <span className="text-[11px] font-bold hidden sm:inline">Tools</span>
-            </button>
+            <>
+              {/* Standalone Tactical Terminal Launcher Pill (Image 2) */}
+              <button
+                type="button"
+                onClick={onOpenTerminal}
+                className="flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#0B0805] border border-[#FF7A00]/50 hover:border-[#FF7A00] hover:bg-[#FF7A00]/10 hover:shadow-[0_0_12px_rgba(255,122,0,0.35)] text-white transition-all cursor-pointer shadow-sm group"
+                title="Launch macOS Terminal Sandbox"
+              >
+                <span className="text-[#35E6B5] font-mono font-bold text-xs sm:text-sm tracking-tight">&gt;_</span>
+                <span className="text-white text-xs sm:text-sm font-medium tracking-wide">Terminal</span>
+              </button>
+
+              {/* Tools Strip Toggle Button */}
+              <button
+                type="button"
+                onClick={() => setToolsStripOpen(!toolsStripOpen)}
+                className={`p-2 rounded-xl border text-xs font-mono transition-all cursor-pointer flex items-center space-x-1.5 ${
+                  toolsStripOpen
+                    ? 'bg-[#FF7A00]/25 text-[#FFA439] border-[#FF7A00]/50 shadow-[0_0_12px_rgba(255,122,0,0.3)]'
+                    : 'bg-black/60 text-[#E2D9CE] border-[#FF7A00]/25 hover:text-white'
+                }`}
+                title={toolsStripOpen ? 'Collapse Tools Strip' : 'Show Tools Strip'}
+              >
+                <Zap className="w-4 h-4 text-[#FF7A00]" />
+                <span className="text-[11px] font-bold hidden sm:inline">Tools</span>
+              </button>
+            </>
           )}
         </div>
       </div>

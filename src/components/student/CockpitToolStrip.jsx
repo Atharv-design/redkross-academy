@@ -5,7 +5,8 @@ import {
   ChevronRight,
   ChevronLeft,
   Shield,
-  Globe
+  Radio,
+  Search
 } from 'lucide-react';
 
 function KaliDragonIcon({ className = 'w-5 h-5' }) {
@@ -32,19 +33,38 @@ function KaliDragonIcon({ className = 'w-5 h-5' }) {
  * CockpitToolStrip.jsx
  * Sleek, vertical icon toolbar pinned on the right of the RedKross Learning Cockpit.
  * Houses:
- * - Tool #1: Tactical MicroVM Terminal (340+ verified commands & live autocomplete)
- * - Tool #2: CyberLab V3 (Authentic Kali Linux Web Desktop, DVWA, OWASP Juice Shop)
+ * - Tool #1: Tactical Recon Hub (Target HUD, 4 Live Ports, Mission Flags, Payloads Arsenal)
+ * - Tool #2: Tactical MicroVM Terminal (340+ verified commands & live autocomplete)
+ * - Tool #3: CyberLab V3 (Authentic Kali Linux Web Desktop, DVWA, OWASP Juice Shop)
+ * - Tool #4: Surface Recon Scanner (1-click Nmap target scan)
+ * - Tool #5: Breach & OSINT Checker
+ * - Tool #6: MITRE ATT&CK Matrix
  */
 export default function CockpitToolStrip({
+  onToggleTacticalInspector,
+  isTacticalInspectorOpen,
   onOpenTerminal,
   isTerminalOpen,
   onOpenCyberLab,
   isCyberLabOpen,
+  onOpenTerminalWithCommand,
   onCollapse
 }) {
   const [hoveredTool, setHoveredTool] = useState(null);
 
   const tools = [
+    {
+      id: 'recon',
+      label: 'Tactical Recon Hub',
+      desc: 'Target Host Matrix, Mission Flags & Payloads Arsenal',
+      icon: Shield,
+      onClick: onToggleTacticalInspector || onOpenTerminal,
+      isActive: isTacticalInspectorOpen,
+      badge: isTacticalInspectorOpen ? 'ACTIVE' : 'RECON',
+      badgeColor: isTacticalInspectorOpen
+        ? 'bg-[#FF7A00] text-black font-bold'
+        : 'bg-[#1A1208] text-[#FFA439] border border-[#FF7A00]/40'
+    },
     {
       id: 'terminal',
       label: 'Terminal',
@@ -68,6 +88,54 @@ export default function CockpitToolStrip({
       badgeColor: isCyberLabOpen
         ? 'bg-[#FFA439] text-black font-bold'
         : 'bg-black/60 text-[#FFA439] border border-[#FFA439]/40'
+    },
+    {
+      id: 'scanner',
+      label: 'Surface Recon Scanner',
+      desc: 'Nmap Live Port Discovery & Service Matrix (10.10.11.205)',
+      icon: Radio,
+      onClick: () => {
+        if (onOpenTerminalWithCommand) {
+          onOpenTerminalWithCommand('nmap -sV -T4 10.10.11.205');
+        } else {
+          onOpenTerminal();
+        }
+      },
+      isActive: false,
+      badge: 'SCAN',
+      badgeColor: 'bg-[#0E0C09] text-[#65F58A] border border-[#65F58A]/40'
+    },
+    {
+      id: 'breach',
+      label: 'Breach & OSINT Checker',
+      desc: 'Credential Leak Database & Exposure Verifier',
+      icon: Search,
+      onClick: () => {
+        if (onOpenTerminalWithCommand) {
+          onOpenTerminalWithCommand('commands recon');
+        } else {
+          onOpenTerminal();
+        }
+      },
+      isActive: false,
+      badge: 'OSINT',
+      badgeColor: 'bg-[#0E0C09] text-[#38BDF8] border border-[#38BDF8]/40'
+    },
+    {
+      id: 'mitre',
+      label: 'MITRE ATT&CK Matrix',
+      desc: 'Threat Actor TTPs, APT Profiles & Kill Chain Explorer',
+      icon: Zap,
+      onClick: () => {
+        if (onOpenTerminalWithCommand) {
+          onOpenTerminalWithCommand('commands cti');
+        } else {
+          onOpenTerminal();
+        }
+      },
+      isActive: false,
+      badge: 'MATRIX',
+      badgeColor: 'bg-[#0E0C09] text-[#FFA439] border border-[#FFA439]/40'
     }
   ];
 
@@ -100,48 +168,38 @@ export default function CockpitToolStrip({
                   onClick={t.onClick}
                   onMouseEnter={() => setHoveredTool(t.id)}
                   onMouseLeave={() => setHoveredTool(null)}
-                  className={`relative w-10 h-10 rounded-xl flex items-center justify-center transition-all cursor-pointer group ${
+                  className={`relative p-2.5 rounded-xl border transition-all cursor-pointer group flex flex-col items-center justify-center ${
                     t.isActive
-                      ? 'bg-[#FF7A00] text-[#071018] shadow-[0_0_15px_rgba(255,122,0,0.5)] font-bold scale-105'
-                      : isHovered
-                      ? 'bg-[#1A1208] text-[#FF7A00] border border-[#FF7A00]/60 scale-105'
-                      : 'bg-[#060504] text-[#A3907C] border border-[#FF7A00]/20 hover:text-white hover:border-[#FF7A00]/40'
+                      ? 'bg-[#FF7A00]/20 text-[#FFA439] border-[#FF7A00] shadow-[0_0_15px_rgba(255,122,0,0.35)] scale-105'
+                      : 'bg-black/50 text-[#A3907C] border-white/10 hover:text-white hover:border-[#FF7A00]/50 hover:bg-[#FF7A00]/10 hover:scale-105'
                   }`}
                   aria-label={t.label}
+                  title={t.label}
                 >
-                  <Icon className="w-4 h-4 transition-transform group-hover:scale-110" />
+                  <Icon className="w-5 h-5 transition-transform group-hover:scale-110" />
 
-                  {/* Micro Indicator Dot if Active */}
-                  {t.isActive && (
-                    <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#FFA439] border border-[#071018] animate-pulse" />
-                  )}
-                </button>
-
-                {/* Badge (ACTIVE, 340+, or V3) */}
-                {t.badge && !t.isActive && (
+                  {/* Micro Badge Underneath */}
                   <span
-                    className={`absolute -bottom-1 text-[8px] font-mono px-1 rounded-full font-bold pointer-events-none ${t.badgeColor}`}
+                    className={`mt-1 text-[8px] font-mono px-1 py-0.2 rounded leading-none transition-colors ${
+                      t.badgeColor
+                    }`}
                   >
                     {t.badge}
                   </span>
-                )}
+                </button>
 
-                {/* Instant Tooltip On Cursor Hover */}
+                {/* Popover Flyout Tooltip (Left Anchor) */}
                 {isHovered && (
-                  <div className="absolute right-full mr-3.5 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-xl bg-[#061911] border border-[#FF7A00]/50 text-white shadow-2xl z-50 whitespace-nowrap pointer-events-none animate-fadeIn flex flex-col items-start">
-                    <div className="flex items-center space-x-1.5">
-                      <span className="text-xs font-bold font-lora text-white">{t.label}</span>
-                      {t.badge && (
-                        <span className="text-[9px] font-mono text-[#FF7A00] font-bold">
-                          [{t.badge}]
-                        </span>
-                      )}
-                    </div>
-                    {t.desc && (
-                      <span className="text-[10px] font-mono text-[#A3907C] leading-tight pt-0.5">
-                        {t.desc}
+                  <div className="absolute right-full mr-3.5 top-1/2 -translate-y-1/2 w-52 p-3 rounded-xl bg-[#0B0805]/98 border border-[#FF7A00]/40 shadow-[0_0_20px_rgba(0,0,0,0.8)] z-50 pointer-events-none animate-fadeIn">
+                    <div className="flex items-center justify-between pb-1 mb-1 border-b border-[#FF7A00]/20">
+                      <span className="text-xs font-bold text-white font-mono">{t.label}</span>
+                      <span className={`text-[8px] font-mono px-1 py-0.5 rounded ${t.badgeColor}`}>
+                        {t.badge}
                       </span>
-                    )}
+                    </div>
+                    <p className="text-[10px] text-[#A3907C] leading-relaxed font-mono">
+                      {t.desc}
+                    </p>
                   </div>
                 )}
               </div>
@@ -150,19 +208,21 @@ export default function CockpitToolStrip({
         </div>
       </div>
 
-      {/* Bottom Strip Collapse Trigger */}
-      {onCollapse && (
-        <div className="w-full flex justify-center pb-2">
+      {/* Bottom Controls */}
+      <div className="flex flex-col items-center space-y-3 w-full px-2">
+        <div className="w-8 h-px bg-[#FF7A00]/20" />
+
+        {onCollapse && (
           <button
             type="button"
             onClick={onCollapse}
-            className="p-1.5 rounded-lg text-[#A3907C] hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+            className="p-2 rounded-xl text-[#A3907C] hover:text-[#FFA439] hover:bg-[#FF7A00]/10 transition-colors cursor-pointer"
             title="Collapse Tool Strip"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
-        </div>
-      )}
+        )}
+      </div>
     </aside>
   );
 }

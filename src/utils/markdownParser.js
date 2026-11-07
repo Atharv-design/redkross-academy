@@ -10,6 +10,62 @@
  */
 import { CHAPTER_1_IMAGES } from '../services/db/chapter1Images.js';
 
+function renderVisualFlowchart(code = '') {
+  const cleanCode = code.trim();
+  const lines = cleanCode.split('\n').map((l) => l.trim()).filter(Boolean);
+  if (lines.length === 0) return '';
+
+  const header = lines[0].toUpperCase();
+  const isLR = header.includes('LR');
+
+  const nodes = [];
+  const nodeMap = new Map();
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.startsWith('flowchart') || line.startsWith('graph') || line.startsWith('subgraph') || line === 'end') continue;
+
+    const nodeRegex = /([a-zA-Z0-9_]+)(?:\[\"([^\"]+)\"\]|\(\(\"?([^\")]+)\"?\)\))/g;
+    let match;
+    while ((match = nodeRegex.exec(line)) !== null) {
+      const id = match[1];
+      const rawText = match[2] || match[3] || id;
+      if (!nodeMap.has(id)) {
+        const parts = rawText.split(/<br\s*\/?>/i);
+        const title = parts[0].trim();
+        const subtitle = parts.slice(1).join(' ').trim();
+        const nodeObj = { id, title, subtitle };
+        nodeMap.set(id, nodeObj);
+        nodes.push(nodeObj);
+      }
+    }
+  }
+
+  if (nodes.length === 0) {
+    return `<div class="my-6 p-4 rounded-xl bg-[#071018] border border-[#FF7A00]/30 font-mono text-xs text-[#FFA439] whitespace-pre-wrap">${cleanCode}</div>`;
+  }
+
+  if (isLR) {
+    const stepsHtml = nodes
+      .map((n, idx) => {
+        const isLast = idx === nodes.length - 1;
+        return `<div class="flex items-center flex-shrink-0"><div class="px-3.5 py-2.5 rounded-xl bg-[#090E17] border border-[#FF7A00]/30 shadow-md hover:border-[#FF7A00]/60 transition-all flex flex-col justify-center min-w-[140px] max-w-[210px]"><span class="text-xs font-bold text-white font-lora">${n.title}</span>${n.subtitle ? `<span class="text-[10px] font-mono text-[#A3907C] mt-0.5 leading-tight">${n.subtitle}</span>` : ''}</div>${!isLast ? '<div class="px-2 text-[#FF7A00] font-mono text-sm font-bold flex-shrink-0 select-none">→</div>' : ''}</div>`;
+      })
+      .join('');
+
+    return `<div class="my-8 w-full p-4 sm:p-5 rounded-2xl bg-[#070B11]/95 border border-[#FF7A00]/30 shadow-2xl overflow-x-auto custom-scrollbar"><div class="text-[10px] font-mono uppercase tracking-widest text-[#FF7A00] mb-3 flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FF7A00] animate-pulse"></span><span>Tactical Progression & Incident Path</span></div><div class="flex items-center gap-1 min-w-max py-1">${stepsHtml}</div></div>`;
+  }
+
+  const gridHtml = nodes
+    .map((n, idx) => {
+      const isTopLevel = idx === 0 && nodes.length > 3;
+      return `<div class="p-3 sm:p-3.5 rounded-xl ${isTopLevel ? 'col-span-full bg-[#1A1208] border border-[#FF7A00]/60 text-center shadow-[0_0_15px_rgba(255,122,0,0.15)]' : 'bg-[#090E17] border border-[#FF7A00]/25 hover:border-[#FF7A00]/60 transition-all shadow-md'}"><span class="text-xs font-bold ${isTopLevel ? 'text-[#FF7A00]' : 'text-white'} font-lora block">${n.title}</span>${n.subtitle ? `<span class="text-[10px] font-mono text-[#A3907C] mt-1 block leading-tight">${n.subtitle}</span>` : ''}</div>`;
+    })
+    .join('');
+
+  return `<div class="my-8 w-full p-4 sm:p-5 rounded-2xl bg-[#070B11]/95 border border-[#FF7A00]/30 shadow-2xl"><div class="text-[10px] font-mono uppercase tracking-widest text-[#FFA439] mb-3.5 flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FFA439]"></span><span>Architectural Hierarchy & Security Matrix</span></div><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">${gridHtml}</div></div>`;
+}
+
 export function renderMarkdownToHtml(markdown = '') {
   if (!markdown || typeof markdown !== 'string') return '';
 
@@ -17,11 +73,9 @@ export function renderMarkdownToHtml(markdown = '') {
 
   html = html.replace(/\r\n/g, '\n');
 
-  // 1. Mermaid Diagram Blocks
+  // 1. Mermaid Diagram Blocks -> High-Craft Responsive Themed Cards
   html = html.replace(/```mermaid\n([\s\S]*?)```/g, (match, code) => {
-    return `<div class="mermaid-diagram my-8 flex flex-col items-center justify-center p-5 rounded-2xl bg-[#071018]/90 border border-[#263440] shadow-[0_0_25px_rgba(101,245,138,0.08)] overflow-x-auto text-center">
-      <div class="mermaid text-center w-full flex justify-center">${code.trim()}</div>
-    </div>`;
+    return renderVisualFlowchart(code);
   });
 
   // 2. Regular Code Blocks
@@ -103,9 +157,9 @@ export function renderMarkdownToHtml(markdown = '') {
     const items = listBlock
       .trim()
       .split('\n')
-      .map((item) => `  <li class="flex items-start gap-2 text-[#E2D9CE] leading-relaxed"><span class="text-[#FF7A00] font-bold mt-0.5">•</span><span>${item.replace(/^[-*]\s+/, '')}</span></li>`)
+      .map((item) => `  <li class="flex items-start gap-2.5 text-[#E2D9CE] leading-relaxed text-xs sm:text-sm"><span class="w-1.5 h-1.5 rounded-full bg-[#FF7A00] mt-2 flex-shrink-0"></span><span>${item.replace(/^[-*]\s+/, '')}</span></li>`)
       .join('\n');
-    return `<ul class="my-4 space-y-2 pl-2">${items}</ul>`;
+    return `<ul class="my-5 space-y-3 pl-1">${items}</ul>`;
   });
 
   html = html.replace(/(?:^\d+\.\s+.+(?:\n|$))+/gm, (listBlock) => {
@@ -113,9 +167,9 @@ export function renderMarkdownToHtml(markdown = '') {
     const items = listBlock
       .trim()
       .split('\n')
-      .map((item) => `  <li class="flex items-start gap-2.5 text-[#E2D9CE] leading-relaxed"><span class="font-mono text-[#FFA439] text-xs font-bold px-1.5 py-0.5 rounded bg-[#1A1208] border border-[#FF7A00]/30 flex-shrink-0">${num++}.</span><span>${item.replace(/^\d+\.\s+/, '')}</span></li>`)
+      .map((item) => `  <li class="flex items-start gap-3 text-[#E2D9CE] leading-relaxed text-xs sm:text-sm"><span class="font-mono text-[#FFA439] text-xs font-bold px-2 py-0.5 rounded-md bg-[#1A1208] border border-[#FF7A00]/35 flex-shrink-0 shadow-sm">${String(num++).padStart(2, '0')}</span><span>${item.replace(/^\d+\.\s+/, '')}</span></li>`)
       .join('\n');
-    return `<ol class="my-4 space-y-2 pl-2">${items}</ol>`;
+    return `<ol class="my-5 space-y-3.5 pl-1">${items}</ol>`;
   });
 
   // 11. Paragraph wrapping

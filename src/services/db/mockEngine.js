@@ -210,7 +210,7 @@ class MockEngine {
       let modified = false;
 
       // Ensure curriculum fixtures sync automatically if updated in source code
-      const CURRICULUM_VERSION = '2026.11.07.v4';
+      const CURRICULUM_VERSION = '2026.11.07.v5';
       if (parsed._curriculum_version !== CURRICULUM_VERSION) {
         parsed._curriculum_version = CURRICULUM_VERSION;
         INITIAL_COURSES.forEach((initCourse) => {
@@ -251,7 +251,7 @@ class MockEngine {
       if (storedCyber && freshCyber) {
         const storedL1 = storedCyber.modules?.[0]?.lessons?.[0]?.content || '';
         const freshL1 = freshCyber.modules?.[0]?.lessons?.[0]?.content || '';
-        if (storedL1.length < freshL1.length || !storedL1.includes('## Part 12')) {
+        if (storedL1.length !== freshL1.length || !storedL1.includes('## Part 11')) {
           storedCyber.modules = freshCyber.modules;
           modified = true;
         }

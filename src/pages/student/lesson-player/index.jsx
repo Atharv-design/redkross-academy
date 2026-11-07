@@ -16,6 +16,7 @@ import LessonTopNavigation from './LessonTopNavigation';
 import LessonOutlineSidebar from './LessonOutlineSidebar';
 import LessonContentPanel from './LessonContentPanel';
 import LessonBottomNavigation from './LessonBottomNavigation';
+import LessonTacticalInspector from './LessonTacticalInspector';
 
 import CertificateRequestModal from './modals/CertificateRequestModal';
 import DiagramLightboxModal from './modals/DiagramLightboxModal';
@@ -111,6 +112,7 @@ export default function LessonPlayerPage() {
   const [isCyberLabMinimized, setIsCyberLabMinimized] = useState(false);
   const [injectedTerminalCommand, setInjectedTerminalCommand] = useState(null);
   const [targetIp, setTargetIp] = useState('10.10.11.205');
+  const [isTacticalInspectorOpen, setIsTacticalInspectorOpen] = useState(false);
 
   const [lightboxImage, setLightboxImage] = useState(null);
   const [assignmentSubmission, setAssignmentSubmission] = useState(null);
@@ -951,6 +953,10 @@ export default function LessonPlayerPage() {
         activeUnit={activeUnit}
         toolsStripOpen={toolsStripOpen}
         setToolsStripOpen={setToolsStripOpen}
+        onOpenTerminal={() => {
+          setIsMacTerminalOpen(true);
+          setIsMacTerminalMinimized(false);
+        }}
       />
 
       {/* 3-Panel Dedicated Learning Layout: Panel 1 (Outline) | Panel 2 (Notes & Theory) | Panel 3 (Tool Strip) */}
@@ -1047,6 +1053,25 @@ export default function LessonPlayerPage() {
           </div>
         </main>
 
+        {/* Tactical Recon Hub Drawer (Image 1) */}
+        {!isPsychology && toolsStripOpen && isTacticalInspectorOpen && activeUnit?.type === 'lesson' && (
+          <LessonTacticalInspector
+            isOpen={isTacticalInspectorOpen}
+            onClose={() => setIsTacticalInspectorOpen(false)}
+            targetIp={targetIp}
+            onOpenTerminal={() => {
+              setIsMacTerminalOpen(true);
+              setIsMacTerminalMinimized(false);
+            }}
+            onInjectPayload={(cmd) => {
+              setInjectedTerminalCommand(cmd);
+              setIsMacTerminalOpen(true);
+              setIsMacTerminalMinimized(false);
+            }}
+            isAssignment={isAssignment}
+          />
+        )}
+
         {/* Panel 3: Right Vertical Tools Strip */}
         {toolsStripOpen && activeUnit?.type === 'lesson' && (
           isPsychology ? (
@@ -1059,6 +1084,8 @@ export default function LessonPlayerPage() {
             />
           ) : (
             <CockpitToolStrip
+              onToggleTacticalInspector={() => setIsTacticalInspectorOpen((prev) => !prev)}
+              isTacticalInspectorOpen={isTacticalInspectorOpen}
               onOpenTerminal={() => {
                 setIsMacTerminalOpen(true);
                 setIsMacTerminalMinimized(false);
@@ -1069,6 +1096,11 @@ export default function LessonPlayerPage() {
                 setIsCyberLabMinimized(false);
               }}
               isCyberLabOpen={isCyberLabOpen}
+              onOpenTerminalWithCommand={(cmd) => {
+                setInjectedTerminalCommand(cmd);
+                setIsMacTerminalOpen(true);
+                setIsMacTerminalMinimized(false);
+              }}
               onCollapse={() => setToolsStripOpen(false)}
             />
           )
