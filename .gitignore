@@ -31,4 +31,6 @@ dist-ssr
 *.tar.gz
 scratch/
 graphify-out/
+# Course Raw Assets
+RK course notes/**/Lessons Images/
 
