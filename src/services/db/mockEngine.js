@@ -251,7 +251,7 @@ class MockEngine {
       if (storedCyber && freshCyber) {
         const storedL1 = storedCyber.modules?.[0]?.lessons?.[0]?.content || '';
         const freshL1 = freshCyber.modules?.[0]?.lessons?.[0]?.content || '';
-        if (storedL1.length !== freshL1.length || !storedL1.includes('## Part 11')) {
+        if (storedL1.length !== freshL1.length) {
           storedCyber.modules = freshCyber.modules;
           modified = true;
         }
@@ -779,21 +779,6 @@ class MockEngine {
     let course = (this.getDb().courses || []).find((c) => c.id === id);
     if (!course) {
       course = (this.getDb().courses || []).find((c) => c.id === 'crs_cyber_intro_01') || (this.getDb().courses || []).find((c) => (c.division || 'cybersecurity') === 'cybersecurity');
-    }
-    // Safety check: ensure crs_cyber_intro_01 always reflects full 12 parts of Chapter 1
-    const freshCyber = INITIAL_COURSES.find((c) => c.id === 'crs_cyber_intro_01');
-    if (course && course.id === 'crs_cyber_intro_01' && freshCyber) {
-      const currentL1 = course.modules?.[0]?.lessons?.[0]?.content || '';
-      const freshL1 = freshCyber.modules?.[0]?.lessons?.[0]?.content || '';
-      if (currentL1.length < freshL1.length || !currentL1.includes('## Part 12')) {
-        course.modules = freshCyber.modules;
-        const db = this.getDb();
-        const storedCourse = (db.courses || []).find((c) => c.id === 'crs_cyber_intro_01');
-        if (storedCourse) {
-          storedCourse.modules = freshCyber.modules;
-          this.saveDb(db);
-        }
-      }
     }
     return this._normalizeCourse(course);
   }

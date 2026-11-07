@@ -43,7 +43,7 @@ export default function LessonPlayerPage() {
   const [currentEnrolment, setCurrentEnrolment] = useState(() => {
     let enr = mockEngine.getEnrolment(enrolmentId);
     if (!enr) {
-      const user = currentUser || mockEngine.getCurrentUser();
+      const user = currentUser || (typeof mockEngine.getCurrentUser === 'function' ? mockEngine.getCurrentUser() : null);
       const userEnrolments = user ? mockEngine.getEnrolmentsForUser(user.id, 'cybersecurity') : [];
       const dbEnrolments = mockEngine.getDb()?.enrolments || [];
       enr = userEnrolments[0] || dbEnrolments.find(e => e.course_id === 'crs_cyber_intro_01') || dbEnrolments[0];
@@ -52,7 +52,7 @@ export default function LessonPlayerPage() {
   });
 
   const enrolment = currentEnrolment || mockEngine.getEnrolment(enrolmentId) || (() => {
-    const user = currentUser || mockEngine.getCurrentUser();
+    const user = currentUser || (typeof mockEngine.getCurrentUser === 'function' ? mockEngine.getCurrentUser() : null);
     const userEnrolments = user ? mockEngine.getEnrolmentsForUser(user.id, 'cybersecurity') : [];
     const dbEnrolments = mockEngine.getDb()?.enrolments || [];
     return userEnrolments[0] || dbEnrolments.find(e => e.course_id === 'crs_cyber_intro_01') || dbEnrolments[0];
@@ -385,12 +385,12 @@ export default function LessonPlayerPage() {
 
     const timer = setInterval(() => {
       setExamTimeRemaining((prev) => {
-        if (prev <= 1) {
+        if (prev !== null && prev <= 1) {
           clearInterval(timer);
-          handleSubmitQuiz();
+          setTimeout(() => handleSubmitQuiz(), 0);
           return 0;
         }
-        return prev - 1;
+        return prev !== null ? prev - 1 : null;
       });
     }, 1000);
 
@@ -446,7 +446,12 @@ export default function LessonPlayerPage() {
   const loadAssignmentSubmission = () => {
     if (!enrolmentId) return;
     const subs = mockEngine.getAssignmentSubmissions({ enrolment_id: enrolmentId });
-    setAssignmentSubmission(subs[0] || null);
+    setAssignmentSubmission((prev) => {
+      const nextSub = subs[0] || null;
+      if (!prev && !nextSub) return null;
+      if (prev && nextSub && prev.id === nextSub.id && prev.status === nextSub.status && prev.grade === nextSub.grade) return prev;
+      return nextSub;
+    });
   };
 
   useEffect(() => {

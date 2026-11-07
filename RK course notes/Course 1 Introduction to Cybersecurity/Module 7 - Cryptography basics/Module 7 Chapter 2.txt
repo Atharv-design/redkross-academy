@@ -1,0 +1,186 @@
+Course 01: Introduction to Cybersecurity
+Module 3: Threat Landscape
+Lesson 2: Hashing, Digital Signatures, and the Cryptographic Toolbox
+Part 1 — Hook
+
+Imagine your teacher collects homework assignments from the class. To make sure no one copies from each other, the teacher asks every student to write a summary of the day’s lesson on a piece of paper, but with a twist: the teacher asks the students to write a summary using exactly 50 words.
+
+Now, imagine a student named Alex writes a summary, and another student, Bella, wants to check if Alex’s summary is the same as what she wrote. Bella can’t just read Alex’s summary because the teacher collects them anonymously. So how does Bella know if Alex’s version matches hers?
+
+This is where hashing comes in.
+
+Bella takes Alex’s summary and runs it through a hash function—a mathematical formula that turns any piece of text into a fixed-length string of characters (called a “hash” or “digest”). The hash for Alex’s summary might look like this:
+
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+
+Now, Bella compares her own summary’s hash. If the hashes match, she knows Alex wrote the exact same summary. If they don’t match, they are different.
+
+Here is the brilliant part: even if Alex changes just one word in his summary, the hash will completely change. The new hash might look like this:
+
+a5c4f3e2d1b0a9f8e6c4d3b2a1907654321
+
+This is the Avalanche Effect—a tiny change in the input creates a completely different hash. And here is the crucial part: you cannot reverse the hash back to the original text. There is no “un-hash” button. You can only generate new hashes from new inputs.
+
+This is why hashing is used for password storage. Websites never store your actual password. They store the hash of your password. When you log in, the system runs your password through the hash function and compares the result to the stored hash. If they match, you’re in. If they don’t, your password is wrong. Even if the database is stolen, the attacker only gets the hashes—not your actual passwords.
+
+Part 2 — Learning Objectives
+
+By the end of this lesson you will be able to:
+
+Define a hash function in simple terms and explain why it is called a “one-way function.”
+Distinguish between collision resistance and pre-image resistance, and explain why both matter for security.
+Describe the difference between MD5, SHA-1, and SHA-256, and why MD5 and SHA-1 are no longer considered secure.
+Explain how digital signatures use hashing to prove who created a document and guarantee it has not been changed.
+Explain the difference between symmetric and asymmetric cryptography in the context of signing and verifying data.
+Explain why hashing is NOT encryption, and why confusing the two is a common mistake.
+Part 3 — Prerequisites
+
+You should have completed Modules 1 and 2, and be familiar with the concepts of assets, threats, vulnerabilities, and the CIA triad.
+
+Part 4 — Concept from Scratch: The Hash Function
+
+Here is the central idea of this lesson.
+
+A hash function is a mathematical formula that turns any piece of information into a fixed-length string of characters. It is called a “one-way function” because:
+
+You can easily generate the hash from the information.
+But you cannot reverse the hash back to the original information.
+The Avalanche Effect
+
+The most important property of a good hash function is the avalanche effect. This means that changing even one tiny bit of the input completely changes the hash.
+
+Input A: hello
+Input B: hello! (just one character added)
+
+The hashes will look completely different, nothing like each other. This is what makes hashing so powerful for security.
+
+Why Hashing Is NOT Encryption
+
+This is the most important distinction to learn:
+
+Encryption is reversible. You can encrypt a message, and then decrypt it back to the original using a key.
+Hashing is one-way. You can generate the hash, but you cannot get the original message back from the hash.
+
+If you try to “decrypt” a hash, it will not work. The only way to “find” the original information is by guessing and checking hashes until one matches—which takes an enormous amount of time for strong hash functions.
+
+The Avalanche Effect Example
+
+Imagine two snowballs:
+
+Snowball A: Made of snow with just a little bit of water.
+Snowball B: Made of snow with just a tiny bit more water.
+
+Visually, they look almost the same. But if you throw them at a wall, the way they break apart is completely different. One might shatter into powder, the other might stay in one piece. This is the avalanche effect: a tiny change creates a completely different result.
+
+Hash Algorithms (The Most Common Ones)
+MD5 (Message Digest 5)
+Old, broken. Generates a 128-bit hash.
+Vulnerability: Easy to create “collisions” (two different inputs producing the same hash). Do not use MD5 for security.
+SHA-1 (Secure Hash Algorithm 1)
+Generates a 160-bit hash.
+Vulnerability: Similar to MD5, collisions can be found relatively easily. Do not use SHA-1 for security.
+SHA-256 (Secure Hash Algorithm 256-bit)
+Generates a 256-bit hash.
+Status: The current gold standard for security. Very difficult to create collisions. Used in Bitcoin, SSL certificates, and software verification.
+Collision Resistance
+
+A collision is when two different inputs produce the same hash.
+
+Collision Resistance means: It is computationally infeasible to find two different inputs that produce the same hash.
+Why it matters: If an attacker can find a collision, they can create two different files with the same hash. This undermines the integrity of the hash function.
+Pre-image Resistance
+
+Pre-image resistance means: Given a hash value, it is computationally infeasible to find an input that hashes to that value.
+
+Example: If I give you the hash e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855, you cannot reverse-engineer what input produced that hash. That is the power of a one-way hash function.
+Part 6 — Digital Signatures: The “Return Address” of the Internet
+
+Now let us connect hashing to the real world. How does the internet know that an email or a software download actually came from the claimed source? This is where digital signatures come in.
+
+The Problem: “I Didn’t Send That!”
+
+Imagine you receive an email that looks like it’s from your bank, asking you to update your password. But is it really from the bank? Or is it a phishing attack?
+
+This is where digital signatures come in. A digital signature is like a digital fingerprint that proves:
+
+Who sent it. (Authentication)
+The document has not been changed. (Integrity)
+How Digital Signatures Work
+The Sender (Say, a Company) signs a document.
+The company takes the document and runs it through a hash function (e.g., SHA-256).
+The resulting hash is then encrypted using the company’s private RSA key.
+The resulting “signature” is attached to the document.
+The Recipient verifies the signature.
+The recipient takes the document.
+The recipient runs the document through the same hash function.
+The recipient uses the company’s public key to decrypt the signature.
+If the decrypted signature matches the newly computed hash, the recipient knows:
+The document came from the claimed sender (Authentication).
+The document has not been changed (Integrity).
+Why Digital Signatures Matter
+E-commerce: When you buy something online, the website’s digital certificate proves it is the real business, not a impersonator.
+Software Updates: When you download a program, the publisher’s digital signature proves it is the real publisher, and the file has not been tampered with.
+Email: S/MIME and PGP use digital signatures to prove an email really came from the claimed sender.
+Why Digital Signatures Beat Simple Hashing
+
+If you just hash a document and send the hash alongside the document, an attacker can:
+
+Change the document.
+Compute a new hash for the changed document.
+Replace the old hash with the new hash.
+
+The recipient would see the new hash and think the document is valid—but it’s actually tampered with.
+
+Digital signatures prevent this because the signature is tied to the sender’s private key, which only the sender possesses.
+
+[DIAGRAM 2 PLACEMENT: How Digital Signatures Work]
+
+Part 7 — Common Mistakes Beginners Make
+
+Mistake 1: Confusing Hashing with Encryption.
+
+The Mistake: Thinking that hashing a password “encrypts” it so it can be “decrypted” later.
+Why it’s wrong: Hashing is one-way. You cannot “decrypt” a hash. If you need to verify a password later, you hash the entered password and compare it to the stored hash. You do not “decrypt” the stored hash.
+
+Mistake 2: Using MD5 or SHA-1 for security.
+
+The Mistake: Using MD5 or SHA-1 for password hashing or file integrity.
+Why it’s wrong: Both have known collision vulnerabilities. Attackers can easily create two files with the same hash. Use SHA-256 or Argon2 instead.
+
+Mistake 3: Storing hashes without a “salt.”
+
+The Mistake: Storing only the hash of a password in a database.
+The Problem: If the database is stolen, attackers can run “rainbow table” attacks—precomputed lists of hashes—to quickly crack passwords.
+The Fix: Always add a salt (a random string unique to each password) before hashing. This forces attackers to recompute hashes for each individual password, making brute-force attacks infeasible.
+
+Mistake 4: Confusing Hashing with Signing.
+
+The Mistake: Thinking that putting a hash in an email proves who sent it.
+The Problem: A hash alone does not prove who sent the document. Anyone can compute a hash. Digital signatures (using private keys) are required to prove authenticity.
+Part 10 — Summary and Glossary
+
+Here is what we covered.
+
+A hash function is a one-way mathematical function that generates a fixed-length string (the “hash”) from any input. The Avalanche Effect means a tiny change in input produces a completely different hash. Pre-image resistance means you cannot reverse the hash to find the original input. Collision resistance means it is hard to find two different inputs with the same hash.
+
+Hashing is different from encryption: hashing is one-way and used for integrity and identification; encryption is two-way and used for confidentiality.
+
+Digital signatures use hashing and public-key cryptography to prove a document’s authenticity and integrity. They rely on the difficulty of forging signatures without the private key.
+
+Glossary of 8 terms:
+
+Hash Function — a mathematical function that maps data of arbitrary size to a fixed-size value.
+Avalanche Effect — the property where a small change in input produces a significant change in the hash.
+Pre-image Resistance — the difficulty of reversing a hash to find the original input.
+Collision Resistance the difficulty of finding two different inputs that produce the same hash.
+MD5 — a broken hash function with 128-bit output, vulnerable to collisions.
+SHA-1 — a hash function with 160-bit output, now considered insecure.
+SHA-256 — a secure hash function with 256-bit output, currently the standard.
+Digital Signature — a cryptographic mechanism that proves the authenticity and integrity of a message.
+Part 12 — Practice Questions & Further Reading
+Practice Questions
+Explain the difference between a hash function and encryption in your own words.
+Why is the Avalanche Effect important for hash functions?
+Why should you never use MD5 or SHA-1 for password hashing or file integrity?
+Explain how a digital signature proves both authenticity and integrity.
+What is the difference between a “collision” and a “pre-image attack” in the context of hash functions?

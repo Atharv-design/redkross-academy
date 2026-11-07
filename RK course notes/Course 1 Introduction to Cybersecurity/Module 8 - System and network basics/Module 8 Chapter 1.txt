@@ -1,0 +1,290 @@
+Course 01: Introduction to Cybersecurity
+Module 8: System and Network Basics
+Lesson 1: Secure Network Basics
+Part 1 — Hook
+
+Imagine your house. You have a front door with a deadbolt. You have windows with locks. You have a fence around the yard. You might even have a security camera and an alarm system. These are physical security controls — they protect the physical things inside your house.
+
+Now imagine your computer network. It has “doors” (ports), “windows” (services), a “fence” (the perimeter), and “cameras” (monitoring). But unlike your house, the bad guys don’t need to be physically near your network to attack it. They can be on the other side of the world, sitting in their pajamas, trying thousands of “doors” every second to see which one is unlocked.
+
+Secure network basics is about understanding the “architecture” of your network — where the doors are, which ones should be locked, which ones need a guard, and how to know when someone is trying to pick the lock. It is not about buying a magic box called a “firewall” and plugging it in. It is about design, segmentation, visibility, and discipline.
+
+In this lesson, we will build a mental model of a secure network from the ground up. We will not just list tools; we will understand why the network looks the way it does, and where the weak spots usually hide.
+
+Part 2 — Learning Objectives
+
+By the end of this lesson you will be able to:
+
+Define network segmentation and explain why a “flat network” is a security nightmare.
+Explain the purpose and placement of firewalls, DMZs, IDPS, and NAC.
+Describe the OSI Model and TCP/IP Model and identify which security controls operate at which layer.
+Differentiate between stateless and stateful filtering, and explain why application-layer inspection matters.
+Design a basic secure network architecture for a small organization (DMZ, Internal, Management, Guest).
+Identify the most common network misconfigurations that lead to breaches.
+Part 3 — Prerequisites
+
+You should have completed Module 1 (Foundations), Module 2 (Core Principles), and Module 7 (Cryptography Basics). You should understand the CIA Triad, the concept of an Attack Surface (Module 1, Lesson 4), and the basics of encryption (Module 7).
+
+Part 4 — Concept from Scratch: The Network as a City
+
+Here is the central sentence of this lesson.
+
+A network is not a wire; it is a city. And like any city, it needs zoning laws, border checkpoints, internal police patrols, and building codes — not just a wall around the perimeter.
+
+Let me say that again, because it changes how you look at a network diagram forever.
+
+A network is not a wire; it is a city. And like any city, it needs zoning laws, border checkpoints, internal police patrols, and building codes — not just a wall around the perimeter.
+
+When you draw a network diagram, you are drawing a map. Most beginners draw a cloud labeled “Internet,” a box labeled “Firewall,” and a big oval labeled “Internal Network” with everything inside. That is a flat network. In a flat network, if an attacker compromises the receptionist’s laptop, they can scan and attack the database server, the domain controller, and the backup server — because there are no internal borders.
+
+Secure network design is about creating “zones of trust.” You group assets by sensitivity and function, and you enforce strict rules about who can talk to whom across zone boundaries.
+
+Here is a picture of the difference.
+
+IMAGE 1 — Flat vs. Segmented Network: A split diagram on a light background. Left side: “FLAT NETWORK (The Village)” — Single circle “Internal Network” containing icons for “Web Server,” “Database,” “Domain Controller,” “User Laptops,” “Printer,” “Backup Server.” One “Firewall” at the perimeter. Red arrows showing “Attacker compromises Laptop -> Free access to Database/DC/Backup.” Right side: “SEGMENTED NETWORK (The City)” — Distinct zones separated by firewall icons: “DMZ (Web Server),” “App Zone (App Servers),” “Data Zone (Database),” “Management Zone (DC, Backup, SIEM),” “User Zone (Laptops, Printers),” “Guest Zone.” Arrows between zones labeled “Strict Policies.” Green checkmarks on zone boundaries. Clean, light background, soft green/red contrast.
+
+Part 5 — How It Works: The Layers of Network Defense
+
+Network security works at multiple layers. We use the OSI Model and TCP/IP Model to understand where our controls sit.
+
+The TCP/IP Model & Security Controls
+TCP/IP Layer	OSI Layers	What Happens Here	Security Controls
+Application	7	User data (HTTP, DNS, SMTP, SSH)	WAF, API Gateway, DLP, App Firewall, TLS/SSL Inspection
+Transport	4	End-to-end connections (TCP, UDP)	Stateful Firewall, Load Balancer, Port Knocking
+Internet	3	Routing & Addressing (IP, ICMP)	Router ACLs, BGP Security (RPKI), IPsec, VPN
+Network Access	1-2	Frames, MAC, Physical (Ethernet, Wi-Fi)	Port Security, NAC, 802.1X, VLANs, MACsec
+
+Key Insight: A firewall at Layer 3/4 (IP/Port) sees who is talking to whom. A WAF at Layer 7 sees what they are saying (SQL injection, XSS). You need both.
+
+The Three Pillars of Network Security Architecture
+
+1. Segmentation (Zoning) — The Zoning Laws
+You divide the network into segments (VLANs, Subnets, VRFs) based on trust level and function.
+
+Untrusted / Internet: The wild west. No trust.
+DMZ (Demilitarized Zone): Public-facing assets (Web, Mail, DNS). Zero trust from Internal.
+Public Services / Guest: Wi-Fi for visitors, IoT devices. Zero trust from Corporate.
+User / Workstation Zone: Employee laptops, printers. Low trust (assume compromised).
+Server / Application Zone: Business logic, APIs. Medium trust.
+Data Zone: Databases, File Stores. High trust (Crown Jewels).
+Management / Control Plane: Firewalls, Switches, Hypervisors, SIEM, Domain Controllers, Backup. Maximum trust / Maximum protection. “Out-of-band” if possible.
+
+Rule: Traffic flows Downhill (Untrusted -> DMZ -> App -> Data) easily. Traffic flows Uphill (Data -> App -> DMZ -> Internet) only with explicit, logged, inspected permission.
+
+2. Perimeter & Border Control (Firewalls) — The Border Checkpoints
+A firewall is a policy enforcement point. It decides: Allow, Deny, Inspect, Log.
+
+Stateless (Packet Filter): Looks at single packet (Src IP, Dst IP, Port, Protocol). Fast, dumb. No context. Good for high-speed edge filtering (e.g., “Drop all RFC1918 from Internet”).
+Stateful Inspection: Tracks connection state (SYN, SYN-ACK, ESTABLISHED). Understands “This packet belongs to an existing conversation.” The standard for 20+ years.
+Next-Generation Firewall (NGFW) / App-ID: Adds Layer 7 visibility. Identifies application (Facebook, SSH, BitTorrent, SQL) regardless of port. Does TLS Decryption (MITM proxy) to inspect encrypted payloads. Does IPS (Intrusion Prevention) signature matching.
+
+Placement:
+
+North-South (Edge): Internet <-> DMZ, Internet <-> VPN, Internet <-> Cloud.
+East-West (Internal): Between Zones (DMZ <-> App, App <-> Data, User -> Mgmt). This is where modern breaches spread. East-West firewalls (or microsegmentation) are critical.
+
+3. Visibility & Detection (The Cameras & Patrols)
+Firewalls block known bad. You need to detect the unknown bad.
+
+IDS/IPS (Network): Signature/Anomaly based. Inline (IPS) or Tap/Span (IDS).
+NDR (Network Detection & Response): Behavioral analytics, ML on traffic metadata (Zeek, Corelight, Darktrace, Vectra). Detects C2, Lateral Movement, Data Exfil.
+Flow Analysis (NetFlow/IPFIX/sFlow): Who talked to whom, when, how much. Cheap, scalable. Essential for forensics.
+Full Packet Capture (PCAP): The “black box.” Expensive storage. Targeted at critical links (Data Center egress).
+Part 6 — Secure Network Services: Hardening the Infrastructure
+
+The network devices themselves (Routers, Switches, Firewalls, Controllers) are high-value targets. If an attacker owns the switch, they own the traffic.
+
+Hardening the Control Plane
+No Telnet / HTTP / SNMPv1/v2c. Only SSHv2, HTTPS, SNMPv3 (AuthPriv).
+AAA (Authentication, Authorization, Accounting): Centralized (TACACS+/RADIUS) -> MFA. No local accounts except break-glass.
+Management Plane Protection: Dedicated Management VLAN / VRF / Out-of-Band (OOB) network. No management access from User/DMZ zones.
+Secure Config Baselines: CIS Benchmarks / DISA STIGs. Disable CDP/LLDP on untrusted ports. Disable unused services (CDP, NTP master, DNS proxy, HTTP server).
+Time Synchronization: NTP authenticated (NTS) or PTP. Critical for logs, certs, Kerberos, SIEM correlation.
+Secure Switching (Layer 2 Defense)
+
+The “soft underbelly” of the network.
+
+Port Security / Sticky MAC: Limit MACs per port. Violation = Shutdown / Restrict.
+DHCP Snooping: Trust only uplinks. Drop DHCP replies from access ports. Builds DHCP Binding Table (IP<->MAC<->Port<->VLAN).
+Dynamic ARP Inspection (DAI): Validates ARP packets against DHCP Snooping table. Stops ARP Poisoning / MITM.
+IP Source Guard: Filters traffic on port to only allow Source IP/MAC matching DHCP Snooping table. Stops IP Spoofing.
+BPDU Guard / Root Guard: Prevents rogue switches becoming Root Bridge (STP hijack).
+Private VLANs / Port Isolation: Devices in same VLAN cannot talk to each other (only to Gateway). Essential for DMZ, Guest, Server VLANs.
+Wireless (Wi-Fi) Hardening
+WPA3-Enterprise (802.1X/EAP-TLS) for Corporate. WPA3-Personal (SAE) for Small Biz.
+No WPA2-Personal (PSK) if avoidable. No WEP / TKIP. Ever.
+Separate SSIDs/VLANs: Corporate (802.1X), Guest (Captive Portal + Rate Limit), IoT (PSK + Strict ACL).
+Disable: WPS, UPnP, WMM (if not needed), Broadcast SSID (marginal value).
+Client Isolation (AP Isolation): Prevents wireless clients talking to each other.
+Part 7 — Remote Access & VPN: The Secure Gateway
+
+Remote access is the new perimeter.
+
+VPN Technologies
+IPsec (Site-to-Site / Remote Access): Kernel-level, standard, heavy. IKEv2 + AES-GCM + PFS. Avoid Aggressive Mode.
+SSL/TLS VPN (Clientless / Client): Runs over TCP 443. Good for NAT traversal. Clientless = Portal (higher risk).
+WireGuard: Modern, kernel-space, ~4000 lines code. Curve25519, ChaCha20-Poly1305, BLAKE2s. Simple, fast, auditable. Preferred for modern Remote Access.
+Zero Trust Network Access (ZTNA) / SDP: No VPN. Identity-aware proxy (Cloudflare Access, Tailscale, Twingate, Zscaler, Netskope). “Never trust, always verify.” App-level access, not network-level. The modern replacement for VPN.
+VPN Hardening Checklist
+MFA Mandatory (Hardware token / FIDO2 / Push + Number Match).
+Certificate-Based Auth (Machine + User) > Password.
+Split Tunneling OFF (Force all traffic through VPN) for High Security. ON for performance (with risks).
+Posture Assessment (Host Check): AV running? Disk Encrypted? Patched? Domain Joined? Quarantine VLAN if fail.
+Split DNS: Only corporate domains resolve via VPN DNS.
+Part 8 — Monitoring & Logging: The Eyes and Ears
+
+You cannot protect what you cannot see.
+
+What to Log (The “Golden Signals” of Network Security)
+Firewall Logs: Allow/Deny, Src/Dst IP/Port, User, App, Threat ID, URL Category.
+DNS Logs (Critical): Query, Response, Client IP. Detects C2 (DGA), Tunneling, Phishing.
+DHCP Logs: IP assignment history (IP <-> MAC <-> Hostname <-> Time).
+VPN/Remote Access Logs: Connect/Disconnect, User, Duration, Bytes, Posture Result.
+Authentication Logs (AAA/TACACS/RADIUS): Login success/fail, Privilege commands.
+Flow Data (NetFlow/IPFIX): Src/Dst IP, Port, Proto, Bytes, Packets, Start/End Time. Sampled is OK.
+IDS/IPS Alerts: Signature ID, Severity, Packet Capture (PCAP) snippet.
+Log Management Architecture
+Syslog (UDP 514 / TCP 6514 / TLS 6514): Standard transport. Use TLS (RFC 5425).
+Centralized SIEM / Log Platform: Splunk, Elastic, Graylog, Loki, Panther, Sentinel.
+Retention: Hot (30-90d), Cold (1-7 years per compliance).
+Alerting: Real-time on Critical/High. Daily digest on Medium. Tune ruthlessly to kill alert fatigue.
+Part 9 — Common Implementation Anti-Patterns & Pitfalls
+Anti-Pattern 1: The “Flat Network” (No Segmentation)
+The Mistake: One big /16 subnet for everything. “It’s easier to manage.”
+Why it Fails: One compromised laptop = Domain Admin in 30 minutes (BloodHound, Kerberoasting, SMB relay).
+Fix: VLANs + ACLs + Firewall between every functional zone. Start with: Mgmt, Servers, Users, Guest, DMZ.
+Anti-Pattern 2: “Allow Any Any” Firewall Rules
+The Mistake: Permit IP Any Any on internal interfaces. “The app broke, so I opened it all.”
+Why it Fails: Turns firewall into a router. Lateral movement unrestricted.
+Fix: Default Deny. Document every required flow (App -> DB: TCP 1433). Use Application-aware rules (App-ID), not just Port.
+Anti-Pattern 3: Management Plane Exposure
+The Mistake: SSH/HTTPS/SNMP on firewall/switch open to User VLAN or Internet. “So I can manage from my desk.”
+Why it Fails: Brute force, CVEs (CVE-2024-3400, CVE-2023-20198), credential stuffing -> Full network ownership.
+Fix: Dedicated Mgmt VLAN/VRF + Jump Host/Bastion + MFA + IP Allowlist.
+Anti-Pattern 4: No TLS Decryption (Blind Spot)
+The Mistake: “We can’t decrypt TLS, it breaks apps / privacy / performance.”
+Why it Fails: 95%+ of malware C2, phishing, data exfil is inside TLS 1.2/1.3. You are blind to 90% of threats.
+Fix: TLS Inspection (MITM Proxy) on NGFW. Pin certs for critical apps (Banking, Health). Use Certificate Pinning / DoH bypass controls.
+Anti-Pattern 5: Ignoring East-West Traffic
+The Mistake: Fortinet/Palo Alto at Internet edge. Zero firewalls between Web, App, DB, User VLANs.
+Why it Fails: Attacker phishes user -> Pivots to App Server -> Pivots to DB. All East-West.
+Fix: East-West Firewalls (Virtual FW in Cloud, Distributed FW in VMware NSX, Cisco ACI, Calico/Cilium in K8s). Microsegmentation.
+Anti-Pattern 6: Legacy Protocols / Cleartext
+The Mistake: Telnet, FTP, TFTP, SNMPv1/v2c, HTTP, Syslog (UDP), NTP (unauth), LDAP (unsigned), SMBv1, NetBIOS, LLMNR/NetBIOS-NS enabled.
+Why it Fails: Credentials in cleartext. Relay attacks. Spoofing. Amplification (NTP/DNS).
+Fix: Disable / Block / Replace. SSH, SFTP, SNMPv3, HTTPS, Syslog/TLS, NTPsec/NTS, LDAPS/StartTLS, SMBv3 (Signing/Encryption), Disable LLMNR/NetBIOS via GPO.
+Part 9 — Guided Mini-Lab: Designing a Secure Network Architecture
+
+In this lab, you will design a network architecture for a fictional company: “Acme Corp” (150 employees, 1 web app, 1 DB, hybrid cloud).
+
+Requirements:
+100 On-prem employees (Laptops, Phones, Printers).
+50 Remote employees (VPN/ZTNA).
+Public Web App (AWS EC2 + RDS Postgres).
+Internal ERP (On-prem VMs).
+Domain Controllers, File Server, Backup Server.
+Guest Wi-Fi, IoT (Smart TVs, Cameras).
+Compliance: SOC2 (Logging, Encryption, Access Control).
+Your Task:
+
+Draw the architecture (text description is fine) and define:
+
+VLAN / Subnet Plan (Name, CIDR, Purpose, Zone).
+Firewall Policy Matrix (Source Zone -> Dest Zone: Allow/Deny, Ports, Inspection).
+Key Security Controls per Zone.
+Remote Access Strategy.
+Logging / Visibility Plan.
+Write it down in your lab notebook:
+LESSON 1 — ACME CORP NETWORK ARCHITECTURE DESIGN
+Date: [today]
+
+VLAN PLAN:
+| VLAN ID | Name            | CIDR          | Zone        | Gateway |
+| 10      | MGMT-OOB        | 10.10.0.0/24  | Management  | FW-Mgmt |
+| 20      | DC-MGMT         | 10.20.0.0/24  | Management  | FW-Mgmt |
+| 30      | SERVER-APP      | 10.30.0.0/23  | App         | FW-App  |
+| 40      | SERVER-DB       | 10.40.0.0/24  | Data        | FW-Data |
+| 50      | SERVER-DMZ      | 10.50.0.0/24  | DMZ         | FW-DMZ  |
+| 100     | USER-WIRED      | 10.100.0.0/22 | User        | FW-User |
+| 101     | USER-WIRELESS   | 10.101.0.0/22 | User        | FW-User |
+| 150     | GUEST-WIFI      | 10.150.0.0/24 | Guest       | FW-Guest|
+| 160     | IOT             | 10.160.0.0/24 | Guest/IoT   | FW-Guest|
+| 200     | VPN-USERS       | 10.200.0.0/24 | Remote      | FW-VPN  |
+| 201     | AZURE-VNET      | 10.201.0.0/16 | Cloud       | TGW     |
+
+FIREWALL POLICY MATRIX (Source -> Dest):
+| Src Zone | Dst Zone | Action | Ports/Apps          | Inspection      |
+| Internet | DMZ      | Allow  | HTTPS (443)         | TLS Decrypt, IPS, WAF |
+| DMZ      | App      | Allow  | HTTPS (443), gRPC   | TLS Decrypt, IPS      |
+| App      | Data     | Allow  | PostgreSQL (5432)   | SQL Inspection, Audit |
+| User     | App      | Allow  | HTTPS, App-Ports    | TLS Decrypt, URL Filt |
+| User     | Internet | Allow  | Web, DNS, Updates   | TLS Decrypt, URL Filt, AV |
+| Mgmt     | All      | Allow  | SSH, HTTPS, SNMPv3  | MFA, Audit, No Decrypt|
+| VPN      | User/App | Allow  | Required Apps       | Posture Check, MFA    |
+| Guest/IoT| Internet | Allow  | DNS, HTTP/S         | Captive Portal, Rate Limit|
+| *        | Mgmt     | Deny   | -                   | Log, Alert          |
+| *        | Data     | Deny   | -                   | Log, Alert          |
+
+KEY CONTROLS:
+- Segmentation: VLANs + FW per Zone (Virtual FWs in Cloud, Physical On-prem).
+- Switching: DHCP Snooping, DAI, IP Source Guard, Port Security, PVLANs on DMZ/Server/User.
+- Wireless: WPA3-Ent (Corp), WPA3-Personal (Guest/IoT), 802.1X (Machine+User Certs).
+- Remote Access: WireGuard (Employees) + ZTNA (Contractors/3rd Party). MFA (FIDO2). Posture Check.
+- Mgmt: OOB Network (separate switches), TACACS+ (MFA), Jump Hosts, No Direct Access.
+- Logging: Syslog/TLS -> SIEM. DNS Logs (Critical). NetFlow. TLS Decrypt (Exc. Finance/Health).
+- VPN: WireGuard + ZTNA. MFA (FIDO2). Posture Check (AV, Disk Enc, Patch). Split Tunnel OFF.
+- Hardening: CIS Benchmarks (FW, SW, Linux, Win). CIS Benchmarks Audit Monthly.
+- Vuln Mgmt: Weekly Auth Scans (Internal/External). Patch SLA: Crit 72h, High 7d, Med 30d.
+
+GAPS IDENTIFIED:
+1. No Microsegmentation within Server VLANs (App->DB only). Need Host-based FW / Cilium.
+2. Cloud (AWS) Security Groups not audited against On-prem FW Policy.
+3. IoT VLAN has Internet access. Should be Deny All Egress except NTP/DNS to Internal.
+Part 10 — Summary and Glossary
+
+Here is what we covered.
+
+Secure network design is about segmentation, not just a perimeter firewall. You build zones (DMZ, App, Data, Mgmt, User, Guest) and enforce strict, logged, inspected policies between them.
+
+Defense in Depth applies to the network:
+
+Perimeter: NGFW (App-ID, TLS Decrypt, IPS, URL Filtering).
+Internal (East-West): Segmentation Firewalls / Microsegmentation / Host FW.
+Infrastructure Hardening: SSH/HTTPS/SNMPv3 only, OOB Mgmt, AAA/TACACS+ MFA, Port Security/DAI/DHCP Snooping/BPDU Guard.
+Remote Access: ZTNA / WireGuard + MFA + Posture Check. No Split Tunnel.
+Visibility: TLS Decryption (Critical), DNS Logging (Critical), NetFlow, SIEM, NDR.
+
+The Golden Rule: Default Deny. Explicit Allow. Log Everything. Inspect Everything (especially TLS).
+
+Glossary of Key Terms:
+
+Network Segmentation: Dividing a network into smaller, isolated segments (VLANs, Subnets) to limit blast radius.
+DMZ (Demilitarized Zone): A network segment hosting public-facing services, isolated from the internal network.
+East-West Traffic: Traffic flowing between systems inside the network (e.g., App -> DB).
+North-South Traffic: Traffic flowing between the internal network and the Internet.
+Stateful Firewall: Tracks connection state (SYN, ESTABLISHED) to make filtering decisions.
+Next-Gen Firewall (NGFW): Firewall with Application Awareness (App-ID), TLS Decryption, IPS, URL Filtering.
+Microsegmentation: Granular segmentation down to workload/pod level (e.g., Calico, Cilium, NSX).
+DMZ (Demilitarized Zone): Semi-trusted zone for public-facing services.
+Out-of-Band (OOB) Management: Dedicated network path for device management, separate from production traffic.
+802.1X / NAC: Port-based Network Access Control. Authenticates device/user before network access.
+DHCP Snooping / DAI / IP Source Guard: Layer 2 defenses against spoofing, MITM, rogue DHCP.
+ZTNA (Zero Trust Network Access): Identity-based, context-aware access to apps (no network-level VPN).
+TLS Decryption / SSL Inspection: Firewall acts as MITM proxy to inspect encrypted traffic payloads.
+Out-of-Band (OOB) Management: Dedicated management network isolated from production traffic.
+Microsegmentation: Granular segmentation enforcing policy at workload/process level.
+CIS Benchmarks: Consensus-based secure configuration guides for OS, Cloud, Network devices.
+TLS Decryption: Intercepting and inspecting TLS traffic by acting as a trusted Man-in-the-Middle.
+East-West Traffic: Lateral traffic between internal systems.
+North-South Traffic: Traffic crossing the network perimeter (Ingress/Egress).
+Microsegmentation: Zero Trust segmentation applied at the workload/container level.
+ZTNA: Zero Trust Network Access — Identity-based application access, replacing VPN.
+Part 11 — Practice Questions & Further Reading
+Practice Questions
+Explain why a “flat network” is the single biggest architectural risk in a breach scenario.
+Describe the difference between a Stateful Firewall and a Next-Generation Firewall (NGFW).
+Why is TLS Decryption (SSL Inspection) considered mandatory for modern perimeter security?
+List the 5 essential Layer 2 switch security features (DHCP Snooping, DAI, etc.) and what attack each prevents.
+Compare IPsec VPN, SSL VPN, WireGuard, and ZTNA. Which would you choose for a modern remote workforce and why?
+Design a VLAN plan for a hospital (Medical Devices, EHR, Admin, Guest, HVAC/Building Mgmt).
+Explain the concept of “Out-of-Band Management” and why it is critical for network device security.
