@@ -7,7 +7,7 @@ export const module3Data = {
     "id": "quiz_mod_c1_3",
     "title": "Module 3 Assessment: Threat Landscape & Malware Operations",
     "pass_threshold": 80,
-    "total_questions": 3,
+    "total_questions": 20,
     "questions": [
       {
         "id": "q_c1_m3_1",

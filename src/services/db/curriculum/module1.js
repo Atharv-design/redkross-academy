@@ -7,7 +7,7 @@ export const module1Data = {
     "id": "quiz_mod_c1_1",
     "title": "Module 1 Assessment: Foundations & CIA Triad",
     "pass_threshold": 80,
-    "total_questions": 5,
+    "total_questions": 20,
     "questions": [
       {
         "id": "q_c1_m1_1",

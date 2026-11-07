@@ -7,7 +7,7 @@ export const module5Data = {
     "id": "quiz_mod_c1_5",
     "title": "Module 5 Assessment: IAM, MFA & Access Control Architecture",
     "pass_threshold": 80,
-    "total_questions": 3,
+    "total_questions": 20,
     "questions": [
       {
         "id": "q_c1_m5_1",

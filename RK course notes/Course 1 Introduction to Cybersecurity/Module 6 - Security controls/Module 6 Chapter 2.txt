@@ -1,0 +1,238 @@
+Course 01: Introduction to Cybersecurity
+Module 6: Security Controls
+Lesson 2: Preventive, Detective, and Corrective Controls
+Part 1 — Hook: The Fire Department Analogy
+
+Imagine you are the owner of a historic wooden theater. You have spent your entire life saving to buy this building, and it is filled with priceless antiques. You face a constant threat: fire.
+
+To protect the theater, you install three completely different types of measures, each designed for a specific moment in the lifecycle of a disaster:
+
+Preventive Controls: You hire a professional electrician to rewire the entire building, removing the frayed, sparking electrical cables that could ignite a fire. You install a modern, spark-resistant fuse box. You ban open flames and smoking inside the building. These measures are designed to stop the fire from ever starting in the first place.
+Detective Controls: You install a network of smoke detectors on the ceiling, a loud fire alarm bell in the lobby, and a sprinkler system that automatically senses heat and sprays water. These measures are designed to discover the fire the exact moment it begins, and scream so loudly that everyone knows to run.
+Corrective Controls: You hire a team of professional firefighters, keep a massive fire extinguisher in the lobby, and maintain a backup generator. If the theater burns to the ground, you have insurance, a disaster recovery plan, and the resources to rebuild the theater brick by brick. These measures are designed to repair the damage and restore normal operations after the disaster has occurred.
+
+If you only bought smoke detectors but never rewired the building, the fire would start, the alarm would scream, and the theater would burn down while everyone watched. If you only rewired the building but never installed smoke detectors, a single spark in the projection booth would smolder for hours, consuming the entire theater silently before anyone noticed.
+
+Security controls work the exact same way. Preventive controls stop the attacker from getting in. Detective controls ensure you know the attacker is inside. Corrective controls clean up the mess and restore your systems. If you ignore any one of these three types, you are not “secure”—you are merely waiting for the next incident to teach you a lesson.
+
+Part 2 — Learning Objectives
+
+By the end of this lesson, you will be able to:
+
+Define and differentiate the three functional control types: Preventive, Detective, and Corrective.
+Classify any real-world security measure into its correct functional type.
+Explain the relationship between these three types and the CIA Triad (Confidentiality, Integrity, Availability).
+Analyze why detective controls are necessary even when preventive controls are perfectly implemented.
+Design a complete control framework for a standard environment, ensuring a balanced mix of all three types.
+Part 3 — Prerequisites
+
+Before proceeding, you must be familiar with:
+
+Module 1 (Foundations): The CIA Triad, the Kill Chain, and the Asset-Threat-Vulnerability model.
+Module 2 (Core Principles): Defence in Depth and Least Privilege.
+Module 6, Lesson 1: The three implementation domains: Administrative, Technical, and Physical controls.
+Part 4 — Concept from Scratch: The Functional Control Lifecycle
+
+In Lesson 1, we learned that every security control belongs to an implementation domain (Administrative, Technical, or Physical). In this lesson, we learn the second axis of classification: functional type.
+
+Every security control, regardless of whether it is a policy, a firewall, or a guard dog, performs one of three mathematical functions in the lifecycle of a security incident:
+
+         THE INCIDENT LIFECYCLE AND SECURITY CONTROLS
+┌──────────────────┐      ┌──────────────────┐      ┌──────────────────┐
+│  PREVENTIVE      │ ──>  │   DETECTIVE      │ ──>  │   CORRECTIVE    │
+│  (Stop the fire) │      │  (See the fire)  │      │  (Put out fire) │
+│                  │      │                  │      │                  │
+│  • Firewalls     │      │  • SIEM Alerts   │      │  • Backups      │
+│  • Encryption    │      │  • IDS/IPS       │      │  • Patching     │
+│  • Training      │      │  • CCTV          │      │  • Recovery     │
+└──────────────────┘      └──────────────────┘      └──────────────────┘
+Preventive Controls (Before the Incident): These are active barriers designed to stop an attacker from achieving their objective. They are the first line of defense.
+Detective Controls (During the Incident): These are monitoring and alerting mechanisms designed to discover that an incident is occurring or has occurred. They provide visibility.
+Corrective Controls (After the Incident): These are recovery mechanisms designed to restore systems to a secure, operational state and mitigate residual damage.
+
+The critical insight is that no single control type is sufficient on its own. A mature security program maintains a balanced portfolio of all three types across all three domains.
+
+[DIAGRAM 1 PLACEMENT: The Security Incident Lifecycle: Preventive, Detective, and Corrective Controls]
+
+Part 5 — Preventive Controls: Building the Walls
+
+Preventive controls are the most visible and intuitive security measures. They are designed to create barriers that stop threats before they can exploit vulnerabilities.
+
+Technical Preventive Controls
+Firewalls: Filter network traffic based on IP addresses, ports, and protocols. A properly configured firewall blocks unauthorized access while allowing legitimate business traffic.
+Encryption: Protects data at rest (on disks and databases) and in transit (over the network). Even if an attacker exfiltrates the data, it is unreadable without the decryption key.
+Multi-Factor Authentication (MFA): Requires two or more independent credentials to verify identity. This stops credential theft from resulting in account compromise.
+Web Application Firewalls (WAF): Filter and block malicious HTTP requests targeting web applications, preventing SQL injection, cross-site scripting (XSS), and other common web attacks.
+Endpoint Protection: Antivirus, anti-malware, and EDR solutions that scan files and processes for known threats before they can execute.
+Administrative Preventive Controls
+Security Policies: Formal documents that define acceptable use, password requirements, and data handling procedures.
+Background Checks: Screening job candidates for criminal history before granting them access to corporate systems.
+Security Awareness Training: Educating employees on how to recognize phishing emails, avoid social engineering, and follow secure practices.
+Acceptable Use Policies (AUP): Rules governing how employees may use corporate networks and devices.
+Physical Preventive Controls
+Locks and Keycards: Restrict physical access to server rooms, offices, and data centers.
+Security Guards: Human personnel who verify identities and patrol perimeters.
+Fences and Bollards: Physical barriers that prevent unauthorized vehicle access.
+Mantrap Portals: Two-door entry systems that prevent tailgating.
+Part 6 — Detective Controls: Installing the Alarms
+
+Detective controls do not stop attacks. They provide visibility. Without detective controls, an organization is blind: it does not know it is under attack until the damage is already done and the attacker has vanished.
+
+Technical Detective Controls
+Security Information and Event Management (SIEM): Collects and analyzes log data from across the organization. It correlates events (e.g., a failed login in London followed by a successful login from the same credentials in Tokyo) and generates alerts.
+Intrusion Detection Systems (IDS): Monitor network traffic for signatures of known attacks and raise alarms.
+Log Monitoring: Continuous review of system, application, and security logs for anomalies.
+CCTV and Surveillance Software: Video analytics that detect motion, loitering, or unauthorized access in real-time.
+File Integrity Monitoring (FIM): Detects unauthorized changes to critical system files, configuration files, and database records.
+Administrative Detective Controls
+Security Audits: Periodic reviews of system configurations, access logs, and policy compliance.
+Incident Response Planning: Predefined procedures for detecting, containing, and recovering from security incidents.
+Compliance Reviews: Assessments against regulatory frameworks (e.g., ISO 27001, PCI DSS, GDPR).
+Whistleblower Programs: Internal channels for employees to report suspected security violations.
+Physical Detective Controls
+CCTV Cameras: Continuous video surveillance of sensitive areas.
+Motion Sensors: Detect unauthorized movement inside buildings.
+Intrusion Alarms: Sound-based or network-based alerts triggered by forced entry.
+Guard Dogs and Patrols: Animals or humans that detect and report intruders.
+Part 7 — Corrective Controls: The Firefighters and the Rebuild
+
+Corrective controls are the recovery mechanisms. They are activated after an incident has occurred, and their purpose is to limit damage, restore operations, and prevent recurrence.
+
+Technical Corrective Controls
+Backup and Restore: The most important corrective control. If ransomware encrypts your files, you restore them from a clean backup. If a database is corrupted, you restore it from a point-in-time snapshot.
+Patch Management: Applying security updates to fix the vulnerability that allowed the incident to occur in the first place.
+Antivirus Quarantine: Isolating infected files or processes to prevent them from spreading.
+System Rebuilding: Reinstalling operating systems and applications on compromised hosts after forensic analysis is complete.
+Disaster Recovery (DR) Sites: Secondary data centers or cloud environments that take over operations if the primary site fails.
+Administrative Corrective Controls
+Incident Response Team (IRT): A dedicated team that responds to incidents, coordinates containment, and manages communication.
+Policy Updates: Revising security policies and procedures to address gaps exposed by the incident.
+Disciplinary Actions: Addressing employee negligence or misconduct that contributed to the incident.
+Legal and Regulatory Notifications: Fulfilling legal obligations to notify affected parties and regulators after a data breach.
+Physical Corrective Controls
+Fire Extinguishers and Suppression Systems: Tools used to put out fires after they are detected.
+Emergency Medical Response: First aid and ambulance services for injured personnel.
+Backup Generators: Restore power after an electrical outage.
+Debris Cleanup and Reconstruction: Rebuilding damaged facilities after a disaster.
+Part 8 — The Relationship Between Control Types and the CIA Triad
+
+Every security control protects one or more of the three core goals of the CIA Triad. Understanding this mapping is essential for designing a balanced security program.
+
+Control Type	Primary CIA Goal Protected	How It Works
+Preventive	Confidentiality & Integrity	Stops unauthorized access and modification before it happens.
+Detective	Integrity & Availability	Discovers unauthorized access, modification, or downtime.
+Corrective	Availability & Integrity	Restores systems and data to a secure, operational state.
+
+The Critical Insight: Preventive controls protect Confidentiality most directly. If you prevent the attacker from getting in, they cannot steal your data. Detective controls protect Integrity. If the attacker bypasses prevention, detective controls ensure you know the data has been tampered with. Corrective controls protect Availability. If everything else fails, corrective controls ensure your systems are restored and your business can continue.
+
+Part 9 — Why Detective Controls Are Non-Negotiable
+
+A common beginner mistake is to assume that if preventive controls are strong enough, detective controls are unnecessary. This is a catastrophic error.
+
+The Mathematics of Failure
+
+No preventive control is 100% effective. Firewalls have misconfigurations. Encryption keys are stolen. Employees are phished. Software contains zero-day vulnerabilities. If your preventive controls have a 99% success rate, and you face 10,000 attack attempts per year, 100 attacks will succeed.
+
+Without detective controls, those 100 successful attacks go unnoticed. The attacker lives inside your network for months, quietly exfiltrating data, while your organization remains completely unaware. This is exactly what happened in the SolarWinds attack: the preventive controls were bypassed, and it was a detective control (a security company monitoring its own logs) that eventually discovered the breach.
+
+The Attacker’s Timeline
+
+The average time to detect a breach is 277 days (according to Verizon’s 2023 Data Breach Investigations Report). During those 277 days, the attacker has time to:
+
+Map your entire network topology.
+Steal every database, file, and credential.
+Establish persistent backdoors.
+Exfiltrate data in small, undetectable chunks.
+
+Detective controls are what collapse that 277-day timeline to hours or days. A SIEM alert, a file integrity monitoring alarm, or an anomaly detection rule is the difference between catching an attacker in the wild and discovering the damage months after they have left.
+
+[DIAGRAM 2 PLACEMENT: The Breach Detection Timeline: Without vs With Detective Controls]
+
+Part 10 — Attacker vs Defender Viewpoint
+The Attacker’s Exploitation Playbook
+ATTACKER CONTROL BYPASS STRATEGIES
+ ├─ Bypass Preventive ─────────> Exploit unpatched software, phish users, steal credentials
+ ├─ Disable Detective ─────────> Delete logs, disable SIEM, kill EDR agents
+ └─ Defeat Corrective ─────────> Encrypt backups, destroy DR sites, corrupt snapshots
+Bypassing Preventive Controls: Attackers do not attack firewalls head-on. They find the one unpatched server, the one weak password, or the one employee who will click a phishing link. They walk through the open door.
+Disabling Detective Controls: Sophisticated attackers know that SIEMs, EDRs, and log monitors will detect them. They actively disable these systems. They delete log files, terminate security processes, and modify configuration files to stop alerts. This is why detective controls must be isolated and tamper-proof—logs must be forwarded to a centralized, immutable repository that the attacker cannot access.
+Defeating Corrective Controls: Ransomware groups specifically target backups. Before encrypting the primary systems, they search the network for backup servers, cloud storage buckets, and snapshot repositories, and they delete or encrypt them first. This is why backups must be immutable (cannot be modified or deleted) and air-gapped (physically or logically isolated from the primary network).
+The Defender’s Hardening Playbook
+Layer Preventive Controls: Use multiple, independent preventive controls (firewalls + MFA + encryption + training) so that defeating one does not grant access.
+Centralize and Protect Detective Controls: Forward all logs to a centralized, tamper-proof SIEM. Use host-based agents that cannot be disabled by standard users. Implement file integrity monitoring on critical systems.
+Immutable and Tested Backups: Store backups in immutable storage (e.g., AWS S3 Object Lock, Azure Immutable Blob). Test backups regularly by restoring them in a sandbox environment. If you cannot restore from a backup, you do not have a backup.
+
+[DIAGRAM 3 PLACEMENT: Attacker Control Bypass Strategies: Preventive, Detective, Corrective]
+
+Part 11 — Common Implementation Anti-Patterns & Pitfalls
+Anti-Pattern 1: Over-Investing in Prevention, Ignoring Detection
+The Mistake: Spending millions of dollars on firewalls, VPNs, and endpoint protection while having zero log collection, no SIEM, and no incident response team.
+Why it Fails: When prevention fails—and it always fails—the organization is completely blind. The breach goes undetected for months.
+Remediation: Allocate budget to detective controls (SIEM, logging, threat hunting) and corrective controls (backups, incident response).
+Anti-Pattern 2: Detective Controls Without Response
+The Mistake: Deploying a SIEM that generates thousands of alerts per day, but no team to investigate them.
+Why it Fails: The SIEM becomes noise. Attackers’ alerts are buried under false positives, and the organization is effectively blind. This is called “alert fatigue.”
+Remediation: Pair detective controls with a dedicated Security Operations Center (SOC) and a documented incident response plan.
+Anti-Pattern 3: Corrective Controls Without Testing
+The Mistake: Configuring automated daily backups, but never testing whether they can be restored.
+Why it Fails: When ransomware hits, the IT team discovers that the backups are corrupted, incomplete, or encrypted because they were stored on a network share that the ransomware could reach.
+Remediation: Test backups quarterly by restoring data to a sandbox environment. Store backups in immutable, isolated storage.
+Anti-Pattern 4: Preventive Controls That Block Business
+The Mistake: Implementing a firewall rule so restrictive that it blocks legitimate business traffic, causing users to bypass the firewall by connecting to personal Wi-Fi hotspots.
+Why it Fails: The preventive control creates a shadow IT problem, bypassing all security controls entirely.
+Remediation: Work with business units to ensure preventive controls are effective without being obstructive.
+
+[DIAGRAM 4 PLACEMENT: The Balanced Security Control Portfolio: Preventive, Detective, Corrective]
+
+Part 12 — Guided Mini-Lab: Building a Balanced Control Framework
+
+In this hands-on lab, we will design a complete security control framework for a standard corporate environment, ensuring a balanced mix of preventive, detective, and corrective controls.
+
+Scenario:
+
+You are the security architect for a 500-employee company. They use cloud-based SaaS applications (Office 365, Salesforce), have a corporate data center with Windows servers, and employees work both in the office and remotely.
+
+Your Task:
+
+Complete the control framework table in your lab notebook:
+
+Control Type	Administrative	Technical	Physical
+Preventive	Security policy, AUP, background checks	Firewalls, MFA, VPN, encryption	Keycards, security guards, fences
+Detective	Security audits, compliance reviews	SIEM, IDS, log monitoring, FIM	CCTV cameras, motion sensors, alarms
+Corrective	Incident response team, policy updates	Backups, patching, DR site	Fire extinguishers, backup generators
+Write it down in your lab notebook:
+LESSON 2 — BALANCED SECURITY CONTROL FRAMEWORK
+Date: [today]
+Organization: 500-Employee Corporate Environment
+Control Type Evaluated: Detective
+  - Administrative: Security audits, compliance reviews
+  - Technical: SIEM, IDS, log monitoring, FIM
+  - Physical: CCTV cameras, motion sensors, alarms
+Assessment: Balanced framework ensures no single point of failure in security posture.
+Part 13 — Summary and Glossary
+Summary Comparison Table
+Control Type	Primary Function	Timing	Examples	Primary Risk if Neglected
+Preventive	Stop the incident	Before	Firewalls, MFA, encryption, training	Unauthorized access, data breach
+Detective	Discover the incident	During	SIEM, IDS, CCTV, audits	Undetected breach, extended dwell time
+Corrective	Repair the damage	After	Backups, patching, DR site	Data loss, extended downtime
+Glossary of Key Terms
+Preventive Control: A security control designed to stop an incident before it happens.
+Detective Control: A security control designed to discover and alert on an incident.
+Corrective Control: A security control designed to repair damage and restore normal operations.
+Dwell Time: The duration of time between the initial compromise of a system and its detection.
+Alert Fatigue: The desensitization of security analysts caused by excessive, low-value alerts.
+Immutable Backup: A backup that cannot be modified, deleted, or encrypted, even by an attacker with full system access.
+Incident Response: The organized process of detecting, containing, eradicating, and recovering from a security incident.
+Defense in Depth: The practice of using multiple, independent layers of security controls.
+Part 14 — Practice Questions & Further Reading
+Practice Questions
+Classify the following controls as Preventive, Detective, or Corrective:
+A firewall rule blocking port 23.
+A SIEM alerting on suspicious logins.
+A backup of the customer database.
+A security awareness training program.
+A CCTV camera in the server room.
+Explain why detective controls are necessary even when preventive controls are perfectly implemented.
+What is “dwell time,” and how do detective controls reduce it?
+Describe a scenario where a strong preventive control is completely bypassed by a weak detective control.
+Design a security control framework for a small e-commerce company. Include at least one control from each functional type for each major asset.

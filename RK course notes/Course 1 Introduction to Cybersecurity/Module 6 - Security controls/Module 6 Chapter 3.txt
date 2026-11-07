@@ -1,0 +1,273 @@
+Course 01: Introduction to Cybersecurity
+Module 6: Security Controls
+Lesson 3: CIS Controls and NIST Cybersecurity Framework
+Part 1 — Hook: From Theory to Actionable Playbooks
+
+You have now studied the theoretical foundations of cybersecurity: the CIA Triad, the core principles of Module 2, the threat landscape of Module 3, the risk models of Module 4, and the identity architectures of Module 5. But theory without a structured implementation plan is just academic noise.
+
+Imagine you are the newly hired Chief Information Security Officer (CISO) of a mid-sized manufacturing company. The CEO calls you into the boardroom and says, “Our insurance premiums just went up 40%. The board wants a concrete plan. Where do we start?”
+
+You cannot answer with abstract concepts like “enforce least privilege” or “deploy defense in depth.” The board needs a prioritized, numbered checklist of concrete actions. They need a playbook.
+
+In the real world, two global standards dominate this space:
+
+The CIS Controls (formerly SANS Top 20): A prioritized, action-oriented set of 18 specific controls. It answers the question: “What specific technical actions should we take first?”
+The NIST Cybersecurity Framework (CSF): A high-level, business-aligned framework used to manage and communicate cybersecurity risk. It answers the question: “How do we govern, assess, and communicate our security program to executives and regulators?”
+
+Mastering these two frameworks is what transforms a security professional from a technician who knows how to configure a firewall into a strategic leader who can align technical controls with business objectives.
+
+Part 2 — Learning Objectives
+
+By the end of this lesson, you will be able to:
+
+Define and differentiate the CIS Controls and the NIST Cybersecurity Framework (CSF).
+Explain the structure of the CIS Controls (IG1, IG2, IG3) and detail the first 6 foundational controls.
+Deconstruct the NIST CSF Core Functions (Identify, Protect, Detect, Respond, Recover) and their relationship to the Framework Implementation Tiers.
+Map CIS Controls to NIST CSF Functions, demonstrating how tactical actions support strategic governance.
+Design a hybrid cybersecurity program that leverages the prioritization of CIS Controls with the governance structure of NIST CSF.
+Part 3 — Prerequisites
+
+Before proceeding, you must be familiar with:
+
+Module 1 (Foundations): The CIA Triad, assets, and the kill chain.
+Module 2 (Core Principles): Least Privilege, Defence in Depth, and Separation of Duties.
+Module 6, Lessons 1 & 2: The three control domains (Administrative, Technical, Physical) and the three functional types (Preventive, Detective, Corrective).
+Part 4 — Concept from Scratch: CIS Controls vs. NIST CSF
+
+To understand why these two frameworks dominate the industry, we must first understand their distinct purposes.
+
+              CIS CONTROLS vs. NIST CSF
+┌──────────────────────────────┐      ┌──────────────────────────────┐
+│  CIS CONTROLS (SANS Top 20)  │      │  NIST CYBERSECURITY FRAMEWORK │
+│                              │      │                              │
+│  • 18 Action-Oriented Items  │      │  • 5 Core Functions           │
+│  • Prioritized & Tactical    │      │  • Business-Aligned & Strategic│
+│  • "What to do first?"       │      │  • "How to govern & manage?"  │
+│  • Implementation Groups     │      │  • Framework Implementation   │
+│    (IG1, IG2, IG3)           │      │    Tiers (0-4)                │
+│  • Focus: Technical Controls │      │  • Focus: Governance & Risk   │
+└──────────────────────────────┘      └──────────────────────────────┘
+1. The CIS Controls: The Tactical “To-Do” List
+
+The Center for Internet Security (CIS) publishes a set of 18 critical security controls. These controls are prioritized, numbered, and highly specific. They are designed to be implemented in order of impact: Controls 1 through 6 are the “Basic Cyber Hygiene” that stop the vast majority of common attacks. Controls 7 through 18 address more advanced threats.
+
+Key Feature: Implementation Groups (IGs)
+The CIS Controls are organized into three Implementation Groups based on the size and maturity of the organization:
+
+IG1 (Basic Cyber Hygiene): Designed for small businesses or departments with no dedicated IT security staff. It covers the first 5 controls.
+IG2 (Intermediate): Designed for medium-sized organizations with a dedicated IT team. It covers the first 13 controls.
+IG3 (Advanced): Designed for large enterprises with dedicated security teams and mature budgets. It covers all 18 controls.
+2. The NIST Cybersecurity Framework: The Strategic “Governance” Model
+
+Developed by the National Institute of Standards and Technology (NIST), the Cybersecurity Framework (CSF) is a voluntary, risk-based framework designed to help organizations understand, manage, and reduce their cybersecurity risk. It is widely used by critical infrastructure sectors, government agencies, and commercial enterprises worldwide.
+
+The NIST CSF is built around five core functions that represent the lifecycle of a cybersecurity program:
+
+Identify: Understand the environment and resources that support critical functions and the risks they face.
+Protect: Develop and implement the appropriate safeguards to ensure the delivery of critical infrastructure services.
+Detect: Develop and implement the appropriate activities to identify the occurrence of a cybersecurity event.
+Respond: Develop and implement the appropriate activities to take action regarding a detected cybersecurity event.
+Recover: Develop and implement the appropriate activities to maintain plans for resilience and to restore any capabilities or services that were impaired due to a cybersecurity event.
+
+[DIAGRAM 1 PLACEMENT: CIS Controls vs NIST CSF: Tactical vs Strategic Frameworks]
+
+Part 5 — The CIS Controls: The 18 Critical Security Actions
+
+The CIS Controls are organized by priority. Let us examine the first six foundational controls in detail, as they represent the “CIS Critical Security Measures” that stop 85% of common attacks.
+
+Control 1: Inventory and Control of Enterprise Assets
+Objective: Maintain an accurate, up-to-date inventory of all hardware, software, and cloud assets.
+Why it Matters: You cannot protect what you do not know exists. Shadow IT, abandoned servers, and unmanaged endpoints are the primary entry points for attackers.
+Implementation: Deploy automated asset discovery tools, integrate with Active Directory, and enforce MDM (Mobile Device Management) on all corporate-owned devices.
+Control 2: Inventory and Control of Software Assets
+Objective: Maintain an inventory of all authorized software and control the installation of new software.
+Why it Matters: Unpatched legacy software and unauthorized applications (e.g., peer-to-peer file sharing, torrent clients) are common attack vectors.
+Implementation: Use application whitelisting, centralized software management tools, and automated patch management systems.
+Control 3: Continuous Vulnerability Management
+Objective: Continuously find, prioritize, and remediate vulnerabilities.
+Why it Matters: Vulnerabilities are the holes in your armor. If you do not find and fix them, attackers will find them for you.
+Implementation: Deploy automated vulnerability scanners, integrate threat intelligence feeds, and establish SLAs for remediation based on severity (e.g., Critical vulnerabilities patched within 24 hours).
+Control 4: Secure Configuration of Enterprise Assets and Software
+Objective: Establish and maintain secure configurations for all hardware and software.
+Why it Matters: Default configurations are often insecure. A hardened configuration closes unnecessary ports, disables unused services, and enforces strong password policies.
+Implementation: Use configuration management tools (e.g., Ansible, SCCM), benchmark against CIS Benchmarks, and enforce secure baselines via Group Policy.
+Control 5: Account Management
+Objective: Manage the lifecycle of user accounts and enforce least privilege.
+Why it Matters: Orphaned accounts, excessive privileges, and shared accounts are the primary causes of insider threats and lateral movement.
+Implementation: Automate provisioning and deprovisioning via SCIM, enforce MFA, and conduct periodic access reviews.
+Control 6: Continuous Monitoring and Defense
+Objective: Implement continuous monitoring systems to detect anomalies and attacks.
+Why it Matters: Even with perfect prevention, you must be able to detect an active breach in real-time.
+Implementation: Deploy a SIEM, configure IDS/IPS, and establish a Security Operations Center (SOC) with 24/7 monitoring.
+
+[DIAGRAM 2 PLACEMENT: The CIS Controls: The First 6 Foundational Controls (Basic Cyber Hygiene)]
+
+Part 6 — The NIST Cybersecurity Framework: The Five Core Functions
+
+The NIST CSF is organized around five core functions that represent the lifecycle of a cybersecurity program. Each function contains categories and subcategories that map to specific security objectives.
+
+1. Identify (ID)
+
+The Identify function helps an organization develop an understanding of its cybersecurity risk to systems, people, assets, data, and capabilities. It is the foundation of the framework.
+
+Asset Management (ID.AM): Catalogue physical and software assets to understand what needs protection.
+Business Environment (ID.BE): Understand the organization’s mission, objectives, and stakeholders.
+Governance (ID.GV): Establish policies, procedures, and roles to manage cybersecurity risk.
+Risk Assessment (ID.RA): Identify and prioritize risks based on likelihood and impact.
+Risk Management Strategy (ID.RM): Define how the organization will manage risk.
+Supply Chain Risk Management (ID.SC): Identify and manage risks from third-party vendors.
+2. Protect (PR)
+
+The Protect function develops and implements safeguards to ensure the delivery of critical infrastructure services. It is the implementation of preventive controls.
+
+Identity Management, Authentication, and Access Control (PR.AC): Control physical and digital access to assets based on identity and role.
+Awareness and Training (PR.AT): Ensure all users and partners understand their cybersecurity roles and responsibilities.
+Data Security (PR.DS): Protect data confidentiality, integrity, and availability.
+Maintenance (PR.MA): Maintain and test processes and tools to ensure the security of assets.
+Protective Technology (PR.PT): Implement technical controls to prevent, detect, and respond to threats.
+3. Detect (DE)
+
+The Detect function develops and implements activities to identify the occurrence of a cybersecurity event. It is the implementation of detective controls.
+
+Anomalies and Events (DE.AE): Detect anomalies and events to identify potential cybersecurity breaches.
+Security Continuous Monitoring (DE.CM): Continuously monitor assets and systems for security threats.
+Detection Processes (DE.DP): Maintain and test detection processes to ensure timely and adequate awareness of anomalies.
+4. Respond (RS)
+
+The Respond function develops and implements activities to take action regarding a detected cybersecurity event. It is the implementation of corrective controls.
+
+Response Planning (RS.RP): Maintain and test response plans and communication strategies.
+Mitigation (RS.MT): Prevent the expansion or escalation of an incident.
+Improvements (RS.IM): Incorporate lessons learned to improve security posture.
+Communication (RS.CO): Coordinate response activities with internal and external stakeholders.
+5. Recover (RC)
+
+The Recover function develops and implements activities to restore capabilities and services impaired by a cybersecurity event. It is the implementation of recovery controls.
+
+Recovery Planning (RC.RP): Maintain and test recovery plans and communication strategies.
+Improvements (RC.IM): Incorporate lessons learned to improve recovery processes.
+Communications (RC.CO): Coordinate recovery activities with internal and external stakeholders.
+           THE NIST CYBERSECURITY FRAMEWORK CORE
+┌─────────────────────────────────────────────────────────────────┐
+│  IDENTIFY (Governance & Risk)  ──>  PROTECT (Preventive)        │
+│         │                                │                      │
+│         ▼                                ▼                      │
+│  DETECT (Monitoring)  <──────────────>  RESPOND (Containment)    │
+│         │                                │                      │
+│         └────────────────────────────────┘                      │
+│                       │                                         │
+│                       ▼                                         │
+│              RECOVER (Restoration)                              │
+└─────────────────────────────────────────────────────────────────┘
+
+[DIAGRAM 3 PLACEMENT: The NIST CSF Core Functions: Identify, Protect, Detect, Respond, Recover]
+
+Part 7 — Framework Implementation Tiers (NIST CSF)
+
+The NIST CSF also includes Implementation Tiers that help organizations assess and communicate their cybersecurity maturity. These tiers range from Partial (Tier 0) to Adaptive (Tier 4).
+
+Tier	Name	Description	Key Characteristics
+Tier 0	Partial	Ad-hoc, informal security practices	No formal risk management; no budget; reactive
+Tier 1	Risk-Informed	Basic risk management processes	Basic policies; informal risk assessment; limited budget
+Tier 2	Repeatable	Established risk management processes	Formal policies; periodic risk assessments; dedicated security team
+Tier 3	Defined	Organization-wide risk management	Standardized processes; automated controls; continuous monitoring
+Tier 4	Adaptive	Advanced, continuous improvement	Threat intelligence integration; machine learning; proactive hardening
+Part 8 — Mapping CIS Controls to NIST CSF Functions
+
+The true power of these two frameworks is that they are complementary. CIS Controls provide the tactical “how,” while NIST CSF provides the strategic “why.” Below is a mapping of the first 6 CIS Controls to the NIST CSF Core Functions:
+
+CIS Control	NIST CSF Function	Category	Description
+Control 1 (Asset Inventory)	Identify	ID.AM	Catalogue assets to understand risk
+Control 2 (Software Inventory)	Identify	ID.AM	Track software to prevent unauthorized installations
+Control 3 (Vulnerability Management)	Identify / Protect	ID.RA / PR.IP	Find and remediate vulnerabilities continuously
+Control 4 (Secure Configuration)	Protect	PR.IP / PR.PT	Harden systems using secure baselines
+Control 5 (Account Management)	Protect	PR.AC	Manage user accounts and enforce least privilege
+Control 6 (Continuous Monitoring)	Detect	DE.CM / DE.AE	Monitor systems for anomalies and attacks
+
+[DIAGRAM 4 PLACEMENT: CIS Controls to NIST CSF Mapping Matrix]
+
+Part 9 — Attacker vs Defender Viewpoint
+The Attacker’s Exploitation Playbook
+ATTACKER FRAMEWORK EXPLOITATION
+ ├─ Identify Phase ───────────> Exploit unmanaged assets (shadow IT)
+ ├─ Protect Phase ────────────> Bypass weak configurations, steal credentials
+ ├─ Detect Phase ─────────────> Disable SIEM, delete logs, kill EDR agents
+ ├─ Respond Phase ────────────> Exploit slow incident response, encrypt backups
+ └─ Recover Phase ────────────> Destroy DR sites, corrupt snapshots
+Exploiting the Identify Phase: Attackers target unmanaged assets (shadow IT, abandoned servers) because they are not in the organization’s inventory and therefore not monitored or patched.
+Exploiting the Protect Phase: Attackers bypass weak configurations (default passwords, unpatched software) and steal credentials (phishing, credential dumping) to gain unauthorized access.
+Exploiting the Detect Phase: Sophisticated attackers disable SIEMs, delete logs, and terminate EDR agents to remain undetected.
+Exploiting the Respond Phase: Attackers exploit slow incident response by encrypting backups and destroying forensic evidence before the response team can act.
+Exploiting the Recover Phase: Attackers target disaster recovery sites and backup snapshots to ensure that even if the primary systems are restored, the data remains encrypted or corrupted.
+The Defender’s Hardening Playbook
+Automate Asset Discovery: Use automated tools to maintain an accurate, up-to-date inventory of all assets.
+Harden Configurations: Apply secure baselines (CIS Benchmarks) to all systems.
+Centralize and Protect Logs: Forward all logs to a centralized, tamper-proof SIEM.
+Test Incident Response: Conduct tabletop exercises and simulations to ensure the response team is prepared.
+Immutable and Tested Backups: Store backups in immutable storage and test them regularly.
+Part 10 — Common Implementation Anti-Patterns & Pitfalls
+Anti-Pattern 1: Implementing CIS Controls Without Prioritization
+The Mistake: Trying to implement all 18 CIS Controls simultaneously across the entire organization.
+Why it Fails: This is a massive, expensive, and disruptive project that fails within months due to budget and resource constraints.
+Remediation: Implement CIS Controls in order of priority, starting with IG1 (Basic Cyber Hygiene) and progressing to IG2 and IG3 as the organization matures.
+Anti-Pattern 2: Treating NIST CSF as a Compliance Checklist
+The Mistake: Treating the NIST CSF as a rigid, binary checklist of “yes/no” requirements.
+Why it Fails: The NIST CSF is a voluntary, flexible framework designed to be tailored to the organization’s specific risk profile, industry, and business objectives.
+Remediation: Use the NIST CSF as a communication tool to align security with business goals, not as a rigid compliance mandate.
+Anti-Pattern 3: Ignoring the Implementation Tiers
+The Mistake: Claiming to be at Tier 4 (Adaptive) while operating at Tier 1 (Risk-Informed).
+Why it Fails: This creates a false sense of security and exposes the organization to significant risk.
+Remediation: Conduct an honest, objective assessment of the organization’s current maturity level and develop a roadmap to progress to higher tiers.
+Anti-Pattern 4: Not Mapping CIS Controls to NIST CSF
+The Mistake: Implementing CIS Controls in isolation, without aligning them to the NIST CSF governance structure.
+Why it Fails: The security team cannot communicate the value of technical controls to executives, and the organization cannot demonstrate compliance with regulatory frameworks.
+Remediation: Map every CIS Control to its corresponding NIST CSF function and category, and use this mapping to communicate progress to the board.
+Part 11 — Guided Mini-Lab: Designing a Hybrid CIS/NIST CSF Program
+
+In this hands-on lab, we will design a hybrid cybersecurity program that leverages the prioritization of CIS Controls with the governance structure of NIST CSF.
+
+Scenario:
+
+You are the CISO of a 200-employee financial services firm. The board has asked you to present a cybersecurity program plan that aligns with both CIS Controls and NIST CSF.
+
+Your Task:
+
+Complete the program plan in your lab notebook:
+
+NIST CSF Function	CIS Controls Mapped	Key Objectives	Implementation Priority
+Identify	Controls 1, 2, 3	Asset inventory, software inventory, vulnerability management	High (IG1)
+Protect	Controls 4, 5, 6	Secure configuration, account management, continuous monitoring	High (IG1)
+Detect	Control 6	SIEM, IDS, log monitoring	Medium (IG2)
+Respond	Control 17	Incident response plan, tabletop exercises	Medium (IG2)
+Recover	Control 11	Backups, disaster recovery, recovery testing	Medium (IG2)
+Write it down in your lab notebook:
+LESSON 3 — HYBRID CIS/NIST CSF PROGRAM DESIGN
+Date: [today]
+Organization: 200-Employee Financial Services Firm
+Framework Approach: Hybrid (CIS Controls for prioritization, NIST CSF for governance)
+Identify Phase: CIS Controls 1, 2, 3 mapped to ID.AM, ID.RA
+Protect Phase: CIS Controls 4, 5, 6 mapped to PR.AC, PR.PT
+Detect Phase: CIS Control 6 mapped to DE.CM, DE.AE
+Respond Phase: CIS Control 17 mapped to RS.RP, RS.MT
+Recover Phase: CIS Control 11 mapped to RC.RP, RC.IM
+Assessment: Hybrid program aligns technical controls with business objectives.
+Part 12 — Summary and Glossary
+Summary Comparison Table
+Framework	Purpose	Structure	Audience	Key Feature
+CIS Controls	Tactical actions	18 prioritized controls	IT security teams, engineers	Implementation Groups (IG1, IG2, IG3)
+NIST CSF	Strategic governance	5 core functions	Executives, regulators, risk managers	Framework Implementation Tiers (0-4)
+Glossary of Key Terms
+CIS Controls: A prioritized set of 18 critical security controls published by the Center for Internet Security.
+Implementation Group (IG): A categorization of CIS Controls based on the size and maturity of the organization (IG1, IG2, IG3).
+NIST Cybersecurity Framework (CSF): A voluntary, risk-based framework developed by NIST to manage and communicate cybersecurity risk.
+Core Function: One of the five phases of the NIST CSF lifecycle: Identify, Protect, Detect, Respond, Recover.
+Framework Implementation Tier: A measure of cybersecurity maturity ranging from Partial (Tier 0) to Adaptive (Tier 4).
+CIS Benchmark: A detailed, technical configuration standard for specific software and hardware.
+Hybrid Program: A cybersecurity program that combines the tactical prioritization of CIS Controls with the strategic governance of NIST CSF.
+Part 13 — Practice Questions & Further Reading
+Practice Questions
+What is the primary difference between the CIS Controls and the NIST Cybersecurity Framework?
+Explain the purpose of the CIS Implementation Groups (IG1, IG2, IG3) and how an organization should use them.
+Describe the five NIST CSF Core Functions and explain how they relate to the lifecycle of a security incident.
+Map CIS Control 3 (Vulnerability Management) and CIS Control 6 (Continuous Monitoring) to their corresponding NIST CSF functions and categories.
+Design a hybrid cybersecurity program for a small retail business. Include at least two CIS Controls mapped to each NIST CSF function.

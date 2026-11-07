@@ -9,6 +9,7 @@ import { apiClient } from '../../../services/apiClient';
 import { socketClient } from '../../../services/socket/socketClient';
 import { useAuth } from '../../../services/auth/authContext';
 import { resolvePdfUrl } from '../../../services/db/assetStorage';
+import { getOrGenerateQuizQuestions, clearQuizSessionQuestions } from '../../../services/db/questionBanks/questionBankEngine.js';
 import CockpitToolStrip from '../../../components/student/CockpitToolStrip';
 import PsychologyToolStrip from '../../../components/student/PsychologyToolStrip';
 
@@ -123,6 +124,7 @@ export default function LessonPlayerPage() {
   const [quizAnswers, setQuizAnswers] = useState({});
   const [quizSubmitted, setQuizSubmitted] = useState(false);
   const [quizResult, setQuizResult] = useState(null);
+  const [quizSessionNonce, setQuizSessionNonce] = useState(0);
   const [examTimeRemaining, setExamTimeRemaining] = useState(null);
   const [attemptsStatus, setAttemptsStatus] = useState(() => {
     try {
@@ -241,7 +243,19 @@ export default function LessonPlayerPage() {
   const activeUnit = allUnits.find((u) => u.id === activeUnitId) || allUnits[0];
   const activeIndex = allUnits.findIndex((u) => u.id === activeUnit?.id);
   const activeLesson = activeUnit?.type === 'lesson' ? activeUnit.lesson : null;
-  const activeQuiz = activeUnit?.type === 'quiz' || activeUnit?.type === 'final_exam' ? activeUnit.quiz : null;
+  const baseQuiz = activeUnit?.type === 'quiz' || activeUnit?.type === 'final_exam' ? activeUnit.quiz : null;
+
+  const activeQuiz = React.useMemo(() => {
+    if (!baseQuiz) return null;
+    const isFinal = activeUnit?.type === 'final_exam';
+    const modNum = activeUnit?.moduleIndex !== undefined ? activeUnit.moduleIndex + 1 : 1;
+    const dynamicQuestions = getOrGenerateQuizQuestions(enrolmentId, baseQuiz.id, modNum, isFinal);
+    return {
+      ...baseQuiz,
+      total_questions: dynamicQuestions.length,
+      questions: dynamicQuestions
+    };
+  }, [baseQuiz?.id, activeUnit?.type, activeUnit?.moduleIndex, enrolmentId, quizSessionNonce]);
 
   const isLessonCompleted = activeLesson
     ? (currentEnrolment?.completed_mandatory_lessons || enrolment?.completed_mandatory_lessons || []).includes(activeLesson.id)
@@ -255,23 +269,25 @@ export default function LessonPlayerPage() {
   const isExamRulesAcknowledged = activeQuiz ? !!hasAcknowledgedExamRules[activeQuiz.id] : false;
   const showExamRulesGate = isExamUnit && !isQuizPassed && !quizSubmitted && !isLockoutActive && !isExamRulesAcknowledged;
 
+  const targetParamUnitId = searchParams.get('unitId') || searchParams.get('lessonId');
+
   useEffect(() => {
-    const targetUnitId = searchParams.get('unitId') || searchParams.get('lessonId');
-    if (targetUnitId && allUnits.some((u) => u.id === targetUnitId)) {
-      setActiveUnitId(targetUnitId);
+    if (targetParamUnitId && allUnits.some((u) => u.id === targetParamUnitId)) {
+      setActiveUnitId((prev) => (prev === targetParamUnitId ? prev : targetParamUnitId));
     } else if (allUnits.length > 0 && (!activeUnitId || !allUnits.some((u) => u.id === activeUnitId))) {
       const savedUnitId = currentEnrolment?.last_visited_unit_id || enrolment?.last_visited_unit_id || localStorage.getItem(`rk_last_unit_${enrolmentId}`);
       if (savedUnitId && allUnits.some((u) => u.id === savedUnitId)) {
-        setActiveUnitId(savedUnitId);
+        setActiveUnitId((prev) => (prev === savedUnitId ? prev : savedUnitId));
       } else {
         const completedLessons = currentEnrolment?.completed_mandatory_lessons || enrolment?.completed_mandatory_lessons || [];
         const firstIncomplete = allUnits.find(
           (u) => u.type === 'lesson' && !completedLessons.includes(u.id)
         );
-        setActiveUnitId(firstIncomplete ? firstIncomplete.id : allUnits[0].id);
+        const fallbackId = firstIncomplete ? firstIncomplete.id : allUnits[0].id;
+        setActiveUnitId((prev) => (prev === fallbackId ? prev : fallbackId));
       }
     }
-  }, [searchParams, allUnits.length, enrolmentId]);
+  }, [targetParamUnitId, allUnits.length, enrolmentId]);
 
   useEffect(() => {
     if (activeUnit?.id && enrolmentId) {
@@ -306,26 +322,24 @@ export default function LessonPlayerPage() {
         : activeUnit?.id;
       const lockoutInfo = mockEngine.isExamLocked(enrolmentId, targetQuizId);
       if (lockoutInfo && lockoutInfo.isLocked) {
-        setIsLockoutActive(true);
-        setLockoutCountdown({
-          hours: lockoutInfo.remainingHours || 0,
-          minutes: lockoutInfo.remainingMinutes || 0,
-          seconds: 0
+        setIsLockoutActive((prev) => (!prev ? true : prev));
+        setLockoutCountdown((prev) => {
+          const h = lockoutInfo.remainingHours || 0;
+          const m = lockoutInfo.remainingMinutes || 0;
+          if (prev.hours === h && prev.minutes === m && prev.seconds === 0) return prev;
+          return { hours: h, minutes: m, seconds: 0 };
         });
       } else {
-        setIsLockoutActive(false);
+        setIsLockoutActive((prev) => (prev ? false : prev));
       }
     } catch (e) {
       console.error('Lockout status check failed:', e);
       try {
         const enr = mockEngine.getEnrolment(enrolmentId);
-        if (enr?.exam_lockout_until && new Date(enr.exam_lockout_until) > new Date()) {
-          setIsLockoutActive(true);
-        } else {
-          setIsLockoutActive(false);
-        }
+        const locked = Boolean(enr?.exam_lockout_until && new Date(enr.exam_lockout_until) > new Date());
+        setIsLockoutActive((prev) => (prev !== locked ? locked : prev));
       } catch {
-        setIsLockoutActive(false);
+        setIsLockoutActive((prev) => (prev ? false : prev));
       }
     }
   };
@@ -349,7 +363,7 @@ export default function LessonPlayerPage() {
 
   useEffect(() => {
     if (activeQuiz) {
-      setQuizSubmitted(isQuizPassed);
+      setQuizSubmitted((prev) => (prev !== isQuizPassed ? isQuizPassed : prev));
       if (isQuizPassed && (!quizResult || quizResult.quizId !== activeQuiz.id)) {
         setQuizResult({
           quizId: activeQuiz.id,
@@ -360,7 +374,7 @@ export default function LessonPlayerPage() {
         });
       } else if (!isQuizPassed) {
         const totalMinutes = activeUnit?.type === 'final_exam' ? 60 : 20;
-        setExamTimeRemaining(totalMinutes * 60);
+        setExamTimeRemaining((prev) => (prev !== totalMinutes * 60 ? totalMinutes * 60 : prev));
       }
     }
   }, [activeQuiz?.id, isQuizPassed, activeUnit?.type]);
@@ -813,6 +827,8 @@ export default function LessonPlayerPage() {
     setQuizAnswers({});
     setQuizResult(null);
     if (activeQuiz?.id) {
+      clearQuizSessionQuestions(enrolmentId, activeQuiz.id);
+      setQuizSessionNonce((prev) => prev + 1);
       setHasAcknowledgedExamRules((prev) => ({
         ...prev,
         [activeQuiz.id]: false

@@ -7,7 +7,7 @@ export const module2Data = {
     "id": "quiz_mod_c1_2",
     "title": "Module 2 Assessment: Core Defensive Architecture",
     "pass_threshold": 80,
-    "total_questions": 3,
+    "total_questions": 20,
     "questions": [
       {
         "id": "q_c1_m2_1",

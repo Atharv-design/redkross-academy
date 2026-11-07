@@ -7,7 +7,7 @@ export const module4Data = {
     "id": "quiz_mod_c1_4",
     "title": "Module 4 Assessment: Risk Management & Threat Modeling",
     "pass_threshold": 80,
-    "total_questions": 3,
+    "total_questions": 20,
     "questions": [
       {
         "id": "q_c1_m4_1",
