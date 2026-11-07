@@ -16,7 +16,6 @@ export default defineConfig({
   },
   server: {
     port: 5173,
-    host: true,
     strictPort: false,
     proxy: {
       '/api': {
@@ -42,11 +41,31 @@ export default defineConfig({
     chunkSizeWarningLimit: 1200,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-three': ['three', 'vanta'],
-          'vendor-blocknote': ['@blocknote/core', '@blocknote/react', '@blocknote/mantine'],
-          'vendor-charts': ['recharts', 'canvas-confetti'],
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (
+              id.includes('/node_modules/react/') ||
+              id.includes('/node_modules/react-dom/') ||
+              id.includes('/node_modules/react-router-dom/') ||
+              id.includes('\\node_modules\\react\\') ||
+              id.includes('\\node_modules\\react-dom\\') ||
+              id.includes('\\node_modules\\react-router-dom\\')
+            ) {
+              return 'vendor-react';
+            }
+            if (id.includes('three') || id.includes('vanta')) {
+              return 'vendor-three';
+            }
+            if (id.includes('@blocknote') || id.includes('@tiptap') || id.includes('prosemirror')) {
+              return 'vendor-blocknote';
+            }
+            if (id.includes('recharts')) {
+              return 'vendor-charts';
+            }
+            if (id.includes('lucide-react')) {
+              return 'vendor-icons';
+            }
+          }
         },
       },
     },

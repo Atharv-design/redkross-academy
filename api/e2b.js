@@ -37,6 +37,24 @@ export default async function handler(req, res) {
   const cleanCmd = (command || '').trim();
 
   try {
+    // ----------------- ACTION: CREATE -----------------
+    if (action === 'create') {
+      let createdSandboxId = `sandbox_${Date.now()}`;
+      try {
+        const sandbox = await Sandbox.create({ apiKey: E2B_API_KEY });
+        createdSandboxId = sandbox.sandboxId || createdSandboxId;
+      } catch (err) {
+        // Fallback local simulated sandbox id
+        createdSandboxId = `local_vm_${Date.now()}`;
+      }
+      return res.status(200).json({
+        success: true,
+        sandboxId: createdSandboxId,
+        status: 'created',
+        executionTimeMs: Date.now() - startTime
+      });
+    }
+
     // ----------------- ACTION: TERMINATE -----------------
     if (action === 'terminate') {
       if (sandboxId && !sandboxId.startsWith('local_vm_')) {

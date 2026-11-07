@@ -3,7 +3,6 @@
  * Matches PRD Appendix B (Course Catalogue), Appendix A (State Rules), and Section 8 (Token Economy)
  */
 
-import fullStackCourseJson from './fullstackCourse.json' with { type: 'json' };
 import { CYBER_COURSES, CYBER_LEARNING_PATHS } from './cyberCourses.js';
 import { PSYCHOLOGY_COURSES, PSYCHOLOGY_LEARNING_PATHS } from './psychologyCourses.js';
 
@@ -62,7 +61,7 @@ export const INITIAL_VERIFIED_CREDENTIALS = [
     id: 'cred_rk_soc_89421',
     verification_id: 'RK-SOC-89421',
     student_name: 'Atharv Sharma',
-    course_id: 'crs_soc_fundamentals',
+    course_id: 'crs_cyber_intro_01',
     course_title: 'SOC Fundamentals & Incident Response',
     credential_title: 'RedKross Certified SOC Analyst (RCSA)',
     type: 'Professional Certification',
@@ -102,7 +101,7 @@ export const INITIAL_ENROLMENTS = [
   {
     id: 'enr_student_soc',
     user_id: 'usr_student_01',
-    course_id: 'crs_soc_fundamentals',
+    course_id: 'crs_cyber_intro_01',
     course_version: '1.2',
     enrolled_at: '2026-10-10T10:00:00Z',
     status: 'active',

@@ -1,0 +1,182 @@
+Thought process
+Thought process
+Course 01: Introduction to Cybersecurity
+Module 2: Core Principles
+Lesson 7: Separation of Duties
+Part 1 — Hook
+A small company has one person in charge of the money. Let us call her Priya. Priya writes the cheques. Priya signs the cheques. Priya mails the cheques. Priya receives the payments. Priya records the payments in the books. Priya reconciles the bank statement. Priya approves the budget. If anyone asks for the company’s finances, Priya produces the reports.
+
+One day Priya leaves for a month. The company discovers that she has been writing cheques to herself for three years. The total is 40 lakh rupees. Nobody noticed, because Priya was the only person who looked at any part of the process. Every control in the system — the bank statement, the ledger, the budget — was a control that Priya herself controlled.
+
+The problem was not that Priya was evil. The problem was that the company had given one human being a complete loop. She could create a payment, authorise it, record it, and hide it. No second person ever touched it. The fraud was not discovered by a control. It was discovered by accident, when she was away.
+
+Separation of duties is the principle that breaks that loop. It says: no single person should control a complete transaction. The person who creates the payment should not be the person who authorises it. The person who authorises it should not be the person who records it. The person who records it should not be the person who reconciles it. If one person controls the whole loop, that person is a fraud risk, and a mistake risk, and an error that nobody will catch.
+
+This lesson is about dividing work so that no single person can both cause a problem and hide it.
+
+Part 2 — Learning Objectives
+By the end of this lesson you will be able to:
+
+Define separation of duties in your own simple words.
+Explain why it is needed: no single person should control a complete transaction.
+Identify the standard roles in a financial transaction and who should not be the same person.
+Apply separation of duties to a real scenario.
+Explain how it relates to the other principles in Module 2.
+Part 3 — Prerequisites
+You have finished Module 1 and Module 2 Lessons 1 to 6. You know the CIA triad, AAA, least privilege, defence in depth, zero trust, and secure defaults. Separation of duties is least privilege applied to processes, not just to people.
+
+Part 4 — Concept from Scratch
+Here is the central sentence of this lesson.
+
+Separation of duties is the principle that no single person should be able to plan, execute, record, and review a complete transaction on their own, because the person who can do all of those things can also hide what they did.
+
+Let me say that again, because it is the sentence that explains why this principle exists at all.
+
+Separation of duties is the principle that no single person should be able to plan, execute, record, and review a complete transaction on their own, because the person who can do all of those things can also hide what they did.
+
+The principle has four parts, corresponding to the four stages of a transaction. These are the standard roles, and they are the same in every organisation, whether it is a shop, a hospital, a government, or a software company.
+
+The creator is the person who initiates the transaction. They request the money, they write the purchase order, they submit the expense claim. The creator has the motive and the knowledge, but not the authority to complete the transaction on their own.
+
+The authoriser is the person who approves it. They check that the request is legitimate, that the amount is correct, and that it fits the budget. The authoriser has the authority, but not the motive and not the record-keeping responsibility.
+
+The recorder is the person who enters the transaction into the books. They record the amount, the date, and the account. The recorder has the record, but not the authority to change the amount or the motive to benefit personally.
+
+The reviewer is the person who checks the work afterwards. They reconcile the bank statement, they audit the ledger, they compare the records to the actual money. The reviewer has the oversight, but no role in creating, authorising, or recording.
+
+The rule is simple: these four roles must be held by four different people, or at least by people who do not overlap in a way that lets one person control the whole loop. The minimum requirement is that the creator and the authoriser are different people, and that the recorder and the reviewer are different people.
+
+Here is a picture of the loop, and how it is broken.
+
+IMAGE 1 — Separation of duties diagram: A diagram on a white background showing a transaction as a four-step circle. Step 1 (blue box) labeled CREATE — “Request the payment” with a small icon of a hand writing. An arrow points to Step 2 (green box) labeled AUTHORISE — “Approve the payment” with a stamp icon. An arrow points to Step 3 (amber box) labeled RECORD — “Enter it in the books” with a ledger icon. An arrow points to Step 4 (red box) labeled REVIEW — “Reconcile and audit” with a magnifying glass icon. The arrow from Step 4 points back to Step 1, completing the loop. Below the loop, four stick figures labeled Person A, Person B, Person C, Person D, each with a line connecting them to exactly one step. A small caption reads: “Four people, four steps. No one person touches more than one step.” On the far right, a second version of the same loop with a single stick figure labeled ONE PERSON touching all four steps, crossed out with a red X, and a caption: “This is fraud.” Clean, professional, 16:9, high resolution.
+
+Part 5 — How It Works: The Principle, the Real-World Examples, and the Implementation
+The Four Roles, and Why Each Matters
+Let us go through each role and explain what it protects, because the value of separation of duties is that it protects against two different things: fraud and error.
+
+The creator initiates. The creator is the person closest to the need. If the marketing team needs to buy advertising, the marketing person creates the request. The creator knows the reason, but the creator also has the incentive to spend money — on something unnecessary, on something personal, or on something fraudulent. Separation of duties protects against that by requiring a second person to approve.
+
+The authoriser approves. The authoriser is the person with the budget authority. They check the request against the budget, against the policy, and against the business need. They do not need to know the details of the advertising campaign. They need to know that the amount is reasonable and that the request is legitimate. The authoriser is the control that stops a bad or fraudulent request from becoming a real payment.
+
+The recorder enters. The recorder takes the approved request and puts it into the accounting system. The recorder should not be able to change the amount. The approved amount is the recorded amount. If the recorder is also the authoriser, they can approve 10,000 rupees and record 100,000 rupees, and nobody will notice until the reconciliation, which is done by someone else.
+
+The reviewer checks. The reviewer compares the records to reality. They reconcile the bank statement to the ledger. They check that the payments recorded match the payments made. They look for duplicate payments, round numbers, unusual vendors, and transactions that lack proper approval. The reviewer is the person who catches what the other three missed.
+
+Real-World Examples
+Example 1: The payroll fraud. A payroll clerk enters employee records and sets salaries. If the same person can also approve the payroll run and reconcile the bank account, they can add a fake employee, set their salary to a high amount, and collect the payments. The fake employee is never real, but the payroll system processes them every month. Separation of duties stops this: the person who enters the records cannot approve the payroll, and the person who reconciles the account is a third person.
+
+Example 2: The purchase order scam. A procurement officer buys supplies for the company. The same officer chooses the vendor, negotiates the price, writes the purchase order, receives the goods, and records the payment. The officer chooses a vendor that is actually their own company, charges an inflated price, and pockets the difference. The goods are real, the invoices are real, and everything looks legitimate. Separation of duties stops this: the person who chooses the vendor is not the person who approves the purchase, and the person who receives the goods is not the person who records the payment.
+
+Example 3: The software bug. A developer writes code that processes payments. The same developer deploys that code to the production server. The developer makes a mistake — or is bribed — and the code rounds down every transaction, sending the difference to an account the developer controls. Nobody notices, because the developer wrote the code, deployed the code, and is the only person who understands it. Separation of duties stops this: the person who writes the code is not the person who reviews it, and the person who deploys it is not the person who monitors the transactions. This is the software version of the principle, and it is why code review and deployment controls exist.
+
+Example 4: The hospital. A hospital buys drugs. The doctor prescribes them. The pharmacist dispenses them. The billing department records the charge. The finance department pays the supplier. If one person controlled all four steps, they could prescribe drugs that nobody needs, dispense them, bill the insurance, and pay a supplier that does not exist. Separation of duties in a hospital is a matter of patient safety, not just money. A doctor who controls the entire prescribing and billing loop can harm patients by prescribing unnecessary or dangerous treatments.
+
+How to Implement It
+Separation of duties is an intention until it is built into the system. Here is how it is actually done.
+
+Step 1: Map the transactions. List every significant transaction in the organisation: purchasing, payroll, sales, refunds, software deployment, access provisioning. You cannot separate duties you have not mapped.
+
+Step 2: Break each transaction into steps. For each transaction, identify every step: who initiates, who approves, who executes, who records, who reviews. Write them down.
+
+Step 3: Identify the conflicts. A conflict exists when one person controls two or more steps that could be used to hide an error or a fraud. The most dangerous conflicts are: creator and authoriser, recorder and reviewer, and approver and recorder. Flag every conflict.
+
+Step 4: Assign the steps to different people. Resolve every conflict by giving the steps to different people. If the organisation is too small to have four people for every transaction, use compensating controls: supervisory review, automated approval workflows, mandatory vacation policies (a person who never takes a vacation is a fraud risk), and random audits.
+
+Step 5: Automate where possible. Software can enforce separation of duties that people cannot. A workflow system can require that a request is approved by a second person before it is processed. A payment system can require that the person who enters a vendor is not the person who authorises payments to that vendor. An access management system can prevent the person who creates an account from also approving that account.
+
+Step 6: Monitor and review. As with every principle, separation of duties decays. People change roles. Systems change. New transactions appear. Review the separation of duties at least annually, and every time a major process changes.
+
+Part 6 — Attack and Defence View
+Let us now look at separation of duties from the attacker’s perspective, because that is how you learn what it is for.
+
+How the attacker exploits a lack of separation of duties. The attacker does not need to break encryption or exploit a vulnerability. They need a single point of control. If one person controls the entire loop, the attacker only has to compromise that one person — through bribery, blackmail, phishing, or simply hiring them.
+
+The classic attack patterns that separation of duties stops:
+
+Vendor fraud. The attacker sets up a fake vendor and gets their invoices paid. This works when the person who creates the vendor is also the person who approves payments to vendors.
+Payroll fraud. The attacker adds a fake employee and collects the salary. This works when the person who enters employee records is also the person who approves the payroll run.
+Expense fraud. The attacker submits fake expense claims. This works when the person who submits the claim is also the person who approves it.
+Data manipulation. The attacker changes a record to hide their tracks. This works when the person who enters the data is also the person who reviews it.
+Insider trading. An employee with access to both the financial records and the external reporting system can change the numbers before they are published. This works when the person who records the transaction is also the person who publishes the report.
+The most important sentence in this lesson: Separation of duties does not stop the attacker. It stops the fraud from being invisible.
+
+Part 7 — Common Mistakes Beginners Make
+Mistake 1: Thinking separation of duties is only for finance. It is not. It applies to any process where a single person can cause harm and hide it. Software deployment, access provisioning, incident response, physical key management, and data deletion all need separation of duties. A developer who can deploy their own code without review is a separation-of-duties failure.
+
+Mistake 2: Confusing it with least privilege. They are related but different. Least privilege is about what a person can access. Separation of duties is about what a person can do in a sequence. A person with least privilege might still control a complete transaction if the transaction has only one step. Separation of duties breaks the transaction into steps that must be done by different people.
+
+Mistake 3: Believing it is too expensive for small organisations. It is not. A small organisation can separate duties by requiring two signatures on cheques, by having the owner review the bank statement personally, by using software that requires approval workflows, and by enforcing mandatory vacation policies. The cost is low. The cost of not doing it is total.
+
+Mistake 4: Ignoring the compensating controls. Some transactions are too small or too rare to justify four separate people. In those cases, the organisation must use compensating controls: supervisory review, automated approval, random audits, and mandatory vacations. If there are no compensating controls, the transaction has no separation of duties at all.
+
+Mistake 5: Treating it as a one-time setup. As with every principle, separation of duties decays. People change roles. Systems change. New transactions appear. The person who designed the separation of duties five years ago may no longer be there, and the process may have quietly accumulated overlaps. Review annually.
+
+Part 8 — Guided Mini-Lab: Map the Duties in a Simple Process
+Let us now apply separation of duties to a simple process. This takes 15 minutes. Choose one of these: requesting a refund from an online store, submitting an expense claim at work, or applying for a loan.
+
+Step 1: Map the steps.
+Write down every step in the process, from start to finish. For an expense claim, the steps are: submit the claim, approve the claim, record the claim in the system, pay the claim, and reconcile the payment.
+
+Step 2: Identify who does each step.
+For each step, write down who is responsible. If the same person does two or more steps, you have a conflict.
+
+Step 3: Identify the conflicts.
+Highlight the steps that are done by the same person. The most dangerous conflicts are: submit and approve, record and reconcile, and approve and pay.
+
+Step 4: Propose a fix.
+For each conflict, propose a change. Who else could do one of the steps? Could a manager approve instead of the same person? Could the system record the payment instead of the person who approved it? Could a different person reconcile the bank statement?
+
+Step 5: Write it down.
+Open your lab notebook and write:
+
+LESSON 7 — SEPARATION OF DUTIES IN A PROCESS
+Date: [today]
+Process: [which process I mapped]
+Steps: [list of steps]
+Who does each: [list]
+Conflicts found: [list — which steps are done by the same person]
+Proposed fix: [what I would change]
+Risk if nothing changes: [one sentence — what could go wrong]
+IMAGE 2 — Flowchart: A horizontal flowchart diagram showing the cyber kill chain: six rounded rectangles in a left-to-right sequence — Reconnaissance → Weaponization → Delivery → Exploitation → Installation → Actions on Objectives — connected by arrows. Below each box, a small one-line example in monospace font. A parallel dashed line at the bottom labeled Defence: detect → contain → eradicate. Clean, white background, navy and red accents, professional diagram style, 16:9, high resolution.
+
+Part 9 — Why This Matters for the Rest of Module 2
+Let me say something plainly.
+
+Separation of duties is the principle that protects the organisation from its own people. The other principles protect against external attackers. Least privilege limits what a person can access. Defence in depth layers technical controls. Zero trust verifies every request. Secure defaults starts safe. But none of them prevent a person with legitimate access from using that access to do something wrong, if nobody else is watching.
+
+Separation of duties is the answer to the insider threat. It is not a technical control. It is an organisational control, and it is the reason that financial systems, governments, and large companies have survived for centuries. It is the oldest principle in this module, and it is still the most effective.
+
+The case studies in Lesson 8 will show you what happens when it is missing. The breaches we have studied — Target, SolarWinds, the payroll frauds, the vendor scams — all of them involved a single person or a single process that controlled too much. The attackers did not have to be clever. They only had to find the person who controlled everything.
+
+Part 10 — Summary and Glossary
+Here is what we covered.
+
+Separation of duties is the principle that no single person should be able to plan, execute, record, and review a complete transaction on their own. The four standard roles are the creator (initiates), the authoriser (approves), the recorder (enters), and the reviewer (checks). The rule is that these roles must be held by different people, and the most dangerous conflicts are creator-authoriser and recorder-reviewer.
+
+The principle protects against fraud and error. It stops a person from both causing a problem and hiding it. It applies to finance, software deployment, access provisioning, incident response, and any process where a single person can cause harm and cover their tracks.
+
+The implementation has six steps: map the transactions, break them into steps, identify conflicts, assign steps to different people, automate where possible, and monitor and review. Small organisations use compensating controls: two signatures, supervisory review, automated approval workflows, mandatory vacations, and random audits.
+
+Glossary of 8 terms:
+
+Separation of duties — the principle that no single person should control a complete transaction.
+Creator — the person who initiates a transaction.
+Authoriser — the person who approves a transaction.
+Recorder — the person who enters a transaction into the system.
+Reviewer — the person who checks the work afterwards.
+Compensating control — an alternative control used when separation of duties is not fully possible.
+Mandatory vacation — a policy requiring employees to take time off, so that their work is reviewed by someone else.
+Insider threat — a threat from someone with legitimate access to the organisation.
+Part 11 — Practice: 5 Quick-Check Questions
+Define separation of duties in one sentence using your own words.
+Name the four roles in a transaction, and say what each one does.
+What is the most dangerous conflict of duties? Why?
+Choose one process from your life. Map the steps, and say whether any one person controls the whole loop.
+A small company has only three employees and cannot afford four people for every transaction. What can it do?
+
+Diagram Placement Summary
+Image	Location in lesson	What it shows
+Image 1	After Part 4 (Concept from Scratch)	Separation of duties: four-step transaction loop — create → authorise → record → review — with four different people each touching one step; a crossed-out version showing one person touching all four
+Image 2	After Part 5 (How It Works)	Kill chain flowchart: reconnaissance → weaponization → delivery → exploitation → installation → actions on objectives, with defence path
+Image 3	After Part 8 (Guided Mini-Lab)	Terminal screenshot: dark-themed terminal showing python3 --version, which nmap, which tshark, echo ‘Lab toolkit ready’
+Image 4	After Part 9 (Why This Matters)	Three-column comparison table: security vs privacy vs safety

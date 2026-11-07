@@ -49,10 +49,10 @@ console.log('\n--- SUITE 2: ACADEMIC DATA PARTITIONING & ZERO LEAKAGE ---');
 const testCadetId = 'usr_cadet_challenger_m4_' + Date.now();
 
 // Enroll student in both cyber and psychology
-const cyberEnr = mockEngine.enrolStudent(testCadetId, 'crs_full_stack_web_dev');
+const cyberEnr = mockEngine.enrolStudent(testCadetId, 'crs_cyber_intro_01');
 const psychEnr = mockEngine.enrolStudent(testCadetId, 'crs_psych_cbt');
 
-assert(cyberEnr && cyberEnr.id, 'Enrolled cadet in crs_full_stack_web_dev (Cybersecurity)');
+assert(cyberEnr && cyberEnr.id, 'Enrolled cadet in crs_cyber_intro_01 (Cybersecurity)');
 assert(psychEnr && psychEnr.id, 'Enrolled cadet in crs_psych_cbt (Psychology)');
 
 // Strict partition queries
@@ -66,7 +66,7 @@ assert(psychEnrolments[0].course_id === 'crs_psych_cbt', 'Psychology enrollment 
 // Verify ZERO cybersecurity courses leaked into psychology query
 const cyberLeakedInPsych = psychEnrolments.filter(e => {
   const c = mockEngine.getCourseById(e.course_id);
-  return c?.division === 'cybersecurity' || e.course_id === 'crs_full_stack_web_dev';
+  return c?.division === 'cybersecurity' || e.course_id === 'crs_cyber_intro_01';
 });
 assert(cyberLeakedInPsych.length === 0, 'ZERO cybersecurity courses returned in psychology enrollment query');
 
@@ -92,12 +92,12 @@ assert(emptyStats.activeCourses === 0, 'Query for non-existent division returns 
 
 // Adversarial Multi-enrollment test
 const testMultiCadetId = 'usr_cadet_multi_m4_' + Date.now();
-mockEngine.enrolStudent(testMultiCadetId, 'crs_full_stack_web_dev');
+mockEngine.enrolStudent(testMultiCadetId, 'crs_cyber_intro_01');
 mockEngine.enrolStudent(testMultiCadetId, 'crs_psych_cbt');
 mockEngine.enrolStudent(testMultiCadetId, 'crs_psych_crisis');
 const multiPsychEnrolments = mockEngine.getEnrolmentsForUser(testMultiCadetId, 'psychology');
 assert(multiPsychEnrolments.length === 2, `Multi-psychology enrollment query returns exactly 2 psychology courses (found ${multiPsychEnrolments.length})`);
-const multiCyberInPsych = multiPsychEnrolments.filter(e => e.course_id === 'crs_full_stack_web_dev');
+const multiCyberInPsych = multiPsychEnrolments.filter(e => e.course_id === 'crs_cyber_intro_01');
 assert(multiCyberInPsych.length === 0, 'ZERO cyber courses leaked in multi-enrollment psychology query');
 
 // ============================================================================

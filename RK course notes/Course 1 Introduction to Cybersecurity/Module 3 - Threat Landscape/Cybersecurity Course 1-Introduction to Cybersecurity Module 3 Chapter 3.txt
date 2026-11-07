@@ -1,0 +1,202 @@
+Course 01: Introduction to Cybersecurity
+Module 3: Threat Landscape
+Lesson 3: Phishing and Social Engineering
+Part 1 — Hook
+
+A man in a suit walks into a secure corporate building. He carries a large cardboard box labelled “IT Department — New Keyboards.” He walks up to the receptionist, smiles warmly, looks at his watch with a stressed expression, and says, “Hi, Sarah, right? Sorry, facilities is breathing down my neck because management wants these new ergonomic keyboards installed on the third floor before the 2 PM meeting, but my badge isn’t programmed for the executive elevators yet. Could you just badge me through the turnstile real quick so I don’t miss the deadline?”
+
+Sarah smiles, feels sympathetic, and taps her badge against the reader. The turnstile clicks open. The man walks into the building, goes straight to an empty desk, plugs a small malicious network device into an Ethernet port behind the phone, and walks out ten minutes later.
+
+He never picked a lock. He never hacked a server. He never wrote a line of code. He hacked Sarah’s willingness to be helpful.
+
+This is social engineering. In the digital world, its most common weapon is phishing. Attackers know that the human brain is easier to exploit than a firewall. You can patch software, but you cannot patch human nature — our desire to be helpful, our fear of authority, our curiosity, and our trust in familiar names. This lesson is about how attackers manipulate human psychology to bypass every technical control you learned in Module 2.
+
+Part 2 — Learning Objectives
+
+By the end of this lesson you will be able to:
+
+Define social engineering and explain why humans are considered the “weakest link” in security.
+Distinguish between phishing, spear phishing, whaling, smishing, vishing, and business email compromise (BEC).
+Identify the core psychological triggers attackers use: urgency, fear, authority, scarcity, and helpfulness.
+Describe the multi-step lifecycle of a social engineering attack.
+Apply defensive controls to protect against human-targeted attacks, including email authentication protocols and awareness training.
+Part 3 — Prerequisites
+
+You have finished Module 1, Module 2, and Module 3 Lessons 1 and 2. You know threat actor types and malware families. This lesson explains how threat actors deliver that malware and steal credentials by targeting people instead of machines.
+
+Part 4 — Concept from Scratch
+
+Here is the central sentence of this lesson.
+
+Social engineering is the art of manipulating people into performing actions or divulging confidential information, and it succeeds because it targets human psychology and trust rather than technical software flaws.
+
+Let me say that again, because it is the most important truth in cybersecurity.
+
+Social engineering targets human psychology and trust rather than technical software flaws.
+
+If an attacker wants to steal a password, they have two choices. They can spend months writing a complex cryptographic attack to break a secure password hash database, or they can send an email that says, “Your password expires in 2 hours. Click here to keep your current password.”
+
+Which one do you think they choose? Exactly. Attackers take the path of least resistance. Since software has become harder to break because of patching and secure defaults, attackers have shifted their focus to the human operating system.
+
+Let us look at how a social engineering attack breaks down into its psychological and technical components.
+
+IMAGE 1 — Social engineering manipulation cycle diagram: A 4-step circular flow chart on a white background. Step 1 (top, navy) labeled INFORMATION GATHERING — “Researching target on social media, LinkedIn, company website.” An arrow points clockwise to Step 2 (right, green) labeled ESTABLISHING TRUST OR FEAR — “Creating a pretext (CEO request, IT urgent alert, familiar brand).” An arrow points to Step 3 (bottom, amber) labeled MANIPULATION / REQUEST — “Asking for credentials, money transfer, or file download.” An arrow points to Step 4 (left, red) labeled EXPLOITATION — “Capturing password, executing malware, or completing fraudulent wire transfer.” Clean, professional, 16:9, high resolution.
+
+Part 5 — How It Works: The Variants of Phishing
+
+While “phishing” is the generic term for fraudulent emails, attackers have developed specialized variants tailored to specific victims and goals.
+
+1. Bulk Phishing — The Wide Net
+
+Bulk phishing is the “spray and pray” approach. An attacker sends millions of generic emails pretending to be a major bank, a streaming service, or a delivery company. The email says something generic like: “Your Netflix payment failed. Update your billing details here.”
+
+Target: Anyone and everyone.
+Goal: Harvest as many credit card numbers, passwords, or personal details as possible.
+Defense: Spam filters, secure email gateways, and user awareness. Because the emails are generic, automated filters catch most of them before they ever hit an inbox.
+2. Spear Phishing — The Custom Harpoon
+
+Spear phishing is targeted. Instead of mailing millions of people, the attacker picks one specific person (or a small team) inside an organization — say, an accountant in the finance department. The attacker researches the accountant on LinkedIn, finds out who their boss is, reads recent company press releases, and crafts an email that looks like it came directly from the CFO: “Hey, John, I’m stuck in an offsite meeting but I need you to review this urgent vendor invoice attached before 3 PM.”
+
+Target: A specific individual with specific access or permissions.
+Goal: Gain initial access to a corporate network or steal high-value credentials.
+Defense: Much harder to stop with simple filters because the email looks completely legitimate. Requires multi-factor authentication (MFA) and strict verification policies for financial transactions.
+3. Whaling — Hunting the Big Fish
+
+Whaling is a specialized form of spear phishing aimed specifically at the “whales” of an organization — the C-level executives (CEO, CFO, COO) or board members. Because executives have the highest level of access and authority, compromising their accounts gives the attacker the keys to the entire kingdom. Whaling emails often pretend to be from legal regulators, tax authorities, or board members, demanding immediate confidential attention.
+
+4. Smishing and Vishing — Mobile and Voice Phishing
+
+Phishing is not restricted to email.
+
+Smishing (SMS Phishing): Phishing delivered via text message on your phone. Example: “Your package could not be delivered. Click this link to pay a $2 customs fee.” Because people trust text messages more than emails, smishing has a very high success rate.
+Vishing (Voice Phishing): Phishing conducted over a phone call or voicemail. Attackers often use voice-altering software or AI deepfake audio to impersonate a company executive or a family member in distress, asking for urgent financial help.
+5. Business Email Compromise (BEC) — The Billion-Dollar Scam
+
+Business Email Compromise is not always about malware; often, it is pure psychological manipulation. An attacker compromises a corporate email account (via phishing or credential stuffing) and quietly watches the inbox for weeks. They learn the communication style of the executive, the names of vendors, and upcoming payment schedules.
+
+Then, at the exact right moment, they send an email from the real executive’s account to the finance department: “We are closing the Acme acquisition today. Wire $500,000 to this new escrow account immediately, and keep it confidential.”
+
+Result: Billions of dollars are lost globally every year to BEC scams. Because the email came from a real account, standard technical email filters see nothing wrong.
+Part 6 — The Psychological Triggers of Social Engineering
+
+Why do smart, educated people fall for phishing emails? Because attackers do not exploit technical bugs; they exploit evolutionary psychological triggers. Robert Cialdini’s principles of influence are the playbook for every social engineer:
+
+Urgency and Time Pressure: “Action required within 2 hours or your account will be deleted.” Urgency shuts down rational, critical thinking. It makes people panic and click before they stop to verify.
+Authority: Pretending to be the CEO, the police, a tax authority, or an IT director. Humans are trained from childhood to obey authority figures without questioning them.
+Fear and Consequences: “Your computer has been infected with pornographic files; pay $500 in Bitcoin or we send this to all your contacts.” Fear overrides logic instantly.
+Helpfulness and Liking: Pretending to be a distressed colleague, a new employee, or someone asking for a simple favor. Most people want to be helpful and polite. Attackers weaponize human kindness.
+Greed and Curiosity: “You have won a free iPhone” or “Review your confidential salary comparison report attached.” Curiosity kills the cat, and it opens the phishing attachment.
+Social Proof: “All other departments have already completed this mandatory security training form.” People tend to follow the crowd when they are unsure what to do.
+
+IMAGE 2 — Psychological triggers wheel diagram: A circular pie chart divided into 6 colored segments on a white background. Each segment represents a psychological trigger used by attackers: Urgency (red), Authority (navy), Fear (orange), Helpfulness (green), Curiosity (purple), and Greed (yellow). In the centre of the circle, a silhouette of a human brain with a lock icon being picked by a key labeled Social Engineering. Clean, professional, 16:9, high resolution.
+
+Part 7 — Technical Defenses Against Phishing
+
+While human training is essential, you cannot train people to be 100% perfect. Therefore, technical controls (Defence in Depth from Module 2 Lesson 4) must catch what humans miss. Three email authentication standards form the backbone of modern email security:
+
+1. SPF (Sender Policy Framework): A DNS record published by a domain owner that lists all the authorized IP addresses permitted to send email on behalf of that domain. When a mail server receives an email claiming to be from netflix.com, it checks Netflix’s SPF record to see if the sending computer’s IP address is on the approved list. If not, the email is flagged or rejected.
+
+2. DKIM (DomainKeys Identified Mail): Adds a cryptographic digital signature to every outgoing email. The receiving mail server uses the sender’s public DNS key to verify the signature. If the signature is valid, it proves two things: the email actually originated from the claimed domain, and the message content was not altered in transit (protecting Integrity from the CIA triad).
+
+3. DMARC (Domain-based Message Authentication, Reporting, and Conformance): A policy framework that builds on SPF and DKIM. It tells receiving mail servers what to do if an email fails SPF or DKIM checks. The domain owner can set the policy to none (just monitor), quarantine (send suspicious emails to the spam folder), or reject (block the email entirely).
+
+Part 8 — Attack and Defence View
+
+Let us examine phishing through the lens of our core principles.
+
+The Attacker’s Strategy:
+The attacker looks for the human firewall, knowing it is the softest layer in any organization. They craft a pretext that bypasses rational thought by triggering fear or urgency. They register look-alike domains (e.g., micros0ft.com instead of microsoft.com) and send emails designed to land during high-stress hours (Friday afternoon or Monday morning).
+
+The Defender’s Strategy:
+
+Implement Email Authentication: Enforce strict SPF, DKIM, and DMARC policies so domain spoofing is blocked automatically.
+Deploy Multi-Factor Authentication (MFA): Even if an attacker steals a user’s password via a phishing site, standard MFA (especially FIDO2/WebAuthn hardware keys or push notifications with number matching) stops the attacker from logging in because they lack the second factor.
+Continuous Security Awareness Training: Train employees not just once a year, but through regular, realistic simulated phishing tests. When someone clicks a fake phishing test, do not punish them; use it as an immediate, supportive teaching moment.
+Establish Out-of-Band Verification: Implement a strict corporate policy: Never approve a financial wire transfer or disclose sensitive credentials based solely on an email request. Always verify through an independent channel (e.g., calling the person on a known phone number).
+Part 9 — Common Mistakes Beginners Make
+
+Mistake 1: Blaming the victim. When an employee falls for a sophisticated spear phishing attack, management often blames or fires them. This creates a culture of fear where employees hide their mistakes instead of reporting them. If an employee clicks a bad link and is afraid to report it, the attacker has hours or days to roam the network silently. Always reward reporting.
+
+Mistake 2: Thinking technical filters catch 100% of phishing. No email filter is perfect. Clever spear phishing and BEC emails contain no malware and use real accounts; traditional filters will pass them straight to the inbox. Human awareness must always be the final layer of defense.
+
+Mistake 3: Relying on SMS-based MFA. Text message (SMS) OTP codes can be intercepted via SIM swapping or phishing sites that proxy the MFA code in real time (AiTM — Adversary-in-the-Middle phishing). Modern zero-trust architectures require phishing-resistant MFA like hardware security keys or authenticator app number matching.
+
+Part 10 — Guided Mini-Lab: Spotting a Phishing Email
+
+Let us practice analyzing a suspicious email. This takes 15 minutes. Read the scenario below and identify the red flags.
+
+The Scenario:
+You receive an email in your work inbox.
+
+From: IT-Support-Admin <support@company-updates-portal.com>
+Subject: URGENT: Mandatory Security Certificate Renewal Required Today
+Body:
+
+Dear Employee,
+Our IT department has detected a critical security vulnerability in your account authentication token. Failure to update your security certificate within 24 hours will result in permanent account suspension and loss of email access.
+Click here to verify your credentials immediately: [Secure Login Link]
+Thank you,
+Corporate IT Team
+
+Step 1: Analyze the Sender Address.
+Does company-updates-portal.com match your actual company domain? No. It is a look-alike domain registered by an attacker.
+
+Step 2: Check for Urgency and Fear.
+Does the email threaten account suspension within 24 hours? Yes. This is a classic psychological trigger designed to cause panic and bypass critical thinking.
+
+Step 3: Check for Vague Language.
+Does it address you by name? No (“Dear Employee”). Real IT departments usually know your name.
+
+Step 4: Hover over the Link.
+If you hover your mouse over the link without clicking, you see it points to http://login.microsoft-auth-update.xyz/signin. That has nothing to do with your company.
+
+Step 5: Write it down.
+Open your lab notebook and write:
+
+LESSON 3 — PHISHING ANALYSIS LAB
+Date: [today]
+Email analyzed: IT Security Certificate Renewal
+Red flags found:
+  1. Sender domain mismatch (company-updates-portal.com)
+  2. High urgency / threat of account suspension
+  3. Generic greeting ("Dear Employee")
+  4. Suspicious destination URL
+Action taken: Reported via the phishing button / Did not click.
+
+IMAGE 3 — Phishing email analysis breakdown: A screenshot-style mockup of a suspicious email on a white background with red callout callipers and text boxes pointing to specific suspicious elements: Box 1 pointing to sender address (support@company-updates-portal.com — “Mismatch!”), Box 2 pointing to subject line (“Urgency trigger!”), Box 3 pointing to body text (“Threat of account suspension!”), and Box 4 pointing to the hyperlink preview showing a malicious external URL. Clean, professional, navy and red accents, 16:9, high resolution.
+
+Part 11 — Why This Matters for the Rest of Module 3
+
+Phishing is the delivery mechanism for almost every major cyber attack we study. The malware families we covered in Lesson 2 (Trojans, ransomware, spyware) rarely jump onto a computer by themselves; they arrive inside a phishing email attachment or are downloaded via a malicious link clicked by a human.
+
+If you understand how social engineering manipulates human trust, you understand how the kill chain starts. In the next lesson, we will look at how networks are overwhelmed when attackers trade subtlety for brute force: Denial of Service (DoS) and DDoS attacks.
+
+Part 12 — Summary and Glossary
+
+Here is what we covered.
+
+Social engineering manipulates human psychology rather than technical flaws. Phishing is fraudulent communication designed to steal credentials or deliver malware. Variants include bulk phishing, spear phishing (targeted), whaling (targeting executives), smishing (SMS), vishing (voice), and Business Email Compromise (BEC). Attackers leverage psychological triggers like urgency, fear, authority, and helpfulness. Technical defenses include email authentication standards: SPF, DKIM, and DMARC, alongside phishing-resistant MFA and supportive security awareness training.
+
+Glossary of 8 terms:
+
+Social engineering — manipulating people into breaking security procedures or giving up information.
+Phishing — fraudulent emails designed to trick users into revealing data or installing malware.
+Spear phishing — a targeted phishing attack aimed at a specific individual or role.
+Whaling — spear phishing directed specifically at senior executives.
+Smishing — phishing delivered via SMS text messages.
+Vishing — phishing conducted over voice calls or voicemail.
+BEC (Business Email Compromise) — a sophisticated scam involving compromised executive accounts to wire money.
+DMARC — an email authentication protocol that uses SPF and DKIM to prevent domain spoofing.
+Part 13 — Practice: 5 Quick-Check Questions
+Why do attackers use social engineering instead of writing complex software exploits?
+What is the difference between bulk phishing and spear phishing?
+Name three psychological triggers commonly used in social engineering attacks.
+What do SPF, DKIM, and DMARC do to protect corporate email?
+If an employee accidentally clicks a phishing link, what should the organization’s culture encourage them to do immediately?
+
+Diagram Placement Summary
+Image	Location in lesson	What it shows
+Image 1	After Part 4 (Concept from Scratch)	Social engineering cycle: 4-step circular flow — information gathering, establishing trust/fear, manipulation, exploitation
+Image 2	After Part 6 (How It Works)	Psychological triggers wheel: 6 colored segments (urgency, authority, fear, helpfulness, curiosity, greed) surrounding a human brain icon
+Image 3	After Part 10 (Guided Mini-Lab)	Phishing email analysis breakdown: mockup email with red callouts pointing to domain mismatch, urgency, generic greeting, and malicious URL
+Image 4	After Part 7 (Technical Defenses)	Email authentication flow: mail server receiving email, checking SPF, DKIM, and DMARC records in DNS before delivering to inbox or spam

@@ -1,0 +1,252 @@
+Course 01: Introduction to Cybersecurity
+Module 2: Core Principles
+Lesson 1: The CIA Triad
+Part 1 — Hook
+
+You already met the CIA triad in Lesson 1 of Module 1. I told you then that it was the heart of the whole subject, and I promised we would come back to it properly. Here we are.
+
+The reason this lesson comes early in Module 2 is simple: everything else in this module is built on it. Least privilege, defence in depth, zero trust, secure defaults, separation of duties — every single one of those principles exists to protect one or more of the three letters C, I, and A. If you do not understand the triad, you will memorise those principles as empty rules. If you do understand it, they will all make sense at once.
+
+So let us do this properly. No shortcuts.
+
+Part 2 — Learning Objectives
+
+By the end of this lesson you will be able to:
+
+Define the CIA triad and explain why it is called a “triad.”
+Explain confidentiality in simple terms, with at least three real examples.
+Explain integrity in simple terms, with at least three real examples.
+Explain availability in simple terms, with at least three real examples.
+Identify which of the three goals is most important in a given scenario.
+Explain why the three goals sometimes conflict with each other.
+Part 3 — Prerequisites
+
+You have finished Module 1. You know what an asset is, you know the kill chain, and you know the vocabulary. That is all you need.
+
+Part 4 — Concept from Scratch
+
+Here is the central sentence of this lesson.
+
+The CIA triad is not a theory. It is a filter. Every decision you make in cybersecurity — what to protect, how to protect it, and what to sacrifice when protection costs too much — passes through these three questions: does it protect confidentiality, integrity, or availability?
+
+Let me say that one more time, because it is the most practical sentence you will learn in Module 2.
+
+The CIA triad is not a theory. It is a filter. Every decision you make in cybersecurity passes through three questions: does it protect confidentiality, integrity, or availability?
+
+The triad is called a triad because it has three parts, and because the three parts are connected. They are not separate ideas that you check off a list. They are three goals that pull in different directions, and the job of a security professional is to keep them in balance.
+
+Here is a picture of that balance.
+
+IMAGE 1 — The CIA triad diagram: Three large overlapping circles on a white background, forming a classic Venn diagram. Circle 1 (navy blue) labeled CONFIDENTIALITY with the subtitle “Keep it secret.” Circle 2 (green) labeled INTEGRITY with the subtitle “Keep it correct.” Circle 3 (amber) labeled AVAILABILITY with the subtitle “Keep it running.” In the centre, where all three overlap, a small bold label: SECURITY. Inside each circle, 2-3 short real-world examples in smaller text (for example, in the confidentiality circle: “passwords,” “medical records,” “military secrets”). Each circle has a small icon: a padlock, a checkmark shield, and a power button. Clean, textbook-style illustration, crisp lines, generous white space, 16:9 aspect ratio, high resolution.
+
+Look at that diagram and notice two things.
+
+First, the circles overlap. That is deliberate. It means the three goals are not in separate boxes. They touch, they interact, and sometimes they fight. A decision that helps one can hurt another.
+
+Second, the word SECURITY sits in the middle, where all three meet. That is the message: security is not one of the three. Security is the balance of all three. If you have confidentiality and integrity but no availability, you have not achieved security. You have achieved two goals and failed the third. The system is secret and correct, but it is useless, because nobody can reach it.
+
+Part 5 — How It Works: The Three Goals, One by One
+Goal 1: Confidentiality — Keep It Secret
+
+Confidentiality is the goal of keeping information away from people who should not see it. Only the people who are authorised get to read it. Everyone else is blocked.
+
+Think of it in the simplest possible way: confidentiality is the lock on the diary.
+
+Now let us look at what confidentiality actually means in practice, because “keep it secret” is too short.
+
+Authorised people. There is always a list. In a company, the list might be “the finance team can see the payroll.” In a hospital, the list might be “the treating doctor and the patient can see the medical record.” Confidentiality is the work of making sure the list is respected and the people not on the list cannot get in.
+
+Unauthorised people. This includes attackers, of course. But it also includes people inside the organisation who have no legitimate reason to see the data. An intern does not need to see the salaries of the senior managers. A marketing person does not need to see the medical records of the customers. Confidentiality is as much about internal access control as it is about external attackers.
+
+Methods. How do you keep a secret? You encrypt it (so it cannot be read without a key), you authenticate (so only the right people can log in), you authorise (so the right people can see the right things), and you train (so people do not accidentally forward the file to the wrong person).
+
+Real examples:
+
+Your password. Nobody else should be able to read it. That is confidentiality.
+Your medical record. Your doctor can see it. Your neighbour cannot. That is confidentiality.
+A military secret. The general staff can see it. The public cannot. That is confidentiality.
+Your credit card number. The payment system can read it. The attacker who steals it has broken confidentiality.
+
+What happens when confidentiality fails: Someone sees something they should not have seen. The classic example is a data breach — a hacker steals the customer database and publishes it online. But a confidentiality failure can also be small: an employee emails a confidential document to their personal email address, or a file with the wrong permissions is readable by everyone on the network.
+
+Goal 2: Integrity — Keep It Correct
+
+Integrity is the goal of keeping information accurate and unbroken. The data says what it is supposed to say, and nobody has changed it without permission.
+
+Think of it this way: integrity is the seal on the envelope. If the seal is broken, you know someone opened it, and you should not trust what is inside.
+
+Integrity has two parts, and this distinction is important.
+
+Data integrity is about the data itself. Has it been changed? Is it still the same data that was originally created? If a database record says your bank balance is 5,000 rupees, integrity means it still says 5,000 rupees, and nobody has quietly changed it to 50,000 or 500.
+
+Provenance integrity is about knowing where the data came from and who created it. If you receive a document, can you prove that it came from the person who claims to have sent it, and that it has not been modified in transit? This is what digital signatures provide, and it is the basis of non-repudiation, which you will study in Lesson 2.
+
+Methods. How do you keep data correct? You use checksums and hashes (mathematical fingerprints that detect changes), you use digital signatures (which prove who created the data), you use access controls (so only authorised people can change it), you use version control (so you can see what changed and when), and you use backups (so you can restore the correct version if something goes wrong).
+
+Real examples:
+
+A bank transaction. The record says you transferred 1,000 rupees. Integrity means the record still says 1,000 rupees, and the bank’s total still balances.
+A software update. The file you download is exactly the file the vendor published, with no modifications in transit. Integrity means the update is not tampered with.
+A medical prescription. The dose written by the doctor is the dose the pharmacy dispenses. Integrity means nobody changed the number.
+A vote. In an electronic voting system, integrity means each vote is recorded exactly as cast and cannot be altered after the fact.
+
+What happens when integrity fails: The data is wrong, and nobody knows it. This is the most dangerous kind of failure, because the system looks perfectly normal while it lies to you. The classic example is the Stuxnet attack from Module 1: the centrifuges were destroyed while the monitoring screens showed everything normal. The operators trusted the screens. The screens lied. That was an integrity failure. Another example: a ransomware attack that encrypts your files — the data still exists, but it is no longer the data you had, because it has been transformed into something unreadable.
+
+Goal 3: Availability — Keep It Running
+
+Availability is the goal of making sure the system is there when you need it. It works, it is fast enough, and it does not disappear.
+
+Think of it this way: availability is the light switch. When you flip it, the light comes on. If it does not, the switch is broken.
+
+Availability is the goal that beginners usually underestimate, because it sounds like “the website is up,” which feels less important than “the data is secret” or “the data is correct.” But availability can be the most expensive goal to fail. A bank’s website being down for an hour can cost millions. A hospital’s patient records being unavailable during an emergency can cost lives.
+
+What availability protects:
+
+Time. How quickly can users access the service after they request it?
+Uptime. What percentage of the time is the service running? “Five nines” — 99.999% uptime — is the gold standard for critical services. That is about 5 minutes of downtime per year.
+Capacity. Can the service handle the number of users who want to use it? A ticketing website that crashes when a popular concert goes on sale has failed availability.
+Recovery. If the service does go down, how fast can it come back? This is what backups and disaster recovery plans are for.
+
+Methods. How do you keep a service available? You use redundancy (multiple copies so one failure is not fatal), you use load balancing (spreading traffic across servers), you use backups and disaster recovery (so you can restore after a failure), you use DDoS protection (so attackers cannot flood the service), you use patching (so known vulnerabilities cannot be exploited to take the service down), and you use monitoring (so you know when it is failing, before the users do).
+
+Real examples:
+
+Your email. When you open your inbox, the service should be there. If it is down, you cannot work. That is an availability failure.
+The power grid. When you flip the switch, the lights should come on. If they do not, the grid has failed availability.
+A navigation app. When you drive, the map should load. If it does not, you are lost.
+A hospital’s emergency system. During a crisis, the system must be running. If it is down, patients cannot be treated.
+
+What happens when availability fails: Nobody can reach the service. The classic example is a DDoS attack — an attacker floods the website with traffic until it cannot respond to real users. The Dyn attack in Module 1 took down Twitter, Netflix, and Spotify for hours. But availability failures are not always attacks. A server can fail physically. A configuration error can take down a service. A ransomware attack that encrypts the data makes it unavailable, even though the attacker did not delete it.
+
+Part 6 — The Three Goals in One Table
+
+Let us put them side by side so the difference is unmistakable.
+
+Goal	One-line definition	The question it answers	What it protects	Example of failure	Key methods
+Confidentiality	Keep it secret.	Who can see this?	Information from unauthorised eyes.	A hacker steals the customer database.	Encryption, access control, authentication, training.
+Integrity	Keep it correct.	Is this still true?	Information from unauthorised change.	A record is altered, and nobody notices.	Hashes, digital signatures, access control, backups.
+Availability	Keep it running.	Can I reach it when I need it?	The service from being unreachable or too slow.	The website is flooded and nobody can log in.	Redundancy, load balancing, DDoS protection, backups.
+Part 7 — Why the Three Goals Conflict
+
+This is the part that most courses skip, and it is the part that makes the triad useful. The three goals do not always get along. Sometimes you have to choose one at the expense of another.
+
+Confidentiality vs. Availability. The strongest confidentiality is to encrypt everything and throw away all the keys. That makes the data perfectly secret. It also makes it perfectly unavailable, because nobody can decrypt it. A practical system has to find a balance: encrypt the sensitive data, but keep the keys safe and accessible to the people who need them.
+
+Confidentiality vs. Integrity. A system that is perfectly confidential — nobody can see the data — can still have terrible integrity, because nobody can check whether the data is correct. If nobody can read the data, nobody can verify it. Monitoring and audit logs require access, and access weakens confidentiality. This is why security teams and privacy teams are often in tension, as you learned in Module 1, Lesson 5.
+
+Integrity vs. Availability. A system that is perfectly intact might be completely unavailable. A perfectly preserved archive is not available to anyone. A system that is perfectly available — open to everyone, all the time — is vulnerable to unauthorised changes, because anyone can modify it.
+
+The practical result: There is no perfect security. There is only the right balance for the situation. A military system will weight confidentiality heavily. A public website will weight availability heavily. A financial system will weight integrity heavily. A hospital will weight all three, but in different places: patient records need confidentiality and integrity, while the emergency booking system needs availability above all.
+
+This is why the triad is a filter and not a checklist. You do not achieve all three equally. You decide, for each asset, which one matters most, and you accept the risk on the other two.
+
+Part 8 — Attack and Defence View
+
+Let us now look at the triad from the attacker’s perspective. This is how you learn to defend.
+
+The attacker wants to break one of the three. Every attack in the kill chain from Module 1 is an attack on one of these goals.
+
+Confidentiality attacks are about stealing data. espionage, phishing for credentials, stealing a database, shoulder surfing. The attacker wants to see what they should not see.
+Integrity attacks are about changing data. ransomware, falsifying records, modifying logs to hide an attack, Stuxnet-style sabotage. The attacker wants the data to say something that is not true.
+Availability attacks are about stopping the service. DDoS, deleting backups, corrupting the filesystem, ransomware. The attacker wants the service to be unreachable.
+
+The defender’s job is to protect all three, but to prioritise based on the asset. Not every asset needs all three equally. Your marketing brochure needs availability (people must be able to read it) and not much confidentiality or integrity. Your source code needs confidentiality (it is your intellectual property) and integrity (it must not be tampered with). Your bank’s transaction database needs all three at maximum.
+
+The most dangerous attacks hit all three at once. Ransomware is the perfect example. It breaks confidentiality (the attacker can read your files), integrity (the files are encrypted and no longer correct), and availability (you cannot access anything). This is why ransomware is the most feared attack in the modern ecosystem. It does not pick one goal. It destroys all three simultaneously.
+
+Part 9 — Common Mistakes Beginners Make
+
+Mistake 1: Thinking the triad is a checklist. You do not “achieve” the triad and then move on. It is a framework for thinking. Every security decision you make — should we encrypt this? Should we back this up? Should we require MFA? — is answered by asking which of the three goals it protects, and whether the cost is worth it.
+
+Mistake 2: Treating the three goals as equally important for every asset. They are not. A public webpage needs availability far more than confidentiality. A trade secret needs confidentiality far more than availability. If you treat all assets as equally sensitive, you will spend too much money on the wrong things and leave the important things unprotected.
+
+Mistake 3: Ignoring the fourth goal. The CIA triad is not the whole story. There is a fourth goal, non-repudiation, which you will study in Lesson 2. There are others too — authenticity, accountability, and auditability. The triad is the starting point, not the complete map. But it is the right starting point, because the other goals are usually extensions of these three.
+
+Mistake 4: Confusing the goal with the method. Encryption is a method for achieving confidentiality. It is not confidentiality itself. A backup is a method for achieving availability. It is not availability itself. If you confuse the method with the goal, you will install tools and think you have solved the problem, when really you have just bought something that points at the problem.
+
+Mistake 5: Forgetting that people are part of the triad. Every goal in the triad involves people. Confidentiality fails when a person is tricked into revealing a secret. Integrity fails when a person is tricked into changing a record. Availability fails when a person is tricked into shutting down a service. The triad is not just about technology. It is about people, processes, and technology together.
+
+Part 10 — Guided Mini-Lab: Apply the Triad to Your Own Life
+
+Let us now apply this to your own life. This takes 10 minutes. Take one of your most important online accounts — your email, your bank, or your cloud storage.
+
+Step 1: Identify the asset.
+What is the asset? Your email messages. Your bank transactions. Your photos. Write it down.
+
+Step 2: Ask the three questions.
+
+Confidentiality: Who should be able to see this asset? Who should not? What would happen if an unauthorised person saw it?
+Integrity: What would happen if the data were changed without your knowledge? Could someone alter your messages, your balance, or your photos?
+Availability: What would happen if you could not access the asset when you needed it? How often do you need it? What is the cost of it being down?
+
+Step 3: Rate each goal from 1 to 5.
+Rate how important each goal is for this asset, on a scale of 1 to 5.
+
+Confidentiality: 1 = the data is public, 5 = the data is a state secret.
+Integrity: 1 = the data can be wrong with no consequences, 5 = a wrong record could kill someone.
+Availability: 1 = the data is nice to have, 5 = the data must be available 24/7 or people die.
+
+Step 4: Identify the weakest goal.
+Which goal has the lowest rating in practice? That is where the risk is. If your email has strong confidentiality (a strong password) but weak availability (no backup), then your biggest risk is losing all your messages forever. If it has strong availability but weak integrity (no way to verify that a message is really from your bank), then your biggest risk is being tricked by a fake email.
+
+Step 5: Write it down.
+Open your lab notebook and write:
+
+LESSON 1 — THE CIA TRIAD APPLIED
+Date: [today]
+Asset: [which account]
+Confidentiality importance: [1-5] — because [one sentence]
+Integrity importance: [1-5] — because [one sentence]
+Availability importance: [1-5] — because [one sentence]
+Weakest goal: [which one]
+Risk: [what could go wrong]
+Action: [what I will do — add a backup? enable 2FA? check the password?]
+
+IMAGE 2 — Flowchart: A horizontal flowchart diagram showing the cyber kill chain: six rounded rectangles in a left-to-right sequence — Reconnaissance → Weaponization → Delivery → Exploitation → Installation → Actions on Objectives — connected by arrows. Below each box, a small one-line example in monospace font. A parallel dashed line at the bottom labeled Defence: detect → contain → eradicate. Clean, white background, navy and red accents, professional diagram style, 16:9, high resolution.
+
+Part 11 — Why This Matters for the Rest of Module 2
+
+Let me say something plainly.
+
+Every lesson in Module 2 is a principle for protecting the triad. Least privilege protects all three by limiting who can see, change, or break things. Defence in depth protects all three by layering protections so that one failure is not enough. Zero trust protects confidentiality by verifying every request. Secure defaults protect all three by starting safe instead of requiring the user to be careful. Separation of duties protects integrity by ensuring that no single person can both create and verify a transaction.
+
+If you understand the triad, Module 2 will feel like one long argument rather than seven separate lessons. Each principle will slot into place as the answer to an obvious question: “how do we protect confidentiality, integrity, and availability when the situation is X?”
+
+That is what this lesson is for. It is the lens. Everything after it is what you see through it.
+
+Part 12 — Summary and Glossary
+
+Here is what we covered.
+
+The CIA triad is the foundational framework of cybersecurity. It has three goals: confidentiality (keep it secret), integrity (keep it correct), and availability (keep it running). Security is the balance of all three, not any one of them alone.
+
+Confidentiality is protected by encryption, access control, authentication, and training. Integrity is protected by hashes, digital signatures, access control, and backups. Availability is protected by redundancy, load balancing, DDoS protection, backups, and monitoring.
+
+The three goals conflict. Strong confidentiality can hurt availability. Strong integrity can require access that weakens confidentiality. Strong availability can make integrity harder to maintain. There is no perfect security — only the right balance for the situation.
+
+Every attack breaks one or more of the three goals. Confidentiality attacks steal data. Integrity attacks change data. Availability attacks stop the service. Ransomware is the most dangerous because it breaks all three at once.
+
+Glossary of 8 terms:
+
+CIA triad — the three core goals of security: Confidentiality, Integrity, Availability.
+Confidentiality — keeping information away from unauthorised people.
+Integrity — keeping information accurate and unbroken.
+Availability — keeping the service working and accessible when needed.
+Non-repudiation — the ability to prove that someone did something; the fourth goal beyond the triad.
+Redundancy — having multiple copies or components so that one failure is not fatal.
+Hash — a mathematical fingerprint of data that detects changes.
+Balance — the ongoing process of trading off the three goals against each other.
+Part 13 — Practice: 5 Quick-Check Questions
+What are the three goals of the CIA triad, and what is the one-line definition of each?
+Give one real example of a confidentiality failure, one of an integrity failure, and one of an availability failure.
+Why can the three goals conflict? Give one example of a conflict.
+Which goal does encryption protect, and which goal does a backup protect?
+Choose an asset from your life. Rate confidentiality, integrity, and availability from 1 to 5, and say which is the weakest.
+
+
+Diagram Placement Summary
+Image	Location in lesson	What it shows
+Image 1	After Part 4 (Concept from Scratch)	The CIA triad: three overlapping circles with examples, security in the centre
+Image 2	After Part 5 (How It Works)	Kill chain flowchart with defence path
+Image 3	After Part 10 (Guided Mini-Lab)	Terminal screenshot of toolkit setup
+Image 4	After Part 11 (Why This Matters)	Three-column comparison table: security vs privacy vs safety

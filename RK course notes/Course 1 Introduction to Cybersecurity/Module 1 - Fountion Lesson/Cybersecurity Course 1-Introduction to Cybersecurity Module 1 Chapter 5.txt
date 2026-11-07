@@ -1,0 +1,250 @@
+Course 01: Introduction to Cybersecurity
+Module 1: Foundations
+Lesson 5: Security, Privacy, and Safety
+Part 1 — Hook: Why This Matters
+
+Three people walk into a problem. Each one sees something different.
+
+The first person is a security engineer. She looks at a new hospital software system and asks: “Who can break into this, and how do we stop them?”
+
+The second person is a privacy officer. He looks at the same system and asks: “What data does this collect, and is the patient okay with it being collected?”
+
+The third person is a safety inspector. She looks at the same system and asks: “If this software fails, does anyone get physically hurt?”
+
+All three are looking at the same software. All three are right. And all three are asking different questions, which is why organisations keep getting confused — and why patients keep getting harmed.
+
+This lesson is about learning to see all three perspectives at once. If you cannot separate these three ideas, you will make bad decisions for the rest of your career. A company that is “secure” but not “private” will lose its customers’ trust. A company that is “private” but not “safe” will kill people. A company that is “safe” but not “secure” will lose everything to a thief.
+
+Let us learn the difference properly, once and for all.
+
+Part 2 — Learning Objectives
+
+By the end of this lesson you will be able to:
+
+Define security, privacy, and safety in your own simple words.
+Distinguish clearly among the three, with at least three examples of each.
+Explain why a system can be secure but not private, private but not safe, or safe but not secure.
+Identify which of the three applies in a given real-world scenario.
+Explain the role of regulation in each domain, naming at least one law for each.
+Apply all three perspectives to a single case study.
+Part 3 — Prerequisites
+
+You should have finished Lessons 1 through 4. You need the CIA triad, the asset inventory, and the attack surface. This lesson uses all of them.
+
+Part 4 — Concept from Scratch
+
+Here is the central sentence of this lesson.
+
+Security, privacy, and safety are three different questions about the same system, and a good organisation answers all three before it launches anything.
+
+Let me say that again, because it is the sentence you will carry into every future lesson.
+
+Security, privacy, and safety are three different questions about the same system, and a good organisation answers all three before it launches anything.
+
+Now let us define each one carefully, because the dictionary definitions are not good enough. The word “security” means “the state of being free from danger,” and that is so general that it is useless. We need sharper definitions.
+
+IMAGE 1 — Three-circle Venn diagram: Three overlapping circles on a white background, each a different color. Circle 1 (navy) labeled SECURITY — Protecting assets from bad people. Circle 2 (green) labeled PRIVACY — Controlling your own information. Circle 3 (amber) labeled SAFETY — Preventing physical harm. In the overlap of all three, a small label: Trusted systems. Outside the circles, a rectangle labeled THE SYSTEM with arrows pointing into all three circles. Each circle contains 2-3 short examples. Clean, professional, 16:9, high resolution.
+
+Security is about protecting assets from intentional harm by bad actors. The key words are assets and intentional. Security assumes there is an enemy, and it builds defences against that enemy. Security is the wall around the castle, the guard at the gate, and the alarm on the door.
+
+Privacy is about controlling your own information. The key words are your own and controlling. Privacy is not about keeping secrets from attackers. It is about deciding who knows what about you, and whether you agreed to that. Privacy is about consent, transparency, and dignity.
+
+Safety is about preventing physical harm to people. The key words are physical and harm. Safety does not care about attackers or data. It cares about whether a failure of the system causes injury, death, or damage to the real world. Safety is the guardrail on the mountain road, the smoke detector in the house, and the automatic shutoff on the gas line.
+
+Now, the most important thing about these three definitions is what they leave out. Notice what is NOT in each definition.
+
+Security does not mention consent. A bank can be perfectly secure — no one can break in — and still violate your privacy by selling your data. Security does not mention physical harm. A secure system can still kill people if it controls a dangerous machine.
+
+Privacy does not mention attackers. Your data can be private — no one can see it — and still be completely insecure, because privacy is about access, not protection. Privacy does not mention physical harm. A private system can still be dangerous.
+
+Safety does not mention attackers or data. A system can be perfectly safe — it cannot hurt anyone — and still be insecure, because a thief can steal the laptop that runs it. Safety does not mention consent.
+
+This is the source of every confusion in this field. People use one word to mean all three, and then they are surprised when things go wrong.
+
+Part 5 — How It Works: The Three Domains, One by One
+Domain 1: Security
+
+Security is the domain of the attacker. It only exists because there are people who want to do harm, and it is organised around the assumption that those people are actively trying to get in.
+
+What security protects: Assets — data, systems, people, and physical things, as we learned in Lesson 3.
+
+What security assumes: There is a threat actor. The threat actor is intelligent, motivated, and has resources. The defender must assume the attacker can find any weakness eventually.
+
+What security measures: It measures resistance to unauthorised access. It asks: how many attackers got in? How much data was stolen? How long was the system down? These are all metrics of security.
+
+Security in practice: Firewalls, encryption, authentication, access control, patching, monitoring, incident response. Every tool you will learn in this course is a security tool.
+
+The security failure mode: A breach. Someone gets in who should not have. Data is stolen, systems are damaged, or the service stops working. The classic example is the Target breach of 2013: 40 million credit card numbers stolen. Target was not privacy-aware (it collected too much data) and it was not safety-critical (a retail store cannot physically kill anyone). It was purely a security failure.
+
+Domain 2: Privacy
+
+Privacy is the domain of the individual. It is organised around the assumption that information about people is sensitive by default, and that the person it belongs to should control it.
+
+What privacy protects: Personal information — your name, your location, your health, your purchases, your communications, your face, your voice, your behaviour patterns.
+
+What privacy assumes: That collecting data creates power, and that power can be abused. Even if no attacker ever breaks in, a company can still do harm by using your data in ways you did not agree to.
+
+What privacy measures: It measures consent, transparency, purpose limitation, data minimisation, and retention. It asks: did the user know what was being collected? Did they agree? Is the data being used for the purpose it was collected for? Is it being deleted when it is no longer needed?
+
+Privacy in practice: Privacy policies, consent forms, data protection impact assessments, anonymisation, the right to be forgotten, data access requests. These are not security tools. They are legal and administrative tools.
+
+The privacy failure mode: Loss of autonomy. Your data is used against you without your knowledge. You are profiled, manipulated, discriminated against, or simply exposed. The classic example is a social media platform that collects your location data, your contacts, your browsing history, and your facial images, and then uses that data to target you with advertisements for products you did not know you wanted — or worse, uses it to make decisions about your job, your insurance, or your credit.
+
+Here is a crucial point that beginners miss: privacy and security can be in tension. Strong security often requires collecting more data — logs, access records, authentication events. Strong privacy often requires collecting less data. A company that logs every user action has strong security (it can detect attacks) but weak privacy (it knows everything about its users). A company that collects almost no data has strong privacy but weak security (it cannot investigate attacks because it has no logs). The art of the field is finding the balance.
+
+Domain 3: Safety
+
+Safety is the domain of the physical world. It is organised around the assumption that systems can fail, and that failure can cause real, measurable harm to human bodies.
+
+What safety protects: People, from physical injury, illness, or death.
+
+What safety assumes: That systems will fail eventually. Safety engineering does not try to prevent failure. It assumes failure is inevitable and designs so that failure is not catastrophic. This is a fundamentally different mindset from security, where the goal is to prevent failure.
+
+What safety measures: It measures incident rates, fatality rates, failure modes, and risk tolerance. It asks: how many people were harmed? Under what conditions does harm occur? What is the acceptable probability of harm?
+
+Safety in practice: Fail-safes, redundant systems, automatic shutoffs, physical guards, warning labels, emergency stops, stress testing, certification, and regulation. A car has seatbelts, crumple zones, airbags, and anti-lock brakes. None of these are security tools. They are safety tools.
+
+The safety failure mode: Physical harm. A person is injured or killed because a system failed in a way that should have been impossible. The classic example is an autonomous vehicle that fails to recognise a pedestrian, or a medical infusion pump that delivers a fatal overdose. These are not security failures — no attacker was involved. They are pure safety failures.
+
+And here is the other crucial point: safety failures are the hardest to forgive. A security breach costs money and reputation. A privacy violation costs trust. A safety failure costs a life. This is why safety-critical systems — aircraft, medical devices, nuclear plants, cars, trains — are regulated so heavily. The regulation exists because the cost of getting it wrong is not measured in dollars.
+
+Part 6 — Example: The Self-Driving Car, Seen Through All Three Lenses
+
+Let us now take one object and look at it through all three lenses at once. This is the best way to see the difference. A self-driving car is the perfect example, because it is a computer on wheels, and it is all three at once.
+
+The security view: The car’s software is connected to the internet for updates and navigation. A security engineer asks: “Can a remote attacker take control of the car?” The answer matters because if the attacker can, they can drive the car off a cliff. The security team builds defences: secure boot (so the car only runs software that has been digitally signed by the manufacturer), encrypted communication (so the attacker cannot inject commands over the air), and intrusion detection (so the car notices unusual commands and ignores them).
+
+The privacy view: The car knows where you drive, when, and how fast. It records your phone calls if you use the hands-free system. It knows your favourite coffee shop, your home address, your workplace, and the hospital you visit on Thursdays. A privacy officer asks: “Who has this data, and is the driver okay with it being collected?” The privacy team writes a privacy policy, gives the driver a dashboard to see what is being collected, and deletes the driving history after a certain period. They also ask: could this data be used against the driver? An insurance company might raise premiums based on aggressive driving. An employer might fire someone for driving to a union meeting. The privacy team has to think about those uses.
+
+The safety view: The car is a 2-ton machine moving at 120 km/h among pedestrians and cyclists. A safety engineer asks: “What happens if the sensor fails?” They design redundant systems: if the camera fails, the radar still works. If both fail, the car pulls over. They test the software millions of miles before it is allowed on public roads. They design the brakes to work even if the computer fails completely. They put a big red button that stops everything. They ask: what is the probability that this car will kill someone in a million trips? The target is less than one in a million.
+
+Now here is the key. All three teams are working on the same car, and they are all right. The security team stops the terrorist. The privacy team stops the surveillance company. The safety team stops the crash. A car that only has security is a car that no one trusts with their data. A car that only has privacy is a car that can be hacked and driven off a cliff. A car that only has safety is a car that records everything and hands it to the highest bidder.
+
+A good car has all three. This is the lesson in one object.
+
+Part 7 — Attack and Defence View
+
+Let us now look at these three domains from the perspective of what can go wrong. This is the most practical way to understand them.
+
+Security failure: An attacker does something unauthorised. The classic signature is unauthorised access. Someone got in who should not have. The response is technical: find the attacker, patch the hole, restore the data.
+
+Privacy failure: Data is used in a way the owner did not consent to. The classic signature is loss of control. The data is still safe from attackers, but it is being used in ways the owner never agreed to. The response is legal and administrative: change the policy, delete the data, compensate the victims.
+
+Safety failure: Someone is physically harmed. The classic signature is physical injury. No attacker was involved. The system simply failed in a way that should not have been possible. The response is engineering and regulation: redesign the system, recall the product, change the law.
+
+Now let us look at how these three failures interact, because they often do.
+
+A security failure can cause a privacy failure. If an attacker steals your medical records, the records were secure (well, not really) and they are no longer private. The privacy violation was caused by a security failure.
+
+A privacy failure can cause a safety failure. If a health app collects your data and sells it to a data broker, and the data broker sells it to an insurance company, and the insurance company cancels your health insurance because of your fitness data, and you cannot get the medication you need — then a privacy violation caused a safety harm. This is not hypothetical. It has happened.
+
+A safety failure can cause a security failure. If a medical device fails and harms a patient, the company’s reputation is destroyed, and the destroyed reputation is a security problem — the company cannot sell anything anymore, and its systems are now targets for activists.
+
+The three domains are connected, and ignoring any one of them means the other two are at risk. This is why a proper risk assessment looks at all three, not just one.
+
+Part 8 — Common Mistakes Beginners Make
+
+Mistake 1: Treating security as the only domain. This is the most common mistake, because security is the loudest domain. It gets the most funding, the most media attention, and the most courses. Beginners naturally assume that if you are secure, you are also private and safe. You are not. A company can spend a hundred million dollars on security and still have terrible privacy and terrible safety. Security is necessary but not sufficient.
+
+Mistake 2: Treating privacy as a security feature. Many organisations say “we are private because we are encrypted.” Encryption is a security control. It protects data from attackers. It does not protect data from the company that holds it. A company can encrypt everything, keep it forever, and sell it to advertisers. That is secure and not private. Encryption is a tool for privacy, but it is not privacy itself.
+
+Mistake 3: Treating safety as an afterthought. Safety is the domain that gets the least attention in cybersecurity courses, and it is the domain where the consequences are most severe. A cybersecurity course that never mentions safety is teaching an incomplete profession. If you work on medical devices, cars, aircraft, power plants, or industrial control systems — which you will, in Courses 28 and beyond — safety is not optional. It is the entire point.
+
+Mistake 4: Using the words interchangeably. “We need better security.” “We need better privacy.” “We need better safety.” These sentences sound similar but mean completely different things. If a manager says “we need better security” when they mean “we need a privacy policy,” the team will build a firewall instead of writing a policy, and the problem will not be solved. Precision in language is precision in thought.
+
+Mistake 5: Ignoring the regulation. Each domain has its own legal framework, and ignoring it is expensive. Security breaches are reportable under law in most countries. Privacy violations are reportable under the GDPR in Europe and the DPDP Act in India. Safety failures trigger product recalls and criminal liability. A professional in this field needs to know at least the name of the regulation that applies to their work. We will name them below.
+
+Part 9 — Guided Mini-Lab: The Three-Question Test
+
+Let us now practice. This takes 10 minutes. Take any product, service, or system you use regularly — your phone, your bank, your favourite app, your smartwatch. Ask it the three questions.
+
+Question 1 (Security): “Who can attack this, and how do we stop them?”
+Write down the answer. What data does it hold? What could an attacker gain by breaking into it? What defences does it have?
+
+Question 2 (Privacy): “What data does it collect, and is the user okay with it?”
+Write down the answer. Read the privacy policy if you can find it. What data is collected? Why? Who is it shared with? How long is it kept? Can the user delete it?
+
+Question 3 (Safety): “If it fails, does anyone get physically hurt?”
+Write down the answer. Is this a safety-critical system? If it fails, what is the worst-case physical outcome?
+
+Now, rate each domain on a scale of 1 to 5:
+
+Security: 1 = no defences, 5 = military-grade
+Privacy: 1 = collects everything, shares everything, 5 = collects nothing, deletes everything
+Safety: 1 = failure causes harm, 5 = failure is harmless
+
+Write the results in your lab notebook:
+
+LESSON 5 — THREE-QUESTION TEST
+Date: [today]
+Product tested: [name]
+Security rating: [1-5] — because [one sentence]
+Privacy rating: [1-5] — because [one sentence]
+Safety rating: [1-5] — because [one sentence]
+Worst domain: [which one, and what is the risk]
+
+IMAGE 3 — Tool screenshot: A photorealistic screenshot of a dark-themed terminal window on a black background, showing a Linux command prompt. Commands visible: python3 --version returning 3.11, which nmap returning /usr/bin/nmap, which tshark, and a final line echo 'Lab toolkit ready' with a blinking cursor. Monospace font, subtle window decoration (minimize/maximize buttons top-left). Slight glow on text. Looks like an actual terminal capture, not cartoonish. 16:9.
+
+Part 10 — The Regulations: Why This Matters in the Real World
+
+Let me now give you the practical reason this lesson matters. Each domain has laws, and breaking those laws is not a theoretical problem.
+
+Security regulation: In India, the Information Technology Act 2000 and the Indian Penal Code deal with cybercrime. Companies that suffer a data breach may be required to report it to CERT-In within six hours. In the European Union, the NIS2 Directive requires critical infrastructure operators to meet specific security standards. In the United States, sector-specific regulators like the FDA (for medical devices) and the FTC (for consumer products) enforce security requirements.
+
+Privacy regulation: The General Data Protection Regulation (GDPR) in Europe is the most famous privacy law in the world. It requires consent for data collection, gives individuals the right to access and delete their data, and imposes fines of up to 4% of global revenue. In India, the Digital Personal Data Protection Act 2023 does similar things for Indian law. In the United States, there is no single federal privacy law; instead there are state laws like the California Consumer Privacy Act (CCPA).
+
+Safety regulation: The Central Drugs Standard Control Organisation (CDSCO) in India regulates medical devices. The Directorate General of Civil Aviation regulates aircraft. The Ministry of Road Transport and Highways regulates vehicles. Each of these regulators requires that products meet safety standards before they can be sold, and each can order a recall if a product is found to be dangerous.
+
+Why this matters for you: If you work in this field, you will be asked to build something. Your job is not just to make it work. It is to make it work securely, privately, and safely. If you ignore any one of those three, you are not doing your job, and someone could get hurt. This is not an academic point. It is the difference between a product that ships and a product that destroys a company.
+
+Part 11 — Why This Matters for the Rest of Your Life
+
+Let me say something plainly.
+
+You are going to learn about firewalls, encryption, penetration testing, and incident response. It is a lot of technical detail, and it is easy to think that being good at technology is the same as being good at this field. It is not.
+
+The technology is the easy part. The hard part is knowing which problem you are solving. If you are asked to “improve security” on a medical device, and you add a stronger password, you have done nothing useful — because the device’s problem is safety, not authentication. If you are asked to “improve privacy” on a social network, and you encrypt the database, you have done nothing useful — because the network’s problem is that it collects too much data and shares it, not that it is unencrypted.
+
+This lesson is what turns a technician into a professional. A technician knows how to build the tool. A professional knows which tool to build, and why, and what happens if it is used wrong.
+
+Part 12 — Summary and Glossary
+
+Here is what we covered.
+
+Security, privacy, and safety are three different questions about the same system. Security asks how to protect assets from bad actors. Privacy asks who controls personal information. Safety asks whether a failure can physically harm people.
+
+Security assumes an enemy and measures resistance to unauthorised access. Privacy assumes that data creates power and measures consent, transparency, and minimisation. Safety assumes failure is inevitable and measures the probability and severity of physical harm.
+
+The three domains are connected. A security failure can cause a privacy failure, which can cause a safety failure. Ignoring any one of them puts the others at risk. Each domain has its own regulation: security under the IT Act 2000 and CERT-In rules, privacy under the GDPR and the DPDP Act 2023, safety under sector-specific regulators like CDSCO and DGCA.
+
+A good product answers all three questions before it launches. A good professional knows which question is being asked, and does not answer the wrong one.
+
+Glossary of 12 terms:
+
+Security — protecting assets from intentional harm by bad actors.
+Privacy — controlling your own personal information and how it is used.
+Safety — preventing physical harm to people when systems fail.
+Consent — the user’s informed agreement to the collection and use of their data.
+Data minimisation — collecting only the data you need, for a specific purpose, and deleting it when done.
+Fail-safe — a design that ensures a system moves to a safe state when it fails.
+Regulation — a legally binding rule issued by a government authority.
+Breach — a security failure in which unauthorised access occurs.
+Right to be forgotten — the legal right to have your personal data deleted.
+Purpose limitation — the principle that data should only be used for the purpose it was collected for.
+Risk tolerance — the acceptable level of risk that an organisation is willing to accept.
+Safety-critical — a system whose failure can cause physical harm or death.
+Part 13 — Practice: 5 Quick-Check Questions
+Define security, privacy, and safety in one sentence each, using your own words.
+Give one example of a system that is secure but not private. Explain why.
+Give one example of a system that is private but not safe. Explain why.
+Give one example of a system that is safe but not secure. Explain why.
+A health app collects your exercise data and sells it to an insurance company. Which domain is violated, and what is the harm?
+
+
+
+Diagram Placement Summary
+Image	Location in lesson	What it shows
+Image 1	After Part 4 (Concept from Scratch)	Three-circle Venn diagram: security, privacy, safety, with overlaps and trusted systems in the centre
+Image 2	After Part 5 (How It Works)	Data classification pyramid: public → internal → sensitive → restricted
+Image 3	After Part 9 (Guided Mini-Lab)	Terminal screenshot of toolkit setup
+Image 4	After Part 11 (Why This Matters)	Three-column comparison table: security vs privacy vs safety

@@ -20,8 +20,8 @@ try {
   const courses = mockEngine.getCourses();
   const cyberCourses = courses.filter(c => (c.division || 'cybersecurity') === 'cybersecurity');
   assert(cyberCourses.length === 1, `Cybersecurity division contains exclusively 1 course: found ${cyberCourses.length}`);
-  assert(cyberCourses[0].id === 'crs_full_stack_web_dev', `Catalog course is Full Stack Web Development (crs_full_stack_web_dev)`);
-  assert(cyberCourses[0].modules.length === 12, `Course has all 12 modules`);
+  assert(cyberCourses[0].id === 'crs_cyber_intro_01', `Catalog course is Introduction to Cybersecurity (crs_cyber_intro_01)`);
+  assert(cyberCourses[0].modules.length === 5, `Course has 5 comprehensive modules`);
 
   // Test 2: Enrolment initialization
   const db = mockEngine.getDb();
@@ -29,9 +29,9 @@ try {
   if (!testUser) {
     testUser = mockEngine.createUser({ email: 'cadet_test@redkross.org.in', full_name: 'Test Cadet' });
   }
-  let enrolment = (db.enrolments || []).find(e => e.user_id === testUser.id && e.course_id === 'crs_full_stack_web_dev');
+  let enrolment = (db.enrolments || []).find(e => e.user_id === testUser.id && e.course_id === 'crs_cyber_intro_01');
   if (!enrolment) {
-    enrolment = mockEngine.enrolStudent(testUser.id, 'crs_full_stack_web_dev');
+    enrolment = mockEngine.enrolStudent(testUser.id, 'crs_cyber_intro_01');
   }
   assert(Boolean(enrolment), `Cadet enrolment is active: ${enrolment?.id}`);
 

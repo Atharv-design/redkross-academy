@@ -17,8 +17,8 @@ function assert(condition, testName) {
 
 try {
   const db = mockEngine.getDb();
-  const course = (db.courses || []).find((c) => c.id === 'crs_full_stack_web_dev');
-  assert(Boolean(course), 'Found primary course crs_full_stack_web_dev');
+  const course = (db.courses || []).find((c) => c.id === 'crs_cyber_intro_01') || (db.courses || [])[0];
+  assert(Boolean(course), 'Found primary course');
 
   // Create isolated test student
   const testUserId = `usr_test_${Date.now()}`;

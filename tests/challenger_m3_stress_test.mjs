@@ -47,10 +47,10 @@ console.log('\n--- SUITE 2: EMPIRICAL DATA ISOLATION & QUERY PARTITIONING ---');
 const testCadetId = 'usr_cadet_challenger_m3_' + Date.now();
 
 // Enroll cadet in both cyber and psych courses
-const cyberEnr = mockEngine.enrolStudent(testCadetId, 'crs_full_stack_web_dev');
+const cyberEnr = mockEngine.enrolStudent(testCadetId, 'crs_cyber_intro_01');
 const psychEnr = mockEngine.enrolStudent(testCadetId, 'crs_psych_cbt');
 
-assert(cyberEnr && cyberEnr.id, 'Enrolled cadet in crs_full_stack_web_dev (Cybersecurity)');
+assert(cyberEnr && cyberEnr.id, 'Enrolled cadet in crs_cyber_intro_01 (Cybersecurity)');
 assert(psychEnr && psychEnr.id, 'Enrolled cadet in crs_psych_cbt (Psychology)');
 
 // Strict partition queries
@@ -59,7 +59,7 @@ const psychEnrolments = mockEngine.getEnrolmentsForUser(testCadetId, 'psychology
 const allEnrolments = mockEngine.getEnrolmentsForUser(testCadetId);
 
 assert(cyberEnrolments.length === 1, `Cybersecurity query returns exactly 1 enrollment (found ${cyberEnrolments.length})`);
-assert(cyberEnrolments[0].course_id === 'crs_full_stack_web_dev', 'Cyber enrollment is strictly crs_full_stack_web_dev');
+assert(cyberEnrolments[0].course_id === 'crs_cyber_intro_01', 'Cyber enrollment is strictly crs_cyber_intro_01');
 
 // Check that 0 psychology courses are returned in cyber query
 const psychLeakedInCyber = cyberEnrolments.filter(e => {
@@ -120,10 +120,10 @@ assert(detailSrc.includes('#FFA439'), 'Amber Gold token (#FFA439) present in sty
 assert(detailSrc.includes('data-academy-theme="cybersecurity"'), 'Theme root token attribute data-academy-theme="cybersecurity" present');
 
 // Course resolution verification
-const resolvedBySlug = mockEngine.getCourseBySlug('full-stack-web-development-fundamentals-to-deployment');
-assert(resolvedBySlug && resolvedBySlug.id === 'crs_full_stack_web_dev', 'mockEngine resolves course by exact slug');
-const resolvedById = mockEngine.getCourseById('crs_full_stack_web_dev');
-assert(resolvedById && resolvedById.title.includes('Full Stack Web Development'), 'mockEngine resolves course by id');
+const resolvedBySlug = mockEngine.getCourseBySlug('introduction-to-cybersecurity');
+assert(resolvedBySlug && resolvedBySlug.id === 'crs_cyber_intro_01', 'mockEngine resolves course by exact slug');
+const resolvedById = mockEngine.getCourseById('crs_cyber_intro_01');
+assert(resolvedById && resolvedById.title.includes('Introduction to Cybersecurity'), 'mockEngine resolves course by id');
 
 // ============================================================================
 // SUITE 4: CYBER STUDENT DASHBOARD (KALI LAUNCHER & CERT PROOFS)

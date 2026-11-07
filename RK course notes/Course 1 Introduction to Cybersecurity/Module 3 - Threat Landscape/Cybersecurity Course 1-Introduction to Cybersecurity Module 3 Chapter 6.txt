@@ -1,0 +1,346 @@
+Course 01: Introduction to Cybersecurity
+Module 3: Threat Landscape
+Lesson 6: The MITRE ATT&CK Framework and Threat Mapping
+Part 1 — Hook: Why This Matters
+
+Imagine a detective arrives at a crime scene. There is a broken window, muddy footprints on the carpet, a missing safe, and a faint smell of gasoline. The detective does not just shrug and write a report saying “someone broke in.” Instead, the detective pulls out a standardized notebook and categorizes the evidence: method of entry (broken window), footwear trace (mud), target (safe), and potential motive (fire). By using a standard framework, the detective can quickly compare this scene to hundreds of others, look up known burglary rings that use gasoline for arson, and assign the case to the right specialized unit.
+
+For decades, cybersecurity had no such standard notebook. When a company was breached, the incident response team wrote a report full of random, unstructured data: “The hacker used a weird PowerShell script at 3 AM, then moved to the finance server, then encrypted files.” Another company, hit by the same hackers a month later, wrote: “We saw a credential-dumping tool followed by lateral movement and a ransomware deployment.”
+
+Because there was no common language, defenders could not easily connect the dots. They were fighting a global, organized enemy using scattered, local reports written in different dialects.
+
+Then came the MITRE ATT&CK Framework. It replaced the chaos with a single, shared map. It broke down every known cyber attack into clear categories: what the attacker wanted to achieve (the tactic) and exactly how they did it (the technique). Now, when one company sees a PowerShell script at 3 AM, they can map it to a standard code, share that code with the world, and another company halfway across the globe can instantly recognize the pattern and block it before it hits them.
+
+This lesson is about that map. It is the most important conceptual tool you will learn in this module. If you understand the ATT&CK Framework, you will never look at a cyber attack as a mysterious, standalone event again. You will see it as a predictable sequence of steps, and you will know exactly where the attacker is and what they will try to do next.
+
+Part 2 — Learning Objectives
+
+By the end of this lesson you will be able to:
+
+Define the MITRE ATT&CK Framework and explain why it was created.
+Distinguish clearly between Tactics, Techniques, Sub-techniques, and Procedures (TTPs).
+Navigate the ATT&CK Matrix and identify the 14 standard phases of an attack.
+Map a real-world incident report to specific ATT&CK techniques.
+Use the framework to identify gaps in your organization’s defensive coverage.
+Contrast the Cyber Kill Chain with the MITRE ATT&CK Framework.
+Part 3 — Prerequisites
+
+You have finished Module 1, Module 2, and Module 3 Lessons 1 through 5. You know threat actor types, malware families, social engineering vectors, DDoS mechanisms, and the basics of threat intelligence and OSINT. This lesson takes those threats and places them onto a standardized grid.
+
+Part 4 — Concept from Scratch
+
+Here is the central sentence of this lesson.
+
+The MITRE ATT&CK Framework is a globally accessible knowledge base of adversary tactics and techniques, organized into a structured matrix that maps exactly how attackers operate in real-world networks.
+
+Let me say that again, because the definition hides the true value.
+
+The MITRE ATT&CK Framework is a globally accessible knowledge base of adversary tactics and techniques, organized into a structured matrix that maps exactly how attackers operate in real-world networks.
+
+The word ATT&CK stands for Adversarial Tactics, Techniques, and Common Knowledge. It is developed and maintained by MITRE, a not-for-profit organization that operates federally funded research and development centers for the United States government.
+
+The framework is based on observed reality. It is not a theoretical model built in a lab. It is built by analyzing thousands of real incident reports, malware analysis documents, and threat intelligence feeds from breaches that actually happened. If a technique has never been seen in the wild, it is not in the matrix. This makes ATT&CK incredibly practical, but it also means it is constantly evolving. As attackers invent new ways to break in, the matrix grows to include them.
+
+To understand the framework, you must understand the difference between the four layers of the hierarchy. Beginners often confuse them, but the difference is everything.
+
+IMAGE 1 — ATT&CK hierarchy tree diagram: A hierarchical tree diagram on a white background. The root node at the top is labeled *TTPs (Tactics, Techniques, and Procedures)*. It branches down into four levels. Level 1 (Navy): TACTICS — “The attacker’s goal or objective (The ‘Why’).” Level 2 (Teal): TECHNIQUES — “How the attacker achieves the goal (The ‘What’).” Level 3 (Green): SUB-TECHNIQUES — “Specific variations of the technique (The ‘Specific Method’).” Level 4 (Amber): PROCEDURES — “Real-world examples and specific malware/tools used (The ‘Who & The Tool’).” Each level has a simple icon and a short real-world example (e.g., Tactic: Credential Access; Technique: OS Credential Dumping; Sub-technique: LSASS Memory; Procedure: Mimikatz). Clean, professional, 16:9, high resolution.
+
+Let us break these four levels down with a real-world analogy before we apply them to computers.
+
+The Goal (Tactic): You are hungry. You want to eat a meal. This is your objective. You are not specifying how you will get food, just that your end state is to have eaten. In ATT&CK, a tactic is a high-level goal like “Initial Access” or “Lateral Movement.”
+
+The Method (Technique): You decide to order a pizza. You could also cook, or go to a restaurant, but you chose ordering. This is the how. In ATT&CK, a technique is the general method used to achieve the goal, such as “Phishing” or “Exploit Public-Facing Application.”
+
+The Specifics (Sub-technique): You open the pizza app, select a large pepperoni, and pay using a credit card. This is a specific variation of the technique. In ATT&CK, a sub-technique is a highly specific implementation. For example, under the “Credential Access” tactic and “OS Credential Dumping” technique, the sub-technique might be “LSASS Memory” (extracting passwords from a specific Windows system process).
+
+The Real-World Example (Procedure): You used the Domino’s app at 8:00 PM on Tuesday using the account “john.doe@gmail.com.” This is the concrete, observable event. In ATT&CK, procedures are the exact commands, malware names, and scripts used by specific threat actors. For example, “APT29 used Cobalt Strike to dump LSASS memory.”
+
+The hierarchy is critical. If you only track the Procedure (the specific malware), you will miss the attack when the malware changes its name. If you track the Technique (the general method), you will catch the attacker even if they switch tools, because the fundamental action remains the same.
+
+Part 5 — How It Works: The ATT&CK Matrix
+
+The framework is organized into a giant grid called the Matrix. Each column in the grid represents a phase of the attack lifecycle (a Tactic). Each cell inside the column lists the Techniques attackers use to achieve that tactic.
+
+The primary matrix used by defenders is the Enterprise ATT&CK Matrix, which covers attacks on Windows, macOS, Linux, Cloud environments (AWS, Azure, GCP), and Network devices. There are also separate matrices for Mobile (iOS, Android) and ICS (Industrial Control Systems).
+
+The Enterprise Matrix has 14 standard Tactics, arranged roughly in the order an attacker would execute them (though attackers often skip around or jump back). Let us walk through them.
+
+1. Initial Access
+
+The attacker’s first goal: getting into your network.
+Techniques include: Phishing, Valid Accounts (stolen passwords), Exploit Public-Facing Application, Supply Chain Compromise, Drive-by Compromise.
+
+2. Execution
+
+The attacker’s goal: running malicious code on your system.
+Techniques include: Command and Scripting Interpreter (PowerShell, Bash), System Services (Windows Services, Cron jobs), User Execution (tricking the user to open a file), Container Administration Command.
+
+3. Persistence
+
+The attacker’s goal: making sure they can come back after you reboot the machine or kick them off.
+Techniques include: Create Account, Boot or Logon Autostart Execution, Event Triggered Execution, External Remote Services, Scheduled Task/Job.
+
+4. Privilege Escalation
+
+The attacker’s goal: moving from a regular user account to an Administrator or Root account to gain more power.
+Techniques include: Access Token Manipulation, Process Injection, Abuse Elevation Control Mechanism (UAC bypass), Exploitation for Privilege Escalation.
+
+5. Defense Evasion
+
+The attacker’s goal: hiding from your antivirus, EDR, and firewalls.
+Techniques include: Obfuscated Files or Information, Indicator Removal (clearing Windows Event Logs), Masquerading (renaming a malicious file to look like svchost.exe), Virtualization/Sandbox Evasion, Impair Defenses (disabling your antivirus).
+
+6. Credential Access
+
+The attacker’s goal: stealing usernames and passwords to move around your network.
+Techniques include: OS Credential Dumping, Brute Force, Unsecured Credentials (finding passwords written in plain text in config files), Input Capture (keyloggers), Steal Web Session Cookie.
+
+7. Discovery
+
+The attacker’s goal: looking around to see what your network has, where the valuable data is, and how your defenses are configured.
+Techniques include: System Information Discovery, Network Service Discovery (running Nmap), File and Directory Discovery, Account Discovery (running net user /domain), Cloud Infrastructure Discovery.
+
+8. Lateral Movement
+
+The attacker’s goal: jumping from the computer they infected to other computers in your network.
+Techniques include: Remote Services (RDP, SSH), SMB/Windows Admin Shares, Pass the Hash, Remote Service Session Hijacking, Exploitation of Remote Services.
+
+9. Collection
+
+The attacker’s goal: gathering the valuable data they came for.
+Techniques include: Data from Local System, Data from Cloud Storage, Screen Capture, Email Collection, Archive Collected Data (zipping files together to steal them in bulk).
+
+10. Command and Control (C2)
+
+The attacker’s goal: maintaining a communication channel between the compromised machine and their external server to send commands and receive stolen data.
+Techniques include: Application Layer Protocol (using HTTPS or DNS to hide traffic), Proxy (routing traffic through innocent computers to hide their real location), Encrypted Channel, Ingress Tool Transfer.
+
+11. Exfiltration
+
+The attacker’s goal: stealing the data out of your network and moving it to their own server.
+Techniques include: Exfiltration Over C2 Channel, Exfiltration Over Web Service (uploading to Google Drive, Dropbox, or GitHub), Scheduled Transfer, Transfer Size Limits.
+
+12. Impact
+
+The attacker’s goal: doing the actual damage.
+Techniques include: Data Encrypted for Impact (Ransomware), Data Destruction, Defacement, Service Stop, Endpoint Denial of Service, Resource Hijacking (cryptomining).
+
+13. Resource Development
+
+The attacker’s goal: building the infrastructure they need before the attack begins.
+Techniques include: Acquire Infrastructure (buying servers, domains, botnets), Develop Capabilities (writing malware, buying exploits), Stage Capabilities (uploading malware to staging servers).
+
+14. Reconnaissance
+
+The attacker’s goal: gathering information about the target from publicly available sources before the attack starts (OSINT).
+Techniques include: Gather Victim Identity Information, Gather Victim Network Information, Search Victim-Owned Websites, Search Open Technical Databases (like Shodan).
+
+Notice that Reconnaissance and Resource Development sit before Initial Access. They are the preparation phase. The rest of the columns (1 through 12) are the attack phase itself.
+
+Part 6 — Attack vs. Defence View: The ATT&CK Navigator
+
+Let us look at how both sides use this matrix.
+
+The Attacker’s View:
+Attackers do not sit down and say “today I will execute T1059.001.” They simply do what works. But threat intelligence analysts map what attackers do to the matrix. When a ransomware gang hits a hospital, an analyst reads the forensic report, identifies the techniques used (e.g., Phishing, PowerShell Execution, LSASS Dumping, RDP Lateral Movement, Ransomware Deployment), and tags the attack with the corresponding ATT&CK IDs. This turns a messy incident report into a structured dataset that can be searched, shared, and compared globally.
+
+The Defender’s View:
+Defenders use the matrix to answer one crucial question: Are we protected against the techniques the attacker actually uses?
+
+Instead of buying random security tools and hoping they work, a mature security team uses the ATT&CK Navigator. This is a free, web-based tool provided by MITRE. It displays the entire matrix as a blank grid. The security team then audits their own defenses and colors in the cells.
+
+If your EDR tool is configured to detect and block PowerShell script execution, you color the “Command and Scripting Interpreter” cell green. If you have no logging configured to detect when someone dumps the LSASS memory, you color the “OS Credential Dumping” cell red.
+
+When you are done, the grid is no longer a theoretical list of bad things. It is a Coverage Heatmap of your organization’s actual defensive posture.
+
+IMAGE 2 — ATT&CK Navigator Coverage Heatmap: A grid-based matrix view on a white background representing the Enterprise ATT&CK framework. The columns are Tactics (Initial Access, Execution, Persistence, etc.) and the rows are Techniques. The grid cells are color-coded: bright green cells indicate Full Coverage (e.g., under Execution and Credential Access), yellow cells indicate Partial Coverage, and bright red cells indicate No Coverage / Blind Spots (e.g., under Lateral Movement and Exfiltration). A small legend box in the corner explains the colors. Clean, professional, 16:9, high resolution.
+
+The heatmap reveals your blind spots instantly. You might discover that while you have excellent antivirus protection against known malware (Defense Evasion), you have absolutely zero monitoring for someone using Remote Desktop Protocol (Lateral Movement) to move through your network. The heatmap tells you exactly what to fix next.
+
+Part 7 — Threat Mapping in Practice
+
+Let us take a famous, real-world attack and map it to the matrix so you can see how it works in practice.
+
+We will map the SolarWinds Supply Chain Attack (2020), which we studied in Module 1 and Module 2.
+
+The Incident: Attackers compromised SolarWinds’ software build system, inserted malicious code into a legitimate software update, and distributed it to 18,000 customers. Once installed, the malware (Sunburst) lay dormant, then communicated with attacker servers, stole Active Directory tokens, and moved laterally to access sensitive cloud environments like Microsoft Office 365 and Azure.
+
+The Mapping:
+
+Reconnaissance (TA0043): The attackers gathered open-source intelligence on SolarWinds’ software development lifecycle, supply chain, and build servers.
+Technique: Gather Victim Identity Information.
+Resource Development (TA0042): The attackers compromised the software build environment.
+Technique: Acquire Infrastructure.
+Initial Access (TA0001): The malicious code was delivered via a trusted software update.
+Technique: Supply Chain Compromise.
+Execution (TA0002): The Sunburst malware executed as a legitimate Windows service.
+Technique: System Services.
+Persistence (TA0003): The malware was designed to survive reboots and hide.
+Technique: Hijack Execution Flow.
+Defense Evasion (TA0005): The malware used legitimate digital certificates and encrypted its communication to avoid detection. It also carefully timed its actions to look like normal business traffic.
+Technique: Masquerading, Indicator Removal.
+Credential Access (TA0006): The attackers stole OAuth access tokens to access cloud environments without needing passwords.
+Technique: Steal Application Access Token.
+Discovery (TA0007): Once inside, the attackers ran scripts to map out the Active Directory structure and identify domain controllers.
+Technique: Account Discovery.
+Lateral Movement (TA0008): The attackers used the stolen tokens to access other cloud environments (Azure, Office 365) and internal email servers.
+Technique: Use Alternate Authentication Material.
+Collection (TA0009): The attackers harvested emails and sensitive documents.
+Technique: Data from Information Repositories.
+Exfiltration (TA0010): The stolen data was sent back to the attackers’ command and control servers.
+Technique: Exfiltration Over C2 Channel.
+Impact (TA0040): (In this specific campaign, the goal was espionage, so they did not deploy ransomware, but they maintained persistent access, which falls under Resource Hijacking and long-term collection).
+
+Notice how the matrix takes a complex, multi-year, highly sophisticated state-sponsored espionage campaign and turns it into a clean, standardized list of 12 distinct phases. If you were defending a company targeted by SolarWinds, you could look at the “Supply Chain Compromise” technique and ask: “Do we have the ability to detect if our software vendors are compromised?” If the answer is no, you know your gap.
+
+Part 8 — ATT&CK vs. The Cyber Kill Chain
+
+In Module 1, you learned about the Cyber Kill Chain (Reconnaissance, Weaponization, Delivery, Exploitation, Installation, C2, Actions on Objectives). You might wonder: why do we need two models?
+
+The Kill Chain and ATT&CK are not competitors; they are different lenses.
+
+The Kill Chain is linear and time-based. It is excellent for understanding the chronological order of an attack. It answers the question: “What step of the attack are we in?” It is great for stopping the attack before it gets deep. If you break the chain at “Delivery,” the rest never happens.
+
+ATT&CK is non-linear and technique-based. Real attackers do not follow the Kill Chain in perfect order. They might gain Initial Access, get caught, retreat, come back through a different door, move laterally, go back to Discovery, and then move laterally again. They loop, they jump, they backtrack. The Kill Chain struggles to model this. ATT&CK handles it perfectly because it is a matrix of behaviors, not a straight line.
+
+Furthermore, the Kill Chain is heavily focused on perimeter defense (stopping the malware before it enters). ATT&CK assumes the attacker is already inside (following the Zero Trust philosophy from Module 2) and focuses on detecting what they do once they are there.
+
+The Rule of Thumb: Use the Kill Chain to understand the timeline and entry points. Use ATT&CK to understand the behaviors, techniques, and detection gaps.
+
+Part 9 — Defensive Mapping: D3FEND
+
+If ATT&CK is the offensive dictionary (what attackers do), MITRE also created a defensive dictionary called D3FEND. It is a knowledge graph of cybersecurity countermeasures.
+
+D3FEND maps directly to ATT&CK Techniques. For every ATT&CK technique an attacker might use, D3FEND lists the defensive techniques that can stop or detect it.
+
+For example:
+
+ATT&CK Technique: Process Injection (injecting malicious code into a legitimate process).
+D3FEND Technique: Process Allowlist Enforcement (only allowing specific, known-good processes to run) or Memory Boundary Enforcing.
+
+Defenders use D3FEND to answer: “What controls do we need to implement to block this specific ATT&CK technique?” It bridges the gap between threat intelligence and security engineering.
+
+Part 10 — Common Mistakes Beginners Make
+
+Mistake 1: Trying to cover the entire matrix. The Enterprise ATT&CK Matrix contains over 200 techniques and 400 sub-techniques. No organization in the world has 100% coverage of every single technique. Attempting to do so leads to massive burnout and wasted budget. Focus on the techniques relevant to your industry and your threat actors. If you are a hospital, focus on Ransomware and Data Exfiltration techniques. If you are a defense contractor, focus on Nation-State Espionage techniques.
+
+Mistake 2: Confusing ATT&CK with a detection tool. ATT&CK is not a piece of software you install. It is a knowledge base, a language, and a testing framework. You do not “buy” ATT&CK. You use it to test your existing tools (like EDR, SIEM, and Firewalls) to see if they actually detect the techniques in the matrix.
+
+Mistake 3: Mapping procedures instead of techniques. If you only map the specific tool (e.g., “Mimikatz”), your detection will fail the moment the attacker switches to a different tool (e.g., “Dumpert”) that performs the exact same technique (OS Credential Dumping). Map to the technique, and you catch the behavior regardless of the tool used.
+
+Mistake 4: Ignoring the PRE-ATT&CK and RE-ATT&CK concepts. Attackers spend months doing Reconnaissance and Resource Development before they ever touch your network. If your security program only looks at what happens after Initial Access, you are ignoring half the battlefield. Use the Reconnaissance and Resource Development columns to monitor your external attack surface and third-party vendors.
+
+Mistake 5: Failing to automate. Writing down ATT&CK mappings in a spreadsheet is a start, but modern SOAR (Security Orchestration, Automation, and Response) platforms can automatically ingest ATT&CK IDs from threat intelligence feeds and update your detection rules in real time. Move from manual mapping to automated mapping as quickly as possible.
+
+Part 11 — Guided Mini-Lab: Mapping an Incident to ATT&CK
+
+Let us practice mapping a short incident report to the ATT&CK Matrix. This takes 20 minutes.
+
+The Incident Report:
+
+At 09:15 AM, the SOC received an alert that an employee clicked a link in a phishing email. The link led to a fake login page that stole their password. At 09:22 AM, the attacker logged into the corporate VPN using the stolen credentials. At 09:30 AM, the attacker ran whoami /all and net user /domain to map the network. At 09:45 AM, they used RDP to jump from their infected laptop to the Finance Server. At 10:00 AM, they used a tool to dump password hashes from the server’s memory. At 10:15 AM, they zipped up the customer database and uploaded it to a personal Dropbox account.
+
+Step 1: Break the incident into chronological actions.
+
+Employee clicks phishing link, password stolen.
+Attacker logs into VPN with stolen password.
+Attacker runs whoami and net user.
+Attacker uses RDP to jump to Finance Server.
+Attacker dumps memory hashes.
+Attacker zips and uploads data to Dropbox.
+
+Step 2: Map each action to an ATT&CK Tactic and Technique.
+Open your web browser and go to attack.mitre.org. Use the search bar to find the matching technique for each action.
+
+Credential Theft via Phishing:
+Tactic: Credential Access (TA0006) or Initial Access (TA0001).
+Technique: Phishing (T1566) -> Input Capture (T1056) or Valid Accounts (T1078).
+Logging into VPN:
+Tactic: Initial Access (TA0001).
+Technique: Valid Accounts (T1078).
+Running whoami and net user:
+Tactic: Discovery (TA0007).
+Technique: System Owner/User Discovery (T1033), Account Discovery (T1087).
+Using RDP to jump to Finance Server:
+Tactic: Lateral Movement (TA0008).
+Technique: Remote Services: SMB/Windows Admin Shares or RDP (T1021).
+Dumping memory hashes:
+Tactic: Credential Access (TA0006).
+Technique: OS Credential Dumping: LSASS Memory (T1003.001).
+Zipping and uploading to Dropbox:
+Tactic: Collection (TA0009) and Exfiltration (TA0010).
+Technique: Archive Collected Data (T1560), Exfiltration Over Web Service (T1567).
+
+Step 3: Analyze the map.
+Look at your list. Where are the biggest gaps?
+
+The attacker used Valid Accounts to get in. This means MFA (Multi-Factor Authentication) would have stopped Step 2 completely.
+The attacker used RDP to move laterally. This means network segmentation (blocking RDP from laptops to Finance Servers) would have stopped Step 4.
+The attacker uploaded data to Dropbox. This means a Data Loss Prevention (DLP) policy blocking unauthorized cloud storage would have stopped Step 6.
+
+Step 4: Write it down.
+Open your lab notebook and write:
+
+markdown
+# LESSON 6 — ATT&CK MAPPING LAB
+Date: [Today's Date]
+
+## Incident Actions & Mappings:
+1. Phishing -> [Initial Access / Credential Access] : Phishing
+2. VPN Login -> [Initial Access] : Valid Accounts
+3. Whoami/Net User -> [Discovery] : Account Discovery
+4. RDP Jump -> [Lateral Movement] : Remote Services (RDP)
+5. Memory Dump -> [Credential Access] : OS Credential Dumping (LSASS)
+6. Zip & Upload -> [Collection / Exfiltration] : Exfiltration Over Web Service
+
+## Defensive Gaps Identified:
+- No MFA on VPN (would stop Step 2)
+- No Network Segmentation (would stop Step 4)
+- No DLP Policy (would stop Step 6)
+
+## Key Takeaway:
+Mapping to ATT&CK instantly reveals the defensive gaps without needing to know the specific malware name.
+
+IMAGE 3 — Threat campaign mapping flow: A horizontal timeline on a white background showing a real attack mapped across the ATT&CK columns. The timeline flows from left to right: Initial Access (Phishing icon) → Discovery (Magnifying glass icon) → Lateral Movement (Network jump icon) → Credential Access (Key icon) → Exfiltration (Data upload icon). Each phase is connected to a corresponding column in the ATT&CK Matrix grid above it, visually demonstrating how a linear attack maps to the standardized framework. Clean, professional, navy and teal accents, 16:9, high resolution.
+
+Part 12 — Why This Matters for the Rest of Module 3
+
+The MITRE ATT&CK Framework is the universal language of modern cybersecurity. It is used by every major security vendor, every government agency, and every enterprise security team. If you walk into a Security Operations Center (SOC) anywhere in the world and hear someone say, “We are seeing T1059 activity on the endpoint,” they are speaking ATT&CK. They mean the attacker is running malicious scripts or commands.
+
+In the final lesson of Module 3, we will learn how to read and write professional threat reports. You will learn how to synthesize OSINT, malware analysis, and ATT&CK mappings into a single, coherent document that tells the complete story of an attack. That lesson is the capstone of threat intelligence, and it relies entirely on the structured thinking you are practicing right now.
+
+Part 13 — Summary and Glossary
+
+Here is what we covered.
+
+The MITRE ATT&CK Framework is a globally accessible knowledge base of adversary tactics and techniques, based on real-world observations. It is organized into a matrix where columns represent Tactics (the attacker’s goal) and rows represent Techniques (how they achieve it). The hierarchy goes from Tactics (Why) to Techniques (What) to Sub-techniques (Specific Method) to Procedures (Real-world tools and examples).
+
+The Enterprise Matrix has 14 Tactics: Reconnaissance, Resource Development, Initial Access, Execution, Persistence, Privilege Escalation, Defense Evasion, Credential Access, Discovery, Lateral Movement, Collection, Command and Control, Exfiltration, and Impact.
+
+Defenders use the ATT&CK Navigator to color-code their defensive coverage, creating a heatmap that highlights blind spots. The framework is non-linear and behavior-based, contrasting with the chronological Cyber Kill Chain. The companion defensive framework, D3FEND, maps countermeasures directly to ATT&CK Techniques.
+
+Glossary of 10 terms:
+
+MITRE ATT&CK — Adversarial Tactics, Techniques, and Common Knowledge; a global framework mapping real-world cyber attack behaviors.
+Tactic — The high-level goal or objective of an attacker (e.g., Initial Access, Exfiltration).
+Technique — The general method used to achieve a tactic (e.g., Phishing, OS Credential Dumping).
+Sub-technique — A highly specific variation of a technique (e.g., LSASS Memory under OS Credential Dumping).
+Procedure — The exact tools, commands, or malware used by a specific threat actor in a real attack.
+ATT&CK Navigator — A free web-based tool used to visualize and track defensive coverage across the ATT&CK matrix.
+Coverage Heatmap — A visual grid showing which ATT&CK techniques are detected (green) and which are blind spots (red) for an organization.
+TTPs — Tactics, Techniques, and Procedures; the complete behavioral profile of a threat actor.
+D3FEND — A defensive knowledge graph that maps cybersecurity countermeasures to ATT&CK offensive techniques.
+PRE-ATT&CK — The portion of the matrix covering Reconnaissance and Resource Development before the actual breach begins.
+Part 14 — Practice: 5 Quick-Check Questions
+What is the difference between an ATT&CK Tactic and an ATT&CK Technique? Give an example of each.
+Why is the MITRE ATT&CK Framework considered more practical than purely theoretical security models?
+If an attacker uses a stolen password to log into a VPN, which ATT&CK Tactic and Technique does this map to?
+Why is it better for a defender to map attacks to Techniques rather than Procedures (specific malware names)?
+Open the MITRE ATT&CK website. Search for “Ransomware.” Which Tactic does it fall under, and what are two Techniques used alongside it?
+
+Diagram Placement Summary
+Image	Location in lesson	What it shows
+Image 1	After Part 4 (Concept from Scratch)	ATT&CK hierarchy tree: root TTPs branching into Tactics (Why), Techniques (What), Sub-techniques (Specific Method), and Procedures (Who/Tools)
+Image 2	After Part 6 (Attack vs. Defence View)	ATT&CK Navigator Coverage Heatmap: grid matrix color-coded green (covered), yellow (partial), and red (blind spots) across tactics and techniques
+Image 3	After Part 11 (Guided Mini-Lab)	Threat campaign mapping flow: linear attack steps (Phishing → Discovery → Lateral Movement → Exfiltration) mapped visually to corresponding matrix columns
+Image 4	After Part 8 (Defensive Mapping: D3FEND)	Offense-Defense mapping bridge: a dual-column visual connecting an ATT&CK technique (Process Injection) on the left to corresponding D3FEND countermeasures (Process Allowlist) on the right

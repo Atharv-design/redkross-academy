@@ -1,0 +1,249 @@
+Course 01: Introduction to Cybersecurity
+Module 2: Core Principles
+Lesson 4: Defence in Depth
+Part 1 — Hook
+
+A castle sits on a hill. The attacker wants to reach the king.
+
+The first wall is high and thick. The attacker climbs it with a ladder and gets over. The second wall is inside the first, and it has a moat. The attacker swims across and gets over. The third wall has guards with arrows. The attacker waits for a shift change and gets over. The fourth wall has a portcullis and a guard dog. The attacker bribes the guard and walks through.
+
+The attacker reached the king. Every single defence worked exactly as designed. And the castle still fell.
+
+The problem was not that the defences were weak. The problem was that the castle relied on any single defence being enough. A strong wall was supposed to be enough. A moat was supposed to be enough. Guards were supposed to be enough. When each defence was treated as the final answer, the attacker only had to beat one of them once.
+
+Defence in depth is the opposite of that. It is the belief that no single defence is enough, so you build many, and you arrange them so that the attacker has to defeat all of them, in order, to reach the target. If the attacker beats the wall, they meet the moat. If they beat the moat, they meet the guards. If they beat the guards, they meet the dog. If they beat the dog, they meet the inner keep.
+
+This lesson is about building that castle. Not with stone, but with controls, layers, and the discipline to never assume that one layer is enough.
+
+Part 2 — Learning Objectives
+
+By the end of this lesson you will be able to:
+
+Define defence in depth in your own simple words.
+Explain why it is necessary: no single defence is sufficient.
+Identify the standard layers of defence in an organisation.
+Explain the difference between overlapping controls, diverse controls, and layered controls.
+Apply defence in depth to a real scenario.
+Explain the limits of defence in depth and when it is not enough.
+Part 3 — Prerequisites
+
+You have finished Module 1 and Module 2 Lessons 1 to 3. You know the CIA triad, AAA, and least privilege. Defence in depth is what you get when you apply least privilege at every layer.
+
+Part 4 — Concept from Scratch
+
+Here is the central sentence of this lesson.
+
+Defence in depth is the practice of relying on multiple, independent layers of security, so that if one layer fails, the next one is already waiting — and the attacker has to fail all of them to reach the target.
+
+Let me say that again, because it is the difference between buying security products and actually being secure.
+
+Defence in depth is the practice of relying on multiple, independent layers of security, so that if one layer fails, the next one is already waiting — and the attacker has to fail all of them to reach the target.
+
+The key word in that sentence is independent. The layers must be independent of each other. If two layers fail in the same way, they are not two layers. They are one layer with two names. The classic example is two antivirus products running on the same computer. They use the same detection technique — signature matching — and a new malware that evades one will evade both. That is not defence in depth. That is redundancy without diversity.
+
+The three properties of a good layered defence:
+
+Overlapping. Every asset is protected by more than one control. If Control A fails, Control B is already in place. Overlap is the “what if this breaks” plan.
+Diverse. The controls use different techniques. A firewall filters by IP and port. An IDS inspects the content of the traffic. An application-level control validates the input. These three stop the same attack in three different ways, and an attacker who defeats one does not automatically defeat the others.
+Layered. The controls are arranged in sequence, like the walls of a castle. The attacker must pass through each layer in order. The outer layers are the first line: network perimeter, firewalls, DDoS protection. The middle layers are detection and response: IDS, SIEM, monitoring. The inner layers are the most sensitive assets: encrypted databases, access controls, air gaps.
+
+Here is a picture of those layers.
+
+IMAGE 1 — Defence in depth layers diagram: A nested diagram on a white background showing four concentric rings around a central bullseye labeled TARGET — SENSITIVE DATA. Outer ring (navy): PERIMETER DEFENCE — firewall, DDoS protection, VPN, network segmentation. Second ring (green): ENDPOINT DEFENCE — antivirus, EDR, patching, device encryption. Third ring (amber): DETECTION & RESPONSE — IDS/IPS, SIEM, logging, monitoring. Inner ring (red): ACCESS & DATA DEFENCE — MFA, RBAC, encryption, backups. Each ring has 3-4 small labeled boxes with the control names. Arrows point inward, showing the attacker must pass through each ring to reach the target. A small figure labeled “ATTACKER” is shown at the outer ring, with a speech bubble “one layer down, four to go.” Clean, professional, 16:9, high resolution.
+
+Part 5 — How It Works: The Layers, from the Outside In
+
+Let us now walk through the layers in the order an attacker would encounter them. This is not an arbitrary list. It is a sequence, and each layer has a specific job.
+
+Layer 1: Perimeter Defence
+
+The perimeter is the boundary between your organisation and the outside world. It is the first thing the attacker touches.
+
+What it includes:
+
+Firewalls. They control which traffic can enter and leave the network, based on rules. A firewall is a gatekeeper. It lets the web traffic through and blocks the rest.
+DDoS protection. Services and appliances that absorb and filter the flood of traffic that characterises a denial-of-service attack. Without this, a determined attacker can take your website down with a botnet.
+VPNs. Virtual private networks that create encrypted tunnels for remote users. They keep the traffic of remote workers safe from eavesdropping on public Wi-Fi.
+Network segmentation. Dividing the network into zones, so that the perimeter is not one wall but many. A breach in the guest Wi-Fi zone does not give the attacker access to the finance zone. Segmentation is least privilege applied to the network.
+
+What the perimeter does not do: It does not stop a user from clicking a malicious link. It does not stop a well-written phishing email from arriving. It does not stop an insider. It does not stop an attacker who has already found a legitimate way in. The perimeter is the outer wall. It is necessary, and it is not sufficient.
+
+Layer 2: Endpoint Defence
+
+The endpoint is any device that connects to the network: a laptop, a phone, a server, a printer. Once the attacker gets past the perimeter, they land on an endpoint.
+
+What it includes:
+
+Antivirus and anti-malware. Software that scans files and processes for known malware and blocks it. It is signature-based and it is weak against new threats, but it catches the vast majority of attacks.
+Endpoint detection and response (EDR). A more advanced tool that monitors the behaviour of endpoints and detects attacks that signature-based antivirus misses. It can also respond automatically — isolating an infected machine from the network.
+Patch management. Keeping every piece of software up to date. This is the most important endpoint defence, because most attacks exploit known vulnerabilities for which patches already exist. From Module 1: the Morris Worm, SQL Slammer, and WannaCry all exploited patched vulnerabilities.
+Device encryption. Encrypting the hard drive of every laptop and phone, so that if the device is stolen, the data on it is unreadable.
+Mobile device management (MDM). Tools that manage and secure phones and tablets that connect to the corporate network.
+
+What endpoint defence does not do: It does not stop a user from being tricked. It does not stop a credential phishing attack, because the user is typing their password into a fake website on their own device. It does not stop an attacker who has legitimate credentials.
+
+Layer 3: Detection and Response
+
+If the first two layers fail — and they will, eventually — you need to know that it happened. This layer is about seeing the attack while it is still in progress.
+
+What it includes:
+
+Intrusion detection systems (IDS) and intrusion prevention systems (IPS). The IDS watches network traffic and raises an alarm when it sees something suspicious. The IPS does the same but also blocks the traffic automatically.
+Security information and event management (SIEM). A system that collects and analyses log data from across the organisation. It correlates events — a failed login in London followed by a successful login from the same credentials in Tokyo — and generates alerts. The SolarWinds attack was discovered by a SIEM.
+Logging. Recording every significant event. Logs are the fuel that the detection systems consume. Without logs, detection is impossible.
+Threat hunting. The proactive search for attackers who have already bypassed the automated defences. A threat hunter does not wait for an alert. They look for the signs of an attacker who is already inside.
+
+What detection does not do: It does not stop the attack. It tells you that the attack is happening or has happened. The response — isolating systems, evicting the attacker, restoring from backups — is a separate capability. Detection without response is an alarm that nobody answers.
+
+Layer 4: Access and Data Defence
+
+This is the inner keep. It protects the most sensitive assets, and it is where least privilege from Lesson 3 is applied most strictly.
+
+What it includes:
+
+Multi-factor authentication (MFA). Requiring two or more forms of proof before granting access. MFA stops almost all phishing and credential theft, because the attacker has the password but not the second factor.
+Role-based access control (RBAC) and attribute-based access control (ABAC). Ensuring that every user and every system has exactly the access they need, and no more. This is least privilege, applied.
+Encryption. Protecting data at rest (on disks and databases) and in transit (over the network). If the attacker gets past all the other layers and steals the data, encryption means the data is useless to them.
+Backups. The last line of defence against ransomware. If everything else fails and the attacker encrypts your data, you restore from a backup that the attacker could not reach. Backups must be isolated, tested, and regular.
+Air gaps. Physically disconnecting the most sensitive systems from the internet. This is the strongest possible isolation, used for national security systems and industrial control systems.
+
+What this layer does not do: It does not stop an attacker with legitimate credentials. It does not stop an insider. It does not stop a sophisticated attacker who is willing to spend months finding a way in. But it makes all of those things much, much harder.
+
+Part 6 — The Three Properties, with Examples
+
+Let us now make the three properties concrete, because “diverse” and “overlapping” are easy words that hide real mistakes.
+
+Overlapping: the same threat, two answers.
+An attacker sends a malicious email. The email is caught by the spam filter (Layer 1). If the filter misses it, the attachment is caught by the antivirus on the user’s laptop (Layer 2). If the antivirus misses it, the behaviour of the malware — calling home to a known bad IP — is caught by the network IDS (Layer 3). Three layers, one threat. The attacker has to defeat all three.
+
+Diverse: different techniques, not different brands.
+Two antivirus products on the same computer are not diverse. They both use signature matching. A new malware that evades one evades both. Diverse defences use different principles: signature matching, behaviour analysis, network traffic analysis, access control, encryption. An attacker who defeats signatures does not automatically defeat behaviour analysis. An attacker who defeats behaviour analysis does not automatically defeat access control.
+
+Layered: the attacker must pass through them in order.
+The attacker cannot skip a layer. They cannot go from the perimeter directly to the database. They must pass through the endpoint, then the detection layer, then the access layer. Each layer buys time — time for the defenders to notice and respond.
+
+Part 7 — Attack and Defence View
+
+Let us now look at defence in depth from the attacker’s perspective, because that is how you learn what it is for.
+
+How the attacker thinks about layers. The attacker does not think about layers. They think about the single point of failure. They look for the one thing that, if broken, gives them everything. Every attack we studied in Module 1 succeeded because of a single point of failure:
+
+The Target breach succeeded because the HVAC vendor’s network connection was a single path to the cash registers.
+The SolarWinds attack succeeded because the software update was a single path to every customer.
+The WannaCry attack succeeded because the unpatched Windows machine was a single path to the hospital network.
+The Dyn attack succeeded because the DNS provider was a single point of failure for a large part of the internet.
+
+Defence in depth is the answer to that thinking. It says: there is no single point of failure, because every path has multiple points, and every point has a backup. The attacker who finds one way in finds that the way leads to a second wall, and then a third.
+
+The defender’s advantage is that the attacker has to break every layer, while the defender only has to hold one. If any single layer holds, the attack fails. This is the inverse of the perimeter model, where the attacker only had to break one thing.
+
+The most important sentence in this lesson: Defence in depth does not make you invincible. It makes you expensive to attack. If attacking you requires defeating four independent layers, each of which takes time and skill, the attacker will usually choose an easier target. That is the real goal: not to be the best-defended organisation in the world, but to be a worse target than the organisation next door.
+
+Part 8 — The Limits of Defence in Depth
+
+Defence in depth is not a magic spell. It has limits, and you need to know them so that you do not rely on it for things it cannot do.
+
+It does not stop a determined attacker. A nation-state with unlimited resources and unlimited time will eventually find a way in, no matter how many layers you build. Defence in depth raises the cost, but it does not make the cost infinite.
+
+It does not stop an insider. An insider already has legitimate access. They do not need to break through the perimeter. They walk through the front door with a keycard and a smile. The layers that stop external attackers are irrelevant to them.
+
+It does not stop a user from being tricked. A well-crafted phishing email will reach the user’s inbox, and the user will click it, no matter how many layers of network defence you have. The human layer is outside the technical layers, and it is the one that matters most.
+
+It does not work if the layers are not maintained. A firewall with outdated firmware, an antivirus with an out-of-date signature database, and a SIEM with no one watching the alerts are not three layers. They are three decorations. Defence in depth is a practice, not a purchase.
+
+It is expensive and complex. Four layers mean four budgets, four teams, four training programmes, and four maintenance schedules. Small organisations cannot afford full defence in depth, and they need to pick the layers that matter most for their specific threats.
+
+Part 9 — Common Mistakes Beginners Make
+
+Mistake 1: Buying multiple products that use the same technique. Two antivirus products, two firewalls from the same vendor, two IDS systems that use the same detection rules — none of that is defence in depth. It is redundancy, and it gives you the illusion of depth. Check whether your controls actually use different techniques. If they do not, you have one layer with a marketing department.
+
+Mistake 2: Treating defence in depth as a product purchase. You cannot buy defence in depth. You buy components. You build the layered system by choosing components that use different techniques, covering different stages of the attack, and protecting different assets. The depth is in the design, not in the box.
+
+Mistake 3: Ignoring the human layer. Every technical layer in this lesson is useless against a user who clicks a malicious link. The human layer is the most important layer and the least protected one. Training, simulated phishing, and clear reporting procedures are part of the layered defence. If you do not include them, you have a castle with no guards.
+
+Mistake 4: Assuming that more layers are always better. There is a point of diminishing returns. Each layer costs money, time, and complexity. A small company with a good firewall, MFA, patching, backups, and trained users is better defended than a large company with twenty layers that nobody maintains. Depth matters, but relevance matters more. Build the layers that match your threats.
+
+Mistake 5: Forgetting that the layers must be maintained. Defence in depth decays. Firmware goes out of date. Signatures go stale. Rules go unreviewed. People leave. The organisation that had four layers in 2023 may have one working layer in 2026, because the other three were never updated. Review your layers quarterly. Replace the ones that are failing. The depth is in the maintenance.
+
+Part 10 — Guided Mini-Lab: Map Your Own Layers
+
+Let us now apply defence in depth to your own digital life. This takes 15 minutes.
+
+Step 1: Identify the target.
+What is the most valuable thing you own online? Your email. Your photos. Your bank account. Your private messages. Pick one. That is the target the attacker wants to reach.
+
+Step 2: Map the layers that protect it.
+For your chosen target, list every defence that stands between the attacker and it:
+
+Perimeter: Is your email account protected by anything at the provider level? Spam filters? Login attempt limits?
+Endpoint: Is your device protected? A password? A lock screen? Antivirus? Encryption?
+Detection: Do you get notifications when someone logs in from a new device? Have you ever reviewed your login history?
+Access and data: Do you use MFA? A unique password? Backups of your important files?
+
+Step 3: Check for independence.
+Look at your list. Are any two items using the same technique? If you use a password and nothing else, you have one layer, not two. If you use a password plus MFA, you have two independent layers. If you use a password plus a second password (a PIN), you still have one layer, because both are “something you know.”
+
+Step 4: Find the single point of failure.
+What is the one thing that, if broken, gives the attacker everything? For most people, it is the email account. If the attacker controls your email, they can reset the passwords for every other account you own. Protect your email first. That is your inner keep.
+
+Step 5: Add one layer.
+What is the one thing you can add today that would make your target harder to reach? Enable MFA on your email. Back up your photos. Install updates. Pick one and do it.
+
+Step 6: Write it down.
+Open your lab notebook and write:
+
+LESSON 4 — DEFENCE IN DEPTH IN MY LIFE
+Date: [today]
+Target: [what I am protecting]
+Layer 1 — Perimeter: [what protects it]
+Layer 2 — Endpoint: [what protects my device]
+Layer 3 — Detection: [what would alert me]
+Layer 4 — Access & Data: [MFA, encryption, backups]
+Single point of failure: [the one thing that would give everything away]
+Layers added today: [what I did]
+
+IMAGE 2 — Flowchart: A horizontal flowchart diagram showing the cyber kill chain: six rounded rectangles in a left-to-right sequence — Reconnaissance → Weaponization → Delivery → Exploitation → Installation → Actions on Objectives — connected by arrows. Below each box, a small one-line example in monospace font. A parallel dashed line at the bottom labeled Defence: detect → contain → eradicate. Clean, white background, navy and red accents, professional diagram style, 16:9, high resolution.
+
+Part 11 — Why This Matters for the Rest of Module 2
+
+Let me say something plainly.
+
+Defence in depth is the principle that ties the other three together. Least privilege is the innermost layer — the access and data defence. Zero trust, which you will study next, is the idea that every layer should verify, not just the perimeter. Secure defaults are the starting state of every layer — safe out of the box, instead of requiring the user to be careful.
+
+If you understand defence in depth, the rest of Module 2 is about what each layer should do and how they should relate to each other. The individual principles are the components. Defence in depth is the architecture that puts them in place.
+
+Part 12 — Summary and Glossary
+
+Here is what we covered.
+
+Defence in depth is the practice of relying on multiple, independent layers of security, so that if one fails, the next is already waiting. The four standard layers are perimeter defence (firewalls, DDoS protection, VPNs, segmentation), endpoint defence (antivirus, EDR, patching, encryption), detection and response (IDS/IPS, SIEM, logging, threat hunting), and access and data defence (MFA, RBAC, encryption, backups, air gaps).
+
+A good layered defence has three properties: overlapping (every asset has more than one control), diverse (the controls use different techniques), and layered (the attacker must pass through them in order).
+
+The attacker thinks in single points of failure. Defence in depth is the answer: no single point, because every path has multiple points and every point has a backup. It does not make you invincible. It makes you expensive to attack.
+
+The limits: it does not stop a determined attacker, an insider, or a tricked user. It decays if it is not maintained. It is expensive and complex.
+
+Glossary of 8 terms:
+
+Defence in depth — relying on multiple, independent layers of security.
+Layer — a category of controls that protect against a specific stage of an attack.
+Single point of failure — a component whose failure would cause the whole system to fail.
+Redundancy — having backup components; not the same as diversity.
+Diversity — using different techniques so that defeating one control does not defeat the others.
+Blast radius — the amount of damage a single compromise can cause.
+Perimeter — the boundary between the organisation and the outside world.
+EDR — Endpoint Detection and Response; behaviour-based protection for devices.
+Part 13 — Practice: 5 Quick-Check Questions
+Define defence in depth in one sentence using your own words.
+What are the four standard layers, and give one example of a control in each.
+What is the difference between redundancy and diversity? Give an example of each.
+Why is the human layer often missing from a defence-in-depth design?
+Choose one asset from your life. What is the single point of failure that protects it, and what is one layer you can add?
+
+Diagram Placement Summary
+Image	Location in lesson	What it shows
+Image 1	After Part 4 (Concept from Scratch)	Defence in depth layers: four concentric rings around a central target — perimeter, endpoint, detection & response, access & data — with an attacker figure at the outer ring
+Image 2	After Part 5 (How It Works)	Kill chain flowchart: reconnaissance → weaponization → delivery → exploitation → installation → actions on objectives, with defence path
+Image 3	After Part 10 (Guided Mini-Lab)	Terminal screenshot: dark-themed terminal showing python3 --version, which nmap, which tshark, echo ‘Lab toolkit ready’
+Image 4	After Part 11 (Why This Matters)	Three-column comparison table: security vs privacy vs safety

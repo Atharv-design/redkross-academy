@@ -202,18 +202,68 @@ class MockEngine {
 
       let modified = false;
 
+      // Ensure curriculum fixtures sync automatically if updated in source code
+      const CURRICULUM_VERSION = '2026.11.07.v3';
+      if (parsed._curriculum_version !== CURRICULUM_VERSION) {
+        parsed._curriculum_version = CURRICULUM_VERSION;
+        INITIAL_COURSES.forEach((initCourse) => {
+          const idx = (parsed.courses || []).findIndex((c) => c.id === initCourse.id);
+          if (idx !== -1) {
+            parsed.courses[idx] = {
+              ...parsed.courses[idx],
+              ...initCourse,
+              modules: initCourse.modules
+            };
+          } else {
+            parsed.courses.push(initCourse);
+          }
+        });
+        modified = true;
+      }
+
+      // Automatically purge legacy deleted courses from storage
       parsed.admin_deleted_course_ids = parsed.admin_deleted_course_ids || [];
       const validCourseIds = INITIAL_COURSES.map((c) => c.id);
       if (parsed.courses && parsed.courses.some((c) => !validCourseIds.includes(c.id))) {
         parsed.courses = parsed.courses.filter((c) => validCourseIds.includes(c.id));
         modified = true;
       }
+      // Migrate any legacy enrollments from crs_full_stack_web_dev or crs_soc_fundamentals to crs_cyber_intro_01
+      if (parsed.enrolments) {
+        parsed.enrolments.forEach((e) => {
+          if (e.course_id === 'crs_full_stack_web_dev' || e.course_id === 'crs_soc_fundamentals') {
+            e.course_id = 'crs_cyber_intro_01';
+            modified = true;
+          }
+        });
+      }
+
+      // Guarantee Chapter 1 completeness in storage
+      const freshCyber = INITIAL_COURSES.find((c) => c.id === 'crs_cyber_intro_01');
+      const storedCyber = (parsed.courses || []).find((c) => c.id === 'crs_cyber_intro_01');
+      if (storedCyber && freshCyber) {
+        const storedL1 = storedCyber.modules?.[0]?.lessons?.[0]?.content || '';
+        const freshL1 = freshCyber.modules?.[0]?.lessons?.[0]?.content || '';
+        if (storedL1.length < freshL1.length || !storedL1.includes('## Part 12')) {
+          storedCyber.modules = freshCyber.modules;
+          modified = true;
+        }
+      }
       INITIAL_COURSES.forEach((initCourse) => {
-        const exists = (parsed.courses || []).some((c) => c.id === initCourse.id);
+        const existingIdx = (parsed.courses || []).findIndex((c) => c.id === initCourse.id);
         const wasDeleted = parsed.admin_deleted_course_ids.includes(initCourse.id);
-        if (!exists && !wasDeleted) {
+        if (existingIdx === -1 && !wasDeleted) {
           parsed.courses.push(initCourse);
           modified = true;
+        } else if (existingIdx !== -1 && !wasDeleted) {
+          if (initCourse.id === 'crs_cyber_intro_01') {
+            parsed.courses[existingIdx] = {
+              ...parsed.courses[existingIdx],
+              ...initCourse,
+              modules: initCourse.modules
+            };
+            modified = true;
+          }
         }
       });
 
@@ -284,13 +334,23 @@ class MockEngine {
               }
               if (mod.lessons) {
                 for (const les of mod.lessons) {
-                  if (!les.video_url || les.video_url.includes('BigBuckBunny')) {
-                    les.video_url = '/assets/sample-lesson.mp4';
-                    les.video_title = les.video_title || les.title;
-                    les.video_duration = les.video_duration || les.duration || '15:00';
+                  if (les.video_url || les.videos || les.video_title || les.video_duration || les.video_asset_id) {
+                    delete les.video_url;
+                    delete les.videos;
+                    delete les.video_title;
+                    delete les.video_duration;
+                    delete les.video_asset_id;
                     modified = true;
                   }
                 }
+              }
+              if (course.video_assets) {
+                delete course.video_assets;
+                modified = true;
+              }
+              if (course.video_url) {
+                delete course.video_url;
+                modified = true;
               }
             }
           }
@@ -706,13 +766,106 @@ class MockEngine {
   }
 
   getCourseBySlug(slug) {
-    const course = (this.getDb().courses || []).find((c) => c.slug === slug);
+    let course = (this.getDb().courses || []).find((c) => c.slug === slug);
+    if (!course && (slug === 'full-stack-web-development-fundamentals-to-deployment' || slug === 'full-stack-web-development-career-path' || slug === 'introduction-to-cybersecurity')) {
+      course = (this.getDb().courses || []).find((c) => c.id === 'crs_cyber_intro_01') || (this.getDb().courses || []).find((c) => (c.division || 'cybersecurity') === 'cybersecurity');
+    }
     return this._normalizeCourse(course);
   }
 
   getCourseById(id) {
-    const course = (this.getDb().courses || []).find((c) => c.id === id);
+    let course = (this.getDb().courses || []).find((c) => c.id === id);
+    if (!course) {
+      course = (this.getDb().courses || []).find((c) => c.id === 'crs_cyber_intro_01') || (this.getDb().courses || []).find((c) => (c.division || 'cybersecurity') === 'cybersecurity');
+    }
+    // Safety check: ensure crs_cyber_intro_01 always reflects full 12 parts of Chapter 1
+    const freshCyber = INITIAL_COURSES.find((c) => c.id === 'crs_cyber_intro_01');
+    if (course && course.id === 'crs_cyber_intro_01' && freshCyber) {
+      const currentL1 = course.modules?.[0]?.lessons?.[0]?.content || '';
+      const freshL1 = freshCyber.modules?.[0]?.lessons?.[0]?.content || '';
+      if (currentL1.length < freshL1.length || !currentL1.includes('## Part 12')) {
+        course.modules = freshCyber.modules;
+        const db = this.getDb();
+        const storedCourse = (db.courses || []).find((c) => c.id === 'crs_cyber_intro_01');
+        if (storedCourse) {
+          storedCourse.modules = freshCyber.modules;
+          this.saveDb(db);
+        }
+      }
+    }
     return this._normalizeCourse(course);
+  }
+
+  /**
+   * Returns a lightweight course summary for catalogs, dashboards, and syllabus overviews.
+   * Strips large markdown content bodies and embedded media to minimize memory footprint.
+   */
+  getCourseSummary(id) {
+    const full = this.getCourseById(id);
+    if (!full) return null;
+
+    return {
+      id: full.id,
+      title: full.title,
+      slug: full.slug,
+      division: full.division,
+      category: full.category,
+      level: full.level,
+      difficulty: full.difficulty,
+      duration: full.duration,
+      estimated_duration: full.estimated_duration,
+      effort_pace: full.effort_pace,
+      price: full.price,
+      total_tokens_reward: full.total_tokens_reward,
+      overview: full.overview,
+      description: full.description,
+      what_you_will_learn: full.what_you_will_learn,
+      prerequisites: full.prerequisites,
+      art: full.art,
+      status: full.status,
+      modules: (full.modules || []).map((m) => ({
+        id: m.id,
+        title: m.title,
+        order: m.order,
+        quiz_id: m.quiz?.id || m.quiz_id,
+        quiz_title: m.quiz?.title,
+        passing_score: m.quiz?.passing_score,
+        total_questions: m.quiz?.questions?.length || m.quiz?.total_questions || 0,
+        lesson_count: (m.lessons || []).length,
+        lessons: (m.lessons || []).map((l) => ({
+          id: l.id,
+          title: l.title,
+          duration: l.duration,
+          is_mandatory: Boolean(l.is_mandatory),
+          type: l.type || 'lesson'
+        }))
+      }))
+    };
+  }
+
+  /**
+   * Loads specific lesson notes & content on-demand
+   */
+  getLessonContent(courseId, lessonId) {
+    const course = this.getCourseById(courseId);
+    if (!course || !course.modules) return null;
+
+    for (const mod of course.modules) {
+      const lesson = (mod.lessons || []).find((l) => l.id === lessonId);
+      if (lesson) {
+        return {
+          id: lesson.id,
+          title: lesson.title,
+          content: lesson.content || '',
+          duration: lesson.duration,
+          is_mandatory: lesson.is_mandatory,
+          type: lesson.type,
+          images: lesson.images || [],
+          pdf_attachment: lesson.pdf_attachment || null
+        };
+      }
+    }
+    return null;
   }
 
   createCourse(coursePayload) {
@@ -1313,6 +1466,7 @@ class MockEngine {
     const db = this.getDb();
     const enrolment = (db.enrolments || []).find((e) => e.id === enrolmentId);
     if (enrolment) {
+      if (enrolment.last_visited_unit_id === unitId) return;
       enrolment.last_visited_unit_id = unitId;
       enrolment.last_accessed_at = new Date().toISOString();
       safeStorage.setItem(`rk_last_unit_${enrolmentId}`, unitId);
@@ -2006,145 +2160,6 @@ class MockEngine {
     return mod.lessons[lessonIdx];
   }
 
-  uploadVideoAsset(courseId, assetPayload, adminEmail = 'usr_admin') {
-    const db = this.getDb();
-    const course = db.courses.find((c) => c.id === courseId);
-    if (!course) return null;
-
-    if (!course.video_assets) {
-      course.video_assets = [];
-    }
-
-    const newAsset = {
-      id: assetPayload.id || `vid_${Date.now()}`,
-      title: assetPayload.title || 'Untitled Video Lesson',
-      duration: assetPayload.duration || '15:00',
-      file_name: assetPayload.file_name || 'lesson-video.mp4',
-      file_size: assetPayload.file_size || '45 MB',
-      lesson_id: assetPayload.lesson_id || null,
-      lesson_title: assetPayload.lesson_title || 'Unassigned',
-      visibility: assetPayload.visibility || 'Enrolled Only',
-      thumbnail: assetPayload.thumbnail || course.art || '/assets/course-art/art-01.jpg',
-      url: assetPayload.url || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-      uploaded_at: new Date().toISOString(),
-    };
-
-    if (newAsset.lesson_id && course.modules) {
-      for (const m of course.modules) {
-        const targetLesson = (m.lessons || []).find((l) => l.id === newAsset.lesson_id);
-        if (targetLesson) {
-          targetLesson.video_url = newAsset.url;
-          targetLesson.video_title = newAsset.title;
-          targetLesson.video_duration = newAsset.duration;
-          targetLesson.video_asset_id = newAsset.id;
-          break;
-        }
-      }
-    }
-
-    course.video_assets.unshift(newAsset);
-
-    db.audit_logs.unshift({
-      id: `aud_${Date.now()}`,
-      actor_id: adminEmail,
-      action: 'VIDEO_ASSET_UPLOADED',
-      entity_type: 'courses',
-      entity_id: courseId,
-      details: `Uploaded video "${newAsset.title}" attached to ${newAsset.lesson_title}`,
-      created_at: new Date().toISOString(),
-    });
-
-    this.saveDb(db);
-    return newAsset;
-  }
-
-  deleteVideoAsset(courseId, assetId, adminEmail = 'usr_admin') {
-    const db = this.getDb();
-    const course = db.courses.find((c) => c.id === courseId);
-    if (!course || !course.video_assets) return false;
-
-    course.video_assets = course.video_assets.filter((a) => a.id !== assetId);
-
-    if (course.modules) {
-      for (const m of course.modules) {
-        for (const l of m.lessons || []) {
-          if (l.video_asset_id === assetId) {
-            delete l.video_url;
-            delete l.video_title;
-            delete l.video_duration;
-            delete l.video_asset_id;
-          }
-        }
-      }
-    }
-
-    db.audit_logs.unshift({
-      id: `aud_${Date.now()}`,
-      actor_id: adminEmail,
-      action: 'VIDEO_ASSET_DELETED',
-      entity_type: 'courses',
-      entity_id: courseId,
-      details: `Deleted video asset ${assetId} from ${course.title}`,
-      created_at: new Date().toISOString(),
-    });
-
-    this.saveDb(db);
-    return true;
-  }
-
-  rebindVideoAsset(courseId, assetId, newLessonId, adminEmail = 'usr_admin') {
-    const db = this.getDb();
-    const course = db.courses.find((c) => c.id === courseId);
-    if (!course || !course.video_assets) return null;
-
-    const asset = course.video_assets.find((a) => a.id === assetId);
-    if (!asset) return null;
-
-    if (course.modules) {
-      for (const m of course.modules) {
-        for (const l of m.lessons || []) {
-          if (l.video_asset_id === assetId) {
-            delete l.video_url;
-            delete l.video_title;
-            delete l.video_duration;
-            delete l.video_asset_id;
-          }
-        }
-      }
-    }
-
-    asset.lesson_id = newLessonId || null;
-    let targetLessonName = 'Unassigned';
-
-    if (newLessonId && course.modules) {
-      for (const m of course.modules) {
-        const targetLesson = (m.lessons || []).find((l) => l.id === newLessonId);
-        if (targetLesson) {
-          targetLesson.video_url = asset.url;
-          targetLesson.video_title = asset.title;
-          targetLesson.video_duration = asset.duration;
-          targetLesson.video_asset_id = asset.id;
-          targetLessonName = targetLesson.title;
-          break;
-        }
-      }
-    }
-
-    asset.lesson_title = targetLessonName;
-    db.audit_logs.unshift({
-      id: `aud_${Date.now()}`,
-      actor_id: adminEmail,
-      action: 'VIDEO_ASSET_REATTACHED',
-      entity_type: 'courses',
-      entity_id: courseId,
-      details: `Rebound video "${asset.title}" to lesson "${targetLessonName}"`,
-      created_at: new Date().toISOString(),
-    });
-
-    this.saveDb(db);
-    return asset;
-  }
-
   publishCourseVersion(courseId, adminEmail = 'usr_admin') {
     const db = this.getDb();
     const course = db.courses.find((c) => c.id === courseId);
@@ -2205,59 +2220,6 @@ class MockEngine {
 
     this.saveDb(db);
     return true;
-  }
-
-  rebindVideoAsset(courseId, assetId, newLessonId, adminEmail = 'usr_admin') {
-    const db = this.getDb();
-    const course = db.courses.find((c) => c.id === courseId);
-    if (!course || !course.video_assets) return null;
-
-    const asset = course.video_assets.find((a) => a.id === assetId);
-    if (!asset) return null;
-
-    if (course.modules) {
-      for (const m of course.modules) {
-        for (const l of m.lessons || []) {
-          if (l.video_asset_id === assetId) {
-            delete l.video_url;
-            delete l.video_title;
-            delete l.video_duration;
-            delete l.video_asset_id;
-          }
-        }
-      }
-    }
-
-    asset.lesson_id = newLessonId || null;
-    let targetLessonName = 'Unassigned';
-
-    if (newLessonId && course.modules) {
-      for (const m of course.modules) {
-        const targetLesson = (m.lessons || []).find((l) => l.id === newLessonId);
-        if (targetLesson) {
-          targetLesson.video_url = asset.url;
-          targetLesson.video_title = asset.title;
-          targetLesson.video_duration = asset.duration;
-          targetLesson.video_asset_id = asset.id;
-          targetLessonName = targetLesson.title;
-          break;
-        }
-      }
-    }
-
-    asset.lesson_title = targetLessonName;
-    db.audit_logs.unshift({
-      id: `aud_${Date.now()}`,
-      actor_id: adminEmail,
-      action: 'VIDEO_ASSET_REATTACHED',
-      entity_type: 'courses',
-      entity_id: courseId,
-      details: `Rebound video "${asset.title}" to lesson "${targetLessonName}"`,
-      created_at: new Date().toISOString(),
-    });
-
-    this.saveDb(db);
-    return asset;
   }
 
   adjustStudentTokens(userId, amount, reason, adminEmail = 'usr_admin') {
@@ -3110,6 +3072,15 @@ class MockEngine {
       },
       lastUpdated: new Date().toISOString()
     };
+  }
+
+  getCurrentUser() {
+    try {
+      const stored = safeStorage.getItem('rk_auth_user');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
   }
 }
 

@@ -57,20 +57,34 @@ export default function CyberAcademyPage() {
     };
   }, []);
 
-  const masterTrack = learningPaths[0] || {
-    id: 'path_fullstack_career',
+  const masterCourse = courses.find((c) => c.id === 'crs_cyber_intro_01' || c.slug === 'introduction-to-cybersecurity') || courses[0];
+  const masterTrack = masterCourse ? {
+    id: masterCourse.id,
     division: 'cybersecurity',
-    slug: 'full-stack-web-development-career-path',
-    title: 'Full Stack Web Development & Application Defense Track',
-    short_desc: 'Comprehensive full-stack engineering curriculum taking developers from web foundations through modern React, Node.js REST APIs, MongoDB, and OWASP defense.',
-    difficulty: 'BEGINNER TO ADVANCED',
-    estimated_weeks: 12,
-    total_hours: 48,
+    slug: masterCourse.slug || 'introduction-to-cybersecurity',
+    title: masterCourse.title || 'Course 01: Introduction to Cybersecurity',
+    short_desc: masterCourse.overview || 'The institutional starting point for modern cyber defense. Master foundational security models, the CIA triad, threat surfaces, the Lockheed Martin Cyber Kill Chain, defense-in-depth architecture, and essential defensive toolkits.',
+    difficulty: masterCourse.difficulty || 'BEGINNER',
+    estimated_weeks: 8,
+    total_hours: 36,
     courses_count: 1,
-    milestone_cert: 'Full Stack Web Developer Certificate',
+    milestone_cert: masterCourse.milestone_cert || 'Certified Cybersecurity Defender Associate (CCDA)',
     featured: true,
-    skills: ['HTML5 & CSS3', 'JavaScript ES6+', 'React 18', 'Node.js & Express', 'MongoDB', 'OWASP Web Defense', 'Docker']
-  };
+    skills: masterCourse.skills || ['CIA Triad', 'Cyber Kill Chain', 'Threat Modeling', 'Attack Surface Analysis', 'Security vs Privacy vs Safety', 'Defensive CLI Toolkit']
+  } : (learningPaths.find((p) => p.slug === 'foundational-cyber-defense-track') || learningPaths[0] || {
+    id: 'crs_cyber_intro_01',
+    division: 'cybersecurity',
+    slug: 'introduction-to-cybersecurity',
+    title: 'Course 01: Introduction to Cybersecurity',
+    short_desc: 'The institutional starting point for modern cyber defense. Master foundational security models, the CIA triad, threat surfaces, the Lockheed Martin Cyber Kill Chain, defense-in-depth architecture, and essential defensive toolkits.',
+    difficulty: 'BEGINNER',
+    estimated_weeks: 8,
+    total_hours: 36,
+    courses_count: 1,
+    milestone_cert: 'Certified Cybersecurity Defender Associate (CCDA)',
+    featured: true,
+    skills: ['CIA Triad', 'Cyber Kill Chain', 'Threat Modeling', 'Attack Surface Analysis', 'Security vs Privacy vs Safety', 'Defensive CLI Toolkit']
+  });
 
   return (
     <div 

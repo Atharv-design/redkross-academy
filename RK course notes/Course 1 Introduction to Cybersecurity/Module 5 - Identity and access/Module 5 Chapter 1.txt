@@ -1,0 +1,245 @@
+Course 01: Introduction to Cybersecurity
+Module 5: Identity and Access
+Lesson 1: Identification vs Authentication
+Part 1 — Hook
+
+You walk up to the entrance of a secure building. You flash an ID badge at the reader. A green light indicates access. You walk through the turnstile and head to the 15th floor.
+
+At the service desk, you announce, “I need to see a manager about the Q4 budget.” The receptionist looks at you and says, “John Smith?” You nod. She replies, “Please have a seat in conference room 15B. He will be there in five minutes.”
+
+You sit. A few minutes later, a man walks in. He looks like he belongs in a business suit. He sits opposite you. “John,” he says. “Thanks for coming.” “No problem,” you reply. “I was hoping you could approve these travel expenses today.”
+
+Later that day, someone calls your phone. The caller ID shows your manager’s name. “Hi, this is John’s assistant. He is unavailable, but I can take a message.”
+
+This simple interaction involves two distinct concepts: identification and authentication.
+
+The ID badge proves identification — it states that you are John Smith.
+The turnstile verifies authentication — it checks that the badge is genuine and John Smith is allowed through.
+The receptionist authenticates — she confirms that the man in the chair is really John Smith.
+The voicemail system authenticates the caller — it checks that the incoming call is from the number registered to John Smith.
+
+The key insight is this: anyone can claim a name on a piece of paper. Authentication is what proves the claim is legitimate.
+
+Part 2 — Learning Objectives
+
+By the end of this lesson you will be able to:
+
+Define identification, authentication, and authorization in your own simple words.
+Explain the three factors of authentication (something you know, have, are).
+Differentiate between identification and authentication with real-world scenarios.
+Identify weaknesses in common authentication mechanisms.
+Describe how MFA prevents credential compromise from fully compromising an account.
+Part 3 — Prerequisites
+
+You have completed Module 1 (Foundations) and Module 2 (Core Principles), particularly the AAA framework (Authentication, Authorization, Accounting). You also studied threat actors in Module 3. Now we will examine in detail how authentication fits into the larger security ecosystem.
+
+Part 4 — Concept from Scratch
+
+Here is the central sentence of this lesson.
+
+Identification is the claim. Authentication is the proof. Authorization is the permission.
+
+Let me say that again, because it is the sentence that will save you from security confusion for the rest of your career.
+
+Identification is the claim. Authentication is the proof. Authorization is the permission.
+
+A typical user interaction goes like this:
+
+Identification: User says “I am Alice”.
+Authentication: User proves “I am Alice” with credentials.
+Authorization: System grants or denies permissions Alice should have.
+Audit: System records Alice did something.
+
+Confusing these steps is the source of most security failures. When a developer writes code that checks a username but skips the password check, they are confusing identification with authentication. When an admin assumes the user is Alice because the browser remembers the last login, they are conflating identification with authorization.
+
+Here is a picture of how these three concepts interact at a system boundary.
+
+Image 1: The Authentication Flow Chart
+
+Flowchart of a secure login process
+
+Title: Secure Login Flow
+
+Start box: User attempts to access resource
+
+Step 1: Identification → Prompt for username/email (icon: ID card with question mark)
+
+Step 2: Authentication → Prompt for password or other credential (icon: key)
+
+Step 3: Decision Point Diamond: “Is credential valid?”
+
+Path: NO → “Authentication failed” box (red border, icon: warning sign) → End
+
+Path: YES → Step 4: Authorization → “Check permissions for this user” (icon: checklist)
+
+Decision Point Diamond: “Does user have access to this resource?”
+
+Path: NO → “Access denied” box (orange border, icon: lock) → End
+
+Path: YES → “Access granted” box (green border, icon: checkmark) → Access user-requested resource → End
+
+Footer note: “Identification = Claim | Authentication = Proof | Authorization = Permission”
+
+Part 5 — The Three Factors of Authentication
+
+The industry standard recognises three types of credentials, known as the factors. Understanding these is fundamental.
+
+Factor 1: Something You Know
+
+This is knowledge-based. It includes passwords, PINs, security questions, and any secret known only to the user.
+
+Strengths: Universally understood, easy to convey, no hardware required.
+Weaknesses: Can be guessed, phished, keylogged, shared, or forgotten.
+
+The weakest single-factor authentication is a password. But passwords are unavoidable because they are a practical necessity.
+
+Factor 2: Something You Have
+
+This is possession-based. It includes physical tokens, smartphones, hardware security keys, or smart cards.
+
+Strengths: Not shareable, not guessable, resistant to phishing when properly implemented.
+Weaknesses: Can be lost or stolen; if the token is cloned, possession does not prove authenticity.
+
+A smartphone token is popular because most people carry their phones everywhere. A hardware security key (like YubiKey) is stronger because it cannot be remotely cloned.
+
+Factor 3: Something You Are
+
+This is inherence-based. It includes biometric data: fingerprints, face scans, voice patterns, iris scans, and even gait (how you walk).
+
+Strengths: Very hard to replicate, convenient for users, not easily shared or lost.
+Weaknesses: If compromised cannot be changed (you cannot grow a new fingerprint); privacy concerns; can have false positives/negatives.
+
+Biometric authentication is improving rapidly, but it is not yet as reliable as the other factors. A smudge on a fingerprint sensor can create false negatives; lighting conditions can affect facial recognition.
+
+Multi-Factor Authentication (MFA) combines two or more of these factors. It is the single most effective defence against credential theft.
+
+Part 6 — Identification vs Authentication vs Authorization
+
+The confusion starts when people use these terms interchangeably. Let us be very explicit.
+
+Term	Definition	Example	What It Protects Against
+Identification	Claiming who you are	Entering username alice@example.com	Nothing. It is just a label.
+Authentication	Proving you are who you claim	Entering correct password or OTP to alice@example.com	Credential theft, phishing, password guessing
+Authorization	Checking if authenticated user can perform action	System grants Alice permission to view Finance reports	Privilege misuse, privilege escalation
+
+Critical Distinction:
+
+Identification is publicly visible. Anyone can see your username in the login form. If I see you are “alice”, I know who to target in a phishing attack.
+Authentication is hidden. The password, OTP, or biometric is secret. Without it, the attacker cannot prove they are Alice.
+Authorization is internal. The system checks Alice’s permissions silently. Alice might be authenticated but denied access to delete a file.
+Part 7 — Attack and Defence Viewpoint
+
+From the attacker’s perspective, they want to separate identification from authentication.
+
+Phishing attacks trick victims into revealing their passwords (breaking authentication).
+Session hijacking attacks steal an active authentication token, allowing the attacker to act as the authenticated user without knowing the password (e.g., stealing cookies).
+Credential stuffing attacks automate billions of stolen username-password pairs against multiple services (exploiting the reuse of identification).
+
+From the defender’s perspective, the goal is to make it impossible for an attacker to separate the claim from the proof. This is why MFA is essential. If an attacker only has the username (identification), they still need the second factor (authentication) to proceed.
+
+Part 8 — Common Mistake Analysis
+
+Mistake 1: Treating identification as authentication.
+
+What it looks like: A developer writes an application where entering a username automatically logs the user in.
+The problem: The session cookie is predictable or static. Once a threat actor knows the username, they have full access.
+The fix: Always require a secret credential (authentication) that the attacker does not know.
+
+Mistake 2: Assuming authentication equals authorization.
+
+What it looks like: An internal admin panel grants the same level of access to any user with a valid password.
+The problem: Regular employees are given administrative powers they do not need. This is a violation of least privilege from Module 2.
+The fix: After authenticating the user, check their specific permissions. Grant only what is justified.
+
+Mistake 3: Forgetting the human element.
+
+What it looks like: An organisation deploys perfect MFA but employees routinely approve authentication prompts sent to their phone because they are used to them.
+The problem: Social engineering. The attacker calls the user, tricks them into revealing a one-time password, and then approves their own login.
+The fix: User education. Never approve unknown MFA requests. Understand that MFA protects against remote compromise, not social engineering.
+Part 9 — Guided Mini-Lab: Audit Your Own Authentication
+
+Let us now apply these concepts to your own digital identity. This takes fifteen minutes.
+
+Step 1: List your accounts.
+Identify the three most important accounts you use regularly. These might be your email, your bank account, or a cloud service where you store important files.
+
+Step 2: Check the authentication factors.
+For each account, write down what factors you use:
+
+Factor 1 - Something You Know: Password, passphrase.
+Factor 2 - Something You Have: Phone (SMS/push token), hardware key, authenticator app.
+Factor 3 - Something You Are: Biometric (fingerprint, face).
+
+Step 3: Rate each account’s protection.
+Fill in a simple table:
+
+Account Name	Factor 1 (Password)	Factor 2	Factor 3	Overall MFA Level
+Email	Strong/Unique	App + Device	None	Two-Factor
+Bank	Complex	SMS Token	None	Two-Factor (weak)
+Cloud Storage	Weak/Reuse	None	None	Single-Factor
+
+Step 4: Identify gaps.
+Which account has only single-factor authentication? Which needs stronger second factors?
+
+Step 5: Make one improvement.
+Pick one account and enable or improve its authentication. If your bank uses SMS, suggest switching to an authenticator app or hardware key through their support portal. If your cloud storage uses a weak password, create a new strong password.
+
+Step 6: Write it down in your lab notebook:
+
+LESSON 1 — AUTHENTICATION AUDIT
+Date: [today]
+Account: Email
+  Factors: Password + Authenticator App
+  MFA Level: Two-Factor (strong)
+Account: Bank
+  Factors: Complex Password + SMS Token (replace SMS with better option)
+  MFA Level: Two-Factor (weak - recommend upgrade)
+Account: Cloud Storage
+  Factors: Weak password, no MFA
+  MFA Level: Single-Factor
+Action Taken: [Describe what you changed]
+Part 10 — Why This Matters for the Rest of Module 5
+
+Let me say something plainly.
+
+Strong authentication is the single most effective control you can apply. If you have MFA enabled on every account that supports it, and you have strong, unique passwords everywhere, the vast majority of common attacks—credential stuffing, phishing, and brute-force—become virtually impossible.
+
+That is why every lesson in Module 5 starts here. Before we learn how to manage identities, authorise access, or build access control policies, we must master the foundation: ensuring that “who you say you are” truly matches “who you are.”
+
+Part 11 — Summary and Glossary
+
+Here is what we covered.
+
+Identification is the claim of identity. It is simply stating a name. Authentication is the proof of that identity. It is verifying the claim using credentials. Authorization is the permission granted. It is the system deciding what the authenticated user can do. A typical interaction is: identify, authenticate, then authorise.
+
+The three authentication factors are: something you know (password/PIN), something you have (phone/token/hardware key), and something you are (biometric). Multi-Factor Authentication (MFA) combines two or more factors for significantly improved security.
+
+Term	Key Point
+Identification	The claim, like stating a username.
+Authentication	The proof, like providing a password.
+Authorization	The permission, like allowing file access.
+MFA	Using two or more factors. Single-factor is weak.
+Biometric	Something you are. Unique, changing it is hard.
+
+Glossary of 8 Terms:
+
+Identification — stating or claiming an identity, e.g., typing a username.
+Authentication — proving that the claimed identity is genuine.
+Authorization — granting or denying permissions based on identity.
+Multi-Factor Authentication (MFA) — authentication requiring two or more factors.
+Something You Know — knowledge-based factor, e.g., password, PIN.
+Something You Have — possession-based factor, e.g., token, phone.
+Something You Are — inherence-based factor, e.g., fingerprint, face.
+Credential — any authentication factor used to prove identity.
+Part 12 — Practice: 5 Quick-Check Questions
+In your own words, what is the difference between identification and authentication?
+Name the three authentication factors and give one example of each.
+Can a single-factor authentication system ever be secure? Why or why not?
+What is the biggest practical risk of relying only on something-you-know factors?
+For your email account, what authentication factors are you using? What is one improvement you could make for stronger security?
+Part 13 — Further Reading
+NIST SP 800-63B: Digital Identity Guidelines — Authentication and Lifecycle Management — The US government’s authoritative guide on authentication best practices.
+OWASP Authentication Cheat Sheet — Practical guidance for developers building secure login systems.
+FIDO Alliance — Standards behind passwordless authentication and hardware security keys.
+Google’s Project Strobe — Research on how compromised credentials lead to major breaches.
+CISA: Multi-Factor Authentication — Government guidance on implementing MFA effectively.

@@ -455,7 +455,8 @@ export default function CyberCourseDetailPage() {
               { id: 'outcomes', label: '02 // OUTCOMES', icon: Shield },
               { id: 'syllabus', label: '03 // SYLLABUS OUTLINE', icon: ListOrdered },
               { id: 'eligibility', label: '04 // ELIGIBILITY', icon: CheckCircle2 },
-              { id: 'faqs', label: '05 // FAQS', icon: HelpCircle }
+              { id: 'certification', label: '05 // CERTIFICATION', icon: Award },
+              { id: 'faqs', label: '06 // FAQS', icon: HelpCircle }
             ].map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -549,40 +550,54 @@ export default function CyberCourseDetailPage() {
               <div className="p-6 sm:p-8 rounded-2xl bg-black/60 backdrop-blur-xl border border-[#FF7A00]/25 shadow-lg space-y-6">
                 <div>
                   <h3 className="text-xl sm:text-2xl font-bold font-royal text-white mb-2">
-                    MITRE ATT&CK &amp; OWASP Top 10 Behavioral Defenses
+                    {course.id === 'crs_cyber_intro_01' || course.slug === 'introduction-to-cybersecurity'
+                      ? 'Defensive Architecture & CIA Triad Competencies'
+                      : 'MITRE ATT&CK & OWASP Top 10 Behavioral Defenses'}
                   </h3>
                   <p className="text-sm text-slate-300 font-sans leading-relaxed">
-                    Graduates master both offensive behavioral understanding and robust software-level mitigation techniques.
+                    {course.id === 'crs_cyber_intro_01' || course.slug === 'introduction-to-cybersecurity'
+                      ? 'Cadets master foundational security principles, adversary kill chains, threat modeling, and layered defensive countermeasures.'
+                      : 'Graduates master both offensive behavioral understanding and robust software-level mitigation techniques.'}
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="p-4 rounded-xl bg-[#FF7A00]/10 border border-[#FF7A00]/30 space-y-2">
-                    <div className="text-xs font-mono font-bold text-[#FFA439] uppercase">
-                      INJECTION MITIGATION
+                  {(course.id === 'crs_cyber_intro_01' || course.slug === 'introduction-to-cybersecurity' ? [
+                    {
+                      title: 'THE CIA TRIAD (CONFIDENTIALITY, INTEGRITY, AVAILABILITY)',
+                      desc: 'Master the core security triad, evaluate trade-offs in real-world scenarios, and balance security without compromising operational availability.'
+                    },
+                    {
+                      title: '6-STAGE CYBER KILL CHAIN',
+                      desc: 'Trace attacks from Reconnaissance to Actions on Objectives; understand how interrupting any single link halts adversary progress.'
+                    },
+                    {
+                      title: 'DEFENSE IN DEPTH & CLI TOOLKIT',
+                      desc: 'Deploy layered security controls across assets, configure terminal diagnostics, and practice threat modeling to minimize attack surfaces.'
+                    }
+                  ] : [
+                    {
+                      title: 'INJECTION MITIGATION',
+                      desc: 'Defeat SQLi, NoSQLi, and OS command injection via parameterized queries, Mongoose schema sanitization, and strict Zod runtime verification.'
+                    },
+                    {
+                      title: 'BROKEN AUTH & JWT',
+                      desc: 'Implement tamper-proof authentication with bcrypt password work factors, short-lived rotating JWT access tokens, and HTTP-only SameSite cookies.'
+                    },
+                    {
+                      title: 'CONTAINER & CI/CD HARDENING',
+                      desc: 'Ship production microservices via non-root Docker containers, automated GitHub Actions security scanners, and least-privilege RBAC.'
+                    }
+                  ]).map((item, idx) => (
+                    <div key={idx} className="p-4 rounded-xl bg-[#FF7A00]/10 border border-[#FF7A00]/30 space-y-2">
+                      <div className="text-xs font-mono font-bold text-[#FFA439] uppercase">
+                        {item.title}
+                      </div>
+                      <p className="text-xs text-slate-300 font-sans leading-relaxed">
+                        {item.desc}
+                      </p>
                     </div>
-                    <p className="text-xs text-slate-300 font-sans leading-relaxed">
-                      Defeat SQLi, NoSQLi, and OS command injection via parameterized queries, Mongoose schema sanitization, and strict Zod runtime verification.
-                    </p>
-                  </div>
-
-                  <div className="p-4 rounded-xl bg-[#FF7A00]/10 border border-[#FF7A00]/30 space-y-2">
-                    <div className="text-xs font-mono font-bold text-[#FFA439] uppercase">
-                      BROKEN AUTH &amp; JWT
-                    </div>
-                    <p className="text-xs text-slate-300 font-sans leading-relaxed">
-                      Implement tamper-proof authentication with bcrypt password work factors, short-lived rotating JWT access tokens, and HTTP-only SameSite cookies.
-                    </p>
-                  </div>
-
-                  <div className="p-4 rounded-xl bg-[#FF7A00]/10 border border-[#FF7A00]/30 space-y-2">
-                    <div className="text-xs font-mono font-bold text-[#FFA439] uppercase">
-                      CONTAINER &amp; CI/CD HARDENING
-                    </div>
-                    <p className="text-xs text-slate-300 font-sans leading-relaxed">
-                      Ship production microservices via non-root Docker containers, automated GitHub Actions security scanners, and least-privilege RBAC.
-                    </p>
-                  </div>
+                  ))}
                 </div>
 
                 {course.learning_objectives && (
@@ -607,7 +622,7 @@ export default function CyberCourseDetailPage() {
             </motion.div>
           )}
 
-          {/* TAB 3: SYLLABUS OUTLINE (Interactive 12-Module Accordion) */}
+          {/* TAB 3: SYLLABUS OUTLINE (Interactive Module Accordion) */}
           {activeTab === 'syllabus' && (
             <motion.div
               initial={{ opacity: 0, y: 15 }}
@@ -617,7 +632,7 @@ export default function CyberCourseDetailPage() {
             >
               <div className="flex items-center justify-between pb-2">
                 <div className="text-xs font-mono text-slate-400">
-                  Total 12 Modules • 78 Lessons • 12 Graded Unit Quizzes
+                  Total {course.modules?.length || 5} Modules • {totalLessonsCount} Lessons • {course.modules?.length || 5} Graded Unit Quizzes
                 </div>
                 <div className="flex items-center gap-2">
                   <button
@@ -743,7 +758,9 @@ export default function CyberCourseDetailPage() {
                     Cadet Eligibility &amp; Technical Prerequisites
                   </h3>
                   <p className="text-sm text-slate-300 font-sans leading-relaxed">
-                    Designed for aspiring full-stack engineers and defensive cybersecurity operators.
+                    {course.id === 'crs_cyber_intro_01' || course.slug === 'introduction-to-cybersecurity'
+                      ? 'Designed for all learners from absolute scratch — no prior coding, networking, or IT background needed.'
+                      : 'Designed for aspiring full-stack engineers and defensive cybersecurity operators.'}
                   </p>
                 </div>
 
@@ -754,9 +771,12 @@ export default function CyberCourseDetailPage() {
                       <span>FOUNDATIONAL REQUIREMENTS</span>
                     </div>
                     <ul className="space-y-2 text-xs text-slate-300 font-sans list-disc list-inside leading-relaxed">
-                      <li>Basic programming logic (variables, loops, conditional branching)</li>
-                      <li>General understanding of internet architecture (IP addresses, URLs, clients vs servers)</li>
-                      <li>Willingness to write code hands-on and debug real errors in the terminal</li>
+                      {(course.prerequisites || [
+                        'No prior programming or networking knowledge required. Designed from absolute scratch.',
+                        'A computer (Windows, macOS, or Linux) with permissions to run command-line terminal commands.'
+                      ]).map((item, idx) => (
+                        <li key={idx}>{item}</li>
+                      ))}
                     </ul>
                   </div>
 
@@ -767,8 +787,8 @@ export default function CyberCourseDetailPage() {
                     </div>
                     <ul className="space-y-2 text-xs text-slate-300 font-sans list-disc list-inside leading-relaxed">
                       <li>Standard desktop/laptop with modern browser (Chrome, Firefox, Safari, Edge)</li>
-                      <li>WebGL support for the in-browser 3D volumetric background and particle canvas</li>
-                      <li>Zero local VM installation needed: Kali Linux CyberLab executes entirely in-browser</li>
+                      <li>Standard OS Terminal (Command Prompt / PowerShell / macOS Terminal / Linux bash)</li>
+                      <li>Zero paid software or virtual machines required — completely free tooling</li>
                     </ul>
                   </div>
                 </div>
@@ -777,14 +797,86 @@ export default function CyberCourseDetailPage() {
                   <ShieldCheck className="w-5 h-5 text-[#FFA439] flex-shrink-0 mt-0.5" />
                   <div className="text-xs text-slate-300 font-sans leading-relaxed">
                     <strong className="text-white font-semibold">Institutional Ethics Pledge: </strong>
-                    All students adhere to the RedKross Defensive Research Foundation code of conduct. Offensive toolchains (Nmap, Wireshark, Hydra) are restricted strictly to isolated virtual lab containers (Subnet 10.10.11.0/24).
+                    All students adhere to the RedKross Defensive Research Foundation code of conduct. Security toolchains and diagnostic utilities are studied strictly for ethical defense, asset protection, and vulnerability remediation.
                   </div>
                 </div>
               </div>
             </motion.div>
           )}
 
-          {/* TAB 5: FAQS */}
+          {/* TAB 5: CERTIFICATION */}
+          {activeTab === 'certification' && (
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-6"
+            >
+              <div className="p-6 sm:p-8 rounded-2xl bg-black/60 backdrop-blur-xl border border-[#FF7A00]/25 shadow-lg space-y-6">
+                <div>
+                  <h3 className="text-xl sm:text-2xl font-bold font-royal text-white mb-2">
+                    Proctored Final Evaluation &amp; SHA-256 On-Chain Proofs
+                  </h3>
+                  <p className="text-sm text-slate-300 font-sans leading-relaxed">
+                    Earn an immutable, tamper-proof credential verified against the RedKross public cryptographic ledger.
+                  </p>
+                </div>
+
+                {/* Exam Specs Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="p-4 rounded-xl bg-black/40 border border-white/10">
+                    <div className="text-[10px] font-mono text-[#FFA439] uppercase">QUESTION SUITE</div>
+                    <div className="text-lg font-bold font-mono text-white">50 MCQs</div>
+                    <div className="text-xs text-slate-400">Randomized across curriculum modules</div>
+                  </div>
+                  <div className="p-4 rounded-xl bg-black/40 border border-white/10">
+                    <div className="text-[10px] font-mono text-[#FFA439] uppercase">TIME RESTRICTION</div>
+                    <div className="text-lg font-bold font-mono text-white">60 Minutes</div>
+                    <div className="text-xs text-slate-400">Strict countdown timer</div>
+                  </div>
+                  <div className="p-4 rounded-xl bg-black/40 border border-white/10">
+                    <div className="text-[10px] font-mono text-[#FFA439] uppercase">PASSING CRITERIA</div>
+                    <div className="text-lg font-bold font-mono text-white">80% (40/50)</div>
+                    <div className="text-xs text-slate-400">Anti-cheat blur lockout active</div>
+                  </div>
+                </div>
+
+                {/* Cryptographic SHA-256 Proof Box */}
+                <div className="p-5 rounded-xl bg-gradient-to-r from-black/80 via-[#181108]/90 to-black/80 border border-[#FF7A00]/40 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-mono font-bold text-[#FFA439] uppercase flex items-center gap-1.5">
+                      <Lock className="w-3.5 h-3.5" />
+                      <span>CRYPTOGRAPHIC DIGITAL SIGNATURE ARCHITECTURE</span>
+                    </span>
+                    <span className="text-[10px] font-mono text-slate-400">ECDSA / SHA-256</span>
+                  </div>
+
+                  <p className="text-xs text-slate-300 font-sans leading-relaxed">
+                    Upon exam passage, a digital certificate is allocated with a unique hash derived from cadet ID, completion timestamp, module metrics, and cryptographic salt.
+                  </p>
+
+                  <div className="p-3 rounded-lg bg-black/80 border border-white/10 font-mono text-xs flex items-center justify-between gap-2 overflow-x-auto">
+                    <span className="text-[#FFA439] truncate">{sampleSha256}</span>
+                    <button
+                      type="button"
+                      onClick={copyHashToClipboard}
+                      className="px-2 py-1 rounded bg-[#FF7A00]/20 hover:bg-[#FF7A00]/40 text-[#FFA439] text-[10px] flex items-center gap-1 shrink-0 cursor-pointer transition-colors"
+                    >
+                      {copiedHash ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                      <span>{copiedHash ? 'COPIED' : 'COPY HASH'}</span>
+                    </button>
+                  </div>
+
+                  <div className="text-[10px] font-mono text-slate-400 flex items-center gap-2">
+                    <CheckCircle2 className="w-3 h-3 text-[#FFA439]" />
+                    <span>Publicly verifiable at /verify/:credentialId</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* TAB 6: FAQS */}
           {activeTab === 'faqs' && (
             <motion.div
               initial={{ opacity: 0, y: 15 }}
@@ -792,7 +884,28 @@ export default function CyberCourseDetailPage() {
               transition={{ duration: 0.3 }}
               className="space-y-4"
             >
-              {[
+              {(course.id === 'crs_cyber_intro_01' || course.slug === 'introduction-to-cybersecurity' ? [
+                {
+                  q: 'Do I need any programming or IT experience before starting this course?',
+                  a: 'No prior background is required. The curriculum begins from scratch, explaining digital security, the CIA triad, and attack surfaces using real-world analogies before introducing hands-on tools.'
+                },
+                {
+                  q: 'What hands-on tools will I set up during Module 1?',
+                  a: 'In Module 1 Chapter 1, you set up your core defensive toolkit including the terminal command line, Python 3, and foundational diagnostics, preparing you for safe local analysis.'
+                },
+                {
+                  q: 'What is the Lockheed Martin Cyber Kill Chain taught in this curriculum?',
+                  a: 'The Cyber Kill Chain is a 6-stage model (Reconnaissance, Weaponization, Delivery, Exploitation, Installation, Actions on Objectives) that teaches defenders how attacks unfold and how breaking any single link completely terminates the threat.'
+                },
+                {
+                  q: 'How does the certification assessment and credential work?',
+                  a: 'Upon completing all modules and passing unit quizzes with >= 80%, you qualify for the proctored final evaluation to earn the Certified Cybersecurity Defender Associate (CCDA) credential, verifiable on-chain.'
+                },
+                {
+                  q: 'Does this course teach defensive security or offensive hacking?',
+                  a: 'RedKross Academy focuses strictly on defensive security and institutional resilience. We examine adversary tactics (kill chain and real-world attack vectors) specifically so defenders understand what they are protecting against.'
+                }
+              ] : [
                 {
                   q: 'What are the system requirements for the virtual Kali CyberLab?',
                   a: 'The Kali CyberLab V3 runs entirely inside your browser using containerized mock architecture, WebGL, and an authentic 143+ command suite. No local VirtualBox or VMware installs are needed.'
@@ -813,7 +926,7 @@ export default function CyberCourseDetailPage() {
                   q: 'Does this curriculum cover ethical application defense only?',
                   a: 'Yes. RedKross Academy adheres strictly to defensive security and secure application development. Offensive tooling simulations exist solely to educate engineers on OWASP Top 10 mitigation.'
                 }
-              ].map((faq, i) => (
+              ]).map((faq, i) => (
                 <div
                   key={i}
                   className="p-5 rounded-xl bg-black/60 backdrop-blur-xl border border-white/10 hover:border-[#FF7A00]/30 transition-colors space-y-2"

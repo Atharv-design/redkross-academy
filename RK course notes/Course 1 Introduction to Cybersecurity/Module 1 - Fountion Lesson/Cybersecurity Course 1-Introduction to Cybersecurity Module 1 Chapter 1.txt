@@ -1,0 +1,267 @@
+Course 01: Introduction to Cybersecurity
+Module 1: Foundations
+Lesson 1: What Is Cybersecurity?
+
+Part 1 — Hook: Why This Matters
+Imagine you have a diary with a lock. You write your secrets in it, and you keep it in a drawer. One day you open it and find that someone has copied every page. You feel exposed. That feeling — someone taking what is yours without permission — is the simplest version of what cybersecurity tries to stop.
+
+Now scale that diary up. Your bank account. Your phone. Your hospital records. Your country’s power grid. All of these are “assets” today, and all of them are under attack, every single day, by people who do not know you and will never meet you. Cybersecurity is the set of habits, tools, and rules we build so that does not happen.
+
+The number will shock you: globally, a cyberattack happens every 39 seconds. That is not a metaphor. Organisations record millions of attacks every year. Most of them fail. But some do not, and when they do, the damage is real — money stolen, records leaked, hospitals slowed down, businesses shut down forever.
+
+This lesson is your starting point. Before you learn how to hack (yes, we will learn that too, in a safe, legal way), you have to know what you are protecting and why. By the end of this lesson you will be able to look at any system and ask the right question: what am I protecting, from whom, and at what cost?
+
+Part 2 — Learning Objectives
+By the end of this lesson you will be able to:
+
+Define cybersecurity in your own simple words.
+Name the three parts of the CIA triad and explain each with a real-life example.
+Identify assets, threats, and controls in a everyday situation.
+Explain the difference between security, privacy, and safety.
+Describe the cyber kill chain in six steps.
+Set up a basic lab toolkit on your computer.
+Part 3 — Prerequisites
+You need nothing before this lesson. No programming, no networking, no prior IT knowledge. If you can use a web browser and type on a keyboard, you are ready. Everything else we build from here.
+
+Part 4 — Concept from Scratch
+Let us start with the word itself. Cyber comes from “cybernetics,” which means the study of control and communication in humans and machines. Security means the state of being free from danger or threat. Put them together and you get: the practice of protecting systems, networks, and programs from digital attack.
+
+That is the dictionary definition. Here is the real one:
+
+Cybersecurity is the work of keeping people’s information and systems safe from harm in the digital world.
+
+Let me say that again slowly, because it is the most important sentence in this whole course.
+
+Cybersecurity is the work of keeping people’s information and systems safe from harm in the digital world.
+
+Now let us break that sentence into four pieces, because each piece matters.
+
+Piece 1: People’s information. This is called “data.” Your name, your phone number, your photos, your bank password, your medical records, your company’s customer list — all of it is data. Some of it belongs to you personally. Some of it belongs to a company you use. Some of it belongs to the government. Cybersecurity decides who can see this data and who cannot.
+
+Piece 2: Systems. A “system” is any computer-like thing that does a job for you. Your laptop is a system. Your phone is a system. The traffic lights in your city are a system. The air conditioner in a hospital is a system. All of them run software, and all of them can be reached through a network.
+
+Piece 3: Harm. Harm is not only stealing money. Harm can be: locking your files and asking for ransom (that is called ransomware), shutting down a website so nobody can use it (that is called a DDoS attack), changing records so they become lies (that is called integrity damage), or simply watching you without permission (that is called surveillance). Harm can be quiet and invisible, and that is what makes it scary.
+
+Piece 4: Safe. Safe does not mean “perfect.” Nobody can make a system 100% safe. Safe means “reduced to an acceptable level.” A safe bank is not one where no robbery ever happens. A safe bank is one where the robbery is so difficult, slow, and noisy that most robbers give up and go somewhere easier. That is the goal of cybersecurity: make the cost of attacking you higher than the reward.
+
+Now here is a picture that explains the whole idea.
+
+IMAGE 1 — Concept diagram: A clean educational diagram on white background showing the CIA triad — three overlapping circles labeled Confidentiality, Integrity, and Availability, with a central dot labeled Cybersecurity. Around the triad, four smaller boxes connected by arrows: Assets (data, devices, networks, people), Threats (attackers, malware), Controls (policies, technology, physical), and Risk. Navy, teal, and amber colours. No text outside the labels. Style: textbook illustration, crisp lines, generous white space, 16:9 aspect ratio, high resolution.
+
+Look at that diagram and notice the arrows. The diagram is telling you something important: cybersecurity is not one thing. It is a balance between four things at once. You cannot have perfect security and perfect convenience. Every choice you make moves one of those arrows. The job of a cybersecurity person is to keep all four arrows pointing in a direction that makes sense for the situation.
+
+Let us now meet the three circles in the middle, because they are the heart of the whole subject. They are called the CIA triad, and every single thing you learn in this course will connect back to them.
+
+C is for Confidentiality. Confidentiality means keeping secrets secret. Only the people who are supposed to see something can see it. Think of a password: you do not want anyone else to read it. Think of a medical record: your doctor can see it, your neighbour cannot. Confidentiality is about access control — who gets in and who stays out.
+
+I is for Integrity. Integrity means keeping things correct and unbroken. If a record says you were born in 1995, it should still say 1995 tomorrow. If a bank says you have 500 rupees, you should still have 500 rupees. Integrity is about trustworthiness — the data is real, it has not been changed by bad people, and you can rely on it.
+
+A is for Availability. Availability means the system is there when you need it. When you want to check your email, the email server should answer. When the hospital needs the patient records, the computer should show them. Availability is about access when needed — the service works, it is fast enough, and it does not disappear.
+
+Here is the clever part. These three goals fight each other sometimes. If you make confidentiality very strong — say, by encrypting everything and throwing away all the keys — you might hurt availability, because now nobody can get in at all, even the good people. If you make availability very easy — say, by removing all login requirements — you hurt confidentiality, because now anyone can get in.
+
+Cybersecurity is the art of balancing these three. There is no perfect answer. There is only the right answer for the situation. A military system will weight confidentiality very heavily. A public weather website will weight availability very heavily. A hospital will weight integrity very heavily, because a wrong dosage record can kill someone.
+
+Part 5 — How It Works
+Now that you understand the three goals, let us look at how an attack actually happens. This is the cyber kill chain, and it is the most useful mental model you will learn all year. It was created by a company called Lockheed Martin, and it describes what an attacker does from the moment they decide to target you to the moment they get what they want.
+
+The kill chain has six steps. Think of it like a factory assembly line. The attacker has to complete every step in order. If you block any one step, the whole attack stops. This is the single most important insight in cybersecurity: you do not need to be perfect. You only need to be one step ahead of the attacker at any point.
+
+IMAGE 2 — Flowchart: A horizontal flowchart diagram showing the cyber kill chain: six rounded rectangles in a left-to-right sequence — Reconnaissance → Weaponization → Delivery → Exploitation → Installation → Actions on Objectives — connected by arrows. Below each box, a small one-line example in monospace font (for example, under Delivery: phishing email). A parallel dashed line at the bottom labeled Defence: detect → contain → eradicate. Clean, white background, navy and red accents, professional diagram style, 16:9, high resolution.
+
+Let us walk through each step.
+
+Step 1: Reconnaissance. This is the “looking around” phase. The attacker is not doing anything harmful yet. They are gathering information about you. They might look up your company’s website, your employees’ social media profiles, the software versions you use, or the public records about your network. This is called “passive recon” when they do it without touching your systems, and “active recon” when they start knocking on your doors directly. Reconnaissance is where most attacks are planned, and it is also where most attacks are easiest to stop, because the attacker is still outside.
+
+Step 2: Weaponization. The attacker takes the information from Step 1 and builds a weapon. This might be a piece of malicious code (called malware), a fake email designed to trick someone, or a USB drive left in a parking lot. The weapon is tailored to the target. If they know you use a specific version of a web server, they build an exploit for that version. Weaponization happens on the attacker’s own computer, so you cannot detect it. This is why the first step matters so much: the better their recon, the better their weapon.
+
+Step 3: Delivery. This is the moment the weapon actually reaches you. The most common delivery methods are email (a phishing link or attachment), a website you are tricked into visiting, a USB drive someone plugs in, or a software update that is fake. Delivery is where most defences are strongest — spam filters, antivirus software, user training. But it is also where most people fail, because humans are the weakest link. A well-written phishing email looks exactly like a real email from your boss.
+
+Step 4: Exploitation. The weapon does its job. The code runs, the vulnerability is triggered, the attacker gets a foothold. This might be a buffer overflow, a broken permission check, a misconfigured service, or simply the user typing their password into a fake login page. Exploitation is technical, and it is the part that gets the most attention in movies. But notice: by the time you are here, the attacker has already succeeded in getting inside. The real work of defence is stopping Steps 1 to 3.
+
+Step 5: Installation. The attacker installs something that lets them come back later. This is called “persistence.” It might be a backdoor, a new user account, a scheduled task that runs every day, or a piece of software that phones home. The goal is to make sure that even if the attacker’s first connection is closed, they can get back in tomorrow. This is why incident response matters: finding and removing the attacker’s installation is what actually ends an attack.
+
+Step 6: Actions on Objectives. This is the end goal. Steal the customer database. Ransom the files. Use the compromised computer to attack someone else. Spy on the executives. The attacker is now doing what they came for. At this point the damage is already done. The only question is how fast you notice.
+
+Now look at the dashed line in the diagram. That is the defender’s path, and it runs parallel to the attacker’s path. The defender’s job is: detect what is happening, contain it so it does not spread, eradicate the attacker’s tools, and then recover the systems. Notice the word “detect” comes first. You cannot stop what you do not know is happening.
+
+Here is the lesson in one line: An attack is a chain. Break any link and the attack dies. Your job as a cybersecurity student is to learn where those links are and how to break them.
+
+Part 6 — Example: A Real Phishing Attack Walked Through
+Theory is good. Let us now watch an attack happen in slow motion, step by step, so you can see the kill chain in real life. This is a made-up example, but it is based on thousands of real ones.
+
+Meet Arjun. Arjun works at a small company called Acme Pvt Ltd. He is a marketing executive. He is busy, he is tired, and he is not thinking about security. Here is what happens.
+
+Reconnaissance. The attacker finds Acme’s website and reads the “Meet the Team” page. They see Arjun’s name, his job title, and a link to his LinkedIn profile. From LinkedIn they learn that Arjun just came back from leave and is probably behind on work. They also find Acme’s email format: first name dot last name at acme dot com. Now they know Arjun’s email address: arjun.sharma@acme.com.
+
+Weaponization. The attacker writes an email. They pretend to be Arjun’s boss, the CEO. The subject line says: “Urgent: Expense reports from your trip — please process today.” The email is short, slightly rushed, and mentions a real project Arjun is working on (which the attacker found on LinkedIn). The attachment is a PDF named Expense_Report_Arjun.pdf that actually contains malicious code.
+
+Delivery. The email is sent. It lands in Arjun’s inbox. It does not look like spam. It looks like a real internal email. Arjun is tired. He sees the CEO’s name, he sees “urgent,” and he opens the attachment.
+
+Exploitation. The PDF exploits a weakness in Arjun’s PDF reader — a vulnerability that was fixed in a new version two months ago, but Arjun never updated. The code runs. The attacker now has control of Arjun’s computer.
+
+Installation. The attacker installs a small program that hides itself and connects back to the attacker’s server every hour. Even if Arjun restarts his computer, the program comes back.
+
+Actions on Objectives. The attacker uses Arjun’s computer to log into Acme’s internal systems. They find the finance department’s shared folder. They copy the entire payroll database. They install ransomware on the file server. Then they send a ransom note: “Pay us 50,000 rupees in cryptocurrency or we delete everything.”
+
+The total time from the first email to the ransom note: 36 hours.
+
+Now here is the good news. Every single one of these six steps had a defence that could have stopped it.
+
+At Reconnaissance: if Acme had removed personal employee details from its website, the attacker would have had less to work with.
+At Weaponization: the attacker built the weapon for a specific PDF reader version. If Arjun had updated his software, the weapon would have been useless.
+At Delivery: if Acme’s email server had better spam filtering, or if Arjun had been trained to hover over links before clicking, the email might never have been opened.
+At Exploitation: if Arjun’s computer had a modern antivirus that blocked unknown code, the exploit would have failed.
+At Installation: if Acme’s network was set up so that a marketing computer could not reach the finance file server, the attacker would have been stuck.
+At Actions on Objectives: if someone had been monitoring the network, they would have seen the unusual data transfer and stopped it before the ransomware ran.
+This is the whole philosophy of cybersecurity in one story. Defence in depth. You do not rely on one wall. You build many walls, one behind the other, so that if the attacker breaks through one, they meet another.
+
+Part 7 — Attack and Defence View
+Let us now look at the same thing from both sides, because to be a good defender you need to think like the attacker. This is the part that most courses get wrong: they teach you how to defend without ever teaching you how the enemy thinks. We will not do that.
+
+The attacker’s mindset. Attackers are not magical. They are people, and they are lazy. They look for the easiest target. If you are hard to attack, they will move on to the next victim. Most attacks are automated — a script that sends the same phishing email to a million addresses and waits for the 0.1% that click. This means two things:
+
+You are not special. The attacker is not sitting there watching you personally. You are one of thousands. The only reason you get attacked is that you are visible on the internet, like a house with the lights on.
+The attacker gives up quickly. If your defences make the attack take more than a few minutes, most automated attacks will skip you. The attackers who stay are the ones who are targeting you specifically, and those are much rarer.
+The defender’s mindset. The defender has one advantage: the defender only has to get it right once. The attacker has to get it right once. That sounds fair, but it is not — the attacker controls the time, the place, and the method. The defender has to be ready all the time, everywhere.
+
+So the defender uses three strategies:
+
+Prevent: Stop the attack before it starts. Patches, updates, strong passwords, training, firewalls.
+Detect: Notice the attack while it is happening. Monitoring, logging, alerts, anomaly detection.
+Respond: Fix the damage and come back stronger. Incident response, backups, recovery plans.
+Notice that “prevent” is only one third of the job. Many organisations spend 90% of their budget on prevention and then have no idea what to do when prevention fails — which it always does eventually. A good cybersecurity person plans for failure.
+
+Part 8 — Common Mistakes Beginners Make
+Before we finish, let me save you from the traps that catch most new students. These are the mistakes I see every term.
+
+Mistake 1: Thinking cybersecurity is only about hacking. It is not. Hacking is one tool in a much bigger toolbox. The majority of cybersecurity work is about policies, training, monitoring, documentation, and plain common sense. If you want to be a penetration tester, yes, you will learn to hack. But most cybersecurity jobs have very little to do with it.
+
+Mistake 2: Thinking tools make you safe. Buying a firewall does not make you secure. Installing antivirus does not make you secure. Tools are only as good as the person configuring them. A firewall set to “allow everything” is the most expensive way to do nothing. Security comes from thinking, not from shopping.
+
+Mistake 3: Confusing security, privacy, and safety. These are three different ideas and they are not interchangeable. We will look at them properly in a moment, but the quick version: security is about protecting assets from bad people, privacy is about controlling your own information, and safety is about not hurting people. A company can be secure but not private. A product can be safe but not secure. Get this wrong and you will make bad decisions later.
+
+Mistake 4: Trying to learn everything at once. Cybersecurity is a huge field. Networking, programming, operating systems, law, cryptography, forensics, cloud computing, human psychology — it is all connected. You will not learn it all. Nobody does. Pick the parts that interest you, go deep on those, and stay curious about the rest. Depth beats breadth every time.
+
+Mistake 5: Ignoring the human. The most expensive security technology in the world can be defeated by one person clicking a link in an email. Every major breach in history — every single one — involved a human making a mistake or being tricked. Technology is important, but people are the centre of the problem. If you forget that, you will build perfect technical defences that fail anyway.
+
+Part 9 — Guided Mini-Lab: Set Up Your Lab Toolkit
+Let us now do something with our hands. We are going to set up the basic toolkit you will use for the entire course. This takes about 15 minutes.
+
+What you need: A computer with the internet. Any operating system works — Windows, Mac, or Linux. If you do not have a computer, use a library or a friend’s. Do not skip this.
+
+Step 1: Open your terminal.
+
+On Windows: press the Windows key, type “terminal,” and press Enter. Or open “Command Prompt.”
+On Mac: open “Applications,” then “Utilities,” then “Terminal.”
+On Linux: open your terminal application. It is usually called “Terminal.”
+You should see a black or dark window with a blinking cursor. That is your command line. Everything we do from now on starts here.
+
+Step 2: Check what is already installed.
+Type this exactly and press Enter:
+
+python3 --version
+You should see something like Python 3.11.6. If you see an error saying “command not found,” do not worry — we will install Python in the next step.
+
+Now type:
+
+which nmap
+nmap is a network scanning tool we will use later. If it prints a path like /usr/bin/nmap, it is installed. If it prints nothing, it is not installed yet, and we will add it later.
+
+Step 3: Install Python if it is missing.
+
+On Windows: go to python.org, download the latest Python 3 installer, and run it. Make sure the box that says “Add Python to PATH” is checked.
+On Mac: Python usually comes pre-installed. Open Terminal and type python3 --version to check.
+On Linux: open your package manager and search for “python3.” On Ubuntu it is sudo apt install python3.
+Step 4: Create your lab folder.
+This is where all your work will live. Type:
+
+mkdir -p ~/cybersec-lab
+Now you have a folder called cybersec-lab in your home directory. From now on, save everything there.
+
+Step 5: Test it.
+Type:
+
+cd ~/cybersec-lab && echo "My lab is ready" > welcome.txt && cat welcome.txt
+If you see My lab is ready, your lab is working. Congratulations. You have now completed the first hands-on step of your cybersecurity journey.
+
+Step 6: Write down your toolkit list.
+Open a text editor (Notepad, TextEdit, or VS Code) and write this list. Keep it in your lab folder. We will add to it every lesson.
+
+CYBERSECURITY LAB TOOLKIT — Lesson 1
+====================================
+Date: [today's date]
+Python version: [what you saw]
+nmap installed: [yes/no]
+Lab folder: ~/cybersec-lab
+
+TOOL LIST:
+1. Terminal (command line)
+2. Python 3
+3. nmap (network scanner) — add later
+4. Wireshark (network analyzer) — add later
+5. VS Code (text editor) — add later
+IMAGE 3 — Terminal screenshot: A photorealistic screenshot of a dark-themed terminal window on a black background, showing a Linux command prompt. Commands visible: python3 --version returning 3.11, which nmap returning /usr/bin/nmap, which tshark, and a final line echo 'Lab toolkit ready' with a blinking cursor. Monospace font, subtle window decoration (minimize/maximize buttons top-left). Slight glow on text. Looks like an actual terminal capture, not cartoonish. 16:9.
+
+Part 10 — Security, Privacy, and Safety: Three Different Ideas
+This is the part most beginners skip, and it is where the biggest confusion happens. Let us fix it now.
+
+Security is about protecting something from someone who wants to harm it. The “something” is an asset — data, a device, a system. The “someone” is a threat actor — a criminal, a competitor, a state, or even a careless employee. Security asks: how do we stop bad people from damaging what we care about?
+
+Privacy is about controlling your own information. It is about who knows what about you, and whether you agreed to that. Privacy asks: who has my data, and what are they doing with it? Privacy is personal. Security is organisational. A company can be secure (its systems are protected) but still violate your privacy (it sells your data without telling you).
+
+Safety is about not hurting people. It is about physical harm, not digital harm. Safety asks: does this system cause injury or death if it fails? A self-driving car is a safety concern. A bank website is not, because if it fails, nobody gets physically hurt — they just lose money.
+
+Here is a comparison table to make it crystal clear.
+
+IMAGE 4 — Comparison table: A side-by-side comparison table on a white background with three columns, headers: Security, Privacy, Safety. Each column shows: a one-line definition, a key question it answers (for example, “Who can see the data?” for Privacy, “Is the data trustworthy?” for Security, “Is the system usable?” for Availability — no, “Does this hurt people?” for Safety), one real-world example, and one failure example. Color-coded headers in navy, green, and amber. Clean typographic layout, no decorative imagery, 16:9, high resolution.
+
+Let us give you concrete examples so the difference is unmistakable.
+
+Security example: A bank uses a firewall, encryption, and multi-factor authentication to stop criminals from stealing customer money. Security failure: The firewall is misconfigured, and a thief empties 500 accounts.
+
+Privacy example: A shopping app asks for permission to access your location, and you say yes. The app tells you exactly how it will use that data. Privacy failure: The app sells your location data to a marketing company without your knowledge.
+
+Safety example: A hospital’s infusion pump is tested so it cannot deliver a fatal dose by accident. Safety failure: The pump software has a bug that causes it to deliver ten times the intended dose.
+
+Now the tricky part. These three ideas overlap. A self-driving car needs security (stop hackers from taking control), privacy (protect the passenger’s data), and safety (do not crash). A hospital needs all three too. A social media app needs security and privacy, but safety is less relevant unless it is used in a medical context.
+
+The mistake beginners make is treating them as synonyms. They are not. When a news article says “the company improved its security,” it probably means it bought better firewalls. When it says “the company improved its privacy,” it means it changed how it handles your data. When it says “the company improved safety,” it means it reduced physical risk. If you mix these up, you will misunderstand the article and make bad decisions.
+
+Part 11 — Summary and Glossary
+Let us wrap up. Here is what we covered.
+
+Cybersecurity is the practice of protecting information and systems from harm in the digital world. It is not one thing — it is a balance between four things: assets, threats, controls, and risk.
+
+The three core goals are the CIA triad: Confidentiality (keep secrets secret), Integrity (keep data correct), and Availability (keep services running). These three goals sometimes fight each other, and the job of a cybersecurity person is to balance them for the situation.
+
+An attack follows a chain with six steps: Reconnaissance, Weaponization, Delivery, Exploitation, Installation, and Actions on Objectives. If you block any one step, the whole attack stops. This is why defence in depth works — you build many layers, and the attacker only needs to break through one.
+
+The attacker is lazy and looks for easy targets. The defender has to get it right every time. So the defender uses three strategies: prevent, detect, and respond. Planning for failure is part of the job.
+
+Security, privacy, and safety are three different ideas. Security protects assets from bad people. Privacy controls your own information. Safety prevents physical harm. Do not mix them up.
+
+Your lab toolkit is set up. Keep the folder, keep the list, and add to it every lesson.
+
+Glossary of 12 terms:
+
+Cybersecurity — the practice of protecting systems, networks, and programs from digital attack.
+Asset — anything valuable that needs protecting: data, devices, networks, people.
+Threat — anything that can damage an asset: an attacker, malware, a natural disaster.
+CIA triad — the three core goals of security: Confidentiality, Integrity, Availability.
+Confidentiality — keeping secrets secret; only authorised people can see the data.
+Integrity — keeping data correct and unbroken; it has not been tampered with.
+Availability — the system is working and accessible when it is needed.
+Kill chain — the six-step sequence an attacker follows to complete an attack.
+Phishing — a fake email or message designed to trick you into giving away passwords or clicking malware.
+Malware — short for “malicious software”; any software designed to harm a system.
+Defence in depth — using multiple layers of security so that if one fails, another stops the attacker.
+Vulnerability — a weakness in a system that an attacker can exploit.
+Part 12 — Practice: 5 Quick-Check Questions
+Answer these from memory. Then check yourself against the lesson.
+
+What are the three parts of the CIA triad, and what does each one mean in one sentence?
+Name the six steps of the kill chain in order.
+True or false: buying a firewall makes you secure. Explain why or why not in two sentences.
+What is the difference between security and privacy? Give one example of each.
+Why is the human called “the weakest link” in cybersecurity?

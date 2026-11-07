@@ -13,7 +13,7 @@ export default function CyberLearningCard({
   const item = course || track;
   if (!item) return null;
 
-  const courseSlug = item.slug || item.id || 'crs_full_stack_web_dev';
+  const courseSlug = item.slug || item.id || 'introduction-to-cybersecurity';
 
   return (
     <motion.div

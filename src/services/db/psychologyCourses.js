@@ -105,7 +105,6 @@ export const PSYCHOLOGY_COURSES = [
             duration: '45 mins',
             xp: 150,
             summary: 'Explore the historical development and empirical validation of Aaron Beck’s cognitive model.',
-            video_url: '/assets/sample-lesson.mp4',
             content_markdown: '# Foundations of the Beckian Cognitive Model\n\nCognitive Behavioral Therapy (CBT) operates on the principle that psychological distress is primarily mediated by cognitive appraisals rather than environmental occurrences alone.\n\n### Core Equation\n**Event -> Cognitive Appraisal -> Affective / Physiological Response -> Behavioral Action**'
           },
           {
@@ -114,7 +113,6 @@ export const PSYCHOLOGY_COURSES = [
             duration: '40 mins',
             xp: 150,
             summary: 'Learn the structured 50-minute clinical session protocol and mood check-in methodology.',
-            video_url: '/assets/sample-lesson.mp4',
             content_markdown: '# Collaborative Empiricism\n\nIn CBT, the therapist and client act as co-investigators testing internal hypotheses against real-world evidence.'
           }
         ]
@@ -131,7 +129,6 @@ export const PSYCHOLOGY_COURSES = [
             duration: '50 mins',
             xp: 180,
             summary: 'Deep dive into all-or-nothing thinking, catastrophizing, and personalization.',
-            video_url: '/assets/sample-lesson.mp4',
             content_markdown: '# The Taxonomy of Cognitive Distortions\n\nLearn to spot automatic heuristics that skew risk appraisal and self-worth under conditions of ambiguity.'
           }
         ]
@@ -190,7 +187,6 @@ export const PSYCHOLOGY_COURSES = [
             duration: '40 mins',
             xp: 140,
             summary: 'Comprehensive walkthrough of the 5-phase RAPID model for humanitarian and campus emergencies.',
-            video_url: '/assets/sample-lesson.mp4',
             content_markdown: '# The RAPID PFA Framework\n\nPsychological First Aid provides non-invasive, compassionate support designed to mitigate acute distress and foster natural adaptive resilience.'
           }
         ]
@@ -248,7 +244,6 @@ export const PSYCHOLOGY_COURSES = [
             duration: '45 mins',
             xp: 160,
             summary: 'Explore Joseph LeDoux’s dual pathways of fear processing from the thalamus to the amygdala.',
-            video_url: '/assets/sample-lesson.mp4',
             content_markdown: '# The Threat Circuitry & The Limbic Axis\n\nUnderstand how sensory input reaches the basolateral amygdala in less than 12 milliseconds—bypassing conscious cortical reflection.'
           }
         ]
@@ -306,7 +301,6 @@ export const PSYCHOLOGY_COURSES = [
             duration: '45 mins',
             xp: 150,
             summary: 'Learn objective behavioral evidence recovery without subjective speculation.',
-            video_url: '/assets/sample-lesson.mp4',
             content_markdown: '# Behavioral Evidence Analysis\n\nDeductive profiling derives behavioral characteristics solely from physical forensic evidence, victimology, and scene topology.'
           }
         ]
@@ -364,7 +358,6 @@ export const PSYCHOLOGY_COURSES = [
             duration: '35 mins',
             xp: 130,
             summary: 'How acute sympathetic hyper-arousal impairs working memory retrieval in the prefrontal cortex.',
-            video_url: '/assets/sample-lesson.mp4',
             content_markdown: '# The Neurobiology of Test Anxiety\n\nWhen examination performance is perceived as an existential threat, working memory capacity collapses by up to 40%.'
           }
         ]
@@ -422,7 +415,6 @@ export const PSYCHOLOGY_COURSES = [
             duration: '30 mins',
             xp: 120,
             summary: 'Review meta-analyses of MBSR for cortisol reduction, immune function, and cortical thickening.',
-            video_url: '/assets/sample-lesson.mp4',
             content_markdown: '# The Clinical Evidence for MBSR\n\nDiscover how daily somatic meditation measurably lowers baseline salivary cortisol and stabilizes autonomic reactivity.'
           }
         ]

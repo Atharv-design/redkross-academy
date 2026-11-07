@@ -1,0 +1,213 @@
+Course 01: Introduction to Cybersecurity
+Module 2: Core Principles
+Lesson 3: Least Privilege
+Part 1 — Hook
+
+A janitor works in a large office building. He has a key that opens every door — the lobby, the bathrooms, the supply closet, the executive floor, the server room, and the CEO’s private office. One day he is robbed at gunpoint on his way to work, and the thieves take his key ring. Within an hour they are inside the CEO’s office, copying the company’s financial records.
+
+The problem was not the janitor. The problem was the key. He did not need to open the CEO’s office to empty the trash. He did not need to open the server room to refill the paper trays. But he had the keys anyway, because nobody had ever asked the question: what does this person actually need to do their job?
+
+That question is the entire lesson. Least privilege is the principle of giving every person, every program, and every system exactly the access they need to do their job — and nothing more. It is the simplest principle in cybersecurity, and it is also the hardest to apply, because it requires saying no to people all the time.
+
+Part 2 — Learning Objectives
+
+By the end of this lesson you will be able to:
+
+Define least privilege in your own simple words.
+Explain why it is the most important principle in cybersecurity.
+Distinguish between privilege, access, and need-to-know.
+Apply least privilege to a real scenario: identify excessive access and reduce it.
+Explain the technical implementation: RBAC, ABAC, just-in-time access, and privileged access management.
+Identify the risks of violating least privilege.
+Part 3 — Prerequisites
+
+You have finished Module 1 and Module 2 Lessons 1 and 2. You know the CIA triad and the AAA framework. Least privilege sits at the intersection of both.
+
+Part 4 — Concept from Scratch
+
+Here is the central sentence of this lesson.
+
+Least privilege is the discipline of giving every person and every program exactly the access they need to do their job, and no more — and it is the single principle that, if applied correctly, would have prevented the majority of the breaches we studied in Module 1.
+
+Let me say that again, because it is the most important claim in this lesson and I want you to feel its weight.
+
+Least privilege is the discipline of giving every person and every program exactly the access they need to do their job, and no more — and it is the single principle that, if applied correctly, would have prevented the majority of the breaches we studied in Module 1.
+
+Think about that for a moment. The Target breach happened because the HVAC vendor could reach the cash register network. The SolarWinds attack succeeded because the software update process had the trust of every system it touched. The TJX breach happened because the wireless network gave the attacker access to the entire retail environment. In every case, someone had more access than they needed, and the attacker used that excess access to cause damage.
+
+Now let us define it precisely, because “what they need” is the hard part.
+
+What “need” means. Need is not “it would be convenient.” Need is not “they might need it someday.” Need is not “they had it last year.” Need is: this specific person, doing this specific job, requires this specific access to complete this specific task, and nothing else. If the access is not required for the job, it is not needed, and it should be removed.
+
+What “access” means. Access is the ability to do something: read a file, write a record, run a program, log in as someone else, change a configuration, shut down a server. Every one of those abilities is a privilege. Least privilege says: count them, justify each one, and remove the ones that are not justified.
+
+Here is a picture of the principle in action.
+
+IMAGE 1 — Least privilege diagram: A side-by-side comparison on a white background. On the left, a red-labeled box titled WITHOUT LEAST PRIVILEGE shows a stick figure labeled “Marketing Employee” connected by thick arrows to six resources: Customer Database, Financial Records, Source Code, Server Admin, Email of Others, Payroll. The arrows are thick and numerous, showing excessive access. On the right, a green-labeled box titled WITH LEAST PRIVILEGE shows the same stick figure connected by a single thin arrow to one resource: Marketing CRM Only. A small caption below reads: “Access = job requirement, nothing more.” Clean, professional, navy and green vs red, 16:9, high resolution.
+
+Part 5 — How It Works: The Principle, the Exceptions, and the Implementation
+What Least Privilege Is
+
+Least privilege is not one rule. It is a family of rules that all point in the same direction: reduce access to the minimum.
+
+For people: Every employee gets the access required by their role, and nothing else. A marketing person can access the marketing CRM. They cannot access the financial records or the source code. A junior developer can read the code repository. They cannot deploy to production. An intern can read the documentation. They cannot change anything.
+
+For programs: Every software component runs with the lowest possible permissions. A web server does not need administrator access to serve web pages. It should run as a dedicated user with limited rights, so that if the attacker compromises the web server, they cannot take over the whole machine. This is called “running with least privilege” and it is one of the most important hardening techniques in existence.
+
+For systems: Every service, every API, every database account has exactly the permissions it needs, and no others. A database backup account can read and write to the backup folder. It cannot read the customer data folder. A monitoring account can read the logs. It cannot change the configuration.
+
+The Two Legitimate Exceptions
+
+Least privilege sounds absolute, but there are two situations where more access is justified. Knowing them prevents you from applying the principle blindly.
+
+Emergency access. Sometimes a person needs more access than usual because of an emergency. A firefighter needs to open every door in a burning building, even the CEO’s office. The key difference is that emergency access is temporary, documented, and monitored. It is not permanent, and it is not invisible. When the emergency is over, the extra access is removed.
+
+Break-glass access. This is the formal version of emergency access. A break-glass account is a highly privileged account that is normally locked away and only used when normal procedures cannot handle the situation. It is called “break glass” because there is literally a glass box containing the password, and you break the glass in an emergency. Every break-glass account is recorded, reviewed, and audited. The audit is what makes it safe — the account is powerful, but it is never invisible.
+
+The rule for both: exceptional access is temporary, documented, monitored, and reviewed. If any of those four conditions is missing, it is not an exception. It is a violation.
+
+How to Implement Least Privilege
+
+Least privilege is an intention until you implement it. Here is how it is actually done in a real organisation.
+
+Step 1: Inventory the access. You cannot reduce what you cannot see. List every person, every program, and every system. List what each one can access. This is the access inventory, and it is the starting point. Most organisations do not have one, and that is the first violation.
+
+Step 2: Justify every access. For each entry in the inventory, ask: what job does this access enable? If you cannot answer, remove the access. If the answer is “I am not sure,” remove the access and restore it later if someone proves they need it. Uncertainty is not a justification.
+
+Step 3: Reduce to the minimum. Once every access is justified, remove the ones that are not needed. This is the hard part, because people resist losing access. The standard response is “but I might need it.” The correct answer is “then ask for it when you need it, and we will give it to you temporarily.” Access should be requested, not granted by default.
+
+Step 4: Use roles, not individuals. Do not manage access person by person. That does not scale. Instead, define roles: Marketing User, Finance Editor, Developer, Administrator. Assign people to roles. Assign access to roles. When a person changes jobs, you change their role, and the access follows automatically. This is RBAC — Role-Based Access Control — from Module 1 Lesson 7, and it is the standard implementation of least privilege.
+
+Step 5: Use just-in-time access. Instead of giving someone permanent access, give them access only when they need it, for the shortest possible time, and remove it immediately afterward. A developer who needs to fix a production bug gets temporary production access, which expires in two hours. This is the modern implementation of least privilege, and it is made possible by privileged access management systems.
+
+Step 6: Monitor and review. Access rots. People change jobs. New systems appear. Old permissions accumulate. Review access at least every quarter. Remove access for people who have left. Reduce access for people who have changed roles. Flag accounts that have not been used in 90 days and disable them.
+
+Part 6 — The Cost of Violating It
+
+Let us now look at what happens when least privilege is ignored. These are not theoretical. They are the breaches from Module 1, seen through the lens of this lesson.
+
+The Target breach (2013). An HVAC vendor had access to Target’s retail network. The vendor needed to submit billing and project management data. It did not need to reach the cash registers. But the network was flat, and the vendor could reach everything. The attacker compromised the vendor, walked through that access, and stole 40 million credit card numbers. The violation: the vendor had more network access than its job required.
+
+The SolarWinds attack (2020). The software update process was trusted by every system that installed it. The update mechanism had the ability to run code with system privileges on every customer’s machine. That ability was necessary — updates need to modify system files. But the process was not monitored, and the attacker inserted malicious code into the update. The violation: the update process had more trust and more access than could be verified.
+
+The insider threat. A disgruntled employee with access to the customer database copies it before they leave. They had that access because their role required it... or did it? Did they need to see the full database, or only the records related to their customers? If the answer is the latter, then they had more access than they needed, and the excess access became a weapon. The violation: the employee had access to more data than their job required.
+
+The script kiddie. An automated vulnerability scanner finds an unpatched server. The server is running with administrator privileges because the IT team never thought to change the default. The attacker gains administrator access. The violation: the service was running with more privileges than it needed.
+
+The common pattern in every case: access exceeded need. The attacker did not need to be brilliant. They just needed someone to have left a door open.
+
+Part 7 — Attack and Defence View
+
+Let us now look at least privilege from the attacker’s perspective, because that is how you learn to defend.
+
+How the attacker exploits excessive access. The attacker does not attack the user directly. They attack the access the user carries. If a marketing person has access to the financial records, the attacker who compromises the marketing person’s laptop inherits that access. If a service account has administrator rights, the attacker who compromises the service account owns the network.
+
+The attacker’s goal is to move laterally — from one system to another — and every excess privilege is a stepping stone. The kill chain from Module 1 ends with “actions on objectives,” and those actions are only possible because someone had more access than they needed. Least privilege is the defence that makes lateral movement difficult. If every person and every program has only the access they need, then the attacker who gets in through one door finds that the door leads nowhere important.
+
+The defender’s strategy is to make the attack surface small and the blast radius even smaller. Least privilege does both. It shrinks the attack surface by removing unnecessary access. It shrinks the blast radius by ensuring that even if one person or one system is compromised, the damage is limited to what that person or system could reach.
+
+The most important sentence in this lesson: Least privilege does not stop the attacker from getting in. It stops them from getting anywhere once they are in.
+
+Part 8 — Common Mistakes Beginners Make
+
+Mistake 1: Confusing least privilege with “nobody can do anything.” Least privilege is not about making systems unusable. It is about making them safe. A properly designed least-privilege system lets people do their jobs smoothly. It just does not let them do other people’s jobs. If your implementation makes the business unable to function, you have applied it wrong.
+
+Mistake 2: Applying it only to people, and not to programs. This is the most common technical mistake. Every service, every script, every API key, every database account should run with the lowest possible permissions. A web server running as root is a disaster waiting to happen. A backup script that can delete the entire database is a disaster that has already happened.
+
+Mistake 3: Granting permanent access instead of just-in-time access. “They have always had it, so they should keep having it.” This is the default behaviour of most organisations, and it is the opposite of least privilege. Access should be requested, granted temporarily, and revoked. Permanent access is the norm in most places, and it is the reason breaches are so damaging.
+
+Mistake 4: Ignoring the exception rules. Emergency access and break-glass access are legitimate, but only if they are temporary, documented, monitored, and reviewed. If they are not, they are violations wearing the costume of exceptions. A permanent administrator account that everyone uses is not a break-glass account. It is a violation.
+
+Mistake 5: Not reviewing access regularly. Access rots. People change jobs. New systems appear. Permissions accumulate like dust. If you review access only when someone leaves, you will find that the people who are still there have far more access than they need. Review quarterly. Remove what is not justified. The organisations that get breached are usually the ones that stopped reviewing years ago.
+
+Part 9 — Guided Mini-Lab: Reduce Your Own Access
+
+Let us now apply least privilege to your own digital life. This takes 15 minutes.
+
+Step 1: List your accounts.
+Write down your three most important online accounts: your email, your bank, and your cloud storage or social media.
+
+Step 2: Check what you can do.
+For each account, list the things you can do that go beyond reading and using the service:
+
+Can you change the password?
+Can you add other users or administrators?
+Can you delete everything?
+Can you download all the data?
+Can you change the billing information?
+
+Step 3: Ask the question.
+For each ability, ask: do I need this ability to use the service? If the answer is no, it is excess privilege. If you share the account with a family member, ask: do they need that ability? If not, restrict it.
+
+Step 4: Reduce.
+For each excess privilege you found, reduce it:
+
+Remove admin access you do not use.
+Remove other users from your account.
+Turn off features you do not use.
+Use a separate account for sensitive things. Your email should not be the admin of your photo storage. Your gaming account should not be connected to your bank.
+
+Step 5: Check your apps.
+Look at the apps and services that have access to your accounts. Every time you sign in with Google, Facebook, or Apple, you are granting that app some access to your data. Review the list. Remove the apps you no longer use. Each one is a potential vulnerability.
+
+Step 6: Write it down.
+Open your lab notebook and write:
+
+LESSON 3 — LEAST PRIVILEGE AUDIT OF MY ACCOUNTS
+Date: [today]
+Account: [name]
+  Excess privileges found: [list]
+  Actions taken: [what I removed or restricted]
+Account: [name]
+  Excess privileges found: [list]
+  Actions taken: [what I removed or restricted]
+Account: [name]
+  Excess privileges found: [list]
+  Actions taken: [what I removed or restricted]
+Apps with access: [list — which ones I removed]
+Result: [how much access did I reduce, in rough terms]
+
+IMAGE 2 — Flowchart: A horizontal flowchart diagram showing the cyber kill chain: six rounded rectangles in a left-to-right sequence — Reconnaissance → Weaponization → Delivery → Exploitation → Installation → Actions on Objectives — connected by arrows. Below each box, a small one-line example in monospace font. A parallel dashed line at the bottom labeled Defence: detect → contain → eradicate. Clean, white background, navy and red accents, professional diagram style, 16:9, high resolution.
+
+Part 10 — Why This Matters for the Rest of Module 2
+
+Let me say something plainly.
+
+Least privilege is the principle that the other principles in this module are built on. Zero trust assumes that no request is trusted by default — which is least privilege applied to every request. Defence in depth assumes that each layer has limited access, so that breaching one layer does not give the attacker everything. Secure defaults assume that the safe starting point is the one with the least access. Separation of duties assumes that no single person has enough access to complete a dangerous transaction alone.
+
+If you understand least privilege, the rest of Module 2 is a set of consequences. Each principle is what you get when you apply least privilege to a different part of the system.
+
+Part 11 — Summary and Glossary
+
+Here is what we covered.
+
+Least privilege is the principle of giving every person, every program, and every system exactly the access they need to do their job, and nothing more. It is the single principle that, if applied correctly, would have prevented the majority of the breaches studied in Module 1.
+
+The implementation has six steps: inventory the access, justify every access, reduce to the minimum, use roles instead of individuals (RBAC), use just-in-time access, and monitor and review quarterly. The two legitimate exceptions are emergency access and break-glass access, both of which must be temporary, documented, monitored, and reviewed.
+
+The cost of violating least privilege is that every excess privilege becomes a stepping stone for the attacker. The defender’s strategy is to make the attack surface small and the blast radius even smaller. Least privilege does not stop the attacker from getting in. It stops them from getting anywhere once they are in.
+
+Glossary of 8 terms:
+
+Least privilege — giving every user and system exactly the access they need, and no more.
+Privilege — any ability to do something that affects the system: read, write, execute, configure.
+Need-to-know — the justification that an access is required for a specific job task.
+Just-in-time access — access granted only when needed, for the shortest possible time, and revoked immediately.
+Privileged access management — the systems and processes for controlling and monitoring administrator and elevated access.
+Blast radius — the amount of damage that can be caused by a single compromise.
+Break-glass access — a highly privileged account used only in emergencies, always audited.
+Access review — the periodic audit of who has what access, and whether it is still justified.
+Part 12 — Practice: 5 Quick-Check Questions
+Define least privilege in one sentence using your own words.
+Why is least privilege considered the most important principle in cybersecurity? Cite one breach from Module 1 as evidence.
+What are the two legitimate exceptions to least privilege, and what four conditions must they meet?
+What is the difference between giving someone permanent access and giving them just-in-time access?
+Choose one account from your life. What is one excess privilege you found, and what did you do about it?
+
+
+Diagram Placement Summary
+Image	Location in lesson	What it shows
+Image 1	After Part 4 (Concept from Scratch)	Least privilege comparison: left side shows a marketing employee with arrows to six resources (excessive access, red); right side shows the same employee with one thin arrow to the marketing CRM only (green)
+Image 2	After Part 5 (How It Works)	Kill chain flowchart: reconnaissance → weaponization → delivery → exploitation → installation → actions on objectives, with defence path
+Image 3	After Part 9 (Guided Mini-Lab)	Terminal screenshot: dark-themed terminal showing python3 --version, which nmap, which tshark, echo ‘Lab toolkit ready’
+Image 4	After Part 10 (Why This Matters)	Three-column comparison table: security vs privacy vs safety

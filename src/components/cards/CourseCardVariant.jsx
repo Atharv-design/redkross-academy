@@ -18,14 +18,15 @@ export default function CourseCardVariant({
 
   const resolveVariantIndex = () => {
     const raw = variantId || course.card_variant;
-    if (typeof raw === 'string') {
+    if (typeof raw === 'string' && raw !== 'random') {
       const match = raw.match(/variant-?(\d+)/i);
       if (match) {
         const num = parseInt(match[1], 10);
         return ((num - 1) % 10 + 10) % 10;
       }
     }
-    return (variantIndex % 10 + 10) % 10;
+    // Random choice from 10 distinct card designs
+    return Math.floor(Math.random() * 10);
   };
 
   const variant = resolveVariantIndex();

@@ -7,7 +7,7 @@ import {
 import { mockEngine } from '../../services/db/mockEngine';
 import { apiClient } from '../../services/apiClient';
 import { socketClient } from '../../services/socket/socketClient';
-import { resolvePdfUrl } from '../../services/db/videoStorage';
+import { resolvePdfUrl } from '../../services/db/assetStorage';
 
 /**
  * AdminAssignmentsPage — Rubric Grading & PDF Assessment Studio

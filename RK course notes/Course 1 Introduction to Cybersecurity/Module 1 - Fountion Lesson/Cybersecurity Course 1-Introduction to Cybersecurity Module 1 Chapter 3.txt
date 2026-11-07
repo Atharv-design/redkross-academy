@@ -1,0 +1,284 @@
+Course 01: Introduction to Cybersecurity
+Module 1: Foundations
+Lesson 3: Assets and Data Types
+Part 1 — Hook: Why This Matters
+
+Before a doctor can treat you, they have to know what part of your body is sick. Before a mechanic can fix your car, they have to know which component is broken. Before a firefighter can put out a fire, they have to know what is burning.
+
+Before a cybersecurity professional can protect anything, they have to know what needs protecting.
+
+This lesson is about that inventory. We are going to build a complete map of everything that has value in a modern organisation — and in your own life. Some of it is obvious: money, customer records, source code. Some of it is not obvious at all: your reputation, your attention, the trust of your users, the uptime of a service nobody thinks about until it stops working.
+
+If you cannot name it, you cannot protect it. That is the rule of this lesson, and it is the rule of the entire course.
+
+Part 2 — Learning Objectives
+
+By the end of this lesson you will be able to:
+
+Define an “asset” in cybersecurity and distinguish it from a resource.
+Classify assets into the four standard categories: data, systems, people, and physical.
+Identify and classify the common data types found in an organisation, including sensitive and regulated types.
+Explain the difference between structured, semi-structured, and unstructured data.
+Build a simple asset inventory for a fictional company.
+Connect asset classification to the CIA triad from Lesson 1.
+Part 3 — Prerequisites
+
+You should have finished Lessons 1 and 2. You need to remember the CIA triad (confidentiality, integrity, availability) and the idea of the attack surface. If those are fuzzy, pause and review. This lesson depends on them heavily.
+
+Part 4 — Concept from Scratch
+
+Let us start with the hardest word in cybersecurity: asset.
+
+An asset is anything that has value to an organisation and that the organisation would miss, lose, or be harmed by if it were stolen, destroyed, or made unavailable. That is a long definition, so let me give you the short version.
+
+An asset is anything you would cry over if it disappeared.
+
+Now, here is the part that surprises most beginners. An asset is not the same as a resource. A resource is anything you use to do work — a desk, a chair, a laptop, a software license. An asset is anything whose loss would hurt you. Your laptop is a resource. The customer database stored on that laptop is an asset. Your office chair is a resource. The building it is in is an asset, because if the building burns down, you lose everything inside it.
+
+The difference matters because organisations spend millions of dollars protecting resources — laptops, software, furniture — and almost nothing protecting the actual assets, which are usually invisible until it is too late.
+
+IMAGE 1 — Asset classification diagram: A large rectangle labeled ORGANISATION divided into four quadrants. Top-left: Data Assets with examples — customer records, source code, financial data, logs. Top-right: System Assets — servers, network devices, applications, endpoints. Bottom-left: People Assets — employees, contractors, executives, customers. Bottom-right: Physical Assets — buildings, data centres, hardware, documents. Each quadrant has a small icon. In the centre, a circle labeled VALUE with arrows pointing outward to all four quadrants. Clean, white background, navy and teal colours, professional diagram style, 16:9, high resolution.
+
+Let us now walk through each of the four categories, because each one needs different protection.
+
+Part 5 — How It Works: The Four Categories of Assets
+Category 1: Data Assets
+
+Data is the most important asset category in the modern world, and it is the one that beginners underestimate the most. Data is not one thing. It is many things, and each type of data needs different protection.
+
+Let us classify data into three groups based on structure, because structure determines how you protect it.
+
+Structured data lives in databases. It is organised into rows and columns. Think of a spreadsheet or a customer table. Every row is a record. Every column is a field. Examples: customer names and addresses, employee salary records, product inventory, transaction logs. Structured data is the easiest to protect because it is the easiest to find. You know where it is. You know what it contains. You can encrypt the database, control access with user accounts, and back it up automatically.
+
+Semi-structured data is data that has some organisation but does not fit neatly into rows and columns. Think of a JSON file from an API, an XML configuration file, or a log file that follows a format but is not a database. Examples: application logs, configuration files, API responses, email headers. Semi-structured data is harder to protect than structured data because it is scattered across systems. A single application might write logs in ten different places, and nobody remembers where all of them are.
+
+Unstructured data has no organisation at all. Think of a Word document, a PDF report, a video recording, a photo, a voice memo. This is the largest category — estimates say 80 to 90 percent of all data in an organisation is unstructured. And it is the hardest to protect, because it is everywhere. It is in shared folders, on employees’ laptops, in email attachments, in cloud storage, and in chat messages. You cannot encrypt it all automatically, because most of it is created by people who do not think about security at all.
+
+Now let us look at the specific data types that matter, because each one has specific legal and technical requirements.
+
+Customer data. Names, addresses, phone numbers, email addresses, purchase history. This is the data that gets stolen in every retail breach. It is valuable to attackers because it can be sold, used for identity fraud, or used for phishing attacks against the customer.
+
+Financial data. Bank account numbers, credit card numbers, transaction records, invoices, payroll. This is the most directly valuable data. It is protected by strict standards — the PCI DSS for card data, tax regulations for financial records, and in India, the Companies Act requires certain financial records to be kept for specific periods.
+
+Employee data. Salary records, performance reviews, medical information, tax forms, home addresses, family details. This data is sensitive in a different way. A customer data breach is embarrassing. An employee data breach can ruin someone’s life, because it includes things like medical conditions and home addresses that can be used for harassment.
+
+Intellectual property. Source code, product designs, research, algorithms, customer lists, business plans. This is the data that makes a company worth something. When a competitor steals your source code, you do not just lose data — you lose your competitive advantage. This is why industrial espionage is one of the most common motives for cyberattacks.
+
+Health data. Medical records, test results, prescriptions, hospital admission records. In India, this is protected by the Digital Personal Data Protection Act 2023. In the United States, by HIPAA. Health data is the most sensitive category because it is deeply personal and cannot be changed. If your credit card number is stolen, you get a new card. If your medical record is stolen, you cannot get a new one.
+
+Log data. Records of what happened on a system — who logged in, what they accessed, what errors occurred. Logs are not glamorous, but they are the single most important asset for detecting attacks. Every major incident we studied in Lesson 2 was discovered by looking at logs. If you do not collect logs, you cannot detect attacks. If you do not keep them, you cannot investigate after the fact.
+
+Backup data. Copies of everything else, kept separately. This is the asset that saves you when everything else is destroyed. In Lesson 2, WannaCry taught us that backups must be isolated and tested. A backup that is connected to the network is not a backup — it is just another copy of the data, and it will be encrypted too.
+
+IMAGE 2 — Data classification pyramid: A four-tier pyramid on a white background. Bottom tier (largest): Public data — marketing materials, annual reports, with a note “no protection needed.” Second tier: Internal data — policies, internal wikis, with a note “access control.” Third tier: Sensitive data — customer records, health data, source code, with a note “encryption + access control.” Top tier (smallest): Restricted data — source code for security products, cryptographic keys, merger plans, with a note “maximum protection, strict access.” Each tier is a different shade from navy (bottom) to amber (top). Clean, professional, 16:9, high resolution.
+
+Category 2: System Assets
+
+Systems are the machines and software that process, store, and transmit data. They are the engine room of any organisation.
+
+Endpoints are the devices people use: laptops, desktops, phones, tablets. There are more endpoints in a modern organisation than any other asset type, and each one is a potential entry point. The 2016 Dyn attack in Lesson 2 was launched through internet-connected cameras — endpoints nobody thought of as security-relevant.
+
+Servers are the machines that host services. Web servers, database servers, file servers, mail servers, application servers. Each server is a target. If you compromise a web server, you can serve malware to its visitors. If you compromise a database server, you can steal everything it stores.
+
+Network devices are the plumbing that connects everything: switches, routers, firewalls, load balancers, wireless access points. These are the assets that attackers use to move around. The Target breach in Lesson 2 succeeded because the attacker moved from the HVAC vendor’s network through Target’s own network devices to the cash registers.
+
+Applications are the software that does the work: email, spreadsheets, customer relationship management, accounting, and all the custom-built services. Applications are the most common attack target because they interact directly with users and often have vulnerabilities in how they handle input.
+
+Cloud services are the newest category and the fastest-growing. Storage, computing, databases, and software delivered over the internet instead of on-site. Cloud services are secure when configured correctly, but they are also the easiest to misconfigure. A single mistake in a cloud storage bucket can expose millions of records to the public internet in seconds.
+
+Industrial control systems are the assets that run the physical world: power plant controllers, water treatment systems, factory assembly lines, building management systems. We studied Stuxnet in Lesson 2, and it targeted exactly these. They are the most dangerous assets to compromise, because a cyberattack on them can cause physical harm.
+
+Category 3: People Assets
+
+This is the category that most security courses treat as an afterthought, and it is the most important one.
+
+Employees are assets because they hold knowledge, they make decisions, and they can be tricked. Every major breach in history involved an employee being phished, social-engineered, or simply making a mistake. The employee is simultaneously the strongest security asset (a trained employee catches attacks) and the weakest (an untrained employee clicks everything).
+
+Executives are a special sub-category. They have access to the most sensitive data, they make the most important decisions, and they are the most valuable phishing targets. The 2013 Target breach ended with the CEO losing their job. Executives are targeted with “whaling” — highly personalised phishing attacks that are so well-researched they look completely legitimate.
+
+Contractors and vendors are the people outside your organisation who have access to your systems. The Target breach came through an HVAC vendor. The SolarWinds attack came through a software vendor. Your security is only as strong as the people you let in through the front door.
+
+Customers are assets too, and this is a concept that took a long time for the industry to accept. Your customers trust you with their data. That trust is an asset. If you lose it, you lose business, and no firewall can restore it. The TJX breach in Lesson 2 cost the company over 200 million dollars, but the real cost was the damage to its reputation, which took years to repair.
+
+Category 4: Physical Assets
+
+Physical assets are the things you can touch, and they are easy to forget in a digital world. But they are the foundation everything else sits on.
+
+Buildings and offices. Your office is an asset. If it is destroyed or occupied by the wrong people, everything inside it is at risk. Physical security — locks, access cards, guards, CCTV — is the first layer of cybersecurity, and it is the layer that most companies get right by accident rather than by design.
+
+Data centres and server rooms. These are the most valuable physical spaces in any organisation. They contain the servers that run everything. Access to a data centre should be restricted, monitored, and logged. A person with physical access to a server can bypass every software control you have.
+
+Hardware. Laptops, servers, network devices, phones, USB drives. Hardware is an asset because it contains data, and it is easy to lose. A laptop left on a train is a data breach. A USB drive found in a parking lot is a classic attack vector — Stuxnet spread this way.
+
+Paper documents. Yes, paper still matters. A printed customer list left on a photocopier is a data breach. Shredders are a security control. Physical records are subject to the same retention and destruction rules as digital ones.
+
+Part 6 — Example: Build an Asset Inventory for “Acme Manufacturing”
+
+Let us now do something practical. We are going to build a simple asset inventory for a fictional company. This is the first thing any security team does when they start a job, and you are going to do it right now.
+
+Acme Manufacturing is a company with 200 employees. They make and sell industrial components. They have a website, an online store, a warehouse, and an office. Here is their asset inventory.
+
+Data assets:
+
+Customer database: 50,000 records with names, addresses, phone numbers, and purchase history.
+Employee database: 200 records with salaries, tax information, and medical details.
+Product designs: CAD files for 150 products. This is their intellectual property.
+Financial records: accounts receivable, accounts payable, payroll, tax filings.
+Website source code: the online store’s code, including payment processing logic.
+System logs: server logs, application logs, firewall logs, kept for 90 days.
+Backups: daily backups of all data, stored offsite and one copy offline.
+
+System assets:
+
+200 employee laptops.
+20 office desktop computers.
+3 servers in the office: one web server, one database server, one file server.
+Network equipment: one firewall, two switches, one wireless router, one VPN appliance.
+The company website and online store, hosted on a cloud provider.
+Email service: 200 email accounts.
+Warehouse management software running on 5 terminals in the warehouse.
+
+People assets:
+
+200 employees, including 5 executives with access to financial data.
+12 contractors who work on the website and IT support.
+3 external vendors: an HVAC company, an accounting firm, and a marketing agency, all with some network access.
+
+Physical assets:
+
+The office building, including the server room.
+The warehouse, including the inventory.
+All the laptops, desktops, and network equipment listed above.
+Paper documents: purchase orders, sales contracts, employee files.
+
+Now let us apply the CIA triad to one asset and see what happens.
+
+Take the customer database. It is worth protecting because:
+
+Confidentiality: Customers do not want their purchase history public. If it leaks, Acme loses trust and faces fines.
+Integrity: If an attacker changes a customer’s address, a shipment goes to the wrong place. If they change a price in the database, the company loses money.
+Availability: If the database is unavailable, the online store cannot process orders. During a busy season, this could mean thousands of dollars lost per hour.
+
+Notice that all three goals matter for one asset. This is why asset classification is the first step in every security plan. You cannot protect something until you know what it is, where it is, and which of the three goals matters most to it.
+
+Part 7 — Attack and Defence View
+
+Now let us look at assets from the attacker’s perspective. This is the most important way to think about security, and it is simple.
+
+The attacker wants one of three things from every asset:
+
+Access. They want to get into the system that holds the asset.
+Data. They want to copy or steal the asset.
+Control. They want to use the asset against you — turning your server into part of a botnet, using your credentials to reach other systems, or encrypting your data and demanding ransom.
+
+Every attack we studied in Lesson 2 fits into one of these three categories. The Morris Worm wanted access and control. Melissa wanted access. SQL Slammer wanted control. TJX wanted data. Stuxnet wanted control. Target wanted data and control. Dyn wanted control. WannaCry wanted control and data. SolarWinds wanted access and data.
+
+The defender’s job is to deny all three. You deny access with authentication, network segmentation, and patching. You deny data theft with encryption, access controls, and monitoring. You deny control with isolation, backups, and detection.
+
+And here is the key insight that connects everything in this lesson: you cannot defend what you have not inventoried. If an attacker finds a system that nobody in the organisation knows exists — a forgotten test server, an old database nobody uses, a shadow IT application set up by a well-meaning employee — that system is completely undefended. It does not matter how strong your firewall is. The attacker walks in through the door you did not know was there.
+
+This is why the first step of every security programme is an asset inventory. Not a firewall. Not antivirus. An inventory. You have to know what you have before you can protect it.
+
+Part 8 — Common Mistakes Beginners Make
+
+Mistake 1: Thinking assets are only digital. They are not. People are assets. Buildings are assets. Paper documents are assets. A company that installs a perfect network firewall but leaves the server room unlocked has not improved its security at all. The attacker walks in through the door.
+
+Mistake 2: Confusing resources with assets. Your laptop is a resource. The data on it is the asset. Your office is a resource. The customer database stored in it is the asset. Organisations spend money on resources and ignore assets. Do not do that.
+
+Mistake 3: Treating all data as equally sensitive. Not all data is the same. Your marketing brochure does not need the same protection as your source code. Treating everything as highly sensitive leads to two bad outcomes: you spend too much money protecting unimportant things, and you spend too little protecting the important ones. Classification is about prioritising your limited security budget where it matters most.
+
+Mistake 4: Forgetting that people are assets too. The best security technology in the world is useless against an employee who clicks a phishing link. The best firewall is useless against an executive who emails their password to someone pretending to be their assistant. People are part of the asset map, not outside it. Train them, test them, and treat them as a security control, not a security problem.
+
+Mistake 5: Not keeping the inventory up to date. An asset inventory from 2024 is useless in 2026. New applications appear, old ones are retired, employees come and go, vendors change. The inventory is a living document. Review it at least every quarter, and every time something major changes — a merger, a new product launch, a move to a new office.
+
+Part 9 — Guided Mini-Lab: Inventory Your Own Digital Life
+
+Let us now do something personal. This takes 15 minutes and requires only a notebook or a text file.
+
+Step 1: List your digital accounts.
+Write down every online account you have that requires a password. Include email, social media, banking, shopping, streaming, cloud storage, gaming, and anything else. Do not judge the list. Just write it all down. Most people are surprised by how many accounts they have — often 30 or more.
+
+Step 2: Classify each one.
+For each account, ask: what would happen if someone took control of it?
+
+Low impact: A streaming service or a forum. Losing it is annoying but not life-changing.
+Medium impact: A shopping site or a social media account. The attacker could buy things in your name or impersonate you.
+High impact: Your email, your bank, your cloud storage, your password manager. The attacker could steal your money, your identity, or your entire digital life.
+
+Step 3: Identify the data you hold.
+For your three most important accounts, what data do you have stored there?
+
+Your email: messages, contacts, documents, photos.
+Your cloud storage: photos, files, backups.
+Your social media: photos, messages, friends list, location history.
+
+Step 4: Apply the lesson.
+Now write one sentence for each of your three most important accounts:
+
+If [account name] is compromised, the data at risk is [list], and the worst-case
+impact is [describe it in one sentence].
+
+For example: “If my email is compromised, the data at risk is my messages, contacts, and password reset links, and the worst-case impact is that the attacker can reset my passwords for every other account I own.”
+
+Step 5: Write it down.
+Open your lab notebook and write:
+
+LESSON 3 — MY DIGITAL ASSET INVENTORY
+Date: [today]
+Total accounts: [number]
+High-impact accounts: [list]
+Data at risk in my email: [list]
+Worst-case impact: [one sentence]
+Action items: [what you will do — reuse passwords? change them. unique passwords? set them up.]
+
+IMAGE 3 — Tool screenshot: A photorealistic screenshot of a dark-themed terminal window on a black background, showing a Linux command prompt. Commands visible: python3 --version returning 3.11, which nmap returning /usr/bin/nmap, which tshark, and a final line echo 'Lab toolkit ready' with a blinking cursor. Monospace font, subtle window decoration (minimize/maximize buttons top-left). Slight glow on text. Looks like an actual terminal capture, not cartoonish. 16:9.
+
+Part 10 — Why This Matters for the Rest of Your Life
+
+Let me say something plainly.
+
+You are going to learn about firewalls, encryption, penetration testing, and incident response. It is a lot of technical detail, and it is easy to get lost in it. This lesson is the reason the detail matters.
+
+Every tool you will learn was built to protect a specific type of asset. The firewall protects network assets. Encryption protects data assets. Access controls protect people assets. Physical security protects physical assets. If you do not understand what an asset is, you will learn the tools as a collection of magic spells with no connection to anything, and you will forget them within a month.
+
+You are learning to be a protector, not a technician. A technician knows how to configure a firewall. A protector knows what the firewall is protecting, why it is worth protecting, and what to do when the firewall fails. This lesson is the foundation of the protector’s mindset.
+
+Part 11 — Summary and Glossary
+
+Here is what we covered.
+
+An asset is anything with value whose loss would harm an organisation. Assets are not the same as resources. Assets fall into four categories: data, systems, people, and physical.
+
+Data assets are the most important and the most varied. They are classified by structure into structured data (databases), semi-structured data (logs, JSON, XML), and unstructured data (documents, photos, videos). They are also classified by sensitivity into public, internal, sensitive, and restricted. The specific data types that matter are customer data, financial data, employee data, intellectual property, health data, log data, and backup data.
+
+System assets include endpoints, servers, network devices, applications, cloud services, and industrial control systems. People assets include employees, executives, contractors, and customers. Physical assets include buildings, data centres, hardware, and paper documents.
+
+The attacker wants one of three things from every asset: access, data, or control. The defender’s job is to deny all three. And the key insight is that you cannot defend what you have not inventoried. An unknown system is an undefended system.
+
+Glossary of 12 terms:
+
+Asset — anything with value to an organisation whose loss would cause harm.
+Resource — anything used to do work; not necessarily valuable if lost.
+Structured data — data organised in rows and columns, usually in a database.
+Unstructured data — data with no organisation: documents, photos, videos.
+Data classification — the process of sorting data by sensitivity so that each level gets the right protection.
+Endpoint — any device that connects to a network: laptop, phone, tablet, camera.
+Shadow IT — systems set up by employees without approval from the IT department.
+Least privilege — giving each person or system only the access they need, nothing more.
+Data minimisation — collecting and keeping only the data you need, deleting the rest.
+Intellectual property — creations of the mind: source code, designs, research, algorithms.
+Attack surface — the total set of points where an attacker can enter or interact with a system.
+Asset inventory — a complete list of all assets, their location, their owner, and their sensitivity level.
+Part 12 — Practice: 5 Quick-Check Questions
+What is the difference between an asset and a resource? Give one example of each.
+Name the four categories of assets and give one example of each.
+What are the three types of data based on structure, and which one is the hardest to protect? Why?
+Explain the sentence “you cannot defend what you have not inventoried” in your own words.
+List three data types that are legally regulated, and name the regulation that applies to each.
+
+Diagram Placement Summary
+Image	Location in lesson	What it shows
+Image 1	After Part 4 (Concept from Scratch)	Four-quadrant asset classification diagram
+Image 2	After Part 5 (How It Works)	Data classification pyramid: public → internal → sensitive → restricted
+Image 3	After Part 9 (Guided Mini-Lab)	Terminal screenshot of toolkit setup
+Image 4	After Part 10 (Why This Matters)	Three-column comparison table (reused from Lesson 1)

@@ -16,10 +16,8 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  const rawDestination = location.state?.from?.pathname || '/student';
-  const safeDestination = rawDestination.startsWith('/') && !rawDestination.startsWith('//')
-    ? rawDestination
-    : '/student';
+  // User login redirect requirement: user login chahe kahi se bhi kare redirect direct home page pe he hona chahiye
+  const safeDestination = '/';
 
   React.useEffect(() => {
     if (currentUser) {

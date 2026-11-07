@@ -1,0 +1,194 @@
+Course 01: Introduction to Cybersecurity
+Module 5: Identity and Access
+Lesson 5: Privileged Access Management (PAM) and the Account Lifecycl
+
+Part 1 — Hook: The Omnipotent Admin Trap and the Corporate Ghost Town
+Imagine an old enterprise manufacturing company. For fifteen years, their IT infrastructure was managed by a single legendary system administrator named Dave. Dave knew every server, every router, and every database password. To make his job easy, Dave created a master account for himself called SuperAdmin with a password stored in a text file on his desktop. Dave had full, unrestricted root access to every machine in the enterprise.
+
+Three years ago, Dave retired. The company threw him a retirement party, wished him well, and HR dutifully revoked his primary Active Directory user account. But they forgot about the SuperAdmin account. They forgot about the secondary backup administrative scripts Dave had hardcoded with SuperAdmin credentials. They forgot about the SSH keys Dave had placed on twenty legacy Linux servers in the basement.
+
+Two weeks ago, an attacker breached the company’s perimeter via a vulnerable public-facing web application. Once inside, the attacker scanned the internal network, discovered the hardcoded credentials for the forgotten SuperAdmin account inside an unencrypted internal wiki page, and authenticated.
+
+Because SuperAdmin was an omnipotent account with zero restrictions, zero session monitoring, and no Multi-Factor Authentication, the attacker instantly inherited absolute control over the entire corporate domain. They did not need to crack passwords or escalate privileges. They simply walked through the front door using Dave’s immortal ghost account. Within four hours, the attacker deployed ransomware across 10,000 endpoints, exfiltrated every customer record, and wiped the corporate backups. The company suffered a catastrophic, business-ending outage—all because of an unmanaged, unmonitored privileged account left behind by a retired employee.
+
+This real-world horror story illustrates the central thesis of this lesson: Standard user accounts are dangerous when compromised; privileged accounts are fatal.
+
+In enterprise security, privileges are like nuclear codes. If you leave them lying around, unmonitored, or shared among multiple humans, disaster is not a question of if, but when. Mastering Privileged Access Management (PAM) and governing the Account Lifecycle from the moment an employee joins the company to the exact second they depart is the ultimate test of an organization’s maturity.
+
+Part 2 — Learning Objectives
+By the end of this comprehensive lesson, you will be able to:
+
+Define privileged access across operating systems, databases, applications, and cloud environments, distinguishing between standard users and privileged entities.
+Deconstruct Privileged Access Management (PAM) architecture, detailing the mechanics of credential vaulting, session recording, Just-In-Time (JIT) elevation, and Just-Enough Administration (JEA).
+Map the three phases of the Account Lifecycle (Provisioning, Active Management, and Deprovisioning), identifying critical vulnerability windows in each.
+Analyze how attackers abuse privileged accounts through credential dumping (LSASS/Mimikatz), Pass-the-Hash, and Golden Ticket attacks against Kerberos KDCs.
+Design and implement an automated identity governance pipeline using SCIM (System for Cross-domain Identity Management) to eliminate orphaned accounts and privilege creep.
+Part 3 — Prerequisites
+Before proceeding with this lesson, ensure you have reviewed:
+
+Module 2 (Core Principles): Least Privilege, Separation of Duties, and Defence in Depth.
+Module 5, Lesson 3: MFA Types and Password Managers (Zero-Knowledge vaults and session security).
+Module 5, Lesson 4: Access Control Models (DAC, MAC, RBAC, ABAC authorization enforcement).
+Part 4 — Concept from Scratch: What is Privileged Access?
+To protect privileged access, we must first define what makes an account “privileged.”
+
+A Privileged Account is any identity that possesses elevated permissions—rights that exceed those of standard users—allowing the entity to modify system configurations, access sensitive databases, install software, create or delete other user accounts, and bypass standard security controls.
+
+       USER PRIVILEGE SPECTRUM
+┌──────────────────────────────────────┐
+│ STANDARD USERS                       │
+│  • Read/write own files              │
+│  • Cannot install software           │
+│  • Limited blast radius              │
+├──────────────────────────────────────┤
+│ PRIVILEGED USERS (IT Admins, DBA)    │
+│  • Modify system configurations      │
+│  • Access all databases & files      │
+│  • High blast radius                 │
+├──────────────────────────────────────┤
+│ OMNIPOTENT ACCOUNTS (Root / System)  │
+│  • Unrestricted kernel control       │
+│  • Bypass all security checks        │
+│  • Total system compromise potential │
+└──────────────────────────────────────┘
+The Major Domains of Privilege:
+Operating System Root / Administrator:
+Linux/Unix: root (UID 0). Can execute any command, modify any file, read any memory space.
+Windows: NT AUTHORITY\SYSTEM or local Administrator / Domain Admins. Can modify the Windows registry, load kernel drivers, and disable endpoint security agents.
+Database Administrators (DBA):
+Accounts with sysadmin, db_owner, or SUPERUSER privileges. They can read raw tables containing millions of plaintext or hashed customer records, bypass application-level logging, and truncate audit trails.
+Cloud Infrastructure Owners:
+AWS Root Account, Azure Subscription Owner, GCP Project Owner. They can spin up cryptocurrency mining rigs, delete entire virtual data centers, modify IAM policies, and create rogue backdoors.
+Service & Application Accounts:
+Non-human accounts (svc-sql, jenkins-deployer) running background daemons, CI/CD pipelines, and API integrations. These often hold static, unrotated passwords embedded in plaintext configuration files.
+Part 5 — Privileged Access Management (PAM) Architecture
+Because privileged accounts are the primary target for advanced threat actors, organizations cannot rely on standard Active Directory groups or basic password policies to protect them. They require a dedicated architectural layer known as Privileged Access Management (PAM).
+
+A mature PAM solution implements four core security pillars:
+
+1. Credential Vaulting and Automated Rotation
+The Mechanism: Privileged passwords are never known to the human administrators who use them. Instead, administrator credentials (e.g., the root password for a production database) are stored inside a hardened, encrypted cryptographic vault (e.g., CyberArk, BeyondTrust, HashiCorp Vault).
+Automated Rotation: The PAM vault automatically changes the root password every 24 hours, or immediately after a session ends, using a cryptographically secure random generator. Humans cannot write down or memorize passwords they never see.
+2. Just-In-Time (JIT) Elevation
+The Mechanism: Administrators operate using standard, low-privilege accounts for their daily tasks (reading email, writing code). When an admin needs to perform a privileged action (e.g., restarting a firewall service), they submit a request to the PAM system.
+Approval & Expiration: The PAM system verifies the request (often requiring manager approval or a ticketing system reference), temporarily elevates the user’s account privileges for a strictly limited window (e.g., 30 minutes), and automatically revokes the privilege the exact second the timer expires.
+3. Just-Enough Administration (JEA)
+The Mechanism: Instead of granting an admin full Domain Admin rights just to restart a print spooler service, JEA restricts the elevated session so the administrator can execute only the specific pre-approved commands required for their current task. All other system commands return an “Access Denied” error.
+4. Session Monitoring, Proxying, and Recording
+The Mechanism: All privileged sessions are proxied through a secure gateway. The administrator does not connect directly to the target server; they connect to the PAM proxy, which establishes the connection on their behalf.
+Full Video Recording: The PAM gateway records every keystroke, mouse click, and terminal output as a video file. If an administrator goes rogue or makes a catastrophic configuration error, security teams have an immutable forensic audit trail of every action taken during the session.
+[DIAGRAM 1 PLACEMENT: Privileged Access Management (PAM) Vault & JIT Workflow]
+
+Part 6 — The Account Lifecycle: Onboarding, Management, and Offboarding
+Privileged access management is only half the battle. Organizations must also govern the lifespan of every single identity—standard and privileged alike—through the Account Lifecycle.
+
+Every account has a birth, a career, and a death. Security vulnerabilities cluster heavily around the transitions between these phases.
+
+                  THE ACCOUNT LIFECYCLE
+┌──────────────────┐      ┌──────────────────┐      ┌──────────────────┐
+│  1. PROVISIONING │ ──>  │  2. MANAGEMENT   │ ──>  │ 3. DEPROVISIONING│
+│  • HR Integration│      │  • Role Changes  │      │  • Offboarding   │
+│  • SCIM Protocol │      │  • Recertif.     │      │  • Revocation    │
+└──────────────────┘      └──────────────────┘      └──────────────────┘
+Phase 1: Onboarding and Provisioning (The Birth)
+The Process: When a new employee is hired, their data enters the Human Resources Information System (HRIS) (e.g., Workday, BambooHR). An automated identity governance pipeline detects the new record and provisions the appropriate accounts across all SaaS tools, local directories, and cloud platforms.
+Automated Protocols (SCIM): Modern enterprise provisioning relies on SCIM (System for Cross-domain Identity Management), an open standard protocol (RFC 7643 / RFC 7644) that automates the exchange of user identity information between identity providers and service providers over REST APIs.
+Security Pitfall: Manual provisioning. When IT staff manually create accounts via helpdesk tickets, typos happen, default passwords are reused, and employees are frequently granted excessive permissions (“Give them the same access as Bob”) in violation of Least Privilege.
+Phase 2: Active Management and Modifications (The Career)
+The Process: Employees change departments, get promoted, take parental leave, or work on temporary cross-functional projects.
+Privilege Creep: As employees move through an organization, their permissions accumulate. When Alice moves from Marketing to Finance, her Marketing permissions are rarely revoked; she simply acquires Finance permissions on top of them. Over years, employees accumulate god-like access across multiple business units.
+Access Recertification (Attestation): To combat privilege creep, organizations run periodic Access Reviews. Department managers receive an automated report listing all employees in their team and their current system permissions, requiring the manager to explicitly click “Recertify” or “Revoke” for each access right.
+Phase 3: Deprovisioning and Offboarding (The Death)
+The Process: When an employee resigns, is terminated, or retires, their access must be terminated immediately.
+The Danger of Orphaned Accounts (Zombie Accounts): If offboarding is manual, accounts are often left active. An “orphaned account” (or zombie account) is an active identity with no human owner. Because no one monitors it, attackers can take it over silently and maintain long-term persistence inside the corporate network.
+Immediate Revocation: In a mature automated lifecycle, terminating an employee in Workday triggers an immediate SCIM API call that disables their Active Directory account, revokes all active OAuth/SAML session tokens, terminates VPN access, and archives their email box within 60 seconds.
+[DIAGRAM 2 PLACEMENT: The Account Lifecycle: Onboarding, Privilege Creep, and Deprovisioning]
+
+Part 7 — Attacker vs Defender Viewpoint
+The Attacker’s Exploitation Playbook
+ATTACKER PRIVILEGE ABUSE PLAYBOOK
+ ├─ LSASS Memory Scraping (Mimikatz) ──> Extracts Plaintext Kerberos Tickets / NTLM Hashes
+ ├─ Pass-the-Hash (PtHash) Attack ──────> Authenticates without knowing plaintext password
+ ├─ Golden Ticket Attack (Kerberos) ────> Forges forged TGT with 10-year expiration
+ └─ Living off the Land (LotL) ─────────> Abuses built-in admin tools (PowerShell, WMI)
+Credential Dumping via LSASS Memory Scraping (Mimikatz):
+Once an attacker gains local administrator or SYSTEM privileges on a Windows endpoint, they dump the memory of the LSASS (Local Security Authority Subsystem Service) process. LSASS caches plaintext credentials, Kerberos tickets, and NTLM password hashes for users who have recently logged into the machine.
+Pass-the-Hash (PtHash) Attacks:
+In legacy Windows environments using NTLM authentication, an attacker who extracts an administrator’s NTLM hash from LSASS does not even need to crack the password. They can inject the hash directly into network authentication packets to log into other domain machines, completely bypassing password hashing checks.
+Golden Ticket Attacks against Active Directory:
+If an attacker compromises the KRBTGT (Kerberos Ticket Granting Ticket) account inside an Active Directory domain, they extract its master NTLM hash. With this hash, they can forge arbitrary Kerberos Ticket Granting Tickets (TGTs) for any user, with any group membership, valid for any arbitrary timeframe (e.g., 10 years). The domain controller blindly trusts the forged ticket because it is signed with its own master key. This gives the attacker absolute, permanent dominion over the enterprise domain.
+The Defender’s Hardening Playbook
+Enforce Strict PAM Architecture: Never allow direct administrative logins to production servers. Force all admin traffic through a hardened PAM proxy with session recording and JIT elevation.
+Implement Windows Credential Guard & LSA Protection: Utilize hardware-based virtualization (VBS) to isolate the LSASS process in a secure memory enclave, preventing tools like Mimikatz from reading plaintext credentials from RAM.
+Frequent KRBTGT Key Rotation: Rotate the Active Directory KRBTGT account password twice a year. This automatically invalidates any forged Kerberos Golden Tickets created by an attacker.
+Deploy Automated SCIM Provisioning: Eliminate manual IT helpdesk account creation and offboarding, ensuring HR systems drive account lifecycles programmatically.
+[DIAGRAM 3 PLACEMENT: Attacker Privilege Escalation: LSASS Dumping to Golden Ticket Creation]
+
+Part 8 — Common Implementation Anti-Patterns & Pitfalls
+Anti-Pattern 1: Permanent Domain Admin Accounts
+The Mistake: IT administrators log into their daily workstations (reading emails, browsing the web) using accounts that are permanently members of the Domain Admins group.
+Why it Fails: If the admin clicks a phishing link while reading email, the malware executes with Domain Admin privileges, instantly compromising the entire enterprise.
+Remediation: Implement the Tiered Administration Model (Tier 0: Domain Controllers/Identity; Tier 1: Servers/Databases; Tier 2: Workstations). Admins must use separate, restricted accounts for daily tasks and elevate to Tier 0 accounts only inside isolated, jump-host environments.
+Anti-Pattern 2: Shared Administrative Accounts
+The Mistake: Creating a single account named dba_admin used by five different database administrators with a password written on a whiteboard.
+Why it Fails: Violates Non-Repudiation (Module 2, Lesson 2). When a database table is accidentally dropped at 3:00 AM, audit logs show only that dba_admin performed the action. Accountability is destroyed because management cannot prove which human being actually typed the command.
+Anti-Pattern 3: Unrotated Application Service Accounts
+The Mistake: A legacy application uses a service account with a password created in 2018 that has never been changed because “updating it breaks the legacy app.”
+Remediation: Migrate legacy applications to Group Managed Service Accounts (gMSA) in Windows or automated secret injection engines (e.g., HashiCorp Vault Agent) that rotate service credentials automatically without application restarts.
+[DIAGRAM 4 PLACEMENT: Enterprise Privileged Access Architecture: Tiered Administration & PAM Gateway]
+
+Part 9 — Guided Mini-Lab: Designing an Automated Offboarding Policy
+In this hands-on lab, we will design a programmatic offboarding workflow to ensure zero orphaned accounts.
+
+Scenario:
+You are the Identity Security Engineer at a financial firm. An employee in the accounting department resigns with a two-week notice. Design the exact technical steps that must occur on their final day.
+
+Your Task:
+Write out the automated offboarding runbook in your lab notebook:
+
+HR System Event: HR marks employee status as “Terminated” in Workday at 5:00 PM.
+IdP Revocation (SCIM): Workday triggers an immediate webhook to Microsoft Entra ID / Okta. What happens to active sessions?
+App Revocation: How do connected SaaS apps (Slack, Jira, Salesforce) receive the revocation signal?
+Endpoint & VPN Revocation: How is physical access card and VPN access terminated?
+Privileged Account Audit: If the employee held any temporary JIT admin rights, how do we verify they are purged?
+Write it down in your lab notebook:
+LESSON 5 — OFFBOARDING AUTOMATION RUNBOOK
+Date: [today]
+Trigger: HRIS Status Update = Terminated
+Step 1: Disable IdP User Account (Active Directory / Entra ID)
+Step 2: Revoke all active OAuth / SAML refresh tokens (Terminate active browser sessions)
+Step 3: Trigger SCIM deprovisioning API calls to downstream SaaS apps (Slack, Jira)
+Step 4: Disable physical badge access via physical security API integration
+Step 5: Archive mailbox and place legal hold on OneDrive / SharePoint data
+Audit Result: Zero orphaned accounts; all access severed within 60 seconds.
+Part 10 — Summary and Glossary
+Summary Comparison Table
+Access Level	Management Standard	Security Control	Primary Risk
+Standard User	SCIM Lifecycle, RBAC	MFA, Least Privilege	Phishing, Credential Stuffing
+Privileged Admin	PAM Vault, JIT Elevation	Session Recording, JEA	Lateral Movement, LSASS Dumping
+Omnipotent (Root)	Hardware Enclaves, Tiered Admin	Strict Segregation, Hardware Keys	Domain Takeover, Golden Tickets
+Service Account	gMSA / Vault Injection	Password Rotation, No Human Login	Hardcoded Password Exposure
+Glossary of Key Terms
+Privileged Account: An identity possessing elevated permissions that exceed standard user rights.
+Privileged Access Management (PAM): Specialized security solutions designed to vault, monitor, and secure administrative access.
+Just-In-Time (JIT) Elevation: Granting administrative privileges temporarily on-demand, with automatic expiration.
+Just-Enough Administration (JEA): Restricting an elevated session so an administrator can execute only pre-approved specific commands.
+Account Lifecycle: The continuous process of provisioning, actively managing, and deprovisioning identities.
+Orphaned Account (Zombie Account): An active user account belonging to a former employee or contractor that has no human owner.
+SCIM (System for Cross-domain Identity Management): An open standard protocol automating user provisioning across cloud apps.
+LSASS: Local Security Authority Subsystem Service; a Windows process that caches credentials in RAM, targeted by Mimikatz.
+Golden Ticket: A forged Kerberos Ticket Granting Ticket created using a compromised KRBTGT master hash, granting permanent domain dominance.
+Privilege Creep: The gradual accumulation of unnecessary permissions as an employee changes roles over time.
+Part 11 — Practice Questions & Further Reading
+Practice Questions
+Why is storing an administrator’s password inside a traditional password manager insufficient for enterprise Privileged Access Management (PAM)?
+Describe the security dangers of “Orphaned Accounts” (Zombie Accounts) and how automated SCIM provisioning prevents them.
+What is the difference between Just-In-Time (JIT) access and Just-Enough Administration (JEA)? How do they combine to enforce Least Privilege?
+Explain how an attacker utilizes Mimikatz against the Windows LSASS process to execute Pass-the-Hash attacks.
+Design a Tiered Administration Model for an enterprise network. What constitutes Tier 0, Tier 1, and Tier 2, and why must administrators never use Tier 0 accounts on Tier 2 workstations?
+Further Reading & Standards
+NIST SP 800-53 Rev. 5 (AC-6 / IA-2): Privileged Account Management and Identification/Authentication controls.
+CISA Guidance: Mitigating Privileged Access Vulnerabilities.
+Microsoft Enterprise Access Model: Securing privileged access across Tier 0, Tier 1, and Tier 2 environments.
+RFC 7643 / RFC 7644: System for Cross-domain Identity Management (SCIM) Core Schema and Protocol.
+

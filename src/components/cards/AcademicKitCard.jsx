@@ -22,20 +22,18 @@ export const ART_PRESETS = [
 /**
  * Resolves artwork, position, shape cut, and accent for any course.
  */
-export function resolveCourseDesign(course, index = 0) {
+export function resolveCourseDesign(course, index = null) {
   let resolvedIndex = index;
-  if (course?.card_variant) {
+  if (course?.card_variant && course.card_variant !== 'random') {
     const match = course.card_variant.match(/variant-?(\d+)/i);
     if (match) {
       resolvedIndex = (parseInt(match[1], 10) - 1) % ART_PRESETS.length;
     }
-  } else if (course?.id) {
-    let hash = 0;
-    for (let i = 0; i < course.id.length; i++) {
-      hash = (hash << 5) - hash + course.id.charCodeAt(i);
-      hash |= 0;
-    }
-    resolvedIndex = Math.abs(hash) % ART_PRESETS.length;
+  } else if (resolvedIndex !== null && typeof resolvedIndex === 'number') {
+    resolvedIndex = Math.abs(resolvedIndex) % ART_PRESETS.length;
+  } else {
+    // Random choice from 10 designs
+    resolvedIndex = Math.floor(Math.random() * ART_PRESETS.length);
   }
 
   const preset = ART_PRESETS[Math.abs(resolvedIndex) % ART_PRESETS.length];

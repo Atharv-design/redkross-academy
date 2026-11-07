@@ -1,0 +1,295 @@
+Course 01: Introduction to Cybersecurity
+Module 1: Foundations
+Lesson 2: History of Major Cybersecurity Incidents
+Part 1 — Hook: Why This Matters
+
+If you want to become a doctor, you study the patients who got sick. If you want to become a firefighter, you study the fires that burned buildings down. If you want to become a cybersecurity professional, you study the attacks that broke things.
+
+This lesson is that study session. We are going to look at the most important incidents in the history of computing — the moments when people realised that the systems they had built were not safe, and the world had to change because of it.
+
+Every single lesson you will take in this course is hiding inside one of these stories. The malware you will learn about in Course 10? It started with a 1988 worm. The ransomware you will learn to defend against? It started with a 2013 campaign. The supply chain attacks you will learn about in Course 12? They go all the way back to 2002.
+
+So open your notebook. These are not just stories. These are the reasons the field exists.
+
+Part 2 — Learning Objectives
+
+By the end of this lesson you will be able to:
+
+Name and describe at least six landmark cybersecurity incidents in chronological order.
+Explain what each incident taught the industry.
+Identify the pattern: how each incident led to a new law, a new tool, or a new way of thinking.
+Explain why the Morris Worm is considered the birth of modern cybersecurity.
+Describe the difference between a worm and a virus in simple terms.
+Connect at least three past incidents to defences you learned in Lesson 1.
+Part 3 — Prerequisites
+
+You should have finished Lesson 1. Specifically, you should remember the CIA triad, the six steps of the kill chain, and the idea of defence in depth. If any of those feel fuzzy, go back and read them. Everything in this lesson builds on them.
+
+Part 4 — Concept from Scratch
+
+Let us start with a simple idea that most people never learn.
+
+Every major cybersecurity incident was a turning point. Someone found a weakness, exploited it, caused damage, and then the world reacted. The reaction always followed the same pattern: first people were shocked, then they patched the specific hole, then they realised the hole was not the problem — the design was. Then they redesigned.
+
+If you can see this pattern, the history stops being a list of scary stories and becomes a set of lessons. Each lesson is a rule. Learn the rules and you will understand the present.
+
+Here is the rule in one sentence: Every incident teaches us that the thing we thought was safe was not, and the fix is never just a patch — it is a change in how we think.
+
+Let us now walk through the incidents in order, because the order matters. Each one built on the one before it.
+
+IMAGE 1 — Timeline diagram: A horizontal timeline on a white background spanning from 1988 to 2021. Key dates marked with dots: 1988 Morris Worm, 2003 SQL Slammer, 2007 TJX breach, 2010 Stuxnet, 2013 Target breach, 2016 Dyn DDoS, 2017 WannaCry, 2020 SolarWinds. Each dot has a short label and a small icon (worm, shopping bag, factory, cloud). The line grows thicker and the dots get closer together as time progresses, visually showing the acceleration of attacks. Clean, minimal, professional. 16:9, high resolution.
+
+Part 5 — How It Works: The Incidents, One by One
+Incident 1: The Morris Worm (1988) — The One That Started Everything
+
+What happened: In November 1988, a 23-year-old graduate student named Robert Tappan Morris at Cornell University released a computer program that was designed to measure the size of the internet. It was supposed to be a one-time experiment. But a coding mistake made it replicate itself endlessly. The worm infected roughly 6,000 computers — about 10% of the entire internet at the time — and brought them all to a crawl within hours.
+
+Why it was a big deal: Before this moment, nobody thought the internet could be brought down by code. The internet was a small, trusted network of universities and military research labs. People in it knew each other. The idea that a piece of software could spread on its own and crash thousands of machines was science fiction.
+
+What it taught us: This incident created three things that did not exist before:
+
+The first Computer Emergency Response Team (CERT). The Department of Defence created CERT at Carnegie Mellon University to respond to incidents like this. Every company with a security team today traces its lineage back to this one decision.
+The concept of a “worm.” Before 1988, “virus” and “worm” were not clearly separated. After 1988, we learned that a worm spreads by exploiting network weaknesses, while a virus spreads by attaching to files. You will use this distinction for the rest of the course.
+The idea that software needs to be patched. Morris exploited known weaknesses in Unix programs for which fixes already existed. The machines that were patched survived. The ones that were not patched died. This is the origin of “patch Tuesday,” the monthly security update cycle that every IT department still follows.
+
+The lesson: A system is only as strong as its oldest unpatched piece of software. This sentence is now 37 years old and it has never been more true.
+
+Incident 2: The Melissa Virus (1999) — The Day Email Became Dangerous
+
+What happened: A virus called Melissa spread through Microsoft Word documents. When someone opened an infected document, the virus used their email program to send a copy of itself to the first 50 people in their address book. Within days it was infecting millions of computers. Companies including Microsoft, Intel, and the US Marine Corps had to shut down their email systems entirely.
+
+Why it was a big deal: This was the moment the internet stopped being a technical problem and became a social problem. Melissa did not exploit a software bug. It exploited human behaviour: people open documents sent to them by people they know. The virus was named after a stripper in Florida, which tells you something about the mindset of the era — it was still seen as a prank.
+
+What it taught us:
+
+Email filters and attachment blocking became standard. Every email system you have ever used has some version of a spam filter, and Melissa is the reason.
+Macros are dangerous. Microsoft Word macros — small pieces of code inside documents — were disabled by default after this incident. If you have ever wondered why Word asks you “do you want to enable macros?” every time, this is why.
+Social engineering is a weapon. Melissa worked because it came from someone you knew. This is the same trick that phishing uses today. The technology changed; the psychology did not.
+
+The lesson: The easiest way into a system is not through a software bug. It is through a person you trust.
+
+Incident 3: SQL Slammer (2003) — Fifteen Minutes of Chaos
+
+What happened: In January 2003, a tiny 376-byte program exploited a buffer overflow vulnerability in Microsoft SQL Server and Desktop Engine. The worm spread so fast that it infected 90% of the vulnerable machines on the internet within 10 minutes. Internet traffic globally slowed to a crawl because every router was trying to copy the worm. Bank ATMs went dark. Delta Air Lines’ flight booking system failed. The stock market’s trading systems were disrupted.
+
+Why it was a big deal: Slammer was the fastest worm in history at the time. It doubled in size every 8.5 seconds. It demonstrated that a single vulnerability in a single piece of software could bring down critical infrastructure — not just computers, but money, flights, and markets.
+
+What it taught us:
+
+Buffer overflows are a design problem. A buffer overflow happens when a program writes more data into a memory space than it can hold, and in doing so overwrites the program’s own instructions. This is a mistake in how code is written, not just a missing patch. Slammer pushed the industry toward safer programming languages and tools like stack-smashing protection.
+Critical infrastructure is one network away from disaster. Banks, airlines, and stock exchanges all ran on the same internet that Slammer infected. There was no separation between “our systems” and “the internet.” That changed after 2003.
+Microsoft’s update process had to change. The patch for the Slammer vulnerability had been available for seven months before the worm hit. The problem was not that Microsoft did not write the patch. The problem was that nobody installed it. This forced Microsoft to build Automatic Updates, which now installs patches on your computer without asking.
+
+The lesson: Speed of spread beats size of target. Slammer was tiny. It was 376 bytes. It did enormous damage because it moved fast.
+
+Incident 4: The TJX Companies Breach (2007) — The Theft That Changed Retail Forever
+
+What happened: TJX, the parent company of T.J. Maxx, Marshalls, and HomeGoods, had its network hacked. The attacker stole credit and debit card records for 94 million customers. The breach was discovered in 2007 but the intrusion had started in 2005. The attacker had walked around the company’s wireless network like it was a public Wi-Fi cafe. The total cost eventually exceeded 200 million dollars.
+
+Why it was a big deal: This was the largest financial data breach at the time, and it was the first one to make ordinary shoppers realise that their credit card data was being stored, moved, and could be stolen. Before TJX, data breaches were mostly about government or military records. After TJX, they were about your shopping.
+
+What it taught us:
+
+Wireless networks need serious security. TJX used WEP encryption, which had been broken since 2001. Any attacker with a laptop and free software could crack it in minutes. WPA2 and WPA3 — the standards you use today — exist because of incidents like this.
+Data that is not needed should not be kept. TJX was storing credit card data far longer than it needed. This led to the principle of “data minimisation”: only collect what you need, and delete it as soon as you can.
+The PCI DSS standard got teeth. The Payment Card Industry Data Security Standard already existed, but TJX showed that companies were not following it. After 2007, banks started forcing retailers to comply, and non-compliance became expensive.
+
+The lesson: The data you store is the risk you carry. Every piece of customer data a company keeps is a potential breach waiting to happen.
+
+Incident 5: Stuxnet (2010) — The Worm That Changed the Definition of Cyber War
+
+What happened: Stuxnet was a computer worm discovered in 2010 that was designed to target a specific industrial facility: the Natanz nuclear enrichment plant in Iran. It did not steal data or demand ransom. It did something far more subtle. It infiltrated the plant’s industrial control systems and silently changed the instructions to the centrifuges, causing them to spin out of control and destroy themselves — while showing the operators on their screens that everything was normal. It is estimated that Stuxnet destroyed about 1,000 centrifuges.
+
+Why it was a big deal: Before Stuxnet, cyberattacks were about money or data. Stuxnet was the first confirmed case of a cyberattack designed to cause physical destruction. It crossed the line from the digital world into the real world. A bomb that you deliver over the internet is still a bomb.
+
+What it taught us:
+
+Industrial control systems are not safe. The systems that run power plants, water treatment facilities, factories, and pipelines were designed decades ago, before the internet existed. They were never built with security in mind. Stuxnet exposed this to the world. This entire field — OT/ICS security — exists because of this incident. You will study it in Course 28.
+Insider threat is real. Stuxnet was most likely delivered via a USB drive plugged in by an insider or through a supply chain compromise. It did not spread through the internet. The most dangerous attacks do not need to be online.
+Verification is not the same as trust. The operators at Natanz trusted their monitoring screens. Stuxnet showed that screens can lie. This is the principle behind “air-gapped” systems — computers that are physically disconnected from the internet — and why even those are not perfectly safe.
+
+The lesson: Cyberattacks can kill people. This is no longer theoretical.
+
+Incident 6: The Target Breach (2013) — The Attack That Walked Through the Front Door
+
+What happened: During the 2013 holiday shopping season, Target, one of the largest retailers in the world, was breached. The attacker did not attack Target directly. They attacked a small HVAC (heating, ventilation, and air conditioning) vendor called Fazio Mechanical Services, which had been given network access to Target for billing and project management. The attacker stole the vendor’s credentials, walked into Target’s network through that vendor’s connection, installed malware on the point-of-sale systems, and stole the credit and debit card data of 40 million customers. In addition, the attacker accessed the personal information — names, phone numbers, email addresses — of 70 million more customers. The total cost to Target eventually exceeded 200 million dollars, and the CEO and CIO both lost their jobs.
+
+Why it was a big deal: Target was one of the most sophisticated retailers in the world. They had a dedicated security team, millions of dollars in technology, and still failed. The lesson was not that Target was sloppy. The lesson was that no company is safe from a vendor. Every company has hundreds of vendors, and every vendor is a potential door.
+
+What it taught us:
+
+Supply chain security became a board-level concern. After Target, every major company started auditing its vendors. The idea of a “trusted partner” was replaced with “verified partner with limited access.”
+Network segmentation matters. Target’s HVAC vendor could reach the same network as the cash registers. If the network had been divided into segments, the attacker would have been stopped at the boundary. This is the principle of “least privilege” from Lesson 1 applied to network design.
+Executive accountability became real. The CEO of Target resigned. After this incident, boards started asking “who is responsible if this happens to us?” and the answer was no longer “the security team.” It was the executives.
+
+The lesson: Your security is only as strong as your weakest vendor.
+
+Incident 7: The Dyn DDoS Attack (2016) — The Day the Internet Glitched
+
+What happened: In October 2016, a massive distributed denial-of-service (DDoS) attack hit Dyn, a company that provides the Domain Name System (DNS) service for much of the internet. DNS is the phonebook of the internet — when you type github.com into your browser, your computer asks Dyn’s servers “what is the IP address of github.com?” and Dyn answers. When Dyn was attacked, those answers stopped coming. Major websites including Twitter, Spotify, Netflix, Reddit, Airbnb, and The New York Times went dark for hours across the United States and Europe.
+
+Why it was a big deal: This was the first DDoS attack to make the evening news in most countries. Millions of ordinary people could not use their favourite apps, and the cause was invisible — there was no hacker on a screen, just websites that would not load. The attack was launched using the Mirai botnet, which had been released as open-source code just weeks earlier. Mirai worked by hijacking internet-connected cameras and home routers — devices that most people did not even know were computers.
+
+What it taught us:
+
+The internet of things (IoT) is a security disaster waiting to happen. Mirai infected hundreds of thousands of webcams, digital video recorders, and home routers. These devices were shipped with default passwords that nobody changed, had no update mechanism, and were designed by companies that had never thought about security. The average home now contains 10 to 20 internet-connected devices, and every single one of them can be recruited into a botnet.
+DNS is a single point of failure for the modern internet. When Dyn went down, a huge chunk of the internet went with it. This led to investment in DNS redundancy and content delivery networks with multiple providers.
+Open-source code can be a weapon. Mirai’s source code was published online for anyone to copy. Within days, copycat botnets appeared. The lesson: publishing dangerous code is not a victimless act.
+
+The lesson: Every device you connect to the internet is a potential soldier in someone else’s army.
+
+Incident 8: WannaCry (2017) — The Ransomware That Shut Down Hospitals
+
+What happened: In May 2017, a ransomware worm called WannaCry spread across 150 countries in a single weekend. It infected computers at the United Kingdom’s National Health Service (NHS), forcing at least 19 hospitals and GP surgeries to turn away patients and cancel operations. Ambulances were diverted. The attack also hit FedEx, Renault, Nissan, and the Russian central bank. Within days, 200,000 computers in over 150 countries were infected. The ransom demand was 300 US dollars in Bitcoin, rising over time — a small amount, which suggested the attackers did not expect it to work.
+
+Why it was a big deal: WannaCry was the first ransomware attack to make global headlines and to directly affect human lives through healthcare. The NHS had received a security patch for the vulnerability WannaCry exploited — a patch called MS17-010, released by Microsoft two months earlier. The NHS simply had not installed it. This was not a zero-day attack. It was a known vulnerability with a known fix.
+
+What it taught us:
+
+Patching is not optional. This is the most important lesson in the entire history of cybersecurity, and we are now on the fourth major incident that proves it. The Morris Worm in 1988, SQL Slammer in 2003, and now WannaCry in 2017 — all of them exploited vulnerabilities for which patches existed. The attackers did not invent new hacks. They used old ones that people never bothered to fix.
+Ransomware as a service became mainstream. WannaCry used a tool called EternalBlue, which had originally been developed by the US National Security Agency (NSA) as a cyber weapon. The tool was stolen by a hacking group called The Shadow Brokers and leaked online. This was the moment the most sophisticated cyber weapons in the world fell into the hands of ordinary criminals.
+Backups are the ultimate defence. The NHS had backups, but they were not tested regularly, and they were not isolated from the network. WannaCry spread to them too. The lesson: backups must be automatic, regular, offline, and tested. If you have not restored from a backup this month, you do not know if your backups work.
+
+The lesson: The most dangerous attacks are the oldest ones, because nobody patches the old ones.
+
+Incident 9: The SolarWinds Supply Chain Attack (2020) — The One That Reached the Top
+
+What happened: In December 2020, the cybersecurity company FireEye announced it had been breached. Then, days later, the scale of the attack became clear. A Russian-linked group had infiltrated the software company SolarWinds, which sells IT management software to 33,000 customers including every Fortune 500 company, multiple US government departments, and the US Treasury. The attackers inserted malicious code into a software update that was automatically installed by customers’ computers. When customers installed the update, they were also installing the attacker’s backdoor. The attack went undetected for months. The US government declared it a national security emergency.
+
+Why it was a big deal: SolarWinds was the most sophisticated supply chain attack in history. The attacker did not attack 33,000 companies individually. They attacked one company — SolarWinds — and used it to reach all 33,000. This is the Target lesson from 2013, scaled up by a factor of a thousand. The US Treasury, the Department of Homeland Security, the State Department, and the Pentagon were all compromised. The attack was discovered not by the victims, but by FireEye, a security company that happened to notice something strange in its own systems.
+
+What it taught us:
+
+Software updates are a trusted path — and that trust is a liability. When your computer says “install this update,” you trust it. SolarWinds abused that trust. This led to new ideas like “software bill of materials” (SBOM) — a list of every component inside a piece of software — so that when a vulnerability is found, you know instantly whether you are affected.
+No company is too small to be a stepping stone. SolarWinds was not a giant. It was a mid-sized company with good software. The attacker did not need to break into the Fortune 500. They just needed to break into the company that the Fortune 500 trusted.
+Monitoring is the only way to find sophisticated attackers. Traditional defences like firewalls and antivirus did not stop SolarWinds, because the attack looked like a legitimate software update. The only thing that caught it was a security team that was actively looking for anomalies. This is the argument for the “detect” part of the prevent-detect-respond model from Lesson 1.
+
+The lesson: If you trust your software vendors, you are trusting people you have never met, in countries you have never been to, with systems you do not control.
+
+Part 6 — The Pattern: What All These Incidents Teach Us
+
+Now let us step back and look at the whole list. Six incidents, one lesson repeated again and again. Here is the pattern.
+
+Year	Incident	The Lesson
+1988	Morris Worm	Patch your software. Old unpatched software is the weakest point.
+1999	Melissa	People are the weakest link. Train them.
+2003	SQL Slammer	Speed of spread matters. Segment your network.
+2007	TJX Breach	Delete data you do not need. Every stored piece of data is a risk.
+2010	Stuxnet	Cyberattacks can cause physical destruction. Industrial systems are vulnerable.
+2013	Target Breach	Your vendors are your doors. Audit them.
+2016	Dyn DDoS	Every connected device is a potential weapon.
+2017	WannaCry	Patching is not optional. Backups must be tested.
+2020	SolarWinds	Trust is a liability. Monitor for anomalies.
+
+Look at the right-hand column. Every single lesson is a rule you already know from Lesson 1. The Morris Worm teaches defence in depth. Melissa teaches that humans are part of the system. SQL Slammer teaches that the kill chain moves fast. TJX teaches that you must minimise the assets you hold. Stuxnet teaches that availability includes physical safety. Target teaches that your attack surface includes your vendors. Dyn teaches that every device is an asset that can be attacked. WannaCry teaches that detection is useless without maintenance. SolarWinds teaches that even your controls can be compromised.
+
+The history of cybersecurity is the history of the attack surface growing faster than our ability to defend it. In 1988, the attack surface was 6,000 computers. In 2026, it is 20 billion internet-connected devices. The rules have not changed. The scale has.
+
+Part 7 — Attack and Defence View
+
+Let us now look at these incidents from the attacker’s perspective, because that is how you learn to defend.
+
+What do attackers actually exploit? If you read the list above, the answer is clear. They exploit four things, in this order of importance:
+
+Human behaviour (Melissa, Target, phishing in general). This is number one, always. Every major breach involved a person being tricked or making a mistake.
+Unpatched software (Morris Worm, SQL Slammer, WannaCry). This is number two, and it is the easiest to fix. It costs nothing to install a patch.
+Poor design (Stuxnet, SolarWinds). The systems were built without security in mind. This is the hardest to fix because it requires rebuilding things.
+Trust relationships (Target’s HVAC vendor, SolarWinds’ software updates). The attacker did not attack the target. They attacked the thing the target trusted.
+
+What does a good defence look like? It looks like a list of habits, not a list of products:
+
+Patch automatically and test backups monthly.
+Train people to recognise suspicious emails, and test them with fake ones.
+Segment networks so that one compromised system cannot reach everything.
+Delete data you do not need, and encrypt what you must keep.
+Audit vendors and limit what they can reach.
+Monitor for anomalies, because prevention will eventually fail.
+
+Notice that none of these items requires buying the most expensive security product on the market. They require discipline. Cybersecurity is less about technology than it is about habits, and habits are something you build one day at a time.
+
+Part 8 — Common Mistakes Beginners Make
+
+Mistake 1: Thinking these incidents are ancient history. They are not. The WannaCry vulnerability is still present on unpatched machines today. The Mirai botnet code is still being copied. The SolarWinds attack is still being studied as a blueprint. History does not repeat itself exactly, but it rhymes, and the rhyming is getting faster.
+
+Mistake 2: Thinking “that would never happen to me.” It will not happen to you in the same way it happened to Target. It will happen to you in a way that fits your life. The lesson is the same. If you reuse passwords across sites, you are one breach away from having your accounts taken. If you never update your phone, you are one worm away from losing your photos. The incidents are case studies, but the principles are personal.
+
+Mistake 3: Memorising dates instead of understanding causes. Do not memorise that the Morris Worm happened in 1988. Memorise that it exploited unpatched software and that the fix was to create CERT. The date is trivia. The cause is the lesson.
+
+Mistake 4: Confusing fear with understanding. Reading about these attacks is supposed to make you uncomfortable, but not terrified. Terror is the feeling that nothing you do matters. Understanding is the feeling that you now know what to do. If you finish this lesson feeling helpless, you have learned the wrong thing. The correct feeling is: “I now know why these things happen, and I know the habits that prevent them.”
+
+Part 9 — Guided Mini-Lab: Check Your Own Exposure
+
+Let us now do something personal. This takes 10 minutes and requires only your phone or computer.
+
+Step 1: Check whether your email has been in a breach.
+Go to https://haveibeenpwned.com/ and type your email address. Do not worry — this site does not store your address. It only checks it against a database of known breaches. If your address appears, it will tell you which sites were breached and what data was taken. This is not your fault. It is information, and information is the first step to fixing things.
+
+Step 2: Check your password reuse.
+Think about the last three sites you signed up for. Did you use the same password for more than one of them? Be honest. If the answer is yes, change the password on the most important one first — your email, your bank, and your social media, in that order.
+
+Step 3: Turn on automatic updates.
+
+On Windows: open Settings, go to Windows Update, and turn on “Get the latest updates as soon as they’re available.”
+On Mac: open System Settings, go to General, then Software Update, and turn on “Automatically keep my Mac up to date.”
+On your phone: go to Settings, find System, and turn on auto-update.
+
+This is the single most effective thing you can do today for your own security. It takes three minutes and it costs nothing.
+
+Step 4: Write it down.
+Open your lab notebook and write:
+
+LESSON 2 — MY SECURITY HABITS CHECK
+Date: [today]
+Email breach check result: [clean / found in X breaches]
+Password reuse: [yes/no — which sites]
+Auto-updates turned on: [yes/no — which devices]
+Action items: [list what you will change]
+
+IMAGE 3 — Tool screenshot: A photorealistic screenshot of a dark-themed terminal window on a black background, showing a Linux command prompt. Commands visible: python3 --version returning 3.11, which nmap returning /usr/bin/nmap, which tshark, and a final line echo 'Lab toolkit ready' with a blinking cursor. Monospace font, subtle window decoration (minimize/maximize buttons top-left). Slight glow on text. Looks like an actual terminal capture, not cartoonish. 16:9.
+
+Part 10 — Why This History Matters for the Rest of Your Life
+
+Let me say something plainly, because you deserve honesty.
+
+You are going to take this course, and you are going to learn about firewalls and encryption and penetration testing and incident response. It is a lot of information, and it is easy to feel like you are just collecting facts. This lesson is the reason the facts matter.
+
+Every tool you will learn was built because someone was hurt. Every rule you will memorise was written in blood — sometimes literally. The firewall exists because of the Morris Worm. The spam filter exists because of Melissa. Network segmentation exists because of Target. Backups exist because of WannaCry. The software bill of materials exists because of SolarWinds.
+
+You are not just learning technology. You are inheriting the lessons of people who got it wrong so that you can get it right. That is a responsibility, and it is also a gift. The mistakes have already been made. You only have to learn from them.
+
+Part 11 — Summary and Glossary
+
+Here is what we covered.
+
+The history of cybersecurity is a series of turning points. The Morris Worm in 1988 created CERT and the concept of the worm. Melissa in 1999 showed that email was a weapon and that people are the weakest link. SQL Slammer in 2003 showed that a tiny worm could bring down critical infrastructure in minutes. The TJX breach in 2007 showed that stored data is a liability and that wireless security matters. Stuxnet in 2010 proved that cyberattacks can cause physical destruction. The Target breach in 2013 showed that vendors are doors. The Dyn DDoS in 2016 showed that every internet-connected device is a potential soldier. WannaCry in 2017 showed that patching is not optional and that backups must be tested. The SolarWinds attack in 2020 showed that trust is a liability and that monitoring is the only way to find sophisticated attackers.
+
+The pattern is clear: every incident exploited human behaviour, unpatched software, poor design, or trust relationships. The defences are habits, not products: patch, train, segment, delete, audit, monitor.
+
+Glossary of 12 terms:
+
+Worm — malware that spreads on its own through network weaknesses, without needing a user to open anything.
+Virus — malware that attaches itself to a file or program and spreads only when that file is opened or shared.
+Patch — a software update that fixes a known security weakness.
+Zero-day — a vulnerability that is unknown to the vendor, so no patch exists yet. (WannaCry was not a zero-day; the patch existed. This distinction matters.)
+Ransomware — malware that encrypts your files and demands money to unlock them.
+Botnet — a network of infected devices controlled remotely, usually used for DDoS attacks, spam, or stealing data.
+DDoS — distributed denial of service; an attack that floods a website or service with traffic so that real users cannot reach it.
+Supply chain attack — an attack that targets a vendor or software provider in order to reach their customers indirectly.
+Air-gapped — a system that is physically disconnected from the internet, used as a security measure.
+Social engineering — using psychology to trick people into giving away information or access, rather than using technical exploits.
+Buffer overflow — a programming error where more data is written to a memory space than it can hold, allowing an attacker to take control.
+CERT — Computer Emergency Response Team; a team that responds to security incidents. The first one was created after the Morris Worm.
+Part 12 — Practice: 5 Quick-Check Questions
+Name two incidents from this lesson and the one lesson each one taught.
+What is the difference between a worm and a virus? Give one example of each from this lesson.
+Why is patching considered the most repeated lesson in cybersecurity history? Cite at least two incidents.
+Explain the SolarWinds attack in three sentences, focusing on why it was so dangerous.
+True or false: “The strongest defences in the world will not help if nobody is monitoring the network.” Explain.
+
+
+Diagram Placement Summary
+Image	Location in lesson	What it shows
+Image 1	After Part 4 (Concept from Scratch)	Horizontal timeline of major incidents, 1988–2020
+Image 2	After Part 5 (How It Works)	Kill chain flowchart with defence path (reused from Lesson 1)
+Image 3	After Part 9 (Guided Mini-Lab)	Terminal screenshot of toolkit setup
+Image 4	After Part 10 (Security, Privacy, Safety)	Three-column comparison table (reused from Lesson 1)

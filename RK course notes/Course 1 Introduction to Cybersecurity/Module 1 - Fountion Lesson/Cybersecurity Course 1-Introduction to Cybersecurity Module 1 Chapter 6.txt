@@ -1,0 +1,222 @@
+Course 01: Introduction to Cybersecurity
+Module 1: Foundations
+Lesson 6: Cyber Ecosystem and Actors
+Part 1 — Hook: Why This Matters
+
+Imagine you walk into a room where ten people are having a conversation. You do not know who anyone is. Someone is telling a joke, someone is arguing, someone is whispering, and someone is watching everyone. Within five minutes you will figure out who is who, because people reveal themselves through what they do.
+
+The internet is that room, but with eight billion people, and it has been growing for decades. If you want to defend it, you have to know who is in it.
+
+This lesson is about the cast of characters. Every person, group, and organisation on the internet is playing one of a small number of roles. There are not as many roles as you think. Learn the roles and the ecosystem stops being a confusing chaos and becomes a set of relationships you can map.
+
+The most important role is the one you have not expected: you. You are not a bystander. You are part of the ecosystem, and every choice you make changes the balance.
+
+Part 2 — Learning Objectives
+
+By the end of this lesson you will be able to:
+
+Name and describe at least seven roles in the cyber ecosystem.
+Distinguish between the different types of threat actors: criminals, nation-states, hacktivists, insiders, and script kiddies.
+Explain the roles of defenders, vendors, users, and regulators in the ecosystem.
+Identify which actor is most likely to target a given organisation and why.
+Explain how the ecosystem has changed since 2000 and why that matters for defence.
+Connect the ecosystem map to the attack surface from Lesson 4.
+Part 3 — Prerequisites
+
+You should have finished Lessons 1 through 5. You need the CIA triad, the asset inventory, the attack surface, and the three domains of security, privacy, and safety. Everything in this lesson connects to them.
+
+Part 4 — Concept from Scratch
+
+Here is the central sentence of this lesson.
+
+The cyber ecosystem is the network of everyone who creates, uses, protects, attacks, or regulates technology — and every actor in it is both a potential threat and a potential ally.
+
+Let me say that again, because it is the most important sentence in this lesson and it contradicts most of what you think you know.
+
+The cyber ecosystem is the network of everyone who creates, uses, protects, attacks, or regulates technology — and every actor in it is both a potential threat and a potential ally.
+
+Most beginners think the ecosystem is a battle between good guys and bad guys. It is not. It is much more interesting than that. The same person who is a threat to you is an ally to someone else. The same organisation that defends you also sells you the vulnerable software you are defending against. The same government that trains hackers also employs them. The ecosystem is not a war. It is a web of relationships, and your job is to understand the web so you can position yourself in it.
+
+Here is a picture of that web.
+
+IMAGE 1 — Ecosystem actor diagram: A central circle labeled THE INTERNET with eight arrows pointing outward to eight surrounding nodes: Threat Actors (criminals, nation-states, hacktivists, insiders), Defenders (security teams, CERTs, law enforcement), Vendors (software companies, hardware manufacturers), Users (employees, consumers, organisations), Regulators (GDPR, CERT-In, CDSCO), Researchers (academic, white-hat), Infrastructure Providers (ISPs, cloud providers, DNS), and Critical Infrastructure (power, water, hospitals, finance). Each node has a small icon. Arrows between nodes show relationships (data flows, attacks, regulation, commerce). Clean, white background, navy and teal colours, professional diagram style, 16:9, high resolution.
+
+Part 5 — How It Works: The Actors, One by One
+
+Let us now meet the cast. I am going to introduce them in a specific order: the attackers first, then the defenders, then the bystanders who are more important than they look. This order matters, because if you understand the attackers, everything else makes sense.
+
+Actor Group 1: Threat Actors
+
+These are the people who do harm. But do not make the mistake of thinking they are all the same. They have different motives, different skills, different resources, and different targets. If you know which one is coming at you, you can predict what they will do.
+
+Criminal groups. These are the most common attackers, and the ones you will deal with most often. Their motive is money, pure and simple. They are organised, they are professional, and they specialise. Some run ransomware operations. Some run phishing operations. Some run botnets. Some sell their services to other criminals. The important thing to understand is that modern cybercrime is a business. It has supply chains, customer support, and branding. The group that ran the WannaCry attack in Lesson 2 was not a bunch of teenagers in a bedroom. It was a criminal enterprise with a business model.
+
+Nation-states. These are the most dangerous attackers, because they have the most resources and the most patience. Their motive is not money. It is power, intelligence, and influence. They build weapons — zero-day exploits that cost millions to discover and that nobody has patched — and they save them for years until the moment they are useful. The Stuxnet attack from Lesson 2 was almost certainly a nation-state operation. So was the SolarWinds attack. Nation-state attackers do not care about your 500 rupees. They care about your secrets, your infrastructure, and your elections. They are the reason the most sensitive systems are air-gapped and why the most important organisations have dedicated threat-hunting teams.
+
+Hacktivists. These are attackers whose motive is ideology, not money. They attack organisations they believe are doing something wrong — environmental destruction, government corruption, human rights abuses, animal testing. They do not want money. They want attention. They want to embarrass their target. They want to send a message. Their attacks are usually loud: defacing websites, leaking documents, shutting down services. They are less sophisticated than criminals and nation-states, but they can be harder to stop, because they are motivated and they recruit publicly. If your organisation is controversial, you will face hacktivists.
+
+Insiders. These are the attackers who are already inside. They have legitimate access, and they are using it for illegitimate purposes. An insider might be a disgruntled employee who copies the customer database before they quit. They might be an employee who is bribed by a competitor. They might simply be someone who is careless and leaves their laptop unlocked. Insiders are the hardest to detect, because they do not need to break in — they already have keys to the door. The lesson from Stuxnet in Lesson 2 is that the most dangerous attack may have been delivered by an insider with a USB drive. Every organisation should assume that at least one of its employees is either malicious or careless, and design accordingly.
+
+Script kiddies. These are the beginners, and they are the ones most people think of when they hear “hacker.” They do not write their own code. They use tools that other people wrote. They download a botnet kit, point it at a target, and press go. They are not dangerous individually, but there are millions of them, and they target everyone. Your website will be scanned by script kiddies every single day, automatically, by bots that test for the same 100 vulnerabilities in every site they find. They are noise, but they are also the reason you have to patch your web server, because the script kiddie scanning your site is running the same automated tool that the professional criminal is running, just with less skill.
+
+Actor Group 2: Defenders
+
+Now the people who stop the attackers. They are not as glamorous as the attackers, but they are the reason the internet still works.
+
+Security teams. These are the people inside organisations who build and run the defences. They are a small team in a large company, or one person in a small company, or nobody in most companies. They are underfunded, overworked, and blamed when things go wrong. If you have ever wondered why security is always the department that says “no,” this is why. They are the ones who have to say no, because everyone else is saying yes to new features, new integrations, new devices, and new access — and every yes is a new road in the attack surface from Lesson 4.
+
+CERTs and CSIRTs. These are the dedicated incident response teams. CERT stands for Computer Emergency Response Team. CSIRT stands for Computer Security Incident Response Team. The first CERT was created at Carnegie Mellon University after the Morris Worm in 1988, and every major organisation and government now has one. Their job is not to prevent attacks. Their job is to respond to them when they happen. They are the firefighters of the cybersecurity world. They are the ones who answer the phone at 3am when the ransomware hits.
+
+Law enforcement. The police, the FBI, the CBI in India, Europol, Interpol. They investigate cybercrime, they arrest attackers, and they coordinate across borders. They are slow, they are bureaucratic, and they are often one step behind. But they are the reason some attackers go to prison, and they are the reason the more careful attackers choose their targets more carefully. The most important thing to understand about law enforcement is that they cannot help you after a breach unless you have evidence. If you do not keep good logs, you have nothing to give them, and they cannot help.
+
+White-hat researchers. These are the good guys who find vulnerabilities in software and report them so they can be fixed. They are the reason your software has patches. Many of them are paid by companies in bug bounty programs. Some of them do it for the fame. Some of them do it for the challenge. They are one of the few groups in the ecosystem that almost everyone agrees is good. The problem is that there are more black-hat researchers looking for the same vulnerabilities, and the white-hats are not always faster.
+
+Actor Group 3: The Bystanders Who Matter More Than They Look
+
+Users. This is you. This is your family. This is your neighbours. You are not passive. Every click, every password, every update you skip, every link you share, every app you install — every one of those actions changes the ecosystem. The Melissa virus in Lesson 2 spread because users opened attachments. The Dyn attack in Lesson 2 happened because users did not change the default passwords on their cameras. You are not just a victim. You are a vector. And you are also a defender, because a trained user is the single most effective security control there is.
+
+Vendors. The companies that make the software and hardware you use. They are defenders, because they write patches and security updates. They are also attackers, because the SolarWinds attack showed that a compromised vendor can be used to attack thousands of customers. They are also victims, because they are targeted by criminals and nation-states. A single vendor with a vulnerability is a risk to everyone who uses their product. This is why you need to know who your vendors are, what software you use, and whether they are maintaining it. An abandoned piece of software is a liability that grows every month.
+
+Infrastructure providers. The internet service providers, the cloud companies, the domain name registrars, the hosting companies. They are the plumbing. If they fail, huge parts of the internet go dark. The Dyn attack in Lesson 2 was an attack on an infrastructure provider, and it took down a large fraction of the internet. These providers are concentrated — a handful of companies control most of the cloud, most of the DNS, and most of the internet backbone. That concentration is both a strength (it is efficient) and a weakness (it creates single points of failure).
+
+Regulators. The governments and agencies that write and enforce the rules. They are slow, they are political, and they are often behind the technology. But they are getting faster, and they are getting more serious. The GDPR in Europe, the DPDP Act in India, and the CERT-In reporting rules in India all exist because the ecosystem was getting out of control. Regulation changes behaviour. If you are in this field long enough, you will be implementing someone else’s regulation, and you need to know what it says.
+
+Researchers and academics. The universities and think tanks that study this field. They publish the papers that invent the techniques you will use. They train the people who will work in this field. They are the least visible actor, but they are the foundation everything else sits on. The kill chain from Lesson 1 came from Lockheed Martin, which is a defence contractor, but the ideas behind it came from academic research. Encryption, the foundation of all secure communication, is the product of decades of academic work.
+
+Part 6 — Example: A Ransomware Attack, Mapped to the Ecosystem
+
+Let us now watch a single attack and see how many actors are involved. This is the best way to understand the ecosystem, because it shows you that an attack is not one person doing one thing. It is a chain of actors, each doing their job.
+
+Step 1: The developer. A criminal group writes the ransomware code. They are a vendor of crime. They build the tool, test it, and offer it to affiliates through a “ransomware as a service” model. They are not the ones who attack you. They are the ones who sold the weapon.
+
+Step 2: The affiliate. Someone pays the developer for access to the ransomware. They are the attacker. They might be a criminal group themselves, or a lone operator. They choose the target, they launch the attack, and they collect the ransom. They are the one you will never see.
+
+Step 3: The initial access broker. The affiliate does not always find the target themselves. They often buy access from someone else — a person who has already compromised a network and is selling the credentials on a dark web marketplace. This is the supply chain of crime. The person who sold you the access might have gotten it from a script kiddie who found an unpatched server.
+
+Step 4: The victim. That is the organisation that gets hit. In this story, let us say it is a hospital. The hospital is a user of the ecosystem. It has a security team, it has employees, it has patients. It is also a target.
+
+Step 5: The security team. The hospital’s security team detects the ransomware. They are the defenders. They isolate the affected systems, they notify the CERT, they call in a forensic firm, they restore from backups. They are the ones who stop the attack from becoming a catastrophe.
+
+Step 6: Law enforcement. The hospital reports the attack to CERT-In, which coordinates with international law enforcement. The affiliate is identified, arrested, and prosecuted. The developer’s infrastructure is seized. This takes months or years, but it happens.
+
+Step 7: The regulator. The hospital is subject to healthcare privacy law. It must notify its patients that their data was compromised. It must report the breach to the health authority. It may be fined. The regulator is the one who makes the hospital pay for the damage.
+
+Step 8: The vendor. The ransomware exploited a vulnerability in a piece of software the hospital used. The vendor releases a patch. The hospital applies it. The vendor is both a victim (its software was abused) and a defender (it fixed the hole).
+
+Look at that list. Eight actors, one attack. None of them is acting alone. The ecosystem is not a line. It is a web, and every thread connects to every other thread. If you understand the web, you can see where the attack will happen before it does.
+
+Part 7 — Attack and Defence View
+
+Let us now look at the ecosystem from the perspective of power, because that is what determines who wins.
+
+Where does the power sit? It has shifted over time, and the shift is not finished.
+
+In 2000, the power sat with the vendors. A handful of software companies — Microsoft especially — controlled the ecosystem because everyone used their software, and the vulnerabilities were in their code. The defender’s job was to patch Microsoft.
+
+In 2010, the power shifted to the users. Social media, cloud services, and mobile apps put enormous amounts of user data in the hands of a small number of platforms. The attacker’s job was to target the users, not the software.
+
+In 2020, the power shifted to the infrastructure providers. A handful of cloud companies and DNS providers control the plumbing of the internet. The SolarWinds attack showed that the attacker’s job was to target the software supply chain, which runs through these providers.
+
+Where is it going? Toward concentration at every level. A few cloud providers host most of the internet. A few software companies provide most of the tools. A few threat actor groups run most of the ransomware. The ecosystem is becoming more concentrated, and that concentration is both efficient and dangerous. The defender’s job is becoming harder, because the attack surface is concentrating into a small number of targets.
+
+What is the defender’s advantage? It is that the defender can choose where to concentrate their own effort. The attacker has to find one weakness. The defender has to defend everything, but the defender can choose what “everything” means. A small organisation does not need to defend against nation-states. It needs to defend against criminals and script kiddies. A hospital needs to defend against criminals and privacy regulators. A defence contractor needs to defend against nation-states. The ecosystem gives you the threat model, and your job is to match your defences to the actors who are actually coming for you.
+
+Part 8 — Common Mistakes Beginners Make
+
+Mistake 1: Thinking the ecosystem is a battle between good and bad. It is not. It is a web of relationships where the same actor can be a defender for one organisation and an attacker for another. Your software vendor is your defender and your attack surface. Your cloud provider is your protector and your single point of failure. Your employees are your security team and your weakest link. If you think in simple categories, you will misread the ecosystem and make bad decisions.
+
+Mistake 2: Underestimating the users. Beginners think users are victims. They are not. Users are the most powerful actors in the ecosystem, because they make the final decision on every attack that involves a human. A phishing email is stopped or opened by a user. A password is shared or not shared by a user. A software update is installed or skipped by a user. Every security control in the world is useless if the user decides to bypass it. Train your users, test your users, and treat them as your most important security asset — because they are.
+
+Mistake 3: Overestimating the criminals. Criminals are professional, but they are also lazy. They use automated tools that scan millions of sites for the same hundred vulnerabilities. They target the easiest victims. If you are hard to attack, they will move on. The most common reason criminals succeed is not sophistication. It is that the victim had an old unpatched server that nobody knew about. The criminal did not outsmart you. You were asleep.
+
+Mistake 4: Ignoring the supply chain. The SolarWinds attack and the Target breach both succeeded because of vendors. Every organisation has dozens or hundreds of vendors, and every vendor is a potential door. If you do not know who your vendors are and what access they have, you have a blind spot in your ecosystem map. This is the most common blind spot in the entire field.
+
+Mistake 5: Treating the ecosystem as static. It is not. It changes faster than most organisations can adapt. New technologies — cloud, mobile, AI, IoT — create new actors and new attack vectors every year. The ecosystem you map this month will be different next year. The map is a living document, and the most dangerous thing you can do is assume it is finished.
+
+Part 9 — Guided Mini-Lab: Map Your Own Place in the Ecosystem
+
+Let us now place yourself in the ecosystem. This takes 15 minutes.
+
+Step 1: List the organisations you interact with.
+Write down every organisation that holds your data or that you depend on. Include your bank, your email provider, your phone company, your employer, your cloud storage, your social media, your shopping sites, your government services, and your internet service provider. These are your place in the ecosystem.
+
+Step 2: Classify each one by actor type.
+For each organisation, decide which actor group it belongs to:
+
+Vendor (makes the product)
+Infrastructure provider (provides the plumbing)
+User (you are their customer)
+Regulator (if it is a government body)
+Defender (if it is a security-focused organisation)
+
+Step 3: Identify your attack surface.
+For each organisation, what could an attacker gain by compromising it? Use the three questions from Lesson 5: what data does it hold, who could use it, and what is the worst-case harm?
+
+Step 4: Identify your dependencies.
+Which of these organisations, if they failed or were breached, would cause you the most harm? Your email provider, probably. Your bank, definitely. Your cloud storage, if you keep important files there. These are your single points of failure.
+
+Step 5: Write it down.
+Open your lab notebook and write:
+
+LESSON 6 — MY PLACE IN THE ECOSYSTEM
+Date: [today]
+Organisations I depend on: [list]
+Their actor type: [vendor / infrastructure / user / regulator]
+Data they hold about me: [list for each]
+Most dangerous dependency: [which one, and why]
+Worst-case scenario: [one sentence — what happens if that one fails]
+
+IMAGE 3 — Tool screenshot: A photorealistic screenshot of a dark-themed terminal window on a black background, showing a Linux command prompt. Commands visible: python3 --version returning 3.11, which nmap returning /usr/bin/nmap, which tshark, and a final line echo 'Lab toolkit ready' with a blinking cursor. Monospace font, subtle window decoration (minimize/maximize buttons top-left). Slight glow on text. Looks like an actual terminal capture, not cartoonish. 16:9.
+
+Part 10 — Why This Matters for the Rest of Your Life
+
+Let me say something plainly.
+
+You are going to learn about firewalls, encryption, penetration testing, and incident response. It is a lot of technical detail, and it is easy to think that being good at the technology is the same as understanding the field. It is not.
+
+The technology is the easy part. The hard part is understanding who is on the other side of the technology, what they want, and why they will succeed or fail. Every tool you will learn was built by someone, for a purpose, in response to a specific actor. If you do not know the actor, you will build the wrong tool.
+
+You are learning to be a strategist, not just a technician. A technician knows how to configure a firewall. A strategist knows why the firewall is there, who it is protecting against, and what happens when it fails. This lesson is what builds the strategist’s map.
+
+Part 11 — Summary and Glossary
+
+Here is what we covered.
+
+The cyber ecosystem is the network of everyone who creates, uses, protects, attacks, or regulates technology. Every actor is both a potential threat and a potential ally.
+
+The threat actors are criminals (motivated by money, professional and organised), nation-states (motivated by power and intelligence, the most dangerous), hacktivists (motivated by ideology, loud and public), insiders (already inside, the hardest to detect), and script kiddies (beginners using other people’s tools, noisy but numerous).
+
+The defenders are security teams (build the defences), CERTs and CSIRTs (respond to incidents), law enforcement (investigate and arrest), and white-hat researchers (find and report vulnerabilities).
+
+The bystanders who matter are users (the most powerful actor, because they make the final decision), vendors (defenders and attack surface at the same time), infrastructure providers (the plumbing, concentrated and fragile), regulators (slow but getting faster), and researchers and academics (the foundation everything sits on).
+
+A single attack involves multiple actors working in a chain. The ecosystem is a web, not a battle. Power has shifted from vendors to users to infrastructure providers, and it is concentrating at every level. The defender’s advantage is the ability to choose where to concentrate effort.
+
+Glossary of 12 terms:
+
+Threat actor — any person or group that poses a threat to an organisation’s assets.
+Nation-state — a government that uses cyber operations for intelligence, influence, or power.
+Insider — someone with legitimate access who uses it for illegitimate purposes.
+Script kiddie — a beginner who uses pre-made tools without understanding them.
+CERT / CSIRT — a Computer Emergency Response Team; the firefighters of the cybersecurity world.
+White-hat — a security researcher who finds vulnerabilities and reports them to be fixed.
+Ransomware as a service — a business model where developers build ransomware and sell access to affiliates.
+Initial access broker — a criminal who compromises networks and sells the access to other criminals.
+Supply chain — the network of vendors and dependencies that an organisation relies on.
+Single point of failure — a component whose failure would cause the whole system to fail.
+Infrastructure provider — an organisation that provides the plumbing of the internet: ISPs, cloud providers, DNS.
+Ecosystem map — a visual representation of all the actors, relationships, and data flows in a given environment.
+Part 12 — Practice: 5 Quick-Check Questions
+Name the five types of threat actors and the motive of each.
+Which actor is the most dangerous for a defence contractor, and why? Which is the most dangerous for a small retail business, and why?
+Explain the “ransomware as a service” business model in your own words.
+True or false: “A vendor is always a defender.” Explain your answer in two sentences.
+Choose one organisation you depend on. List two actors in the ecosystem that could harm you through that organisation, and say how.
+
+
+Diagram Placement Summary
+Image	Location in lesson	What it shows
+Image 1	After Part 4 (Concept from Scratch)	Ecosystem actor diagram: central internet with eight surrounding nodes and relationship arrows
+Image 2	After Part 5 (How It Works)	Data classification pyramid: public → internal → sensitive → restricted
+Image 3	After Part 9 (Guided Mini-Lab)	Terminal screenshot of toolkit setup
+Image 4	After Part 11 (Why This Matters)	Three-column comparison table (reused from Lesson 1)

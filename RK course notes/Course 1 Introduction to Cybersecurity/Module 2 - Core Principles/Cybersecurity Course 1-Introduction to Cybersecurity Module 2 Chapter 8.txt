@@ -1,0 +1,237 @@
+Course 01: Introduction to Cybersecurity
+Module 2: Core Principles
+Lesson 8: Principle Case Studies
+
+Part 1 — Hook
+You have now studied seven principles. The CIA triad. AAA. Least privilege. Defence in depth. Zero trust. Secure defaults. Separation of duties. Each one made sense on its own, and each one was a rule you could write down and memorise.
+
+But rules are not the same as understanding. Understanding only comes when you see the rule working — or failing — in a real situation.
+
+This lesson is where the seven principles stop being a list and become a way of thinking. We are going to take the real breaches you studied in Module 1 and look at them again, this time through the lens of Module 2. I am going to ask, for each case: which principle was violated, what was the consequence, and what would have stopped it?
+
+If you can answer those three questions for each case, you have learned the principles. If you cannot, go back and study. This lesson is the test, and it is also the reward — because when you can look at a breach and immediately see which principle failed, you have developed the professional instinct that separates a technician from a strategist.
+
+Part 2 — Learning Objectives
+By the end of this lesson you will be able to:
+
+Apply the seven principles of Module 2 to real breach cases.
+Identify which principle was violated in a given scenario.
+Explain the consequence of each violation.
+Recommend the specific controls that would have prevented each breach.
+Synthesise the principles into a single coherent framework.
+Part 3 — Prerequisites
+You have finished Module 1 and all of Module 2. This lesson uses everything. If any earlier lesson feels fuzzy, this lesson will show you exactly where.
+
+Part 4 — Concept from Scratch
+Here is the central sentence of this lesson.
+
+A breach is not a mystery. It is a principle failure. Every successful attack violates at least one of the seven principles, and if you learn to see which one, you can predict the next attack before it happens.
+
+Let me say that again, because it is the most powerful sentence in this entire module.
+
+A breach is not a mystery. It is a principle failure. Every successful attack violates at least one of the seven principles, and if you learn to see which one, you can predict the next attack before it happens.
+
+The seven principles are not seven separate ideas. They are one idea, viewed from seven angles. The CIA triad tells you what to protect. AAA tells you who can touch it. Least privilege tells you how much they can touch. Defence in depth tells you to protect it in many ways. Zero trust tells you to verify every touch. Secure defaults tells you to make the safe choice automatic. Separation of duties tells you that no single person controls the whole loop.
+
+When a breach happens, it is usually because two or more of these failed at once. The attacker does not defeat all seven. They find the one or two that were not applied, and they walk through the gap.
+
+Here is a picture of how the seven principles relate to each other, so that you can carry them as one framework rather than seven rules.
+
+IMAGE 1 — Principles framework diagram: A central circle labeled SECURITY with seven petals radiating outward, each a different colour: CIA Triad (navy), AAA (green), Least Privilege (amber), Defence in Depth (red), Zero Trust (purple), Secure Defaults (teal), Separation of Duties (orange). Each petal has a one-line summary. Outside the petals, a dashed ring labeled ATTACKERS with arrows pointing inward at the petals, showing that attackers target the principles. In the centre, a small shield icon. Clean, professional, 16:9, high resolution.
+
+Part 5 — How It Works: The Case Studies, One by One
+Let us now work through the cases. For each one, I am going to tell you what happened, which principle failed, why it failed, and what would have stopped it. Read them as a professional would: looking for the gap, not the drama.
+
+Case Study 1: The Target Breach (2013) — 40 million credit card numbers stolen
+What happened. An HVAC vendor called Fazio Mechanical Services had network access to Target for billing and project management. The attacker compromised the vendor’s systems, stole the vendor’s credentials, and used them to walk into Target’s network. From there, the attacker installed malware on the point-of-sale systems and stole the credit and debit card details of 40 million customers. The breach cost Target more than 200 million dollars, and the CEO and CIO both lost their jobs.
+
+Which principle failed. This is a classic least privilege failure, wrapped in a zero trust failure, with a separation of duties gap underneath.
+
+Why. The HVAC vendor needed to submit billing data. It did not need to reach the cash register network. But Target’s network was flat — there was no segmentation between the vendor connection and the point-of-sale systems. The vendor had far more network access than its job required. That is least privilege: the vendor was given access to things it did not need.
+
+On top of that, Target trusted the vendor’s connection once it was inside. The network did not verify what the vendor was doing. It did not re-check. It did not limit the vendor’s access to specific systems. That is zero trust: the network assumed that a connection from inside was safe, and it never verified the request.
+
+And underneath it all, there was no separation of duties in the vendor management process. The person who approved vendor access was not independently checked against what the vendor actually needed. A single process allowed a vendor with a legitimate purpose to receive access far beyond that purpose.
+
+What would have stopped it.
+
+Least privilege: segment the network so that the HVAC vendor can only reach the billing system, not the cash register network.
+Zero trust: verify every connection, regardless of where it comes from. Do not trust the internal network.
+Defence in depth: even if the vendor is compromised, the point-of-sale systems should be protected by additional layers — network segmentation, monitoring, and access controls that limit what the vendor can reach.
+The lesson. A vendor is a person outside your organisation who has access inside your organisation. Every vendor is a potential attack vector. Treat them with the same suspicion you treat an external attacker, because that is what they become when they are compromised.
+
+Case Study 2: The SolarWinds Attack (2020) — 18,000 customers compromised
+What happened. A Russian-linked group infiltrated SolarWinds, a software company that sells IT management software to 33,000 organisations, including every Fortune 500 company and multiple US government departments. The attackers inserted malicious code into a software update. When customers installed the update — which they trusted, because it came from a vendor they trusted — they also installed the attacker’s backdoor. The attack went undetected for months. The US government declared it a national security emergency.
+
+Which principle failed. This is a zero trust failure, a secure defaults failure, and a defence in depth failure.
+
+Why. The software update process was trusted completely. When a customer installed an update from SolarWinds, the system did not question it. It did not verify what the update was doing. It did not limit what the update could access. That is zero trust: the update was treated as legitimate by default, and nothing verified it.
+
+The update ran with system-level privileges, which is necessary for IT management software — it needs to change system files. But the default was that the update could do anything. That is secure defaults: the software shipped with the most permissive access possible, and the customer had to take deliberate action to restrict it. Almost nobody did.
+
+And there was no detection layer. The malicious update communicated with an external server, and nobody noticed, because there was no monitoring of update behaviour. That is defence in depth: there was no detection layer behind the trust layer. If the trust layer fails, and there is nothing behind it, the attacker owns the system.
+
+What would have stopped it.
+
+Zero trust: verify software updates before they are applied. Use code signing so that only updates with a valid cryptographic signature from the vendor are installed.
+Secure defaults: run the update with the lowest possible privileges. IT management software does not need to modify every file on the system.
+Defence in depth: monitor update behaviour. Alert on unusual network connections from update processes. A detection layer would have caught the communication with the attacker’s server.
+The lesson. Trust is a liability. The SolarWinds attacker did not attack 18,000 customers individually. They attacked one company — SolarWinds — and used the trust that 18,000 customers placed in that company to reach all of them. The single point of failure was not a technical vulnerability. It was trust.
+
+Case Study 3: The WannaCry Ransomware Attack (2017) — 200,000 computers in 150 countries
+What happened. In May 2017, a ransomware worm called WannaCry spread across the world in a single weekend. It infected computers at the UK’s National Health Service, forcing at least 19 hospitals to turn away patients and cancel operations. It also hit FedEx, Renault, Nissan, and the Russian central bank. Within days, 200,000 computers in over 150 countries were infected. The ransom demand was 300 US dollars in Bitcoin. The vulnerability WannaCry exploited was in Windows, and the patch had been available for two months before the attack.
+
+Which principle failed. This is a secure defaults failure, a defence in depth failure, and a least privilege failure.
+
+Why. The most direct failure is secure defaults: the NHS and many other organisations had not installed a patch that had been available for two months. The default state of their systems was “vulnerable,” and nothing had changed it. Automatic updates — the secure default — were not enabled.
+
+Behind that, there was no defence in depth. When the worm entered one system, it spread freely through the network because there was no segmentation. If the network had been divided into segments, the worm would have been contained to one part of the organisation instead of spreading to everything.
+
+And the systems ran with more privileges than they needed. The worm was able to spread because services had the access required to reach other machines. Least privilege applied to network services would have limited the blast radius.
+
+What would have stopped it.
+
+Secure defaults: enable automatic updates. The patch existed. The failure was not technical. It was that the patch was not installed.
+Defence in depth: segment the network. If one machine is infected, the segment stops the worm from reaching the others.
+Least privilege: run services with the lowest possible privileges, so that a compromised service cannot reach the whole network.
+The lesson. WannaCry was not a zero-day attack. It was a known vulnerability with a known patch. The attackers did not invent anything new. They used an old exploit against systems that had never been updated. This is the most important lesson in cybersecurity: the most dangerous attacks are the oldest ones, because nobody patches the old ones.
+
+Case Study 4: The Dyn DDoS Attack (2016) — major websites went dark across the US and Europe
+What happened. In October 2016, a massive distributed denial-of-service attack hit Dyn, a company that provides DNS services for much of the internet. When Dyn was attacked, major websites including Twitter, Spotify, Netflix, Reddit, Airbnb, and The New York Times went dark for hours. The attack was launched using the Mirai botnet, which had been released as open-source code weeks earlier. Mirai worked by hijacking internet-connected cameras and home routers — devices with default passwords that nobody had changed.
+
+Which principle failed. This is a secure defaults failure on an industrial scale, with a least privilege failure in the botnet itself.
+
+Why. The cameras and routers that formed the Mirai botnet shipped with default passwords — “admin/admin,” “root/12345,” and similar. The manufacturers did not require users to change the password on first use. The users did not change them. The devices were visible to the internet, and the default passwords were well known. The Mirai code simply tried a list of default passwords, logged in, and recruited the device into the botnet.
+
+This is secure defaults in its purest and most devastating form. The devices were not vulnerable because of a technical flaw. They were vulnerable because the manufacturer made the insecure choice the default choice. The user had to take action to be safe, and almost nobody did.
+
+What would have stopped it.
+
+Secure defaults: require a unique password on first use. Do not ship devices with known default credentials.
+Least privilege: the camera should not have been reachable from the internet in the first place. Home routers should block inbound connections by default.
+Defence in depth: even if the device is compromised, network-level protections should limit what it can do.
+The lesson. Every device you connect to the internet is a potential soldier in someone else’s army. The Mirai botnet was built from devices that were insecure by default, and the attack was automated. This is why secure defaults is not a nice-to-have. It is the only control that works at internet scale.
+
+Case Study 5: The Colonial Pipeline Ransomware Attack (2021) — fuel supply disrupted across the US Eastern Seaboard
+What happened. In May 2021, a ransomware attack shut down the Colonial Pipeline, which carries nearly half the fuel consumed on the US East Coast. The attacker gained access through a single VPN account that used a password that had been sitting in the company’s network for years. The password was old, it was weak, and it did not have multi-factor authentication. The VPN account had been dormant for months, but it was still active, and it was still reachable from the internet. The attacker logged in, moved through the network, deployed ransomware, and the company shut down its pipelines for several days. Fuel prices spiked, panic buying ensued, and the US government declared a state of emergency.
+
+Which principle failed. This is a zero trust failure, a secure defaults failure, and a least privilege failure.
+
+Why. The VPN account was reachable from the internet, and it was protected by a single weak password. That is zero trust: the connection was trusted by default, because it came through a VPN, and nothing verified it further. There was no multi-factor authentication, which would have stopped the attacker even with the password.
+
+The password had been sitting in the network for years. That is secure defaults: the system did not require strong passwords, and it did not require them to be changed regularly. The default was weak and permanent.
+
+And the VPN account had access to critical systems. That is least privilege: the account did not need to reach the operational technology that controlled the pipelines. It needed to be managed, not to control fuel flow. But the network was flat, and the account could reach everything.
+
+What would have stopped it.
+
+Zero trust: require MFA for every remote access account. Verify every connection. Do not trust the VPN by default.
+Secure defaults: require strong, unique passwords. Require them to be changed regularly. Disable accounts that are not in use.
+Least privilege: limit what a VPN account can reach. Segment the network so that the IT network cannot reach the operational technology network.
+The lesson. A single weak password on a single dormant account shut down a major part of a country’s fuel supply. The attacker did not break in. They guessed the password, or found it in a database, and walked through a door that should never have been open. This is the same lesson as every other case: the failure was not technical. It was a principle failure.
+
+Case Study 6: The Inside Job — A payroll clerk steals 40 lakh rupees over three years
+What happened. A small company had one person in charge of the money. She wrote the cheques, signed them, mailed them, received the payments, recorded the payments, reconciled the bank statement, and approved the budget. When she left for a month, the company discovered that she had been writing cheques to herself for three years. The total was 40 lakh rupees. Nobody noticed, because every control in the system was a control that she herself controlled.
+
+Which principle failed. This is a separation of duties failure, pure and simple, with a defence in depth gap underneath.
+
+Why. One person controlled the entire transaction loop: create, authorise, record, and review. The person who could cause the fraud was the same person who could hide it. Separation of duties exists precisely to prevent this, and it was completely absent.
+
+There was no defence in depth either. The bank statement was supposed to be a control, but she reconciled it herself. The ledger was supposed to be a control, but she kept it herself. Every control was a control she controlled, which means there was effectively only one layer, not many.
+
+What would have stopped it.
+
+Separation of duties: the person who writes the cheques should not be the person who signs them. The person who records the payments should not be the person who reconciles the bank statement.
+Defence in depth: an independent reviewer — the owner, an auditor, a second manager — should check the bank statement every month.
+Mandatory vacation: a person who never takes a vacation is a fraud risk. When they are away, someone else looks at their work.
+The lesson. Separation of duties is the oldest principle in this module, and it is still the most effective. It does not require technology. It requires the discipline to ensure that no single person controls a complete loop. If you remember nothing else from Module 2, remember this one.
+
+Part 6 — The Seven Principles, One Table
+Let us now put all seven principles side by side, with the case that demonstrates each one, and the control that would have prevented it.
+
+Principle	What it protects	Case that violated it	The control that would have stopped it
+CIA Triad	Confidentiality, Integrity, Availability	WannaCry (availability), Stuxnet (integrity), Target (confidentiality)	Encrypt, verify, and segment
+AAA	Who can access what	Colonial Pipeline (weak authentication)	MFA, RBAC, logging
+Least Privilege	Access limited to need	Target (vendor had too much access)	Segment, restrict, review
+Defence in Depth	Multiple independent layers	Colonial Pipeline (one layer only)	Layer perimeter, endpoint, detection, access
+Zero Trust	No implicit trust	SolarWinds (trusted update), Target (trusted internal network)	Verify every request, assume breach
+Secure Defaults	Safe out of the box	Mirai (default passwords), WannaCry (no auto-updates)	Unique passwords, auto-updates, encryption on
+Separation of Duties	No single person controls a loop	Payroll fraud (one person did everything)	Four roles, four people, independent review
+Part 7 — Attack and Defence View
+Let us now look at these cases from the attacker’s perspective, because that is how you learn to defend.
+
+What the attacker looks for. The attacker is not looking for a technical masterpiece. They are looking for a principle failure. They scan for default passwords. They look for networks that trust internal traffic. They look for vendors with broad access. They look for systems that have not been updated. They look for processes where one person controls everything.
+
+The attacker’s formula is simple: find the principle that is not applied, exploit it, and move on. The attacker does not need to defeat all seven principles. They need to find one gap.
+
+The defender’s formula is the inverse: apply all seven principles, all the time, to every asset. If even one principle is consistently applied — if every device has a unique password, if every connection is verified, if every transaction has four people — the attacker’s automated tools will skip you entirely, because there is no easy gap to find.
+
+The most important sentence in this lesson: The attacker only needs one principle to fail. The defender only needs one principle to hold.
+
+Part 8 — Common Mistakes Beginners Make
+Mistake 1: Studying the cases as stories instead of as principle failures. Every case in this lesson is a demonstration of a specific principle. If you remember the story but not the principle, you have learned the wrong thing. The story is the delivery mechanism. The principle is the lesson.
+
+Mistake 2: Thinking that technology alone can fix these problems. Most of the failures in these cases were not technical. They were design failures, policy failures, and discipline failures. A firewall would not have stopped the payroll fraud. MFA would not have stopped the Mirai botnet. Technology is a tool. The principles are the strategy.
+
+Mistake 3: Believing that large organisations are immune. Every case in this lesson involved a large organisation — Target, SolarWinds, the NHS, Colonial Pipeline. But the principles apply at every scale. A small business with a flat network and one person handling the money is exposed to exactly the same failures, just on a smaller stage. The principles do not care about your budget. They care about whether you apply them.
+
+Mistake 4: Treating the principles as a checklist to complete. You do not “finish” the seven principles and then move on to the next topic. They are a permanent way of thinking. Every new system you design, every new vendor you onboard, every new process you create is an opportunity to apply them — or to violate them. The organisations that survive are the ones that keep applying them, year after year, as the systems and the attackers change.
+
+Part 9 — Guided Mini-Lab: Find the Principle Failure in Your Own Life
+Let us now apply this way of thinking to your own life. This takes 15 minutes.
+
+Step 1: Identify a recent mistake or near-miss.
+Think of a time when something went wrong, or almost went wrong, in your digital life. A suspicious email you almost clicked. A website that asked for your password and you almost typed it. A device that was stolen or lost. A time you reused a password and then found out the site was breached.
+
+Step 2: Identify the principle.
+Which principle was involved? If you almost clicked a phishing link, the principle is secure defaults (the email provider should have blocked it) and zero trust (you should have verified the sender). If you reused a password, the principle is least privilege (your accounts should not be connected through one password) and AAA (each account should have its own authentication).
+
+Step 3: Identify the gap.
+What was missing that would have stopped it? Was there no MFA? No spam filter? No unique password? No awareness? Write it down.
+
+Step 4: Fix it.
+What will you do differently next time? Enable MFA on that account. Use a password manager. Report the suspicious email. Learn to recognise the pattern.
+
+Step 5: Write it down.
+Open your lab notebook and write:
+
+LESSON 8 — PRINCIPLE FAILURE IN MY LIFE
+Date: [today]
+What happened: [the near-miss or mistake]
+Which principle failed: [which one, and why]
+The gap: [what was missing]
+What I will do differently: [one specific action]
+Which principle I will apply next time: [which one]
+IMAGE 2 — Flowchart: A horizontal flowchart diagram showing the cyber kill chain: six rounded rectangles in a left-to-right sequence — Reconnaissance → Weaponization → Delivery → Exploitation → Installation → Actions on Objectives — connected by arrows. Below each box, a small one-line example in monospace font. A parallel dashed line at the bottom labeled Defence: detect → contain → eradicate. Clean, white background, navy and red accents, professional diagram style, 16:9, high resolution.
+
+Part 10 — Why This Matters for the Rest of the Course
+Let me say something plainly.
+
+You have now completed Module 2. You have studied seven principles and applied them to six real cases. You have seen that a breach is not a mystery — it is a principle failure, and the principles are knowable, teachable, and preventable.
+
+Everything you will learn from Module 3 onward is an application of these seven principles to a specific domain. Cryptography is the CIA triad applied to mathematics. Identity and access is AAA applied to people. Risk management is the triad applied to uncertainty. Security controls are defence in depth applied to policy. Zero trust is zero trust applied to networks. Secure defaults are secure defaults applied to software. Separation of duties is separation of duties applied to processes.
+
+You now have the framework. The rest of the course is filling in the details, but the framework does not change. The attackers will use new tools, new techniques, and new targets, but they will still be looking for the same seven gaps. If you can see the gap, you can close it.
+
+Part 11 — Summary of Module 2
+Here is what the entire module taught you, in one paragraph.
+
+Cybersecurity is built on seven principles. The CIA triad defines the three goals: confidentiality, integrity, and availability. AAA answers the identity questions: who you are, what you can do, and what you did. Least privilege limits access to the minimum required. Defence in depth layers multiple independent controls so that one failure is not enough. Zero trust removes implicit trust and verifies every request. Secure defaults makes the safe choice the automatic choice. Separation of duties ensures that no single person controls a complete transaction.
+
+Every major breach is a failure of one or more of these principles. Target failed least privilege and zero trust. SolarWinds failed zero trust, secure defaults, and defence in depth. WannaCry failed secure defaults, defence in depth, and least privilege. The Dyn attack failed secure defaults at industrial scale. Colonial Pipeline failed zero trust, secure defaults, and least privilege. The payroll fraud failed separation of duties.
+
+The attacker only needs one principle to fail. The defender only needs one principle to hold.
+
+Part 12 — Practice: 5 Quick-Check Questions
+Name the seven principles of Module 2, and give the one-line definition of each.
+Choose one case from this lesson. Which principle failed, and what control would have stopped it?
+Why is the attacker’s formula “find one gap” while the defender’s formula is “apply all seven”?
+Which principle do you think is most often violated in real organisations, and why?
+Choose one principle from Module 2. How will you apply it differently in your own life after this lesson?
+
+Diagram Placement Summary
+Image	Location in lesson	What it shows
+Image 1	After Part 4 (Concept from Scratch)	Principles framework: central security circle with seven coloured petals — CIA triad, AAA, least privilege, defence in depth, zero trust, secure defaults, separation of duties — with attacker arrows pointing inward
+Image 2	After Part 5 (How It Works)	Kill chain flowchart: reconnaissance → weaponization → delivery → exploitation → installation → actions on objectives, with defence path
+Image 3	After Part 9 (Guided Mini-Lab)	Terminal screenshot: dark-themed terminal showing python3 --version, which nmap, which tshark, echo ‘Lab toolkit ready’
+Image 4	After Part 10 (Why This Matters)	Three-column comparison table: security vs privacy vs safety

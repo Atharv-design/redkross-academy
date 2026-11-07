@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "server": "node server/productionServer.js",
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
+    "build:curriculum": "node scripts/build_cyber_curriculum.js",
     "test": "node tests/unit_test_student_features.mjs",
     "check:env": "node scripts/verify-env.js",
     "db:migrate": "node scripts/runMigrations.js",
