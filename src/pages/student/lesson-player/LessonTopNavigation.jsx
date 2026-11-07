@@ -26,8 +26,8 @@ export default function LessonTopNavigation({
           </button>
 
           <div className="truncate text-xs font-mono min-w-0">
-            <span className="text-[#A3907C] hidden md:inline">Course / </span>
-            <span className="text-white font-bold truncate">{course?.title}</span>
+            <span className="text-[#A3907C] hidden md:inline font-lora">Course / </span>
+            <span className="text-white font-bold truncate font-lora">{course?.title}</span>
           </div>
         </div>
 

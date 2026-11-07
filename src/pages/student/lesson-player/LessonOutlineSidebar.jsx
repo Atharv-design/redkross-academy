@@ -34,7 +34,7 @@ export default function LessonOutlineSidebar({
       <div className="p-4 border-b border-[#FF7A00]/20 flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <BookOpen className="w-4 h-4 text-[#FF7A00]" />
-          <h3 className="font-bold text-sm text-white">Course outline</h3>
+          <h3 className="font-bold text-sm text-white font-lora">Course outline</h3>
         </div>
         <button
           type="button"
@@ -161,7 +161,7 @@ export default function LessonOutlineSidebar({
                                 : 'text-[#A3907C]'
                             }`}
                           />
-                          <span className="truncate">{les.title}</span>
+                          <span className="truncate font-lora">{les.title}</span>
                         </div>
                         <div className="flex items-center space-x-1.5 flex-shrink-0">
                           {isDone && (

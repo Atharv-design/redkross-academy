@@ -1004,7 +1004,7 @@ export default function LessonPlayerPage() {
             {/* Top Unit Title Bar & Bookmark Toggle */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#FF7A00]/20 gap-3">
               <div>
-                <span className="text-[11px] font-mono text-[#A3907C] uppercase tracking-wider block">
+                <span className="text-[11px] font-mono text-[#A3907C] uppercase tracking-wider block font-lora">
                   {activeUnit?.moduleTitle || 'Curriculum Module'}
                 </span>
                 <h2 className="text-xl sm:text-2xl font-bold text-white font-lora tracking-tight">
@@ -1015,7 +1015,7 @@ export default function LessonPlayerPage() {
               <button
                 type="button"
                 onClick={() => toggleBookmark(activeUnit?.id)}
-                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border text-xs font-mono transition-all cursor-pointer self-start sm:self-center ${
+                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border text-xs font-mono font-lora transition-all cursor-pointer self-start sm:self-center ${
                   isCurrentUnitBookmarked
                     ? 'bg-[#FF7A00]/15 text-[#FF7A00] border-[#FF7A00]/40'
                     : 'bg-[#0E0C09] text-[#A3907C] border-[#FF7A00]/20 hover:text-white'

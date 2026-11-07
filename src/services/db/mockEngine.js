@@ -1385,6 +1385,9 @@ class MockEngine {
       });
     });
 
+    if (totalMandatory === 0) {
+      totalMandatory = course.modules.reduce((sum, m) => sum + (m.lessons?.length || 0), 0);
+    }
     if (totalMandatory === 0) return { percentage: 100, completed: 0, total: 0 };
 
     const completedList = Array.isArray(enrolment.completed_mandatory_lessons)

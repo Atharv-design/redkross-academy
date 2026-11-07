@@ -90,11 +90,11 @@ function LessonContentPanel({
         <div className="space-y-6">
           {/* Sub-Tabs: Notes vs Assignment */}
           <div className="flex items-center justify-between border-b border-[#FF7A00]/20 pb-2">
-            <div className="flex items-center space-x-4 text-xs font-mono">
+            <div className="flex items-center space-x-4 text-xs font-mono font-lora">
               <button
                 type="button"
                 onClick={() => setActiveTab('notes')}
-                className={`pb-2 border-b-2 font-bold transition-all cursor-pointer ${
+                className={`pb-2 border-b-2 font-bold font-lora transition-all cursor-pointer ${
                   activeTab === 'notes'
                     ? 'border-[#FF7A00] text-[#FF7A00]'
                     : 'border-transparent text-[#A3907C] hover:text-white'
@@ -106,7 +106,7 @@ function LessonContentPanel({
                 <button
                   type="button"
                   onClick={() => setActiveTab('assignment')}
-                  className={`pb-2 border-b-2 font-bold transition-all cursor-pointer ${
+                  className={`pb-2 border-b-2 font-bold font-lora transition-all cursor-pointer ${
                     activeTab === 'assignment'
                       ? 'border-[#FF7A00] text-[#FF7A00]'
                       : 'border-transparent text-[#A3907C] hover:text-white'
@@ -120,7 +120,7 @@ function LessonContentPanel({
             <button
               type="button"
               onClick={handleDownloadChapterNotes}
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-[#FF7A00]/30 bg-[#1A1208] text-[#FF7A00] hover:bg-[#FF7A00]/20 text-xs font-mono transition-colors cursor-pointer"
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-[#FF7A00]/30 bg-[#1A1208] text-[#FF7A00] hover:bg-[#FF7A00]/20 text-xs font-mono font-lora transition-colors cursor-pointer"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Download Study Notes</span>
