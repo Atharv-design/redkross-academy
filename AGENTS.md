@@ -78,3 +78,40 @@ When authoring, reviewing, updating, or formatting curriculum chapters, lessons,
 - Ground security principles in quantitative operational metrics: latency thresholds, "Five Nines" (99.999%) uptime, MTBF, RTO/RPO, intrusion dwell time.
 - All learning objectives under `## Core Competencies and Learning Objectives` must be structured into actionable bullet items with front-loaded concept tags.
 
+---
+
+# Course Engineering & Operational Blueprint (Authoritative Standards)
+
+### 1. Visual Models & Diagrams Placement Invariant
+- **Contextual Inline Placement Only:** All diagrams, flowcharts, and architecture blueprints must be embedded directly inside the relevant theoretical section (`![Caption](/assets/courses/<slug>/<file>.png)`), right where the concept is taught.
+- **Strict Anti-Pattern (No End-of-Lesson Galleries):** Never dump image galleries or stage photos at the bottom/ending of a lesson. Visuals must be encountered during the reading flow.
+- **Dual-Format Asset Storage:** Optimize and store high-resolution diagrams in `public/assets/courses/<course-slug>/` with both `.png` and `.jpg` formats.
+
+### 2. Assessment Architecture & Question Bank Standards
+- **Volume:** Exactly 200 questions per module, maintained in isolated files (`moduleXQuestions.js`).
+- **Difficulty Distribution:** Exactly 100 Medium (conceptual application, scenario analysis) and 100 Difficult (edge cases, multi-factor evaluation, calculations). Exactly 0 Easy / trivia questions.
+- **Strict Question Schema:** Every question must have `id`, `text`, `options` (array of 4 strings), `correct_answer_index` (0–3), `explanation`, and `difficulty` ('Medium' | 'Difficult').
+- **Module Knowledge Checks:** Sample exactly 20 questions (balanced 10 Medium + 10 Difficult) with non-deterministic option shuffling that preserves the correct answer string. Passing score: 80% (16/20).
+- **Final Certification Exam:** Exactly 60 MCQs sampled evenly across all modules (10 questions per module), timed at 60 minutes with proctoring / blur protection.
+
+### 3. Strict Linear Curriculum Progression Invariant
+- **Linear Daisy-Chain:** Module 1 lessons unlocked by default. Module 1 Knowledge Check unlocks only after 100% of Module 1 lessons are completed. Module 2 unlocks only after passing Module 1 Knowledge Check ($\ge 80\%$).
+- **Final Exam Unlock Gate:** Final exam unlocks only when all lessons across all modules are read AND all module knowledge checks are passed ($\ge 80\%$).
+- **Zero Production Bypass:** Purge all development bypass flags (`rk_dev_gateway_unlock_all`) from production code.
+
+### 4. Classroom Viewport Ergonomics & Scroll Reset
+- **Instant Scroll-to-Top on Unit Progression:** When cadets click "Complete & Next", "Next Unit", or switch lessons via the sidebar, the center stage `<main>` scroll container must immediately execute `scrollTo({ top: 0, left: 0, behavior: 'instant' })`. Cadets must never land at the bottom of a new unit.
+
+### 5. Course Presentation & Card Standards
+- **Direct Authoritative Titles:** Never prefix titles with "Course 01:" or "Course 02:". State the clean course title directly (e.g., `Introduction to Cybersecurity`).
+- **Zero Truncation (`...`):** Never apply `line-clamp-3` or truncate course descriptions with ellipses. Show complete, high-impact institutional briefs.
+- **Tight Card Geometry:** Use natural content wrapping with `gap-4` instead of arbitrary `min-h-[510px]` and `justify-between` to eliminate empty vertical gaps.
+- **Obsolete Simulator Cleanup:** Remove callouts or buttons for sandboxes/simulators that are not integrated into that specific course.
+
+### 6. Cache Invalidation & Schema Versioning Lifecycle
+- Whenever modifying static database fixtures (`cyberCourses.js`, modules, or question banks):
+  1. Bump `CURRICULUM_VERSION` in `src/services/db/mockEngine.js`.
+  2. Update the asserted version in `tests/test_curriculum_cache_migration.mjs`.
+  3. Run `node tests/test_curriculum_cache_migration.mjs` to verify safe migration without wiping cadet accounts, progress metrics, quiz history, or token balances.
+
+
