@@ -52,7 +52,7 @@ export default function LessonOutlineSidebar({
           const isUnlocked = isModuleUnlocked(modIdx);
           const isCurrentMod = activeUnit?.moduleId === mod.id;
           // TEMPORARY_GATEWAY_MODULE_6: Auto-expand Module 6 if not explicitly toggled
-          const isExpanded = isUnlocked && (expandedModules[mod.id] !== undefined ? Boolean(expandedModules[mod.id]) : (isCurrentMod || modIdx === 0 || modIdx === 5));
+          const isExpanded = isUnlocked && (expandedModules[mod.id] !== undefined ? Boolean(expandedModules[mod.id]) : (isCurrentMod || modIdx === 0));
           const modLessons = mod.lessons || [];
           const completedLessonsList = currentEnrolment?.completed_mandatory_lessons || enrolment?.completed_mandatory_lessons || [];
           const passedQuizzesList = currentEnrolment?.passed_quizzes || enrolment?.passed_quizzes || [];

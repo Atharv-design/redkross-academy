@@ -175,8 +175,6 @@ export default function LessonPlayerPage() {
 
   const isModuleUnlocked = (modIndex) => {
     if (modIndex === 0) return true;
-    // TEMPORARY_GATEWAY_MODULE_6: Temporary preview unlock for Module 6
-    if (modIndex === 5) return true;
     const completedLessons = currentEnrolment?.completed_mandatory_lessons || enrolment?.completed_mandatory_lessons || [];
     const passedQuizzes = currentEnrolment?.passed_quizzes || enrolment?.passed_quizzes || [];
     for (let i = 0; i < modIndex; i++) {
