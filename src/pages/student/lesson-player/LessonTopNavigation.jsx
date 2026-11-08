@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, Zap } from 'lucide-react';
+import { Menu, Zap, Unlock, Lock } from 'lucide-react';
 
 export default function LessonTopNavigation({
   sidebarOpen,
@@ -10,6 +10,8 @@ export default function LessonTopNavigation({
   activeUnit,
   toolsStripOpen,
   setToolsStripOpen,
+  gatewayUnlockAll,
+  toggleGatewayUnlock,
   onOpenTerminal = () => {}
 }) {
   return (
@@ -63,6 +65,33 @@ export default function LessonTopNavigation({
             </div>
             <span className="text-white font-bold">{progressData.percentage}%</span>
           </div>
+
+          {/* Temporary Review Gateway Toggle */}
+          {toggleGatewayUnlock && (
+            <button
+              type="button"
+              onClick={toggleGatewayUnlock}
+              className={`p-2 rounded-xl border text-xs font-mono transition-all cursor-pointer flex items-center space-x-1.5 ${
+                gatewayUnlockAll
+                  ? 'bg-[#FF7A00]/20 text-[#FFA439] border-[#FF7A00]/50 shadow-[0_0_12px_rgba(255,122,0,0.25)]'
+                  : 'bg-black/60 text-[#A3907C] border-white/10 hover:text-white'
+              }`}
+              title={
+                gatewayUnlockAll
+                  ? 'Testing Gateway ACTIVE: All modules unlocked for review. Click to switch to strict linear mode.'
+                  : 'Testing Gateway: Strict progression active. Click to unlock all modules for testing.'
+              }
+            >
+              {gatewayUnlockAll ? (
+                <Unlock className="w-3.5 h-3.5 text-[#FF7A00]" />
+              ) : (
+                <Lock className="w-3.5 h-3.5 text-[#A3907C]" />
+              )}
+              <span className="text-[11px] font-bold hidden xl:inline">
+                {gatewayUnlockAll ? 'Gateway: All Unlocked' : 'Strict Mode'}
+              </span>
+            </button>
+          )}
 
           {activeUnit?.type === 'lesson' && (
             <button

@@ -164,7 +164,26 @@ export default function LessonPlayerPage() {
     nextUnitId: null
   });
 
+  // =========================================================================
+  // TEMPORARY REVIEW & TESTING GATEWAY (DEV OVERRIDE)
+  // Allows testing all 5 modules and units freely without prerequisite gating.
+  // Revert / set to false once testing is complete to re-enforce strict unlock flow.
+  // =========================================================================
+  const [gatewayUnlockAll, setGatewayUnlockAll] = useState(() => {
+    const saved = localStorage.getItem('rk_dev_gateway_unlock_all');
+    return saved !== null ? saved === 'true' : true; // Enabled by default for testing
+  });
+
+  const toggleGatewayUnlock = () => {
+    setGatewayUnlockAll((prev) => {
+      const next = !prev;
+      localStorage.setItem('rk_dev_gateway_unlock_all', String(next));
+      return next;
+    });
+  };
+
   const isModuleUnlocked = (modIndex) => {
+    if (gatewayUnlockAll) return true;
     if (modIndex === 0) return true;
     const completedLessons = currentEnrolment?.completed_mandatory_lessons || enrolment?.completed_mandatory_lessons || [];
     const passedQuizzes = currentEnrolment?.passed_quizzes || enrolment?.passed_quizzes || [];
@@ -197,7 +216,7 @@ export default function LessonPlayerPage() {
     });
   };
 
-  const isFinalExamUnlocked = areAllModulesCompleted();
+  const isFinalExamUnlocked = gatewayUnlockAll || areAllModulesCompleted();
 
   useEffect(() => {
     const syncEnrolment = () => {
@@ -974,6 +993,8 @@ export default function LessonPlayerPage() {
         activeUnit={activeUnit}
         toolsStripOpen={toolsStripOpen}
         setToolsStripOpen={setToolsStripOpen}
+        gatewayUnlockAll={gatewayUnlockAll}
+        toggleGatewayUnlock={toggleGatewayUnlock}
         onOpenTerminal={() => {
           setIsMacTerminalOpen(true);
           setIsMacTerminalMinimized(false);
