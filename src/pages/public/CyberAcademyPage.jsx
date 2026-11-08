@@ -63,27 +63,49 @@ export default function CyberAcademyPage() {
     division: 'cybersecurity',
     slug: masterCourse.slug || 'introduction-to-cybersecurity',
     title: masterCourse.title || 'Course 01: Introduction to Cybersecurity',
-    short_desc: masterCourse.overview || 'The institutional starting point for modern cyber defense. Master foundational security models, the CIA triad, threat surfaces, the Lockheed Martin Cyber Kill Chain, defense-in-depth architecture, and essential defensive toolkits.',
-    difficulty: masterCourse.difficulty || 'BEGINNER',
-    estimated_weeks: 8,
-    total_hours: 36,
+    short_desc: masterCourse.overview || 'The institutional starting point for modern cyber defense. Master foundational security models, the CIA triad, the Lockheed Martin Cyber Kill Chain, STRIDE threat modeling, CVSS v3.1 scoring, authentication and access controls, applied cryptography, SOC incident management, and Indian cyber law (IT Act & DPDP Act 2023).',
+    difficulty: (masterCourse.difficulty || 'BEGINNER').toUpperCase(),
+    estimated_weeks: 10,
+    total_hours: 45,
     courses_count: 1,
     milestone_cert: masterCourse.milestone_cert || 'Certified Cybersecurity Defender Associate (CCDA)',
     featured: true,
-    skills: masterCourse.skills || ['CIA Triad', 'Cyber Kill Chain', 'Threat Modeling', 'Attack Surface Analysis', 'Security vs Privacy vs Safety', 'Defensive CLI Toolkit']
+    skills: masterCourse.skills || [
+      'CIA Triad & Defense-in-Depth',
+      'Lockheed Martin Cyber Kill Chain',
+      'Threat Modeling & STRIDE',
+      '5×5 Risk Matrix & CVSS v3.1',
+      'Identity, MFA & Access Control',
+      'Applied Cryptography (AES & TLS 1.3)',
+      'SOC Operations & SIEM Telemetry',
+      'Incident Response (NIST SP 800-61)',
+      'DPDP Act 2023 & Compliance',
+      'NICE Workforce Career Mapping'
+    ]
   } : (learningPaths.find((p) => p.slug === 'foundational-cyber-defense-track') || learningPaths[0] || {
     id: 'crs_cyber_intro_01',
     division: 'cybersecurity',
     slug: 'introduction-to-cybersecurity',
     title: 'Course 01: Introduction to Cybersecurity',
-    short_desc: 'The institutional starting point for modern cyber defense. Master foundational security models, the CIA triad, threat surfaces, the Lockheed Martin Cyber Kill Chain, defense-in-depth architecture, and essential defensive toolkits.',
+    short_desc: 'The institutional starting point for modern cyber defense. Master foundational security models, the CIA triad, the Lockheed Martin Cyber Kill Chain, STRIDE threat modeling, CVSS v3.1 scoring, authentication and access controls, applied cryptography, SOC incident management, and Indian cyber law (IT Act & DPDP Act 2023).',
     difficulty: 'BEGINNER',
-    estimated_weeks: 8,
-    total_hours: 36,
+    estimated_weeks: 10,
+    total_hours: 45,
     courses_count: 1,
     milestone_cert: 'Certified Cybersecurity Defender Associate (CCDA)',
     featured: true,
-    skills: ['CIA Triad', 'Cyber Kill Chain', 'Threat Modeling', 'Attack Surface Analysis', 'Security vs Privacy vs Safety', 'Defensive CLI Toolkit']
+    skills: [
+      'CIA Triad & Defense-in-Depth',
+      'Lockheed Martin Cyber Kill Chain',
+      'Threat Modeling & STRIDE',
+      '5×5 Risk Matrix & CVSS v3.1',
+      'Identity, MFA & Access Control',
+      'Applied Cryptography (AES & TLS 1.3)',
+      'SOC Operations & SIEM Telemetry',
+      'Incident Response (NIST SP 800-61)',
+      'DPDP Act 2023 & Compliance',
+      'NICE Workforce Career Mapping'
+    ]
   });
 
   return (

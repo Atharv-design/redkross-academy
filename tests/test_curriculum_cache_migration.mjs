@@ -33,7 +33,7 @@ mockEngine._cachedDb = null;
 
 const db = mockEngine.getDb();
 
-assert.strictEqual(db._curriculum_version, '2026.11.09.v19_module6_complete_visual_diagrams', 'Curriculum version must be updated to latest');
+assert.strictEqual(db._curriculum_version, '2026.11.09.v20_course_card_and_detail_refresh', 'Curriculum version must be updated to latest');
 const cyberCourse = db.courses.find(c => c.id === 'crs_cyber_intro_01');
 assert.ok(cyberCourse, 'crs_cyber_intro_01 must exist');
 assert.strictEqual(cyberCourse.modules.length, 6, 'crs_cyber_intro_01 must have all 6 modules from INITIAL_COURSES');

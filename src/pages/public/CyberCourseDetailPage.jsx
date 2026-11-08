@@ -28,8 +28,6 @@ import {
   HelpCircle,
   ListOrdered,
   Share2,
-  Copy,
-  Check,
   Calendar,
   Globe,
   Coins,
@@ -63,7 +61,6 @@ export default function CyberCourseDetailPage() {
   const [activeTab, setActiveTab] = useState('overview');
   const [expandedModules, setExpandedModules] = useState({ 0: true, 1: true });
   const [enrolling, setEnrolling] = useState(false);
-  const [copiedHash, setCopiedHash] = useState(false);
   const [showGrantModal, setShowGrantModal] = useState(false);
   const [couponCode, setCouponCode] = useState('');
   const [grantSuccess, setGrantSuccess] = useState(false);
@@ -165,14 +162,6 @@ export default function CyberCourseDetailPage() {
     }
   };
 
-  const sampleSha256 = '3a7f8b9c2e1d0f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a';
-
-  const copyHashToClipboard = () => {
-    navigator.clipboard?.writeText(sampleSha256);
-    setCopiedHash(true);
-    setTimeout(() => setCopiedHash(false), 2000);
-  };
-
   const totalLessonsCount = useMemo(() => {
     if (!course?.modules) return 78;
     return course.modules.reduce((acc, m) => acc + (m.lessons?.length || 0), 0);
@@ -243,7 +232,7 @@ export default function CyberCourseDetailPage() {
                 <div className="p-3.5 rounded-xl bg-black/35 backdrop-blur-xl border border-[#FF7A00]/25 hover:border-[#FF7A00]/50 transition-colors">
                   <div className="text-[10px] font-mono text-[#FFA439] uppercase">DURATION</div>
                   <div className="text-base sm:text-lg font-bold font-mono text-white">
-                    {course.estimated_duration || '12 Weeks'}
+                    {course.estimated_duration || '10 Weeks'}
                   </div>
                   <div className="text-[10px] text-slate-400">6–8 hrs / week</div>
                 </div>
@@ -251,7 +240,7 @@ export default function CyberCourseDetailPage() {
                 <div className="p-3.5 rounded-xl bg-black/35 backdrop-blur-xl border border-[#FF7A00]/25 hover:border-[#FF7A00]/50 transition-colors">
                   <div className="text-[10px] font-mono text-[#FFA439] uppercase">SYLLABUS</div>
                   <div className="text-base sm:text-lg font-bold font-mono text-white">
-                    {course.modules?.length || 12} Modules
+                    {course.modules?.length || 6} Modules
                   </div>
                   <div className="text-[10px] text-slate-400">{totalLessonsCount} Lessons</div>
                 </div>
@@ -259,9 +248,15 @@ export default function CyberCourseDetailPage() {
                 <div className="p-3.5 rounded-xl bg-black/35 backdrop-blur-xl border border-[#FF7A00]/25 hover:border-[#FF7A00]/50 transition-colors">
                   <div className="text-[10px] font-mono text-[#FFA439] uppercase">EXAM GATES</div>
                   <div className="text-base sm:text-lg font-bold font-mono text-white">
-                    12 Quizzes + Final
+                    {course.id === 'crs_cyber_intro_01' || course.slug === 'introduction-to-cybersecurity'
+                      ? '6 Knowledge Checks + Final'
+                      : '12 Quizzes + Final'}
                   </div>
-                  <div className="text-[10px] text-slate-400">50-MCQ Proctored</div>
+                  <div className="text-[10px] text-slate-400">
+                    {course.id === 'crs_cyber_intro_01' || course.slug === 'introduction-to-cybersecurity'
+                      ? '60-MCQ Proctored Final'
+                      : '50-MCQ Proctored'}
+                  </div>
                 </div>
               </div>
             </div>
@@ -363,7 +358,7 @@ export default function CyberCourseDetailPage() {
                     <Clock className="w-3.5 h-3.5 text-slate-400" />
                     <span>Effort</span>
                   </span>
-                  <span className="font-bold text-white">{course.estimated_duration || '12 Weeks'}</span>
+                  <span className="font-bold text-white">{course.effort || '6–8 hrs / week'}</span>
                 </div>
 
                 <div className="flex items-center justify-between text-slate-300">
@@ -371,7 +366,7 @@ export default function CyberCourseDetailPage() {
                     <Calendar className="w-3.5 h-3.5 text-slate-400" />
                     <span>Length</span>
                   </span>
-                  <span className="font-bold text-white">{course.estimated_duration || '12 Weeks'}</span>
+                  <span className="font-bold text-white">{course.estimated_duration || '10 Weeks'}</span>
                 </div>
 
                 <div className="flex items-center justify-between text-slate-300">
@@ -379,7 +374,7 @@ export default function CyberCourseDetailPage() {
                     <Layers className="w-3.5 h-3.5 text-slate-400" />
                     <span>Level</span>
                   </span>
-                  <span className="font-bold text-[#FFA439]">{course.difficulty || 'Beginner to Advanced'}</span>
+                  <span className="font-bold text-[#FFA439]">{course.difficulty || 'Beginner'}</span>
                 </div>
 
                 <div className="flex items-center justify-between text-slate-300">
@@ -403,7 +398,7 @@ export default function CyberCourseDetailPage() {
                     <Coins className="w-3.5 h-3.5 text-[#FFA439]" />
                     <span>Bounty</span>
                   </span>
-                  <span className="font-bold text-[#FFA439]">+1200 Tokens</span>
+                  <span className="font-bold text-[#FFA439]">+{course.total_tokens_reward || 1500} Tokens</span>
                 </div>
               </div>
 
@@ -455,8 +450,7 @@ export default function CyberCourseDetailPage() {
               { id: 'outcomes', label: '02 // OUTCOMES', icon: Shield },
               { id: 'syllabus', label: '03 // SYLLABUS OUTLINE', icon: ListOrdered },
               { id: 'eligibility', label: '04 // ELIGIBILITY', icon: CheckCircle2 },
-              { id: 'certification', label: '05 // CERTIFICATION', icon: Award },
-              { id: 'faqs', label: '06 // FAQS', icon: HelpCircle }
+              { id: 'faqs', label: '05 // FAQS', icon: HelpCircle }
             ].map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -561,19 +555,31 @@ export default function CyberCourseDetailPage() {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {(course.id === 'crs_cyber_intro_01' || course.slug === 'introduction-to-cybersecurity' ? [
                     {
-                      title: 'THE CIA TRIAD (CONFIDENTIALITY, INTEGRITY, AVAILABILITY)',
-                      desc: 'Master the core security triad, evaluate trade-offs in real-world scenarios, and balance security without compromising operational availability.'
+                      title: 'MOD 01 // FOUNDATIONS & ECOSYSTEM',
+                      desc: 'Master fundamental security models, evaluate trade-offs between Security, Privacy, and Safety, and analyze attack surfaces across hybrid infrastructure.'
                     },
                     {
-                      title: '6-STAGE CYBER KILL CHAIN',
-                      desc: 'Trace attacks from Reconnaissance to Actions on Objectives; understand how interrupting any single link halts adversary progress.'
+                      title: 'MOD 02 // CIA TRIAD & DEFENSE IN DEPTH',
+                      desc: 'Apply Confidentiality, Integrity, and Availability principles; implement non-repudiation and design concentric defense-in-depth perimeters across administrative, technical, and physical layers.'
                     },
                     {
-                      title: 'DEFENSE IN DEPTH & CLI TOOLKIT',
-                      desc: 'Deploy layered security controls across assets, configure terminal diagnostics, and practice threat modeling to minimize attack surfaces.'
+                      title: 'MOD 03 // KILL CHAIN & ADVERSARY OPS',
+                      desc: 'Deconstruct the 6-stage Lockheed Martin Cyber Kill Chain from Reconnaissance to Actions on Objectives; analyze malware taxonomy, social engineering vectors, and physical security.'
+                    },
+                    {
+                      title: 'MOD 04 // RISK, CVSS v3.1 & STRIDE',
+                      desc: 'Calculate CVSS v3.1 base severity metrics across exploitability and impact vectors, build STRIDE threat models, and establish cross-functional defensive control matrices.'
+                    },
+                    {
+                      title: 'MOD 05 // IDENTITY & ACCESS MANAGEMENT',
+                      desc: 'Enforce robust authentication boundaries with MFA and bcrypt work factors, implement Zero Trust architecture, and apply least-privilege Role-Based Access Control (RBAC).'
+                    },
+                    {
+                      title: 'MOD 06 // SEC OPS, GOVERNANCE & LAW',
+                      desc: 'Harmonize security programs with NIST CSF 2.0 and CIS Controls v8, navigate SOC triage lifecycles, leverage foundational cryptography, and understand Indian cyber regulations (IT Act & DPDP Act).'
                     }
                   ] : [
                     {
@@ -632,7 +638,7 @@ export default function CyberCourseDetailPage() {
             >
               <div className="flex items-center justify-between pb-2">
                 <div className="text-xs font-mono text-slate-400">
-                  Total {course.modules?.length || 5} Modules • {totalLessonsCount} Lessons • {course.modules?.length || 5} Graded Unit Quizzes
+                  Total {course.modules?.length || 6} Modules • {totalLessonsCount} Lessons • 6 Knowledge Checks + 1 Final Certification Exam
                 </div>
                 <div className="flex items-center gap-2">
                   <button
@@ -685,7 +691,7 @@ export default function CyberCourseDetailPage() {
 
                         <div className="flex items-center gap-3 shrink-0">
                           <span className="text-[11px] font-mono text-slate-400 hidden sm:block">
-                            {lessonCount} Lessons + Quiz
+                            {lessonCount} Lessons + Knowledge Check
                           </span>
                           {isExpanded ? (
                             <ChevronUp className="w-4 h-4 text-[#FFA439]" />
@@ -729,10 +735,10 @@ export default function CyberCourseDetailPage() {
                               <div className="flex items-center gap-2">
                                 <Award className="w-4 h-4 text-[#FFA439]" />
                                 <span className="text-[#FFA439] font-bold">
-                                  Module {idx + 1} Assessment: 20-MCQ Graded Quiz
+                                  Module {idx + 1} Assessment: 20-MCQ Graded Assessment
                                 </span>
                               </div>
-                              <span className="text-[10px] text-slate-300">80% Pass Req</span>
+                              <span className="text-[10px] text-slate-300">80% Pass Req • 20 MCQs</span>
                             </div>
                           </motion.div>
                         )}
@@ -772,8 +778,9 @@ export default function CyberCourseDetailPage() {
                     </div>
                     <ul className="space-y-2 text-xs text-slate-300 font-sans list-disc list-inside leading-relaxed">
                       {(course.prerequisites || [
-                        'No prior programming or networking knowledge required. Designed from absolute scratch.',
-                        'A computer (Windows, macOS, or Linux) with permissions to run command-line terminal commands.'
+                        'No prior programming, networking, or cybersecurity background required. Designed from absolute scratch.',
+                        'A modern laptop or desktop computer with any standard operating system (Windows, macOS, or Linux).',
+                        'Estimated dedication of 6–8 hours per week across 10 weeks (~45 total learning hours).'
                       ]).map((item, idx) => (
                         <li key={idx}>{item}</li>
                       ))}
@@ -787,8 +794,8 @@ export default function CyberCourseDetailPage() {
                     </div>
                     <ul className="space-y-2 text-xs text-slate-300 font-sans list-disc list-inside leading-relaxed">
                       <li>Standard desktop/laptop with modern browser (Chrome, Firefox, Safari, Edge)</li>
-                      <li>Standard OS Terminal (Command Prompt / PowerShell / macOS Terminal / Linux bash)</li>
-                      <li>Zero paid software or virtual machines required — completely free tooling</li>
+                      <li>100% web-accessible curriculum with interactive inline question engines</li>
+                      <li>Zero paid software licenses or complex virtual machine setups required — completely free tooling</li>
                     </ul>
                   </div>
                 </div>
@@ -804,79 +811,7 @@ export default function CyberCourseDetailPage() {
             </motion.div>
           )}
 
-          {/* TAB 5: CERTIFICATION */}
-          {activeTab === 'certification' && (
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className="space-y-6"
-            >
-              <div className="p-6 sm:p-8 rounded-2xl bg-black/60 backdrop-blur-xl border border-[#FF7A00]/25 shadow-lg space-y-6">
-                <div>
-                  <h3 className="text-xl sm:text-2xl font-bold font-royal text-white mb-2">
-                    Proctored Final Evaluation &amp; SHA-256 On-Chain Proofs
-                  </h3>
-                  <p className="text-sm text-slate-300 font-sans leading-relaxed">
-                    Earn an immutable, tamper-proof credential verified against the RedKross public cryptographic ledger.
-                  </p>
-                </div>
-
-                {/* Exam Specs Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="p-4 rounded-xl bg-black/40 border border-white/10">
-                    <div className="text-[10px] font-mono text-[#FFA439] uppercase">QUESTION SUITE</div>
-                    <div className="text-lg font-bold font-mono text-white">50 MCQs</div>
-                    <div className="text-xs text-slate-400">Randomized across curriculum modules</div>
-                  </div>
-                  <div className="p-4 rounded-xl bg-black/40 border border-white/10">
-                    <div className="text-[10px] font-mono text-[#FFA439] uppercase">TIME RESTRICTION</div>
-                    <div className="text-lg font-bold font-mono text-white">60 Minutes</div>
-                    <div className="text-xs text-slate-400">Strict countdown timer</div>
-                  </div>
-                  <div className="p-4 rounded-xl bg-black/40 border border-white/10">
-                    <div className="text-[10px] font-mono text-[#FFA439] uppercase">PASSING CRITERIA</div>
-                    <div className="text-lg font-bold font-mono text-white">80% (40/50)</div>
-                    <div className="text-xs text-slate-400">Anti-cheat blur lockout active</div>
-                  </div>
-                </div>
-
-                {/* Cryptographic SHA-256 Proof Box */}
-                <div className="p-5 rounded-xl bg-gradient-to-r from-black/80 via-[#181108]/90 to-black/80 border border-[#FF7A00]/40 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-mono font-bold text-[#FFA439] uppercase flex items-center gap-1.5">
-                      <Lock className="w-3.5 h-3.5" />
-                      <span>CRYPTOGRAPHIC DIGITAL SIGNATURE ARCHITECTURE</span>
-                    </span>
-                    <span className="text-[10px] font-mono text-slate-400">ECDSA / SHA-256</span>
-                  </div>
-
-                  <p className="text-xs text-slate-300 font-sans leading-relaxed">
-                    Upon exam passage, a digital certificate is allocated with a unique hash derived from cadet ID, completion timestamp, module metrics, and cryptographic salt.
-                  </p>
-
-                  <div className="p-3 rounded-lg bg-black/80 border border-white/10 font-mono text-xs flex items-center justify-between gap-2 overflow-x-auto">
-                    <span className="text-[#FFA439] truncate">{sampleSha256}</span>
-                    <button
-                      type="button"
-                      onClick={copyHashToClipboard}
-                      className="px-2 py-1 rounded bg-[#FF7A00]/20 hover:bg-[#FF7A00]/40 text-[#FFA439] text-[10px] flex items-center gap-1 shrink-0 cursor-pointer transition-colors"
-                    >
-                      {copiedHash ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                      <span>{copiedHash ? 'COPIED' : 'COPY HASH'}</span>
-                    </button>
-                  </div>
-
-                  <div className="text-[10px] font-mono text-slate-400 flex items-center gap-2">
-                    <CheckCircle2 className="w-3 h-3 text-[#FFA439]" />
-                    <span>Publicly verifiable at /verify/:credentialId</span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {/* TAB 6: FAQS */}
+          {/* TAB 5: FAQS */}
           {activeTab === 'faqs' && (
             <motion.div
               initial={{ opacity: 0, y: 15 }}
@@ -887,23 +822,27 @@ export default function CyberCourseDetailPage() {
               {(course.id === 'crs_cyber_intro_01' || course.slug === 'introduction-to-cybersecurity' ? [
                 {
                   q: 'Do I need any programming or IT experience before starting this course?',
-                  a: 'No prior background is required. The curriculum begins from scratch, explaining digital security, the CIA triad, and attack surfaces using real-world analogies before introducing hands-on tools.'
+                  a: 'No prior background is required. The curriculum begins from scratch, explaining digital security, core ecosystem concepts, and foundational architecture before advancing to threat modeling and defensive operations.'
                 },
                 {
-                  q: 'What hands-on tools will I set up during Module 1?',
-                  a: 'In Module 1 Chapter 1, you set up your core defensive toolkit including the terminal command line, Python 3, and foundational diagnostics, preparing you for safe local analysis.'
+                  q: 'What does the 6-module curriculum cover?',
+                  a: 'The curriculum spans 6 comprehensive modules: (1) Cybersecurity Foundations & Ecosystem, (2) Core Principles & Defense Architecture, (3) The Threat Landscape & Adversary Operations, (4) Risk Management, Vulnerabilities & Defense Strategy, (5) Identity & Access Management (IAM), and (6) Security Operations, Governance & Career Pathways.'
                 },
                 {
                   q: 'What is the Lockheed Martin Cyber Kill Chain taught in this curriculum?',
-                  a: 'The Cyber Kill Chain is a 6-stage model (Reconnaissance, Weaponization, Delivery, Exploitation, Installation, Actions on Objectives) that teaches defenders how attacks unfold and how breaking any single link completely terminates the threat.'
+                  a: 'The Cyber Kill Chain is a 6-stage operational model (Reconnaissance, Weaponization, Delivery, Exploitation, Installation, Actions on Objectives) that teaches defenders how attacks unfold and how interrupting any single link preemptively halts adversary progress.'
                 },
                 {
-                  q: 'How does the certification assessment and credential work?',
-                  a: 'Upon completing all modules and passing unit quizzes with >= 80%, you qualify for the proctored final evaluation to earn the Certified Cybersecurity Defender Associate (CCDA) credential, verifiable on-chain.'
+                  q: 'How do the assessments and final certification work?',
+                  a: 'Each module concludes with a 20-MCQ Knowledge Check requiring an 80% score to proceed. Upon completing all 38 lessons and 6 Knowledge Checks, cadets unlock the proctored 60-MCQ final certification exam to earn the Certified Cybersecurity Defender Associate (CCDA) credential.'
+                },
+                {
+                  q: 'What is the recommended weekly pace and duration?',
+                  a: 'The course is structured for 10 weeks at an estimated pace of 6–8 hours per week (approx. 45 total learning hours). The curriculum is fully self-paced, allowing motivated cadets to progress as their schedule allows.'
                 },
                 {
                   q: 'Does this course teach defensive security or offensive hacking?',
-                  a: 'RedKross Academy focuses strictly on defensive security and institutional resilience. We examine adversary tactics (kill chain and real-world attack vectors) specifically so defenders understand what they are protecting against.'
+                  a: 'RedKross Academy focuses strictly on defensive security and institutional resilience. We examine adversary tactics and real-world attack vectors specifically so defenders understand how to anticipate, mitigate, and neutralize threats.'
                 }
               ] : [
                 {
