@@ -1105,23 +1105,7 @@ export default function LessonPlayerPage() {
             />
           ) : (
             <CockpitToolStrip
-              onToggleTacticalInspector={() => setIsTacticalInspectorOpen((prev) => !prev)}
-              isTacticalInspectorOpen={isTacticalInspectorOpen}
-              onOpenTerminal={() => {
-                setIsMacTerminalOpen(true);
-                setIsMacTerminalMinimized(false);
-              }}
-              isTerminalOpen={isMacTerminalOpen}
-              onOpenCyberLab={() => {
-                setIsCyberLabOpen(true);
-                setIsCyberLabMinimized(false);
-              }}
-              isCyberLabOpen={isCyberLabOpen}
-              onOpenTerminalWithCommand={(cmd) => {
-                setInjectedTerminalCommand(cmd);
-                setIsMacTerminalOpen(true);
-                setIsMacTerminalMinimized(false);
-              }}
+              tools={[]}
               onCollapse={() => setToolsStripOpen(false)}
             />
           )
