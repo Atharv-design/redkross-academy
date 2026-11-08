@@ -6,7 +6,8 @@ import {
   Loader2,
   Send,
   CheckCircle2,
-  FileDown
+  FileDown,
+  Image as ImageIcon
 } from 'lucide-react';
 import { FileUploadProgressBar } from '../../../components/application/file-upload/FileUploadProgressBar';
 import { renderMarkdownToHtml } from '../../../utils/markdownParser';
@@ -157,6 +158,43 @@ function LessonContentPanel({
                       __html: memoizedHtml
                     }}
                   />
+                </div>
+              )}
+
+              {/* Official High-Resolution Lesson Architecture Diagrams */}
+              {activeLesson?.images && activeLesson.images.length > 0 && (
+                <div className="p-6 rounded-2xl bg-[#0E0C09] border border-[#FF7A00]/30 space-y-4 shadow-xl">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#FF7A00]/20 pb-3">
+                    <div className="flex items-center space-x-2">
+                      <ImageIcon className="w-5 h-5 text-[#FF7A00]" />
+                      <h4 className="font-bold text-sm sm:text-base text-white font-lora">
+                        Visual Models & Framework Reference Diagrams ({activeLesson.images.length})
+                      </h4>
+                    </div>
+                    <span className="text-[11px] font-mono text-[#A3907C]">Click any diagram for full-screen inspection</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {activeLesson.images.map((img, iIdx) => (
+                      <div
+                        key={img.id || iIdx}
+                        onClick={() => setLightboxImage({ url: img.url, caption: img.caption, name: img.title })}
+                        className="group relative rounded-xl overflow-hidden border border-[#FF7A00]/25 bg-black/50 hover:border-[#FF7A00] transition-all cursor-pointer shadow-lg hover:shadow-[0_0_20px_rgba(255,122,0,0.25)] flex flex-col justify-between"
+                      >
+                        <div className="w-full h-44 bg-[#0B0907] overflow-hidden flex items-center justify-center">
+                          <img
+                            src={img.url}
+                            alt={img.alt || img.title}
+                            className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                          />
+                        </div>
+                        <div className="p-3 bg-[#110D08] border-t border-[#FF7A00]/20 space-y-1">
+                          <p className="text-xs font-mono font-bold text-[#FFA439] truncate">{img.title}</p>
+                          <p className="text-[11px] font-mono text-[#8BA2B5] line-clamp-2 leading-relaxed">{img.caption}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
 

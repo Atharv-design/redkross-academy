@@ -15,6 +15,7 @@ export const CHAPTER_1_IMAGES = new Proxy(
       if (typeof prop === 'string') {
         if (prop in target) return target[prop];
         if (prop.startsWith('/assets/courses/')) return prop;
+        if (prop.startsWith('module')) return `/assets/courses/cyber-01/${prop}`;
       }
       return target[prop] || prop;
     }

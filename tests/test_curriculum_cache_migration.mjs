@@ -33,10 +33,10 @@ mockEngine._cachedDb = null;
 
 const db = mockEngine.getDb();
 
-assert.strictEqual(db._curriculum_version, '2026.11.08.v16_module5_academic_perfection', 'Curriculum version must be updated to latest');
+assert.strictEqual(db._curriculum_version, '2026.11.09.v19_module6_complete_visual_diagrams', 'Curriculum version must be updated to latest');
 const cyberCourse = db.courses.find(c => c.id === 'crs_cyber_intro_01');
 assert.ok(cyberCourse, 'crs_cyber_intro_01 must exist');
-assert.strictEqual(cyberCourse.modules.length, 5, 'crs_cyber_intro_01 must have all 5 modules from INITIAL_COURSES');
+assert.strictEqual(cyberCourse.modules.length, 6, 'crs_cyber_intro_01 must have all 6 modules from INITIAL_COURSES');
 assert.strictEqual(db.users[0].name, 'Cadet Tester', 'User account must be preserved');
 assert.strictEqual(db.enrolments[0].progress, 42, 'Cadet enrolment progress must be preserved');
 assert.strictEqual(db.quiz_attempts[0].score, 100, 'Quiz attempts must be preserved');

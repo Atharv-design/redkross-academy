@@ -15,13 +15,15 @@ import { module2QuestionBank } from './module2QuestionBank.js';
 import { module3QuestionBank } from './module3QuestionBank.js';
 import { module4QuestionBank } from './module4QuestionBank.js';
 import { module5QuestionBank } from './module5QuestionBank.js';
+import { module6QuestionBank } from './module6QuestionBank.js';
 
 const MODULE_BANKS = {
   1: module1QuestionBank,
   2: module2QuestionBank,
   3: module3QuestionBank,
   4: module4QuestionBank,
-  5: module5QuestionBank
+  5: module5QuestionBank,
+  6: module6QuestionBank
 };
 
 export function shuffleArray(array) {
@@ -78,7 +80,8 @@ export function shuffleQuestionOptions(q) {
  */
 export function getRandomModuleQuestions(moduleIdOrNumber, count = 20) {
   let modNum = typeof moduleIdOrNumber === 'number' ? moduleIdOrNumber : parseInt(String(moduleIdOrNumber).replace(/\D/g, ''), 10);
-  if (!modNum || modNum < 1 || modNum > 5) modNum = 1;
+  const totalAvailable = Object.keys(MODULE_BANKS).length;
+  if (!modNum || modNum < 1 || modNum > totalAvailable) modNum = 1;
 
   const bank = MODULE_BANKS[modNum] || module1QuestionBank;
   const mediumQs = bank.filter(q => (q.difficulty || 'medium').toLowerCase() === 'medium');
@@ -93,13 +96,14 @@ export function getRandomModuleQuestions(moduleIdOrNumber, count = 20) {
 }
 
 /**
- * Dynamically generates the 50-Question Course Final Examination:
- * Samples 10 questions from each of the 5 modules (5 Medium, 5 Difficult per module = 50 total).
+ * Dynamically generates the Course Final Examination:
+ * Samples evenly across all available modules (guaranteeing exact total count and 50/50 difficulty balance).
  * Questions and options are completely randomized.
  */
 export function getRandomFinalExamQuestions(totalCount = 50) {
-  const totalModules = Object.keys(MODULE_BANKS).length; // 5
-  const perModule = Math.floor(totalCount / totalModules); // 10 per module
+  const totalModules = Object.keys(MODULE_BANKS).length;
+  const basePerModule = Math.floor(totalCount / totalModules);
+  let remainder = totalCount % totalModules;
 
   const allSampled = [];
   for (let m = 1; m <= totalModules; m++) {
@@ -107,8 +111,11 @@ export function getRandomFinalExamQuestions(totalCount = 50) {
     const med = bank.filter(q => (q.difficulty || 'medium').toLowerCase() === 'medium');
     const diff = bank.filter(q => (q.difficulty || '').toLowerCase() === 'difficult');
 
-    const mCount = Math.floor(perModule / 2);
-    const dCount = perModule - mCount;
+    let countForThisMod = basePerModule + (remainder > 0 ? 1 : 0);
+    if (remainder > 0) remainder--;
+
+    const mCount = Math.floor(countForThisMod / 2);
+    const dCount = countForThisMod - mCount;
 
     const sMed = shuffleArray(med).slice(0, mCount);
     const sDiff = shuffleArray(diff).slice(0, dCount);

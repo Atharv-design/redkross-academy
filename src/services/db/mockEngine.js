@@ -196,7 +196,7 @@ class MockEngine {
         db.courses.push(initCourse);
       }
     });
-    db._curriculum_version = '2026.11.08.v16_module5_academic_perfection';
+    db._curriculum_version = '2026.11.09.v19_module6_complete_visual_diagrams';
     this.saveDb(db, { type: 'CURRICULUM_SYNCED', payload: { version: db._curriculum_version } });
     return db;
   }
@@ -229,7 +229,7 @@ class MockEngine {
       let modified = false;
 
       // Ensure curriculum fixtures sync automatically if updated in source code
-      const CURRICULUM_VERSION = '2026.11.08.v16_module5_academic_perfection';
+      const CURRICULUM_VERSION = '2026.11.09.v19_module6_complete_visual_diagrams';
       if (parsed._curriculum_version !== CURRICULUM_VERSION) {
         parsed._curriculum_version = CURRICULUM_VERSION;
         INITIAL_COURSES.forEach((initCourse) => {

@@ -1,0 +1,488 @@
+Module: Cybersecurity Practices, Operations, Governance & Career Development
+Lesson 1 : Security Controls and System Protection
+
+Understanding the Foundation of Protection
+
+Security is not a single product you buy off a shelf. It is not a single firewall, a single antivirus, or a single policy document. Real security is a layered ecosystem of decisions, technologies, processes, and human behaviors working together. Think of it like protecting a house. You have a fence around the property (physical control). You have locks on the doors and windows (technical control). You have a rule that the last person to leave locks the deadbolt (administrative control). You have a motion sensor that turns on the lights when someone approaches (detective control). You have a deadbolt that prevents the door from opening even if the handle is turned (preventive control). And if a window breaks, you have a plan to board it up and call the police (corrective control).
+
+Security professionals organize these layers using standard frameworks so that nothing falls through the cracks. The most fundamental way to categorize our defenses is by nature (what is it made of?) and by function (what does it do?). We also rely on industry standard frameworks like the CIS Controls and the NIST Cybersecurity Framework (CSF) to ensure we are not missing critical areas. Beyond technology and policy, we must address the human element through Security Awareness Programmes. We must secure the network highways with Firewalls and the devices themselves through Endpoint Protection and Patching. We must prepare for the worst with Backups and Recovery. And we must secure the daily tools people use most: Email, Browsers, and Mobile Devices.
+
+This lesson walks through each of these pillars in detail, connecting the theory to the practical reality of defending an organization.
+
+The Three Natures of Controls: Administrative, Technical, and Physical
+
+When we talk about “controls,” we are talking about any measure taken to reduce risk. The most fundamental way to categorize them is by their nature: what are they made of?
+
+Administrative Controls: The Human Rules
+
+Administrative controls are the policies, procedures, standards, guidelines, and training programs created by management. They are the “soft” controls — made of paper, words, and agreements — but they are the foundation upon which all technical and physical controls rest. Without a policy saying “you must lock your screen,” the automatic screen lock timeout (a technical control) is useless because someone will disable it. Without a policy requiring background checks, a malicious insider gets hired.
+
+Key Examples:
+
+Policies & Procedures: The Acceptable Use Policy tells employees what they can and cannot do with company devices. The Incident Response Plan tells the IT team exactly what to do when an alert fires at 3 AM. The Onboarding/Offboarding checklist ensures access is granted on day one and revoked the moment someone leaves.
+Security Awareness Training: Teaching staff how to spot a phishing email, how to create a strong password, why they shouldn’t plug in a random USB drive found in the parking lot.
+Risk Assessments & Management: The formal process of identifying assets, threats, and vulnerabilities, deciding how to handle the risk, and tracking it over time.
+Compliance & Legal: Ensuring the organization meets GDPR, DPDP Act, PCI-DSS, HIPAA, or CERT-In requirements.
+Personnel Controls: Background checks during hiring, Non-Disclosure Agreements (NDAs), separation of duties (so no single person can both create a vendor and approve payment), mandatory rotation of duties for critical roles, and immediate revocation of access upon termination.
+
+Why they matter: Technical controls fail. Firewalls have zero-day vulnerabilities. Antivirus misses new malware. Physical locks can be picked. Administrative controls provide the governance layer that ensures the technical and physical controls are actually selected, implemented, monitored, and improved. They assign accountability. If a server is unpatched, the policy says “who is responsible?” and “by when must it be fixed?”
+
+Technical Controls: The Digital Enforcers
+
+Technical controls (often called logical controls) use software, hardware, and firmware mechanisms to enforce security policies automatically. They do not rely on a human remembering to do the right thing every time; they enforce the rule through code and logic.
+
+Key Examples:
+
+Access Control Systems: Firewalls filtering traffic based on IP/port/application. Identity and Access Management (IAM) systems enforcing Multi-Factor Authentication (MFA), Single Sign-On (SSO), Role-Based Access Control (RBAC), and Privileged Access Management (PAM). Network segmentation (VLANs, micro-segmentation) limiting lateral movement.
+Encryption: TLS 1.3 for data in transit (HTTPS, VPN, TLS). AES-256 encryption for data at rest (disk encryption like BitLocker/LUKS, database encryption, S3 bucket encryption).
+Endpoint Protection: Endpoint Detection and Response (EDR) agents monitoring process execution, file writes, network connections, and memory injection in real-time. Application Control / Application Whitelisting allowing only signed/approved binaries to run.
+Vulnerability Management: Automated scanners (Nessus, Qualys, OpenVAS, Trivy) finding missing patches and misconfigurations. Patch management systems (WSUS, Intune, Jamf, Ansible) deploying fixes.
+Monitoring & Detection: SIEM (Splunk, Elastic, Sentinel, Wazuh) aggregating logs. EDR/XDR agents detecting behavioral anomalies. Network Detection and Response (NDR) like Zeek/Suricata analyzing traffic. User and Entity Behavior Analytics (UEBA) spotting impossible travel or impossible access times.
+Data Protection: Data Loss Prevention (DLP) blocking upload of credit card numbers to personal Gmail. Digital Rights Management (DRM) / Information Rights Management (IRM) controlling document access after download. Data Classification tags (Public, Internal, Confidential, Restricted) driving automated handling rules.
+Secure Development (DevSecOps): Static Application Security Testing (SAST) scanning code at commit. Dynamic Application Security Testing (DAST) scanning running apps. Software Composition Analysis (SCA) checking open-source libraries for CVEs. Container image scanning (Trivy, Grype). Infrastructure as Code (IaC) scanning (Checkov, tfsec).
+
+Why they matter: Humans are inconsistent, forgetful, and tricked. Technical controls enforce policy 24/7/365 at machine speed. They provide the evidence (logs, alerts, alerts) that administrative controls are being followed.
+
+Physical Controls: The Tangible Barriers
+
+Physical controls protect the physical assets: the servers, the laptops, the paper records, the networking gear, the power supply, the cooling, and the people. If someone can walk into the server room and unplug the firewall, the best firewall configuration in the world is useless.
+
+Key Examples:
+
+Perimeter Security: Fences, gates, bollards, barriers, security guards, reception desks, visitor logs, badge readers at entry points.
+Server Room / Data Center Security: Biometric access (fingerprint, iris, face) or multi-factor badge + PIN for server rooms. Mantraps (airlocks) preventing tailgating. Environmental controls: Precision cooling (HVAC), fire suppression (gas-based like FM-200/Novec 1230, not water), Uninterruptible Power Supply (UPS) and Generators, Raised flooring for cable management and water leak detection.
+Workstation Security: Cable locks for laptops. Privacy screens on monitors. Automatic screen lock after 5 minutes inactivity. USB port blocking/disabling via Group Policy/MDM. No unauthorized removable media.
+Media Handling & Disposal: Locked cabinets for backup tapes / external drives. Secure Disposal: Cross-cut shredders for paper. Degaussing or physical destruction (shredding/crushing) of hard drives/SSDs. Certified e-waste disposal vendors with certificates of destruction.
+Environmental Monitoring: Temperature/Humidity sensors with alerts. Water leak sensors under raised floors. Smoke/VESDA aspiration detection. CCTV recording with 90-day retention.
+Utilities Redundancy: Dual power feeds from different substations. UPS (Uninterruptible Power Supply) for graceful shutdown. Generators with fuel contracts for 72+ hours runtime.
+
+Why they matter: The CIA triad (Confidentiality, Integrity, Availability) applies to paper and hardware just as much as bits. A stolen unencrypted backup tape is a data breach. A flooded server room kills Availability. A stolen badge clones Access.
+
+The Three Functions of Controls: Preventive, Detective, Corrective
+
+Beyond what a control is made of (admin, tech, physical), we classify controls by when they act relative to an incident. A mature security program requires all three.
+
+Preventive Controls: Stopping the Incident Before It Happens
+
+These controls attempt to block the attack or error before it succeeds. They reduce the likelihood of an incident.
+
+Technical: Firewall blocking port 22 (SSH) from the internet. MFA preventing login with stolen password. Application Whitelisting blocking mimikatz.exe from running. Patch management closing CVE-2021-44228 (Log4Shell) before exploit. Encryption rendering stolen laptop data unreadable. Application Whitelisting (AppLocker/WDAC) allowing only signed scripts.
+Administrative: Mandatory MFA policy. “No admin rights for daily driver accounts” policy. Secure coding standards (no hardcoded secrets). Mandatory code review before merge. Background checks preventing malicious insider hire.
+Physical: Mantrap at data center entrance preventing tailgating. Locked server rack cabinets. Faraday cage for sensitive RF testing. Faraday bags for seized phones.
+
+Goal: Reduce the Attack Surface and Likelihood of a successful attack.
+
+Detective Controls: Discovering the Incident During or After
+
+These controls do not stop the initial action; they see it happening or find evidence after the fact. They reduce the Time to Detect (MTTD). Without them, an attacker lives in your network for months (Dwell Time).
+
+Technical: SIEM correlating 5 failed logins + 1 success = Brute Force Alert. EDR alert: powershell.exe spawned cmd.exe with -enc (encoded command). Network IDS (Suricata) alert: “ET MALWARE Known C2 Callback Domain”. File Integrity Monitoring (FIM) alert: /etc/passwd modified. CloudTrail alert: DeleteBucket API call by non-admin user. DLP alert: Credit card numbers uploaded to pastebin.com. Honeytoken (canary token) accessed in fake passwords.txt file.
+Administrative: Internal Audit finding privileged accounts unused for 90 days. Vendor risk assessment revealing vendor’s SOC2 expired. Phishing simulation click-through report showing 15% click rate.
+Physical: CCTV alert: Motion detected in server room at 3 AM. Badge reader log: “John Doe” badged into server room at 3 AM (John is on vacation). Motion sensor in server room triggering alarm.
+
+Goal: Minimize Dwell Time (Mean Time to Detect - MTTD). The faster you see it, the less damage.
+
+Corrective Controls: Fixing the Damage and Restoring Normalcy
+
+These controls activate after an incident is confirmed. They limit the Impact and restore Availability and Integrity. They are the “Cleanup and Recovery” crew.
+
+Technical: Restoring database from immutable backup (S3 Object Lock / Veeam Immutable Repository) after ransomware. Running malwarebytes / defender offline scan to remove malware. Rotating compromised credentials (API keys, passwords, certificates). Patching the exploited CVE. Rebuilding compromised server from “Golden Image” / Immutable Infrastructure (Terraform/Packer) rather than cleaning. Revoking stolen session tokens / API keys. Pushing updated firewall block list for C2 IPs.
+Administrative: Activating Incident Response Plan (IRP). Notifying Legal/Compliance for GDPR/DPDP 72-hour breach notification. Notifying Cyber Insurance carrier. Communicating with customers/regulators. Conducting Root Cause Analysis (RCA / 5 Whys). Updating policies/procedures to prevent recurrence. Disciplinary action for negligent employee (if applicable).
+Physical: Replacing compromised hardware (keylogger hardware implant on keyboard). Re-keying physical locks after lost master key. Replacing tampered hardware security module (HSM). Re-keying physical locks after lost master key.
+
+Goal: Minimize Mean Time to Recover (MTTR) and Impact. Restore Confidentiality, Integrity, Availability.
+
+The Interplay: Why You Need All Three
+
+Imagine a Phishing Email with a malicious link.
+
+Preventive: Email Gateway (SEG) blocks known malicious URL. MFA prevents login even if password stolen. User Security Awareness Training makes user hesitate.
+Detective: User clicks anyway. EDR detects outlook.exe spawning cmd.exe (suspicious child process). SIEM correlates “User clicked link” + “New Process cmd.exe from outlook.exe” → Alert fires.
+Corrective: EDR isolates host (Network Quarantine). SOC Analyst kills malicious process. Forensic image taken. Credentials rotated. User re-trained.
+
+If you only have Preventive: The one phishing email that bypasses the filter owns you.
+If you only have Detective: You watch the attacker encrypt your data for 3 hours before you act.
+If you only have Corrective: You restore from backup every week. You never stop the bleeding.
+
+Defense in Depth = Preventive + Detective + Corrective across Admin, Tech, Physical.
+
+Frameworks That Organize the Chaos: CIS Controls & NIST CSF
+
+We do not invent security from scratch. We stand on the shoulders of giants. Two frameworks dominate the industry.
+
+CIS Critical Security Controls (CIS Controls v8)
+
+The Center for Internet Security (CIS) publishes a prioritized set of 18 Controls. They are prescriptive, actionable, and prioritized. “Do these first.” They map directly to the NICE Workforce Framework and MITRE ATT&CK.
+
+The 18 CIS Controls (v8):
+
+Inventory and Control of Enterprise Assets (Know what you have).
+Inventory and Control of Software Assets (Know what runs).
+Data Protection (Classify, Encrypt, DLP, Retention).
+Secure Configuration of Enterprise Assets and Software (Hardening baselines, CIS Benchmarks).
+Account Management (Lifecycle, MFA, Privileged Access Management).
+Access Control Management (Least Privilege, RBAC, Segmentation).
+Access Control Management (Wait, v8 merged 5 & 6? No, v8 has distinct: 4=Secure Config, 5=Account Mgmt, 6=Access Control Mgmt). Correction: v8 Controls: 1. Inventory Enterprise Assets, 2. Inventory Software Assets, 3. Data Protection, 4. Secure Configuration, 5. Account Management, 6. Access Control Management, 7. Continuous Vulnerability Management, 8. Audit Log Management, 9. Email/Web Browser Protections, 10. Malware Defenses, 11. Data Recovery, 12. Network Infrastructure Management, 13. Network Monitoring and Defense, 14. Security Awareness Training, 15. Service Provider Management, 16. Application Software Security, 17. Incident Response Management, 18. Penetration Testing.
+Secure Configuration of Enterprise Assets and Software (CIS Benchmarks / STIGs / Hardening).
+Account Management (Lifecycle, MFA, PAM).
+Access Control Management (Least Privilege, RBAC, Segmentation).
+Continuous Vulnerability Management (Scan, Prioritize via KEV/CISA KEV, Patch SLAs).
+Audit Log Management (Centralize, Retain, Alert, Immutable).
+Email and Web Browser Protections (DMARC/DKIM/SPF, DNS Filtering, Isolation).
+Malware Defenses (EDR, AV, Sandbox, App Control).
+Data Recovery (Backups, Immutable, Tested, RTO/RPO).
+Network Infrastructure Management (Secure Config, Segmentation, Change Mgmt).
+Network Monitoring and Defense (IDS/IPS, NDR/Zeek/Suricata, DNS Filtering).
+Security Awareness and Skills Training (Phishing sims, Role-based, Phishing simulations).
+Service Provider Management (Vendor Risk, Contracts, SOC2, Offboarding).
+Application Software Security (SDLC, SAST/DAST/SCA, WAF).
+Incident Response Management (Plan, Team, Playbooks, Comms, Post-Mortem).
+Penetration Testing (Internal/External, Red Team, Scope, Rules).
+
+Implementation Groups (IGs):
+
+IG1 (Basic Cyber Hygiene): 56 Safeguards. “Must do for everyone.” Basic hygiene. Small orgs start here.
+IG2: + Additional safeguards for orgs handling sensitive data. Proactive security.
+IG3: + Advanced safeguards for high-value targets / regulated. Dedicated security team, automation, threat hunting.
+
+Why CIS? It tells you exactly what to do first. “Implement MFA” not “Improve Auth.”
+
+NIST Cybersecurity Framework (CSF) 2.0
+
+The NIST CSF is a risk-based framework. It is outcome-based, not prescriptive like CIS. It provides a Common Language for the Board, IT, Legal, and Auditors. It has 6 Core Functions (Govern added in 2.0):
+
+Govern (GV): Establish & communicate strategy, policy, roles, risk appetite, supply chain risk. New in 2.0.
+Identify (ID): Asset Management, Business Environment, Governance, Risk Assessment, Risk Management Strategy, Supply Chain Risk.
+Protect (PR): Identity Mgmt (MFA, PAM), Awareness Training, Data Security (Encryption, DLP), Protective Tech (Firewalls, Hardening), Maintenance, Awareness Training.
+Detect (DE): Anomalies/Events (Anomaly Detection), Continuous Monitoring (SIEM/NDR/EDR), Detection Processes (SIEM Rules, Threat Hunting).
+Respond (RS): Response Planning, Communications, Analysis (Forensics/Triage), Mitigation (Containment/Eradication), Improvements (Lessons Learned).
+Recover (RC): Recovery Planning, Improvements, Communications (Internal/External/Public).
+
+Implementation Tiers (Maturity Model):
+
+Tier 1: Partial (Ad-hoc, Reactive, No formal process).
+Tier 2: Risk Informed (Aware, some processes, not org-wide).
+Tier 3: Repeatable (Formal Policies, Consistent, Risk-Informed).
+Tier 4: Adaptive (Agile, Predictive, Real-time, Continuous Improvement, Culture of Security).
+
+Mapping: Most orgs map CIS Controls to NIST CSF Functions. CIS = “What to do.” NIST CSF = “How mature is your program?”
+
+Control Testing and Compensating Controls
+
+You implemented a control. Does it work? “Trust but Verify.”
+
+Control Testing Methods
+Vulnerability Scanning (Automated): Nessus, Qualys, OpenVAS, Tenable.io, OpenVAS, Microsoft Defender Vulnerability Management. Scans for missing patches, weak configs, open ports. Frequency: Continuous (Agent) or Weekly/Monthly (Network). Limitation: Only finds known vulnerabilities (CVEs). Misses logic flaws, business logic flaws, zero-days, misconfigurations not in DB.
+Configuration Auditing (Baseline Compliance): CIS Benchmarks / STIGs / DISA STIGs. Tools: OpenSCAP, Ansible, Chef InSpec, PowerShell DSC, Microsoft Secure Score, AWS Config Rules, Azure Policy, GCP Policy Controller. Checks: “Is port 22 closed?” “Is password policy 14 chars?” “Is audit logging enabled?”
+Penetration Testing (Pen Test): Authorized simulated attack. Black Box (Zero knowledge), Gray Box (Some info/creds), White Box (Full source/code/arch access). Red Team (Adversary Emulation: Stealth, Persistence, Lateral Movement, Goal-oriented). Purple Team (Red + Blue collaborating: Attack -> Detect -> Improve Detection).
+Red Team / Purple Team Exercises: Red Team acts as APT (Stealth, Persistence, Custom Malware). Blue Team detects/responds. Purple Team = Collaborative: Red attacks, Blue watches, both improve detection rules together. Best for maturity.
+Configuration Drift Detection: Tools like AWS Config, Azure Policy, AWS Config, Terraform Drift Detection, GitOps (ArgoCD/Flux) detecting drift from Git (GitOps). “Infrastructure as Code” ensures desired state = actual state.
+Breach and Attack Simulation (BAS): Automated tools (Cymulate, AttackIQ, SafeBreach, AttackIQ, Cymulate) running safe attack simulations daily/weekly against prod controls. “Did our EDR catch Mimikatz?” “Did firewall block exfil?”
+Tabletop Exercises (TTX): Discussion-based. “Scenario: Ransomware encrypts File Server at 2 AM Saturday. Walk through IR Plan.” Tests Process and People, not just Tech.
+Red Team / Purple Team: Red acts as APT. Blue detects/responds. Purple = Collaboration.
+Compensating Controls: When You Cannot Fix the Root Cause
+
+Scenario: You have a legacy Windows 2008 Server running a critical medical device. Vendor went bankrupt. No patches exist for CVE-2024-XXXX. You cannot patch (breaks app). You cannot remove (patient safety). You cannot upgrade (Vendor gone).
+
+Compensating Control: A control that reduces the risk to an acceptable level without fixing the underlying vulnerability.
+
+Examples:
+
+Network Segmentation: Isolate the Win2008 server in a dedicated VLAN with Deny All Ingress/Egress except specific required ports (TCP 443 to App Server, TCP 1433 to SQL). No Internet. No Domain Admin access.
+Virtual Patching / Shielding: Deploy WAF (ModSecurity / AWS WAF / Cloudflare) rule blocking exploit payload for CVE-XXXX. Deploy IPS Signature (Snort/Suricata/Snort rule) for the exploit traffic. Deploy RASP (Runtime Application Self-Protection) agent inside app.
+Compensating Monitoring: Hyper-sensitive monitoring on that host. EDR in “Aggressive” mode. Sysmon full config. Network tap mirroring all traffic to Zeek/Suricata. Alert on any outbound connection from that host.
+Application Whitelisting (AppLocker / WDAC): Only allow signed, approved binaries to run on that server. Blocks the exploit payload even if exploit works.
+Micro-segmentation: Zero Trust Network Access (ZTNA). Zero Trust Network Access (ZTNA) / Identity-Aware Proxy. The legacy app is only accessible via Identity-Aware Proxy (IAP) requiring Phishing-Resistant MFA + Device Trust (Managed Device Cert).
+Compensating Administrative Controls: Strict Access Review (Monthly). Dedicated Admin Account (No Domain Admin daily driver). Privileged Access Management (PAM) - Just-In-Time (JIT) Access. Enhanced Logging (Full Packet Capture / Full Packet Capture). Incident Response Playbook specific to this asset.
+
+Documentation Requirement: Every Compensating Control must be documented in the Risk Register with: “Primary Control Failed (Unpatchable CVE-XXXX), Compensating Control Implemented (Network Segmentation + WAF Rule + Enhanced Monitoring), Residual Risk Score, Review Date, Owner.”
+
+Security Awareness Programmes: The Human Firewall
+
+Technology fails. Policies are ignored. People are the last line of defense and the primary attack vector. Verizon DBIR consistently shows ~70-90% of breaches involve the Human Element (Phishing, Stolen Credentials, Errors, Misuse).
+
+A Security Awareness Programme is not an annual 30-minute CBT (Computer Based Training) video watched at 2x speed while checking email.
+
+Core Components of a Mature Programme
+Role-Based Training: Developers get Secure Coding (OWASP Top 10, Secrets Management). Finance/HR get BEC/Invoice Fraud/Invoice Fraud training. IT Admins get Privileged Access Hygiene. Executives get Whaling/Whaling/BEC training. Developers get Secure Coding (OWASP Top 10).
+Phishing Simulations (The Gym):
+Frequency: Monthly minimum. Quarterly is “checking the box.”
+Variety: Credential Harvesting (Fake O365 Login), Malicious Attachment (Macro/PDF Exploit), Link to Drive-by Download, QR Code Phishing (Quishing), SMS Smishing, Voice Vishing (Callback), QR Code Phishing (Quishing).
+Difficulty Progression: Start obvious (Nigerian Prince). Move to Spear Phishing (Contextual: “Invoice from Vendor X”). Spear Phishing with OSINT (Referencing real project name, colleague name).
+No Shame, Just Learning: Clicked? -> Immediate “Teachable Moment” page: “You clicked. Here is what you missed: [Hover over link -> shows real URL], [Urgency Tactic], [Sender Mismatch]. Take 2-min Micro-Learning.”
+Reporting Culture: “Report Phish” Button (Phish Alert Button / Phish Alert Button) in Outlook/Gmail. Reward Reporting: “Phish of the Month” recognition. Never punish clicks. Punish non-reporting of real phish.
+Metrics: Click Rate (Target < 5%), Report Rate (Target > 50%), Repeat Clicker Rate (Target 0%).
+Role-Based Training:
+Developers: Secure Coding (OWASP Top 10, SAST/SAST/SCA, Secrets Management, Threat Modeling).
+IT Admins/DevOps: Privilege Hygiene (JIT Access, No Standing Admin), Secure CI/CD, Immutable Infrastructure, Secrets Management (Vault).
+Finance/HR/Executives: Business Email Compromise (BEC), Invoice Fraud, Deepfake Voice/Video, Whaling.
+Executives/Board: Regulatory Landscape, Risk Appetite, Cyber Insurance, Ransomware Decision Making (Pay/No Pay).
+Communication & Culture:
+Monthly Security Digest: 3-min read. “This month: New Phishing Trend (QR Codes), New CVE (CVE-2024-XXXX), Tip: Check Sender Domain.”
+Phishing Reporting Culture: “Report Phish” button in Outlook/Gmail. “Thank you for reporting!” auto-reply. Zero Blame Culture. Clicked a real phish? “Thanks for reporting. Let’s secure your account.” No Blame.
+Executive Sponsorship: CISO presents at All-Hands. CEO sends “I took the training too” email.
+Gamification: Leaderboards (Department vs Department), Badges (“Phish Slayer”), Swag (Stickers, Hoodies).
+New Hire Onboarding: Security Day 1. Phish Sim Day 7. Policy Sign-off.
+Metrics that Matter (Report to Board):
+Phish Click Rate (Target < 5%).
+Phish Report Rate (Target > 50%).
+Repeat Clicker Rate (Target 0%).
+Training Completion Rate (Target 100% within 30 days of hire/annually).
+Policy Acknowledgement Rate (100%).
+Phishing Simulation Click Rate by Department (Targeted Training).
+Secure Network Basics and Firewall Basics
+
+The network is the circulatory system. Firewalls are the valves and checkpoints.
+
+Network Segmentation (The Foundation of Zero Trust)
+
+Flat Network = Flat Tire. One breach = Total Compromise.
+
+Zoning Strategy (The “City” Model):
+
+Internet / Untrusted: The Wild West.
+DMZ / Public Zone: Public-facing services (Web App, Email Gateway, VPN Gateway, DNS). No Direct Access to Internal.
+DMZ / Application Tier: Web Servers, API Gateways. Talk to App Tier only on specific ports (443, 8080).
+Application / Business Logic Tier: App Servers, API Gateways, Business Logic. Talks to DB only.
+Data / Database Tier: Databases (SQL, NoSQL), Secrets Vaults. No Direct Internet Access. Only App Tier talks here.
+Management / Control Plane: Firewalls, Switches, Routers, Hypervisors, vCenter, AD Domain Controllers, PAM, SIEM, Backup Servers. Most Restricted. Only from Mgmt Jump Hosts / Bastion Hosts.
+User / Corporate Zone: Employee Laptops, Printers, VoIP Phones. Internet Access via Proxy. No direct Server Access.
+Guest / IoT / BYOD: Isolated. Internet Only. No Corporate Resource Access.
+OT / OT / IoT: Building Mgmt, Cameras, Badge Readers, Factory PLCs. Air-Gapped or Strictly Segmented.
+
+Inter-Zone Communication: Default Deny. Explicit Allow Rules only. App Server -> DB: TCP 1433. Web -> App: 443. Admin Jump Box -> Server: RDP/SSH (Bastion Host). No “Any-Any” Rules.
+
+Firewall Evolution & Capabilities
+Packet Filter (Gen 1): ACLs. Src IP, Dst IP, Port, Protocol. Stateless. Fast, Blind.
+Stateful Inspection (Gen 2): Tracks Connection State (SYN, SYN-ACK, ESTABLISHED). Allows Return Traffic automatically. Standard for 20 years.
+Application Layer / NGFW (Next-Gen Firewall) - Gen 3+:
+App-ID (App-ID): Identifies Application (Facebook, SSH, SQL, BitTorrent, TeamViewer) regardless of Port/Port. Blocks Facebook on Port 443. Allows SSH on Port 443.
+User-ID / User-ID: Maps IP -> User (AD/LDAP/SAML/Kerberos). Policy: “Group ‘Finance’ can access ‘Banking’ category.”
+Content-ID / Threat Prevention: IPS (Intrusion Prevention System): Signature/Anomaly based blocking (CVEs, Exploits, Brute Force). Anti-Virus/Anti-Malware: Stream-based AV scanning (Stream AV). URL Filtering / URL Filtering: Category blocking (Malware, Phishing, Gambling, Proxy/VPN, Newly Registered Domains). File Blocking: Block .exe, .scr, .zip, .iso upload/download. WildFire / Sandbox: Detonate unknown files in Cloud Sandbox (WildFire, FortiSandbox, FortiSandbox, FireEye, Check Point SandBlast). SSL Decryption (TLS Decryption / SSL Inspection): Critical. 95%+ traffic is TLS 1.2/1.3. Without Decryption, FW is blind to Malware, C2, Data Exfil, SQLi inside HTTPS. MITM Proxy: FW generates Cert on-the-fly (Trusted Root CA deployed to Endpoints via GPO/MDM). Performance Hit: Need Hardware Acceleration (SSL Offload Cards).
+DNS Security / DNS Security: DNS Sinkholing (Sinkhole C2 Domains). DNS over HTTPS (DoH) / DNS over TLS (DoT) Inspection / Blocking.
+File Blocking / DLP: Block .exe, .apk, .apk, .ipa, .ps1, .bat, .jar upload/download. DLP Patterns (Credit Card, SSN, PCI, PII, Source Code).
+WildFire / Sandbox Integration: Unknown file -> Upload to Cloud Sandbox (WildFire, FortiSandbox, FortiSandbox, FireEye, Joe Sandbox, CAPE) -> Verdict in 5-15 min -> Push Signature to all Firewalls.
+Management & Automation: API-driven (Terraform, Ansible, Panorama, FortiManager, FortiManager, Panorama, FortiManager, FortiManager, FortiManager, FortiManager). Infrastructure as Code (Terraform Provider). API for Dynamic Address Groups (Auto-block IOC from SIEM/XDR).
+Firewall Rule Hygiene (The Hygiene that Saves Lives)
+Default Deny: Implicit Deny All at Bottom. Explicit Allow Only.
+Naming Convention: FW-RULE-[SRC_ZONE]-[DST_ZONE]-[APP]-[SEQ]. E.g., FW-RULE-USER-APP-SALESFORCE-001.
+Least Privilege: Application = "salesforce" NOT Port 443. Source User = "Sales_Group" NOT Any. Destination = "Salesforce_Cloud_IPs" (Dynamic Address Group updated by API).
+No “Any-Any” Rules. Ever.
+Logging: Log at Session End (Allow). Log at Session Start (Deny). Send to SIEM.
+Review Cycle: Quarterly Rule Review. Shadow Rules (Zero hits 90 days) -> Disable -> Delete. Overlapping Rules -> Consolidate.
+Change Management: Every Rule Change = Change Ticket + Risk Assessment + Peer Review + Test in Staging → Prod.
+Endpoint Protection and Security Patching
+
+The Endpoint (Laptop, Server, Mobile, IoT, Container) is where the war is won or lost.
+
+Evolution: AV -> NGAV -> EDR -> XDR
+Generation	Tech	Detection	Response	Limitation
+AV (Legacy)	Signature Matching (MD5/SHA256)	Known Malware Only	Quarantine / Delete	Blind to Unknown / Fileless / Memory Injection
+NGAV (Next-Gen AV)	ML/Behavioral (Pre-Exec)	Known + Unknown (Pre-Exec)	Block / Quarantine	Limited Visibility Post-Exec. No Timeline.
+EDR (Endpoint Detection & Response)	Kernel Sensor + Behavioral (Post-Exec)	Known + Unknown + Behavioral (MITRE ATT&CK)	Active Response: Kill Process, Isolate Host, Snapshot Memory, Rollback Ransomware.	Visibility into Post-Execution Behavior. Timeline.
+XDR (Extended Detection & Response)	EDR + Network + Cloud + Email + Identity + Cloud	Cross-Layer Correlation (MITRE ATT&CK).	XDR: Correlated Response (Isolate Host + Block IP + Disable User + Block File Hash).	Unified Console. Single Pane of Glass.
+
+Must-Have Features for Modern Endpoint Security:
+
+NGAV/Behavioral Blocking: Pre-execution ML (Static) + Behavior Monitoring (Runtime).
+Kernel/Root Level Visibility: Kernel Callback / eBPF (Linux) / ETW / Kernel Callbacks (Windows). Sees everything: Process Tree, Command Line, Network, File, Registry, Memory, Image Load.
+Behavioral Analytics (MITRE ATT&CK Mapping): Detects TTPs, not just Hashes. T1059.001 PowerShell, T1003.001 LSASS Memory, T1055 Process Injection, T1003.001 LSASS, T1003.001 LSASS, T1566.001, T1055, T1003, T1021.004.
+Active Response (The “R” in EDR):
+Network Isolation / Quarantine: Host talks only to EDR Console. Stops Lateral Movement / C2 / Exfil.
+Process Kill / Tree Kill: Kill Process Tree (PID 1234).
+File Quarantine / Deletion: Move to Encrypted Vault.
+Memory Dump: Capture lsass.dmp for Forensics before killing.
+Rollback / Remediation: Ransomware Rollback (SentinelOne, CrowdStrike, Defender, SentinelOne, Cybereason). Journaled File System / Shadow Copy / Journaling -> Revert Encrypted Files instantly.
+Script Control / AMSI Integration: Block powershell -enc, wscript, cscript, mshta, msiexec, regsvr32, rundll32 abuse. AMSI (Antimalware Scan Interface) scans script content before execution.
+Application Control / Whitelisting: AppLocker / WDAC (Windows Defender Application Control). Only Signed/Allowed Binaries Run. Best Protection against Unknown/Zero-Day.
+Vulnerability / Patch Management Integration: Agent reports Missing Patches (KB), CVE, Severity. Integrates with Patch Management (SCCM/Intune/Jamf/Ansible).
+Centralized Management / Multi-Tenant: Single Pane of Glass. Multi-Tenant for MSSP/MSP.
+Security Patching (Vulnerability Management) - The Operational Grind
+
+The Reality: “Patch Tuesday” is not a day. It’s a Lifecycle.
+
+The Vulnerability Management Lifecycle (VMLC):
+
+Discover (Inventory): You cannot patch what you don’t know. Agent-based (EDR Agent, Tanium, Tanium, Tanium, Tanium, Qualys Agent, Qualys, Tanium) + Network Scan (Nessus, Tenable, Qualys, OpenVAS) + Cloud API (AWS Inspector, Azure Defender, GCP SCC) + Container Registry Scan (Trivy, Grype, Snyk, Aqua, Aqua, Trivy). SBOM (Software Bill of Materials): Syft/Grype/CycloneDX for Containers/Code.
+Assess & Prioritize (The “So What?”): CVSS is NOT Risk.
+Risk Score = CVSS × Exploit Maturity (KEV/POC/Weaponized) × Asset Criticality × Threat Intel × (1 - Control Efficacy).
+CISA KEV (Known Exploited Vulnerabilities): Mandatory Patch Immediately. CISA KEV List = “Actively Exploited.” SLA: 24-72 Hours.
+High (Weaponized Exploit / CVSS ≥ 8.0): 72 Hours - 7 Days.
+Medium (POC Exists / CVSS 4-7): 30 Days.
+Low / Info: 90 Days / Next Cycle.
+Remediate (The Fix):
+Immutable Infrastructure (Preferred): Bake Patch into Golden Image (Packer) -> Rebuild AMI / Container Image → Blue/Green / Canary Deploy → Terminate Old. Zero Drift. Zero Downtime (Blue/Green).
+In-Place Patching (Legacy/Stateful): WSUS / WSUS / WSUS / Intune / Jamf / Ansible / SCCM / BigFix. Test in Staging First. Reboot Management (Maintenance Windows).
+Virtual Patching / Shielding (When Patch Impossible): WAF Rule (ModSecurity/Cloudflare/AWS WAF), IPS Signature (Snort/Suricata/Palo Alto), RASP (Runtime App Self-Protection), Host FW Rule. Temporary. Track Expiry.
+Risk Acceptance (Formal): Documented, Approved by Risk Owner, Compensating Controls Documented, Expiry Date, Review Date.
+Verify (Close the Loop): Re-scan. Verify Vulnerability Gone. Run Regression Tests (Smoke Tests). Close Ticket.
+Report: MTTR (Mean Time to Patch) by Severity. Compliance %. Backlog Trend.
+
+Patch Management Automation (The Modern Way):
+
+Golden Image Pipeline: Code Commit → CI Build → Vuln Scan (Trivy/Grype) → Hardening (CIS Benchmark/STIG) → Bake AMI/Container → Test → Promote → Deploy via ASG / Kubernetes Rolling Update.
+OS Patching: Automated via SSM Patch Manager / Azure Update Manager / WSUS + PowerShell / Ansible / Ansible / Ansible / Jamf / Intune.
+Container Base Images: Rebuild Weekly (Distroless / Chainguard / Wolfi / Alpine). FROM gcr.io/distroless/java17.
+Firmware/BIOS/BMC: fwupd / Vendor APIs (Dell Redfish, HP iLO API, Dell Redfish) → Automated Staging.
+Backups and Recovery Basics: The Ultimate Insurance
+
+Backup is not a Backup until it is Tested Restored.
+
+The 3-2-1-1-0 Rule (The Modern Gold Standard)
+Number	Requirement	Why
+3	Three Copies of Data	Primary + 2 Backups. Survives Media Failure of any single copy.
+2	Two Different Media Types	Disk + Tape / Disk + Cloud / Disk + Immutable Object Storage. Survives Media-Type Failure (e.g., RAID Controller Bug kills all Disks).
+1	One Offsite Copy	Different Geographic Region / Cloud Region / Physical Vault. Survives Site Disaster (Fire, Flood, Bomb).
+1	One Immutable / Air-Gapped Copy	The Ransomware Killer. S3 Object Lock (Compliance Mode), Azure Immutable Blob, Tape (WORM), Linux chattr +i. Attacker with Domain Admin Cannot Delete/Encrypt this copy.
+0	Zero Errors (Verified Restore)	The Only Metric That Matters. Automated Restore Test Weekly/Monthly. Restore to Isolated VLAN → Run App Health Checks → Alert on Failure.
+Backup Architecture Tiers
+Tier	RPO (Data Loss)	RTO (Downtime)	Technology	Use Case
+Tier 0: Mission Critical (RPO=0, RTO<15m)	Synchronous Replication	Active/Active Cluster	Sync Replication (SRDF, MetroCluster, AlwaysOn AG, Aurora Global DB)	Core Banking, ERP, Life Support
+Tier 1: Mission Critical (RPO<15m, RTO<1h)	Synchronous / Async Snapshots	Active/Passive Cluster	Storage Replication (SRDF, SnapMirror, Async Replication), AlwaysOn AG Async	Critical DB, ERP
+Tier 2: Business Critical (RPO=1h, RTO=4h)	Hourly Snapshots / CDP	VM Replication (Zerto, Veeam CDP, SRM)	VM Replication (Zerto, Veeam CDP), SQL AlwaysOn Async	Critical App Servers, File Shares
+Tier 3: Standard (RPO=24h, RTO=24h)	Nightly Backup	Veeam / Veeam / Commvault / Rubrik / Cohesity / Druva / AWS Backup	Nightly Incremental / Synthetic Full	File Servers, Dev/Test, Non-Critical Apps
+Tier 4: Archive / Compliance	Weekly/Monthly	Tape / Cloud Archive (S3 Glacier Deep Archive / Azure Archive / Glacier Deep Archive)	Legal/Regulatory Retention (7-7 Years)	Email Archives, Audit Logs, Old Projects
+Immutable Backups: The Ransomware Kill Switch
+S3 Object Lock (Compliance Mode): PutObjectRetention + PutObjectLegalHold. Even Root/Admin cannot delete. Governance Mode allows privileged bypass; Compliance Mode = NO ONE CAN DELETE.
+Azure Immutable Blob: Legal Hold / Time-Based Retention Policy (Locked).
+Tape (LTO-9: 18TB Native, 45TB Compressed): True Air-Gap. Offline. Ransomware cannot reach it. Offsite Vault (Iron Mountain / Iron Mountain).
+Veeam / Veeam / Rubrik / Cohesity / Druva / Commvault: Native Support for S3 Object Lock / Azure Immutable Blob / Tape Out.
+The “Zero” in 3-2-1-1-0: Tested Restore
+Automated Restore Testing: Weekly/Monthly. Veeam SureBackup / Veeam SureBackup / Rubrik / Rubrik / Commvault / Cohesity / Druva.
+Process: Schedule Job → Restore VM to Isolated VLAN (No Network) → Power On → Run Application Health Check Script (DB Connect, HTTP 200, Critical Query) → Report Success/Fail → Auto-Cleanup.
+Metric: Restore Success Rate = 100%. Mean Time to Restore (MTTR) < RTO.
+Backup Encryption & Key Management
+Encryption at Rest: AES-256. Key Management: KMS / HSM (AWS KMS, Azure Key Vault, HashiCorp Vault, Thales, Gemalto). Backup Software does NOT hold keys. KMS encrypts DEK (Data Encryption Key) -> Wrapped DEK stored with Backup Metadata.
+Key Rotation: Annual KEK Rotation. Re-wrap DEKs.
+Key Escrow / Split Knowledge: Shamir’s Secret Sharing (Shamir’s Secret Sharing) for Master Keys. M-of-N (e.g., 3 of 5 Admins) to authorize Master Key Decryption.
+Email Security, Browser Safety, and Mobile Device Safety
+
+The User is the Perimeter. The Inbox and the Browser are the Front Lines. The Phone is the Keys to the Kingdom.
+
+Email Security: The #1 Threat Vector
+
+Layered Defense (The “Onion”):
+
+Layer 1: DNS Authentication (The Identity Check) - At the Domain Level.
+SPF (Sender Policy Framework): v=spf1 ip4:192.0.2.0/24 include:_spf.google.com -all. Tells world: Only these IPs/Hosts can send as @mycompany.com. -all (Hard Fail) is Mandatory.
+DKIM (DomainKeys Identified Mail): Cryptographic Signature on Email Header/Body. d=example.com; s=selector1;. Proves Integrity and Origin. Rotate Keys Annually (2048-bit RSA / Ed25519).
+DMARC (Domain-based Message Authentication, Reporting, Conformance): The Policy Engine. v=DMARC1; p=reject; rua=mailto:dmarc@company.com; ruf=mailto:dmarc-forensic@company.com; pct=100; adkim=s; aspf=s;.
+p=reject: The Gold Standard. Reject unauthenticated mail.
+rua: Aggregate Reports (XML) → Parse with parsedmarc / dmarcian / Valimail / Valimail / Dmarcian → Dashboard: “Who is sending as us? Who is failing?”
+ruf: Forensic Reports (Full Email) → Forensic Analysis.
+adkim=s; aspf=s: Strict Alignment. From: header domain MUST match SPF Return-Path domain AND DKIM d= domain. Strict Alignment is Mandatory for Security.
+Layer 2: Secure Email Gateway (SEG) / ICES (Integrated Cloud Email Security) — The Perimeter Filter.
+SEG (Gateway): Proofpoint, Mimecast, Microsoft Defender for Office 365 Plan 2, Cisco Secure Email (Cisco Secure Email), FortiMail. MX Record points here. Inspects before Mailbox.
+ICES (Integrated Cloud Email Security): Abnormal Security, Abnormal Security, Abnormal Security, Avanan, GreatHarm, Armorblox. API-based (Graph API / Gmail API). Sits inside Mailbox (Post-Delivery). Sees Internal Email (User A -> User B). Sees Compromised Internal Account. Post-Delivery Retraction (Clawback): Removes malicious email after delivery from Inbox/Deleted Items.
+Capabilities: Multi-Engine AV, Sandbox Detonation (Attachments/URLs), URL Rewriting (Time-of-Click Protection), URL Rewriting, QR Code Analysis, QR Code Analysis, QR Code Analysis, BEC Detection (Display Name Spoof, Lookalike Domain, Executive Impersonation, Reply-To Mismatch), DLP (PCI, PII), Encryption (TLS Enforce, S/MIME, PGP).
+Layer 3: Post-Delivery / Human Layer (The Human Firewall).
+Phish Reporting Button: “Report Phishing” Button in Outlook/Gmail/Outlook Mobile. One Click -> Deletes Email + Sends to SOC/SEG for Analysis + Auto-Retracts from other Inboxes.
+Phishing Simulations: Monthly. Varied Templates. No Shame. “Report Phish” Button = Hero.
+DMARC Reporting (rua): Parse Aggregate Reports (XML) -> Dashboard (Parsedmarc, Dmarcian, Valimail). Visibility: “Who is sending as us?” “Who is failing SPF/DKIM?”
+Browser Safety: The Universal Client
+
+The Browser is the new OS. It executes untrusted code (JS/WASM) from millions of origins.
+
+Hardening Baseline (Enforce via Group Policy / Intune / Jamf / Chrome Enterprise Policies / Edge Policies):
+
+Enforce TLS 1.2+ Only: Disable TLS 1.0/1.1, SSLv3. SSLVersionMin = tls1.2.
+Certificate Transparency Enforcement: RequireCT / Expect-CT Header. Reject certs not logged in Public CT Logs.
+Certificate Pinning / Expect-CT: Expect-CT: max-age=86400, enforce, report-uri="https://report.example.com". (HPKP deprecated, use Expect-CT).
+HSTS (HTTP Strict Transport Security): Strict-Transport-Security: max-age=31536000; includeSubDomains; preload. Preload List Submission (hstspreload.org).
+Certificate Pinning / Expect-CT: Expect-CT: max-age=86400, enforce, report-uri="...".
+Secure Cookies: Secure; HttpOnly; SameSite=Strict/Lax; __Host- prefix (Secure, Path=/, No Domain).
+Content Security Policy (CSP) Level 3: Content-Security-Policy: default-src 'self'; script-src 'self' 'nonce-{random}' 'strict-dynamic'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests;. Nonce/Hash based. strict-dynamic allows trusted scripts to load sub-resources. No unsafe-inline, No unsafe-eval.
+Referrer Policy: Referrer-Policy: strict-origin-when-cross-origin (or no-referrer).
+Permissions Policy (Feature Policy): Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), payment=().
+X-Frame-Options: DENY (or SAMEORIGIN). frame-ancestors 'none' in CSP supersedes.
+X-Content-Type-Options: nosniff. Prevents MIME Sniffing.
+Cross-Origin Policies (COOP/COEP/CORP):
+Cross-Origin-Opener-Policy: same-origin (Isolates Browsing Context).
+Cross-Origin-Embedder-Policy: require-corp (Requires crossorigin attr or CORP header on cross-origin resources).
+Cross-Origin-Resource-Policy: same-origin (or cross-origin for CDN).
+Disable Dangerous Features: WebRTC (IP Leak), WebUSB, WebBluetooth, WebNFC, WebHID, Web Serial, File System Access API (Unless explicitly needed).
+Extension Control: ExtensionAllowlist / ExtensionInstallBlocklist / ExtensionInstallForcelist. Only Approved Extensions (uBlock Origin, 1Password, Grammarly, Company Approved). Block chrome://extensions installation.
+Password Manager Integration: Enforce Enterprise Password Manager (1Password, Bitwarden, Bitwarden, 1Password). Disable Browser Built-in Password Manager (PasswordManagerEnabled: false).
+Safe Browsing / Enhanced Protection: SafeBrowsingProtectionLevel: EnhancedProtection.
+Enterprise Controls: Chrome Enterprise Core / Edge Management / Chrome Enterprise Core. Enroll Browser. Cloud Reporting.
+Mobile Device Safety: The Pocket Data Center
+
+Threat Model: Loss/Theft, Malicious Apps, Phishing (Smishing/Quishing), OS Exploits, MDM Bypass, Baseband/Zero-Click (Pegasus/Predator), Unencrypted Backup, Insecure Wi-Fi.
+
+Mobile Security Architecture: MDM / UEM / MAM
+Model	Ownership	Enrollment	Control Level	Use Case
+COBO (Corporate Owned, Business Only)	Company	ADE (Apple DEP) / Android Zero Touch	Full Device Owner / Device Owner. Full Wipe, Config, Restrictions, Kiosk.	High Security / Regulated / Shared Devices.
+COPE (Corporate Owned, Personally Enabled)	Company	ADE / Zero Touch	Work Profile (Android) / User Enrollment (iOS). Containerization. Work/Personal Separation.	Corporate Devices with Personal Use Allowance.
+BYOD (Bring Your Own Device)	Employee	User Enrollment (iOS) / Work Profile (Android)	MAM (Mobile App Management) / App Protection Policies (APP). No Device Control. App Protection Policies (APP): DLP (Cut/Copy/Paste Block, Save As Block, Screen Cap Block, PIN/Bio to Open, Offline Wipe Timer).	Contractors, BYOD, Low Sensitivity Data.
+Unmanaged / Unenrolled	Employee	None	Conditional Access Block. Block Access via Conditional Access (Require Compliant Device / App Protection Policy).	Block Access.
+Mobile Security Controls (The “Must-Haves”)
+
+1. Enrollment & Identity:
+
+Zero Touch / Apple DEP / Android Zero Touch: Zero Touch Provisioning. Device enrolls on First Boot. No User Interaction for MDM Enrollment.
+Identity: Certificate-Based Auth (SCEP/Intune/Intune SCEP) for Wi-Fi/VPN/App Auth. FIDO2 / Passkeys for App Auth. No Passwords.
+
+2. Configuration & Restrictions (The “Lockdown”):
+
+OS Version Enforcement: Min iOS 17 / Android 14. Block Jailbreak/Root (SafetyNet/Play Integrity API / DeviceCheck / App Attest).
+Encryption: File-Based Encryption (FBE) / Full Disk Encryption (FDE) Enforced. Hardware-Backed Keystore/StrongBox/SEP.
+Lock Screen: Complex Passcode (6+ Digits / Alphanumeric) + Biometric. Max Failed Attempts -> Wipe / Lockout.
+Restrictions (The “No Fun” List):
+Camera / Screenshot / Screen Recording: Disable (High Sec).
+AirDrop / Nearby Share: Contacts Only / Off.
+iCloud / Google Backup: Disable for Work Profile / Managed Apple ID.
+App Installation: Managed App Store Only (VPP / Managed Play Store). Block Sideloading (APK/IPA).
+USB Accessories (Locked): Require Unlock.
+VPN: Per-App VPN / Always-On VPN (IKEv2/IPSec/WireGuard). Split Tunnel OFF (Force All Traffic).
+App Management: VPP (Volume Purchase Program) / Managed Google Play. Silent Install / Update / Remove. App Config: Push Config (Server URL, Certs) via MDM.
+
+3. Data Protection (DLP on Device):
+
+App Protection Policies (APP / MAM): Cut/Copy/Paste Block (Work -> Personal). Save As Blocked to Personal Locations (iCloud, Google Drive, Local). Print Block. Screen Capture Block. Open-In Management (Only Managed Apps Open Work Data).
+Selective Wipe: Retire / Wipe Work Profile (Leaves Personal Photos/WhatsApp). Full Device Wipe (COBO/COPE Only).
+Conditional Launch: Require PIN/Bio to Open App. Require Min OS Version. Require Device Not Jailbroken/Rooted (SafetyNet/Play Integrity/DeviceCheck/App Attest). Require Network Trust (Corporate Wi-Fi / VPN).
+
+4. Threat Defense (MTD - Mobile Threat Defense):
+
+On-Device: Microsoft Defender for Endpoint (Android/iOS), Lookout, Zimperium, Check Point, Wandera (Jamf). On-Device Behavioral Analysis: Process Monitoring, Network Traffic Analysis, Phishing URL Check (Local/Cloud), App Reputation, OS Vuln Scan, Certificate Pinning Validation.
+Network: DNS Filtering (DoH/DoT to Corporate DNS). Always-On VPN / Per-App VPN. Block Malicious Domains/IPs. SSL Inspection (MITM Proxy) for Mobile Traffic (CA Cert Deployed via MDM).
+
+6. BYOD Strategy (If Allowed):
+
+MAM Only (No MDM Enrollment). App Protection Policies (APP) Only.
+Containerization: Work Profile (Android) / User Enrollment (iOS). Hard Boundary.
+No High-Risk Data: No PHI/PCI/Classified on BYOD.
+User Privacy: Clear Privacy Policy. “We see App Inventory, Compliance Status, Not Personal Photos/Messages/Location.”
+Summary
+
+Security Controls are the vocabulary of defense. Administrative sets the rules. Technical enforces them at machine speed. Physical protects the atoms. Preventive stops the breach. Detective finds the breach. Corrective heals the wound. CIS Controls and NIST CSF give us the map and the maturity model. Control Testing proves the locks work. Compensating Controls save us when the ideal fix is impossible. Awareness Programs turn humans from liabilities into sensors. Firewalls segment the network and inspect the traffic. Endpoints are the battlefield; EDR/XDR gives us vision and hands on the endpoint. Patching is hygiene; Immutable Infrastructure is the modern cure. Backups are the time machine; 3-2-1-1-0 with Immutable Storage is the ransomware kill switch. Email, Browser, Mobile are the human perimeter — hardened by DMARC/DKIM/SPF, SEG/ICES, Browser Hardening, MDM/MAM/MTD, Conditional Access.
+
+Security is not a noun. It is a verb. It is the daily practice of reducing risk, one control, one patch, one trained user, one tested backup at a time.
+
+Glossary of Key Terms
+Administrative Controls: Policies, procedures, training, hiring practices.
+Technical Controls: Software/hardware enforcement (Firewalls, EDR, Encryption, MFA).
+Physical Controls: Fences, Guards, Locks, Biometrics, Environmental Controls.
+Preventive Controls: Stop incidents before they occur (MFA, Firewall, Training).
+Detective Controls: Detect incidents in progress (SIEM, IDS, EDR, CCTV, Audits).
+Corrective Controls: Restore operations after incident (Backups, IR Plan, Patching).
+CIS Controls v8: 18 Prioritized Controls (IG1, IG2, IG3).
+NIST CSF 2.0: Govern, Identify, Protect, Detect, Respond, Recover. Tiers 1-4.
+Compensating Control: Alternative control when primary cannot be implemented.
+SIEM: Security Information and Event Management (Log Centralization + Correlation).
+EDR/XDR: Endpoint/Extended Detection & Response.
+SIEM/SOAR: Security Orchestration, Automation, Response.
+FIM: File Integrity Monitoring.
+DLP: Data Loss Prevention.
+CASB: Cloud Access Security Broker.
+ZTNA: Zero Trust Network Access.
+SBOM: Software Bill of Materials.
+CIS Controls v8: 18 Controls, 3 Implementation Groups (IG1/IG2/IG3).
+NIST CSF 2.0: Govern, Identify, Protect, Detect, Respond, Recover.
+MITRE ATT&CK: Adversary Tactics, Techniques, Procedures Knowledge Base.
+CIS Controls v8: 18 Controls, 3 Implementation Groups (IG1, IG2, IG3).
+NIST CSF 2.0: Govern, Identify, Protect, Detect, Respond, Recover.
+Zero Trust: Never Trust, Always Verify. Explicit Verification. Least Privilege. Assume Breach.
+RPO/RTO/MTD: Recovery Point/Time Objective, Maximum Tolerable Downtime.
+3-2-1-1-0 Backup Rule: 3 Copies, 2 Media, 1 Offsite, 1 Immutable/Air-gapped, 0 Errors (Tested).
+CERT-In Directions 2022: 6hr Reporting, NTP Sync, 180d Logs, VPN KYC, PoC.

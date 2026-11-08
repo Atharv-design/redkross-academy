@@ -14,6 +14,9 @@ import {
   module5QuestionBank
 } from '../src/services/db/questionBanks/module5QuestionBank.js';
 import {
+  module6QuestionBank
+} from '../src/services/db/questionBanks/module6QuestionBank.js';
+import {
   getRandomModuleQuestions,
   getRandomFinalExamQuestions,
   getOrGenerateQuizQuestions,
@@ -41,7 +44,8 @@ const banks = [
   { name: 'Module 2', bank: module2QuestionBank },
   { name: 'Module 3', bank: module3QuestionBank },
   { name: 'Module 4', bank: module4QuestionBank },
-  { name: 'Module 5', bank: module5QuestionBank }
+  { name: 'Module 5', bank: module5QuestionBank },
+  { name: 'Module 6', bank: module6QuestionBank }
 ];
 
 // 1. Verify 200 questions per bank
@@ -71,7 +75,7 @@ banks.forEach(({ name, bank }) => {
 
 // Total questions verification
 const totalQuestionsCount = banks.reduce((sum, b) => sum + b.bank.length, 0);
-assert(totalQuestionsCount === 1000, `Total question bank count across Modules 1-5 is exactly 1,000 (Found ${totalQuestionsCount})`);
+assert(totalQuestionsCount === 1200, `Total question bank count across Modules 1-6 is exactly 1,200 (Found ${totalQuestionsCount})`);
 
 // 2. Test Dynamic 20-Question Sampler
 const sampledM1 = getRandomModuleQuestions(1, 20);
@@ -80,6 +84,12 @@ assert(sampledM1.length === 20, `getRandomModuleQuestions(1, 20) returned exactl
 const sampleM1Medium = sampledM1.filter(q => q.difficulty.toLowerCase() === 'medium').length;
 const sampleM1Difficult = sampledM1.filter(q => q.difficulty.toLowerCase() === 'difficult').length;
 assert(sampleM1Medium === 10 && sampleM1Difficult === 10, `Sampled 20 questions have balanced 10 Medium and 10 Difficult questions (M:${sampleM1Medium}, D:${sampleM1Difficult})`);
+
+const sampledM6 = getRandomModuleQuestions(6, 20);
+assert(sampledM6.length === 20, `getRandomModuleQuestions(6, 20) returned exactly 20 questions for Module 6`);
+const sampleM6Medium = sampledM6.filter(q => q.difficulty.toLowerCase() === 'medium').length;
+const sampleM6Difficult = sampledM6.filter(q => q.difficulty.toLowerCase() === 'difficult').length;
+assert(sampleM6Medium === 10 && sampleM6Difficult === 10, `Module 6 sampled questions have balanced 10 Medium and 10 Difficult (M:${sampleM6Medium}, D:${sampleM6Difficult})`);
 
 // Verify option schema for ExamCBTInterface compatibility
 const optionsValid = sampledM1.every(q => 
@@ -97,19 +107,23 @@ const firstIdsRun1 = sampledM1.slice(0, 5).map(q => q.id).join(',');
 const firstIdsRun2 = sampleM1_run2.slice(0, 5).map(q => q.id).join(',');
 assert(firstIdsRun1 !== firstIdsRun2, `Subsequent module sample runs have different question orders (non-deterministic shuffle)`);
 
-// 4. Test Final Exam 50-Question Engine
-const finalExamQs = getRandomFinalExamQuestions(50);
-assert(finalExamQs.length === 50, `getRandomFinalExamQuestions(50) returned exactly 50 questions`);
+// 4. Test Final Exam 50-Question Engine (and 60-Question full distribution)
+const finalExamQs50 = getRandomFinalExamQuestions(50);
+assert(finalExamQs50.length === 50, `getRandomFinalExamQuestions(50) returned exactly 50 questions`);
 
-const finalExamM1 = finalExamQs.filter(q => q.id.includes('m1_') || q.id.includes('c1_m1_') || q.id.startsWith('c1_m1')).length;
-const finalExamM2 = finalExamQs.filter(q => q.id.includes('m2_') || q.id.includes('c1_m2_') || q.id.startsWith('c1_m2')).length;
-const finalExamM3 = finalExamQs.filter(q => q.id.includes('m3_') || q.id.includes('c1_m3_') || q.id.startsWith('c1_m3')).length;
-const finalExamM4 = finalExamQs.filter(q => q.id.includes('m4_') || q.id.includes('c1_m4_') || q.id.startsWith('c1_m4')).length;
-const finalExamM5 = finalExamQs.filter(q => q.id.includes('m5_') || q.id.includes('c1_m5_') || q.id.startsWith('c1_m5')).length;
+const finalExamQs60 = getRandomFinalExamQuestions(60);
+assert(finalExamQs60.length === 60, `getRandomFinalExamQuestions(60) returned exactly 60 questions`);
+
+const finalExamM1 = finalExamQs60.filter(q => q.id.includes('m1_') || q.id.includes('c1_m1_') || q.id.startsWith('c1_m1')).length;
+const finalExamM2 = finalExamQs60.filter(q => q.id.includes('m2_') || q.id.includes('c1_m2_') || q.id.startsWith('c1_m2')).length;
+const finalExamM3 = finalExamQs60.filter(q => q.id.includes('m3_') || q.id.includes('c1_m3_') || q.id.startsWith('c1_m3')).length;
+const finalExamM4 = finalExamQs60.filter(q => q.id.includes('m4_') || q.id.includes('c1_m4_') || q.id.startsWith('c1_m4')).length;
+const finalExamM5 = finalExamQs60.filter(q => q.id.includes('m5_') || q.id.includes('c1_m5_') || q.id.startsWith('c1_m5')).length;
+const finalExamM6 = finalExamQs60.filter(q => q.id.includes('m6_') || q.id.includes('c1_m6_') || q.id.startsWith('c1_m6')).length;
 
 assert(
-  finalExamM1 === 10 && finalExamM2 === 10 && finalExamM3 === 10 && finalExamM4 === 10 && finalExamM5 === 10,
-  `Final Exam cleanly samples exactly 10 questions from each of the 5 modules (M1:${finalExamM1}, M2:${finalExamM2}, M3:${finalExamM3}, M4:${finalExamM4}, M5:${finalExamM5})`
+  finalExamM1 === 10 && finalExamM2 === 10 && finalExamM3 === 10 && finalExamM4 === 10 && finalExamM5 === 10 && finalExamM6 === 10,
+  `Final Exam (60 Qs) cleanly samples exactly 10 questions from each of the 6 modules (M1:${finalExamM1}, M2:${finalExamM2}, M3:${finalExamM3}, M4:${finalExamM4}, M5:${finalExamM5}, M6:${finalExamM6})`
 );
 
 // 5. Test Option Shuffling Integrity

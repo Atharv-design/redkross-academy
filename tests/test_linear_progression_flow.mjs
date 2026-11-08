@@ -117,6 +117,57 @@ assert.strictEqual(isModUnlocked(freshEnr, 2), true, 'Module 3 must now be UNLOC
 assert.strictEqual(isModUnlocked(freshEnr, 3), false, 'Module 4 must still be LOCKED');
 
 console.log('✓ Stage 5 Passed: Module 2 completed and passed -> Module 3 unlocked');
+
+// 6. Complete Modules 3, 4, 5
+for (let mIdx = 2; mIdx <= 4; mIdx++) {
+  const mod = course.modules[mIdx];
+  for (const l of mod.lessons) {
+    mockEngine.recordLessonCompletion(enrolment.id, l.id);
+  }
+  mockEngine.recordQuizAttemptSubmission({
+    enrolmentId: enrolment.id,
+    quizId: mod.quiz.id,
+    scorePercentage: 90,
+    isPassed: true
+  });
+}
+freshEnr = mockEngine.getEnrolment(enrolment.id);
+
+assert.strictEqual(isModUnlocked(freshEnr, 5), true, 'Module 6 must now be UNLOCKED after passing Modules 1-5');
+assert.strictEqual(isQuizUnlocked(freshEnr, 5), false, 'Module 6 Quiz must be LOCKED until Module 6 lessons are completed');
+
+console.log('✓ Stage 6 Passed: Modules 3, 4, 5 completed and passed -> Module 6 unlocked');
+
+// 7. Complete Module 6 lessons and pass Module 6 exam
+const mod6 = course.modules[5];
+assert.strictEqual(mod6.lessons.length, 5, 'Module 6 must have 5 lessons');
+for (const l of mod6.lessons) {
+  mockEngine.recordLessonCompletion(enrolment.id, l.id);
+}
+freshEnr = mockEngine.getEnrolment(enrolment.id);
+assert.strictEqual(isQuizUnlocked(freshEnr, 5), true, 'Module 6 Quiz must UNLOCK once all Module 6 lessons are read');
+
+mockEngine.recordQuizAttemptSubmission({
+  enrolmentId: enrolment.id,
+  quizId: mod6.quiz.id,
+  scorePercentage: 95,
+  isPassed: true
+});
+freshEnr = mockEngine.getEnrolment(enrolment.id);
+
+function areAllModulesCompleted(enr) {
+  const completedLessons = enr?.completed_mandatory_lessons || [];
+  const passedQuizzes = enr?.passed_quizzes || [];
+  return course.modules.every((mod) => {
+    const lessonsDone = (mod.lessons || []).every((l) => completedLessons.includes(l.id));
+    const quizDone = mod.quiz ? passedQuizzes.includes(mod.quiz.id) : true;
+    return quizDone && lessonsDone;
+  });
+}
+
+assert.strictEqual(areAllModulesCompleted(freshEnr), true, 'All 6 modules must be cleared and Final Exam UNLOCKED');
+console.log('✓ Stage 7 Passed: Module 6 completed and passed -> Final Exam unlocked');
+
 console.log('================================================================');
 console.log('ALL STRICT LINEAR CURRICULUM PROGRESSION TESTS PASSED CLEANLY (100%)');
 console.log('================================================================');

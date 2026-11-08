@@ -8,6 +8,7 @@ import { module2Data } from './curriculum/module2.js';
 import { module3Data } from './curriculum/module3.js';
 import { module4Data } from './curriculum/module4.js';
 import { module5Data } from './curriculum/module5.js';
+import { module6Data } from './curriculum/module6.js';
 
 export const CYBER_COURSES = [
   {
@@ -20,7 +21,7 @@ export const CYBER_COURSES = [
     "difficulty": "Beginner",
     "price": 0,
     "cert_price": 0,
-    "estimated_duration": "8 Weeks",
+    "estimated_duration": "10 Weeks",
     "effort": "4–6 Hours per Week",
     "access": "Free Institutional Access",
     "rating": 4.98,
@@ -32,7 +33,9 @@ export const CYBER_COURSES = [
       "Threat Modeling",
       "Attack Surface Analysis",
       "Security vs Privacy vs Safety",
-      "Defensive CLI Toolkit"
+      "Defensive CLI Toolkit",
+      "Network Security Architecture",
+      "Firewall & DMZ Engineering"
     ],
     "milestone_cert": "Certified Cybersecurity Defender Associate (CCDA)",
     "lead_author": {
@@ -75,7 +78,8 @@ export const CYBER_COURSES = [
       module2Data,
       module3Data,
       module4Data,
-      module5Data
+      module5Data,
+      module6Data
     ]
   }
 ];
