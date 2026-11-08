@@ -52,14 +52,14 @@ export default function CyberLearningCard({
             </div>
           </div>
 
-          {/* Title */}
+          {/* Title - Clean name without 'Course 01:' prefix */}
           <h3 className="text-xl sm:text-2xl font-bold font-royal text-white leading-tight group-hover:text-[#FFA439] transition-colors">
-            {item.title}
+            {(item.title || 'Introduction to Cybersecurity').replace(/^Course\s*\d+:\s*/i, '')}
           </h3>
 
-          {/* Description */}
-          <p className="text-xs text-slate-300 font-sans leading-relaxed line-clamp-3">
-            {item.short_desc}
+          {/* Description - Full, proper description without truncation */}
+          <p className="text-xs text-slate-300 font-sans leading-relaxed">
+            {item.short_desc || item.overview}
           </p>
 
           {/* Key Skills */}

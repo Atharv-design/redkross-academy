@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   ChevronLeft,
@@ -163,6 +163,18 @@ export default function LessonPlayerPage() {
     passingScore: 80,
     nextUnitId: null
   });
+
+  const mainScrollRef = useRef(null);
+
+  // Automatically scroll main content panel and window to the top on lesson / unit change
+  useEffect(() => {
+    if (mainScrollRef.current) {
+      mainScrollRef.current.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    }
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    }
+  }, [activeUnitId]);
 
   // =========================================================================
   // Strict Linear Curriculum Progression: Read Module -> Pass Exam -> Unlock Next
@@ -567,6 +579,13 @@ export default function LessonPlayerPage() {
       setSearchParams({ unitId: unit.id });
     }
 
+    if (mainScrollRef.current) {
+      mainScrollRef.current.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    }
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    }
+
     const targetQuizId = unit.quiz?.id || unit.id;
     const lockCheck = mockEngine.isExamLocked(enrolmentId, targetQuizId);
     if (lockCheck.isLocked) {
@@ -616,6 +635,12 @@ export default function LessonPlayerPage() {
       await handleMarkLessonComplete();
     }
     handleNextUnit();
+    if (mainScrollRef.current) {
+      mainScrollRef.current.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    }
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    }
   };
 
   const handleDownloadChapterNotes = () => {
@@ -1032,7 +1057,7 @@ export default function LessonPlayerPage() {
         />
 
         {/* Panel 2: Center Main Stage Content (Notes, Theory, Lab Synthesis) */}
-        <main className="flex-1 min-w-0 h-[calc(100vh-3.5rem)] overflow-y-auto custom-scrollbar p-4 sm:p-6 lg:p-7 space-y-6 bg-black/90 pb-24 z-10">
+        <main ref={mainScrollRef} className="flex-1 min-w-0 h-[calc(100vh-3.5rem)] overflow-y-auto custom-scrollbar p-4 sm:p-6 lg:p-7 space-y-6 bg-black/90 pb-24 z-10">
           <div className="w-full space-y-6">
             {/* Top Unit Title Bar & Bookmark Toggle */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#FF7A00]/20 gap-3">

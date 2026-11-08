@@ -62,7 +62,7 @@ export default function CyberAcademyPage() {
     id: masterCourse.id,
     division: 'cybersecurity',
     slug: masterCourse.slug || 'introduction-to-cybersecurity',
-    title: masterCourse.title || 'Course 01: Introduction to Cybersecurity',
+    title: (masterCourse.title || 'Introduction to Cybersecurity').replace(/^Course\s*\d+:\s*/i, ''),
     short_desc: masterCourse.overview || 'The institutional starting point for modern cyber defense. Master foundational security models, the CIA triad, the Lockheed Martin Cyber Kill Chain, STRIDE threat modeling, CVSS v3.1 scoring, authentication and access controls, applied cryptography, SOC incident management, and Indian cyber law (IT Act & DPDP Act 2023).',
     difficulty: (masterCourse.difficulty || 'BEGINNER').toUpperCase(),
     estimated_weeks: 10,
@@ -86,7 +86,7 @@ export default function CyberAcademyPage() {
     id: 'crs_cyber_intro_01',
     division: 'cybersecurity',
     slug: 'introduction-to-cybersecurity',
-    title: 'Course 01: Introduction to Cybersecurity',
+    title: 'Introduction to Cybersecurity',
     short_desc: 'The institutional starting point for modern cyber defense. Master foundational security models, the CIA triad, the Lockheed Martin Cyber Kill Chain, STRIDE threat modeling, CVSS v3.1 scoring, authentication and access controls, applied cryptography, SOC incident management, and Indian cyber law (IT Act & DPDP Act 2023).',
     difficulty: 'BEGINNER',
     estimated_weeks: 10,
@@ -343,10 +343,10 @@ export default function CyberAcademyPage() {
                   </div>
 
                   <div className="p-3 rounded-xl bg-black/40 border border-[#FF7A00]/20">
-                    <div className="text-[10px] font-mono text-[#FFA439] uppercase">CYBERLAB STATUS</div>
+                    <div className="text-[10px] font-mono text-[#FFA439] uppercase">CURRICULUM ACCESS</div>
                     <div className="text-xs sm:text-sm font-bold font-mono text-[#FFA439] mt-0.5 flex items-center gap-1.5">
                       <span className="w-2 h-2 rounded-full bg-[#FF7A00] animate-pulse" />
-                      <span>ONLINE // V3</span>
+                      <span>UNRESTRICTED</span>
                     </div>
                   </div>
 

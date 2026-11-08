@@ -15,7 +15,7 @@ export const CYBER_COURSES = [
     "id": "crs_cyber_intro_01",
     "division": "cybersecurity",
     "slug": "introduction-to-cybersecurity",
-    "title": "Course 01: Introduction to Cybersecurity",
+    "title": "Introduction to Cybersecurity",
     "version": "1.0",
     "category": "Foundations & Defense",
     "difficulty": "Beginner",

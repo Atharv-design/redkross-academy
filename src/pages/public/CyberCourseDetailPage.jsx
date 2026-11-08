@@ -212,14 +212,14 @@ export default function CyberCourseDetailPage() {
                 <span className="px-2.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-black/60 border border-white/10 text-slate-300">
                   {course.difficulty || 'Beginner to Advanced'}
                 </span>
-                <span className="px-2.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-black/60 border border-[#00AEEF]/30 text-[#00AEEF]">
-                  KALI CYBERLAB V3 READY
+                <span className="px-2.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-black/60 border border-[#FF7A00]/30 text-[#FFA439]">
+                  FOUNDATIONS READY
                 </span>
               </div>
 
               {/* Title */}
               <h1 className="font-royal text-2xl sm:text-4xl lg:text-5xl font-black text-white leading-tight">
-                {course.title}
+                {(course.title || 'Introduction to Cybersecurity').replace(/^Course\s*\d+:\s*/i, '')}
               </h1>
 
               {/* Overview Subtitle */}

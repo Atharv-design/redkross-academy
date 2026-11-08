@@ -45,7 +45,7 @@ export default function LessonBottomNavigation({
           className="px-6 py-2.5 rounded-xl text-xs font-mono font-bold flex items-center space-x-2 border border-[#FF7A00] bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] cursor-pointer shadow-[0_0_20px_rgba(255,122,0,0.5)] transition-all animate-pulse"
         >
           <Shield className="w-4 h-4" />
-          <span>Complete Unit &amp; Enter Final Exam (50 MCQs)</span>
+          <span>Complete Unit &amp; Enter Final Exam ({course?.final_assessment?.total_questions || 60} MCQs)</span>
           <ChevronRight className="w-4 h-4 stroke-[3]" />
         </button>
       ) : activeIndex >= allUnits.length - 1 ? (

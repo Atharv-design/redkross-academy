@@ -33,7 +33,6 @@ import CyberShaderBackground from '../../components/ui/CyberShaderBackground';
 import CyberDivisionWatermark from '../../components/cyber/CyberDivisionWatermark';
 import CyberAcademyNavbar from '../../components/cyber/CyberAcademyNavbar';
 import Footer from '../../components/common/Footer';
-import CyberLabDesktopWindow from '../../components/student/CyberLabDesktopWindow';
 import { mockEngine } from '../../services/db/mockEngine';
 import { useAuth } from '../../services/auth/authContext';
 import { CYBER_COURSES } from '../../services/db/cyberCourses';
@@ -52,8 +51,6 @@ export default function CyberStudentDashboard() {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
 
-  const [isLabOpen, setIsLabOpen] = useState(false);
-  const [isLabMinimized, setIsLabMinimized] = useState(false);
   const [copiedHash, setCopiedHash] = useState(null);
 
   const [stats, setStats] = useState({
@@ -100,11 +97,6 @@ export default function CyberStudentDashboard() {
     setTimeout(() => setCopiedHash(null), 2000);
   };
 
-  const handleLaunchLab = () => {
-    setIsLabOpen(true);
-    setIsLabMinimized(false);
-  };
-
   const sampleVerificationHash = '3a7f8b9c2e1d0f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a';
 
   return (
@@ -145,24 +137,15 @@ export default function CyberStudentDashboard() {
               </h1>
 
               <p className="text-xs sm:text-sm text-slate-300 font-sans max-w-2xl leading-relaxed">
-                Welcome, Cadet <span className="text-white font-semibold">{currentUser?.name || currentUser?.full_name || 'Operator'}</span>. Your defensive curriculum, Kali sandbox containers, and cryptographic certifications are isolated to this secure student dashboard.
+                Welcome, Cadet <span className="text-white font-semibold">{currentUser?.name || currentUser?.full_name || 'Operator'}</span>. Your defensive curriculum, learning progress, and cryptographic certifications are isolated to this secure student dashboard.
               </p>
             </div>
 
-            {/* Quick 1-Click Kali CyberLab Launcher Button */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0 w-full lg:w-auto">
-              <button
-                type="button"
-                onClick={handleLaunchLab}
-                className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-[#FF7A00] via-[#FFA439] to-[#E56A00] text-black font-mono font-bold text-xs hover:brightness-110 shadow-[0_0_25px_rgba(255,122,0,0.45)] transition-all flex items-center justify-center gap-2.5 cursor-pointer group"
-              >
-                <Terminal className="w-4 h-4 text-black group-hover:rotate-6 transition-transform" />
-                <span>Launch Kali CyberLab V3</span>
-              </button>
-
+            {/* Quick Action Navigation Button */}
+            <div className="flex items-center gap-3 shrink-0">
               <Link
                 to="/academy/cybersecurity"
-                className="px-4 py-3 rounded-2xl bg-black/60 border border-white/15 text-slate-300 hover:text-white hover:border-[#FFA439] font-mono text-xs transition-colors flex items-center justify-center gap-1.5"
+                className="px-5 py-3 rounded-2xl bg-black/60 border border-white/15 text-slate-300 hover:text-white hover:border-[#FFA439] font-mono text-xs transition-colors flex items-center justify-center gap-2"
               >
                 <BookOpen className="w-3.5 h-3.5 text-[#FFA439]" />
                 <span>Explore Tracks</span>
@@ -212,35 +195,6 @@ export default function CyberStudentDashboard() {
               <div className="text-[10px] text-slate-400 mt-0.5">Tamper-proof proofs</div>
             </div>
           </div>
-        </div>
-
-        {/* 1-CLICK KALI CYBERLAB CALLOUT CARD */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-[#0C121E]/90 via-[#070A10]/95 to-[#04060A]/95 border border-[#00AEEF]/35 shadow-[0_0_35px_rgba(0,174,239,0.15)] flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          <div className="space-y-2 max-w-2xl">
-            <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-[#00AEEF]/20 text-[#00AEEF] border border-[#00AEEF]/40 uppercase">
-                VIRTUAL KALI LINUX V3
-              </span>
-              <span className="text-xs font-mono text-slate-400">
-                143+ Security Commands • Subnet: 10.10.11.0/24
-              </span>
-            </div>
-            <h3 className="text-xl sm:text-2xl font-bold font-royal text-white">
-              Instant Attack Simulation &amp; Defensive Container Sandbox
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-300 font-sans leading-relaxed">
-              Launch an in-browser Linux desktop equipped with interactive terminal tools (Nmap, Wireshark, Hydra, Gobuster, SQLmap) and targeted vulnerable practice targets (OWASP Juice Shop, DVWA, WebGoat).
-            </p>
-          </div>
-
-          <button
-            type="button"
-            onClick={handleLaunchLab}
-            className="px-6 py-3.5 rounded-xl bg-[#00AEEF] hover:bg-[#0090D0] text-black font-mono font-bold text-xs transition-all shadow-[0_0_20px_rgba(0,174,239,0.4)] flex items-center gap-2 cursor-pointer shrink-0"
-          >
-            <Terminal className="w-4 h-4 text-black" />
-            <span>Open CyberLab Sandbox</span>
-          </button>
         </div>
 
         {/* ACTIVE CYBERSECURITY ENROLLMENTS SECTION */}
@@ -482,17 +436,6 @@ export default function CyberStudentDashboard() {
           )}
         </section>
       </main>
-
-      {/* Kali CyberLab V3 Desktop Modal Window */}
-      {isLabOpen && (
-        <CyberLabDesktopWindow
-          isOpen={isLabOpen}
-          onClose={() => setIsLabOpen(false)}
-          isMinimized={isLabMinimized}
-          onMinimize={() => setIsLabMinimized(true)}
-          onRestore={() => setIsLabMinimized(false)}
-        />
-      )}
 
       {/* Cyber In-Branch Footer */}
       <Footer />
