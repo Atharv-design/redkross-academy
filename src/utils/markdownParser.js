@@ -192,10 +192,51 @@ export function renderMarkdownToHtml(markdown = '') {
     return `<blockquote class="border-l-4 border-[#FF7A00] pl-4 sm:pl-5 py-3.5 text-[#E2D9CE] bg-[#1A1208]/90 rounded-r-xl text-[16px] sm:text-[17px] leading-[1.75] my-6 font-lora shadow-md border-y border-r border-[#FF7A00]/15">${rawContent}</blockquote>`;
   });
 
+  // 5b. Smart Content Normalizers: Auto-promote unformatted Goals, Groups, and Scenarios (W3C WAI Hierarchy)
+  // Promotes: "Goal 1: Confidentiality — Keep It Secret" -> "### Goal 1: Confidentiality — Keep It Secret"
+  html = html.replace(/^(?:(?:Goal|Pillar|Principle)\s+(\d+):\s*(.+))$/gim, '### Goal $1: $2');
+  html = html.replace(/^(?:(?:Group|Category|Domain)\s+(\d+):\s*(.+))$/gim, '### Group $1: $2');
+
+  // Promotes: "Real examples:", "What availability protects:", "What happens when X fails:" -> "#### Real Examples"
+  html = html.replace(/^(Real examples|Real-world examples|Real-World Operational Examples):?\s*$/gim, '#### Real-World Operational Examples:');
+  html = html.replace(/^(What\s+[a-zA-Z0-9\s-]+\s+protects):?\s*$/gim, '#### $1:');
+  html = html.replace(/^(What happens when\s+[a-zA-Z0-9\s-]+\s+fails):?\s*$/gim, '#### $1:');
+  html = html.replace(/^(Case\s+Example\s+\d+:|Example\s+\d+:)\s*(.+)$/gim, '#### $1 $2');
+
+  // Promotes standalone "Term — definition" lines into structured list items: "- **Term:** definition"
+  html = html.replace(/^([A-Z][a-zA-Z0-9\s/()_-]{1,35})\s*[—–]\s*([a-z].+)$/gm, (match, term, def) => {
+    return `- **${term.trim()}:** ${def.trim()}`;
+  });
+
   // 6. Headings - Prominent, Structured Lora Hierarchy
-  html = html.replace(/^#### (.*)$/gim, '<h4 class="text-sm sm:text-base font-semibold text-[#FFA439] mt-6 mb-2.5 font-lora uppercase tracking-wider">$1</h4>');
-  html = html.replace(/^### (.*)$/gim, '<h3 class="text-lg sm:text-xl font-semibold text-white mt-8 mb-3.5 font-lora">$1</h3>');
-  html = html.replace(/^## (.*)$/gim, '<h2 class="text-xl sm:text-2xl font-bold text-[#FFA439] mt-9 sm:mt-10 mb-4 font-lora text-center flex items-center justify-center gap-2 border-b border-[#FF7A00]/30 pb-3">$1</h2>');
+  html = html.replace(/^##### (.*)$/gim, '<h5 class="text-xs sm:text-sm font-mono font-bold text-[#65F58A] mt-5 mb-2 uppercase tracking-widest flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#65F58A]"></span><span>$1</span></h5>');
+  html = html.replace(/^#### (.*)$/gim, (match, title) => {
+    return `<h4 class="text-sm sm:text-base font-bold text-[#FFA439] mt-7 mb-3 font-lora tracking-wide flex items-center gap-2">
+      <span class="w-1.5 h-1.5 rounded-full bg-[#FF7A00] flex-shrink-0"></span>
+      <span>${title.trim()}</span>
+    </h4>`;
+  });
+  html = html.replace(/^### (.*)$/gim, (match, title) => {
+    const cleanTitle = title.trim();
+    const badgeMatch = cleanTitle.match(/^(Goal \d+|Group \d+|Pillar \d+|Principle \d+|Step \d+):\s*(.*)$/i);
+    if (badgeMatch) {
+      const badge = badgeMatch[1].toUpperCase();
+      const rest = badgeMatch[2];
+      return `<h3 class="text-lg sm:text-xl font-bold text-white mt-9 mb-4 font-lora flex items-center flex-wrap gap-2.5 border-l-4 border-[#FF7A00] pl-3.5 py-1 bg-[#120E09]/60 rounded-r-xl">
+        <span class="px-2 py-0.5 rounded bg-[#FF7A00]/20 border border-[#FF7A00]/40 text-[#FFA439] text-xs font-mono font-bold tracking-wider">${badge}</span>
+        <span>${rest}</span>
+      </h3>`;
+    }
+    return `<h3 class="text-lg sm:text-xl font-bold text-white mt-8 mb-4 font-lora flex items-center gap-2.5 border-l-4 border-[#FF7A00] pl-3.5 py-0.5">
+      <span>${cleanTitle}</span>
+    </h3>`;
+  });
+  html = html.replace(/^## (.*)$/gim, (match, title) => {
+    return `<h2 class="text-xl sm:text-2xl font-bold text-[#FFA439] mt-10 mb-5 font-lora text-center flex items-center justify-center gap-2.5 border-b border-[#FF7A00]/30 pb-3.5 tracking-tight shadow-sm">
+      <span class="w-2 h-2 rounded-full bg-[#FF7A00] animate-pulse flex-shrink-0"></span>
+      <span>${title.trim()}</span>
+    </h2>`;
+  });
   html = html.replace(/^# (.*)$/gim, '<h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-2 mb-6 font-lora tracking-tight text-center pb-3 border-b border-[#FF7A00]/40">$1</h1>');
 
   // 7. Bold & Italic
@@ -241,10 +282,12 @@ export function renderMarkdownToHtml(markdown = '') {
     const rawItems = listBlock.trim().split('\n');
 
     // Check if this list is a term-definition list (Glossaries, Lexicons, Definitional Banks)
-    const isTermDefList = rawItems.length >= 1 && rawItems.every(item => {
+    const defItemCount = rawItems.filter(item => {
       const clean = item.replace(/^[-*]\s+/, '').trim();
       return /^<strong class="font-bold text-white">[^<]+:?<\/strong>:?\s+/.test(clean);
-    });
+    }).length;
+
+    const isTermDefList = defItemCount >= 2 && defItemCount >= Math.floor(rawItems.length * 0.5);
 
     if (isTermDefList) {
       const dlItems = rawItems.map(item => {
@@ -253,24 +296,24 @@ export function renderMarkdownToHtml(markdown = '') {
         if (match) {
           const term = match[1].trim();
           const def = match[2].trim();
-          return `<div class="p-4 rounded-xl bg-[#120E09]/80 border border-[#FF7A00]/25 shadow-sm transition-all hover:border-[#FF7A00]/50">
-            <dt class="font-bold text-[#FFA439] font-lora text-base flex items-center gap-2 mb-1.5">
-              <span class="w-1.5 h-1.5 rounded-full bg-[#FF7A00]"></span>
+          return `<div class="p-4 rounded-xl bg-[#0D0A07] border border-[#FF7A00]/25 shadow-sm transition-all hover:border-[#FF7A00]/50 hover:bg-[#120E09]/90">
+            <dt class="font-bold text-[#FFA439] font-lora text-[16px] sm:text-[17px] flex items-center gap-2 mb-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#FF7A00] flex-shrink-0"></span>
               <span>${term}</span>
             </dt>
-            <dd class="text-[#E2D9CE] font-lora text-[15px] sm:text-[16px] leading-[1.75] pl-3.5 border-l-2 border-[#FF7A00]/30">${def}</dd>
+            <dd class="text-[#E2D9CE] font-lora text-[15px] sm:text-[16px] leading-[1.8] pl-3.5 border-l-2 border-[#FF7A00]/30">${def}</dd>
           </div>`;
         }
-        return `<div class="p-3 text-[#E2D9CE] font-lora">${clean}</div>`;
+        return `<div class="p-3 text-[#E2D9CE] font-lora leading-relaxed">${clean}</div>`;
       }).join('\n');
 
       return `<dl class="my-6 space-y-3.5">${dlItems}</dl>`;
     }
 
     const items = rawItems
-      .map((item) => `  <li class="flex items-start gap-3 text-[#E2D9CE] leading-[1.75] text-[16px] sm:text-[17px] font-lora"><span class="w-2 h-2 rounded-full bg-[#FF7A00] mt-2.5 flex-shrink-0"></span><span>${item.replace(/^[-*]\s+/, '')}</span></li>`)
+      .map((item) => `  <li class="flex items-start gap-3 text-[#E2D9CE] leading-[1.8] text-[16px] sm:text-[17px] font-lora"><span class="w-2 h-2 rounded-full bg-[#FF7A00] mt-2.5 flex-shrink-0 shadow-[0_0_6px_rgba(255,122,0,0.5)]"></span><span>${item.replace(/^[-*]\s+/, '')}</span></li>`)
       .join('\n');
-    return `<ul class="my-5 space-y-2.5 sm:space-y-3 pl-1">${items}</ul>`;
+    return `<ul class="my-5 space-y-3 pl-1">${items}</ul>`;
   });
 
   html = html.replace(/(?:^\d+\.\s+.+(?:\n|$))+/gm, (listBlock) => {
