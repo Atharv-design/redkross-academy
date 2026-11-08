@@ -49,9 +49,9 @@ export default function LessonOutlineSidebar({
       {/* Outline Modules Accordion */}
       <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
         {(course?.modules || []).map((mod, modIdx) => {
-          const isExpanded = expandedModules[mod.id] !== false;
-          const isCurrentMod = activeUnit?.moduleId === mod.id;
           const isUnlocked = isModuleUnlocked(modIdx);
+          const isCurrentMod = activeUnit?.moduleId === mod.id;
+          const isExpanded = isUnlocked && (expandedModules[mod.id] !== undefined ? Boolean(expandedModules[mod.id]) : (isCurrentMod || modIdx === 0));
           const modLessons = mod.lessons || [];
           const completedLessonsList = currentEnrolment?.completed_mandatory_lessons || enrolment?.completed_mandatory_lessons || [];
           const passedQuizzesList = currentEnrolment?.passed_quizzes || enrolment?.passed_quizzes || [];
@@ -76,7 +76,7 @@ export default function LessonOutlineSidebar({
                 type="button"
                 onClick={() => {
                   if (!isUnlocked) {
-                    alert(`Module ${modIdx + 1} Locked: Pass Module ${modIdx} Knowledge Check (>= 80%) to unlock.`);
+                    alert(`Module ${modIdx + 1} Locked: You must complete all lessons and pass the Module ${modIdx} Knowledge Check (>= 80%) to unlock.`);
                     return;
                   }
                   setExpandedModules((prev) => ({
@@ -188,10 +188,16 @@ export default function LessonOutlineSidebar({
                     const lockInfo = mockEngine.isExamLocked(enrolmentId, mod.quiz.id);
                     const isQuizLocked = lockInfo.isLocked;
                     const attemptStatus = mockEngine.getQuizAttemptStatus(enrolmentId, mod.quiz.id);
+                    const areAllLessonsCompleted = modLessons.length === 0 || completedCount === modLessons.length;
+
                     return (
                       <button
                         type="button"
-                        onClick={() =>
+                        onClick={() => {
+                          if (!areAllLessonsCompleted) {
+                            alert(`Knowledge Check Locked: Complete all ${modLessons.length} lessons in ${mod.title} (${completedCount}/${modLessons.length} completed) before attempting the examination.`);
+                            return;
+                          }
                           handleSelectUnit({
                             id: mod.quiz.id,
                             type: 'quiz',
@@ -199,11 +205,13 @@ export default function LessonOutlineSidebar({
                             moduleIndex: modIdx,
                             moduleId: mod.id,
                             moduleTitle: mod.title
-                          })
-                        }
+                          });
+                        }}
                         className={`w-full text-left p-2.5 rounded-lg text-xs flex items-center justify-between transition-all mt-1 cursor-pointer border ${
                           activeUnit?.id === mod.quiz.id
                             ? 'bg-[#FF7A00] text-[#071018] font-bold border-[#FF7A00] shadow-sm'
+                            : !areAllLessonsCompleted
+                            ? 'bg-[#090806] text-gray-500 border-white/5 opacity-70 hover:opacity-90'
                             : isQuizLocked
                             ? 'bg-rose-950/70 text-rose-300 border-rose-500/50 hover:bg-rose-900/60'
                             : isModQuizPassed
@@ -212,7 +220,9 @@ export default function LessonOutlineSidebar({
                         }`}
                       >
                         <div className="flex items-center space-x-2 truncate pr-2">
-                          {isQuizLocked ? (
+                          {!areAllLessonsCompleted ? (
+                            <Lock className="w-3.5 h-3.5 flex-shrink-0 text-gray-500" />
+                          ) : isQuizLocked ? (
                             <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0 text-rose-400" />
                           ) : (
                             <Award
@@ -233,6 +243,8 @@ export default function LessonOutlineSidebar({
                           className={`text-[9px] font-mono px-1.5 py-0.5 rounded ${
                             activeUnit?.id === mod.quiz.id
                               ? 'bg-[#071018] text-[#FF7A00]'
+                              : !areAllLessonsCompleted
+                              ? 'bg-black text-gray-400 border border-gray-800'
                               : isQuizLocked
                               ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold'
                               : isModQuizPassed
@@ -240,7 +252,13 @@ export default function LessonOutlineSidebar({
                               : 'bg-amber-500/15 text-amber-300'
                           }`}
                         >
-                          {isQuizLocked ? '24H LOCK' : isModQuizPassed ? 'PASSED' : `${attemptStatus.attemptsRemaining}/3 TRIES`}
+                          {!areAllLessonsCompleted
+                            ? `LOCKED (${completedCount}/${modLessons.length})`
+                            : isQuizLocked
+                            ? '24H LOCK'
+                            : isModQuizPassed
+                            ? 'PASSED'
+                            : `${attemptStatus.attemptsRemaining}/3 TRIES`}
                         </span>
                       </button>
                     );

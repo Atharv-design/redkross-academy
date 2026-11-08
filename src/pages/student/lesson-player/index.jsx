@@ -165,25 +165,15 @@ export default function LessonPlayerPage() {
   });
 
   // =========================================================================
-  // TEMPORARY REVIEW & TESTING GATEWAY (DEV OVERRIDE)
-  // Allows testing all 5 modules and units freely without prerequisite gating.
-  // Revert / set to false once testing is complete to re-enforce strict unlock flow.
+  // Strict Linear Curriculum Progression: Read Module -> Pass Exam -> Unlock Next
   // =========================================================================
-  const [gatewayUnlockAll, setGatewayUnlockAll] = useState(() => {
-    const saved = localStorage.getItem('rk_dev_gateway_unlock_all');
-    return saved !== null ? saved === 'true' : true; // Enabled by default for testing
-  });
-
-  const toggleGatewayUnlock = () => {
-    setGatewayUnlockAll((prev) => {
-      const next = !prev;
-      localStorage.setItem('rk_dev_gateway_unlock_all', String(next));
-      return next;
-    });
-  };
+  useEffect(() => {
+    try {
+      localStorage.removeItem('rk_dev_gateway_unlock_all');
+    } catch (e) {}
+  }, []);
 
   const isModuleUnlocked = (modIndex) => {
-    if (gatewayUnlockAll) return true;
     if (modIndex === 0) return true;
     const completedLessons = currentEnrolment?.completed_mandatory_lessons || enrolment?.completed_mandatory_lessons || [];
     const passedQuizzes = currentEnrolment?.passed_quizzes || enrolment?.passed_quizzes || [];
@@ -191,13 +181,13 @@ export default function LessonPlayerPage() {
       const prevMod = course?.modules?.[i];
       if (!prevMod) continue;
       const prevLessons = prevMod.lessons || [];
-      const allLessonsDone = prevLessons.every((l) =>
+      const allLessonsDone = prevLessons.length === 0 || prevLessons.every((l) =>
         completedLessons.includes(l.id)
       );
       const prevQuizDone = prevMod.quiz
         ? passedQuizzes.includes(prevMod.quiz.id)
         : true;
-      const prevModCleared = prevMod.quiz ? prevQuizDone : allLessonsDone;
+      const prevModCleared = prevMod.quiz ? (prevQuizDone && allLessonsDone) : allLessonsDone;
       if (!prevModCleared) return false;
     }
     return true;
@@ -212,11 +202,11 @@ export default function LessonPlayerPage() {
         completedLessons.includes(l.id)
       );
       const quizDone = mod.quiz ? passedQuizzes.includes(mod.quiz.id) : true;
-      return mod.quiz ? quizDone : lessonsDone;
+      return quizDone && lessonsDone;
     });
   };
 
-  const isFinalExamUnlocked = gatewayUnlockAll || areAllModulesCompleted();
+  const isFinalExamUnlocked = areAllModulesCompleted();
 
   useEffect(() => {
     const syncEnrolment = () => {
@@ -292,15 +282,28 @@ export default function LessonPlayerPage() {
 
   useEffect(() => {
     if (targetParamUnitId && allUnits.some((u) => u.id === targetParamUnitId)) {
+      const targetUnit = allUnits.find((u) => u.id === targetParamUnitId);
+      if (targetUnit && targetUnit.moduleIndex > 0 && !isModuleUnlocked(targetUnit.moduleIndex)) {
+        const fallbackUnit = allUnits.find((u) => isModuleUnlocked(u.moduleIndex || 0)) || allUnits[0];
+        setActiveUnitId(fallbackUnit.id);
+        setSearchParams({ lessonId: fallbackUnit.id });
+        return;
+      }
       setActiveUnitId((prev) => (prev === targetParamUnitId ? prev : targetParamUnitId));
     } else if (allUnits.length > 0 && (!activeUnitId || !allUnits.some((u) => u.id === activeUnitId))) {
       const savedUnitId = currentEnrolment?.last_visited_unit_id || enrolment?.last_visited_unit_id || localStorage.getItem(`rk_last_unit_${enrolmentId}`);
       if (savedUnitId && allUnits.some((u) => u.id === savedUnitId)) {
-        setActiveUnitId((prev) => (prev === savedUnitId ? prev : savedUnitId));
+        const savedUnit = allUnits.find((u) => u.id === savedUnitId);
+        if (savedUnit && savedUnit.moduleIndex > 0 && !isModuleUnlocked(savedUnit.moduleIndex)) {
+          const fallbackUnit = allUnits.find((u) => isModuleUnlocked(u.moduleIndex || 0)) || allUnits[0];
+          setActiveUnitId(fallbackUnit.id);
+        } else {
+          setActiveUnitId((prev) => (prev === savedUnitId ? prev : savedUnitId));
+        }
       } else {
         const completedLessons = currentEnrolment?.completed_mandatory_lessons || enrolment?.completed_mandatory_lessons || [];
         const firstIncomplete = allUnits.find(
-          (u) => u.type === 'lesson' && !completedLessons.includes(u.id)
+          (u) => u.type === 'lesson' && !completedLessons.includes(u.id) && isModuleUnlocked(u.moduleIndex || 0)
         );
         const fallbackId = firstIncomplete ? firstIncomplete.id : allUnits[0].id;
         setActiveUnitId((prev) => (prev === fallbackId ? prev : fallbackId));
@@ -537,6 +540,17 @@ export default function LessonPlayerPage() {
       if (!isFinalExamUnlocked) {
         alert('Final Assessment Locked: You must complete all prior course modules and score >= 80% on each knowledge check.');
         return;
+      }
+    } else if (unit.type === 'quiz' && unit.moduleIndex !== undefined) {
+      const targetMod = course?.modules?.[unit.moduleIndex];
+      if (targetMod && targetMod.lessons && targetMod.lessons.length > 0) {
+        const completedLessons = currentEnrolment?.completed_mandatory_lessons || enrolment?.completed_mandatory_lessons || [];
+        const allDone = targetMod.lessons.every((l) => completedLessons.includes(l.id));
+        if (!allDone) {
+          const completedCount = targetMod.lessons.filter((l) => completedLessons.includes(l.id)).length;
+          alert(`Knowledge Check Locked: You must complete all ${targetMod.lessons.length} lessons in ${targetMod.title} (${completedCount}/${targetMod.lessons.length} completed) before attempting the examination.`);
+          return;
+        }
       }
     } else if (unit.moduleIndex > 0 && !isModuleUnlocked(unit.moduleIndex)) {
       alert(`Module ${unit.moduleIndex + 1} Locked: You must pass the Module ${unit.moduleIndex} Knowledge Check (>= 80%) to unlock.`);
@@ -993,8 +1007,6 @@ export default function LessonPlayerPage() {
         activeUnit={activeUnit}
         toolsStripOpen={toolsStripOpen}
         setToolsStripOpen={setToolsStripOpen}
-        gatewayUnlockAll={gatewayUnlockAll}
-        toggleGatewayUnlock={toggleGatewayUnlock}
         onOpenTerminal={() => {
           setIsMacTerminalOpen(true);
           setIsMacTerminalMinimized(false);

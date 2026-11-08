@@ -1,5 +1,5 @@
 /**
- * RedKross Academy — Psychology & Mental Wellbeing Curriculum Fixtures
+ * RedKross Academy: Psychology & Mental Wellbeing Curriculum Fixtures
  * High-fidelity course definitions aligned with clinical standards, RCI guidelines, and evidence-based psychological science.
  */
 
@@ -244,7 +244,7 @@ export const PSYCHOLOGY_COURSES = [
             duration: '45 mins',
             xp: 160,
             summary: 'Explore Joseph LeDoux’s dual pathways of fear processing from the thalamus to the amygdala.',
-            content_markdown: '# The Threat Circuitry & The Limbic Axis\n\nUnderstand how sensory input reaches the basolateral amygdala in less than 12 milliseconds—bypassing conscious cortical reflection.'
+            content_markdown: '# The Threat Circuitry & The Limbic Axis\n\nUnderstand how sensory input reaches the basolateral amygdala in less than 12 milliseconds, bypassing conscious cortical reflection.'
           }
         ]
       }

@@ -182,6 +182,25 @@ class MockEngine {
     }
   }
 
+  syncCurriculumFromDisk(forceReset = false) {
+    const db = this.getDb();
+    INITIAL_COURSES.forEach((initCourse) => {
+      const idx = (db.courses || []).findIndex((c) => c.id === initCourse.id);
+      if (idx !== -1) {
+        db.courses[idx] = {
+          ...db.courses[idx],
+          ...initCourse,
+          modules: initCourse.modules
+        };
+      } else {
+        db.courses.push(initCourse);
+      }
+    });
+    db._curriculum_version = '2026.11.08.v16_module5_academic_perfection';
+    this.saveDb(db, { type: 'CURRICULUM_SYNCED', payload: { version: db._curriculum_version } });
+    return db;
+  }
+
   getDb() {
     if (this._cachedDb) {
       return this._cachedDb;
@@ -210,7 +229,7 @@ class MockEngine {
       let modified = false;
 
       // Ensure curriculum fixtures sync automatically if updated in source code
-      const CURRICULUM_VERSION = '2026.11.07.v8';
+      const CURRICULUM_VERSION = '2026.11.08.v16_module5_academic_perfection';
       if (parsed._curriculum_version !== CURRICULUM_VERSION) {
         parsed._curriculum_version = CURRICULUM_VERSION;
         INITIAL_COURSES.forEach((initCourse) => {
