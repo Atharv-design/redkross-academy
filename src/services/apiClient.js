@@ -64,8 +64,13 @@ export const apiClient = {
         throw new Error('API serverless unavailable or returned non-JSON');
       }
       const data = await res.json();
+      let courses = data.courses || [];
+      if (!courses.some((c) => c.id === 'crs_cyber_net_02' || c.slug === 'computer-networking-for-cybersecurity')) {
+        const net02 = mockEngine.getCourseSummary('crs_cyber_net_02') || mockEngine.getCourseById('crs_cyber_net_02');
+        if (net02) courses.push(net02);
+      }
       return {
-        courses: data.courses || [],
+        courses,
         public_catalog_enabled: data.public_catalog_enabled,
         message: data.message
       };
@@ -484,7 +489,7 @@ export const apiClient = {
     } catch (err) {
       console.warn('Fallback to local engine for getWallet:', err.message);
       return {
-        balance: mockEngine.getUserTokenBalance(userId),
+        balance: typeof mockEngine.getTokenBalance === 'function' ? mockEngine.getTokenBalance(userId) : 0,
         transactions: mockEngine.getUserLedger(userId)
       };
     }

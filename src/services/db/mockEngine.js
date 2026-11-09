@@ -159,10 +159,36 @@ class MockEngine {
     this.notifyListeners(type, payload);
   }
 
+  _saveDynamicStateToStorage(db) {
+    try {
+      const dynamicState = {
+        _initialized: true,
+        _curriculum_version: db._curriculum_version || '2026.11.09.v23_course02_computer_networking_release',
+        users: db.users || [],
+        enrolments: db.enrolments || [],
+        credentials: db.credentials || [],
+        reward_ledger: db.reward_ledger || [],
+        audit_logs: db.audit_logs || [],
+        quiz_retry_windows: db.quiz_retry_windows || {},
+        quiz_attempts: db.quiz_attempts || [],
+        exam_violation_events: db.exam_violation_events || [],
+        assignment_submissions: db.assignment_submissions || [],
+        certificate_requests: db.certificate_requests || [],
+        banned_emails: db.banned_emails || [],
+        admin_deleted_course_ids: db.admin_deleted_course_ids || [],
+        public_catalog_enabled: db.public_catalog_enabled ?? true
+      };
+      safeStorage.setItem(STORAGE_KEY, JSON.stringify(dynamicState));
+    } catch (e) {
+      console.warn('Storage sync warning:', e);
+    }
+  }
+
   initDatabase(forceReset = false) {
     if (forceReset || !safeStorage.getItem(STORAGE_KEY)) {
       const initialDb = {
         _initialized: true,
+        _curriculum_version: '2026.11.09.v23_course02_computer_networking_release',
         users: INITIAL_USERS,
         learning_paths: INITIAL_LEARNING_PATHS,
         courses: INITIAL_COURSES,
@@ -177,26 +203,14 @@ class MockEngine {
         certificate_requests: [],
         banned_emails: [],
       };
-      safeStorage.setItem(STORAGE_KEY, JSON.stringify(initialDb));
       this._cachedDb = initialDb;
+      this._saveDynamicStateToStorage(initialDb);
     }
   }
 
   syncCurriculumFromDisk(forceReset = false) {
     const db = this.getDb();
-    INITIAL_COURSES.forEach((initCourse) => {
-      const idx = (db.courses || []).findIndex((c) => c.id === initCourse.id);
-      if (idx !== -1) {
-        db.courses[idx] = {
-          ...db.courses[idx],
-          ...initCourse,
-          modules: initCourse.modules
-        };
-      } else {
-        db.courses.push(initCourse);
-      }
-    });
-    db._curriculum_version = '2026.11.09.v21_clean_course_titles_and_scroll_reset';
+    db._curriculum_version = '2026.11.09.v23_course02_computer_networking_release';
     this.saveDb(db, { type: 'CURRICULUM_SYNCED', payload: { version: db._curriculum_version } });
     return db;
   }
@@ -210,13 +224,14 @@ class MockEngine {
       let parsed = data ? JSON.parse(data) : null;
       if (!parsed || !parsed._initialized) {
         this.initDatabase(true);
-        parsed = this._cachedDb || JSON.parse(safeStorage.getItem(STORAGE_KEY));
+        return this._cachedDb;
       }
 
-      parsed.courses = parsed.courses || [];
+      // Load static course fixtures strictly from memory (0 MB storage footprint)
+      parsed.courses = INITIAL_COURSES;
+      parsed.learning_paths = INITIAL_LEARNING_PATHS;
       parsed.users = parsed.users || [];
       parsed.enrolments = parsed.enrolments || [];
-      parsed.learning_paths = parsed.learning_paths || [];
       parsed.credentials = parsed.credentials || [];
       parsed.reward_ledger = parsed.reward_ledger || [];
       parsed.audit_logs = parsed.audit_logs || [];
@@ -225,35 +240,16 @@ class MockEngine {
       parsed.certificate_requests = parsed.certificate_requests || [];
       parsed.quiz_retry_windows = parsed.quiz_retry_windows || {};
       parsed.banned_emails = parsed.banned_emails || [];
+      parsed.admin_deleted_course_ids = parsed.admin_deleted_course_ids || [];
 
       let modified = false;
 
-      // Ensure curriculum fixtures sync automatically if updated in source code
-      const CURRICULUM_VERSION = '2026.11.09.v21_clean_course_titles_and_scroll_reset';
+      const CURRICULUM_VERSION = '2026.11.09.v23_course02_computer_networking_release';
       if (parsed._curriculum_version !== CURRICULUM_VERSION) {
         parsed._curriculum_version = CURRICULUM_VERSION;
-        INITIAL_COURSES.forEach((initCourse) => {
-          const idx = (parsed.courses || []).findIndex((c) => c.id === initCourse.id);
-          if (idx !== -1) {
-            parsed.courses[idx] = {
-              ...parsed.courses[idx],
-              ...initCourse,
-              modules: initCourse.modules
-            };
-          } else {
-            parsed.courses.push(initCourse);
-          }
-        });
         modified = true;
       }
 
-      // Automatically purge legacy deleted courses from storage
-      parsed.admin_deleted_course_ids = parsed.admin_deleted_course_ids || [];
-      const validCourseIds = INITIAL_COURSES.map((c) => c.id);
-      if (parsed.courses && parsed.courses.some((c) => !validCourseIds.includes(c.id))) {
-        parsed.courses = parsed.courses.filter((c) => validCourseIds.includes(c.id));
-        modified = true;
-      }
       // Migrate any legacy enrollments from crs_full_stack_web_dev or crs_soc_fundamentals to crs_cyber_intro_01
       if (parsed.enrolments) {
         parsed.enrolments.forEach((e) => {
@@ -263,39 +259,6 @@ class MockEngine {
           }
         });
       }
-
-      // Guarantee Chapter 1 completeness in storage
-      const freshCyber = INITIAL_COURSES.find((c) => c.id === 'crs_cyber_intro_01');
-      const storedCyber = (parsed.courses || []).find((c) => c.id === 'crs_cyber_intro_01');
-      if (storedCyber && freshCyber) {
-        const storedL1 = storedCyber.modules?.[0]?.lessons?.[0]?.content || '';
-        const freshL1 = freshCyber.modules?.[0]?.lessons?.[0]?.content || '';
-        if (storedL1.length !== freshL1.length) {
-          storedCyber.modules = freshCyber.modules;
-          modified = true;
-        }
-      }
-      INITIAL_COURSES.forEach((initCourse) => {
-        const existingIdx = (parsed.courses || []).findIndex((c) => c.id === initCourse.id);
-        const wasDeleted = parsed.admin_deleted_course_ids.includes(initCourse.id);
-        if (existingIdx === -1 && !wasDeleted) {
-          parsed.courses.push(initCourse);
-          modified = true;
-        }
-      });
-
-      const validPathIds = INITIAL_LEARNING_PATHS.map((p) => p.id);
-      if (parsed.learning_paths && parsed.learning_paths.some((p) => !validPathIds.includes(p.id))) {
-        parsed.learning_paths = parsed.learning_paths.filter((p) => validPathIds.includes(p.id));
-        modified = true;
-      }
-      INITIAL_LEARNING_PATHS.forEach((initPath) => {
-        const exists = (parsed.learning_paths || []).some((p) => p.id === initPath.id);
-        if (!exists) {
-          parsed.learning_paths.push(initPath);
-          modified = true;
-        }
-      });
 
       if (typeof parsed.public_catalog_enabled !== 'boolean') {
         parsed.public_catalog_enabled = true;
@@ -316,62 +279,6 @@ class MockEngine {
       if (parsed.credentials && parsed.credentials.some((c) => c.id?.startsWith('RK-CERT-1'))) {
         parsed.credentials = parsed.credentials.filter((c) => !c.id?.startsWith('RK-CERT-1'));
         modified = true;
-      }
-
-      if (parsed.enrolments && parsed.enrolments.length > 0) {
-        const initialCount = parsed.enrolments.length;
-        parsed.enrolments = parsed.enrolments.filter((e) => {
-          if (e.user_id === 'usr_student_01') return true;
-          const hasActivity = (e.completed_mandatory_lessons && e.completed_mandatory_lessons.length > 0) ||
-            (e.passed_quizzes && e.passed_quizzes.length > 0) ||
-            Boolean(e.credential_id) ||
-            Boolean(e.final_assessment_attempt_id) ||
-            (e.progress && e.progress > 0);
-          if (hasActivity) return true;
-          if (e.status === 'in_progress' && (!e.progress || e.progress === 0)) {
-            return false;
-          }
-          return true;
-        });
-        if (parsed.enrolments.length !== initialCount) {
-          modified = true;
-        }
-      }
-
-      if (parsed.courses) {
-        for (const course of parsed.courses) {
-          if (course.modules) {
-            const freshCourse = INITIAL_COURSES.find((c) => c.id === course.id);
-            for (let mIdx = 0; mIdx < course.modules.length; mIdx++) {
-              const mod = course.modules[mIdx];
-              const freshMod = freshCourse?.modules?.[mIdx];
-              if (freshMod?.quiz && (!mod.quiz || (mod.quiz.questions?.length || 0) < (freshMod.quiz.questions?.length || 0))) {
-                mod.quiz = freshMod.quiz;
-                modified = true;
-              }
-              if (mod.lessons) {
-                for (const les of mod.lessons) {
-                  if (les.video_url || les.videos || les.video_title || les.video_duration || les.video_asset_id) {
-                    delete les.video_url;
-                    delete les.videos;
-                    delete les.video_title;
-                    delete les.video_duration;
-                    delete les.video_asset_id;
-                    modified = true;
-                  }
-                }
-              }
-              if (course.video_assets) {
-                delete course.video_assets;
-                modified = true;
-              }
-              if (course.video_url) {
-                delete course.video_url;
-                modified = true;
-              }
-            }
-          }
-        }
       }
 
       if (parsed.users) {
@@ -405,7 +312,7 @@ class MockEngine {
       }
 
       if (modified) {
-        safeStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+        this._saveDynamicStateToStorage(parsed);
       }
 
       this._cachedDb = parsed;
@@ -413,15 +320,13 @@ class MockEngine {
     } catch (e) {
       console.error('Failed to parse database, resetting...', e);
       this.initDatabase(true);
-      const fallback = JSON.parse(safeStorage.getItem(STORAGE_KEY));
-      this._cachedDb = fallback;
-      return fallback;
+      return this._cachedDb;
     }
   }
 
   saveDb(db, eventMetadata = { type: 'DB_MUTATED', payload: {} }) {
     this._cachedDb = db;
-    safeStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+    this._saveDynamicStateToStorage(db);
     this.emit(eventMetadata.type || 'DB_MUTATED', eventMetadata.payload || {});
   }
 
@@ -772,7 +677,7 @@ class MockEngine {
   }
 
   getCourses() {
-    return (this.getDb().courses || []).map((c) => this._normalizeCourse(c));
+    return (INITIAL_COURSES || []).map((c) => this._normalizeCourse(c));
   }
 
   getCoursesByDivision(division) {
@@ -781,23 +686,23 @@ class MockEngine {
   }
 
   getLearningPathsByDivision(division) {
-    const paths = this.getDb().learning_paths || [];
+    const paths = INITIAL_LEARNING_PATHS || [];
     if (!division) return paths;
     return paths.filter((p) => (p.division || 'cybersecurity') === division);
   }
 
   getCourseBySlug(slug) {
-    let course = (this.getDb().courses || []).find((c) => c.slug === slug);
+    let course = (INITIAL_COURSES || []).find((c) => c.slug === slug);
     if (!course && (slug === 'full-stack-web-development-fundamentals-to-deployment' || slug === 'full-stack-web-development-career-path' || slug === 'introduction-to-cybersecurity')) {
-      course = (this.getDb().courses || []).find((c) => c.id === 'crs_cyber_intro_01') || (this.getDb().courses || []).find((c) => (c.division || 'cybersecurity') === 'cybersecurity');
+      course = (INITIAL_COURSES || []).find((c) => c.id === 'crs_cyber_intro_01') || INITIAL_COURSES[0];
     }
     return this._normalizeCourse(course);
   }
 
   getCourseById(id) {
-    let course = (this.getDb().courses || []).find((c) => c.id === id);
+    let course = (INITIAL_COURSES || []).find((c) => c.id === id);
     if (!course) {
-      course = (this.getDb().courses || []).find((c) => c.id === 'crs_cyber_intro_01') || (this.getDb().courses || []).find((c) => (c.division || 'cybersecurity') === 'cybersecurity');
+      course = (INITIAL_COURSES || []).find((c) => c.id === 'crs_cyber_intro_01') || INITIAL_COURSES[0];
     }
     return this._normalizeCourse(course);
   }
@@ -1308,7 +1213,16 @@ class MockEngine {
   }
 
   getEnrolment(enrolmentId) {
-    return this.getDb().enrolments.find((e) => e.id === enrolmentId);
+    if (!enrolmentId) return null;
+    const db = this.getDb();
+    let found = (db.enrolments || []).find((e) => e.id === enrolmentId);
+    if (!found && (enrolmentId === 'crs_cyber_net_02' || enrolmentId === 'computer-networking-for-cybersecurity' || enrolmentId === 'enr_student_net_02')) {
+      found = (db.enrolments || []).find((e) => e.course_id === 'crs_cyber_net_02');
+      if (!found) {
+        return this.enrolStudent('usr_student_01', 'crs_cyber_net_02');
+      }
+    }
+    return found;
   }
 
   enrolStudent(userId, courseId) {
@@ -1993,6 +1907,10 @@ class MockEngine {
       .reduce((sum, tx) => sum + tx.amount, 0);
   }
 
+  getUserTokenBalance(userId) {
+    return this.getTokenBalance(userId);
+  }
+
   getTokenTransactions(userId) {
     const db = this.getDb();
     return db.reward_ledger
@@ -2471,6 +2389,20 @@ class MockEngine {
     if (!enrolmentId) return { isLocked: false, remainingHours: 0, remainingMinutes: 0, lockedUntil: null };
     const db = this.getDb();
     const enrolment = (db.enrolments || []).find((e) => e.id === enrolmentId);
+
+    // Course 2 Temporary Inspection Mode: bypass lockout for Course 2 units
+    const isCourse2 = enrolment?.course_id === 'crs_cyber_net_02' ||
+      (quizId && (
+        quizId.startsWith('quiz_mod_c2_') || 
+        quizId === 'exam_cyber_net_final' || 
+        quizId === 'exam_final_c02' || 
+        quizId.includes('c2_') || 
+        quizId.includes('c02') ||
+        quizId.includes('net_')
+      ));
+    if (isCourse2) {
+      return { isLocked: false, remainingHours: 0, remainingMinutes: 0, lockedUntil: null };
+    }
     const now = new Date();
     let maxLockDate = null;
     let maxLockIso = null;

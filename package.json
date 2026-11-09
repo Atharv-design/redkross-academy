@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "server": "node server/productionServer.js",
-    "build": "vite build",
+    "build": "node --max-old-space-size=4096 node_modules/vite/bin/vite.js build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "build:curriculum": "node scripts/build_cyber_curriculum.js",
@@ -32,7 +32,9 @@
     "framer-motion": "^12.42.0",
     "html2canvas": "^1.4.1",
     "jspdf": "^4.2.1",
+    "katex": "^0.19.1",
     "lucide-react": "^1.16.0",
+    "mermaid": "^12.3.0",
     "pg": "^8.23.1",
     "qrcode.react": "^4.2.0",
     "react": "^19.0.0",

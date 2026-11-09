@@ -1,165 +1,217 @@
 /**
- * High-Craft Markdown Parser for RedKross Academy
- * Transforms raw markdown into semantic, styled HTML matching Obsidian Dark theme.
- * Enhanced to support:
- * - Centered H1 and H2 headers
- * - Native Mermaid diagrams (.mermaid class container)
- * - Full-width responsive images with figcaptions
- * - Markdown tables with cyber grid styling
- * - High-contrast bullet and numbered lists
+ * High-Craft Academic Markdown Parser for RedKross Academy
+ * Transforms raw curriculum notes into semantic, textbook-grade HTML.
+ * Features:
+ * - Native KaTeX integration for inline ($...$, \(...\)) and display ($$...$$, \[...\]) math formulas (HTML output mode)
+ * - Native Mermaid diagram rendering (.mermaid containers) for sequence diagrams, flowcharts, state diagrams
+ * - Strict separation between programming code blocks, terminal sessions, and educational diagrams
+ * - Automatic conversion of ASCII / Unicode box-drawing tables into responsive academic HTML tables
+ * - Multi-line numbered procedures (01., 02., 03.) with coherent aligned explanations
+ * - Leakage-proof image parsing with sanitised alt attributes and rich figcaptions
+ * - Academic typography: Lora 17px body, line-height 1.6, #E2D9CE text color
+ * - Compact heading proximity and responsive overflow management
  */
+import katex from 'katex';
 import { CHAPTER_1_IMAGES } from '../services/db/chapter1Images.js';
 
-function renderVisualFlowchart(code = '') {
-  const cleanCode = code.trim();
-  const lines = cleanCode.split('\n').map((l) => l.trim()).filter(Boolean);
-  if (lines.length === 0) return '';
+/**
+ * Pre-processes LaTeX equations to resolve JS string escape sequence collisions.
+ * e.g., \text -> \u0009ext (tab), \times -> \u0009imes, \mathbf -> \u0008mathbf (backspace), \begin -> \u0008egin, \frac -> \u000crac (form feed)
+ */
+function cleanLatex(eq = '') {
+  if (!eq) return '';
+  return eq
+    .replace(/\u0009ext/g, '\\text')
+    .replace(/\u0009imes/g, '\\times')
+    .replace(/\u0009o\b/g, '\\to')
+    .replace(/\u0008mathbf/g, '\\mathbf')
+    .replace(/\u0008egin/g, '\\begin')
+    .replace(/\u000crac/g, '\\frac')
+    .replace(/\bext\{/g, '\\text{')
+    .replace(/\bextResult\b/g, '\\text{Result}')
+    .replace(/\bimes\b/g, '\\times')
+    .replace(/(?<!\\)quad\b/g, '\\quad')
+    .replace(/\\{2,}(text|times|mathbf|begin|end|frac|to|quad|approx|cdot)/g, '\\$1')
+    .trim();
+}
 
-  const header = lines[0].toUpperCase();
-  const isLR = header.includes('LR');
+/**
+ * Converts Unicode / ASCII box-drawing tables into responsive academic HTML tables.
+ */
+function convertBoxTableToHtml(text) {
+  const lines = text.trim().split('\n').map(l => l.trim()).filter(Boolean);
+  let title = '';
+  const rows = [];
 
-  const nodes = [];
-  const nodeMap = new Map();
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    if (line.startsWith('flowchart') || line.startsWith('graph') || line.startsWith('subgraph') || line === 'end') continue;
-
-    const nodeRegex = /([a-zA-Z0-9_]+)(?:\[\"([^\"]+)\"\]|\(\(\"?([^\")]+)\"?\)\))/g;
-    let match;
-    while ((match = nodeRegex.exec(line)) !== null) {
-      const id = match[1];
-      const rawText = match[2] || match[3] || id;
-      if (!nodeMap.has(id)) {
-        const parts = rawText.split(/<br\s*\/?>/i);
-        const title = parts[0].trim();
-        const subtitle = parts.slice(1).join(' ').trim();
-        const nodeObj = { id, title, subtitle };
-        nodeMap.set(id, nodeObj);
-        nodes.push(nodeObj);
+  for (const line of lines) {
+    // Check if line is a title above the box table
+    if (!line.includes('│') && !line.includes('┌') && !line.includes('├') && !line.includes('└') && !line.includes('|')) {
+      if (!title) title = line.trim();
+      continue;
+    }
+    // Skip border horizontal lines
+    if (line.includes('┌') || line.includes('├') || line.includes('└') || /^[─┬┼┴\s\-_+]+$/.test(line)) {
+      continue;
+    }
+    // Extract cells from pipe or box vertical bars
+    if (line.includes('│') || (line.startsWith('|') && line.endsWith('|'))) {
+      const sep = line.includes('│') ? '│' : '|';
+      const cells = line.split(sep).slice(1, -1).map(c => c.trim());
+      if (cells.length > 0 && cells.some(c => c.length > 0)) {
+        rows.push(cells);
       }
     }
   }
 
-  if (nodes.length === 0) {
-    return `<div class="my-6 p-4 rounded-xl bg-[#071018] border border-[#FF7A00]/30 font-mono text-xs text-[#FFA439] whitespace-pre-wrap">${cleanCode}</div>`;
-  }
+  if (rows.length < 2) return null;
 
-  if (isLR) {
-    const stepsHtml = nodes
-      .map((n, idx) => {
-        const isLast = idx === nodes.length - 1;
-        return `<div class="flex items-center flex-shrink-0"><div class="px-3.5 py-2.5 rounded-xl bg-[#090E17] border border-[#FF7A00]/30 shadow-md hover:border-[#FF7A00]/60 transition-all flex flex-col justify-center min-w-[140px] max-w-[210px]"><span class="text-xs font-bold text-white font-lora">${n.title}</span>${n.subtitle ? `<span class="text-[10px] font-mono text-[#A3907C] mt-0.5 leading-tight">${n.subtitle}</span>` : ''}</div>${!isLast ? '<div class="px-2 text-[#FF7A00] font-mono text-sm font-bold flex-shrink-0 select-none">→</div>' : ''}</div>`;
-      })
-      .join('');
+  const header = rows[0];
+  const body = rows.slice(1);
 
-    return `<div class="my-8 w-full p-4 sm:p-5 rounded-2xl bg-[#070B11]/95 border border-[#FF7A00]/30 shadow-2xl overflow-x-auto custom-scrollbar"><div class="text-[10px] font-mono uppercase tracking-widest text-[#FF7A00] mb-3 flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FF7A00] animate-pulse"></span><span>Tactical Progression & Incident Path</span></div><div class="flex items-center gap-1 min-w-max py-1">${stepsHtml}</div></div>`;
-  }
+  const thead = `<thead class="bg-[#120E09] border-b border-[#FF7A00]/30">
+    <tr>${header.map(col => `<th class="py-2.5 px-3.5 text-xs font-mono font-bold text-[#FFA439] uppercase tracking-wider">${col}</th>`).join('')}</tr>
+  </thead>`;
 
-  const gridHtml = nodes
-    .map((n, idx) => {
-      const isTopLevel = idx === 0 && nodes.length > 3;
-      return `<div class="p-3 sm:p-3.5 rounded-xl ${isTopLevel ? 'col-span-full bg-[#1A1208] border border-[#FF7A00]/60 text-center shadow-[0_0_15px_rgba(255,122,0,0.15)]' : 'bg-[#090E17] border border-[#FF7A00]/25 hover:border-[#FF7A00]/60 transition-all shadow-md'}"><span class="text-xs font-bold ${isTopLevel ? 'text-[#FF7A00]' : 'text-white'} font-lora block">${n.title}</span>${n.subtitle ? `<span class="text-[10px] font-mono text-[#A3907C] mt-1 block leading-tight">${n.subtitle}</span>` : ''}</div>`;
-    })
-    .join('');
+  const tbody = `<tbody>${body.map((row, rIdx) => {
+    const isAlt = rIdx % 2 === 1;
+    return `<tr class="border-b border-[#FF7A00]/10 ${isAlt ? 'bg-[#0E0B07]' : 'bg-[#070A0F]'} hover:bg-[#1A1208]/70 transition-colors">
+      ${row.map(c => `<td class="py-2.5 px-3.5 text-sm font-lora text-[#E2D9CE] leading-relaxed">${c}</td>`).join('')}
+    </tr>`;
+  }).join('\n')}</tbody>`;
 
-  return `<div class="my-8 w-full p-4 sm:p-5 rounded-2xl bg-[#070B11]/95 border border-[#FF7A00]/30 shadow-2xl"><div class="text-[10px] font-mono uppercase tracking-widest text-[#FFA439] mb-3.5 flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FFA439]"></span><span>Architectural Hierarchy & Security Matrix</span></div><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">${gridHtml}</div></div>`;
-}
+  const captionHtml = title ? `<div class="px-3.5 py-1.5 bg-[#120E09] border-b border-[#FF7A00]/25 text-xs font-mono font-bold text-[#FFA439] flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FF7A00]"></span><span>${title}</span></div>` : '';
 
-function cleanMathNotation(eq = '') {
-  let res = eq.trim();
-  res = res.replace(/\\text\{([^}]+)\}/g, '$1');
-  res = res.replace(/\\text\b/g, '');
-  res = res.replace(/\\implies/g, '⟹');
-  res = res.replace(/\\parallel/g, '∥');
-  res = res.replace(/\\times/g, '×');
-  res = res.replace(/\\pmod\{([^}]+)\}/g, '(mod $1)');
-  res = res.replace(/\\pmod\s+([0-9a-zA-Z^]+)/g, '(mod $1)');
-  res = res.replace(/\\left\\lfloor/g, '⌊');
-  res = res.replace(/\\right\\rfloor/g, '⌋');
-  res = res.replace(/\\lfloor/g, '⌊');
-  res = res.replace(/\\rfloor/g, '⌋');
-  res = res.replace(/\\left\(/g, '(');
-  res = res.replace(/\\right\)/g, ')');
-  res = res.replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '($1 / $2)');
-  res = res.replace(/\\neq/g, '≠');
-  res = res.replace(/\\ge/g, '≥');
-  res = res.replace(/\\le/g, '≤');
-  res = res.replace(/\\quad/g, '  ');
-  res = res.replace(/\\\{/g, '{');
-  res = res.replace(/\\\}/g, '}');
-  res = res.replace(/\\log_2/g, 'log₂');
-  res = res.replace(/\\/g, '');
-  return res.trim();
+  return `<div class="my-5 overflow-x-auto rounded-xl border border-[#FF7A00]/25 shadow-md">${captionHtml}<table class="w-full text-left border-collapse">${thead}${tbody}</table></div>`;
 }
 
 export function renderMarkdownToHtml(markdown = '') {
-  if (!markdown || typeof markdown !== 'string') return '';
+  if (!markdown) return '';
 
-  let html = markdown;
+  let html = markdown.replace(/\r\n/g, '\n');
 
-  html = html.replace(/\r\n/g, '\n');
+  // Pre-normalize common escaped LaTeX characters in markdown strings
+  html = html
+    .replace(/\u0009ext/g, '\\text')
+    .replace(/\u0009imes/g, '\\times')
+    .replace(/\u0009o\b/g, '\\to')
+    .replace(/\u0008mathbf/g, '\\mathbf')
+    .replace(/\u0008egin/g, '\\begin')
+    .replace(/\u000crac/g, '\\frac');
 
-  // 1. Mermaid Diagram Blocks -> High-Craft Responsive Themed Cards
+  // =========================================================================
+  // STEP 1: SHIELD CODE BLOCKS & CONVERT EMBEDDED BOX TABLES
+  // =========================================================================
+  const codeBlocks = [];
+  const inlineCodes = [];
+
+  // 1a. Mermaid Diagram Blocks -> Native Mermaid Container
   html = html.replace(/```mermaid\n([\s\S]*?)```/g, (match, code) => {
-    return renderVisualFlowchart(code);
+    const cleanCode = code.trim();
+    const token = `@@@MERMAID_${codeBlocks.length}@@@`;
+    codeBlocks.push(`<div class="my-6 w-full overflow-x-auto custom-scrollbar flex justify-center">
+      <div class="mermaid text-center" style="min-width: 280px; max-width: 100%;">${cleanCode}</div>
+    </div>`);
+    return token;
   });
 
-  // 2. Regular Code Blocks
+  // 1b. Standard Fenced Code Blocks: Check for ASCII Box Tables, Accidentally Trapped Tables, or CLI Sessions
   html = html.replace(/```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g, (match, lang, code) => {
-    const languageClass = lang ? `language-${lang}` : '';
+    // If the code block is an ASCII/Unicode box-drawing table:
+    if (code.includes('┌') || code.includes('│') || code.includes('├') || code.includes('┼') || code.includes('└')) {
+      const convertedTable = convertBoxTableToHtml(code);
+      if (convertedTable) {
+        const token = `@@@CODEBLOCK_${codeBlocks.length}@@@`;
+        codeBlocks.push(convertedTable);
+        return token;
+      }
+    }
+
+    // If the code block accidentally wraps a Markdown table:
+    if (/^\s*\|.+\|\s*\n\s*\|[\s-:]+\|/m.test(code)) {
+      return `\n\n${code.trim()}\n\n`;
+    }
+
+    // If the code block accidentally wraps a Markdown figure or heading:
+    if (/^\s*(!\[|###|##|#)/m.test(code) && !/^(bash|sh|powershell|python|json|yaml)/i.test(lang)) {
+      return `\n\n${code.trim()}\n\n`;
+    }
+
     const cleanCode = code
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
-    return `<div class="my-5 rounded-xl overflow-hidden border border-[#263440] bg-[#071018] shadow-lg">
-      <div class="px-4 py-2 bg-[#101923] border-b border-[#263440] flex items-center justify-between text-[10px] font-mono text-[#94A3B8]">
-        <span>${lang ? lang.toUpperCase() : 'CODE / TERMINAL'}</span>
-        <span class="text-[#65F58A]">REDKROSS CLI</span>
-      </div>
-      <pre class="p-4 overflow-x-auto font-mono text-xs text-[#65F58A] leading-relaxed"><code class="${languageClass}">${cleanCode}</code></pre>
-    </div>`;
-  });
 
-  // 2b. Display Mathematical Formulas ($$...$$) -> Academic Obsidian Formula Cards
-  html = html.replace(/\$\$([\s\S]*?)\$\$/g, (match, eq) => {
-    const cleanFormula = cleanMathNotation(eq);
-    return `<div class="my-5 p-4 rounded-xl bg-[#071018] border border-[#FF7A00]/30 shadow-md">
-      <div class="text-[10px] font-mono uppercase tracking-widest text-[#FFA439] mb-2 flex items-center justify-between">
+    // Classify block as Operational CLI vs Source Code vs Telemetry Output
+    const isExplicitCli = /^(bash|sh|powershell|cmd|terminal|console)$/i.test(lang) || /^(PS\s+[A-Z]:\\|\$|#\s)/m.test(code);
+    const isTelemetry = !lang || /^(output|text|telemetry)$/i.test(lang) || /^(Name\s+Status|Interface\s+Status|DestinationPrefix|0x[0-9a-fA-F]+)/m.test(code);
+
+    let languageLabel = (lang || (isExplicitCli ? 'CLI' : isTelemetry ? 'CLI OUTPUT' : 'CODE')).toUpperCase();
+    let categoryLabel = isExplicitCli ? 'OPERATIONAL CLI' : isTelemetry ? 'OPERATIONAL TELEMETRY' : 'SOURCE CODE';
+    let dotColor = isExplicitCli ? 'bg-[#65F58A]' : isTelemetry ? 'bg-[#38BDF8]' : 'bg-[#FF7A00]';
+
+    const token = `@@@CODEBLOCK_${codeBlocks.length}@@@`;
+    codeBlocks.push(`<div class="my-5 rounded-xl border border-[#FF7A00]/25 overflow-hidden bg-[#070A0F] shadow-lg">
+      <div class="px-3.5 py-1.5 bg-[#120E09] border-b border-[#FF7A00]/20 flex items-center justify-between">
         <div class="flex items-center gap-2">
-          <span class="w-1.5 h-1.5 rounded-full bg-[#65F58A]"></span>
-          <span>Mathematical Formulation & Formal Proof</span>
+          <span class="w-2 h-2 rounded-full ${dotColor}"></span>
+          <span class="font-mono text-[11px] font-bold text-[#FFA439] tracking-wider">${languageLabel}</span>
         </div>
-        <span class="text-[10px] font-mono text-[#A3907C]">RFC FORMAL SPEC</span>
+        <span class="text-[10px] font-mono text-[#8C7A6B]">${categoryLabel}</span>
       </div>
-      <div class="font-mono text-xs sm:text-sm text-[#65F58A] leading-relaxed overflow-x-auto custom-scrollbar py-1">${cleanFormula}</div>
-    </div>`;
+      <pre class="p-4 font-mono text-xs sm:text-sm text-[#E2D9CE] overflow-x-auto leading-relaxed custom-scrollbar m-0"><code>${cleanCode}</code></pre>
+    </div>`);
+    return token;
   });
 
-  // 3. Markdown Images with Trailing Caption Deduplication & Fusion:
-  // Fuses ![alt](url) and immediately following *Figure/Diagram...* into ONE unified <figure>
+  // 1c. Inline Code Spans (`code`)
+  html = html.replace(/`([^`\n]+)`/g, (match, code) => {
+    const clean = code
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    const token = `@@@INLINECODE_${inlineCodes.length}@@@`;
+    inlineCodes.push(`<code class="px-1.5 py-0.5 rounded bg-[#18120B] border border-[#FF7A00]/30 font-mono text-xs sm:text-[13px] text-[#FFA439] font-medium">${clean}</code>`);
+    return token;
+  });
+
+  // =========================================================================
+  // STEP 2: MARKDOWN IMAGES & FIGURES (PROCESSED BEFORE KATEX)
+  // Ensures alt attributes are clean text and cannot leak raw HTML or quotes
+  // =========================================================================
   html = html.replace(/!\[(.*?)\]\((.*?)\)(?:\s*\n+\*([^*]+)\*)?/g, (match, alt, src, trailingCaption) => {
     const cleanSrc = src.trim();
     const resolvedSrc = CHAPTER_1_IMAGES && CHAPTER_1_IMAGES[cleanSrc] ? CHAPTER_1_IMAGES[cleanSrc] : cleanSrc;
-    // Prefer trailing detailed caption if present, otherwise alt
-    const captionText = (trailingCaption && trailingCaption.trim()) || (alt && alt.trim()) || '';
-    return `<figure class="my-8 w-full overflow-hidden rounded-2xl border border-[#FF7A00]/35 shadow-[0_8px_30px_rgba(0,0,0,0.6)] bg-black/40">
+    const rawCaption = (trailingCaption && trailingCaption.trim()) || (alt && alt.trim()) || '';
+
+    // Sanitize alt attribute: remove all HTML tags, raw math delimiters, and encode double quotes
+    const plainAlt = rawCaption
+      .replace(/<[^>]+>/g, '')
+      .replace(/\$([^$]+)\$/g, '$1')
+      .replace(/\\\(|\\\)/g, '')
+      .replace(/\\text\{([^}]+)\}/g, '$1')
+      .replace(/\\times/g, 'x')
+      .replace(/\\to/g, '->')
+      .replace(/\\quad/g, ' ')
+      .replace(/"/g, '&quot;')
+      .trim() || 'Technical Diagram';
+
+    return `<figure class="my-8 w-full overflow-hidden rounded-2xl border border-[#FF7A00]/30 shadow-[0_8px_30px_rgba(0,0,0,0.6)] bg-black/40">
       <img
         src="${resolvedSrc}"
-        alt="${captionText || 'Technical Diagram'}"
+        alt="${plainAlt}"
         class="w-full h-auto block rounded-t-2xl cursor-pointer hover:scale-[1.003] transition-transform duration-300"
         loading="lazy"
         decoding="async"
       />
-      ${captionText ? `<figcaption class="py-2.5 px-4 text-center text-xs font-mono text-[#A3907C] border-t border-[#FF7A00]/20 bg-[#0B0907] flex items-center justify-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FF7A00]/80"></span><span>${captionText}</span></figcaption>` : ''}
+      ${rawCaption ? `<figcaption class="py-2.5 px-4 text-center text-xs font-mono text-[#A3907C] border-t border-[#FF7A00]/20 bg-[#0B0907] flex items-center justify-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FF7A00]/80"></span><span>${rawCaption}</span></figcaption>` : ''}
     </figure>`;
   });
 
-  // 3a. Malformed Image Syntax Fallback: handles !!(url), !(url), or ![raw-path] gracefully
+  // 2b. Malformed Image Syntax Fallback: handles !(url) or ![path]
   html = html.replace(/(?:!\[\]\(|!!\(|!\()([^)]+\.(?:jpg|jpeg|png|webp|svg|gif))\)/gi, (match, src) => {
     const cleanSrc = src.trim();
     const resolvedSrc = CHAPTER_1_IMAGES && CHAPTER_1_IMAGES[cleanSrc] ? CHAPTER_1_IMAGES[cleanSrc] : cleanSrc;
-    return `<figure class="my-8 w-full overflow-hidden rounded-2xl border border-[#FF7A00]/35 shadow-[0_8px_30px_rgba(0,0,0,0.6)] bg-black/40">
+    return `<figure class="my-8 w-full overflow-hidden rounded-2xl border border-[#FF7A00]/30 shadow-[0_8px_30px_rgba(0,0,0,0.6)] bg-black/40">
       <img
         src="${resolvedSrc}"
         alt="Technical Reference Diagram"
@@ -170,16 +222,87 @@ export function renderMarkdownToHtml(markdown = '') {
     </figure>`;
   });
 
-  // 3b. Standard Markdown Links: [text](url) -> Secure styled anchor
+  // =========================================================================
+  // STEP 3: NATIVE KATEX MATHEMATICAL FORMULA RENDERING (HTML MODE ONLY)
+  // Output mode 'html' eliminates MathML duplication and subscript stacking
+  // =========================================================================
+
+  // 3a. Block Equations: $$...$$ and \[...\]
+  html = html.replace(/(?:\$\$([\s\S]*?)\$\$|\\\[([\s\S]*?)\\\])/g, (match, eq1, eq2) => {
+    const eq = cleanLatex(eq1 || eq2 || '');
+    if (!eq) return '';
+    try {
+      const rendered = katex.renderToString(eq, {
+        displayMode: true,
+        throwOnError: false,
+        output: 'html'
+      });
+      return `<div class="my-5 py-2 px-3 overflow-x-auto custom-scrollbar flex justify-center text-center text-white">${rendered}</div>`;
+    } catch (e) {
+      return `<div class="my-5 p-3 rounded-lg bg-[#140D08] border border-red-500/30 font-mono text-xs text-red-300">${eq}</div>`;
+    }
+  });
+
+  // 3b. Inline Equations: \(...\)
+  html = html.replace(/\\\(([\s\S]*?)\\\)/g, (match, eq) => {
+    const clean = cleanLatex(eq);
+    if (!clean) return '';
+    try {
+      return katex.renderToString(clean, {
+        displayMode: false,
+        throwOnError: false,
+        output: 'html'
+      });
+    } catch (e) {
+      return match;
+    }
+  });
+
+  // 3c. Inline Equations: $...$ (strict math tokens, excluding currency or shell vars)
+  html = html.replace(/(?<![0-9a-zA-Z\\])\$([^\$\n\r]+?)\$(?![0-9a-zA-Z])/g, (match, eq) => {
+    const clean = cleanLatex(eq);
+    if (!clean) return match;
+    try {
+      return katex.renderToString(clean, {
+        displayMode: false,
+        throwOnError: false,
+        output: 'html'
+      });
+    } catch (e) {
+      return match;
+    }
+  });
+
+  // =========================================================================
+  // STEP 4: STANDARD MARKDOWN LINKS
+  // =========================================================================
   html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, href) => {
     const cleanHref = href.trim();
     return `<a href="${cleanHref}" target="_blank" rel="noopener noreferrer" class="text-[#FFA439] underline decoration-[#FF7A00]/40 hover:decoration-[#FF7A00] transition-colors">${text}</a>`;
   });
 
-  // 4. Horizontal Rules
-  html = html.replace(/^---$/gm, '<hr class="my-8 border-t border-[#FF7A00]/25" />');
+  // =========================================================================
+  // STEP 5: HEADINGS (H1-H5) WITH COMPACT EXPLANATION PROXIMITY
+  // =========================================================================
+  html = html.replace(/^#\s+(.+)$/gm, '<h1 class="text-2xl sm:text-3xl font-bold font-lora text-white mt-8 mb-3 text-center border-b border-[#FF7A00]/25 pb-3">$1</h1>');
+  html = html.replace(/^##\s+(.+)$/gm, '<h2 class="text-xl sm:text-2xl font-bold font-lora text-white mt-7 mb-2 text-center">$1</h2>');
+  html = html.replace(/^###\s+(.+)$/gm, '<h3 class="text-lg sm:text-xl font-bold font-lora text-[#FFA439] mt-6 mb-2 border-l-2 border-[#FF7A00] pl-3">$1</h3>');
+  html = html.replace(/^####\s+(.+)$/gm, '<h4 class="text-base sm:text-lg font-bold font-lora text-white mt-4 mb-1.5 flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FF7A00]/70 flex-shrink-0"></span><span>$1</span></h4>');
+  html = html.replace(/^#####\s+(.+)$/gm, '<h5 class="text-sm sm:text-base font-semibold font-mono text-[#FFA439] mt-3 mb-1">$1</h5>');
 
-  // 5. Semantic Multi-Themed Blockquotes / Callout Cards
+  // =========================================================================
+  // STEP 6: INLINE TYPOGRAPHY (BOLD, ITALIC, STRIKETHROUGH)
+  // =========================================================================
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong class="font-bold text-white">$1</strong>');
+  html = html.replace(/(?<!\*)\*([^*]+?)\*(?!\*)/g, '<em class="italic text-[#E2D9CE]/90">$1</em>');
+  html = html.replace(/~~(.+?)~~/g, '<del class="line-through text-[#8C7A6B]">$1</del>');
+
+  // =========================================================================
+  // STEP 7: HORIZONTAL RULES & BLOCKQUOTES
+  // =========================================================================
+  html = html.replace(/^---$/gm, '<hr class="my-6 border-t border-[#FF7A00]/20" />');
+
+  // Clean textbook blockquotes
   html = html.replace(/(?:^>\s*.+(?:\n|$))+/gm, (bqBlock) => {
     const rawContent = bqBlock
       .split('\n')
@@ -188,185 +311,67 @@ export function renderMarkdownToHtml(markdown = '') {
       .trim();
 
     if (!rawContent) return '';
-
-    // Theme 1: Academic Definition
-    if (/\*\*(?:Formal )?Definition:?\*\*/i.test(rawContent)) {
-      return `<blockquote class="border-l-4 border-[#FF7A00] pl-4 sm:pl-5 py-4 text-[#E2D9CE] bg-[#1A1208]/90 rounded-r-xl text-[16px] sm:text-[17px] leading-[1.75] my-6 font-lora shadow-lg border-y border-r border-[#FF7A00]/20">
-        <div class="flex items-center gap-2 mb-2 text-xs font-mono font-bold text-[#FFA439] tracking-wider uppercase">
-          <span class="w-2 h-2 rounded-full bg-[#FF7A00]"></span>
-          <span>Core Academic Definition</span>
-        </div>
-        ${rawContent}
-      </blockquote>`;
-    }
-    // Theme 2: Defensive Warning & Common Trap
-    if (/\*\*(?:Warning|Caution|Common Trap|Danger):?\*\*/i.test(rawContent)) {
-      return `<blockquote class="border-l-4 border-[#F43F5E] pl-4 sm:pl-5 py-4 text-[#FFE4E6] bg-[#1F0A0E]/90 rounded-r-xl text-[16px] sm:text-[17px] leading-[1.75] my-6 font-lora shadow-lg border-y border-r border-[#F43F5E]/20">
-        <div class="flex items-center gap-2 mb-2 text-xs font-mono font-bold text-[#FB7185] tracking-wider uppercase">
-          <span class="w-2 h-2 rounded-full bg-[#F43F5E]"></span>
-          <span>Defensive Warning & Trap</span>
-        </div>
-        ${rawContent}
-      </blockquote>`;
-    }
-    // Theme 3: Historical Case Evidence
-    if (/\*\*(?:Case Study|Real-World Incident|Incident Dossier):?\*\*/i.test(rawContent)) {
-      return `<blockquote class="border-l-4 border-[#06B6D4] pl-4 sm:pl-5 py-4 text-[#CFFAFE] bg-[#08151E]/90 rounded-r-xl text-[16px] sm:text-[17px] leading-[1.75] my-6 font-lora shadow-lg border-y border-r border-[#06B6D4]/20">
-        <div class="flex items-center gap-2 mb-2 text-xs font-mono font-bold text-[#22D3EE] tracking-wider uppercase">
-          <span class="w-2 h-2 rounded-full bg-[#06B6D4]"></span>
-          <span>Historical Case Evidence</span>
-        </div>
-        ${rawContent}
-      </blockquote>`;
-    }
-    // Theme 4: Key Takeaway / Protector's Rule
-    if (/\*\*(?:Key Takeaway|Protector's Rule|Core Principle|Foundational Axiom):?\*\*/i.test(rawContent)) {
-      return `<blockquote class="border-l-4 border-[#10B981] pl-4 sm:pl-5 py-4 text-[#D1FAE5] bg-[#071811]/90 rounded-r-xl text-[16px] sm:text-[17px] leading-[1.75] my-6 font-lora shadow-lg border-y border-r border-[#10B981]/20">
-        <div class="flex items-center gap-2 mb-2 text-xs font-mono font-bold text-[#34D399] tracking-wider uppercase">
-          <span class="w-2 h-2 rounded-full bg-[#10B981]"></span>
-          <span>Protector's Key Takeaway</span>
-        </div>
-        ${rawContent}
-      </blockquote>`;
-    }
-
-    // Default Amber Blockquote
-    return `<blockquote class="border-l-4 border-[#FF7A00] pl-4 sm:pl-5 py-3.5 text-[#E2D9CE] bg-[#1A1208]/90 rounded-r-xl text-[16px] sm:text-[17px] leading-[1.75] my-6 font-lora shadow-md border-y border-r border-[#FF7A00]/15">${rawContent}</blockquote>`;
+    return `<blockquote class="my-4 border-l-2 border-[#FF7A00]/50 pl-4 py-1 text-[#E2D9CE]/90 font-lora italic text-[16px] leading-[1.6]">
+      ${rawContent}
+    </blockquote>`;
   });
 
-  // 5b. Smart Content Normalizers: Auto-promote unformatted Goals, Groups, and Scenarios (W3C WAI Hierarchy)
-  // Promotes unformatted AAA headings: "- **The First A:** Authentication - Who Are You?" -> "### Pillar 1: Authentication — Identity Verification"
-  html = html.replace(/^(?:[-*]\s+)?\*\*The\s+(First|Second|Third|Fourth)\s+A:?\*\*\s*:?\s*(.+)$/gim, (match, order, rest) => {
-    const num = order.toLowerCase() === 'first' ? '1' : order.toLowerCase() === 'second' ? '2' : order.toLowerCase() === 'third' ? '3' : '4';
-    return `### Pillar ${num}: ${rest.replace(/^[—–-]\s*/, '')}`;
-  });
-  html = html.replace(/^(The\s+(?:First|Second|Third|Fourth)\s+A:\s*.+)$/gim, '### $1');
+  // =========================================================================
+  // STEP 8: ACADEMIC TABLES
+  // =========================================================================
+  html = html.replace(/(?:^\|.+\|\r?\n?)+/gm, (tableBlock) => {
+    const lines = tableBlock.trim().split('\n').map(l => l.trim()).filter(Boolean);
+    if (lines.length < 2) return tableBlock;
 
-  // Promotes: "Layer 1: Perimeter Defence" -> "### Layer 1: Perimeter Defence"
-  html = html.replace(/^(Layer\s+\d+:\s*.+)$/gim, '### $1');
-
-  // Promotes: "The Two Legitimate Exceptions" -> "### The Two Legitimate Architectural Exceptions"
-  html = html.replace(/^The Two Legitimate Exceptions:?\s*$/gim, '### The Two Legitimate Architectural Exceptions');
-
-  // Promotes: "How to Implement Least Privilege" or "How to Implement [Framework]" -> "### How to Implement $1"
-  html = html.replace(/^(How to Implement\s+[^:\n]+):?\s*$/gim, '### $1');
-
-  // Promotes: "Goal 1: Confidentiality — Keep It Secret" -> "### Goal 1: Confidentiality — Keep It Secret"
-  html = html.replace(/^(?:(?:Goal|Pillar|Principle)\s+(\d+):\s*(.+))$/gim, '### Goal $1: $2');
-  html = html.replace(/^(?:(?:Group|Category|Domain)\s+(\d+):\s*(.+))$/gim, '### Group $1: $2');
-  html = html.replace(/^(?:(?:Type)\s+(\d+):\s*(.+))$/gim, '### Type $1: $2');
-
-  // Promotes: "Real examples:", "What availability protects:", "What happens when X fails:" -> "#### Real Examples"
-  html = html.replace(/^(Real examples|Real-world examples|Real-World Operational Examples):?\s*$/gim, '#### Real-World Operational Examples:');
-  html = html.replace(/^(What\s+[a-zA-Z0-9\s-]+\s+protects):?\s*$/gim, '#### $1:');
-  html = html.replace(/^(What happens when\s+[a-zA-Z0-9\s-]+\s+fails):?\s*$/gim, '#### $1:');
-  html = html.replace(/^(Case\s+Example\s+\d+:|Example\s+\d+:)\s*(.+)$/gim, '#### $1 $2');
-  html = html.replace(/^What it includes:?\s*$/gim, '#### Defensive Controls (What It Includes):');
-  html = html.replace(/^What (?:the [^:\n]+|detection) does not do:?\s*$/gim, '#### Architectural Blind Spots:');
-  html = html.replace(/^How (authentication|authorization|accounting) works\.?:?\s*$/gim, (match, term) => {
-    const capitalized = term.charAt(0).toUpperCase() + term.slice(1);
-    return `#### How ${capitalized} Works:`;
-  });
-  html = html.replace(/^The three types of evidence\.?:?\s*$/gim, '#### The Three Types of Evidence:');
-  html = html.replace(/^The models of authorization\.?:?\s*$/gim, '#### The Four Models of Authorization:');
-  html = html.replace(/^The rules? for both\.?:?\s*$/gim, '#### Mandatory Governance Rules for Exceptions:');
-
-  // Auto-split run-on headings where the explanatory body was attached to the heading line:
-  // e.g. "### Step 1: Inventory the access. You cannot reduce..." -> "### Step 1: Inventory the access\n\nYou cannot reduce..."
-  html = html.replace(/^###\s+((?:Step|Pillar|Goal|Group|Layer|Principle|Type)\s+\d+:\s*[^.\n]{3,65})\.\s+([A-Z].+)$/gm, '### $1\n\n$2');
-
-  // Promotes standalone "Term — definition" lines into structured list items: "- **Term:** definition"
-  html = html.replace(/^([A-Z][a-zA-Z0-9\s/()_-]{1,35})\s*[—–]\s*([a-z].+)$/gm, (match, term, def) => {
-    return `- **${term.trim()}:** ${def.trim()}`;
-  });
-
-  // 6. Headings - Calibrated Academic Lora Hierarchy (Standard: H2 23-25px, H3 19-21px, H4 16-17px)
-  html = html.replace(/^##### (.*)$/gim, '<h5 class="text-xs sm:text-sm font-mono font-bold text-[#65F58A] mt-3.5 mb-1.5 uppercase tracking-widest flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#65F58A]"></span><span>$1</span></h5>');
-  html = html.replace(/^#### (.*)$/gim, (match, title) => {
-    return `<h4 class="font-lora font-medium text-[16px] sm:text-[17px] text-[#FFA439] mt-[15px] mb-[6px] tracking-wide flex items-center gap-2">
-      <span class="w-1.5 h-1.5 rounded-full bg-[#FF7A00] flex-shrink-0"></span>
-      <span>${title.trim()}</span>
-    </h4>`;
-  });
-  html = html.replace(/^### (.*)$/gim, (match, title) => {
-    const cleanTitle = title.trim();
-    const badgeMatch = cleanTitle.match(/^(Goal \d+|Group \d+|Pillar \d+|Principle \d+|Step \d+|Layer \d+|Type \d+):\s*(.*)$/i);
-    if (badgeMatch) {
-      const badge = badgeMatch[1].toUpperCase();
-      let rest = badgeMatch[2];
-      let trailingBody = '';
-      const dotIndex = rest.indexOf('. ');
-      if (dotIndex !== -1 && dotIndex < 60) {
-        trailingBody = rest.slice(dotIndex + 2);
-        rest = rest.slice(0, dotIndex);
+    let tableCaption = '';
+    const filteredLines = [];
+    for (const line of lines) {
+      const capMatch = line.match(/^\|\s*(?:Table|Caption)[:\s]+([^|]+)\s*\|/i);
+      if (capMatch) {
+        tableCaption = capMatch[1].trim();
+      } else {
+        filteredLines.push(line);
       }
-      const headingHtml = `<h3 class="font-lora font-semibold text-[19px] sm:text-[21px] text-white mt-[20px] mb-[7px] flex items-center flex-wrap gap-2 border-l-4 border-[#FF7A00] pl-3 py-0.5 bg-[#120E09]/60 rounded-r-lg">
-        <span class="px-1.5 py-0.5 rounded bg-[#FF7A00]/20 border border-[#FF7A00]/40 text-[#FFA439] text-xs font-mono font-bold tracking-wider">${badge}</span>
-        <span>${rest}</span>
-      </h3>`;
-      return trailingBody ? `${headingHtml}\n\n${trailingBody}` : headingHtml;
     }
-    return `<h3 class="font-lora font-semibold text-[19px] sm:text-[21px] text-white mt-[20px] mb-[7px] flex items-center gap-2 border-l-4 border-[#FF7A00] pl-3 py-0.5">
-      <span>${cleanTitle}</span>
-    </h3>`;
-  });
-  html = html.replace(/^## (.*)$/gim, (match, title) => {
-    return `<h2 class="font-lora font-bold text-[23px] sm:text-[25px] text-[#FFA439] mt-[26px] mb-[9px] text-center flex items-center justify-center gap-2.5 border-b border-[#FF7A00]/30 pb-2.5 tracking-tight shadow-sm">
-      <span class="w-2 h-2 rounded-full bg-[#FF7A00] animate-pulse flex-shrink-0"></span>
-      <span>${title.trim()}</span>
-    </h2>`;
-  });
-  html = html.replace(/^# (.*)$/gim, '<h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-2 mb-5 font-lora tracking-tight text-center pb-2.5 border-b border-[#FF7A00]/40">$1</h1>');
 
-  // 7. Bold & Italic
-  html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-white">$1</strong>');
-  html = html.replace(/\*(.*?)\*/g, '<em class="italic text-slate-200">$1</em>');
-
-  // 8. Inline Code
-  html = html.replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 rounded bg-[#161009] border border-[#FF7A00]/30 text-[#FFA439] font-mono text-[11px]">$1</code>');
-
-  // 8b. Inline Mathematical Notation ($variable$)
-  html = html.replace(/\$([a-zA-Z0-9_\\{}()+\-*/=^, \t≠≥≤⟹∥×]+?)\$/g, (match, inner) => {
-    const cleanVar = cleanMathNotation(inner);
-    return `<code class="px-1.5 py-0.5 rounded bg-[#121A15] border border-[#65F58A]/30 text-[#65F58A] font-mono text-xs font-semibold">${cleanVar}</code>`;
-  });
-
-  // 9. Markdown Tables with Optional Academic Banners (Uni.lu & W3C WAI standard)
-  html = html.replace(/(?:(?:\n|^)(?:[*_#]{0,3})(Table\s+\d+:?[^\n*#]+)(?:[*_#]{0,3})\s*\n+)?((?:^\|.+\|(?:\n|$))+)/gm, (match, tableCaption, tableBlock) => {
-    const lines = tableBlock.trim().split('\n');
-    if (lines.length < 2) return match;
-
-    const headerLine = lines[0];
-    const isSeparator = lines[1].includes('---');
-    const dataLines = isSeparator ? lines.slice(2) : lines.slice(1);
+    if (filteredLines.length < 2) return tableBlock;
 
     const parseRow = (line) => line.split('|').slice(1, -1).map(c => c.trim());
+    const headerCols = parseRow(filteredLines[0]);
+    
+    // Check delimiter row
+    let dataStartIdx = 1;
+    if (filteredLines[1] && /^\|[\s-:]+\|/.test(filteredLines[1])) {
+      dataStartIdx = 2;
+    }
 
-    const headers = parseRow(headerLine);
-    const thead = `<thead><tr class="bg-[#1A1208] border-b border-[#FF7A00]/30">${headers.map(h => `<th class="px-4 py-2.5 text-left text-xs font-mono font-bold text-[#FFA439] uppercase tracking-wider font-lora">${h}</th>`).join('')}</tr></thead>`;
+    const thead = `<thead class="bg-[#120E09] border-b border-[#FF7A00]/30">
+      <tr>${headerCols.map(col => `<th class="py-2.5 px-3.5 text-xs font-mono font-bold text-[#FFA439] uppercase tracking-wider">${col}</th>`).join('')}</tr>
+    </thead>`;
 
-    const tbody = `<tbody>${dataLines.map((line, rIdx) => {
-      const cells = parseRow(line);
-      const bg = rIdx % 2 === 0 ? 'bg-[#0B0907]/80' : 'bg-[#120E09]/80';
-      return `<tr class="${bg} border-b border-[#FF7A00]/15 hover:bg-[#1A1208]/90 transition-colors">${cells.map(c => `<td class="px-4 py-2.5 text-xs text-[#E2D9CE] font-lora leading-relaxed">${c}</td>`).join('')}</tr>`;
-    }).join('')}</tbody>`;
+    const bodyRows = filteredLines.slice(dataStartIdx).map((line, rIdx) => {
+      const cols = parseRow(line);
+      const isAlt = rIdx % 2 === 1;
+      return `<tr class="border-b border-[#FF7A00]/10 ${isAlt ? 'bg-[#0E0B07]' : 'bg-[#070A0F]'} hover:bg-[#1A1208]/70 transition-colors">
+        ${cols.map(c => `<td class="py-2.5 px-3.5 text-sm font-lora text-[#E2D9CE] leading-relaxed">${c}</td>`).join('')}
+      </tr>`;
+    }).join('\n');
 
-    const banner = tableCaption ? `<div class="px-4 py-2 bg-[#140E08] border-b border-[#FF7A00]/30 flex items-center justify-between text-xs font-mono font-bold text-[#FFA439] uppercase tracking-wider">
-      <div class="flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-[#FF7A00]"></span>
-        <span>${tableCaption.trim()}</span>
-      </div>
-      <span class="text-[#65F58A] text-[10px] px-2 py-0.5 rounded bg-[#071018] border border-[#65F58A]/30">ACADEMIC REFERENCE</span>
-    </div>` : '';
+    const tbody = `<tbody>${bodyRows}</tbody>`;
+    const captionHtml = tableCaption ? `<div class="px-3.5 py-1.5 bg-[#120E09] border-b border-[#FF7A00]/25 text-xs font-mono font-bold text-[#FFA439]">${tableCaption}</div>` : '';
 
-    return `<div class="my-5 overflow-x-auto rounded-xl border border-[#FF7A00]/30 shadow-lg">${banner}<table class="w-full text-left border-collapse">${thead}${tbody}</table></div>`;
+    return `<div class="my-5 overflow-x-auto rounded-xl border border-[#FF7A00]/25 shadow-md">${captionHtml}<table class="w-full text-left border-collapse">${thead}${tbody}</table></div>`;
   });
 
-  // 10. Lists (Unordered & Ordered) + Semantic Description Lists for Glossaries (W3C WAI)
+  // =========================================================================
+  // STEP 9: LISTS (UNORDERED, DEFINITION, AND COHERENT NUMBERED PROCEDURES)
+  // =========================================================================
+
+  // 9a. Unordered lists
   html = html.replace(/(?:^[-*]\s+.+(?:\n|$))+/gm, (listBlock) => {
     const rawItems = listBlock.trim().split('\n');
 
-    // Check if this list is a term-definition list (Glossaries, Lexicons, Definitional Banks)
+    // Check if this list is a term-definition list (e.g. - **Term:** Definition)
     const defItemCount = rawItems.filter(item => {
       const clean = item.replace(/^[-*]\s+/, '').trim();
       return /^<strong class="font-bold text-white">[^<]+:?<\/strong>:?\s+/.test(clean);
@@ -381,47 +386,47 @@ export function renderMarkdownToHtml(markdown = '') {
         if (match) {
           const term = match[1].trim();
           const def = match[2].trim();
-          return `<div class="p-3 sm:p-3.5 rounded-lg bg-[#0D0A07] border border-[#FF7A00]/25 shadow-sm transition-all hover:border-[#FF7A00]/50 hover:bg-[#120E09]/90">
-            <dt class="font-bold text-[#FFA439] font-lora text-[16px] sm:text-[17px] flex items-center gap-2 mb-1">
-              <span class="w-1.5 h-1.5 rounded-full bg-[#FF7A00] flex-shrink-0"></span>
-              <span>${term}</span>
-            </dt>
-            <dd class="text-[#E2D9CE] font-lora text-[15px] sm:text-[16px] leading-[1.6] pl-3 border-l-2 border-[#FF7A00]/30">${def}</dd>
+          return `<div class="py-1 border-l-2 border-[#FF7A00]/30 pl-3.5 my-1">
+            <dt class="font-bold text-[#FFA439] font-lora text-[17px]">${term}</dt>
+            <dd class="text-[#E2D9CE] font-lora text-[16px] leading-[1.6] mt-0.5">${def}</dd>
           </div>`;
         }
-        return `<div class="p-2.5 text-[#E2D9CE] font-lora leading-relaxed">${clean}</div>`;
+        return `<div class="py-1 text-[#E2D9CE] font-lora leading-relaxed">${clean}</div>`;
       }).join('\n');
 
-      return `<dl class="my-4 space-y-2.5">${dlItems}</dl>`;
+      return `<dl class="my-3 space-y-1.5">${dlItems}</dl>`;
     }
 
     const items = rawItems
-      .map((item) => `  <li class="flex items-start gap-2.5 text-[#E2D9CE] leading-[1.6] text-[17px] font-lora"><span class="w-1.5 h-1.5 rounded-full bg-[#FF7A00] mt-2 flex-shrink-0 shadow-[0_0_5px_rgba(255,122,0,0.5)]"></span><span>${item.replace(/^[-*]\s+/, '')}</span></li>`)
+      .map((item) => `  <li class="flex items-start gap-2.5 text-[#E2D9CE] leading-[1.6] text-[17px] font-lora"><span class="w-1.5 h-1.5 rounded-full bg-[#FF7A00] mt-2 flex-shrink-0"></span><span class="flex-1">${item.replace(/^[-*]\s+/, '')}</span></li>`)
       .join('\n');
-    return `<ul class="my-3 sm:my-3.5 space-y-[5px] pl-1 sm:pl-2">${items}</ul>`;
+    return `<ul class="my-3 space-y-1.5 pl-1 sm:pl-2">${items}</ul>`;
   });
 
-  html = html.replace(/(?:^\d+\.\s+.+(?:\n|$))+/gm, (listBlock) => {
+  // 9b. Coherent Ordered Numbered Procedures (01., 02., 03.) with Multi-line continuation support
+  html = html.replace(/(?:^\d+\.\s+[\s\S]*?(?=\n\d+\.|\n\n\S|\n\n#|$))+/gm, (listBlock) => {
+    // Split into individual numbered items:
+    const itemChunks = listBlock.split(/(?=^\d+\.\s+)/m).filter(c => c.trim().length > 0);
     let num = 1;
-    const items = listBlock
-      .trim()
-      .split('\n')
-      .map((item) => {
-        const match = item.match(/^(\d+)\.\s+(.*)/s);
-        const itemNum = match ? match[1].padStart(2, '0') : String(num++).padStart(2, '0');
-        const itemText = match ? match[2] : item.replace(/^\d+\.\s+/, '');
-        return `  <li class="flex items-start gap-2.5 text-[#E2D9CE] leading-[1.6] text-[17px] font-lora"><span class="font-mono text-[#FFA439] text-xs font-bold px-1.5 py-0.5 rounded bg-[#1A1208] border border-[#FF7A00]/35 flex-shrink-0 shadow-sm">${itemNum}</span><span>${itemText}</span></li>`;
-      })
-      .join('\n');
-    return `<ol class="my-3 sm:my-3.5 space-y-[5px] pl-1 sm:pl-2">${items}</ol>`;
+
+    const items = itemChunks.map((chunk) => {
+      const match = chunk.match(/^(\d+)\.\s+([\s\S]*)/);
+      const itemNum = match ? match[1].padStart(2, '0') : String(num++).padStart(2, '0');
+      const itemBody = match ? match[2].trim() : chunk.trim();
+      return `  <li class="flex items-start gap-2.5 text-[#E2D9CE] leading-[1.6] text-[17px] font-lora"><span class="font-mono text-[#FFA439] text-[15px] font-semibold flex-shrink-0 select-none">${itemNum}.</span><div class="flex-1 space-y-1">${itemBody}</div></li>`;
+    }).join('\n');
+
+    return `<ol class="my-3 space-y-2 pl-1 sm:pl-2">${items}</ol>`;
   });
 
   // Merge adjacent lists that had blank lines between items
-  html = html.replace(/<\/ul>\s*<ul class="my-3 sm:my-3\.5 space-y-\[5px\] pl-1 sm:pl-2">/g, '');
-  html = html.replace(/<\/ol>\s*<ol class="my-3 sm:my-3\.5 space-y-\[5px\] pl-1 sm:pl-2">/g, '');
-  html = html.replace(/<\/dl>\s*<dl class="my-4 space-y-2\.5">/g, '');
+  html = html.replace(/<\/ul>\s*<ul class="my-3 space-y-1\.5 pl-1 sm:pl-2">/g, '');
+  html = html.replace(/<\/ol>\s*<ol class="my-3 space-y-2 pl-1 sm:pl-2">/g, '');
+  html = html.replace(/<\/dl>\s*<dl class="my-3 space-y-1\.5">/g, '');
 
-  // 11. Paragraph wrapping with exact 8-10px bottom margin (Lora 17px, line-height 1.6, #E2D9CE)
+  // =========================================================================
+  // STEP 10: PARAGRAPHS & FLOWING TEXTBOOK PROSE
+  // =========================================================================
   const blocks = html.split(/\n\s*\n/);
   html = blocks
     .map((block) => {
@@ -440,13 +445,27 @@ export function renderMarkdownToHtml(markdown = '') {
         trimmed.startsWith('<hr') ||
         trimmed.startsWith('<ul') ||
         trimmed.startsWith('<ol') ||
-        trimmed.startsWith('<dl')
+        trimmed.startsWith('<dl') ||
+        trimmed.startsWith('@@@CODEBLOCK_') ||
+        trimmed.startsWith('@@@MERMAID_')
       ) {
         return trimmed;
       }
-      return `<p class="font-lora text-[17px] leading-[1.6] text-[#E2D9CE] mb-2 sm:mb-2.5">${trimmed}</p>`;
+      return `<p class="font-lora text-[17px] leading-[1.6] text-[#E2D9CE] mb-3">${trimmed}</p>`;
     })
     .join('\n\n');
+
+  // =========================================================================
+  // STEP 11: RESTORE SHIELDED CODE BLOCKS & INLINE CODES
+  // =========================================================================
+  codeBlocks.forEach((block, idx) => {
+    html = html.replace(`@@@CODEBLOCK_${idx}@@@`, block);
+    html = html.replace(`@@@MERMAID_${idx}@@@`, block);
+  });
+
+  inlineCodes.forEach((code, idx) => {
+    html = html.replace(`@@@INLINECODE_${idx}@@@`, code);
+  });
 
   return html;
 }

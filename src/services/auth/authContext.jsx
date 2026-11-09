@@ -79,21 +79,10 @@ export function AuthProvider({ children }) {
   };
 
   useEffect(() => {
-    if (localStorage.getItem('redkross_academy_dev_admin') === 'true') {
-      setCurrentUser({
-        id: 'usr_super_admin_dev',
-        email: 'admin@redkross.org.in',
-        full_name: 'Lead Super Admin',
-        role: 'super_admin',
-        headline: 'Chief Defensive Director & Institutional Proctor',
-        avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=256&q=80',
-        streak_days: 42,
-        timezone: 'Asia/Kolkata',
-      });
-      setTokenBalance(9999);
-      setIsLoading(false);
-      return;
-    }
+    // Super admin access disabled: clean up any legacy dev admin flags
+    try {
+      localStorage.removeItem('redkross_academy_dev_admin');
+    } catch {}
 
     const savedDevCadet = localStorage.getItem('redkross_academy_dev_cadet');
     if (savedDevCadet) {

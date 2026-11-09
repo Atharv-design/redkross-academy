@@ -16,12 +16,14 @@ function assert(condition, testName) {
 }
 
 try {
-  // Test 1: Course Normalization & Single Course Persistence in Cybersecurity Division
+  // Test 1: Course Normalization & Active Courses in Cybersecurity Division
   const courses = mockEngine.getCourses();
   const cyberCourses = courses.filter(c => (c.division || 'cybersecurity') === 'cybersecurity');
-  assert(cyberCourses.length === 1, `Cybersecurity division contains exclusively 1 course: found ${cyberCourses.length}`);
-  assert(cyberCourses[0].id === 'crs_cyber_intro_01', `Catalog course is Introduction to Cybersecurity (crs_cyber_intro_01)`);
-  assert(cyberCourses[0].modules.length === 5, `Course has 5 comprehensive modules`);
+  assert(cyberCourses.length >= 2, `Cybersecurity division contains at least 2 courses: found ${cyberCourses.length}`);
+  assert(cyberCourses.some(c => c.id === 'crs_cyber_intro_01'), `Catalog course has Introduction to Cybersecurity (crs_cyber_intro_01)`);
+  assert(cyberCourses.some(c => c.id === 'crs_cyber_net_02'), `Catalog course has Computer Networking for Cybersecurity (crs_cyber_net_02)`);
+  const c1 = cyberCourses.find(c => c.id === 'crs_cyber_intro_01');
+  assert(c1.modules.length === 6, `Course 01 has 6 comprehensive modules`);
 
   // Test 2: Enrolment initialization
   const db = mockEngine.getDb();

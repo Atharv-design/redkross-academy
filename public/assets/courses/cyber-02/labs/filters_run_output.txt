@@ -1,0 +1,74 @@
+TShark (Wireshark) 4.2.5 (Git commit 798e06a0f7be).
+### filter: tcp.flags.syn==1 && tcp.flags.ack==0
+   10   5.692526  172.30.0.20 → 172.30.0.10  TCP 74 44460 → 8080 [SYN] Seq=0 Win=64240 Len=0 MSS=1460 SACK_PERM TSval=651756182 TSecr=0 WS=128
+   25   6.308304  172.30.0.21 → 172.30.0.10  TCP 74 54762 → 8080 [SYN] Seq=0 Win=64240 Len=0 MSS=1460 SACK_PERM TSval=3940696692 TSecr=0 WS=128
+### filter: tcp.flags.fin==1 && ip.addr==172.30.0.20
+   19   5.693805  172.30.0.10 → 172.30.0.20  TCP 66 8080 → 44460 [FIN, ACK] Seq=1034 Ack=81 Win=65152 Len=0 TSval=3375649611 TSecr=651756183
+   20   5.693834  172.30.0.20 → 172.30.0.10  TCP 66 44460 → 8080 [FIN, ACK] Seq=81 Ack=1035 Win=64128 Len=0 TSval=651756183 TSecr=3375649611
+### filter: arp.opcode==1 (requests)
+5	172.30.0.1	172.30.0.10
+7	172.30.0.20	172.30.0.20
+8	172.30.0.20	172.30.0.10
+22	172.30.0.21	172.30.0.21
+23	172.30.0.21	172.30.0.10
+### filter: arp.opcode==2 (replies)
+6	c2:97:98:65:94:00	172.30.0.10
+9	c2:97:98:65:94:00	172.30.0.10
+24	c2:97:98:65:94:00	172.30.0.10
+### filter: icmp
+40	172.30.0.22	172.30.0.10	8	0	64
+41	172.30.0.10	172.30.0.22	0	0	64
+43	172.30.0.22	172.30.0.10	8	0	64
+44	172.30.0.10	172.30.0.22	0	0	64
+49	172.30.0.10,172.30.0.23	172.30.0.23,172.30.0.10	3	3	64,64
+### filter: udp && !icmp
+48	54156	9999	19	RK-UDP-TEST
+### filter: http.request
+13	172.30.0.20	GET	/	curl/8.23.0
+28	172.30.0.21	GET	/nothere	curl/8.23.0
+### filter: http.response.code >= 400
+32	172.30.0.10	172.30.0.21	404	File not found
+### filter: tcp.stream==1 (first lines)
+   10   5.692526  172.30.0.20 → 172.30.0.10  TCP 74 44460 → 8080 [SYN] Seq=0 Win=64240 Len=0 MSS=1460 SACK_PERM TSval=651756182 TSecr=0 WS=128
+   11   5.692536  172.30.0.10 → 172.30.0.20  TCP 74 8080 → 44460 [SYN, ACK] Seq=0 Ack=1 Win=65160 Len=0 MSS=1460 SACK_PERM TSval=3375649610 TSecr=651756182 WS=128
+   12   5.692569  172.30.0.20 → 172.30.0.10  TCP 66 44460 → 8080 [ACK] Seq=1 Ack=1 Win=64256 Len=0 TSval=651756182 TSecr=3375649610
+### tcp.time_delta handshake (stream with 172.30.0.20)
+10	1	0	0	··········S·
+11	1	0	1	·······A··S·
+12	1	1	1	·······A····
+13	1	1	1	·······AP···
+14	1	1	81	·······A····
+### stats: protocol hierarchy (lab subnet only)
+
+===================================================================
+Protocol Hierarchy Statistics
+Filter: 
+
+eth                                      frames:49 bytes:4757
+  ip                                     frames:34 bytes:4127
+    tcp                                  frames:28 bytes:3601
+      tls                                frames:1 bytes:90
+      http                               frames:4 bytes:1643
+        data-text-lines                  frames:2 bytes:1344
+          tcp.segments                   frames:2 bytes:1344
+    icmp                                 frames:5 bytes:473
+      data                               frames:1 bytes:81
+    udp                                  frames:1 bytes:53
+      data                               frames:1 bytes:53
+  arp                                    frames:15 bytes:630
+===================================================================
+### stats: tcp conversations (lab subnet only)
+================================================================================
+TCP Conversations
+Filter:ip.src==172.30.0.0/24 && ip.dst==172.30.0.0/24
+                                                           |       <-      | |       ->      | |     Total     |    Relative    |   Duration   |
+                                                           | Frames  Bytes | | Frames  Bytes | | Frames  Bytes |      Start     |              |
+172.30.0.20:44460          <-> 172.30.0.10:8080                 6 1437 bytes       6 484 bytes      12 1921 bytes     5.692526000         0.0013
+172.30.0.21:54762          <-> 172.30.0.10:8080                 6 925 bytes       6 491 bytes      12 1416 bytes     6.308304000         0.0012
+================================================================================
+### capinfos
+File name:           /data/rk_c02_lab.pcap
+Number of packets:   49
+Capture duration:    8.580977 seconds
+First packet time:   2026-11-07 00:57:28.253413
+Last packet time:    2026-11-07 00:57:36.834390

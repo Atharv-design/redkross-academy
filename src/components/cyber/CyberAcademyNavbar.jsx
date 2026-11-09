@@ -23,8 +23,8 @@ export default function CyberAcademyNavbar() {
                 <span className="font-royal text-base sm:text-lg font-bold text-white tracking-wide">
                   RedKross
                 </span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold tracking-widest bg-[#FF7A00]/15 text-[#FFA439] border border-[#FF7A00]/30 uppercase">
-                  CYBER ACADEMY
+                <span className="text-xs sm:text-sm font-mono font-bold tracking-wider text-[#FFA439] uppercase">
+                  Cyber Academy
                 </span>
               </div>
               <span className="text-[10px] font-mono text-[#A3907C] tracking-wider">

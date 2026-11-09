@@ -1,0 +1,7 @@
+172.30.0.1    3e:fc:02:bb:98:bd  requests=1 replies=0 announcements=0
+172.30.0.10   c2:97:98:65:94:00  requests=0 replies=5 announcements=0
+172.30.0.20   8e:c4:2b:21:89:b7  requests=1 replies=0 announcements=1
+172.30.0.21   02:3f:f4:e6:bd:9a  requests=1 replies=0 announcements=1
+172.30.0.22   8a:24:76:c4:48:4a  requests=1 replies=0 announcements=2
+172.30.0.23   6a:b8:1e:30:da:b6  requests=1 replies=0 announcements=1
+6 IPs, 0 conflicts

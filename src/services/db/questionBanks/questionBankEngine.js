@@ -16,6 +16,11 @@ import { module3QuestionBank } from './module3QuestionBank.js';
 import { module4QuestionBank } from './module4QuestionBank.js';
 import { module5QuestionBank } from './module5QuestionBank.js';
 import { module6QuestionBank } from './module6QuestionBank.js';
+import {
+  COURSE02_MODULE_BANKS,
+  getRandomModuleQuestions as getRandomModuleQuestionsC2,
+  getCourseFinalExamQuestions as getCourseFinalExamQuestionsC2
+} from '../course02/course02Engine.js';
 
 const MODULE_BANKS = {
   1: module1QuestionBank,
@@ -128,33 +133,52 @@ export function getRandomFinalExamQuestions(totalCount = 50) {
 /**
  * Retrieves active session questions or generates fresh randomized questions.
  * Caches in sessionStorage so mid-exam page reloads don't disrupt active questions or answers.
+ * If forceRegenerate is true (e.g. on explicit exam retake), cache is cleared and fresh random questions are sampled.
  */
-export function getOrGenerateQuizQuestions(enrolmentId, quizId, moduleNum = 1, isFinalExam = false) {
-  const cacheKey = `rk_quiz_session_${enrolmentId || 'cadet'}_${quizId}`;
+export function getOrGenerateQuizQuestions(enrolmentId, quizId, moduleNum = 1, isFinalExam = false, courseId = null, forceRegenerate = false) {
+  const isC2 = courseId === 'crs_cyber_net_02' || (typeof quizId === 'string' && (quizId.includes('c2') || quizId.includes('net_final') || quizId.includes('c02')));
+  const primaryCacheKey = `rk_quiz_session_${isC2 ? 'c2_' : ''}${enrolmentId || 'cadet'}_${quizId}`;
+  const legacyCacheKey = `rk_quiz_session_${enrolmentId || 'cadet'}_${quizId}`;
+
   if (typeof window !== 'undefined') {
-    try {
-      const cached = sessionStorage.getItem(cacheKey);
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
+    if (forceRegenerate) {
+      try {
+        sessionStorage.removeItem(primaryCacheKey);
+        sessionStorage.removeItem(legacyCacheKey);
+      } catch {}
+    } else {
+      try {
+        const cached = sessionStorage.getItem(primaryCacheKey) || sessionStorage.getItem(legacyCacheKey);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed;
+          }
         }
+      } catch {
+        // ignore
       }
-    } catch {
-      // ignore
     }
   }
 
   let questions = [];
-  if (isFinalExam || (typeof quizId === 'string' && (quizId.includes('final') || quizId.includes('exam_cyber')))) {
-    questions = getRandomFinalExamQuestions(50);
+  if (isC2) {
+    if (isFinalExam || (typeof quizId === 'string' && (quizId.includes('final') || quizId.includes('exam_cyber_net')))) {
+      questions = getCourseFinalExamQuestionsC2(50);
+    } else {
+      questions = getRandomModuleQuestionsC2(moduleNum, 20);
+    }
   } else {
-    questions = getRandomModuleQuestions(moduleNum, 20);
+    if (isFinalExam || (typeof quizId === 'string' && (quizId.includes('final') || quizId.includes('exam_cyber')))) {
+      questions = getRandomFinalExamQuestions(50);
+    } else {
+      questions = getRandomModuleQuestions(moduleNum, 20);
+    }
   }
 
-  if (typeof window !== 'undefined') {
+  if (typeof window !== 'undefined' && Array.isArray(questions) && questions.length > 0) {
     try {
-      sessionStorage.setItem(cacheKey, JSON.stringify(questions));
+      sessionStorage.setItem(primaryCacheKey, JSON.stringify(questions));
     } catch {
       // ignore
     }
@@ -166,15 +190,15 @@ export function getOrGenerateQuizQuestions(enrolmentId, quizId, moduleNum = 1, i
 /**
  * Clears cached active quiz questions on retake or submission reset.
  */
-export function clearQuizSessionQuestions(enrolmentId, quizId) {
-  const cacheKey = `rk_quiz_session_${enrolmentId || 'cadet'}_${quizId}`;
+export function clearQuizSessionQuestions(enrolmentId, quizId, courseId = null) {
   if (typeof window !== 'undefined') {
     try {
-      sessionStorage.removeItem(cacheKey);
+      sessionStorage.removeItem(`rk_quiz_session_${enrolmentId || 'cadet'}_${quizId}`);
+      sessionStorage.removeItem(`rk_quiz_session_c2_${enrolmentId || 'cadet'}_${quizId}`);
     } catch {
       // ignore
     }
   }
 }
 
-export { MODULE_BANKS };
+export { MODULE_BANKS, COURSE02_MODULE_BANKS };

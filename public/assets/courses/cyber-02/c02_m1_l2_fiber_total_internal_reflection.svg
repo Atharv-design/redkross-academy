@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 260" width="100%" height="100%">
+  <defs>
+    <filter id="amberGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <linearGradient id="coreGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1A1208" />
+      <stop offset="50%" stop-color="#0E0904" />
+      <stop offset="100%" stop-color="#1A1208" />
+    </linearGradient>
+    <linearGradient id="claddingGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0A0E17" />
+      <stop offset="100%" stop-color="#070A0F" />
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#FF7A00" />
+    </marker>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="100%" height="100%" fill="#070A0F" rx="14" stroke="#FF7A00" stroke-width="1.2" stroke-opacity="0.35" />
+
+  <!-- Upper Cladding -->
+  <rect x="25" y="20" width="810" height="42" fill="url(#claddingGrad)" stroke="#FF7A00" stroke-width="0.8" stroke-opacity="0.25" rx="6" />
+  <text x="430" y="46" font-family="'Lora', serif" font-size="13" font-weight="bold" fill="#8C7A6B" text-anchor="middle" letter-spacing="1">
+    UPPER CLADDING (Silica Glass - Lower Refractive Index n₂ ≈ 1.45)
+  </text>
+
+  <!-- Core Layer -->
+  <rect x="25" y="65" width="810" height="130" fill="url(#coreGrad)" stroke="#FF7A00" stroke-width="1.5" stroke-dasharray="6,4" stroke-opacity="0.7" rx="6" />
+  <text x="430" y="135" font-family="'Lora', serif" font-size="15" font-weight="bold" fill="#FFA439" text-anchor="middle" letter-spacing="1">
+    CORE (Ultra-Pure Silica Glass - High Refractive Index n₁ ≈ 1.48)
+  </text>
+  <text x="430" y="155" font-family="monospace" font-size="11" fill="#A3907C" text-anchor="middle">
+    Light Pulse Confinement via Total Internal Reflection (θ &gt; θ_critical = arcsin(n₂ / n₁))
+  </text>
+
+  <!-- Lower Cladding -->
+  <rect x="25" y="198" width="810" height="42" fill="url(#claddingGrad)" stroke="#FF7A00" stroke-width="0.8" stroke-opacity="0.25" rx="6" />
+  <text x="430" y="224" font-family="'Lora', serif" font-size="13" font-weight="bold" fill="#8C7A6B" text-anchor="middle" letter-spacing="1">
+    LOWER CLADDING (Silica Glass - Lower Refractive Index n₂ ≈ 1.45)
+  </text>
+
+  <!-- Light Path (Photon Zig-Zag Beam) -->
+  <polyline
+    points="35,130 115,67 215,193 315,67 415,193 515,67 615,193 715,67 800,130"
+    fill="none"
+    stroke="#FF7A00"
+    stroke-width="3"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    filter="url(#amberGlow)"
+  />
+
+  <!-- Direction Arrows along the ray -->
+  <path d="M 68,95 L 75,89" stroke="#FFA439" stroke-width="2.5" marker-end="url(#arrow)" />
+  <path d="M 160,125 L 168,135" stroke="#FFA439" stroke-width="2.5" marker-end="url(#arrow)" />
+  <path d="M 260,135 L 268,125" stroke="#FFA439" stroke-width="2.5" marker-end="url(#arrow)" />
+  <path d="M 360,125 L 368,135" stroke="#FFA439" stroke-width="2.5" marker-end="url(#arrow)" />
+  <path d="M 460,135 L 468,125" stroke="#FFA439" stroke-width="2.5" marker-end="url(#arrow)" />
+  <path d="M 560,125 L 568,135" stroke="#FFA439" stroke-width="2.5" marker-end="url(#arrow)" />
+  <path d="M 660,135 L 668,125" stroke="#FFA439" stroke-width="2.5" marker-end="url(#arrow)" />
+
+  <!-- Boundary Reflection Points -->
+  <circle cx="115" cy="67" r="4.5" fill="#FFA439" filter="url(#amberGlow)" />
+  <circle cx="215" cy="193" r="4.5" fill="#FFA439" filter="url(#amberGlow)" />
+  <circle cx="315" cy="67" r="4.5" fill="#FFA439" filter="url(#amberGlow)" />
+  <circle cx="415" cy="193" r="4.5" fill="#FFA439" filter="url(#amberGlow)" />
+  <circle cx="515" cy="67" r="4.5" fill="#FFA439" filter="url(#amberGlow)" />
+  <circle cx="615" cy="193" r="4.5" fill="#FFA439" filter="url(#amberGlow)" />
+  <circle cx="715" cy="67" r="4.5" fill="#FFA439" filter="url(#amberGlow)" />
+
+  <!-- Annotation Labels -->
+  <rect x="35" y="80" width="125" height="22" fill="#070A0F" rx="4" stroke="#FF7A00" stroke-width="0.8" stroke-opacity="0.5" />
+  <text x="97" y="95" font-family="monospace" font-size="10" font-weight="bold" fill="#65F58A" text-anchor="middle">LASER INPUT</text>
+
+  <rect x="705" y="80" width="125" height="22" fill="#070A0F" rx="4" stroke="#FF7A00" stroke-width="0.8" stroke-opacity="0.5" />
+  <text x="767" y="95" font-family="monospace" font-size="10" font-weight="bold" fill="#65F58A" text-anchor="middle">OPTICAL OUTPUT</text>
+</svg>

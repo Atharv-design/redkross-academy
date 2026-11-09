@@ -26,7 +26,8 @@ export default function LessonOutlineSidebar({
   currentEnrolment,
   enrolment,
   enrolmentId,
-  isFinalExamUnlocked
+  isFinalExamUnlocked,
+  onShowNotice
 }) {
   const renderSidebarContent = () => (
     <div className="flex flex-col h-full">
@@ -51,7 +52,7 @@ export default function LessonOutlineSidebar({
         {(course?.modules || []).map((mod, modIdx) => {
           const isUnlocked = isModuleUnlocked(modIdx);
           const isCurrentMod = activeUnit?.moduleId === mod.id;
-          // TEMPORARY_GATEWAY_MODULE_6: Auto-expand Module 6 if not explicitly toggled
+          // Auto-expand active module or first module (or keep user's manual toggles)
           const isExpanded = isUnlocked && (expandedModules[mod.id] !== undefined ? Boolean(expandedModules[mod.id]) : (isCurrentMod || modIdx === 0));
           const modLessons = mod.lessons || [];
           const completedLessonsList = currentEnrolment?.completed_mandatory_lessons || enrolment?.completed_mandatory_lessons || [];
@@ -77,7 +78,9 @@ export default function LessonOutlineSidebar({
                 type="button"
                 onClick={() => {
                   if (!isUnlocked) {
-                    alert(`Module ${modIdx + 1} Locked: You must complete all lessons and pass the Module ${modIdx} Knowledge Check (>= 80%) to unlock.`);
+                    if (onShowNotice) {
+                      onShowNotice(`Module ${modIdx + 1} Locked`, `You must complete all lessons and pass the Module ${modIdx} Knowledge Check (>= 80%) to unlock.`);
+                    }
                     return;
                   }
                   setExpandedModules((prev) => ({
@@ -196,7 +199,9 @@ export default function LessonOutlineSidebar({
                         type="button"
                         onClick={() => {
                           if (!areAllLessonsCompleted) {
-                            alert(`Knowledge Check Locked: Complete all ${modLessons.length} lessons in ${mod.title} (${completedCount}/${modLessons.length} completed) before attempting the examination.`);
+                            if (onShowNotice) {
+                              onShowNotice('Knowledge Check Locked', `Complete all ${modLessons.length} lessons in ${mod.title} (${completedCount}/${modLessons.length} completed) before attempting the examination.`);
+                            }
                             return;
                           }
                           handleSelectUnit({
@@ -274,13 +279,16 @@ export default function LessonOutlineSidebar({
         {course?.final_assessment && (() => {
           const isFinalLocked = mockEngine.isExamLocked(enrolmentId, course.final_assessment.id).isLocked;
           const finalAttemptStatus = mockEngine.getQuizAttemptStatus(enrolmentId, course.final_assessment.id);
+          const isFinalUnlocked = isFinalExamUnlocked;
           return (
             <div className="pt-3 border-t border-[#FF7A00]/20">
               <button
                 type="button"
                 onClick={() => {
-                  if (!isFinalExamUnlocked) {
-                    alert('Final Assessment Locked: You must complete all prior course modules and score >= 80% on each knowledge check.');
+                  if (!isFinalUnlocked) {
+                    if (onShowNotice) {
+                      onShowNotice('Final Assessment Locked', 'You must complete all prior course modules and score >= 80% on each knowledge check.');
+                    }
                     return;
                   }
                   handleSelectUnit({
@@ -297,7 +305,7 @@ export default function LessonOutlineSidebar({
                     ? 'bg-[#FF7A00] text-[#071018] font-bold border-[#FF7A00] shadow-md'
                     : isFinalLocked
                     ? 'bg-rose-950/70 text-rose-300 border-rose-500/50 hover:bg-rose-900/60'
-                    : isFinalExamUnlocked
+                    : isFinalUnlocked
                     ? 'bg-[#1A1208] text-[#FF7A00] border-[#FF7A00]/40 hover:bg-[#0c2a1e]'
                     : 'bg-[#080705] text-gray-500 border-gray-800 cursor-not-allowed opacity-60'
                 }`}
@@ -320,7 +328,7 @@ export default function LessonOutlineSidebar({
                       ? 'bg-rose-500/20 text-rose-300 border-rose-500/40 font-bold'
                       : enrolment?.final_assessment_passed
                       ? 'bg-[#FF7A00]/15 text-[#FF7A00] border-[#FF7A00]/30'
-                      : isFinalExamUnlocked
+                      : isFinalUnlocked
                       ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
                       : 'border-white/10 text-gray-400'
                   }`}
@@ -329,7 +337,7 @@ export default function LessonOutlineSidebar({
                     ? '24H LOCK'
                     : enrolment?.final_assessment_passed
                     ? 'PASSED'
-                    : isFinalExamUnlocked
+                    : isFinalUnlocked
                     ? `${finalAttemptStatus.attemptsRemaining}/3 TRIES`
                     : 'LOCKED'}
                 </span>

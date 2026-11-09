@@ -48,6 +48,48 @@ function LessonContentPanel({
   const memoizedHtml = React.useMemo(() => {
     return renderMarkdownToHtml(activeLesson?.content || 'Defensive laboratory briefing and operational objectives.');
   }, [activeLesson?.id, activeLesson?.content]);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined' && memoizedHtml) {
+      import('mermaid').then(({ default: mermaid }) => {
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: 'dark',
+          themeVariables: {
+            darkMode: true,
+            background: '#070A0F',
+            primaryColor: '#1A1208',
+            primaryBorderColor: '#FF7A00',
+            primaryTextColor: '#E2D9CE',
+            lineColor: '#FF7A00',
+            textColor: '#E2D9CE',
+            fontSize: '13px',
+            fontFamily: 'Lora, serif',
+            actorBkg: '#1A1208',
+            actorBorder: '#FF7A00',
+            actorTextColor: '#FFA439',
+            actorLineColor: '#FF7A00',
+            signalColor: '#FF7A00',
+            signalTextColor: '#E2D9CE',
+            labelBoxBkgColor: '#1A1208',
+            labelBoxBorderColor: '#FF7A00',
+            labelTextColor: '#FFA439',
+            loopTextColor: '#E2D9CE',
+            noteBorderColor: '#FF7A00',
+            noteBkgColor: '#120E09',
+            noteTextColor: '#E2D9CE'
+          },
+          securityLevel: 'loose'
+        });
+        const elements = document.querySelectorAll('.mermaid:not([data-processed="true"])');
+        if (elements.length > 0) {
+          mermaid.run({ nodes: elements }).catch((err) => {
+            console.warn('[Mermaid] render error:', err);
+          });
+        }
+      }).catch((err) => console.warn('[Mermaid] dynamic import error:', err));
+    }
+  }, [memoizedHtml]);
   return (
     <div className="w-full space-y-6">
       {/* 24-HOUR ANTI-CHEAT PROCTOR LOCKDOWN HUD (LESSON UNITS) */}
@@ -149,10 +191,9 @@ function LessonContentPanel({
                       });
                     }
                   }}
-                  className="cyber-glass-panel p-6 sm:p-10 rounded-2xl border border-[#FF7A00]/25 min-h-[400px] overflow-visible prose prose-invert prose-sm sm:prose-base max-w-none cursor-default"
+                  className="bg-[#0B0D14]/95 p-6 sm:p-10 rounded-2xl border border-[#FF7A00]/25 shadow-2xl min-h-[400px] overflow-visible prose prose-invert prose-sm sm:prose-base max-w-none cursor-default prose-table:border-collapse prose-pre:p-0 prose-pre:m-0 prose-pre:bg-transparent prose-pre:border-none prose-code:before:content-none prose-code:after:content-none prose-img:m-0 prose-figure:m-0 prose-headings:font-lora"
                 >
                   <div
-                    style={{ contentVisibility: 'auto' }}
                     dangerouslySetInnerHTML={{
                       __html: memoizedHtml
                     }}

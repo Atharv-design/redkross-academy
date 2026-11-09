@@ -9,6 +9,7 @@ import { module3Data } from './curriculum/module3.js';
 import { module4Data } from './curriculum/module4.js';
 import { module5Data } from './curriculum/module5.js';
 import { module6Data } from './curriculum/module6.js';
+import { course02Data } from './course02/index.js';
 
 export const CYBER_COURSES = [
   {
@@ -85,10 +86,12 @@ export const CYBER_COURSES = [
       module5Data,
       module6Data
     ]
-  }
+  },
+  course02Data
 ];
 
 export const CYBER_INTRO_COURSE_01 = CYBER_COURSES[0];
+export const CYBER_NET_COURSE_02 = CYBER_COURSES[1];
 
 export const CYBER_LEARNING_PATHS = [
   {
@@ -105,5 +108,20 @@ export const CYBER_LEARNING_PATHS = [
     featured: true,
     skills: ['CIA Triad', 'Cyber Kill Chain', 'Threat Modeling', '5×5 Risk Matrix', 'CVSS v3.1', 'Identity & Access', 'Applied Cryptography', 'SOC & IR', 'DPDP Act 2023'],
     course_ids: ['crs_cyber_intro_01']
+  },
+  {
+    id: 'path_network_defense',
+    division: 'cybersecurity',
+    slug: 'network-defense-and-infrastructure-track',
+    title: 'Network Defense & Infrastructure Engineering Track',
+    short_desc: 'Comprehensive training in enterprise computer networking, Layer 2/3 defense, stateful firewalls, VPNs, and ground-truth packet triage.',
+    difficulty: 'Beginner',
+    estimated_weeks: 10,
+    total_hours: 50,
+    courses_count: 1,
+    milestone_cert: 'Certified Network Defense Associate (CNDA)',
+    featured: true,
+    skills: ['Layer 2 Switching', '802.1Q VLANs', 'CIDR Subnetting', 'TCP/IP Sockets', 'DNSSEC & DHCP Snooping', 'Stateful Firewalls', 'WireGuard & IPsec', 'Wireshark Analysis'],
+    course_ids: ['crs_cyber_net_02']
   }
 ];

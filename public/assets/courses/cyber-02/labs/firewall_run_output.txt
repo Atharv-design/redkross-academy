@@ -1,0 +1,18 @@
+Installing iptables on the router...
+== Rule set
+Chain FORWARD (policy DROP)
+num  target     prot opt source               destination         
+1    ACCEPT     0    --  0.0.0.0/0            0.0.0.0/0            ctstate RELATED,ESTABLISHED
+2    ACCEPT     6    --  172.31.10.0/24       172.31.20.10         tcp dpt:8080 ctstate NEW
+3    LOG        0    --  0.0.0.0/0            0.0.0.0/0            LOG flags 0 level 4 prefix "RK-FWD-DENY "
+== Test 1 (should be ALLOWED): HTTP to 172.31.20.10:8080
+HTTP 8080: ALLOWED (page received)
+== Test 2 (should be DENIED): ICMP ping to 172.31.20.10
+PING: DENIED (no reply)
+== Rule counters after tests (packets/bytes per rule)
+Chain FORWARD (policy DROP 2 packets, 168 bytes)
+num   pkts bytes target     prot opt in     out     source               destination         
+1       11  1706 ACCEPT     0    --  *      *       0.0.0.0/0            0.0.0.0/0            ctstate RELATED,ESTABLISHED
+2        1    60 ACCEPT     6    --  *      *       172.31.10.0/24       172.31.20.10         tcp dpt:8080 ctstate NEW
+3        2   168 LOG        0    --  *      *       0.0.0.0/0            0.0.0.0/0            LOG flags 0 level 4 prefix "RK-FWD-DENY "
+Cleanup complete.

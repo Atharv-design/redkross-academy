@@ -33,4 +33,7 @@ scratch/
 graphify-out/
 # Course Raw Assets
 RK course notes/**/Lessons Images/
+RK course notes/RedKross Academy Complete Cybersecurity Course Library/
+scripts/*.txt
+scripts/*.json
 

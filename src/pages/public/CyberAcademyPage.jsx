@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
@@ -26,6 +26,7 @@ import CyberLearningCard from '../../components/cyber/CyberLearningCard';
 import { apiClient } from '../../services/apiClient';
 import { socketClient } from '../../services/socket/socketClient';
 import { useAuth } from '../../services/auth/authContext';
+import { CYBER_COURSES } from '../../services/db/cyberCourses';
 
 export default function CyberAcademyPage() {
   const { currentUser } = useAuth();
@@ -57,56 +58,41 @@ export default function CyberAcademyPage() {
     };
   }, []);
 
-  const masterCourse = courses.find((c) => c.id === 'crs_cyber_intro_01' || c.slug === 'introduction-to-cybersecurity') || courses[0];
-  const masterTrack = masterCourse ? {
-    id: masterCourse.id,
-    division: 'cybersecurity',
-    slug: masterCourse.slug || 'introduction-to-cybersecurity',
-    title: (masterCourse.title || 'Introduction to Cybersecurity').replace(/^Course\s*\d+:\s*/i, ''),
-    short_desc: masterCourse.overview || 'The institutional starting point for modern cyber defense. Master foundational security models, the CIA triad, the Lockheed Martin Cyber Kill Chain, STRIDE threat modeling, CVSS v3.1 scoring, authentication and access controls, applied cryptography, SOC incident management, and Indian cyber law (IT Act & DPDP Act 2023).',
-    difficulty: (masterCourse.difficulty || 'BEGINNER').toUpperCase(),
-    estimated_weeks: 10,
-    total_hours: 45,
-    courses_count: 1,
-    milestone_cert: masterCourse.milestone_cert || 'Certified Cybersecurity Defender Associate (CCDA)',
-    featured: true,
-    skills: masterCourse.skills || [
-      'CIA Triad & Defense-in-Depth',
-      'Lockheed Martin Cyber Kill Chain',
-      'Threat Modeling & STRIDE',
-      '5×5 Risk Matrix & CVSS v3.1',
-      'Identity, MFA & Access Control',
-      'Applied Cryptography (AES & TLS 1.3)',
-      'SOC Operations & SIEM Telemetry',
-      'Incident Response (NIST SP 800-61)',
-      'DPDP Act 2023 & Compliance',
-      'NICE Workforce Career Mapping'
-    ]
-  } : (learningPaths.find((p) => p.slug === 'foundational-cyber-defense-track') || learningPaths[0] || {
-    id: 'crs_cyber_intro_01',
-    division: 'cybersecurity',
-    slug: 'introduction-to-cybersecurity',
-    title: 'Introduction to Cybersecurity',
-    short_desc: 'The institutional starting point for modern cyber defense. Master foundational security models, the CIA triad, the Lockheed Martin Cyber Kill Chain, STRIDE threat modeling, CVSS v3.1 scoring, authentication and access controls, applied cryptography, SOC incident management, and Indian cyber law (IT Act & DPDP Act 2023).',
-    difficulty: 'BEGINNER',
-    estimated_weeks: 10,
-    total_hours: 45,
-    courses_count: 1,
-    milestone_cert: 'Certified Cybersecurity Defender Associate (CCDA)',
-    featured: true,
-    skills: [
-      'CIA Triad & Defense-in-Depth',
-      'Lockheed Martin Cyber Kill Chain',
-      'Threat Modeling & STRIDE',
-      '5×5 Risk Matrix & CVSS v3.1',
-      'Identity, MFA & Access Control',
-      'Applied Cryptography (AES & TLS 1.3)',
-      'SOC Operations & SIEM Telemetry',
-      'Incident Response (NIST SP 800-61)',
-      'DPDP Act 2023 & Compliance',
-      'NICE Workforce Career Mapping'
-    ]
-  });
+  const cyberCoursesList = useMemo(() => {
+    const list = CYBER_COURSES.map((cc) => ({
+      ...cc,
+      difficulty: (cc.difficulty || 'BEGINNER').toUpperCase(),
+      estimated_weeks: cc.estimated_weeks || 10,
+      short_desc: cc.short_desc || cc.overview
+    }));
+
+    if (courses && courses.length > 0) {
+      courses.forEach((apiC) => {
+        const idx = list.findIndex((item) => item.id === apiC.id || item.slug === apiC.slug);
+        if (idx >= 0) {
+          list[idx] = {
+            ...list[idx],
+            ...apiC,
+            difficulty: (apiC.difficulty || list[idx].difficulty || 'BEGINNER').toUpperCase(),
+            estimated_weeks: apiC.estimated_weeks || list[idx].estimated_weeks || 10,
+            short_desc: apiC.short_desc || apiC.overview || list[idx].short_desc
+          };
+        } else {
+          list.push({
+            ...apiC,
+            difficulty: (apiC.difficulty || 'BEGINNER').toUpperCase(),
+            estimated_weeks: apiC.estimated_weeks || 10,
+            short_desc: apiC.short_desc || apiC.overview
+          });
+        }
+      });
+    }
+
+    return list;
+  }, [courses]);
+
+  const masterCourse = cyberCoursesList[0];
+  const masterTrack = masterCourse;
 
   return (
     <div 
@@ -290,20 +276,23 @@ export default function CyberAcademyPage() {
                   Cybersecurity Course Curriculum
                 </h2>
                 <p className="text-xs sm:text-sm font-mono text-slate-400 mt-1">
-                  Hands-on course with cryptographic verification, real code assessments, and interactive laboratories.
+                  Master institutional cyber defense through hands-on curricula, real code assessments, and cryptographic credentials.
                 </p>
               </div>
               <span className="text-xs font-mono text-[#FFA439] hidden sm:block">
-                [ OFFICIAL MASTER CURRICULUM ]
+                [ {cyberCoursesList.length} MASTER CURRICULA ]
               </span>
             </motion.div>
 
-            {/* Official Master Curriculum Card (Left-Aligned, Horizontally Compact, Vertically Expanded) */}
-            <div className="max-w-xl text-left">
-              <CyberLearningCard 
-                track={masterTrack} 
-                idx={0} 
-              />
+            {/* Responsive Multi-Course Grid: Course 01 & Course 02 side-by-side */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl">
+              {cyberCoursesList.map((courseItem, idx) => (
+                <CyberLearningCard 
+                  key={courseItem.id || courseItem.slug || idx} 
+                  course={courseItem} 
+                  idx={idx} 
+                />
+              ))}
             </div>
           </section>
 

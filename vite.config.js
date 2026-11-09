@@ -42,6 +42,12 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
+          if (id.includes('course02')) {
+            return 'curriculum-course02';
+          }
+          if (id.includes('curriculum') || id.includes('questionBanks')) {
+            return 'curriculum-course01';
+          }
           if (id.includes('node_modules')) {
             if (
               id.includes('/node_modules/react/') ||
@@ -61,6 +67,12 @@ export default defineConfig({
             }
             if (id.includes('recharts')) {
               return 'vendor-charts';
+            }
+            if (id.includes('mermaid') || id.includes('d3') || id.includes('dagre') || id.includes('khroma')) {
+              return 'vendor-mermaid';
+            }
+            if (id.includes('katex')) {
+              return 'vendor-katex';
             }
             if (id.includes('lucide-react')) {
               return 'vendor-icons';

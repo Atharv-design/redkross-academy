@@ -250,12 +250,14 @@ export default function CyberCourseDetailPage() {
                   <div className="text-base sm:text-lg font-bold font-mono text-white">
                     {course.id === 'crs_cyber_intro_01' || course.slug === 'introduction-to-cybersecurity'
                       ? '6 Knowledge Checks + Final'
-                      : '12 Quizzes + Final'}
+                      : course.id === 'crs_cyber_net_02' || course.slug === 'computer-networking-for-cybersecurity'
+                      ? '8 Quizzes + Final'
+                      : `${course.modules?.length || 6} Quizzes + Final`}
                   </div>
                   <div className="text-[10px] text-slate-400">
                     {course.id === 'crs_cyber_intro_01' || course.slug === 'introduction-to-cybersecurity'
                       ? '60-MCQ Proctored Final'
-                      : '50-MCQ Proctored'}
+                      : '50-MCQ Proctored Final'}
                   </div>
                 </div>
               </div>
@@ -546,12 +548,16 @@ export default function CyberCourseDetailPage() {
                   <h3 className="text-xl sm:text-2xl font-bold font-royal text-white mb-2">
                     {course.id === 'crs_cyber_intro_01' || course.slug === 'introduction-to-cybersecurity'
                       ? 'Defensive Architecture & CIA Triad Competencies'
-                      : 'MITRE ATT&CK & OWASP Top 10 Behavioral Defenses'}
+                      : course.id === 'crs_cyber_net_02' || course.slug === 'computer-networking-for-cybersecurity'
+                      ? 'Enterprise Networking & Layered Perimeter Defense Competencies'
+                      : 'Defensive Engineering & Threat Mitigation Competencies'}
                   </h3>
                   <p className="text-sm text-slate-300 font-sans leading-relaxed">
                     {course.id === 'crs_cyber_intro_01' || course.slug === 'introduction-to-cybersecurity'
                       ? 'Cadets master foundational security principles, adversary kill chains, threat modeling, and layered defensive countermeasures.'
-                      : 'Graduates master both offensive behavioral understanding and robust software-level mitigation techniques.'}
+                      : course.id === 'crs_cyber_net_02' || course.slug === 'computer-networking-for-cybersecurity'
+                      ? 'Cadets master physical through application layer packet transmission, binary subnetting, routing convergence, stateful firewalls, and Wireshark forensics.'
+                      : 'Graduates master robust defensive architecture, operational telemetry, and systematic vulnerability remediation.'}
                   </p>
                 </div>
 
@@ -581,20 +587,43 @@ export default function CyberCourseDetailPage() {
                       title: 'MOD 06 // SEC OPS, GOVERNANCE & LAW',
                       desc: 'Harmonize security programs with NIST CSF 2.0 and CIS Controls v8, navigate SOC triage lifecycles, leverage foundational cryptography, and understand Indian cyber regulations (IT Act & DPDP Act).'
                     }
-                  ] : [
+                  ] : course.id === 'crs_cyber_net_02' || course.slug === 'computer-networking-for-cybersecurity' ? [
                     {
-                      title: 'INJECTION MITIGATION',
-                      desc: 'Defeat SQLi, NoSQLi, and OS command injection via parameterized queries, Mongoose schema sanitization, and strict Zod runtime verification.'
+                      title: 'MOD 01 // NETWORK FUNDAMENTALS',
+                      desc: 'Master physical and logical topologies (star, mesh, spine-leaf), transmission media (copper UTP/STP, single/multimode fibre, wireless RF), device roles, and interface inspection forensics.'
                     },
                     {
-                      title: 'BROKEN AUTH & JWT',
-                      desc: 'Implement tamper-proof authentication with bcrypt password work factors, short-lived rotating JWT access tokens, and HTTP-only SameSite cookies.'
+                      title: 'MOD 02 // LAYERED MODELS & ENCAPSULATION',
+                      desc: 'Dissect packet propagation across the OSI 7-layer and TCP/IP 4-layer reference architectures, tracing PDU encapsulation (Data, Segment, Packet, Frame, Bits) down to the wire and back.'
                     },
                     {
-                      title: 'CONTAINER & CI/CD HARDENING',
-                      desc: 'Ship production microservices via non-root Docker containers, automated GitHub Actions security scanners, and least-privilege RBAC.'
+                      title: 'MOD 03 // ADDRESSING (IPV4, CIDR & IPV6)',
+                      desc: 'Execute binary/hexadecimal conversions, bitwise ANDing, CIDR prefix calculations, Variable Length Subnet Masking (VLSM), RFC 1918 private scopes, and IPv6 128-bit SLAAC architecture.'
+                    },
+                    {
+                      title: 'MOD 04 // PROTOCOLS (TCP, UDP, ICMP & ARP)',
+                      desc: 'Dissect the TCP 3-way handshake, sequence/ack tracking, RST teardowns, UDP stateless streaming, ICMP error messaging, ARP cache mechanics, and DAI defensive controls.'
+                    },
+                    {
+                      title: 'MOD 05 // SERVICES (DNS, DHCP, NAT & TLS 1.3)',
+                      desc: 'Analyze DNS root-to-authoritative hierarchy, Kaminsky cache poisoning, DNSSEC, DHCP DORA cycles, DHCP snooping, NAT/PAT overload, and the TLS 1.3 1-RTT cryptographic handshake.'
+                    },
+                    {
+                      title: 'MOD 06 // ROUTING & SWITCHING SEGMENTATION',
+                      desc: 'Evaluate Layer 2 switching CAM tables, 802.1Q VLAN trunking, STP loop prevention, default gateways, route lookups (longest prefix match), OSPF, BGP autonomous systems, and DMZ design.'
+                    },
+                    {
+                      title: 'MOD 07 // BOUNDARIES, FIREWALLS & VPNS',
+                      desc: 'Configure stateful packet inspection, Linux Netfilter conntrack tables, iptables/nftables syntax, forward/reverse proxies, WireGuard/IPsec VPN tunnels, WPA3 SAE Wi-Fi, and Zero Trust tenets.'
+                    },
+                    {
+                      title: 'MOD 08 // TRAFFIC ANALYSIS & FORENSICS',
+                      desc: 'Conduct ground-truth packet triage with Wireshark and tshark CLI, apply Berkeley Packet Filters (BPF) and display filters, dissect malicious beacons, and draft a forensic troubleshooting report.'
                     }
-                  ]).map((item, idx) => (
+                  ] : (course.modules || []).map((m, mIdx) => ({
+                    title: `MOD ${String(mIdx + 1).padStart(2, '0')} // ${m.title.toUpperCase()}`,
+                    desc: m.description || 'Core technical competencies, hands-on labs, and graded assessments.'
+                  }))).map((item, idx) => (
                     <div key={idx} className="p-4 rounded-xl bg-[#FF7A00]/10 border border-[#FF7A00]/30 space-y-2">
                       <div className="text-xs font-mono font-bold text-[#FFA439] uppercase">
                         {item.title}
@@ -844,26 +873,43 @@ export default function CyberCourseDetailPage() {
                   q: 'Does this course teach defensive security or offensive hacking?',
                   a: 'RedKross Academy focuses strictly on defensive security and institutional resilience. We examine adversary tactics and real-world attack vectors specifically so defenders understand how to anticipate, mitigate, and neutralize threats.'
                 }
+              ] : course.id === 'crs_cyber_net_02' || course.slug === 'computer-networking-for-cybersecurity' ? [
+                {
+                  q: 'Do I need prior networking or coding knowledge before starting this course?',
+                  a: 'No prior networking certification is required. Familiarity with basic IT concepts or Course 01 (Introduction to Cybersecurity) is recommended. The course constructs all networking knowledge from binary bits and physical cables to stateful firewalls.'
+                },
+                {
+                  q: 'What does the 8-module Computer Networking curriculum cover?',
+                  a: 'The curriculum spans 8 comprehensive modules: (1) Network Fundamentals, (2) Layered Models and Encapsulation, (3) Addressing (IPv4, CIDR, VLSM & IPv6), (4) Network Protocols (TCP, UDP, ICMP, ARP), (5) Essential Network Services (DNS, DHCP, NAT, HTTP & TLS 1.3), (6) Routing and Switching Segmentation, (7) Network Boundaries, Firewalls & VPNs, and (8) Traffic Analysis & Wireshark Forensics.'
+                },
+                {
+                  q: 'What practical network analysis tools will I use in this curriculum?',
+                  a: 'Cadets analyze real traffic captures using Wireshark, tshark, tcpdump, dig, traceroute, and Linux stateful firewall utilities (iptables, nftables). Every lesson includes inline interactive packet decodes and terminal illustrations.'
+                },
+                {
+                  q: 'How do module assessments and the final CNDA certification exam work?',
+                  a: 'Each module concludes with a 20-MCQ graded assessment requiring a 70% score to proceed. After passing all 8 modules, cadets unlock the proctored 50-MCQ final certification exam to earn the Certified Network Defense Associate (CNDA) credential.'
+                },
+                {
+                  q: 'What is the recommended weekly pace and duration?',
+                  a: 'The course is structured for 10 weeks at 6–8 hours per week (~86 total learning hours including 56 hours module study, 18 hours practicals, 2 hours assessment, and 10 hours capstone report). The curriculum is fully self-paced.'
+                },
+                {
+                  q: 'How do employers verify RedKross networking credentials?',
+                  a: 'Each issued certificate contains a public verification URL (/verify/:id) and a deterministic SHA-256 hash that cryptographically confirms the cadet identity, passing grade, and completion timestamp.'
+                }
               ] : [
                 {
-                  q: 'What are the system requirements for the virtual Kali CyberLab?',
-                  a: 'The Kali CyberLab V3 runs entirely inside your browser using containerized mock architecture, WebGL, and an authentic 143+ command suite. No local VirtualBox or VMware installs are needed.'
+                  q: 'What is the retake policy for module quizzes?',
+                  a: 'Cadets are granted 3 attempts per module assessment. If all 3 attempts fail to meet the 80% passing threshold, a mandatory 24-hour review cooldown is activated to reinforce syllabus mastery.'
                 },
                 {
-                  q: 'What is the quiz cooldown and retake policy?',
-                  a: 'Cadets are granted 3 attempts per module assessment. If all 3 attempts fail to meet the 80% passing threshold, a mandatory 24-hour tactical review cooldown is activated to reinforce syllabus mastery.'
-                },
-                {
-                  q: 'How does the 50-MCQ final certification exam work?',
-                  a: 'The final exam features 50 randomized questions covering all 12 modules under a 60-minute timer. Strict anti-cheat tab-blur protection logs all focus disruptions; 3 strikes terminate the attempt.'
+                  q: 'How does the final certification exam work?',
+                  a: 'The final certification exam features randomized questions under a 60-minute proctored timer. Strict anti-cheat tab-blur protection logs all focus disruptions.'
                 },
                 {
                   q: 'How do employers verify RedKross credentials?',
                   a: 'Each issued certificate contains a public verification URL (/verify/:id) and a deterministic SHA-256 hash that cryptographically confirms the cadet identity, grade, and completion timestamp.'
-                },
-                {
-                  q: 'Does this curriculum cover ethical application defense only?',
-                  a: 'Yes. RedKross Academy adheres strictly to defensive security and secure application development. Offensive tooling simulations exist solely to educate engineers on OWASP Top 10 mitigation.'
                 }
               ]).map((faq, i) => (
                 <div

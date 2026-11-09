@@ -109,6 +109,18 @@ export const INITIAL_ENROLMENTS = [
     passed_quizzes: ['quiz_mod_1'],
     final_assessment_attempt_id: null,
     credential_id: null,
+  },
+  {
+    id: 'enr_student_net_02',
+    user_id: 'usr_student_01',
+    course_id: 'crs_cyber_net_02',
+    course_version: '1.0',
+    enrolled_at: '2026-10-10T10:00:00Z',
+    status: 'active',
+    completed_mandatory_lessons: [],
+    passed_quizzes: [],
+    final_assessment_attempt_id: null,
+    credential_id: null,
   }
 ];
 

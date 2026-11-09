@@ -1,0 +1,62 @@
+Waiting for capture to start...
+HTTP GET / -> 200
+HTTP GET /nothere -> 404
+PING 172.30.0.10 (172.30.0.10): 56 data bytes
+64 bytes from 172.30.0.10: seq=0 ttl=64 time=0.114 ms
+64 bytes from 172.30.0.10: seq=1 ttl=64 time=0.089 ms
+
+--- 172.30.0.10 ping statistics ---
+2 packets transmitted, 2 packets received, 0% packet loss
+round-trip min/avg/max = 0.089/0.101/0.114 ms
+UDP datagram sent
+Saved ./rk_c02_lab.pcap
+    1   0.000000 140.248.138.132 -> 172.30.0.10  TLSv1.2 90 Application Data
+    2   0.000010  172.30.0.10 -> 140.248.138.132 TCP 54 37932 -> 443 [RST] Seq=1 Win=0 Len=0
+    3   0.000038 140.248.138.132 -> 172.30.0.10  TCP 66 443 -> 37932 [FIN, ACK] Seq=25 Ack=1 Win=4096 Len=0 TSval=2415381735 TSecr=3465418616
+    4   0.000040  172.30.0.10 -> 140.248.138.132 TCP 54 37932 -> 443 [RST] Seq=1 Win=0 Len=0
+    5   1.242307 3e:fc:02:bb:98:bd -> c2:97:98:65:94:00 ARP 42 Who has 172.30.0.10? Tell 172.30.0.1
+    6   1.242318 c2:97:98:65:94:00 -> 3e:fc:02:bb:98:bd ARP 42 172.30.0.10 is at c2:97:98:65:94:00
+    7   5.661915 8e:c4:2b:21:89:b7 -> Broadcast    ARP 42 ARP Announcement for 172.30.0.20
+    8   5.692508 8e:c4:2b:21:89:b7 -> Broadcast    ARP 42 Who has 172.30.0.10? Tell 172.30.0.20
+    9   5.692514 c2:97:98:65:94:00 -> 8e:c4:2b:21:89:b7 ARP 42 172.30.0.10 is at c2:97:98:65:94:00
+   10   5.692526  172.30.0.20 -> 172.30.0.10  TCP 74 44460 -> 8080 [SYN] Seq=0 Win=64240 Len=0 MSS=1460 SACK_PERM TSval=651756182 TSecr=0 WS=128
+   11   5.692536  172.30.0.10 -> 172.30.0.20  TCP 74 8080 -> 44460 [SYN, ACK] Seq=0 Ack=1 Win=65160 Len=0 MSS=1460 SACK_PERM TSval=3375649610 TSecr=651756182 WS=128
+   12   5.692569  172.30.0.20 -> 172.30.0.10  TCP 66 44460 -> 8080 [ACK] Seq=1 Ack=1 Win=64256 Len=0 TSval=651756182 TSecr=3375649610
+   13   5.692666  172.30.0.20 -> 172.30.0.10  HTTP 146 GET / HTTP/1.1 
+   14   5.692671  172.30.0.10 -> 172.30.0.20  TCP 66 8080 -> 44460 [ACK] Seq=1 Ack=81 Win=65152 Len=0 TSval=3375649610 TSecr=651756182
+   15   5.693724  172.30.0.10 -> 172.30.0.20  TCP 222 HTTP/1.0 200 OK  [TCP segment of a reassembled PDU]
+   16   5.693758  172.30.0.20 -> 172.30.0.10  TCP 66 44460 -> 8080 [ACK] Seq=81 Ack=157 Win=64128 Len=0 TSval=651756183 TSecr=3375649611
+   17   5.693776  172.30.0.10 -> 172.30.0.20  HTTP 943 HTTP/1.0 200 OK  (text/html)
+   18   5.693781  172.30.0.20 -> 172.30.0.10  TCP 66 44460 -> 8080 [ACK] Seq=81 Ack=1034 Win=63744 Len=0 TSval=651756183 TSecr=3375649611
+   19   5.693805  172.30.0.10 -> 172.30.0.20  TCP 66 8080 -> 44460 [FIN, ACK] Seq=1034 Ack=81 Win=65152 Len=0 TSval=3375649611 TSecr=651756183
+   20   5.693834  172.30.0.20 -> 172.30.0.10  TCP 66 44460 -> 8080 [FIN, ACK] Seq=81 Ack=1035 Win=64128 Len=0 TSval=651756183 TSecr=3375649611
+   21   5.693840  172.30.0.10 -> 172.30.0.20  TCP 66 8080 -> 44460 [ACK] Seq=1035 Ack=82 Win=65152 Len=0 TSval=3375649611 TSecr=651756183
+   22   6.278706 MS-NLB-PhysServer-32_1f:f4:e6:bd:9a -> Broadcast    ARP 42 ARP Announcement for 172.30.0.21
+   23   6.308276 MS-NLB-PhysServer-32_1f:f4:e6:bd:9a -> Broadcast    ARP 42 Who has 172.30.0.10? Tell 172.30.0.21
+   24   6.308285 c2:97:98:65:94:00 -> MS-NLB-PhysServer-32_1f:f4:e6:bd:9a ARP 42 172.30.0.10 is at c2:97:98:65:94:00
+   25   6.308304  172.30.0.21 -> 172.30.0.10  TCP 74 54762 -> 8080 [SYN] Seq=0 Win=64240 Len=0 MSS=1460 SACK_PERM TSval=3940696692 TSecr=0 WS=128
+   26   6.308316  172.30.0.10 -> 172.30.0.21  TCP 74 8080 -> 54762 [SYN, ACK] Seq=0 Ack=1 Win=65160 Len=0 MSS=1460 SACK_PERM TSval=16934020 TSecr=3940696692 WS=128
+   27   6.308328  172.30.0.21 -> 172.30.0.10  TCP 66 54762 -> 8080 [ACK] Seq=1 Ack=1 Win=64256 Len=0 TSval=3940696692 TSecr=16934020
+   28   6.308411  172.30.0.21 -> 172.30.0.10  HTTP 153 GET /nothere HTTP/1.1 
+   29   6.308416  172.30.0.10 -> 172.30.0.21  TCP 66 8080 -> 54762 [ACK] Seq=1 Ack=88 Win=65152 Len=0 TSval=16934020 TSecr=3940696692
+   30   6.309383  172.30.0.10 -> 172.30.0.21  TCP 252 HTTP/1.0 404 File not found  [TCP segment of a reassembled PDU]
+   31   6.309428  172.30.0.21 -> 172.30.0.10  TCP 66 54762 -> 8080 [ACK] Seq=88 Ack=187 Win=64128 Len=0 TSval=3940696693 TSecr=16934021
+   32   6.309443  172.30.0.10 -> 172.30.0.21  HTTP 401 HTTP/1.0 404 File not found  (text/html)
+   33   6.309466  172.30.0.21 -> 172.30.0.10  TCP 66 54762 -> 8080 [ACK] Seq=88 Ack=522 Win=64128 Len=0 TSval=3940696693 TSecr=16934021
+   34   6.309470  172.30.0.10 -> 172.30.0.21  TCP 66 8080 -> 54762 [FIN, ACK] Seq=522 Ack=88 Win=65152 Len=0 TSval=16934021 TSecr=3940696693
+   35   6.309532  172.30.0.21 -> 172.30.0.10  TCP 66 54762 -> 8080 [FIN, ACK] Seq=88 Ack=523 Win=64128 Len=0 TSval=3940696693 TSecr=16934021
+   36   6.309552  172.30.0.10 -> 172.30.0.21  TCP 66 8080 -> 54762 [ACK] Seq=523 Ack=89 Win=65152 Len=0 TSval=16934021 TSecr=3940696693
+   37   6.935157 8a:24:76:c4:48:4a -> Broadcast    ARP 42 ARP Announcement for 172.30.0.22
+   38   6.959062 8a:24:76:c4:48:4a -> Broadcast    ARP 42 Who has 172.30.0.10? Tell 172.30.0.22
+   39   6.959072 c2:97:98:65:94:00 -> 8a:24:76:c4:48:4a ARP 42 172.30.0.10 is at c2:97:98:65:94:00
+   40   6.959093  172.30.0.22 -> 172.30.0.10  ICMP 98 Echo (ping) request  id=0x0001, seq=0/0, ttl=64
+   41   6.959106  172.30.0.10 -> 172.30.0.22  ICMP 98 Echo (ping) reply    id=0x0001, seq=0/0, ttl=64 (request in 40)
+   42   7.936196 8a:24:76:c4:48:4a -> Broadcast    ARP 42 ARP Announcement for 172.30.0.22
+   43   7.959408  172.30.0.22 -> 172.30.0.10  ICMP 98 Echo (ping) request  id=0x0001, seq=1/256, ttl=64
+   44   7.959422  172.30.0.10 -> 172.30.0.22  ICMP 98 Echo (ping) reply    id=0x0001, seq=1/256, ttl=64 (request in 43)
+   45   8.510882 6a:b8:1e:30:da:b6 -> Broadcast    ARP 42 ARP Announcement for 172.30.0.23
+   46   8.580934 6a:b8:1e:30:da:b6 -> Broadcast    ARP 42 Who has 172.30.0.10? Tell 172.30.0.23
+   47   8.580942 c2:97:98:65:94:00 -> 6a:b8:1e:30:da:b6 ARP 42 172.30.0.10 is at c2:97:98:65:94:00
+   48   8.580960  172.30.0.23 -> 172.30.0.10  UDP 53 54156 -> 9999 Len=11
+   49   8.580977  172.30.0.10 -> 172.30.0.23  ICMP 81 Destination unreachable (Port unreachable)
+Cleanup complete (containers and network removed).

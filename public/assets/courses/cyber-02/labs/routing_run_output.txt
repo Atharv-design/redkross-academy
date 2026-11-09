@@ -1,0 +1,27 @@
+== Router interfaces
+    inet 127.0.0.1/8 scope host lo
+2: eth0@if75: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP 
+    link/ether 56:bb:06:1f:22:d4 brd ff:ff:ff:ff:ff:ff
+    inet 172.31.10.254/24 brd 172.31.10.255 scope global eth0
+3: eth1@if76: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP 
+    link/ether 2a:29:5c:e4:b2:9a brd ff:ff:ff:ff:ff:ff
+    inet 172.31.20.254/24 brd 172.31.20.255 scope global eth1
+== Router routing table
+default via 172.31.20.1 dev eth1 
+172.31.10.0/24 dev eth0 scope link  src 172.31.10.254 
+172.31.20.0/24 dev eth1 scope link  src 172.31.20.254 
+== Staff client
+-- routing table
+default via 172.31.10.1 dev eth0 
+172.31.10.0/24 dev eth0 scope link  src 172.31.10.50 
+172.31.20.0/24 via 172.31.10.254 dev eth0 
+-- route chosen for 172.31.20.10
+172.31.20.10 via 172.31.10.254 dev eth0  src 172.31.10.50 
+-- traceroute
+traceroute to 172.31.20.10 (172.31.20.10), 3 hops max, 46 byte packets
+ 1  172.31.10.254  0.011 ms  0.007 ms  0.005 ms
+ 2  172.31.20.10  0.004 ms  0.005 ms  0.005 ms
+-- ping (note ttl)
+PING 172.31.20.10 (172.31.20.10): 56 data bytes
+64 bytes from 172.31.20.10: seq=0 ttl=63 time=1.415 ms
+Cleanup complete.

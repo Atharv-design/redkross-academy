@@ -5,6 +5,7 @@ import { AuthProvider } from './services/auth/authContext.jsx';
 import ErrorBoundary from './components/common/ErrorBoundary.jsx';
 import './index.css';
 import './styles/liquid-glass.css';
+import 'katex/dist/katex.min.css';
 
 if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
   if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {

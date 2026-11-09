@@ -1,0 +1,70 @@
+=== 1. DNS: local resolver for rk-lab.example
+-- A record
+www.rk-lab.example.	300	IN	A	172.30.5.10
+-- MX record
+rk-lab.example.		300	IN	MX	10 mail.rk-lab.example.
+-- TXT record
+rk-lab.example.		300	IN	TXT	"v=spf1 mx -all"
+-- name that does not exist (status line)
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 29536
+=== 2. DHCP: client asks the lab dnsmasq for a lease
+  udhcpc: started, v1.36.1
+  udhcpc: broadcasting discover
+  udhcpc: broadcasting discover
+  udhcpc: broadcasting select for 172.30.5.143, server 172.30.5.53
+  udhcpc: lease of 172.30.5.143 obtained from 172.30.5.53, lease time 3600
+-- capture summary (DNS and DHCP)
+1	172.30.5.60	172.30.5.53	www.rk-lab.example		
+2	172.30.5.53	172.30.5.60	www.rk-lab.example	0	
+3	172.30.5.60	172.30.5.53	rk-lab.example		
+4	172.30.5.53	172.30.5.60	rk-lab.example	0	
+5	172.30.5.60	172.30.5.53	rk-lab.example		
+6	172.30.5.53	172.30.5.60	rk-lab.example	0	
+7	172.30.5.60	172.30.5.53	nothere.rk-lab.example		
+8	172.30.5.53	172.30.5.60	nothere.rk-lab.example	3	
+9	0.0.0.0	255.255.255.255			1
+10	172.30.5.53	172.30.5.143			2
+11	0.0.0.0	255.255.255.255			1
+12	172.30.5.53	172.30.5.143			2
+13	0.0.0.0	255.255.255.255			3
+14	172.30.5.53	172.30.5.143			5
+-- resolver log (last lines)
+dnsmasq-dhcp[49]: DHCPDISCOVER(eth0) 62:1d:aa:0d:27:91 
+dnsmasq-dhcp[49]: DHCPOFFER(eth0) 172.30.5.143 62:1d:aa:0d:27:91 
+dnsmasq-dhcp[49]: DHCPDISCOVER(eth0) 62:1d:aa:0d:27:91 
+dnsmasq-dhcp[49]: DHCPOFFER(eth0) 172.30.5.143 62:1d:aa:0d:27:91 
+dnsmasq-dhcp[49]: DHCPREQUEST(eth0) 172.30.5.143 62:1d:aa:0d:27:91 
+dnsmasq-dhcp[49]: DHCPACK(eth0) 172.30.5.143 62:1d:aa:0d:27:91 
+=== 3. NAT: inside 172.30.6.0/24 -> router -> outside 172.30.7.0/24
+-- NAT rule
+-A POSTROUTING -s 172.30.6.0/24 -o eth1 -j MASQUERADE
+64 bytes from 172.30.7.80: seq=0 ttl=63 time=1.156 ms
+64 bytes from 172.30.7.80: seq=1 ttl=63 time=0.150 ms
+2 packets transmitted, 2 packets received, 0% packet loss
+-- connection tracking table
+icmp     1 29 src=172.30.6.20 dst=172.30.7.80 type=8 code=0 id=8 src=172.30.7.80 dst=172.30.7.254 type=0 code=0 id=8 mark=0 use=1
+-- what the outside server saw (source address)
+IP 172.30.7.254 > 172.30.7.80: ICMP echo request, id 8, seq 0, length 64
+IP 172.30.7.80 > 172.30.7.254: ICMP echo reply, id 8, seq 0, length 64
+IP 172.30.7.254 > 172.30.7.80: ICMP echo request, id 8, seq 1, length 64
+IP 172.30.7.80 > 172.30.7.254: ICMP echo reply, id 8, seq 1, length 64
+=== 4. TLS: local HTTPS server with a self-signed certificate
+-- client offering -tls1_2
+    Protocol  : TLSv1.2
+    Verify return code: 18 (self-signed certificate)
+New, TLSv1.2, Cipher is ECDHE-RSA-AES256-GCM-SHA384
+issuer=CN=www.rk-lab.example
+subject=CN=www.rk-lab.example
+-- client offering -tls1_3
+New, TLSv1.3, Cipher is TLS_AES_256_GCM_SHA384
+Verify return code: 18 (self-signed certificate)
+issuer=CN=www.rk-lab.example
+subject=CN=www.rk-lab.example
+-- TLS handshake messages seen on the wire
+4	172.30.5.62	1	www.rk-lab.example	0x0303		
+6	172.30.5.10	2,11,12,14		0x0303		www.rk-lab.example,www.rk-lab.example
+8	172.30.5.62	16				
+9	172.30.5.10	4				
+19	172.30.5.62	1	www.rk-lab.example	0x0303		
+21	172.30.5.10	2		0x0303		
+Cleanup on exit.

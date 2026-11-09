@@ -21,14 +21,32 @@ import { useAuth } from '../../services/auth/authContext';
 import RedKrossOfficialCertificate from '../../components/certificate/RedKrossOfficialCertificate';
 import { downloadCertificatePdf } from '../../utils/pdfGenerator';
 import ExamCBTInterface from '../../components/student/ExamCBTInterface';
+import { getOrGenerateQuizQuestions, clearQuizSessionQuestions } from '../../services/db/questionBanks/questionBankEngine';
 
 export default function FinalCertificationPage() {
   const { enrolmentId } = useParams();
   const { currentUser, refreshBalance } = useAuth();
 
+  const [examSessionNonce, setExamSessionNonce] = useState(0);
   const enrolment = mockEngine.getEnrolment(enrolmentId);
   const course = enrolment ? mockEngine.getCourseById(enrolment.course_id) : null;
-  const examMeta = course?.final_assessment;
+  const baseExamMeta = course?.final_assessment;
+
+  const examMeta = React.useMemo(() => {
+    if (!baseExamMeta) return null;
+    const dynamicQuestions = getOrGenerateQuizQuestions(
+      enrolmentId,
+      baseExamMeta.id || 'exam_cyber_final',
+      course?.modules?.length || 6,
+      true,
+      course?.id
+    );
+    return {
+      ...baseExamMeta,
+      total_questions: dynamicQuestions.length,
+      questions: dynamicQuestions
+    };
+  }, [baseExamMeta, enrolmentId, course?.id, course?.modules?.length, examSessionNonce]);
 
   const [gateStatus, setGateStatus] = useState({ is_unlocked: false, reasons: [] });
   const [examStarted, setExamStarted] = useState(false);
@@ -174,7 +192,21 @@ export default function FinalCertificationPage() {
     );
   }
 
-  const handleStartFinal = () => {
+  const handleStartFinal = async () => {
+    try {
+      const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtxClass && !window.__rkProctorAudioCtx) {
+        window.__rkProctorAudioCtx = new AudioCtxClass();
+        if (window.__rkProctorAudioCtx.state === 'suspended') {
+          window.__rkProctorAudioCtx.resume().catch(() => {});
+        }
+      }
+    } catch {}
+    try {
+      if (document.documentElement.requestFullscreen) {
+        await document.documentElement.requestFullscreen().catch(() => {});
+      }
+    } catch {}
     setExamStarted(true);
     setActiveAttemptId(`final_att_${Date.now()}`);
     setUserAnswers({});
@@ -406,10 +438,12 @@ export default function FinalCertificationPage() {
             isSubmitted={Boolean(examResult)}
             submissionResult={examResult}
             onRetakeExam={() => {
+              clearQuizSessionQuestions(enrolmentId, examMeta?.id || 'exam_cyber_final', course?.id);
               setExamResult(null);
               setExamStarted(false);
               setUserAnswers({});
-              setTimerSeconds(examMeta.duration_minutes ? examMeta.duration_minutes * 60 : 3600);
+              setExamSessionNonce((prev) => prev + 1);
+              setTimerSeconds(examMeta?.duration_minutes ? examMeta.duration_minutes * 60 : 3600);
             }}
             isLockoutActive={lockoutState.isLocked}
             lockoutCountdown={{

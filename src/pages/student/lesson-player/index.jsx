@@ -61,42 +61,45 @@ export default function LessonPlayerPage() {
   const course = enrolment ? mockEngine.getCourseById(enrolment.course_id) : mockEngine.getCourseById('crs_cyber_intro_01');
   const isPsychology = (course?.division || '').toLowerCase() === 'psychology';
 
-  const allUnits = [];
-  if (course && course.modules) {
-    course.modules.forEach((mod, modIdx) => {
-      (mod.lessons || []).forEach((les) => {
-        allUnits.push({
-          id: les.id,
-          type: 'lesson',
-          lesson: les,
-          moduleIndex: modIdx,
-          moduleId: mod.id,
-          moduleTitle: mod.title
+  const allUnits = React.useMemo(() => {
+    const units = [];
+    if (course && course.modules) {
+      course.modules.forEach((mod, modIdx) => {
+        (mod.lessons || []).forEach((les) => {
+          units.push({
+            id: les.id,
+            type: 'lesson',
+            lesson: les,
+            moduleIndex: modIdx,
+            moduleId: mod.id,
+            moduleTitle: mod.title
+          });
         });
+        if (mod.quiz) {
+          units.push({
+            id: mod.quiz.id,
+            type: 'quiz',
+            quiz: mod.quiz,
+            moduleIndex: modIdx,
+            moduleId: mod.id,
+            moduleTitle: mod.title
+          });
+        }
       });
-      if (mod.quiz) {
-        allUnits.push({
-          id: mod.quiz.id,
-          type: 'quiz',
-          quiz: mod.quiz,
-          moduleIndex: modIdx,
-          moduleId: mod.id,
-          moduleTitle: mod.title
+
+      if (course.final_assessment) {
+        units.push({
+          id: course.final_assessment.id,
+          type: 'final_exam',
+          quiz: course.final_assessment,
+          moduleIndex: course.modules.length,
+          moduleId: 'mod_final',
+          moduleTitle: 'Final Comprehensive Certification Assessment'
         });
       }
-    });
-
-    if (course.final_assessment) {
-      allUnits.push({
-        id: course.final_assessment.id,
-        type: 'final_exam',
-        quiz: course.final_assessment,
-        moduleIndex: course.modules.length,
-        moduleId: 'mod_final',
-        moduleTitle: 'Final Comprehensive Certification Assessment'
-      });
     }
-  }
+    return units;
+  }, [course]);
 
   const queryParamUnitId = searchParams.get('unitId') || searchParams.get('lessonId');
   const [activeUnitId, setActiveUnitId] = useState(queryParamUnitId || allUnits[0]?.id || null);
@@ -135,7 +138,9 @@ export default function LessonPlayerPage() {
   });
 
   const initialLockout = (() => {
-    if (!enrolmentId) return { isLocked: false, remainingHours: 0, remainingMinutes: 0 };
+    if (!enrolmentId) {
+      return { isLocked: false, remainingHours: 0, remainingMinutes: 0 };
+    }
     try {
       return mockEngine.isExamLocked(enrolmentId, queryParamUnitId);
     } catch {
@@ -153,6 +158,11 @@ export default function LessonPlayerPage() {
   const [certRequestSubmitted, setCertRequestSubmitted] = useState(false);
   const [certCadetNotes, setCertCadetNotes] = useState('');
   const [hasAcknowledgedExamRules, setHasAcknowledgedExamRules] = useState({});
+  const [onScreenAlert, setOnScreenAlert] = useState(null); // { title: string, message: string, type?: 'warning' | 'error' | 'info' }
+
+  const showCustomAlert = (title, message, type = 'warning') => {
+    setOnScreenAlert({ title, message, type });
+  };
 
   const [unlockCelebrationModal, setUnlockCelebrationModal] = useState({
     isOpen: false,
@@ -168,17 +178,28 @@ export default function LessonPlayerPage() {
 
   // Automatically scroll main content panel and window to the top on lesson / unit change
   useEffect(() => {
-    if (mainScrollRef.current) {
-      mainScrollRef.current.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-    }
-    if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-    }
+    const scrollToTop = () => {
+      if (mainScrollRef.current) {
+        mainScrollRef.current.scrollTop = 0;
+        mainScrollRef.current.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      }
+      if (typeof window !== 'undefined') {
+        window.scrollTo(0, 0);
+      }
+    };
+
+    scrollToTop();
+    const rafId = requestAnimationFrame(scrollToTop);
+    const timerId = setTimeout(scrollToTop, 60);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      clearTimeout(timerId);
+    };
   }, [activeUnitId]);
 
   // =========================================================================
   // Strict Linear Curriculum Progression: Read Module -> Pass Exam -> Unlock Next
-  // =========================================================================
   useEffect(() => {
     try {
       localStorage.removeItem('rk_dev_gateway_unlock_all');
@@ -270,13 +291,13 @@ export default function LessonPlayerPage() {
     if (!baseQuiz) return null;
     const isFinal = activeUnit?.type === 'final_exam';
     const modNum = activeUnit?.moduleIndex !== undefined ? activeUnit.moduleIndex + 1 : 1;
-    const dynamicQuestions = getOrGenerateQuizQuestions(enrolmentId, baseQuiz.id, modNum, isFinal);
+    const dynamicQuestions = getOrGenerateQuizQuestions(enrolmentId, baseQuiz.id, modNum, isFinal, course?.id);
     return {
       ...baseQuiz,
       total_questions: dynamicQuestions.length,
       questions: dynamicQuestions
     };
-  }, [baseQuiz?.id, activeUnit?.type, activeUnit?.moduleIndex, enrolmentId, quizSessionNonce]);
+  }, [baseQuiz?.id, activeUnit?.type, activeUnit?.moduleIndex, enrolmentId, quizSessionNonce, course?.id]);
 
   const isLessonCompleted = activeLesson
     ? (currentEnrolment?.completed_mandatory_lessons || enrolment?.completed_mandatory_lessons || []).includes(activeLesson.id)
@@ -289,6 +310,14 @@ export default function LessonPlayerPage() {
   const isExamUnit = (activeUnit?.type === 'quiz' || activeUnit?.type === 'final_exam') && !!activeQuiz;
   const isExamRulesAcknowledged = activeQuiz ? !!hasAcknowledgedExamRules[activeQuiz.id] : false;
   const showExamRulesGate = isExamUnit && !isQuizPassed && !quizSubmitted && !isLockoutActive && !isExamRulesAcknowledged;
+  const isExamActive = isExamUnit && !isQuizPassed && !quizSubmitted;
+
+  // Automatically collapse outline sidebar whenever on an active exam unit
+  useEffect(() => {
+    if (isExamActive) {
+      setSidebarOpen(false);
+    }
+  }, [isExamActive]);
 
   const targetParamUnitId = searchParams.get('unitId') || searchParams.get('lessonId');
 
@@ -407,29 +436,19 @@ export default function LessonPlayerPage() {
           isPassed: true
         });
       } else if (!isQuizPassed) {
-        const totalMinutes = activeUnit?.type === 'final_exam' ? 60 : 20;
+        const isFifty = activeUnit?.type === 'final_exam' || (activeQuiz?.total_questions >= 50);
+        const totalMinutes = isFifty ? 60 : 30; // 50 marks = 60 min, 20 marks = 30 min
         setExamTimeRemaining((prev) => (prev !== totalMinutes * 60 ? totalMinutes * 60 : prev));
       }
     }
   }, [activeQuiz?.id, isQuizPassed, activeUnit?.type]);
 
+  // Auto-dismiss course outline sidebar whenever an active exam unit is displayed
   useEffect(() => {
-    if (!activeQuiz || quizSubmitted || isLockoutActive || examTimeRemaining === null || examTimeRemaining <= 0) return;
-    if (!hasAcknowledgedExamRules[activeQuiz.id] && !isQuizPassed) return;
-
-    const timer = setInterval(() => {
-      setExamTimeRemaining((prev) => {
-        if (prev !== null && prev <= 1) {
-          clearInterval(timer);
-          setTimeout(() => handleSubmitQuiz(), 0);
-          return 0;
-        }
-        return prev !== null ? prev - 1 : null;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [activeQuiz?.id, quizSubmitted, isLockoutActive, examTimeRemaining === null, hasAcknowledgedExamRules, isQuizPassed]);
+    if (isExamUnit && !isQuizPassed && !quizSubmitted) {
+      setSidebarOpen(false);
+    }
+  }, [isExamUnit, isQuizPassed, quizSubmitted]);
 
   const triggerProctorViolation = (violationType) => {
     if (quizSubmitted || isLockoutActive || !activeQuiz) return;
@@ -453,9 +472,9 @@ export default function LessonPlayerPage() {
             minutes: forfeitResult.remainingMinutes || 59,
             seconds: 59
           });
-          alert('PROCTORING VIOLATION: Tab switch detected during active examination. All 3 evaluation attempts have been exhausted. A 24-hour examination cooldown is now enforced.');
+          showCustomAlert('PROCTORING VIOLATION (24H COOLDOWN)', 'Tab switch detected during active examination. All 3 evaluation attempts have been exhausted. A 24-hour examination cooldown is now enforced.', 'error');
         } else {
-          alert(`PROCTORING WARNING: Tab switch detected. 1 attempt has been deducted. You have ${forfeitResult.attemptsRemaining} of 3 attempts remaining.`);
+          showCustomAlert('PROCTORING WARNING', `Tab switch detected. 1 attempt has been deducted. You have ${forfeitResult.attemptsRemaining} of 3 attempts remaining.`, 'warning');
         }
       }
     } catch (e) {
@@ -514,43 +533,16 @@ export default function LessonPlayerPage() {
       !quizSubmitted &&
       !isLockoutActive &&
       activeQuiz &&
-      hasAcknowledgedExamRules[activeQuiz.id] &&
-      (Object.keys(quizAnswers).length > 0 || (examTimeRemaining !== null && examTimeRemaining < (activeUnit?.type === 'final_exam' ? 3600 : 1200)));
+      hasAcknowledgedExamRules[activeQuiz.id];
 
     if (isExamInProgress && unit.id !== activeUnit?.id) {
-      const confirmForfeit = window.confirm(
-        'EXAMINATION ACTIVE WARNING:\n\nYou are currently in an active examination session.\nIf you exit or switch units before submitting, you will FORFEIT 1 attempt.\n\nAre you sure you want to exit and forfeit this attempt?'
-      );
-      if (!confirmForfeit) return;
-
-      const targetQuizId = activeQuiz?.id || activeUnit?.id;
-      const forfeitResult = mockEngine.forfeitQuizAttempt({
-        enrolmentId,
-        quizId: targetQuizId,
-        reason: 'EXAM_ABANDONED_MIDWAY'
-      });
-
-      if (forfeitResult) {
-        setAttemptsStatus(forfeitResult);
-        if (forfeitResult.isLocked) {
-          setIsLockoutActive(true);
-          setLockoutCountdown({
-            hours: forfeitResult.remainingHours || 23,
-            minutes: forfeitResult.remainingMinutes || 59,
-            seconds: 59
-          });
-          alert('All 3 examination attempts have been exhausted (abandoned midway). A 24-hour proctoring cooldown is now actively enforced.');
-        } else {
-          alert(`Examination attempt forfeited. You now have ${forfeitResult.attemptsRemaining} of 3 attempts remaining.`);
-        }
-      }
-      setQuizAnswers({});
-      setExamTimeRemaining(null);
+      showCustomAlert('EXAMINATION ACTIVE LOCKDOWN', 'You are in an active examination session in Fullscreen Mode.\nLeaving or switching units is prohibited until you complete your assessment.\nPlease use the "Final Submit & Finish" button to submit your answers and exit.', 'error');
+      return;
     }
 
     if (unit.type === 'final_exam') {
       if (!isFinalExamUnlocked) {
-        alert('Final Assessment Locked: You must complete all prior course modules and score >= 80% on each knowledge check.');
+        showCustomAlert('Final Assessment Locked', 'You must complete all prior course modules and score >= 80% on each knowledge check.', 'warning');
         return;
       }
     } else if (unit.type === 'quiz' && unit.moduleIndex !== undefined) {
@@ -560,12 +552,12 @@ export default function LessonPlayerPage() {
         const allDone = targetMod.lessons.every((l) => completedLessons.includes(l.id));
         if (!allDone) {
           const completedCount = targetMod.lessons.filter((l) => completedLessons.includes(l.id)).length;
-          alert(`Knowledge Check Locked: You must complete all ${targetMod.lessons.length} lessons in ${targetMod.title} (${completedCount}/${targetMod.lessons.length} completed) before attempting the examination.`);
+          showCustomAlert('Knowledge Check Locked', `You must complete all ${targetMod.lessons.length} lessons in ${targetMod.title} (${completedCount}/${targetMod.lessons.length} completed) before attempting the examination.`, 'warning');
           return;
         }
       }
     } else if (unit.moduleIndex > 0 && !isModuleUnlocked(unit.moduleIndex)) {
-      alert(`Module ${unit.moduleIndex + 1} Locked: You must pass the Module ${unit.moduleIndex} Knowledge Check (>= 80%) to unlock.`);
+      showCustomAlert(`Module ${unit.moduleIndex + 1} Locked`, `You must pass the Module ${unit.moduleIndex} Knowledge Check (>= 80%) to unlock.`, 'warning');
       return;
     }
 
@@ -636,11 +628,20 @@ export default function LessonPlayerPage() {
     }
     handleNextUnit();
     if (mainScrollRef.current) {
+      mainScrollRef.current.scrollTop = 0;
       mainScrollRef.current.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     }
     if (typeof window !== "undefined") {
-      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      window.scrollTo(0, 0);
     }
+    setTimeout(() => {
+      if (mainScrollRef.current) {
+        mainScrollRef.current.scrollTop = 0;
+      }
+      if (typeof window !== "undefined") {
+        window.scrollTo(0, 0);
+      }
+    }, 60);
   };
 
   const handleDownloadChapterNotes = () => {
@@ -748,7 +749,7 @@ export default function LessonPlayerPage() {
   const handleSubmitQuiz = (e) => {
     e?.preventDefault();
     if (isLockoutActive || mockEngine.isExamLocked(enrolmentId, activeQuiz?.id).isLocked) {
-      alert('Examination Locked: A 24-hour proctoring security ban is actively in effect. Submissions are rejected.');
+      showCustomAlert('Examination Locked', 'A 24-hour proctoring security ban is actively in effect. Submissions are rejected.', 'error');
       return;
     }
     if (!activeQuiz || !activeQuiz.questions?.length) return;
@@ -875,14 +876,14 @@ export default function LessonPlayerPage() {
     const lockCheck = mockEngine.isExamLocked(enrolmentId, activeQuiz?.id);
     if (lockCheck.isLocked) {
       setIsLockoutActive(true);
-      alert('Retake Locked: A 24-hour proctoring cooldown is actively enforcing lockdown on this evaluation.');
+      showCustomAlert('Retake Locked', 'A 24-hour proctoring cooldown is actively enforcing lockdown on this evaluation.', 'error');
       return;
     }
 
     const currentStatus = mockEngine.getQuizAttemptStatus(enrolmentId, activeQuiz?.id);
     if (currentStatus.attemptsRemaining <= 0) {
       setIsLockoutActive(true);
-      alert('Retake Locked: All 3 evaluation attempts have been exhausted. Please wait 24 hours for the next window.');
+      showCustomAlert('Retake Locked', 'All 3 evaluation attempts have been exhausted. Please wait 24 hours for the next window.', 'error');
       return;
     }
 
@@ -890,19 +891,26 @@ export default function LessonPlayerPage() {
     setQuizAnswers({});
     setQuizResult(null);
     if (activeQuiz?.id) {
-      clearQuizSessionQuestions(enrolmentId, activeQuiz.id);
+      clearQuizSessionQuestions(enrolmentId, activeQuiz.id, course?.id);
+      try {
+        localStorage.removeItem(`rk_exam_deadline_${enrolmentId || 'cadet'}_${activeQuiz.id}`);
+        localStorage.removeItem(`rk_exam_buffer_${enrolmentId || 'cadet'}_${activeQuiz.id}`);
+        localStorage.removeItem(`rk_exam_strikes_${enrolmentId || 'cadet'}_${activeQuiz.id}`);
+      } catch {}
       setQuizSessionNonce((prev) => prev + 1);
       setHasAcknowledgedExamRules((prev) => ({
         ...prev,
         [activeQuiz.id]: false
       }));
     }
-    const totalMinutes = activeUnit?.type === 'final_exam' ? 60 : 20;
+    const isFifty = activeUnit?.type === 'final_exam' || (activeQuiz?.total_questions >= 50);
+    const totalMinutes = isFifty ? 60 : 30; // 50 marks = 60 min, 20 marks = 30 min
     setExamTimeRemaining(totalMinutes * 60);
   };
 
   const handleAcknowledgeExamRules = () => {
     if (!activeQuiz) return;
+    setSidebarOpen(false); // Auto-dismiss course outline sidebar on exam start
     setHasAcknowledgedExamRules((prev) => ({
       ...prev,
       [activeQuiz.id]: true
@@ -1032,6 +1040,7 @@ export default function LessonPlayerPage() {
         activeUnit={activeUnit}
         toolsStripOpen={toolsStripOpen}
         setToolsStripOpen={setToolsStripOpen}
+        isExamActive={isExamActive}
         onOpenTerminal={() => {
           setIsMacTerminalOpen(true);
           setIsMacTerminalMinimized(false);
@@ -1040,21 +1049,24 @@ export default function LessonPlayerPage() {
 
       {/* 3-Panel Dedicated Learning Layout: Panel 1 (Outline) | Panel 2 (Notes & Theory) | Panel 3 (Tool Strip) */}
       <div className="flex-1 flex w-full relative items-start">
-        {/* Panel 1: Left Course Outline Sidebar */}
-        <LessonOutlineSidebar
-          sidebarOpen={sidebarOpen}
-          setSidebarOpen={setSidebarOpen}
-          course={course}
-          expandedModules={expandedModules}
-          setExpandedModules={setExpandedModules}
-          activeUnit={activeUnit}
-          handleSelectUnit={handleSelectUnit}
-          isModuleUnlocked={isModuleUnlocked}
-          currentEnrolment={currentEnrolment}
-          enrolment={enrolment}
-          enrolmentId={enrolmentId}
-          isFinalExamUnlocked={isFinalExamUnlocked}
-        />
+        {/* Panel 1: Left Course Outline Sidebar - completely removed during active exam */}
+        {!isExamActive && (
+          <LessonOutlineSidebar
+            sidebarOpen={sidebarOpen}
+            setSidebarOpen={setSidebarOpen}
+            course={course}
+            expandedModules={expandedModules}
+            setExpandedModules={setExpandedModules}
+            activeUnit={activeUnit}
+            handleSelectUnit={handleSelectUnit}
+            isModuleUnlocked={isModuleUnlocked}
+            currentEnrolment={currentEnrolment}
+            enrolment={enrolment}
+            enrolmentId={enrolmentId}
+            isFinalExamUnlocked={isFinalExamUnlocked}
+            onShowNotice={(title, msg) => showCustomAlert(title, msg, 'warning')}
+          />
+        )}
 
         {/* Panel 2: Center Main Stage Content (Notes, Theory, Lab Synthesis) */}
         <main ref={mainScrollRef} className="flex-1 min-w-0 h-[calc(100vh-3.5rem)] overflow-y-auto custom-scrollbar p-4 sm:p-6 lg:p-7 space-y-6 bg-black/90 pb-24 z-10">
@@ -1116,19 +1128,21 @@ export default function LessonPlayerPage() {
               onReturnToReview={() => handleSelectUnit(allUnits[0])}
             />
 
-            {/* Bottom Prev / Next Navigation Bar */}
-            <LessonBottomNavigation
-              activeUnit={activeUnit}
-              quizSubmitted={quizSubmitted}
-              handlePrevUnit={handlePrevUnit}
-              activeIndex={activeIndex}
-              allUnits={allUnits}
-              course={course}
-              handleCompleteAndNext={handleCompleteAndNext}
-              handleMarkLessonComplete={handleMarkLessonComplete}
-              isLessonCompleted={isLessonCompleted}
-              savingProgress={savingProgress}
-            />
+            {/* Bottom Prev / Next Navigation Bar - suppressed during exam */}
+            {!isExamActive && (
+              <LessonBottomNavigation
+                activeUnit={activeUnit}
+                quizSubmitted={quizSubmitted}
+                handlePrevUnit={handlePrevUnit}
+                activeIndex={activeIndex}
+                allUnits={allUnits}
+                course={course}
+                handleCompleteAndNext={handleCompleteAndNext}
+                handleMarkLessonComplete={handleMarkLessonComplete}
+                isLessonCompleted={isLessonCompleted}
+                savingProgress={savingProgress}
+              />
+            )}
           </div>
         </main>
 
@@ -1233,6 +1247,45 @@ export default function LessonPlayerPage() {
             onRestore={() => setIsCyberLabMinimized(false)}
           />
         </React.Suspense>
+      )}
+
+      {/* Custom In-App On-Screen Alert Modal (Replaces Native Browser Alerts) */}
+      {onScreenAlert && (
+        <div className="fixed inset-0 z-[10002] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn select-none">
+          <div className="max-w-md w-full rounded-2xl bg-[#0F0C08] border-2 border-[#FF7A00]/80 p-6 sm:p-7 space-y-5 text-center shadow-[0_0_50px_rgba(255,122,0,0.35)]">
+            <div className={`w-14 h-14 rounded-2xl border flex items-center justify-center mx-auto ${
+              onScreenAlert.type === 'error'
+                ? 'bg-rose-500/20 border-rose-500 text-rose-400'
+                : 'bg-[#FF7A00]/20 border-[#FF7A00] text-[#FF7A00]'
+            }`}>
+              <AlertTriangle className="w-7 h-7" />
+            </div>
+
+            <div className="space-y-2">
+              <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase font-bold tracking-wider border inline-block ${
+                onScreenAlert.type === 'error'
+                  ? 'bg-rose-500/20 text-rose-300 border-rose-500/40'
+                  : 'bg-[#FF7A00]/20 text-[#FFA439] border-[#FF7A00]/40'
+              }`}>
+                {onScreenAlert.type === 'error' ? 'Security Restriction' : 'Academy Notice'}
+              </span>
+              <h3 className="text-xl font-bold font-lora text-white">
+                {onScreenAlert.title}
+              </h3>
+              <p className="text-xs font-mono text-[#E2D9CE]/90 leading-relaxed whitespace-pre-line">
+                {onScreenAlert.message}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setOnScreenAlert(null)}
+              className="w-full py-3 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-bold font-mono text-xs uppercase tracking-wider shadow-[0_0_20px_rgba(255,122,0,0.4)] transition-all cursor-pointer"
+            >
+              Acknowledge & Continue
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -30,7 +30,7 @@ import { getEcosystemLinks } from '../../utils/ecosystemLinks';
  */
 export default function Navbar() {
   const navigate = useNavigate();
-  const { currentUser, tokenBalance, logout, devLoginAsAdmin } = useAuth();
+  const { currentUser, tokenBalance, logout } = useAuth();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [supportModalOpen, setSupportModalOpen] = useState(false);
@@ -217,21 +217,6 @@ export default function Navbar() {
                   <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-gradient-to-r from-[#FF7A00] to-[#FFA439] rounded-full shadow-[0_0_8px_rgba(255,122,0,0.8)]" />
                 )}
               </Link>
-
-              {currentUser && currentUser.role === 'super_admin' && (
-                <Link
-                  to="/admin"
-                  onClick={closeMobileMenu}
-                  className={`text-xs font-mono font-medium transition-colors duration-200 relative py-1 whitespace-nowrap ${
-                    isActive('/admin') ? 'text-[#FF7A00] font-bold' : 'text-[#E2D9CE] hover:text-white'
-                  }`}
-                >
-                  Admin Console
-                  {isActive('/admin') && (
-                    <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-gradient-to-r from-[#FF7A00] to-[#FFA439] rounded-full shadow-[0_0_8px_rgba(255,122,0,0.8)]" />
-                  )}
-                </Link>
-              )}
             </nav>
 
             {/* Right Action & Auth Elements */}
@@ -248,20 +233,6 @@ export default function Navbar() {
                   <span className="hidden md:inline text-[10px] text-[#FF7A00] uppercase">Tokens</span>
                 </Link>
               )}
-
-              {/* 1-Click Admin Access */}
-              <button
-                type="button"
-                onClick={() => {
-                  devLoginAsAdmin();
-                  navigate('/admin');
-                }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full liquid-glass-button text-xs font-mono font-bold shadow-[0_0_15px_rgba(255,122,0,0.25)] flex-shrink-0"
-                title="1-Click Super Admin Console"
-              >
-                <Zap className="w-3.5 h-3.5 text-[#FFA439] animate-pulse" />
-                <span className="text-[#FFA439]">Admin</span>
-              </button>
 
               {/* User Profile Dropdown or Slim Pill CTA Button */}
               {currentUser ? (
@@ -350,16 +321,6 @@ export default function Navbar() {
                           <Coins className="w-4 h-4 text-[#FFA439]" />
                           <span>Token Ledger</span>
                         </Link>
-                        {currentUser.role === 'super_admin' && (
-                          <Link
-                            to="/admin"
-                            onClick={() => setShowProfileMenu(false)}
-                            className="flex items-center gap-2 px-4 py-2 text-[#FFA439] hover:bg-[#1B2530] transition-colors font-semibold"
-                          >
-                            <Shield className="w-4 h-4" />
-                            <span>Super Admin Area</span>
-                          </Link>
-                        )}
                       </div>
 
                       <div className="py-1">
@@ -439,19 +400,6 @@ export default function Navbar() {
                 >
                   Verify Credential
                 </Link>
-                {currentUser && currentUser.role === 'super_admin' && (
-                  <Link
-                    to="/admin"
-                    onClick={closeMobileMenu}
-                    className={`px-3 py-2 rounded-lg transition-colors ${
-                      isActive('/admin')
-                        ? 'bg-[#FF7A00]/15 text-[#FFA439] font-bold border border-[#FF7A00]/30'
-                        : 'text-slate-300 hover:bg-[#1B2530] hover:text-[#FFA439]'
-                    }`}
-                  >
-                    Admin Console
-                  </Link>
-                )}
               </nav>
             </div>
           </div>

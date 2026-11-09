@@ -11,7 +11,7 @@ import { useAuth } from '../../services/auth/authContext';
 export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { loginWithGoogle, devLoginAsAdmin, currentUser } = useAuth();
+  const { loginWithGoogle, currentUser } = useAuth();
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -127,24 +127,6 @@ export default function LoginPage() {
             <p className="text-center text-[11px] text-[#64748B] font-mono leading-relaxed">
               Opens the official Google verification window. Select your authorized Google account to sign in.
             </p>
-
-            {/* 1-Click Super Admin Dev Access (Temporary Development Clearance) */}
-            <div className="pt-2 border-t border-[#263440]/60">
-              <button
-                type="button"
-                onClick={() => {
-                  devLoginAsAdmin();
-                  navigate('/admin', { replace: true });
-                }}
-                className="w-full py-3.5 px-4 rounded-xl ultra-glass-btn active:scale-[0.99] font-mono text-xs font-bold transition-all flex items-center justify-center gap-2 group shadow-[0_0_20px_rgba(255,122,0,0.2)]"
-              >
-                <ShieldCheck className="w-4 h-4 text-[#FF7A00]" />
-                <span>⚡ DEV MODE: 1-Click Super Admin Login</span>
-              </button>
-              <div className="text-center text-[10px] text-[#64748B] font-mono mt-1.5">
-                Quick bypass for development & studio page styling
-              </div>
-            </div>
           </div>
 
           {/* Hardened Security Verification Matrix */}

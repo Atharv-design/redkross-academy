@@ -1,0 +1,38 @@
+=== client tests (from 172.30.8.20)
+port 8080: HTTP 200 in 0.001037s
+port 8081: HTTP 000 in 4.003152s
+curl exit code 28 
+port 8082: HTTP 000 in 0.000309s
+curl exit code 7 
+dns app.rk-lab.example: 172.30.8.10
+dns typo apps.rk-lab.example: status: NXDOMAIN
+Saved ./rk_c02_trouble.pcap
+=== capinfos
+Number of packets:   28
+Data size:           2180 bytes
+Capture duration:    9.472089 seconds
+=== SYNs per destination port (tcp.flags.syn==1 && tcp.flags.ack==0)
+      1 8080
+      4 8081
+      1 8082
+=== port 8081 (tcp.port==8081)
+17	4.415412000	----------S-	Connection establish request (SYN): server port 8081
+18	5.440034000	----------S-	Connection establish request (SYN): server port 8081,This frame is a (suspected) retransmission
+19	6.464030000	----------S-	Connection establish request (SYN): server port 8081,This frame is a (suspected) retransmission
+20	7.488012000	----------S-	Connection establish request (SYN): server port 8081,This frame is a (suspected) retransmission
+=== port 8082 (tcp.port==8082)
+21	172.30.8.20	----------S-
+22	172.30.8.10	-------A-R--
+=== HTTP responses (http.response)
+12	8080	200
+=== DNS (dns.flags.response==1)
+app.rk-lab.example	0	172.30.8.10
+apps.rk-lab.example	3	
+=== expert info summary
+Warns (1)
+   Frequency      Group           Protocol  Summary
+=== TCP conversations
+172.30.8.20:39212          <-> 172.30.8.10:8080                 6 622 bytes       6 484 bytes      12 1106 bytes     4.411223000         0.0005
+172.30.8.20:50786          <-> 172.30.8.10:8081                 0 0 bytes         4 296 bytes       4 296 bytes     4.415412000         3.0726
+172.30.8.20:48802          <-> 172.30.8.10:8082                 1 54 bytes        1 74 bytes        2 128 bytes     8.422642000         0.0000
+Cleanup on exit.

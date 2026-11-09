@@ -222,14 +222,14 @@ export default function CyberStudentDashboard() {
                   No Active Cyber Enrollment Detected
                 </h3>
                 <p className="text-xs text-slate-400 font-sans max-w-md mx-auto">
-                  Enroll in the official Full Stack Web Development &amp; Application Defense master curriculum with instant institutional access.
+                  Enroll in the official cybersecurity master curricula with instant institutional access and on-chain verification.
                 </p>
               </div>
               <Link
-                to="/academy/cybersecurity/courses/full-stack-web-development-fundamentals-to-deployment"
+                to="/academy/cybersecurity#courses"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#FF7A00] to-[#E56A00] text-black font-mono font-bold text-xs hover:brightness-110 transition-all shadow-[0_0_15px_rgba(255,122,0,0.35)]"
               >
-                <span>View Master Cyber Curriculum</span>
+                <span>Explore Cyber Courses</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
@@ -260,7 +260,7 @@ export default function CyberStudentDashboard() {
                           </span>
                         </div>
                         <h3 className="text-lg sm:text-xl font-bold font-royal text-white">
-                          {course.title}
+                          {(course.title || '').replace(/^Course\s*\d+:\s*/i, '')}
                         </h3>
                       </div>
 

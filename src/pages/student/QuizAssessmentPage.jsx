@@ -25,6 +25,7 @@ import { socketClient } from '../../services/socket/socketClient';
 import { useAuth } from '../../services/auth/authContext';
 import PixelBackground from '../../components/ui/PixelBackground';
 import ExamCBTInterface from '../../components/student/ExamCBTInterface';
+import { getOrGenerateQuizQuestions, clearQuizSessionQuestions } from '../../services/db/questionBanks/questionBankEngine';
 
 export default function QuizAssessmentPage() {
   const { enrolmentId, quizId } = useParams();
@@ -34,15 +35,30 @@ export default function QuizAssessmentPage() {
   const enrolment = mockEngine.getEnrolment(enrolmentId);
   const course = enrolment ? mockEngine.getCourseById(enrolment.course_id) : null;
 
-  let quizMeta = null;
+  const [quizSessionNonce, setQuizSessionNonce] = useState(0);
+
+  let baseQuizMeta = null;
   if (course && course.modules) {
     for (const mod of course.modules) {
       if (mod.quiz && mod.quiz.id === quizId) {
-        quizMeta = mod.quiz;
+        baseQuizMeta = mod.quiz;
         break;
       }
     }
   }
+
+  const quizMeta = React.useMemo(() => {
+    if (!baseQuizMeta) return null;
+    const modIdx = course?.modules?.findIndex(m => m.quiz?.id === quizId);
+    const modNum = modIdx !== undefined && modIdx !== -1 ? modIdx + 1 : 1;
+    const isFinal = Boolean(baseQuizMeta.type === 'final_exam' || baseQuizMeta.is_final);
+    const dynamicQuestions = getOrGenerateQuizQuestions(enrolmentId, baseQuizMeta.id, modNum, isFinal, course?.id);
+    return {
+      ...baseQuizMeta,
+      total_questions: dynamicQuestions.length,
+      questions: dynamicQuestions
+    };
+  }, [baseQuizMeta, enrolmentId, course?.id, quizId, quizSessionNonce]);
 
   const [showPreExamModal, setShowPreExamModal] = useState(false);
   const [cameraWarningModal, setCameraWarningModal] = useState(null); // { message: string }
@@ -246,6 +262,21 @@ export default function QuizAssessmentPage() {
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
+
+      try {
+        const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtxClass && !window.__rkProctorAudioCtx) {
+          window.__rkProctorAudioCtx = new AudioCtxClass();
+          if (window.__rkProctorAudioCtx.state === 'suspended') {
+            window.__rkProctorAudioCtx.resume().catch(() => {});
+          }
+        }
+      } catch {}
+      try {
+        if (document.documentElement.requestFullscreen) {
+          await document.documentElement.requestFullscreen().catch(() => {});
+        }
+      } catch {}
 
       const attempt = mockEngine.startQuizAttempt(enrolmentId, quizId);
       setActiveAttempt(attempt);
@@ -556,7 +587,13 @@ export default function QuizAssessmentPage() {
             onSubmitExam={handleSubmit}
             isSubmitted={false}
             submissionResult={null}
-            onRetakeExam={() => {}}
+            onRetakeExam={() => {
+              clearQuizSessionQuestions(enrolmentId, quizId, course?.id);
+              setSubmissionResult(null);
+              setUserAnswers({});
+              setExamStarted(false);
+              setQuizSessionNonce((prev) => prev + 1);
+            }}
             isLockoutActive={lockoutState.isLocked}
             lockoutCountdown={{
               hours: lockoutState.remainingHours || 0,
