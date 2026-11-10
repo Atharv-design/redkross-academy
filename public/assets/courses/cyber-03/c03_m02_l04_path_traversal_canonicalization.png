@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" width="100%" height="100%">
+  <defs>
+    <!-- Grid Pattern -->
+    <pattern id="gridPattern" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M 30 0 L 0 0 0 30" fill="none" stroke="#F1F5F9" stroke-width="1.5" />
+      <circle cx="30" cy="30" r="1.5" fill="#E2E8F0" />
+    </pattern>
+    <!-- Drop Shadow Filter -->
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0F172A" flood-opacity="0.08" />
+    </filter>
+  </defs>
+
+  <!-- Clean Crisp White Background -->
+  <rect width="1200" height="680" fill="#FFFFFF" />
+  <rect width="1200" height="680" fill="url(#gridPattern)" />
+
+  <!-- Outer Architectural Border -->
+  <rect x="25" y="25" width="1150" height="630" rx="16" fill="none" stroke="#CBD5E1" stroke-width="2" />
+  <rect x="27" y="27" width="1146" height="626" rx="14" fill="none" stroke="#F8FAFC" stroke-width="3" />
+
+  <!-- Corner Tech Accent Ticks -->
+  <path d="M 25 50 L 50 25 M 1175 50 L 1150 25 M 25 605 L 50 630 M 1175 605 L 1150 630" stroke="#FF7A00" stroke-width="3" stroke-linecap="round" />
+
+  <!-- Top Header Banner -->
+  <g transform="translate(60, 50)">
+    <!-- Category & Badge -->
+    <rect width="170" height="28" rx="6" fill="#FFF7ED" stroke="#FF7A00" stroke-width="1.5" />
+    <text x="85" y="19" font-family="JetBrains Mono, monospace" font-size="11" font-weight="800" fill="#C2410C" text-anchor="middle">C03-M02-D14</text>
+    
+    <text x="185" y="19" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#64748B">MODULE 02 // SYSTEMS DEFENSE</text>
+
+    <!-- Main Figure Title -->
+    <text x="0" y="58" font-family="Inter, system-ui, sans-serif" font-size="22" font-weight="800" fill="#0F172A">Path Traversal Defense: Absolute vs. Relative Paths &amp; Directory Canonicalization</text>
+  </g>
+
+  <!-- Horizontal Divider Line -->
+  <line x1="60" y1="130" x2="1140" y2="130" stroke="#E2E8F0" stroke-width="2" />
+
+  <!-- Tailored Diagram Architecture Graphic -->
+  
+      <!-- Left Column: Linux Architecture -->
+      <g transform="translate(140, 160)">
+        <rect width="445" height="430" rx="12" fill="#F0FDF4" stroke="#16A34A" stroke-width="2.5" />
+        <rect x="0" y="0" width="445" height="50" rx="12" fill="#16A34A" />
+        <rect x="0" y="30" width="445" height="20" fill="#16A34A" />
+        <text x="222" y="32" font-family="Inter, system-ui, sans-serif" font-size="17" font-weight="800" fill="#FFFFFF" text-anchor="middle">LINUX (GNU / LINUX ARCHITECTURE)</text>
+        
+        <g transform="translate(20, 70)">
+          <rect width="405" height="60" rx="8" fill="#DCFCE7" stroke="#22C55E" stroke-width="1.5" />
+          <text x="20" y="26" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="700" fill="#15803D">USER SPACE: SYSTEMD &amp; GNU UTILITIES</text>
+          <text x="20" y="46" font-family="Inter, system-ui, sans-serif" font-size="11.5" fill="#166534">systemd (PID 1), bash, coreutils, glibc, OpenSSH daemon</text>
+        </g>
+
+        <g transform="translate(20, 145)">
+          <rect width="405" height="35" rx="6" fill="#FEF08A" stroke="#EAB308" stroke-width="1.5" />
+          <text x="202" y="22" font-family="JetBrains Mono, monospace" font-size="11.5" font-weight="700" fill="#854D0E" text-anchor="middle">SYSCALLS: openat, fork, clone, execve, mmap</text>
+        </g>
+
+        <g transform="translate(20, 195)">
+          <rect width="405" height="110" rx="8" fill="#DCFCE7" stroke="#22C55E" stroke-width="1.5" />
+          <text x="20" y="28" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="700" fill="#15803D">MONOLITHIC MODULAR KERNEL (RING 0)</text>
+          <text x="20" y="50" font-family="Inter, system-ui, sans-serif" font-size="11.5" fill="#166534">- Process &amp; Thread Scheduler (CFS / EEVDF)</text>
+          <text x="20" y="70" font-family="Inter, system-ui, sans-serif" font-size="11.5" fill="#166534">- VFS Abstraction (ext4, XFS, btrfs, /proc, /sys)</text>
+          <text x="20" y="90" font-family="Inter, system-ui, sans-serif" font-size="11.5" fill="#166534">- Loadable Kernel Modules (LKM, modprobe, lsmod)</text>
+        </g>
+
+        <g transform="translate(20, 320)">
+          <rect width="405" height="90" rx="8" fill="#F1F5F9" stroke="#94A3B8" stroke-width="1.5" />
+          <text x="20" y="26" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="700" fill="#334155">SECURITY BOUNDARIES &amp; TOKENS</text>
+          <text x="20" y="48" font-family="Inter, system-ui, sans-serif" font-size="11" fill="#475569">UID 0 (root), POSIX DAC perms (rwxrwxrwx), SUID/SGID,</text>
+          <text x="20" y="68" font-family="Inter, system-ui, sans-serif" font-size="11" fill="#475569">POSIX Extended ACLs (getfacl/setfacl), Linux Capabilities.</text>
+        </g>
+      </g>
+
+      <!-- Right Column: Windows Architecture -->
+      <g transform="translate(615, 160)">
+        <rect width="445" height="430" rx="12" fill="#EFF6FF" stroke="#2563EB" stroke-width="2.5" />
+        <rect x="0" y="0" width="445" height="50" rx="12" fill="#2563EB" />
+        <rect x="0" y="30" width="445" height="20" fill="#2563EB" />
+        <text x="222" y="32" font-family="Inter, system-ui, sans-serif" font-size="17" font-weight="800" fill="#FFFFFF" text-anchor="middle">WINDOWS NT ARCHITECTURE</text>
+        
+        <g transform="translate(20, 70)">
+          <rect width="405" height="60" rx="8" fill="#DBEAFE" stroke="#3B82F6" stroke-width="1.5" />
+          <text x="20" y="26" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="700" fill="#1E40AF">USER SPACE: WIN32 SUBSYSTEM &amp; SERVICES</text>
+          <text x="20" y="46" font-family="Inter, system-ui, sans-serif" font-size="11.5" fill="#1E3A8A">smss.exe, csrss.exe, wininit.exe, services.exe, lsass.exe</text>
+        </g>
+
+        <g transform="translate(20, 145)">
+          <rect width="405" height="35" rx="6" fill="#FEF08A" stroke="#EAB308" stroke-width="1.5" />
+          <text x="202" y="22" font-family="JetBrains Mono, monospace" font-size="11.5" font-weight="700" fill="#854D0E" text-anchor="middle">WIN32 API -> NTDLL.DLL -> NTOSKRNL TRAP</text>
+        </g>
+
+        <g transform="translate(20, 195)">
+          <rect width="405" height="110" rx="8" fill="#DBEAFE" stroke="#3B82F6" stroke-width="1.5" />
+          <text x="20" y="28" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="700" fill="#1E40AF">HYBRID NT EXECUTIVE &amp; MICROKERNEL (RING 0)</text>
+          <text x="20" y="50" font-family="Inter, system-ui, sans-serif" font-size="11.5" fill="#1E3A8A">- NT Executive: Object Manager, Process Manager</text>
+          <text x="20" y="70" font-family="Inter, system-ui, sans-serif" font-size="11.5" fill="#1E3A8A">- Security Reference Monitor (SRM), Virtual Memory</text>
+          <text x="20" y="90" font-family="Inter, system-ui, sans-serif" font-size="11.5" fill="#1E3A8A">- Hardware Abstraction Layer (HAL.dll) &amp; Signed Drivers</text>
+        </g>
+
+        <g transform="translate(20, 320)">
+          <rect width="405" height="90" rx="8" fill="#F1F5F9" stroke="#94A3B8" stroke-width="1.5" />
+          <text x="20" y="26" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="700" fill="#334155">SECURITY BOUNDARIES &amp; TOKENS</text>
+          <text x="20" y="48" font-family="Inter, system-ui, sans-serif" font-size="11" fill="#475569">SIDs (S-1-5-21...), User Access Tokens, UAC Integrity</text>
+          <text x="20" y="68" font-family="Inter, system-ui, sans-serif" font-size="11" fill="#475569">Levels (Low/Med/High/System), NTFS DACLs &amp; ACEs.</text>
+        </g>
+      </g>
+    
+
+  <!-- Footer Banner: Caption & Institutional Accreditation -->
+  <g transform="translate(60, 615)">
+    <line x1="0" y1="0" x2="1080" y2="0" stroke="#E2E8F0" stroke-width="1.5" />
+    <text x="0" y="24" font-family="Inter, system-ui, sans-serif" font-size="11.5" font-weight="500" fill="#64748B">
+      <tspan font-weight="700" fill="#334155">C03-M02-D14:</tspan> Absolute versus relative path resolution mechanics and directory traversal risks (../../etc/passwd) neutralized by realpath() canonicalization.
+    </text>
+    <text x="1080" y="24" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#FF7A00" text-anchor="end">REDKROSS ACADEMY // CYBERSECURITY ARCHITECTURE</text>
+  </g>
+</svg>

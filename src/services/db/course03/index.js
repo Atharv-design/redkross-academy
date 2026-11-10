@@ -43,18 +43,18 @@ export const course03Data = {
   short_desc: "The definitive enterprise systems administration and defensive infrastructure curriculum. Master OS internal architectures (CPU privilege rings, virtual memory, UEFI Secure Boot), industrial Linux administration (FHS 3.0, POSIX ACLs, defensive Bash automation), Windows NT executive internals (Registry hives, services.exe, SIDs, UAC, NTFS DACLs), modern PowerShell 7 object pipelines, Active Directory Kerberos authentication, GPO precedence (LSDOU), and consensus system hardening baselines (CIS Level 1/2, Lynis compliance scoring).",
   
   skills: [
-    "Linux Kernel Privilege Rings & Syscall Forensics",
-    "POSIX File Permissions, SUID/SGID & Extended ACLs",
-    "Defensive Shell Scripting (Strict Mode & Traps)",
-    "systemd Service Units & Monotonic Timer Architecture",
-    "Windows NT Executive & Core Process Ancestry",
-    "Windows Registry Forensics & Persistence Hunting",
-    "Security Identifiers (SIDs), UAC & Token Integrity",
-    "NTFS DACLs, ACE Evaluation & Share Permissions",
-    "PowerShell Object Pipelines, CLM & Script Block Logging",
-    "Windows Event Log XML Telemetry (EID 4624/4688/1102)",
-    "Active Directory Kerberos Tickets & GPO LSDOU Precedence",
-    "CIS Benchmark System Hardening & Lynis Automated Audits"
+    "Linux Kernel Rings & Syscalls",
+    "POSIX Permissions & Extended ACLs",
+    "Defensive Bash Automation",
+    "systemd Units & Monotonic Timers",
+    "Windows NT Executive Internals",
+    "Registry Forensics & Persistence",
+    "Windows SIDs, UAC & Tokens",
+    "NTFS DACLs & ACE Permissions",
+    "PowerShell 7 Object Pipelines",
+    "Security Event Log Auditing",
+    "Active Directory & Kerberos GPO",
+    "CIS Benchmarks & Lynis Hardening"
   ],
 
   milestone_cert: "Certified Systems Administration & Defense Associate (CSADA)",

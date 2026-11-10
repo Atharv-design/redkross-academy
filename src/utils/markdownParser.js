@@ -296,7 +296,14 @@ export function renderMarkdownToHtml(markdown = '') {
         class="w-full h-auto block rounded-t-2xl cursor-pointer hover:scale-[1.003] transition-transform duration-300"
         loading="lazy"
         decoding="async"
+        onerror="if(this.src.endsWith('.png')){this.src=this.src.replace(/\\.png$/,'.svg');}else{this.onerror=null;this.style.display='none';if(this.nextElementSibling){this.nextElementSibling.style.display='block';}}"
       />
+      <div style="display:none;" class="p-6 sm:p-8 bg-[#0B0D14] border-b border-[#FF7A00]/20 rounded-t-2xl text-center space-y-2.5">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF7A00]/15 border border-[#FF7A00]/40 text-[#FFA439] text-xs font-mono font-bold uppercase">
+          <span>TECHNICAL BLUEPRINT // ${plainAlt}</span>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-300 font-sans max-w-xl mx-auto leading-relaxed">${rawCaption || 'Defensive architecture reference diagram.'}</p>
+      </div>
       ${rawCaption ? `<figcaption class="py-2.5 px-4 text-center text-xs font-mono text-[#A3907C] border-t border-[#FF7A00]/20 bg-[#0B0907] flex items-center justify-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FF7A00]/80"></span><span>${rawCaption}</span></figcaption>` : ''}
     </figure>`;
   });
@@ -312,6 +319,7 @@ export function renderMarkdownToHtml(markdown = '') {
         class="w-full h-auto block rounded-2xl cursor-pointer hover:scale-[1.003] transition-transform duration-300"
         loading="lazy"
         decoding="async"
+        onerror="if(this.src.endsWith('.png')){this.src=this.src.replace(/\\.png$/,'.svg');}else{this.onerror=null;this.style.display='none';}"
       />
     </figure>`;
   });

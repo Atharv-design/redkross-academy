@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" width="100%" height="100%">
+  <defs>
+    <!-- Grid Pattern -->
+    <pattern id="gridPattern" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M 30 0 L 0 0 0 30" fill="none" stroke="#F1F5F9" stroke-width="1.5" />
+      <circle cx="30" cy="30" r="1.5" fill="#E2E8F0" />
+    </pattern>
+    <!-- Drop Shadow Filter -->
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0F172A" flood-opacity="0.08" />
+    </filter>
+  </defs>
+
+  <!-- Clean Crisp White Background -->
+  <rect width="1200" height="680" fill="#FFFFFF" />
+  <rect width="1200" height="680" fill="url(#gridPattern)" />
+
+  <!-- Outer Architectural Border -->
+  <rect x="25" y="25" width="1150" height="630" rx="16" fill="none" stroke="#CBD5E1" stroke-width="2" />
+  <rect x="27" y="27" width="1146" height="626" rx="14" fill="none" stroke="#F8FAFC" stroke-width="3" />
+
+  <!-- Corner Tech Accent Ticks -->
+  <path d="M 25 50 L 50 25 M 1175 50 L 1150 25 M 25 605 L 50 630 M 1175 605 L 1150 630" stroke="#FF7A00" stroke-width="3" stroke-linecap="round" />
+
+  <!-- Top Header Banner -->
+  <g transform="translate(60, 50)">
+    <!-- Category & Badge -->
+    <rect width="170" height="28" rx="6" fill="#FFF7ED" stroke="#FF7A00" stroke-width="1.5" />
+    <text x="85" y="19" font-family="JetBrains Mono, monospace" font-size="11" font-weight="800" fill="#C2410C" text-anchor="middle">C03-M05-D41</text>
+    
+    <text x="185" y="19" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#64748B">MODULE 05 // SYSTEMS DEFENSE</text>
+
+    <!-- Main Figure Title -->
+    <text x="0" y="58" font-family="Inter, system-ui, sans-serif" font-size="22" font-weight="800" fill="#0F172A">Anatomy of a Windows Security Identifier (SID): S-1-5-21 Breakdown</text>
+  </g>
+
+  <!-- Horizontal Divider Line -->
+  <line x1="60" y1="130" x2="1140" y2="130" stroke="#E2E8F0" stroke-width="2" />
+
+  <!-- Tailored Diagram Architecture Graphic -->
+  
+      <!-- Layer 4: Top / User Space -->
+      <g transform="translate(140, 160)">
+        <rect width="920" height="85" rx="10" fill="#F8FAFC" stroke="#0284C7" stroke-width="2.5" stroke-dasharray="6,4" />
+        <rect x="0" y="0" width="14" height="85" rx="4" fill="#0284C7" />
+        <text x="35" y="38" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="700" fill="#0369A1">LAYER 4: USER SPACE &amp; APPLICATIONS (RING 3)</text>
+        <text x="35" y="62" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="500" fill="#475569">Restricted execution: CLI shells, GUI desktop, user-mode agents, and web applications running with non-root security tokens.</text>
+        <g transform="translate(740, 25)">
+          <rect width="150" height="36" rx="6" fill="#E0F2FE" stroke="#38BDF8" stroke-width="1.5" />
+          <text x="75" y="23" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#0369A1" text-anchor="middle">UNPRIVILEGED</text>
+        </g>
+      </g>
+
+      <!-- System Call Boundary Line -->
+      <g transform="translate(140, 260)">
+        <line x1="0" y1="18" x2="920" y2="18" stroke="#FF7A00" stroke-width="3" stroke-dasharray="8,6" />
+        <rect x="360" y="0" width="200" height="36" rx="18" fill="#FFF7ED" stroke="#FF7A00" stroke-width="2" />
+        <text x="460" y="23" font-family="JetBrains Mono, monospace" font-size="12" font-weight="800" fill="#C2410C" text-anchor="middle">↕ SYSTEM CALLS (TRAP)</text>
+      </g>
+
+      <!-- Layer 3: Kernel Space -->
+      <g transform="translate(140, 310)">
+        <rect width="920" height="110" rx="10" fill="#FFFBEB" stroke="#D97706" stroke-width="2.5" />
+        <rect x="0" y="0" width="14" height="110" rx="4" fill="#D97706" />
+        <text x="35" y="36" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="700" fill="#B45309">LAYER 3: PRIVILEGED KERNEL EXECUTIVE (RING 0)</text>
+        <text x="35" y="60" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="500" fill="#78350F">Core subsystems: Process Scheduler, Virtual Memory Paging, VFS File Systems, IPC, and Cryptographic Security Token Verification.</text>
+        <g transform="translate(35, 74)">
+          <rect width="180" height="26" rx="4" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1" />
+          <text x="90" y="17" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="700" fill="#92400E" text-anchor="middle">PROCESS SCHEDULER</text>
+          <rect x="200" y="0" width="180" height="26" rx="4" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1" />
+          <text x="290" y="17" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="700" fill="#92400E" text-anchor="middle">MEMORY MMU / ASLR</text>
+          <rect x="400" y="0" width="180" height="26" rx="4" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1" />
+          <text x="490" y="17" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="700" fill="#92400E" text-anchor="middle">VFS / NTFS DRIVERS</text>
+          <rect x="600" y="0" width="180" height="26" rx="4" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1" />
+          <text x="690" y="17" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="700" fill="#92400E" text-anchor="middle">NETWORK / PACKETS</text>
+        </g>
+      </g>
+
+      <!-- Layer 2: Drivers & HAL -->
+      <g transform="translate(140, 435)">
+        <rect width="920" height="75" rx="10" fill="#F8FAFC" stroke="#64748B" stroke-width="2" />
+        <rect x="0" y="0" width="14" height="75" rx="4" fill="#64748B" />
+        <text x="35" y="32" font-family="Inter, system-ui, sans-serif" font-size="15" font-weight="700" fill="#334155">LAYER 2: HARDWARE ABSTRACTION LAYER (HAL) &amp; DEVICE DRIVERS</text>
+        <text x="35" y="55" font-family="Inter, system-ui, sans-serif" font-size="12.5" font-weight="500" fill="#64748B">Modular device drivers (.sys / .ko) executing under hardware abstraction APIs for storage controllers, NICs, and bus bridges.</text>
+      </g>
+
+      <!-- Layer 1: Physical Hardware -->
+      <g transform="translate(140, 525)">
+        <rect width="920" height="70" rx="10" fill="#0F172A" stroke="#1E293B" stroke-width="2" />
+        <rect x="0" y="0" width="14" height="70" rx="4" fill="#FF7A00" />
+        <text x="35" y="30" font-family="Inter, system-ui, sans-serif" font-size="15" font-weight="700" fill="#F8FAFC">LAYER 1: BARE-METAL PHYSICAL HARDWARE &amp; FIRMWARE</text>
+        <text x="35" y="52" font-family="Inter, system-ui, sans-serif" font-size="12.5" font-weight="500" fill="#94A3B8">x86-64 / ARM CPU Privilege Registers, Physical RAM Modules, NVMe Storage, Hardware TPM 2.0, and UEFI Firmware NVRAM.</text>
+      </g>
+    
+
+  <!-- Footer Banner: Caption & Institutional Accreditation -->
+  <g transform="translate(60, 615)">
+    <line x1="0" y1="0" x2="1080" y2="0" stroke="#E2E8F0" stroke-width="1.5" />
+    <text x="0" y="24" font-family="Inter, system-ui, sans-serif" font-size="11.5" font-weight="500" fill="#64748B">
+      <tspan font-weight="700" fill="#334155">C03-M05-D41:</tspan> Bit-level and textual dissection of a Windows Security Identifier (SID): revision, identifier authority, domain sub-authorities, and Relative Identifier (RID).
+    </text>
+    <text x="1080" y="24" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#FF7A00" text-anchor="end">REDKROSS ACADEMY // CYBERSECURITY ARCHITECTURE</text>
+  </g>
+</svg>

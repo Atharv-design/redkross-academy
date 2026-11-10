@@ -284,8 +284,8 @@ export default function CyberAcademyPage() {
               </span>
             </motion.div>
 
-            {/* Responsive Multi-Course Grid: Course 01 & Course 02 side-by-side */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl">
+            {/* Responsive Multi-Course Grid: Course 01, Course 02 & Course 03 side-by-side with uniform heights */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-7xl mx-auto items-stretch">
               {cyberCoursesList.map((courseItem, idx) => (
                 <CyberLearningCard 
                   key={courseItem.id || courseItem.slug || idx} 
