@@ -289,38 +289,51 @@ body {
 
 /* Custom Themed Scrollbar (Amber Orange + Nocturnal Black Theme) */
 html {
-  scrollbar-color: rgba(255, 122, 0, 0.45) #05070B;
+  scrollbar-color: rgba(255, 122, 0, 0.45) transparent;
+  scrollbar-width: thin;
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 ::-webkit-scrollbar-track {
-  background: #05070B;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 122, 0, 0.40);
   border-radius: 9999px;
-  border: 1px solid rgba(255, 122, 0, 0.15);
+  border: 1px solid rgba(255, 122, 0, 0.2);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 164, 57, 0.75);
-  box-shadow: 0 0 10px rgba(255, 122, 0, 0.5);
+  background: rgba(255, 164, 57, 0.85);
+  box-shadow: 0 0 8px rgba(255, 122, 0, 0.6);
 }
 
-/* Explicit Custom Scrollbar Utility */
+/* Explicit Custom Scrollbar Utility - Ultra-Thin Amber Streamline */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 122, 0, 0.45) transparent;
+  scrollbar-color: rgba(255, 122, 0, 0.5) transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 3px;
+  height: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
@@ -328,25 +341,40 @@ html {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 122, 0, 0.40);
+  background: rgba(255, 122, 0, 0.5);
   border-radius: 9999px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 164, 57, 0.75);
+  background: rgba(255, 164, 57, 0.9);
+  box-shadow: 0 0 6px rgba(255, 122, 0, 0.6);
 }
 
-/* Division Scoped Scrollbars */
+/* Division Scoped Scrollbars: Strictly Amber/Orange Theme (Zero Cyan/Blue) */
 [data-academy-theme="cybersecurity"] {
-  scrollbar-color: rgba(0, 240, 255, 0.4) #030906;
+  scrollbar-color: rgba(255, 122, 0, 0.5) transparent;
+  scrollbar-width: thin;
+}
+[data-academy-theme="cybersecurity"] ::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+[data-academy-theme="cybersecurity"] ::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+[data-academy-theme="cybersecurity"] ::-webkit-scrollbar-track {
+  background: transparent;
 }
 [data-academy-theme="cybersecurity"] ::-webkit-scrollbar-thumb {
-  background: rgba(0, 240, 255, 0.35);
-  border: 1px solid rgba(0, 240, 255, 0.15);
+  background: rgba(255, 122, 0, 0.5);
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 122, 0, 0.25);
 }
 [data-academy-theme="cybersecurity"] ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 240, 255, 0.75);
-  box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+  background: rgba(255, 164, 57, 0.9);
+  box-shadow: 0 0 8px rgba(255, 122, 0, 0.6);
 }
 
 [data-academy-theme="psychology"] {
