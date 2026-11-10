@@ -448,7 +448,12 @@ export default async function handler(req, res) {
       'crs_soc_fundamentals', 'crs_practical_cyber_def',
       'course-soc-101', 'course-threat-hunt-201', 'course-malware-rev-301'
     ]);
-    const activeCourses = allCourses.filter(c => !LEGACY_COURSE_IDS.has(c.id));
+    const activeCourses = allCourses.filter(c => 
+      !LEGACY_COURSE_IDS.has(c.id) &&
+      c.id !== 'crs_full_stack_web_dev' &&
+      !c.slug.includes('web-dev') &&
+      !c.title.toLowerCase().includes('web development')
+    );
 
     if (!activeCourses.some(c => c.id === 'crs_cyber_net_02' || c.slug === 'computer-networking-for-cybersecurity')) {
       activeCourses.push({

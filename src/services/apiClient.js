@@ -64,7 +64,9 @@ export const apiClient = {
         throw new Error('API serverless unavailable or returned non-JSON');
       }
       const data = await res.json();
-      let courses = data.courses || [];
+      let courses = (data.courses || []).filter(
+        (c) => c.id !== 'crs_full_stack_web_dev' && !c.slug?.includes('web-dev') && !c.title?.toLowerCase().includes('web development')
+      );
       if (!courses.some((c) => c.id === 'crs_cyber_net_02' || c.slug === 'computer-networking-for-cybersecurity')) {
         const net02 = mockEngine.getCourseSummary('crs_cyber_net_02') || mockEngine.getCourseById('crs_cyber_net_02');
         if (net02) courses.push(net02);
@@ -94,7 +96,12 @@ export const apiClient = {
     if (!division) return data;
     return {
       ...data,
-      courses: allCourses.filter((c) => (c.division || 'cybersecurity') === division)
+      courses: allCourses.filter(
+        (c) => (c.division || 'cybersecurity') === division && 
+               c.id !== 'crs_full_stack_web_dev' && 
+               !c.slug?.includes('web-dev') && 
+               !c.title?.toLowerCase().includes('web development')
+      )
     };
   },
 
@@ -247,7 +254,12 @@ export const apiClient = {
     if (!division) return data;
     return {
       ...data,
-      courses: allCourses.filter((c) => (c.division || 'cybersecurity') === division)
+      courses: allCourses.filter(
+        (c) => (c.division || 'cybersecurity') === division && 
+               c.id !== 'crs_full_stack_web_dev' && 
+               !c.slug?.includes('web-dev') && 
+               !c.title?.toLowerCase().includes('web development')
+      )
     };
   },
 

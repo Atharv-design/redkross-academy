@@ -361,7 +361,7 @@ export default function CyberStudentDashboard() {
                   </div>
 
                   <h3 className="text-lg font-bold font-royal text-white">
-                    {cert.title || 'Full Stack Web Developer Certificate'}
+                    {cert.title || 'Certified Cybersecurity Defender Associate (CCDA)'}
                   </h3>
 
                   <div className="p-3 rounded-lg bg-black/80 border border-white/10 font-mono text-xs space-y-1">
@@ -402,7 +402,7 @@ export default function CyberStudentDashboard() {
                   <div className="flex items-center gap-2">
                     <Lock className="w-4 h-4 text-[#FFA439]" />
                     <h3 className="text-base font-bold font-royal text-white">
-                      Full Stack Application Defense Certificate (Pending Exam Passage)
+                      Certified Cybersecurity Defender Associate (Pending Exam Passage)
                     </h3>
                   </div>
                   <p className="text-xs text-slate-300 font-sans max-w-2xl leading-relaxed">

@@ -59,6 +59,16 @@ export default function CyberAcademyPage() {
   }, []);
 
   const cyberCoursesList = useMemo(() => {
+    // Strictly canonical cybersecurity courses only
+    const ALLOWED_CYBER_IDS = new Set([
+      'crs_cyber_intro_01', 
+      'crs_cyber_net_02', 
+      'crs_cyber_admin_03',
+      'introduction-to-cybersecurity',
+      'computer-networking-for-cybersecurity',
+      'linux-and-windows-system-administration'
+    ]);
+
     const list = CYBER_COURSES.map((cc) => ({
       ...cc,
       difficulty: (cc.difficulty || 'BEGINNER').toUpperCase(),
@@ -68,6 +78,10 @@ export default function CyberAcademyPage() {
 
     if (courses && courses.length > 0) {
       courses.forEach((apiC) => {
+        // Discard any course not in the canonical cyber list (e.g. web dev)
+        if (!ALLOWED_CYBER_IDS.has(apiC.id) && !ALLOWED_CYBER_IDS.has(apiC.slug)) {
+          return;
+        }
         const idx = list.findIndex((item) => item.id === apiC.id || item.slug === apiC.slug);
         if (idx >= 0) {
           list[idx] = {
@@ -77,18 +91,11 @@ export default function CyberAcademyPage() {
             estimated_weeks: apiC.estimated_weeks || list[idx].estimated_weeks || 10,
             short_desc: apiC.short_desc || apiC.overview || list[idx].short_desc
           };
-        } else {
-          list.push({
-            ...apiC,
-            difficulty: (apiC.difficulty || 'BEGINNER').toUpperCase(),
-            estimated_weeks: apiC.estimated_weeks || 10,
-            short_desc: apiC.short_desc || apiC.overview
-          });
         }
       });
     }
 
-    return list;
+    return list.filter((c) => ALLOWED_CYBER_IDS.has(c.id) || ALLOWED_CYBER_IDS.has(c.slug));
   }, [courses]);
 
   const masterCourse = cyberCoursesList[0];
@@ -284,8 +291,8 @@ export default function CyberAcademyPage() {
               </span>
             </motion.div>
 
-            {/* Responsive Multi-Course Grid: Course 01, Course 02 & Course 03 side-by-side with uniform heights */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-7xl mx-auto items-stretch">
+            {/* Responsive 2x2 Grid: Course 01, Course 02 & Course 03 with uniform heights */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto items-stretch">
               {cyberCoursesList.map((courseItem, idx) => (
                 <CyberLearningCard 
                   key={courseItem.id || courseItem.slug || idx} 
