@@ -20,21 +20,33 @@ import { CHAPTER_1_IMAGES } from '../services/db/chapter1Images.js';
  */
 function cleanLatex(eq = '') {
   if (!eq) return '';
-  return eq
+  let res = eq
     .replace(/\u0009ext/g, '\\text')
     .replace(/\u0009imes/g, '\\times')
     .replace(/\u0009o\b/g, '\\to')
     .replace(/\u0008mathbf/g, '\\mathbf')
     .replace(/\u0008egin/g, '\\begin')
     .replace(/\u000crac/g, '\\frac')
+    // Collapse double backslashes before LaTeX command words to prevent newLineInDisplayMode
+    .replace(/\\\\+([a-zA-Z]+)/g, '\\$1')
     .replace(/(?<!\\)\bext\{/g, '\\text{')
     .replace(/(?<!\\)\brac\{/g, '\\frac{')
     .replace(/(?<!\\)\begin\{/g, '\\begin{')
     .replace(/(?<!\\)\mathbf\{/g, '\\mathbf{')
     .replace(/(?<!\\)\bquad\b/g, '\\quad')
-    .replace(/(?<!\\)\b(times|cdot|approx|geq|leq|neq|to)\b/g, '\\$1')
+    .replace(/(?<!\\)\b(times|cdot|approx|geq|leq|neq|to|implies|mid|mathbf)\b/g, '\\$1')
+    .replace(/\\mathbf\s*\{/g, '\\mathbf{')
+    .replace(/(?<!\\)\bBig\(/g, '\\Big(')
+    .replace(/(?<!\\)\bBig\)/g, '\\Big)')
     .replace(/\bextResult\b/g, '\\text{Result}')
     .trim();
+
+  // If \to was substituted inside \text{...}, restore English word 'to'
+  res = res.replace(/\\text\{([^}]+)\}/g, (m, inner) => {
+    return `\\text{${inner.replace(/\\to\b/g, 'to')}}`;
+  });
+
+  return res;
 }
 
 /**

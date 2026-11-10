@@ -12,7 +12,7 @@ export const module8Data = {
   lessons: [
     {
       id: "les_c2_m8_l1",
-      title: "Packet Capture Architecture & Responsible Telemetry",
+      title: "8.1 Packet Capture Architecture & Responsible Telemetry",
       duration: "70 mins",
       type: "reading",
       images: [
@@ -79,7 +79,7 @@ Packet captures frequently contain confidential enterprise data, session cookies
     },
     {
       id: "les_c2_m8_l2",
-      title: "Capture Filters (BPF) vs. Wireshark Display Filters",
+      title: "8.2 Capture Filters (BPF) vs. Wireshark Display Filters",
       duration: "75 mins",
       type: "reading",
       images: [
@@ -147,7 +147,7 @@ Governed by the official \`wireshark-filter\` specification, display filters eva
     },
     {
       id: "les_c2_m8_l3",
-      title: "Wireshark Display Filters in Applied Incident Triage",
+      title: "8.3 Wireshark Display Filters in Applied Incident Triage",
       duration: "75 mins",
       type: "reading",
       images: [
@@ -205,7 +205,7 @@ Ensure all system clocks were synchronized via NTP (Course 22 Module 6).`
     },
     {
       id: "les_c2_m8_l4",
-      title: "Statistics & Macroscopic Telemetry: The Big Picture",
+      title: "8.4 Statistics & Macroscopic Telemetry: The Big Picture",
       duration: "70 mins",
       type: "reading",
       content: `## Macroscopic Capture Statistics, Protocol Hierarchies & Endpoints
@@ -264,7 +264,7 @@ Ethernet                               49       4757    100.00%    100.00%
     },
     {
       id: "les_c2_m8_l5",
-      title: "Troubleshooting Connection Failures from Packets",
+      title: "8.5 Troubleshooting Connection Failures from Packets",
       duration: "75 mins",
       type: "reading",
       images: [
@@ -337,7 +337,7 @@ As cataloged in **Figure C02-M08-F3**, four distinct signatures appear:
     },
     {
       id: "les_c2_m8_l6",
-      title: "Compiling a Formal Technical Network Report",
+      title: "8.6 Compiling a Formal Technical Network Report",
       duration: "80 mins",
       type: "reading",
       content: `## Compiling an Authoritative Technical Network Analysis Report
