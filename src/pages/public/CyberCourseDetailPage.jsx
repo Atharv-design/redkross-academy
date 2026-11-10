@@ -80,7 +80,16 @@ export default function CyberCourseDetailPage() {
       apiClient
         .getCourseBySlug(slug)
         .then((c) => {
-          if (c) setCourse(c);
+          if (c && c.modules && c.modules.length > 0 && c.overview) {
+            setCourse(c);
+          } else {
+            const local =
+              mockEngine.getCourseBySlug(slug) ||
+              mockEngine.getCourseById(slug) ||
+              CYBER_COURSES.find((item) => item.slug === slug || item.id === slug) ||
+              CYBER_COURSES[0];
+            if (local) setCourse(local);
+          }
         })
         .catch(() => {
           const local =
@@ -252,7 +261,7 @@ export default function CyberCourseDetailPage() {
                       ? '6 Knowledge Checks + Final'
                       : course.id === 'crs_cyber_net_02' || course.slug === 'computer-networking-for-cybersecurity'
                       ? '8 Quizzes + Final'
-                      : `${course.modules?.length || 6} Quizzes + Final`}
+                      : `${course.modules?.length || 8} Quizzes + Final`}
                   </div>
                   <div className="text-[10px] text-slate-400">
                     {course.id === 'crs_cyber_intro_01' || course.slug === 'introduction-to-cybersecurity'
@@ -261,6 +270,58 @@ export default function CyberCourseDetailPage() {
                   </div>
                 </div>
               </div>
+
+              {/* Faculty & Milestone Credential Badge */}
+              <div className="p-4 rounded-2xl bg-black/40 backdrop-blur-xl border border-[#FF7A00]/20 flex flex-wrap items-center justify-between gap-4 mt-2">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-black border border-[#FF7A00]/40 flex items-center justify-center p-1.5 shadow-[0_0_12px_rgba(255,122,0,0.3)] flex-shrink-0">
+                    <ShieldCheck className="w-5 h-5 text-[#FFA439]" />
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-mono text-[#A3907C] uppercase tracking-wider">
+                      Authoritative Faculty
+                    </div>
+                    <div className="text-xs font-bold font-royal text-white">
+                      {course.lead_author?.name || 'RedKross Systems Defense Faculty'}
+                    </div>
+                    <div className="text-[10px] text-slate-400 font-sans">
+                      {course.lead_author?.title || 'Defensive Architecture & Security Operations'}
+                    </div>
+                  </div>
+                </div>
+
+                {course.milestone_cert && (
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#FF7A00]/10 border border-[#FF7A00]/30">
+                    <Award className="w-4 h-4 text-[#FFA439] flex-shrink-0" />
+                    <div className="text-right">
+                      <div className="text-[9px] font-mono text-[#FFA439] uppercase font-bold">Milestone Award</div>
+                      <div className="text-[11px] font-royal font-bold text-white truncate max-w-[220px]">
+                        {course.milestone_cert}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Key Competency Domains & Toolchain Pills */}
+              {(course.skills || []).length > 0 && (
+                <div className="space-y-2 pt-1">
+                  <div className="text-[10px] font-mono font-bold text-[#FFA439] uppercase tracking-wider flex items-center gap-1.5">
+                    <Terminal className="w-3.5 h-3.5 text-[#FF7A00]" />
+                    <span>CORE TELEMETRY &amp; TACTICAL TOOLCHAIN</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {(course.skills || []).map((skill) => (
+                      <span
+                        key={skill}
+                        className="px-2.5 py-1 rounded-md bg-white/[0.03] border border-white/10 hover:border-[#FF7A00]/40 text-[11px] font-mono text-slate-300 transition-colors"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Right 4 Cols: DEFENSIVE CREDENTIALING AUTHORITY CARD */}
@@ -495,6 +556,44 @@ export default function CyberCourseDetailPage() {
                   </p>
                 </div>
 
+                {/* Why This Subject Matters Grid */}
+                {course.why_it_matters && course.why_it_matters.length > 0 && (
+                  <div>
+                    <div className="text-xs font-mono font-bold text-[#FFA439] uppercase mb-3 flex items-center gap-1.5">
+                      <Shield className="w-3.5 h-3.5 text-[#FF7A00]" />
+                      <span>WHY THIS CURRICULUM MATTERS: OPERATIONAL DEFENSE RATIONALE</span>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {course.why_it_matters.map((item, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-start gap-2.5 p-3 rounded-xl bg-white/[0.03] border border-white/5"
+                        >
+                          <CheckCircle2 className="w-4 h-4 text-[#FFA439] flex-shrink-0 mt-0.5" />
+                          <span className="text-xs text-slate-300 font-sans leading-relaxed">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Target Audience & Prerequisite Alignment */}
+                {course.intended_audience && course.intended_audience.length > 0 && (
+                  <div>
+                    <div className="text-xs font-mono font-bold text-[#FFA439] uppercase mb-3 flex items-center gap-1.5">
+                      <Terminal className="w-3.5 h-3.5 text-[#FF7A00]" />
+                      <span>TARGET CADET PROFILE &amp; PREREQUISITE ALIGNMENT</span>
+                    </div>
+                    <div className="p-4 rounded-xl bg-black/40 border border-white/10 space-y-2">
+                      <ul className="space-y-1.5 text-xs text-slate-300 font-sans list-disc list-inside leading-relaxed">
+                        {course.intended_audience.map((item, idx) => (
+                          <li key={idx}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                )}
+
                 {/* Skills Grid */}
                 <div>
                   <div className="text-xs font-mono font-bold text-[#FFA439] uppercase mb-3">
@@ -550,6 +649,8 @@ export default function CyberCourseDetailPage() {
                       ? 'Defensive Architecture & CIA Triad Competencies'
                       : course.id === 'crs_cyber_net_02' || course.slug === 'computer-networking-for-cybersecurity'
                       ? 'Enterprise Networking & Layered Perimeter Defense Competencies'
+                      : course.id === 'crs_cyber_admin_03' || course.slug === 'linux-and-windows-system-administration'
+                      ? 'Enterprise Systems Administration & Defensive Infrastructure Competencies'
                       : 'Defensive Engineering & Threat Mitigation Competencies'}
                   </h3>
                   <p className="text-sm text-slate-300 font-sans leading-relaxed">
@@ -557,6 +658,8 @@ export default function CyberCourseDetailPage() {
                       ? 'Cadets master foundational security principles, adversary kill chains, threat modeling, and layered defensive countermeasures.'
                       : course.id === 'crs_cyber_net_02' || course.slug === 'computer-networking-for-cybersecurity'
                       ? 'Cadets master physical through application layer packet transmission, binary subnetting, routing convergence, stateful firewalls, and Wireshark forensics.'
+                      : course.id === 'crs_cyber_admin_03' || course.slug === 'linux-and-windows-system-administration'
+                      ? 'Cadets master OS kernel privilege rings, FHS 3.0 directory trees, POSIX permissions, Windows NT executive internals, PowerShell 7 automation, Active Directory Kerberos, and CIS system hardening baselines.'
                       : 'Graduates master robust defensive architecture, operational telemetry, and systematic vulnerability remediation.'}
                   </p>
                 </div>
@@ -620,6 +723,39 @@ export default function CyberCourseDetailPage() {
                       title: 'MOD 08 // TRAFFIC ANALYSIS & FORENSICS',
                       desc: 'Conduct ground-truth packet triage with Wireshark and tshark CLI, apply Berkeley Packet Filters (BPF) and display filters, dissect malicious beacons, and draft a forensic troubleshooting report.'
                     }
+                  ] : course.id === 'crs_cyber_admin_03' || course.slug === 'linux-and-windows-system-administration' ? [
+                    {
+                      title: 'MOD 01 // OPERATING SYSTEM FOUNDATIONS',
+                      desc: 'Deconstruct CPU privilege rings (Ring 0 vs. Ring 3), system call dispatch, virtual memory paging, process trees, UEFI Secure Boot, and CrowdStrike 2024 kernel failure analysis.'
+                    },
+                    {
+                      title: 'MOD 02 // LINUX ENVIRONMENT & FILE SYSTEM',
+                      desc: 'Navigate the Filesystem Hierarchy Standard (FHS 3.0), evaluate inode structures, hard vs. symbolic links, hidden dotfiles, and locate forensic artifacts using find, grep, and xargs pipelines.'
+                    },
+                    {
+                      title: 'MOD 03 // CORE LINUX ADMINISTRATION',
+                      desc: 'Administer POSIX permissions (rwx), SUID/SGID/Sticky bits, extended ACLs (getfacl/setfacl), sudoers least-privilege, APT/RPM package integrity, systemd service units, and journald telemetry.'
+                    },
+                    {
+                      title: 'MOD 04 // LINUX AUTOMATION & SCHEDULING',
+                      desc: 'Author defensive Bash automation scripts featuring strict mode (set -euo pipefail), signal trapping, input validation, cron scheduling audits, and systemd monotonic timer automation.'
+                    },
+                    {
+                      title: 'MOD 05 // WINDOWS ARCHITECTURE & CORE ADMIN',
+                      desc: 'Dissect Windows NT executive subsystem, Registry hives forensics, SCM service lifecycles, Security Identifiers (SIDs), UAC token elevation, and NTFS DACLs vs SACLs inheritance.'
+                    },
+                    {
+                      title: 'MOD 06 // POWERSHELL ADMIN & AUTOMATION',
+                      desc: 'Leverage PowerShell 7 object pipelines, provider namespaces, Constrained Language Mode (CLM), AppLocker/WDAC integration, and deploy enterprise Script Block Logging (Event ID 4104).'
+                    },
+                    {
+                      title: 'MOD 07 // ENTERPRISE WINDOWS CONCEPTS',
+                      desc: 'Analyze Windows Security Event Logs (EID 4624/4688/1102), Active Directory domain trusts, Kerberos TGT/TGS ticket requests, Group Policy precedence (LSDOU), and WSUS patch management.'
+                    },
+                    {
+                      title: 'MOD 08 // HARDENING, BASELINES & AUDITS',
+                      desc: 'Apply consensus hardening with CIS Benchmark Level 1/2 baselines, Windows Defender Firewall rule engineering, automated Lynis compliance scoring, and execute a comprehensive capstone systems audit.'
+                    }
                   ] : (course.modules || []).map((m, mIdx) => ({
                     title: `MOD ${String(mIdx + 1).padStart(2, '0')} // ${m.title.toUpperCase()}`,
                     desc: m.description || 'Core technical competencies, hands-on labs, and graded assessments.'
@@ -667,7 +803,7 @@ export default function CyberCourseDetailPage() {
             >
               <div className="flex items-center justify-between pb-2">
                 <div className="text-xs font-mono text-slate-400">
-                  Total {course.modules?.length || 6} Modules • {totalLessonsCount} Lessons • 6 Knowledge Checks + 1 Final Certification Exam
+                  Total {course.modules?.length || 8} Modules • {totalLessonsCount} Lessons • {course.modules?.length || 8} Knowledge Checks + 1 Final Certification Exam
                 </div>
                 <div className="flex items-center gap-2">
                   <button
@@ -795,7 +931,11 @@ export default function CyberCourseDetailPage() {
                   <p className="text-sm text-slate-300 font-sans leading-relaxed">
                     {course.id === 'crs_cyber_intro_01' || course.slug === 'introduction-to-cybersecurity'
                       ? 'Designed for all learners from absolute scratch — no prior coding, networking, or IT background needed.'
-                      : 'Designed for aspiring full-stack engineers and defensive cybersecurity operators.'}
+                      : course.id === 'crs_cyber_net_02' || course.slug === 'computer-networking-for-cybersecurity'
+                      ? 'Designed for learners who have completed Course 01 or have foundational IT literacy.'
+                      : course.id === 'crs_cyber_admin_03' || course.slug === 'linux-and-windows-system-administration'
+                      ? 'Designed for learners who have completed Courses 01 & 02 or have foundational command-line and networking literacy.'
+                      : 'Designed for aspiring cybersecurity defenders and systems engineers.'}
                   </p>
                 </div>
 
@@ -822,9 +962,13 @@ export default function CyberCourseDetailPage() {
                       <span>HARDWARE &amp; SYSTEM ENVIRONMENT</span>
                     </div>
                     <ul className="space-y-2 text-xs text-slate-300 font-sans list-disc list-inside leading-relaxed">
-                      <li>Standard desktop/laptop with modern browser (Chrome, Firefox, Safari, Edge)</li>
-                      <li>100% web-accessible curriculum with interactive inline question engines</li>
-                      <li>Zero paid software licenses or complex virtual machine setups required — completely free tooling</li>
+                      {(course.required_software_hardware || [
+                        'Standard desktop/laptop with modern browser (Chrome, Firefox, Safari, Edge)',
+                        '100% web-accessible curriculum with interactive inline question engines',
+                        'Zero paid software licenses or complex virtual machine setups required — completely free tooling'
+                      ]).map((item, idx) => (
+                        <li key={idx}>{item}</li>
+                      ))}
                     </ul>
                   </div>
                 </div>
@@ -897,6 +1041,31 @@ export default function CyberCourseDetailPage() {
                 {
                   q: 'How do employers verify RedKross networking credentials?',
                   a: 'Each issued certificate contains a public verification URL (/verify/:id) and a deterministic SHA-256 hash that cryptographically confirms the cadet identity, passing grade, and completion timestamp.'
+                }
+              ] : course.id === 'crs_cyber_admin_03' || course.slug === 'linux-and-windows-system-administration' ? [
+                {
+                  q: 'Do I need prior Linux or PowerShell scripting experience before taking this course?',
+                  a: 'No prior command-line scripting experience is assumed. The curriculum begins from first principles, explaining core syntax, flags, redirection, and object pipelines step-by-step before advancing to defensive Bash automation and PowerShell 7 administration.'
+                },
+                {
+                  q: 'What laboratory environment is required for the hands-on practicals?',
+                  a: 'A computer with 8 GB RAM (16 GB recommended) and hardware virtualization enabled (VT-x / AMD-V). For Linux practicals, WSL2 with Ubuntu 24.04/26.04 LTS (recommended for Windows users) or a virtual machine (VirtualBox/Hyper-V) is used. Windows 10/11 Home is sufficient for most labs, with Pro/Enterprise noted where Group Policy (gpedit.msc) is evaluated.'
+                },
+                {
+                  q: 'Why does this course cover both Linux and Windows together in a single curriculum?',
+                  a: 'Modern enterprise IT infrastructure is heterogeneous. Workstations and Active Directory domains predominantly run Windows, while cloud workloads, microservices, databases, and network appliances run Linux. Security defenders and systems administrators must be equally fluent and capable across both platforms.'
+                },
+                {
+                  q: 'What is the significance of the 2024 CrowdStrike outage analyzed in Module 1?',
+                  a: 'The July 2024 incident provides a critical real-world lesson in operating system privilege boundaries. A sensor update executed in kernel space (Ring 0) where an invalid memory read triggered a BugCheck/BSOD that disabled 8.5 million systems worldwide. Defenders study this to understand kernel vs. user space isolation.'
+                },
+                {
+                  q: 'How do module assessments, the Lynis audit capstone, and the final CSADA exam work?',
+                  a: 'Each of the 8 modules concludes with a 20-MCQ knowledge check requiring an 80% passing grade. Upon completing all 48 lessons and 8 quizzes, cadets conduct an automated Lynis system audit and unlock the proctored 50-MCQ final exam to earn the Certified Systems Administration & Defense Associate (CSADA) credential.'
+                },
+                {
+                  q: 'How does this credential translate into enterprise cybersecurity roles?',
+                  a: 'The CSADA credential aligns directly with the NICE Framework for Systems Administration (K0001, K0002, K0003) and Incident Response (K0041, K0070). It validates that you can manage permissions, investigate process trees, audit event logs, build defensive automation, and enforce consensus CIS hardening baselines.'
                 }
               ] : [
                 {
