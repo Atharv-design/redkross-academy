@@ -1,82 +1,61 @@
 import fs from 'fs';
 
-const file = 'api/courses.js';
-let content = fs.readFileSync(file, 'utf8');
+let content = fs.readFileSync('api/courses.js', 'utf8');
+const netCourseEnd = "created_at: new Date().toISOString()\n      });\n    }";
+const netCourseEndCRLF = "created_at: new Date().toISOString()\r\n      });\r\n    }";
 
-const target = `    if (!activeCourses.some(c => c.id === 'crs_cyber_net_02' || c.slug === 'computer-networking-for-cybersecurity')) {
-      activeCourses.push({
-        id: 'crs_cyber_net_02',
-        slug: 'computer-networking-for-cybersecurity',
-        title: 'Computer Networking for Cybersecurity',
-        version: '1.0',
-        category: 'Network Defense & Infrastructure',
-        difficulty: 'Beginner',
-        price: 0,
-        cert_price: 0,
-        estimated_duration: '10 Weeks',
-        rating: 4.97,
-        enrolled_count: 980,
-        overview: 'The definitive architectural bridge between computer networking fundamentals and adversarial cyber defense. Master physical and logical network models, Ethernet framing and CAM learning, binary IPv4 and IPv6 subnetting, transport-layer TCP state tracking, core infrastructure protocols (DNS, DHCP, NAT, TLS 1.3), stateful firewall engineering, and ground-truth Wireshark packet capture analysis.',
-        lead_author: {
-          name: 'RedKross Network Defense Faculty',
-          title: 'Network Security Architecture & Infrastructure Operations',
-          role: 'Director of Network Engineering, RedKross Research Foundation'
-        },
-        total_tokens_reward: 1600,
-        card_variant: 'variant-03',
-        created_at: new Date().toISOString()
-      });
-    }`;
+const isCRLF = content.includes(netCourseEndCRLF);
+const match = isCRLF ? netCourseEndCRLF : netCourseEnd;
+const nl = isCRLF ? '\r\n' : '\n';
 
-const replacement = `    if (!activeCourses.some(c => c.id === 'crs_cyber_net_02' || c.slug === 'computer-networking-for-cybersecurity')) {
+const course03Block = `${nl}${nl}    if (!activeCourses.some(c => c.id === 'crs_cyber_admin_03' || c.slug === 'linux-and-windows-system-administration')) {
       activeCourses.push({
-        id: 'crs_cyber_net_02',
-        slug: 'computer-networking-for-cybersecurity',
-        title: 'Computer Networking for Cybersecurity',
+        id: 'crs_cyber_admin_03',
+        slug: 'linux-and-windows-system-administration',
+        title: 'Linux and Windows System Administration',
         version: '1.0',
-        category: 'Network Defense & Infrastructure',
-        difficulty: 'Beginner',
+        category: 'Systems Administration & Enterprise Defense',
+        difficulty: 'Intermediate',
         price: 0,
         cert_price: 0,
         estimated_duration: '10 Weeks',
         estimated_weeks: 10,
-        total_hours: 86,
-        rating: 4.98,
-        enrolled_count: 1840,
-        milestone_cert: 'Certified Network Defense Associate (CNDA)',
-        short_desc: 'The definitive architectural bridge between computer networking fundamentals and adversarial cyber defense. Master physical and logical network models, Ethernet framing, binary IPv4 & IPv6 subnetting, TCP state tracking, core protocols (DNS, DHCP, TLS 1.3), stateful firewalls, and Wireshark packet capture analysis.',
-        overview: 'Almost every attack and almost every defence happens on a network. Phishing email crosses mail servers; ransomware spreads over file-sharing protocols; attackers malware phones home through DNS and HTTPS; defenders watch packets, flows and logs to catch them. You cannot investigate an alert, write a firewall rule, read a penetration test report or design a cloud network without understanding how data actually moves. Master physical and logical network models, Ethernet framing, binary IPv4/IPv6 subnetting, transport TCP state tracking, core protocols (DNS, DHCP, NAT, TLS 1.3), stateful firewall engineering, and Wireshark packet capture analysis.',
+        total_hours: 90,
+        rating: 4.97,
+        enrolled_count: 1420,
+        milestone_cert: 'Certified Systems Administration & Defense Associate (CSADA)',
+        short_desc: 'The definitive enterprise systems administration and defensive infrastructure curriculum. Master OS internal architectures, industrial Linux administration, Windows NT executive internals, modern PowerShell 7 object pipelines, Active Directory Kerberos, and CIS system hardening.',
+        overview: 'System administration is the frontline operational substrate of cybersecurity. Master CPU privilege rings, virtual memory paging, UEFI Secure Boot, Linux FHS 3.0, POSIX ACLs, defensive Bash automation, Windows NT executive subsystems, registry transaction logs, svchost isolation, SIDs, UAC, NTFS DACLs, PowerShell 7 object pipelines, Windows Event Log XML triage, Active Directory Kerberos authentication, Group Policy LSDOU precedence, and CIS Benchmark system hardening.',
         skills: [
-          'Wireshark & TShark Packet Dissection',
-          'TCP 3-Way Handshake & State Tracking',
-          'Binary IPv4 Subnetting & VLSM Design',
-          'IPv6 SLAAC & Scoped Addressing',
-          'DNS Resolution & Cache Poisoning Defense',
-          'DHCP Snooping & Dynamic ARP Inspection',
-          'NAT/PAT Overload & Conntrack State Tables',
-          'HTTP/HTTPS Semantics & TLS 1.3 Handshake',
-          'Layer 2 Switching, CAM Tables & 802.1Q VLANs',
-          'Stateful Linux Firewalls & ACL Rule Design',
-          'Wireless Security: WPA3 SAE & 802.1X',
-          'Incident Triage & Forensic Network Reports'
+          'Linux Kernel Privilege Rings & Syscall Forensics',
+          'POSIX File Permissions, SUID/SGID & Extended ACLs',
+          'Defensive Shell Scripting (Strict Mode & Traps)',
+          'systemd Service Units & Monotonic Timer Architecture',
+          'Windows NT Executive & Core Process Ancestry',
+          'Windows Registry Forensics & Persistence Hunting',
+          'Security Identifiers (SIDs), UAC & Token Integrity',
+          'NTFS DACLs, ACE Evaluation & Share Permissions',
+          'PowerShell Object Pipelines, CLM & Script Block Logging',
+          'Windows Event Log XML Telemetry (EID 4624/4688/1102)',
+          'Active Directory Kerberos Tickets & GPO LSDOU Precedence',
+          'CIS Benchmark System Hardening & Lynis Automated Audits'
         ],
         lead_author: {
-          name: 'RedKross Network Defense Faculty',
-          title: 'Network Security Architecture & Infrastructure Operations',
-          role: 'Director of Network Engineering, RedKross Research Foundation',
-          avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80'
+          name: 'RedKross Systems Engineering Faculty',
+          title: 'Enterprise Systems Administration & Infrastructure Defense',
+          role: 'Director of Systems Architecture, RedKross Research Foundation',
+          avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=256&q=80'
         },
-        total_tokens_reward: 1800,
-        card_variant: 'variant-03',
+        total_tokens_reward: 2000,
+        card_variant: 'variant-01',
         created_at: new Date().toISOString()
       });
     }`;
 
-content = content.replace(/\r\n/g, '\n');
-if (content.includes(target)) {
-  content = content.replace(target, replacement);
-  fs.writeFileSync(file, content.replace(/\n/g, '\r\n'), 'utf8');
-  console.log('Successfully updated api/courses.js');
+if (content.includes(match)) {
+  content = content.replace(match, match + course03Block);
+  fs.writeFileSync('api/courses.js', content, 'utf8');
+  console.log('Successfully updated api/courses.js with Course 03!');
 } else {
-  console.error('Target not found in api/courses.js');
+  console.error('Target match not found in api/courses.js');
 }

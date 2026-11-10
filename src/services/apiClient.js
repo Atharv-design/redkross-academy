@@ -69,6 +69,10 @@ export const apiClient = {
         const net02 = mockEngine.getCourseSummary('crs_cyber_net_02') || mockEngine.getCourseById('crs_cyber_net_02');
         if (net02) courses.push(net02);
       }
+      if (!courses.some((c) => c.id === 'crs_cyber_admin_03' || c.slug === 'linux-and-windows-system-administration')) {
+        const admin03 = mockEngine.getCourseSummary('crs_cyber_admin_03') || mockEngine.getCourseById('crs_cyber_admin_03');
+        if (admin03) courses.push(admin03);
+      }
       return {
         courses,
         public_catalog_enabled: data.public_catalog_enabled,

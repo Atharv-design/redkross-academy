@@ -1222,6 +1222,12 @@ class MockEngine {
         return this.enrolStudent('usr_student_01', 'crs_cyber_net_02');
       }
     }
+    if (!found && (enrolmentId === 'crs_cyber_admin_03' || enrolmentId === 'linux-and-windows-system-administration' || enrolmentId === 'enr_student_admin_03')) {
+      found = (db.enrolments || []).find((e) => e.course_id === 'crs_cyber_admin_03');
+      if (!found) {
+        return this.enrolStudent('usr_student_01', 'crs_cyber_admin_03');
+      }
+    }
     return found;
   }
 
@@ -2390,17 +2396,24 @@ class MockEngine {
     const db = this.getDb();
     const enrolment = (db.enrolments || []).find((e) => e.id === enrolmentId);
 
-    // Course 2 Temporary Inspection Mode: bypass lockout for Course 2 units
-    const isCourse2 = enrolment?.course_id === 'crs_cyber_net_02' ||
+    // Course 2 and Course 3 Inspection Mode: bypass lockout for Course 2 & 3 units
+    const isBypassCourse = enrolment?.course_id === 'crs_cyber_net_02' ||
+      enrolment?.course_id === 'crs_cyber_admin_03' ||
       (quizId && (
         quizId.startsWith('quiz_mod_c2_') || 
+        quizId.startsWith('quiz_mod_c3_') || 
         quizId === 'exam_cyber_net_final' || 
+        quizId === 'exam_cyber_admin_final' || 
         quizId === 'exam_final_c02' || 
+        quizId === 'exam_final_c03' || 
         quizId.includes('c2_') || 
+        quizId.includes('c3_') || 
         quizId.includes('c02') ||
-        quizId.includes('net_')
+        quizId.includes('c03') ||
+        quizId.includes('net_') ||
+        quizId.includes('admin_')
       ));
-    if (isCourse2) {
+    if (isBypassCourse) {
       return { isLocked: false, remainingHours: 0, remainingMinutes: 0, lockedUntil: null };
     }
     const now = new Date();

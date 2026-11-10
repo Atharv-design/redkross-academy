@@ -10,6 +10,7 @@ import { module4Data } from './curriculum/module4.js';
 import { module5Data } from './curriculum/module5.js';
 import { module6Data } from './curriculum/module6.js';
 import { course02Data } from './course02/index.js';
+import { course03Data } from './course03/index.js';
 
 export const CYBER_COURSES = [
   {
@@ -87,11 +88,13 @@ export const CYBER_COURSES = [
       module6Data
     ]
   },
-  course02Data
+  course02Data,
+  course03Data
 ];
 
 export const CYBER_INTRO_COURSE_01 = CYBER_COURSES[0];
 export const CYBER_NET_COURSE_02 = CYBER_COURSES[1];
+export const CYBER_ADMIN_COURSE_03 = CYBER_COURSES[2];
 
 export const CYBER_LEARNING_PATHS = [
   {
@@ -123,5 +126,20 @@ export const CYBER_LEARNING_PATHS = [
     featured: true,
     skills: ['Layer 2 Switching', '802.1Q VLANs', 'CIDR Subnetting', 'TCP/IP Sockets', 'DNSSEC & DHCP Snooping', 'Stateful Firewalls', 'WireGuard & IPsec', 'Wireshark Analysis'],
     course_ids: ['crs_cyber_net_02']
+  },
+  {
+    id: 'path_sysadmin_defense',
+    division: 'cybersecurity',
+    slug: 'linux-and-windows-systems-administration-track',
+    title: 'Systems Administration & Enterprise Infrastructure Defense Track',
+    short_desc: 'Master OS internals, industrial Linux administration (FHS 3.0, POSIX ACLs, Bash automation), Windows NT executive (Registry, services, SIDs, UAC, NTFS DACLs), PowerShell 7 object pipelines, Active Directory Kerberos, and CIS system hardening.',
+    difficulty: 'Intermediate',
+    estimated_weeks: 10,
+    total_hours: 90,
+    courses_count: 1,
+    milestone_cert: 'Certified Systems Administration & Defense Associate (CSADA)',
+    featured: true,
+    skills: ['Kernel Rings & Syscalls', 'POSIX Permissions & ACLs', 'Defensive Bash Scripting', 'systemd Timers', 'Windows Registry & Persistence', 'SIDs, UAC & Tokens', 'NTFS Permissions & Shares', 'PowerShell 7 Object Pipelines', 'Windows Event Forwarding', 'Kerberos & Group Policy (LSDOU)', 'CIS Benchmark Hardening', 'Lynis Automated Audits'],
+    course_ids: ['crs_cyber_admin_03']
   }
 ];

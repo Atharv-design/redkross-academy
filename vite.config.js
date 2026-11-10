@@ -42,6 +42,9 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
+          if (id.includes('course03')) {
+            return 'curriculum-course03';
+          }
           if (id.includes('course02')) {
             return 'curriculum-course02';
           }
