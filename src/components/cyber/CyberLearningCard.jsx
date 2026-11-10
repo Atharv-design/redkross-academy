@@ -13,7 +13,8 @@ import {
   Users, 
   BarChart3, 
   BookOpen, 
-  CheckCircle2
+  CheckCircle2,
+  Image as ImageIcon
 } from 'lucide-react';
 import CyberProjectCircuitFrame from './CyberProjectCircuitFrame';
 
@@ -468,13 +469,13 @@ export default function CyberLearningCard({
                         </div>
 
                         <div className="p-2 rounded-xl bg-gradient-to-r from-[#FF7A00]/10 via-black/50 to-transparent border border-[#FF7A00]/25 flex items-center gap-2">
-                          <BookOpen className="w-3.5 h-3.5 text-[#FFA439] shrink-0" />
+                          <ImageIcon className="w-3.5 h-3.5 text-[#FFA439] shrink-0" />
                           <div>
                             <span className="text-[9px] font-mono text-[#FFA439] uppercase font-bold block">
                               Format
                             </span>
-                            <span className="text-[11px] font-sans text-white font-medium line-clamp-1" title="Video • Hands-on Labs • Assessments">
-                              Video • Labs • Tests
+                            <span className="text-[11px] font-sans text-white font-medium line-clamp-1" title="High-Quality Technical Diagrams • Hands-on Labs • Proctored CBT Assessments">
+                              Diagrams • Labs • Exams
                             </span>
                           </div>
                         </div>
