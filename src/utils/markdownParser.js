@@ -386,10 +386,25 @@ export function renderMarkdownToHtml(markdown = '') {
   });
 
   // =========================================================================
-  // STEP 5: HEADINGS (H1-H5) WITH COMPACT EXPLANATION PROXIMITY
+  // STEP 5: HEADINGS (H1-H5) & MAJOR SECTION DIVIDERS
+  // Major sections (##) are divided with a light, thin amber line (border-t border-[#FF7A00]/20)
+  // Sub-sections (###, ####, #####) remain in continuous reading flow without dividers
   // =========================================================================
+  // Clean up leading horizontal rules or rules immediately preceding major sections (##)
+  html = html.replace(/^\s*---\s*\n+/g, '');
+  html = html.replace(/(?:^---\s*\n+)+(?=##\s+)/gm, '');
+
   html = html.replace(/^#\s+(.+)$/gm, '<h1 class="text-2xl sm:text-3xl font-bold font-lora text-white mt-8 mb-3 text-center border-b border-[#FF7A00]/25 pb-3">$1</h1>');
-  html = html.replace(/^##\s+(.+)$/gm, '<h2 class="text-xl sm:text-2xl font-bold font-lora text-white mt-7 mb-2 text-center">$1</h2>');
+
+  let isFirstH2 = true;
+  html = html.replace(/^##\s+(.+)$/gm, (match, heading) => {
+    if (isFirstH2) {
+      isFirstH2 = false;
+      return `<h2 class="text-xl sm:text-2xl font-bold font-lora text-white mt-6 mb-3 text-center">${heading}</h2>`;
+    }
+    return `<hr class="my-8 border-t border-[#FF7A00]/20" />\n<h2 class="text-xl sm:text-2xl font-bold font-lora text-white mt-6 mb-3 text-center">${heading}</h2>`;
+  });
+
   html = html.replace(/^###\s+(.+)$/gm, '<h3 class="text-lg sm:text-xl font-bold font-lora text-[#FFA439] mt-6 mb-2 border-l-2 border-[#FF7A00] pl-3">$1</h3>');
   html = html.replace(/^####\s+(.+)$/gm, '<h4 class="text-base sm:text-lg font-bold font-lora text-white mt-4 mb-1.5 flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FF7A00]/70 flex-shrink-0"></span><span>$1</span></h4>');
   html = html.replace(/^#####\s+(.+)$/gm, '<h5 class="text-sm sm:text-base font-semibold font-mono text-[#FFA439] mt-3 mb-1">$1</h5>');
@@ -404,7 +419,7 @@ export function renderMarkdownToHtml(markdown = '') {
   // =========================================================================
   // STEP 7: HORIZONTAL RULES & BLOCKQUOTES
   // =========================================================================
-  html = html.replace(/^---$/gm, '<hr class="my-6 border-t border-[#FF7A00]/20" />');
+  html = html.replace(/^---$/gm, '<hr class="my-8 border-t border-[#FF7A00]/20" />');
 
   // Clean textbook blockquotes
   html = html.replace(/(?:^>\s*.+(?:\n|$))+/gm, (bqBlock) => {
