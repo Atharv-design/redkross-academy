@@ -65,15 +65,6 @@ export default defineConfig({
             if (id.includes('three') || id.includes('vanta')) {
               return 'vendor-three';
             }
-            if (id.includes('@blocknote') || id.includes('@tiptap') || id.includes('prosemirror')) {
-              return 'vendor-blocknote';
-            }
-            if (id.includes('recharts')) {
-              return 'vendor-charts';
-            }
-            if (id.includes('mermaid') || id.includes('d3') || id.includes('dagre') || id.includes('khroma')) {
-              return 'vendor-mermaid';
-            }
             if (id.includes('katex')) {
               return 'vendor-katex';
             }
