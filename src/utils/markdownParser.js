@@ -27,12 +27,98 @@ function cleanLatex(eq = '') {
     .replace(/\u0008mathbf/g, '\\mathbf')
     .replace(/\u0008egin/g, '\\begin')
     .replace(/\u000crac/g, '\\frac')
-    .replace(/\bext\{/g, '\\text{')
+    .replace(/(?<!\\)\bext\{/g, '\\text{')
+    .replace(/(?<!\\)\brac\{/g, '\\frac{')
+    .replace(/(?<!\\)\begin\{/g, '\\begin{')
+    .replace(/(?<!\\)\mathbf\{/g, '\\mathbf{')
+    .replace(/(?<!\\)\bquad\b/g, '\\quad')
+    .replace(/(?<!\\)\b(times|cdot|approx|geq|leq|neq|to)\b/g, '\\$1')
     .replace(/\bextResult\b/g, '\\text{Result}')
-    .replace(/\bimes\b/g, '\\times')
-    .replace(/(?<!\\)quad\b/g, '\\quad')
-    .replace(/\\{2,}(text|times|mathbf|begin|end|frac|to|quad|approx|cdot)/g, '\\$1')
     .trim();
+}
+
+/**
+ * Builds a structured, responsive Math Steps Container for sequential calculations.
+ * Binds Step Number, Technical Explanation, KaTeX Formula, and Verified Outcome together.
+ */
+function renderMathStepsBlock(blockText, blockTitle = 'Sequential Technical Calculation') {
+  const lines = blockText.trim().split('\n').filter(l => l.trim().length > 0);
+  const steps = [];
+  let currentStep = null;
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    // Check if line starts a new step: "Step 01: Verbal Title", "1. Title", or "- **Step 01"
+    const stepMatch = trimmed.match(/^(?:[-*]\s+)?(?:\*\*)?(?:Step\s*(\d+)|\b(\d+)\.)[:\s]*(.*?)(?:\*\*)?(?:\s*\|\s*(.*))?$/i);
+    if (stepMatch) {
+      if (currentStep) steps.push(currentStep);
+      const stepNum = (stepMatch[1] || stepMatch[2] || (steps.length + 1)).toString().padStart(2, '0');
+      const rest = stepMatch[3] || '';
+      const pipePart = stepMatch[4] || '';
+      currentStep = {
+        number: `Step ${stepNum}`,
+        description: rest,
+        equation: pipePart,
+        result: ''
+      };
+    } else if (currentStep) {
+      if (trimmed.startsWith('$$') || trimmed.startsWith('\\[')) {
+        currentStep.equation = (currentStep.equation ? currentStep.equation + ' ' : '') + trimmed;
+      } else if (trimmed.startsWith('*Result:') || trimmed.startsWith('Result:')) {
+        currentStep.result = trimmed.replace(/^\*?Result:\s*/i, '').replace(/\*$/, '');
+      } else {
+        currentStep.description = (currentStep.description ? currentStep.description + ' ' : '') + trimmed;
+      }
+    } else {
+      currentStep = {
+        number: `Step 01`,
+        description: trimmed,
+        equation: '',
+        result: ''
+      };
+    }
+  }
+  if (currentStep) steps.push(currentStep);
+
+  const stepHtmls = steps.map((s) => {
+    let eqHtml = '';
+    if (s.equation) {
+      const cleanEq = s.equation.replace(/^\$\$|\$\$$|^\\\[|\\\]$/g, '').trim();
+      try {
+        eqHtml = katex.renderToString(cleanLatex(cleanEq), {
+          displayMode: true,
+          throwOnError: false,
+          output: 'html'
+        });
+      } catch (e) {
+        eqHtml = `<span class="font-mono text-xs text-[#FFA439]">${cleanEq}</span>`;
+      }
+    }
+
+    return `<div class="p-3.5 sm:p-4 rounded-xl bg-[#070A0F] border border-[#FF7A00]/20 flex flex-col md:flex-row md:items-center justify-between gap-3 hover:border-[#FF7A00]/40 transition-colors shadow-sm">
+      <div class="flex items-start gap-3 flex-1 min-w-0">
+        <span class="px-2.5 py-1 rounded-md bg-[#1F1308] border border-[#FF7A00]/40 font-mono text-xs font-bold text-[#FFA439] flex-shrink-0 select-none">${s.number}</span>
+        <div class="space-y-1 min-w-0">
+          <div class="text-[15px] font-lora text-[#E2D9CE] leading-relaxed">${s.description}</div>
+          ${s.result ? `<div class="text-xs font-mono text-[#65F58A] flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-[#65F58A]"></span><span>${s.result}</span></div>` : ''}
+        </div>
+      </div>
+      ${eqHtml ? `<div class="text-right overflow-x-auto custom-scrollbar py-2 px-3.5 rounded-lg bg-[#0E0C09] border border-[#FF7A00]/15 flex items-center justify-end text-white text-sm max-w-full md:max-w-[48%] flex-shrink-0">${eqHtml}</div>` : ''}
+    </div>`;
+  }).join('\n');
+
+  return `<div class="my-6 rounded-2xl border border-[#FF7A00]/30 bg-[#0B0D14] overflow-hidden shadow-2xl">
+    <div class="px-4 py-2.5 bg-[#140D07] border-b border-[#FF7A00]/25 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-[#FF7A00] animate-pulse"></span>
+        <span class="font-mono text-xs font-bold text-[#FFA439] uppercase tracking-wider">${blockTitle || 'Sequential Technical Calculation'}</span>
+      </div>
+      <span class="text-[10px] font-mono text-[#8C7A6B] uppercase tracking-wider">KaTeX Verified</span>
+    </div>
+    <div class="p-4 sm:p-5 space-y-3 bg-[#0B0D14]/90">
+      ${stepHtmls}
+    </div>
+  </div>`;
 }
 
 /**
@@ -99,10 +185,18 @@ export function renderMarkdownToHtml(markdown = '') {
     .replace(/\u000crac/g, '\\frac');
 
   // =========================================================================
-  // STEP 1: SHIELD CODE BLOCKS & CONVERT EMBEDDED BOX TABLES
+  // STEP 1: SHIELD CODE BLOCKS & CONVERT EMBEDDED BOX TABLES & MATH STEPS
   // =========================================================================
   const codeBlocks = [];
   const inlineCodes = [];
+
+  // 1-pre. Structured Math Steps Blocks (:::math-steps ... :::)
+  html = html.replace(/:::math-steps\s*(.*?)\n([\s\S]*?):::/gi, (match, title, body) => {
+    const rendered = renderMathStepsBlock(body, title.trim());
+    const token = `@@@MATHSTEPS_${codeBlocks.length}@@@`;
+    codeBlocks.push(rendered);
+    return token;
+  });
 
   // 1a. Mermaid Diagram Blocks -> Native Mermaid Container
   html = html.replace(/```mermaid\n([\s\S]*?)```/g, (match, code) => {
@@ -237,7 +331,7 @@ export function renderMarkdownToHtml(markdown = '') {
         throwOnError: false,
         output: 'html'
       });
-      return `<div class="my-5 py-2 px-3 overflow-x-auto custom-scrollbar flex justify-center text-center text-white">${rendered}</div>`;
+      return `<div class="my-5 py-3 px-4 rounded-xl bg-[#0B0D14] border border-[#FF7A00]/25 shadow-lg overflow-x-auto custom-scrollbar flex justify-center text-center text-white">${rendered}</div>`;
     } catch (e) {
       return `<div class="my-5 p-3 rounded-lg bg-[#140D08] border border-red-500/30 font-mono text-xs text-red-300">${eq}</div>`;
     }
@@ -248,11 +342,12 @@ export function renderMarkdownToHtml(markdown = '') {
     const clean = cleanLatex(eq);
     if (!clean) return '';
     try {
-      return katex.renderToString(clean, {
+      const rendered = katex.renderToString(clean, {
         displayMode: false,
         throwOnError: false,
         output: 'html'
       });
+      return `<span class="inline-math inline-flex items-center align-middle whitespace-nowrap mx-0.5">${rendered}</span>`;
     } catch (e) {
       return match;
     }
@@ -263,11 +358,12 @@ export function renderMarkdownToHtml(markdown = '') {
     const clean = cleanLatex(eq);
     if (!clean) return match;
     try {
-      return katex.renderToString(clean, {
+      const rendered = katex.renderToString(clean, {
         displayMode: false,
         throwOnError: false,
         output: 'html'
       });
+      return `<span class="inline-math inline-flex items-center align-middle whitespace-nowrap mx-0.5">${rendered}</span>`;
     } catch (e) {
       return match;
     }
@@ -447,7 +543,8 @@ export function renderMarkdownToHtml(markdown = '') {
         trimmed.startsWith('<ol') ||
         trimmed.startsWith('<dl') ||
         trimmed.startsWith('@@@CODEBLOCK_') ||
-        trimmed.startsWith('@@@MERMAID_')
+        trimmed.startsWith('@@@MERMAID_') ||
+        trimmed.startsWith('@@@MATHSTEPS_')
       ) {
         return trimmed;
       }
@@ -461,6 +558,7 @@ export function renderMarkdownToHtml(markdown = '') {
   codeBlocks.forEach((block, idx) => {
     html = html.replace(`@@@CODEBLOCK_${idx}@@@`, block);
     html = html.replace(`@@@MERMAID_${idx}@@@`, block);
+    html = html.replace(`@@@MATHSTEPS_${idx}@@@`, block);
   });
 
   inlineCodes.forEach((code, idx) => {

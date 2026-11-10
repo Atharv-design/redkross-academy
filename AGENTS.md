@@ -78,6 +78,15 @@ When authoring, reviewing, updating, or formatting curriculum chapters, lessons,
 - Ground security principles in quantitative operational metrics: latency thresholds, "Five Nines" (99.999%) uptime, MTBF, RTO/RPO, intrusion dwell time.
 - All learning objectives under `## Core Competencies and Learning Objectives` must be structured into actionable bullet items with front-loaded concept tags.
 
+### 6. KaTeX Mathematical Typesetting & Structured Math Steps Containers
+- **Primary Math Engine:** KaTeX is the exclusive mathematical rendering engine for all scientific, cryptographic, and networking formulas across Course 02.
+- **Isolated HTML Output Mode:** KaTeX must render with `output: 'html'` to prevent duplicate MathML/HTML double-rendering and vertical operator drift in Tailwind prose containers.
+- **String Escape Normalization:** Pre-process LaTeX strings to prevent JS escape character collisions (`\text` $\to$ `\u0009ext`, `\times` $\to$ `\u0009imes`, `\begin` $\to$ `\u0008egin`, `\frac` $\to$ `\u000crac`).
+- **Structured Math Steps Container:** Multi-step procedural calculations (e.g. IPv4 subnet bit-splitting, TCP stream tracking, encapsulation header arithmetic) must be rendered inside a dedicated atomic container (`:::math-steps ... :::`):
+  - Each step binds: **[Step Badge]**, **[Verbal Technical Objective]**, **[KaTeX Equation]**, and **[Verified Technical Result]**.
+  - Containers must use responsive horizontal overflow protection and preserve unbroken operator alignment across mobile and desktop viewports.
+- **Strict Domain Classification:** Never format programming code, terminal commands, IP addresses, or hexadecimal packet bytes as raw math equations. Reserve KaTeX strictly for mathematical relationships, summations, fractions, subscripts, and equality proofs.
+
 ---
 
 # Course Engineering & Operational Blueprint (Authoritative Standards)
@@ -113,5 +122,18 @@ When authoring, reviewing, updating, or formatting curriculum chapters, lessons,
   1. Bump `CURRICULUM_VERSION` in `src/services/db/mockEngine.js`.
   2. Update the asserted version in `tests/test_curriculum_cache_migration.mjs`.
   3. Run `node tests/test_curriculum_cache_migration.mjs` to verify safe migration without wiping cadet accounts, progress metrics, quiz history, or token balances.
+
+### 7. Diagram Design Prompting & User-Crafted Asset Protocol
+- **No Direct Raw SVG Injection:** Do not directly insert or auto-generate raw SVG diagrams into curriculum module files without explicit user review.
+- **Visual Design Prompts Mandate:** When a diagram is required or missing, formulate a detailed, production-ready visual design prompt for the user containing:
+  1. **Diagram Identifier & Title** (e.g. `Figure C02-M03-D2: CIDR Subnet Slicing Tree`)
+  2. **Lesson Placement** (Module X, Lesson Y)
+  3. **Core Educational Objective** (What specific cyber/networking concept is illustrated)
+  4. **Visual Layout & Node Architecture** (Canvas layout, containers, flow direction)
+  5. **Data Flow, Signatures & Protocols** (Exact bytes, headers, sequence arrows)
+  6. **RedKross Palette Tokens** (Obsidian `#070A0F`, Amber `#FF7A00`/`#FFA439`, Cyan `#38BDF8`, Green `#65F58A`)
+  7. **Target Aspect Ratio & Format** (16:9, PNG/SVG)
+- **Comprehensive Visual Coverage:** Maintain at least 1-2 authoritative visual diagrams per core conceptual lesson to eliminate plain-text walls.
+
 
 
