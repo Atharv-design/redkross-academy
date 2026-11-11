@@ -64,22 +64,89 @@ html {
   background-color: #000000;
 }
 
-/* Typography Standard — Universal Lora Standard Across All Pages & Divisions */
-*, *::before, *::after, html, body, p, span, a, li, blockquote, label, h1, h2, h3, h4, h5, h6, input, textarea, select, button, code, pre, kbd, samp, .font-mono, .mono, .tabular-nums, .font-sans, .font-royal, .font-lora, .font-cinzel, .font-orbitron, .font-plus-jakarta {
-  font-family: 'Lora', Georgia, serif !important;
+/* Typography Standard — Academic Prose Standard Across All Pages & Divisions */
+html, body {
+  font-family: 'Lora', Georgia, serif;
+}
+
+h1, h2, h3, h4, h5, h6, p, a, li, blockquote, label, .font-lora, .font-royal, .font-serif, .acad-card__title, .acad-card__desc {
+  font-family: 'Lora', Georgia, serif;
 }
 
 input, textarea, select, button {
-  font-family: 'Lora', Georgia, serif !important;
+  font-family: 'Lora', Georgia, serif;
 }
 
-/* Universal Typography & Word-Wrap Standard */
-/* Guarantees that words are NEVER sliced mid-syllable; whole words wrap cleanly to the next line */
-h1, h2, h3, h4, h5, h6, p, span, a, li, blockquote, label, .acad-card__title, .acad-card__desc {
-  word-break: normal !important;
-  overflow-wrap: break-word !important;
-  hyphens: manual !important;
+/* Monospace & Code Font Preservation */
+code, pre, kbd, samp, .font-mono, .mono, .tabular-nums {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+}
+
+/* Universal Typography & Word-Wrap Standard for Natural Academic Prose */
+/* Guarantees that words in headings, paragraphs, and list items wrap cleanly without breaking mid-word */
+h1, h2, h3, h4, h5, h6, p, a, li, blockquote, label, .acad-card__title, .acad-card__desc {
+  word-break: normal;
+  overflow-wrap: normal;
+  hyphens: manual;
   text-wrap: pretty;
+}
+
+/* Inline code & technical identifiers: wrap gracefully without splitting normal prose */
+code:not(pre code), kbd, samp {
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+/* Code and Terminal Session Overflow Rules */
+pre {
+  word-break: normal;
+  overflow-wrap: normal;
+  white-space: pre;
+}
+
+pre code {
+  white-space: inherit;
+  word-break: normal;
+}
+
+/* ========================================================================= */
+/* KATEX MATHEMATICAL FORMULA PRESERVATION & TYPOGRAPHY SHIELD             */
+/* Preserves native KaTeX font cascade (KaTeX_Main, KaTeX_Math, KaTeX_AMS)  */
+/* Prevents line breaks, word breaking, and vertical metric deformation     */
+/* ========================================================================= */
+.katex,
+.katex * {
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+  white-space: nowrap;
+  text-wrap: nowrap;
+  letter-spacing: normal !important;
+}
+
+/* KaTeX display mode block styling & container overflow management */
+.katex-display {
+  display: block !important;
+  margin: 0.6em 0 !important;
+  text-align: center !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+}
+
+.katex-display > .katex {
+  display: inline-block !important;
+  text-align: initial !important;
+  white-space: nowrap !important;
+}
+
+/* Notebook Alignment for Math Steps Sequential Cards */
+.math-step-formula .katex-display {
+  margin: 0 !important;
+  text-align: center !important;
+}
+
+.math-step-formula .katex-display > .katex {
+  text-align: center !important;
 }
 
 /* Tabular figures for telemetry & numbers */

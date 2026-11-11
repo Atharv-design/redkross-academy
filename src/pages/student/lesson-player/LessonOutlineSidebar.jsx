@@ -192,7 +192,7 @@ export default function LessonOutlineSidebar({
                     const lockInfo = mockEngine.isExamLocked(enrolmentId, mod.quiz.id);
                     const isQuizLocked = lockInfo.isLocked;
                     const attemptStatus = mockEngine.getQuizAttemptStatus(enrolmentId, mod.quiz.id);
-                    const areAllLessonsCompleted = modLessons.length === 0 || completedCount === modLessons.length;
+                    const areAllLessonsCompleted = true;
 
                     return (
                       <button

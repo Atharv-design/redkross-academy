@@ -2026,21 +2026,23 @@ class MockEngine {
   isModuleUnlocked(enrolmentId, courseId, moduleIndex) {
     if (moduleIndex === 0) return true;
     const db = this.getDb();
-    const enrolment = (db.enrolments || []).find((e) => e.id === enrolmentId);
+    let enrolment = (db.enrolments || []).find((e) => e.id === enrolmentId);
+    if (!enrolment && courseId) {
+      enrolment = (db.enrolments || []).find((e) => e.course_id === courseId);
+    }
     if (!enrolment) return false;
-    const course = (db.courses || []).find((c) => c.id === courseId);
-    if (!course || !course.modules || !course.modules[moduleIndex - 1]) return true;
+    const course = (db.courses || []).find((c) => c.id === courseId || c.slug === courseId);
+    if (!course || !course.modules) return true;
 
-    const prevMod = course.modules[moduleIndex - 1];
-    const prevLessons = prevMod.lessons || [];
-    const allPrevLessonsCompleted = prevLessons.every((l) =>
-      enrolment.completed_mandatory_lessons?.includes(l.id)
-    );
-    const prevQuizPassed = prevMod.quiz
-      ? enrolment.passed_quizzes?.includes(prevMod.quiz.id)
-      : true;
-
-    return prevMod.quiz ? prevQuizPassed : allPrevLessonsCompleted;
+    for (let i = 0; i < moduleIndex; i++) {
+      const prevMod = course.modules[i];
+      if (!prevMod) continue;
+      if (prevMod.quiz) {
+        const passed = enrolment.passed_quizzes?.includes(prevMod.quiz.id);
+        if (!passed) return false;
+      }
+    }
+    return true;
   }
 
   reorderModulesAndLessons(courseId, modulesPayload, adminEmail = 'usr_admin') {

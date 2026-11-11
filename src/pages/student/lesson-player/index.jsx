@@ -208,34 +208,23 @@ export default function LessonPlayerPage() {
 
   const isModuleUnlocked = (modIndex) => {
     if (modIndex === 0) return true;
-    const completedLessons = currentEnrolment?.completed_mandatory_lessons || enrolment?.completed_mandatory_lessons || [];
     const passedQuizzes = currentEnrolment?.passed_quizzes || enrolment?.passed_quizzes || [];
     for (let i = 0; i < modIndex; i++) {
       const prevMod = course?.modules?.[i];
       if (!prevMod) continue;
-      const prevLessons = prevMod.lessons || [];
-      const allLessonsDone = prevLessons.length === 0 || prevLessons.every((l) =>
-        completedLessons.includes(l.id)
-      );
-      const prevQuizDone = prevMod.quiz
-        ? passedQuizzes.includes(prevMod.quiz.id)
-        : true;
-      const prevModCleared = prevMod.quiz ? (prevQuizDone && allLessonsDone) : allLessonsDone;
-      if (!prevModCleared) return false;
+      if (prevMod.quiz) {
+        const passed = passedQuizzes.includes(prevMod.quiz.id);
+        if (!passed) return false;
+      }
     }
     return true;
   };
 
   const areAllModulesCompleted = () => {
     if (!course || !course.modules) return false;
-    const completedLessons = currentEnrolment?.completed_mandatory_lessons || enrolment?.completed_mandatory_lessons || [];
     const passedQuizzes = currentEnrolment?.passed_quizzes || enrolment?.passed_quizzes || [];
     return course.modules.every((mod) => {
-      const lessonsDone = (mod.lessons || []).every((l) =>
-        completedLessons.includes(l.id)
-      );
-      const quizDone = mod.quiz ? passedQuizzes.includes(mod.quiz.id) : true;
-      return quizDone && lessonsDone;
+      return mod.quiz ? passedQuizzes.includes(mod.quiz.id) : true;
     });
   };
 
@@ -544,17 +533,6 @@ export default function LessonPlayerPage() {
       if (!isFinalExamUnlocked) {
         showCustomAlert('Final Assessment Locked', 'You must complete all prior course modules and score >= 80% on each knowledge check.', 'warning');
         return;
-      }
-    } else if (unit.type === 'quiz' && unit.moduleIndex !== undefined) {
-      const targetMod = course?.modules?.[unit.moduleIndex];
-      if (targetMod && targetMod.lessons && targetMod.lessons.length > 0) {
-        const completedLessons = currentEnrolment?.completed_mandatory_lessons || enrolment?.completed_mandatory_lessons || [];
-        const allDone = targetMod.lessons.every((l) => completedLessons.includes(l.id));
-        if (!allDone) {
-          const completedCount = targetMod.lessons.filter((l) => completedLessons.includes(l.id)).length;
-          showCustomAlert('Knowledge Check Locked', `You must complete all ${targetMod.lessons.length} lessons in ${targetMod.title} (${completedCount}/${targetMod.lessons.length} completed) before attempting the examination.`, 'warning');
-          return;
-        }
       }
     } else if (unit.moduleIndex > 0 && !isModuleUnlocked(unit.moduleIndex)) {
       showCustomAlert(`Module ${unit.moduleIndex + 1} Locked`, `You must pass the Module ${unit.moduleIndex} Knowledge Check (>= 80%) to unlock.`, 'warning');

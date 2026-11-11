@@ -27,8 +27,9 @@ function cleanLatex(eq = '') {
     .replace(/\u0008mathbf/g, '\\mathbf')
     .replace(/\u0008egin/g, '\\begin')
     .replace(/\u000crac/g, '\\frac')
-    // Collapse double backslashes before LaTeX command words to prevent newLineInDisplayMode
-    .replace(/\\\\+([a-zA-Z]+)/g, '\\$1')
+    // Only collapse over-escaped command backslashes at start-of-expression or after whitespace/operators/delimiters
+    // Preserves legitimate LaTeX line breaks (\\) in aligned environments and matrices
+    .replace(/(?:^|(?<=[\s=+\-*\/({[]))\\\\+([a-zA-Z]+)/g, '\\$1')
     .replace(/(?<!\\)\bext\{/g, '\\text{')
     .replace(/(?<!\\)\brac\{/g, '\\frac{')
     .replace(/(?<!\\)\begin\{/g, '\\begin{')
@@ -107,27 +108,25 @@ function renderMathStepsBlock(blockText, blockTitle = 'Sequential Technical Calc
       }
     }
 
-    return `<div class="p-3.5 sm:p-4 rounded-xl bg-[#070A0F] border border-[#FF7A00]/20 flex flex-col md:flex-row md:items-center justify-between gap-3 hover:border-[#FF7A00]/40 transition-colors shadow-sm">
-      <div class="flex items-start gap-3 flex-1 min-w-0">
-        <span class="px-2.5 py-1 rounded-md bg-[#1F1308] border border-[#FF7A00]/40 font-mono text-xs font-bold text-[#FFA439] flex-shrink-0 select-none">${s.number}</span>
-        <div class="space-y-1 min-w-0">
-          <div class="text-[15px] font-lora text-[#E2D9CE] leading-relaxed">${s.description}</div>
-          ${s.result ? `<div class="text-xs font-mono text-[#65F58A] flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-[#65F58A]"></span><span>${s.result}</span></div>` : ''}
-        </div>
+    return `<div class="p-3 sm:p-3.5 rounded-xl bg-[#090D15] border border-white/10 space-y-2.5 shadow-sm">
+      <div class="flex items-start sm:items-center gap-2.5">
+        <span class="px-2 py-0.5 rounded bg-[#FF7A00]/15 border border-[#FF7A00]/30 font-mono text-xs font-bold text-[#FFA439] select-none flex-shrink-0">${s.number}</span>
+        <div class="text-[15px] font-lora text-[#E2D9CE] leading-relaxed font-medium">${s.description}</div>
       </div>
-      ${eqHtml ? `<div class="text-right overflow-x-auto custom-scrollbar py-2 px-3.5 rounded-lg bg-[#0E0C09] border border-[#FF7A00]/15 flex items-center justify-end text-white text-sm max-w-full md:max-w-[48%] flex-shrink-0">${eqHtml}</div>` : ''}
+      ${eqHtml ? `<div class="not-prose math-step-formula w-full overflow-x-auto custom-scrollbar py-2.5 px-3 rounded-lg bg-[#05080E] border border-white/5 text-center">${eqHtml}</div>` : ''}
+      ${s.result ? `<div class="text-xs font-mono text-[#65F58A] flex items-center gap-1.5 pl-0.5"><span class="w-1.5 h-1.5 rounded-full bg-[#65F58A] flex-shrink-0"></span><span>${s.result}</span></div>` : ''}
     </div>`;
   }).join('\n');
 
-  return `<div class="my-6 rounded-2xl border border-[#FF7A00]/30 bg-[#0B0D14] overflow-hidden shadow-2xl">
-    <div class="px-4 py-2.5 bg-[#140D07] border-b border-[#FF7A00]/25 flex items-center justify-between">
+  return `<div class="not-prose my-4 rounded-2xl border border-white/10 bg-[#070A0F] overflow-hidden shadow-xl">
+    <div class="px-4 py-2 bg-[#10141D] border-b border-white/10 flex items-center justify-between">
       <div class="flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-[#FF7A00] animate-pulse"></span>
+        <span class="w-2 h-2 rounded-full bg-[#FF7A00]"></span>
         <span class="font-mono text-xs font-bold text-[#FFA439] uppercase tracking-wider">${blockTitle || 'Sequential Technical Calculation'}</span>
       </div>
-      <span class="text-[10px] font-mono text-[#8C7A6B] uppercase tracking-wider">KaTeX Verified</span>
+      <span class="text-[10px] font-mono text-[#8C7A6B] uppercase tracking-wider">Academic Derivation</span>
     </div>
-    <div class="p-4 sm:p-5 space-y-3 bg-[#0B0D14]/90">
+    <div class="p-3.5 sm:p-4 space-y-2.5 bg-[#070A0F]">
       ${stepHtmls}
     </div>
   </div>`;
@@ -203,7 +202,7 @@ export function renderMarkdownToHtml(markdown = '') {
   const inlineCodes = [];
 
   // 1-pre. Structured Math Steps Blocks (:::math-steps ... :::)
-  html = html.replace(/:::math-steps\s*(.*?)\n([\s\S]*?):::/gi, (match, title, body) => {
+  html = html.replace(/:::math-steps[^\S\r\n]*(.*?)\r?\n([\s\S]*?):::/gi, (match, title, body) => {
     const rendered = renderMathStepsBlock(body, title.trim());
     const token = `@@@MATHSTEPS_${codeBlocks.length}@@@`;
     codeBlocks.push(rendered);
@@ -276,7 +275,7 @@ export function renderMarkdownToHtml(markdown = '') {
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
     const token = `@@@INLINECODE_${inlineCodes.length}@@@`;
-    inlineCodes.push(`<code class="px-1.5 py-0.5 rounded bg-[#18120B] border border-[#FF7A00]/30 font-mono text-xs sm:text-[13px] text-[#FFA439] font-medium">${clean}</code>`);
+    inlineCodes.push(`<code class="px-1.5 py-0.5 rounded bg-[#11141D] border border-white/10 font-mono text-xs sm:text-[13px] text-[#E2D9CE] font-normal break-words">${clean}</code>`);
     return token;
   });
 
@@ -301,7 +300,7 @@ export function renderMarkdownToHtml(markdown = '') {
       .replace(/"/g, '&quot;')
       .trim() || 'Technical Diagram';
 
-    return `<figure class="my-8 w-full overflow-hidden rounded-2xl border border-[#FF7A00]/30 shadow-[0_8px_30px_rgba(0,0,0,0.6)] bg-black/40">
+    return `<figure class="my-5 w-full overflow-hidden rounded-2xl border border-[#FF7A00]/30 shadow-[0_8px_30px_rgba(0,0,0,0.6)] bg-black/40">
       <img
         src="${resolvedSrc}"
         alt="${plainAlt}"
@@ -324,7 +323,7 @@ export function renderMarkdownToHtml(markdown = '') {
   html = html.replace(/(?:!\[\]\(|!!\(|!\()([^)]+\.(?:jpg|jpeg|png|webp|svg|gif))\)/gi, (match, src) => {
     const cleanSrc = src.trim();
     const resolvedSrc = CHAPTER_1_IMAGES && CHAPTER_1_IMAGES[cleanSrc] ? CHAPTER_1_IMAGES[cleanSrc] : cleanSrc;
-    return `<figure class="my-8 w-full overflow-hidden rounded-2xl border border-[#FF7A00]/30 shadow-[0_8px_30px_rgba(0,0,0,0.6)] bg-black/40">
+    return `<figure class="my-5 w-full overflow-hidden rounded-2xl border border-[#FF7A00]/30 shadow-[0_8px_30px_rgba(0,0,0,0.6)] bg-black/40">
       <img
         src="${resolvedSrc}"
         alt="Technical Reference Diagram"
@@ -348,12 +347,12 @@ export function renderMarkdownToHtml(markdown = '') {
     try {
       const rendered = katex.renderToString(eq, {
         displayMode: true,
-        throwOnError: false,
+        throwOnError: true,
         output: 'html'
       });
-      return `<div class="my-5 py-3 px-4 rounded-xl bg-[#0B0D14] border border-[#FF7A00]/25 shadow-lg overflow-x-auto custom-scrollbar flex justify-center text-center text-white">${rendered}</div>`;
+      return `<div class="not-prose my-3.5 py-2.5 px-4 rounded-xl bg-[#0B0D14] border border-white/10 shadow-lg overflow-x-auto custom-scrollbar text-center text-white">${rendered}</div>`;
     } catch (e) {
-      return `<div class="my-5 p-3 rounded-lg bg-[#140D08] border border-red-500/30 font-mono text-xs text-red-300">${eq}</div>`;
+      return `<div class="not-prose my-3.5 p-3 rounded-lg bg-[#140D08] border border-red-500/30 font-mono text-xs text-red-300">${eq}</div>`;
     }
   });
 
@@ -364,26 +363,33 @@ export function renderMarkdownToHtml(markdown = '') {
     try {
       const rendered = katex.renderToString(clean, {
         displayMode: false,
-        throwOnError: false,
+        throwOnError: true,
         output: 'html'
       });
-      return `<span class="inline-math inline-flex items-center align-middle whitespace-nowrap mx-0.5">${rendered}</span>`;
+      return `<span class="not-prose inline-math inline-flex items-center align-middle whitespace-nowrap mx-0.5">${rendered}</span>`;
     } catch (e) {
       return match;
     }
   });
 
   // 3c. Inline Equations: $...$ (strict math tokens, excluding currency or shell vars)
-  html = html.replace(/(?<![0-9a-zA-Z\\])\$([^\$\n\r]+?)\$(?![0-9a-zA-Z])/g, (match, eq) => {
+  html = html.replace(/(?<![0-9a-zA-Z\\\$])\$([^\s\$][^\$\r\n]*?[^\s\$]|[^\s\$])\$(?![0-9a-zA-Z\$])/g, (match, eq) => {
+    // Exclude shielded code blocks or inline code spans
+    if (eq.includes('@@@CODEBLOCK_') || eq.includes('@@@INLINECODE_')) return match;
+    // Exclude shell syntax, double quotes, regex matches (=~), command substitutions $(), or parameter expansions ${}
+    if (/["><]|(=~)|(\$\()|(\$\{)/.test(eq)) return match;
+    // Require positive mathematical indicators (LaTeX commands, mathematical operators, relations, or sub/superscripts)
+    if (!/(\\[a-zA-Z]+|[=^_+\-×÷≠≤≥≈±]|\\pmod|\\lfloor|\\rfloor)/.test(eq)) return match;
+
     const clean = cleanLatex(eq);
     if (!clean) return match;
     try {
       const rendered = katex.renderToString(clean, {
         displayMode: false,
-        throwOnError: false,
+        throwOnError: true,
         output: 'html'
       });
-      return `<span class="inline-math inline-flex items-center align-middle whitespace-nowrap mx-0.5">${rendered}</span>`;
+      return `<span class="not-prose inline-math inline-flex items-center align-middle whitespace-nowrap mx-0.5">${rendered}</span>`;
     } catch (e) {
       return match;
     }
@@ -406,20 +412,20 @@ export function renderMarkdownToHtml(markdown = '') {
   html = html.replace(/^\s*---\s*\n+/g, '');
   html = html.replace(/(?:^---\s*\n+)+(?=##\s+)/gm, '');
 
-  html = html.replace(/^#\s+(.+)$/gm, '<h1 class="text-2xl sm:text-3xl font-bold font-lora text-white mt-8 mb-3 text-center border-b border-[#FF7A00]/25 pb-3">$1</h1>');
+  html = html.replace(/^#\s+(.+)$/gm, '<h1 class="text-2xl sm:text-3xl font-bold font-lora text-white mt-6 mb-2.5 text-center border-b border-[#FF7A00]/25 pb-3">$1</h1>');
 
   let isFirstH2 = true;
   html = html.replace(/^##\s+(.+)$/gm, (match, heading) => {
     if (isFirstH2) {
       isFirstH2 = false;
-      return `<h2 class="text-xl sm:text-2xl font-bold font-lora text-white mt-6 mb-3 text-center">${heading}</h2>`;
+      return `<h2 class="text-xl sm:text-2xl font-bold font-lora text-white mt-6 mb-2 text-center">${heading}</h2>`;
     }
-    return `<hr class="my-8 border-t border-[#FF7A00]/20" />\n<h2 class="text-xl sm:text-2xl font-bold font-lora text-white mt-6 mb-3 text-center">${heading}</h2>`;
+    return `<hr class="my-5 border-t border-[#FF7A00]/20" />\n<h2 class="text-xl sm:text-2xl font-bold font-lora text-white mt-6 mb-2 text-center">${heading}</h2>`;
   });
 
-  html = html.replace(/^###\s+(.+)$/gm, '<h3 class="text-lg sm:text-xl font-bold font-lora text-[#FFA439] mt-6 mb-2 border-l-2 border-[#FF7A00] pl-3">$1</h3>');
-  html = html.replace(/^####\s+(.+)$/gm, '<h4 class="text-base sm:text-lg font-bold font-lora text-white mt-4 mb-1.5 flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FF7A00]/70 flex-shrink-0"></span><span>$1</span></h4>');
-  html = html.replace(/^#####\s+(.+)$/gm, '<h5 class="text-sm sm:text-base font-semibold font-mono text-[#FFA439] mt-3 mb-1">$1</h5>');
+  html = html.replace(/^###\s+(.+)$/gm, '<h3 class="text-lg sm:text-xl font-bold font-lora text-[#F5EFE6] mt-4.5 mb-1.5">$1</h3>');
+  html = html.replace(/^####\s+(.+)$/gm, '<h4 class="text-base sm:text-lg font-bold font-lora text-[#EAE3D8] mt-3.5 mb-1 flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FF7A00]/60 flex-shrink-0"></span><span>$1</span></h4>');
+  html = html.replace(/^#####\s+(.+)$/gm, '<h5 class="text-sm sm:text-base font-semibold font-mono text-[#D6CEBE] mt-3 mb-1">$1</h5>');
 
   // =========================================================================
   // STEP 6: INLINE TYPOGRAPHY (BOLD, ITALIC, STRIKETHROUGH)
@@ -431,7 +437,7 @@ export function renderMarkdownToHtml(markdown = '') {
   // =========================================================================
   // STEP 7: HORIZONTAL RULES & BLOCKQUOTES
   // =========================================================================
-  html = html.replace(/^---$/gm, '<hr class="my-8 border-t border-[#FF7A00]/20" />');
+  html = html.replace(/^---$/gm, '<hr class="my-5 border-t border-[#FF7A00]/20" />');
 
   // Clean textbook blockquotes
   html = html.replace(/(?:^>\s*.+(?:\n|$))+/gm, (bqBlock) => {
@@ -498,40 +504,26 @@ export function renderMarkdownToHtml(markdown = '') {
   // STEP 9: LISTS (UNORDERED, DEFINITION, AND COHERENT NUMBERED PROCEDURES)
   // =========================================================================
 
-  // 9a. Unordered lists
+  // 9a. Unordered & Definition lists
   html = html.replace(/(?:^[-*]\s+.+(?:\n|$))+/gm, (listBlock) => {
     const rawItems = listBlock.trim().split('\n');
 
-    // Check if this list is a term-definition list (e.g. - **Term:** Definition)
-    const defItemCount = rawItems.filter(item => {
+    const items = rawItems.map((item) => {
       const clean = item.replace(/^[-*]\s+/, '').trim();
-      return /^<strong class="font-bold text-white">[^<]+:?<\/strong>:?\s+/.test(clean);
-    }).length;
 
-    const isTermDefList = defItemCount >= 2 && defItemCount >= Math.floor(rawItems.length * 0.5);
+      // Check if item is a definition: **Term:** Def or **Term**: Def
+      const termMatch = clean.match(/^<strong class="font-bold text-white">([^<]+?):?<\/strong>:?\s*(.*)$/s);
+      if (termMatch) {
+        const rawTerm = termMatch[1].trim();
+        const cleanTerm = rawTerm.replace(/:+$/, '').trim();
+        const def = termMatch[2].trim();
+        return `  <li class="flex items-start gap-2.5 text-[#E2D9CE] leading-[1.65] text-[16.5px] font-lora"><span class="w-1.5 h-1.5 rounded-full bg-[#FF7A00] mt-2 flex-shrink-0"></span><span class="flex-1"><strong class="font-bold text-[#FFA439]">${cleanTerm}:</strong> ${def}</span></li>`;
+      }
 
-    if (isTermDefList) {
-      const dlItems = rawItems.map(item => {
-        const clean = item.replace(/^[-*]\s+/, '').trim();
-        const match = clean.match(/^<strong class="font-bold text-white">([^<]+?):?<\/strong>:?\s*(.*)$/s);
-        if (match) {
-          const term = match[1].trim();
-          const def = match[2].trim();
-          return `<div class="py-1 border-l-2 border-[#FF7A00]/30 pl-3.5 my-1">
-            <dt class="font-bold text-[#FFA439] font-lora text-[17px]">${term}</dt>
-            <dd class="text-[#E2D9CE] font-lora text-[16px] leading-[1.6] mt-0.5">${def}</dd>
-          </div>`;
-        }
-        return `<div class="py-1 text-[#E2D9CE] font-lora leading-relaxed">${clean}</div>`;
-      }).join('\n');
+      return `  <li class="flex items-start gap-2.5 text-[#E2D9CE] leading-[1.65] text-[16.5px] font-lora"><span class="w-1.5 h-1.5 rounded-full bg-[#FF7A00] mt-2 flex-shrink-0"></span><span class="flex-1">${clean}</span></li>`;
+    }).join('\n');
 
-      return `<dl class="my-3 space-y-1.5">${dlItems}</dl>`;
-    }
-
-    const items = rawItems
-      .map((item) => `  <li class="flex items-start gap-2.5 text-[#E2D9CE] leading-[1.6] text-[17px] font-lora"><span class="w-1.5 h-1.5 rounded-full bg-[#FF7A00] mt-2 flex-shrink-0"></span><span class="flex-1">${item.replace(/^[-*]\s+/, '')}</span></li>`)
-      .join('\n');
-    return `<ul class="my-3 space-y-1.5 pl-1 sm:pl-2">${items}</ul>`;
+    return `<ul class="my-2 space-y-1 pl-1 sm:pl-2">${items}</ul>`;
   });
 
   // 9b. Coherent Ordered Numbered Procedures (01., 02., 03.) with Multi-line continuation support
@@ -544,16 +536,16 @@ export function renderMarkdownToHtml(markdown = '') {
       const match = chunk.match(/^(\d+)\.\s+([\s\S]*)/);
       const itemNum = match ? match[1].padStart(2, '0') : String(num++).padStart(2, '0');
       const itemBody = match ? match[2].trim() : chunk.trim();
-      return `  <li class="flex items-start gap-2.5 text-[#E2D9CE] leading-[1.6] text-[17px] font-lora"><span class="font-mono text-[#FFA439] text-[15px] font-semibold flex-shrink-0 select-none">${itemNum}.</span><div class="flex-1 space-y-1">${itemBody}</div></li>`;
+      return `  <li class="flex items-start gap-2.5 text-[#E2D9CE] leading-[1.65] text-[16.5px] font-lora"><span class="font-mono text-[#FFA439] text-[15px] font-semibold flex-shrink-0 select-none">${itemNum}.</span><div class="flex-1 space-y-1">${itemBody}</div></li>`;
     }).join('\n');
 
-    return `<ol class="my-3 space-y-2 pl-1 sm:pl-2">${items}</ol>`;
+    return `<ol class="my-2 space-y-1.5 pl-1 sm:pl-2">${items}</ol>`;
   });
 
   // Merge adjacent lists that had blank lines between items
-  html = html.replace(/<\/ul>\s*<ul class="my-3 space-y-1\.5 pl-1 sm:pl-2">/g, '');
-  html = html.replace(/<\/ol>\s*<ol class="my-3 space-y-2 pl-1 sm:pl-2">/g, '');
-  html = html.replace(/<\/dl>\s*<dl class="my-3 space-y-1\.5">/g, '');
+  html = html.replace(/<\/ul>\s*<ul class="my-2 space-y-1 pl-1 sm:pl-2">/g, '');
+  html = html.replace(/<\/ol>\s*<ol class="my-2 space-y-1\.5 pl-1 sm:pl-2">/g, '');
+  html = html.replace(/<\/dl>\s*<dl class="my-2 space-y-1">/g, '');
 
   // =========================================================================
   // STEP 10: PARAGRAPHS & FLOWING TEXTBOOK PROSE
@@ -583,7 +575,7 @@ export function renderMarkdownToHtml(markdown = '') {
       ) {
         return trimmed;
       }
-      return `<p class="font-lora text-[17px] leading-[1.6] text-[#E2D9CE] mb-3">${trimmed}</p>`;
+      return `<p class="font-lora text-[16.5px] leading-[1.7] text-[#E2D9CE] my-2.5">${trimmed}</p>`;
     })
     .join('\n\n');
 
