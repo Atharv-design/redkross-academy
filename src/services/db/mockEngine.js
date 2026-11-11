@@ -163,7 +163,7 @@ class MockEngine {
     try {
       const dynamicState = {
         _initialized: true,
-        _curriculum_version: db._curriculum_version || '2026.11.09.v23_course02_computer_networking_release',
+        _curriculum_version: db._curriculum_version || '2026.11.11.v24_c01_c02_academic_enhancement',
         users: db.users || [],
         enrolments: db.enrolments || [],
         credentials: db.credentials || [],
@@ -188,7 +188,7 @@ class MockEngine {
     if (forceReset || !safeStorage.getItem(STORAGE_KEY)) {
       const initialDb = {
         _initialized: true,
-        _curriculum_version: '2026.11.09.v23_course02_computer_networking_release',
+        _curriculum_version: '2026.11.11.v24_c01_c02_academic_enhancement',
         users: INITIAL_USERS,
         learning_paths: INITIAL_LEARNING_PATHS,
         courses: INITIAL_COURSES,
@@ -210,7 +210,7 @@ class MockEngine {
 
   syncCurriculumFromDisk(forceReset = false) {
     const db = this.getDb();
-    db._curriculum_version = '2026.11.09.v23_course02_computer_networking_release';
+    db._curriculum_version = '2026.11.11.v24_c01_c02_academic_enhancement';
     this.saveDb(db, { type: 'CURRICULUM_SYNCED', payload: { version: db._curriculum_version } });
     return db;
   }
@@ -244,7 +244,7 @@ class MockEngine {
 
       let modified = false;
 
-      const CURRICULUM_VERSION = '2026.11.09.v23_course02_computer_networking_release';
+      const CURRICULUM_VERSION = '2026.11.11.v24_c01_c02_academic_enhancement';
       if (parsed._curriculum_version !== CURRICULUM_VERSION) {
         parsed._curriculum_version = CURRICULUM_VERSION;
         modified = true;

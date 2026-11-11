@@ -42,12 +42,96 @@ function cleanLatex(eq = '') {
     .replace(/\bextResult\b/g, '\\text{Result}')
     .trim();
 
-  // If \to was substituted inside \text{...}, restore English word 'to'
+  // If \to was substituted inside \text{...}, restore English word 'to' and escape TeX macro parameter '#'
   res = res.replace(/\\text\{([^}]+)\}/g, (m, inner) => {
-    return `\\text{${inner.replace(/\\to\b/g, 'to')}}`;
+    return `\\text{${inner.replace(/\\to\b/g, 'to').replace(/(?<!\\)#/g, '\\#')}}`;
   });
 
   return res;
+}
+
+function escapeHtml(str = '') {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function katexStrictHandler(errorCode) {
+  return errorCode === 'unknownSymbol' || errorCode === 'symbolNotInFont' ? 'ignore' : 'warn';
+}
+
+const CALLOUT_META = {
+  note: {
+    label: 'NOTE',
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>'
+  },
+  tip: {
+    label: 'TIP',
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>'
+  },
+  important: {
+    label: 'IMPORTANT',
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M12 7v4"/><path d="M12 14h.01"/></svg>'
+  },
+  warning: {
+    label: 'WARNING',
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>'
+  },
+  caution: {
+    label: 'CAUTION',
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>'
+  }
+};
+
+function sanitizeCalloutMarkdown(rawBody = '') {
+  const shielded = [];
+  let safe = rawBody.replace(/```[\s\S]*?```|`[^`\n]+`/g, (m) => {
+    const idx = shielded.length;
+    shielded.push(m);
+    return `\u0000RKCODE_${idx}\u0000`;
+  });
+  safe = safe.replace(/<!--[\s\S]*?-->|<\/?[a-zA-Z][a-zA-Z0-9-]*(?:\s+[^<>$\n]*?)?\/?>/g, (tag) => escapeHtml(tag));
+  shielded.forEach((snippet, idx) => {
+    safe = safe.replace(`\u0000RKCODE_${idx}\u0000`, snippet);
+  });
+  return safe;
+}
+
+function renderCalloutBlock(bqBlock) {
+  const rawLines = bqBlock.replace(/\n$/, '').split('\n').map(line => line.replace(/^>[ \t]?/, ''));
+  const firstMatch = (rawLines[0] || '').trim().match(/^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\](?:\s+(.*))?$/i);
+  if (!firstMatch) return null;
+
+  const variant = firstMatch[1].toLowerCase();
+  const meta = CALLOUT_META[variant] || CALLOUT_META.note;
+  const trailingFirst = (firstMatch[2] || '').trim();
+  const bodyLines = trailingFirst ? [trailingFirst, ...rawLines.slice(1)] : rawLines.slice(1);
+
+  const normalizedLines = [];
+  for (let i = 0; i < bodyLines.length; i++) {
+    const line = bodyLines[i];
+    const prev = normalizedLines[normalizedLines.length - 1];
+    const isListItem = /^\s*(?:[-*]|\d+\.)\s+/.test(line);
+    const prevIsListItem = prev !== undefined && /^\s*(?:[-*]|\d+\.)\s+/.test(prev);
+    if (isListItem && prev !== undefined && prev.trim() !== '' && !prevIsListItem) {
+      normalizedLines.push('');
+    }
+    normalizedLines.push(line);
+  }
+
+  const safeBody = sanitizeCalloutMarkdown(normalizedLines.join('\n').trim());
+  const innerHtml = safeBody ? renderMarkdownToHtml(safeBody, { insideCallout: true }) : '';
+
+  return `<aside class="not-prose rk-callout rk-callout-${variant}" data-callout="${variant}" role="note" aria-label="${meta.label} advisory">
+  <div class="rk-callout-header">
+    <span class="rk-callout-icon" aria-hidden="true">${meta.icon}</span>
+    <span class="rk-callout-badge">${meta.label}</span>
+  </div>
+  <div class="rk-callout-body">
+    ${innerHtml}
+  </div>
+</aside>`;
 }
 
 /**
@@ -101,6 +185,7 @@ function renderMathStepsBlock(blockText, blockTitle = 'Sequential Technical Calc
         eqHtml = katex.renderToString(cleanLatex(cleanEq), {
           displayMode: true,
           throwOnError: false,
+          strict: katexStrictHandler,
           output: 'html'
         });
       } catch (e) {
@@ -181,8 +266,9 @@ function convertBoxTableToHtml(text) {
   return `<div class="my-5 overflow-x-auto rounded-xl border border-[#FF7A00]/25 shadow-md">${captionHtml}<table class="w-full text-left border-collapse">${thead}${tbody}</table></div>`;
 }
 
-export function renderMarkdownToHtml(markdown = '') {
+export function renderMarkdownToHtml(markdown = '', options = {}) {
   if (!markdown) return '';
+  const { insideCallout = false } = options;
 
   let html = markdown.replace(/\r\n/g, '\n');
 
@@ -209,11 +295,11 @@ export function renderMarkdownToHtml(markdown = '') {
     return token;
   });
 
-  // 1a. Mermaid Diagram Blocks -> Native Mermaid Container
+  // 1a. Mermaid Diagram Blocks -> Native Mermaid Container (escape XML/HTML delimiters so browser DOM preserves labels for Mermaid.run)
   html = html.replace(/```mermaid\n([\s\S]*?)```/g, (match, code) => {
-    const cleanCode = code.trim();
+    const cleanCode = escapeHtml(code.trim());
     const token = `@@@MERMAID_${codeBlocks.length}@@@`;
-    codeBlocks.push(`<div class="my-6 w-full overflow-x-auto custom-scrollbar flex justify-center">
+    codeBlocks.push(`<div class="not-prose my-6 w-full overflow-x-auto custom-scrollbar flex justify-center">
       <div class="mermaid text-center" style="min-width: 280px; max-width: 100%;">${cleanCode}</div>
     </div>`);
     return token;
@@ -241,10 +327,7 @@ export function renderMarkdownToHtml(markdown = '') {
       return `\n\n${code.trim()}\n\n`;
     }
 
-    const cleanCode = code
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
+    const cleanCode = escapeHtml(code);
 
     // Classify block as Operational CLI vs Source Code vs Telemetry Output
     const isExplicitCli = /^(bash|sh|powershell|cmd|terminal|console)$/i.test(lang) || /^(PS\s+[A-Z]:\\|\$|#\s)/m.test(code);
@@ -268,12 +351,20 @@ export function renderMarkdownToHtml(markdown = '') {
     return token;
   });
 
+  // 1b-callout. GitHub-Flavored Markdown Alerts ([!NOTE], [!TIP], [!IMPORTANT], [!WARNING], [!CAUTION])
+  if (!insideCallout) {
+    html = html.replace(/(?:^>[ \t]?.*(?:\n|$))+/gm, (bqBlock) => {
+      const rendered = renderCalloutBlock(bqBlock);
+      if (!rendered) return bqBlock;
+      const token = `@@@CALLOUT_${codeBlocks.length}@@@`;
+      codeBlocks.push(rendered);
+      return `\n\n${token}\n\n`;
+    });
+  }
+
   // 1c. Inline Code Spans (`code`)
   html = html.replace(/`([^`\n]+)`/g, (match, code) => {
-    const clean = code
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
+    const clean = escapeHtml(code);
     const token = `@@@INLINECODE_${inlineCodes.length}@@@`;
     inlineCodes.push(`<code class="px-1.5 py-0.5 rounded bg-[#11141D] border border-white/10 font-mono text-xs sm:text-[13px] text-[#E2D9CE] font-normal break-words">${clean}</code>`);
     return token;
@@ -348,6 +439,7 @@ export function renderMarkdownToHtml(markdown = '') {
       const rendered = katex.renderToString(eq, {
         displayMode: true,
         throwOnError: true,
+        strict: katexStrictHandler,
         output: 'html'
       });
       return `<div class="not-prose my-3.5 py-2.5 px-4 rounded-xl bg-[#0B0D14] border border-white/10 shadow-lg overflow-x-auto custom-scrollbar text-center text-white">${rendered}</div>`;
@@ -364,6 +456,7 @@ export function renderMarkdownToHtml(markdown = '') {
       const rendered = katex.renderToString(clean, {
         displayMode: false,
         throwOnError: true,
+        strict: katexStrictHandler,
         output: 'html'
       });
       return `<span class="not-prose inline-math inline-flex items-center align-middle whitespace-nowrap mx-0.5">${rendered}</span>`;
@@ -376,10 +469,13 @@ export function renderMarkdownToHtml(markdown = '') {
   html = html.replace(/(?<![0-9a-zA-Z\\\$])\$([^\s\$][^\$\r\n]*?[^\s\$]|[^\s\$])\$(?![0-9a-zA-Z\$])/g, (match, eq) => {
     // Exclude shielded code blocks or inline code spans
     if (eq.includes('@@@CODEBLOCK_') || eq.includes('@@@INLINECODE_')) return match;
-    // Exclude shell syntax, double quotes, regex matches (=~), command substitutions $(), or parameter expansions ${}
-    if (/["><]|(=~)|(\$\()|(\$\{)/.test(eq)) return match;
-    // Require positive mathematical indicators (LaTeX commands, mathematical operators, relations, or sub/superscripts)
-    if (!/(\\[a-zA-Z]+|[=^_+\-×÷≠≤≥≈±]|\\pmod|\\lfloor|\\rfloor)/.test(eq)) return match;
+    // Exclude shell syntax, regex matches (=~), command/param expansions, redirections, or raw HTML tags
+    if (/(=~|\$\(|\$\{|<<|>>|>&|<&|<\(|>\(|\/dev\/|<\s*\/?[a-zA-Z][a-zA-Z0-9-]*(?:\s+[^>]*)?>|<!--)/.test(eq)) return match;
+    // Allow quotes strictly inside LaTeX text/font commands (e.g. \text{"admin"}), rejecting bare shell quotes
+    const outsideTextCommands = eq.replace(/\\(?:text|texttt|textrm|mathrm|mathbf|mathit|mathsf|operatorname)\{[^{}]*\}/g, '');
+    if (outsideTextCommands.includes('"')) return match;
+    // Require positive mathematical indicators (LaTeX commands, mathematical operators, relations, comparisons, or sub/superscripts)
+    if (!/(\\[a-zA-Z]+|[=^_+\-×÷≠≤≥≈±]|\\pmod|\\lfloor|\\rfloor|\S\s*[<>]\s*\S)/.test(eq)) return match;
 
     const clean = cleanLatex(eq);
     if (!clean) return match;
@@ -387,6 +483,7 @@ export function renderMarkdownToHtml(markdown = '') {
       const rendered = katex.renderToString(clean, {
         displayMode: false,
         throwOnError: true,
+        strict: katexStrictHandler,
         output: 'html'
       });
       return `<span class="not-prose inline-math inline-flex items-center align-middle whitespace-nowrap mx-0.5">${rendered}</span>`;
@@ -400,7 +497,12 @@ export function renderMarkdownToHtml(markdown = '') {
   // =========================================================================
   html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, href) => {
     const cleanHref = href.trim();
-    return `<a href="${cleanHref}" target="_blank" rel="noopener noreferrer" class="text-[#FFA439] underline decoration-[#FF7A00]/40 hover:decoration-[#FF7A00] transition-colors">${text}</a>`;
+    const normalizedScheme = cleanHref.replace(/[\s\u0000-\u001F]+/g, '');
+    if (/^(?:javascript|vbscript|data):/i.test(normalizedScheme)) {
+      return `<span class="text-[#E2D9CE]/80">${escapeHtml(text)}</span>`;
+    }
+    const safeHref = cleanHref.replace(/"/g, '&quot;');
+    return `<a href="${safeHref}" target="_blank" rel="noopener noreferrer" class="text-[#FFA439] underline decoration-[#FF7A00]/40 hover:decoration-[#FF7A00] transition-colors">${text}</a>`;
   });
 
   // =========================================================================
@@ -569,7 +671,9 @@ export function renderMarkdownToHtml(markdown = '') {
         trimmed.startsWith('<ul') ||
         trimmed.startsWith('<ol') ||
         trimmed.startsWith('<dl') ||
+        trimmed.startsWith('<aside') ||
         trimmed.startsWith('@@@CODEBLOCK_') ||
+        trimmed.startsWith('@@@CALLOUT_') ||
         trimmed.startsWith('@@@MERMAID_') ||
         trimmed.startsWith('@@@MATHSTEPS_')
       ) {
@@ -584,6 +688,7 @@ export function renderMarkdownToHtml(markdown = '') {
   // =========================================================================
   codeBlocks.forEach((block, idx) => {
     html = html.replace(`@@@CODEBLOCK_${idx}@@@`, block);
+    html = html.replace(`@@@CALLOUT_${idx}@@@`, block);
     html = html.replace(`@@@MERMAID_${idx}@@@`, block);
     html = html.replace(`@@@MATHSTEPS_${idx}@@@`, block);
   });

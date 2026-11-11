@@ -31,6 +31,8 @@ dist-ssr
 *.tar.gz
 scratch/
 graphify-out/
+src/backups/
+src/services/db/course03/modules/backup_*/
 # Course Raw Assets
 RK course notes/**/Lessons Images/
 RK course notes/RedKross Academy Complete Cybersecurity Course Library/

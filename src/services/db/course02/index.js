@@ -126,7 +126,7 @@ export const course02Data = {
   completion_requirements: [
     "Pass each of the 8 module assessments with a minimum score of 70%.",
     "Complete hands-on guided practicals with documented evidence (screenshots, command outputs, or filter traces).",
-    "Pass the Course 02 Comprehensive Final Assessment (50 MCQs) with a minimum score of 70%.",
+    "Pass the Course 02 Comprehensive Final Assessment (50 MCQs) with a minimum score of 80%.",
     "Submit the Capstone Network Incident & Hardening Report achieving 'Competent' across all rubric criteria."
   ],
 

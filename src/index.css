@@ -794,3 +794,97 @@ html {
   }
 }
 
+/* GitHub-Flavored Markdown Alert / Callout Advisory Panels */
+.rk-callout {
+  margin: 1.125rem 0;
+  padding: 0.9rem 1.05rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(11, 13, 20, 0.88);
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.rk-callout-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.45rem;
+}
+
+.rk-callout-badge {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.rk-callout-body {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: #E2D9CE;
+}
+
+.rk-callout-body > p {
+  margin: 0.45rem 0;
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.rk-callout-body > p:first-child {
+  margin-top: 0;
+}
+
+.rk-callout-body > p:last-child,
+.rk-callout-body > ul:last-child,
+.rk-callout-body > ol:last-child {
+  margin-bottom: 0;
+}
+
+.rk-callout-note {
+  background: rgba(12, 24, 38, 0.65);
+  border-color: rgba(56, 189, 248, 0.34);
+}
+.rk-callout-note .rk-callout-icon,
+.rk-callout-note .rk-callout-badge {
+  color: #7DD3FC;
+}
+
+.rk-callout-tip {
+  background: rgba(9, 26, 20, 0.65);
+  border-color: rgba(101, 245, 138, 0.32);
+}
+.rk-callout-tip .rk-callout-icon,
+.rk-callout-tip .rk-callout-badge {
+  color: #6EE7B7;
+}
+
+.rk-callout-important {
+  background: rgba(22, 16, 38, 0.65);
+  border-color: rgba(167, 139, 250, 0.34);
+}
+.rk-callout-important .rk-callout-icon,
+.rk-callout-important .rk-callout-badge {
+  color: #C4B5FD;
+}
+
+.rk-callout-warning {
+  background: rgba(28, 20, 9, 0.7);
+  border-color: rgba(251, 191, 36, 0.38);
+}
+.rk-callout-warning .rk-callout-icon,
+.rk-callout-warning .rk-callout-badge {
+  color: #FCD34D;
+}
+
+.rk-callout-caution {
+  background: rgba(34, 13, 16, 0.7);
+  border-color: rgba(248, 113, 113, 0.4);
+}
+.rk-callout-caution .rk-callout-icon,
+.rk-callout-caution .rk-callout-badge {
+  color: #FCA5A5;
+}
+

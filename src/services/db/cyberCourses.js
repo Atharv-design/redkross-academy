@@ -76,7 +76,7 @@ export const CYBER_COURSES = [
       "credential_title": "Certified Cybersecurity Defender Associate (CCDA)",
       "time_limit_minutes": 60,
       "passing_score": 80,
-      "total_questions": 60,
+      "total_questions": 50,
       "proctored": true
     },
     "modules": [
