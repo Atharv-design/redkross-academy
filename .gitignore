@@ -34,8 +34,24 @@ graphify-out/
 src/backups/
 src/services/db/course03/modules/backup_*/
 # Course Raw Assets
-RK course notes/**/Lessons Images/
-RK course notes/RedKross Academy Complete Cybersecurity Course Library/
+RK course notes/
 scripts/*.txt
 scripts/*.json
+
+# Agent, Tool & MCP Configs
+.claude/
+.serena/
+.omc/
+.mcp.json
+claude.json
+
+# Test, Audit & Scratch Reports
+*_output.txt
+test_output.txt
+cyber_vault_output.txt
+question_bank_output.txt
+bug_report.md
+database-security-review.md
+docs/superpowers/
+
 
