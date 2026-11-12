@@ -26,6 +26,11 @@ import {
   getRandomModuleQuestions as getRandomModuleQuestionsC3,
   getCourse03FinalExam
 } from '../course03/course03Engine.js';
+import {
+  COURSE04_MODULE_BANKS,
+  getRandomModuleQuestions as getRandomModuleQuestionsC4,
+  getCourse04FinalExam
+} from '../course04/course04Engine.js';
 
 const MODULE_BANKS = {
   1: module1QuestionBank,
@@ -143,7 +148,8 @@ export function getRandomFinalExamQuestions(totalCount = 50) {
 export function getOrGenerateQuizQuestions(enrolmentId, quizId, moduleNum = 1, isFinalExam = false, courseId = null, forceRegenerate = false) {
   const isC2 = courseId === 'crs_cyber_net_02' || (typeof quizId === 'string' && (quizId.includes('c2') || quizId.includes('net_final') || quizId.includes('c02')));
   const isC3 = courseId === 'crs_cyber_admin_03' || (typeof quizId === 'string' && (quizId.includes('c3') || quizId.includes('admin_final') || quizId.includes('c03')));
-  const primaryCacheKey = `rk_quiz_session_${isC3 ? 'c3_' : (isC2 ? 'c2_' : '')}${enrolmentId || 'cadet'}_${quizId}`;
+  const isC4 = courseId === 'crs_cyber_python_04' || (typeof quizId === 'string' && (quizId.includes('c4') || quizId.includes('python_final') || quizId.includes('c04')));
+  const primaryCacheKey = `rk_quiz_session_${isC4 ? 'c4_' : (isC3 ? 'c3_' : (isC2 ? 'c2_' : ''))}${enrolmentId || 'cadet'}_${quizId}`;
   const legacyCacheKey = `rk_quiz_session_${enrolmentId || 'cadet'}_${quizId}`;
 
   if (typeof window !== 'undefined') {
@@ -151,6 +157,7 @@ export function getOrGenerateQuizQuestions(enrolmentId, quizId, moduleNum = 1, i
       try {
         sessionStorage.removeItem(primaryCacheKey);
         sessionStorage.removeItem(legacyCacheKey);
+        sessionStorage.removeItem(`rk_quiz_session_c4_${enrolmentId || 'cadet'}_${quizId}`);
         sessionStorage.removeItem(`rk_quiz_session_c3_${enrolmentId || 'cadet'}_${quizId}`);
         sessionStorage.removeItem(`rk_quiz_session_c2_${enrolmentId || 'cadet'}_${quizId}`);
       } catch {}
@@ -170,7 +177,13 @@ export function getOrGenerateQuizQuestions(enrolmentId, quizId, moduleNum = 1, i
   }
 
   let questions = [];
-  if (isC3) {
+  if (isC4) {
+    if (isFinalExam || (typeof quizId === 'string' && (quizId.includes('final') || quizId.includes('exam_cyber_python')))) {
+      questions = getCourse04FinalExam(60);
+    } else {
+      questions = getRandomModuleQuestionsC4(moduleNum, 20);
+    }
+  } else if (isC3) {
     if (isFinalExam || (typeof quizId === 'string' && (quizId.includes('final') || quizId.includes('exam_cyber_admin')))) {
       questions = getCourse03FinalExam(60);
     } else {
@@ -210,10 +223,11 @@ export function clearQuizSessionQuestions(enrolmentId, quizId, courseId = null) 
       sessionStorage.removeItem(`rk_quiz_session_${enrolmentId || 'cadet'}_${quizId}`);
       sessionStorage.removeItem(`rk_quiz_session_c2_${enrolmentId || 'cadet'}_${quizId}`);
       sessionStorage.removeItem(`rk_quiz_session_c3_${enrolmentId || 'cadet'}_${quizId}`);
+      sessionStorage.removeItem(`rk_quiz_session_c4_${enrolmentId || 'cadet'}_${quizId}`);
     } catch {
       // ignore
     }
   }
 }
 
-export { MODULE_BANKS, COURSE02_MODULE_BANKS, COURSE03_MODULE_BANKS };
+export { MODULE_BANKS, COURSE02_MODULE_BANKS, COURSE03_MODULE_BANKS, COURSE04_MODULE_BANKS };

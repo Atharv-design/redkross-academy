@@ -133,6 +133,18 @@ export const INITIAL_ENROLMENTS = [
     passed_quizzes: [],
     final_assessment_attempt_id: null,
     credential_id: null,
+  },
+  {
+    id: 'enr_student_python_04',
+    user_id: 'usr_student_01',
+    course_id: 'crs_cyber_python_04',
+    course_version: '1.0',
+    enrolled_at: '2026-11-11T10:00:00Z',
+    status: 'active',
+    completed_mandatory_lessons: [],
+    passed_quizzes: [],
+    final_assessment_attempt_id: null,
+    credential_id: null,
   }
 ];
 

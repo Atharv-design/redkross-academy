@@ -1,0 +1,24 @@
+﻿
+> redkross-academy@1.0.0 test
+> node tests/unit_test_student_features.mjs
+
+--- STARTING COMPREHENSIVE UNIT TESTING FOR STUDENT FEATURES ---
+[PASS] Cybersecurity division contains at least 2 courses: found 4
+[PASS] Catalog course has Introduction to Cybersecurity (crs_cyber_intro_01)
+[PASS] Catalog course has Computer Networking for Cybersecurity (crs_cyber_net_02)
+[PASS] Course 01 has 6 comprehensive modules
+[PASS] Cadet enrolment is active: enr_student_soc
+[PASS] recordLessonCompletion marks lesson 'les_m1_l1' complete
+[PASS] completeLesson saves last_visited_unit_id automatically
+[PASS] saveLastVisitedUnit updates last_visited_unit_id to 'les_m2_l3' persistently
+[PASS] Initial attempts remaining is 3
+[PASS] After 1st mid-exam abandonment, attempts remaining is 2 (found 2)
+[PASS] Exam is not locked after 1st abandonment
+[PASS] After 2nd mid-exam abandonment, attempts remaining is 1 (found 1)
+[PASS] Exam is not locked after 2nd abandonment
+[PASS] After 3rd mid-exam abandonment, attempts remaining is 0 (found 0)
+[PASS] 24-Hour Lockout is activated immediately upon exhausting 3 attempts
+[PASS] isExamLocked confirms active 24-hour lockout
+[PASS] Lockout remaining hours is 23h-24h (found 24h)
+
+--- TEST RUN SUMMARY: 17 PASSED, 0 FAILED ---

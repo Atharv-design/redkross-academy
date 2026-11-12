@@ -33,10 +33,16 @@ mockEngine._cachedDb = null;
 
 const db = mockEngine.getDb();
 
-assert.strictEqual(db._curriculum_version, '2026.11.11.v24_c01_c02_academic_enhancement', 'Curriculum version must be updated to latest');
+assert.strictEqual(db._curriculum_version, '2026.11.11.v26_c04_strict_no_references', 'Curriculum version must be updated to latest');
 const cyberCourse = db.courses.find(c => c.id === 'crs_cyber_intro_01');
 assert.ok(cyberCourse, 'crs_cyber_intro_01 must exist');
 assert.strictEqual(cyberCourse.modules.length, 6, 'crs_cyber_intro_01 must have all 6 modules from INITIAL_COURSES');
+const pythonCourse = db.courses.find(c => c.id === 'crs_cyber_python_04');
+assert.ok(pythonCourse, 'crs_cyber_python_04 must exist');
+assert.strictEqual(pythonCourse.modules.length, 8, 'crs_cyber_python_04 must have all 8 modules');
+assert.strictEqual(pythonCourse.modules.reduce((acc, m) => acc + (m.lessons?.length || 0), 0), 48, 'crs_cyber_python_04 must have 48 lessons');
+assert.ok(!/\[C04-M01-R1\]/.test(pythonCourse.modules[0].lessons[0].content), 'crs_cyber_python_04 lessons must not expose citation IDs');
+assert.ok(Array.isArray(pythonCourse.modules[0].lessons[0].lab_resources) && pythonCourse.modules[0].lessons[0].lab_resources.length > 0, 'crs_cyber_python_04 lab_resources must survive migration');
 assert.strictEqual(db.users[0].name, 'Cadet Tester', 'User account must be preserved');
 assert.strictEqual(db.enrolments[0].progress, 42, 'Cadet enrolment progress must be preserved');
 assert.strictEqual(db.quiz_attempts[0].score, 100, 'Quiz attempts must be preserved');

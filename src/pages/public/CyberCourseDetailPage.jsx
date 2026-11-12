@@ -264,7 +264,7 @@ export default function CyberCourseDetailPage() {
                       : `${course.modules?.length || 8} Quizzes + Final`}
                   </div>
                   <div className="text-[10px] text-slate-400">
-                    {course.id === 'crs_cyber_intro_01' || course.slug === 'introduction-to-cybersecurity'
+                    {course.id === 'crs_cyber_intro_01' || course.slug === 'introduction-to-cybersecurity' || course.id === 'crs_cyber_python_04' || course.slug === 'python-for-cybersecurity'
                       ? '60-MCQ Proctored Final'
                       : '50-MCQ Proctored Final'}
                   </div>
@@ -651,6 +651,8 @@ export default function CyberCourseDetailPage() {
                       ? 'Enterprise Networking & Layered Perimeter Defense Competencies'
                       : course.id === 'crs_cyber_admin_03' || course.slug === 'linux-and-windows-system-administration'
                       ? 'Enterprise Systems Administration & Defensive Infrastructure Competencies'
+                      : course.id === 'crs_cyber_python_04' || course.slug === 'python-for-cybersecurity'
+                      ? 'Python Security Automation & Defensive Engineering Competencies'
                       : 'Defensive Engineering & Threat Mitigation Competencies'}
                   </h3>
                   <p className="text-sm text-slate-300 font-sans leading-relaxed">
@@ -660,6 +662,8 @@ export default function CyberCourseDetailPage() {
                       ? 'Cadets master physical through application layer packet transmission, binary subnetting, routing convergence, stateful firewalls, and Wireshark forensics.'
                       : course.id === 'crs_cyber_admin_03' || course.slug === 'linux-and-windows-system-administration'
                       ? 'Cadets master OS kernel privilege rings, FHS 3.0 directory trees, POSIX permissions, Windows NT executive internals, PowerShell 7 automation, Active Directory Kerberos, and CIS system hardening baselines.'
+                      : course.id === 'crs_cyber_python_04' || course.slug === 'python-for-cybersecurity'
+                      ? 'Cadets master Python 3 core data structures, hash-pinned virtual environments, ReDoS/CSV defenses, path and subprocess confinement, loopback TCP/TLS sockets, streaming SHA-256 and HMAC integrity, tamper-evident FIM alerts, and unittest-verified CLI engineering.'
                       : 'Graduates master robust defensive architecture, operational telemetry, and systematic vulnerability remediation.'}
                   </p>
                 </div>
@@ -755,6 +759,39 @@ export default function CyberCourseDetailPage() {
                     {
                       title: 'MOD 08 // HARDENING, BASELINES & AUDITS',
                       desc: 'Apply consensus hardening with CIS Benchmark Level 1/2 baselines, Windows Defender Firewall rule engineering, automated Lynis compliance scoring, and execute a comprehensive capstone systems audit.'
+                    }
+                  ] : course.id === 'crs_cyber_python_04' || course.slug === 'python-for-cybersecurity' ? [
+                    {
+                      title: 'MOD 01 // PYTHON FOUNDATIONS',
+                      desc: 'Configure Python 3 safely, understand dynamic name-to-object binding and explicit type conversion boundaries, process strings safely, select O(1) dicts/sets vs lists, and avoid string-comparison bugs.'
+                    },
+                    {
+                      title: 'MOD 02 // FUNCTIONS, MODULES & EXCEPTIONS',
+                      desc: 'Design pure security functions with mutable-default safety, author importable packages, implement narrow fail-closed exception chaining (PEP 3134), and manage hash-pinned venvs (--require-hashes).'
+                    },
+                    {
+                      title: 'MOD 03 // TEXT, REGEX, CSV & JSON SAFETY',
+                      desc: 'Process UTF-8 logs with streaming generators, neutralize CSV formula injection, parse strict JSON Schema, reject unsafe pickle deserialization, and prevent catastrophic ReDoS backtracking.'
+                    },
+                    {
+                      title: 'MOD 04 // FILESYSTEMS & OS PROCESS SAFETY',
+                      desc: 'Enforce canonical Path.resolve() and is_relative_to() path-traversal confinement, enforce least-privilege os.chmod modes, and run OS commands safely using subprocess lists with shell=False.'
+                    },
+                    {
+                      title: 'MOD 05 // NETWORKING & WEB REQUESTS',
+                      desc: 'Build local 127.0.0.1 TCP sockets and concurrent selectors servers, configure verified TLS certificate validation, decode big-endian binary frames via struct, and call APIs without SSRF.'
+                    },
+                    {
+                      title: 'MOD 06 // CRYPTOGRAPHY, LOGS & IOCS',
+                      desc: 'Stream 64 KiB chunked SHA-256 digests, authenticate records with constant-time hmac.compare_digest(), normalize timezone-aware UTC events, and refang/validate IOCs cleanly.'
+                    },
+                    {
+                      title: 'MOD 07 // DEFENSIVE SECURITY AUTOMATION',
+                      desc: 'Engineer signed JSON File Integrity Monitoring (FIM) baselines, stateful sliding-window detection rules with deduplication suppression, and ANSI/XSS-sanitized JSONL alert outputs.'
+                    },
+                    {
+                      title: 'MOD 08 // RELIABLE TOOLING & RKLOGA 2.0',
+                      desc: 'Verify security utilities with unittest suites, clean CLI 0/1/2 exit contracts, structured pyproject.toml + Bandit/mypy gates, and deliver the documented rkloga 2.0 log analysis capstone.'
                     }
                   ] : (course.modules || []).map((m, mIdx) => ({
                     title: `MOD ${String(mIdx + 1).padStart(2, '0')} // ${m.title.toUpperCase()}`,
@@ -935,6 +972,8 @@ export default function CyberCourseDetailPage() {
                       ? 'Designed for learners who have completed Course 01 or have foundational IT literacy.'
                       : course.id === 'crs_cyber_admin_03' || course.slug === 'linux-and-windows-system-administration'
                       ? 'Designed for learners who have completed Courses 01 & 02 or have foundational command-line and networking literacy.'
+                      : course.id === 'crs_cyber_python_04' || course.slug === 'python-for-cybersecurity'
+                      ? 'Designed for absolute beginners in programming as well as sysadmins and SOC analysts — zero prior coding required.'
                       : 'Designed for aspiring cybersecurity defenders and systems engineers.'}
                   </p>
                 </div>
@@ -1066,6 +1105,23 @@ export default function CyberCourseDetailPage() {
                 {
                   q: 'How does this credential translate into enterprise cybersecurity roles?',
                   a: 'The CSADA credential aligns directly with the NICE Framework for Systems Administration (K0001, K0002, K0003) and Incident Response (K0041, K0070). It validates that you can manage permissions, investigate process trees, audit event logs, build defensive automation, and enforce consensus CIS hardening baselines.'
+                }
+              ] : course.id === 'crs_cyber_python_04' || course.slug === 'python-for-cybersecurity' ? [
+                {
+                  q: 'Do I need any prior Python or programming experience before enrolling?',
+                  a: 'No prior coding experience is required. Module 1 begins from installing CPython 3.10+ and core variable binding rules, stepping deliberately through collections, functions, file handling, networking, cryptography, and automated testing.'
+                },
+                {
+                  q: 'What tools and software do I need to complete the practical labs?',
+                  a: 'A computer running Windows 10/11, macOS, or Linux with Python 3.10 or newer (tested on CPython 3.12 / 3.14). All 48 lessons emphasize standard-library security engineering, hash-pinned virtual environments, and safe loopback 127.0.0.1 network labs.'
+                },
+                {
+                  q: 'What is the rkloga 2.0 capstone project built in Module 8?',
+                  a: 'Across Modules 1 through 8, cadets incrementally engineer rkloga 2.0 — a documented, unittest-verified Python CLI security log analyzer featuring streaming SHA-256 verification, UTC normalization, path/CSV/ANSI sanitization, stateful suppression rules, and strict 0/1/2 exit codes.'
+                },
+                {
+                  q: 'How do module assessments and the final CCPAA certification exam work?',
+                  a: 'Each of the 8 modules ends with a 20-MCQ graded assessment drawn dynamically from a 200-question bank requiring an 80% passing score. Completing all 8 modules unlocks the proctored 60-MCQ final exam to earn the Certified Cybersecurity Python Automation Associate (CCPAA) credential.'
                 }
               ] : [
                 {

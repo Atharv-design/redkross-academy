@@ -77,6 +77,16 @@ export default function CyberLearningCard({
         'CIS Hardening'
       ];
     }
+    if (item.id === 'crs_cyber_python_04' || item.slug === 'python-for-cybersecurity') {
+      return [
+        'Python 3 Stdlib',
+        'ReDoS & CSV Safety',
+        'Path Confinement',
+        'Loopback TLS & struct',
+        'SHA-256 & HMAC',
+        'FIM & rkloga 2.0'
+      ];
+    }
     if (Array.isArray(item.skills) && item.skills.length > 0) {
       return item.skills.slice(0, 6).map((s) => s.length > 18 ? `${s.slice(0, 16)}...` : s);
     }
@@ -107,6 +117,14 @@ export default function CyberLearningCard({
         whatYoullLearnText: 'CPU privilege rings, POSIX ACLs, defensive Bash scripts, Windows registry forensics, PowerShell pipelines, and Active Directory.',
         whoItsForText: 'Systems administrators, SOC analysts, and security engineers managing enterprise operating environments.',
         prereqText: 'Course 01 & 02 recommended; basic understanding of networking and operating systems.'
+      };
+    }
+    if (item.id === 'crs_cyber_python_04' || item.slug === 'python-for-cybersecurity') {
+      return {
+        learningGoal: 'Master defensive Python 3 security engineering from first principles to a tested, CI-verified rkloga 2.0 CLI log analysis utility.',
+        whatYoullLearnText: 'Hash-pinned venvs, ReDoS/CSV safety, path/subprocess confinement, loopback TCP/TLS, streaming SHA-256/HMAC, FIM baselines, and unittest suites.',
+        whoItsForText: 'Beginners starting in security automation, SOC analysts, and defenders building deterministic triage tooling.',
+        prereqText: 'Zero prior programming experience required; Course 01–03 helpful for log and network literacy.'
       };
     }
     return {

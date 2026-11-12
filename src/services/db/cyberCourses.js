@@ -11,6 +11,7 @@ import { module5Data } from './curriculum/module5.js';
 import { module6Data } from './curriculum/module6.js';
 import { course02Data } from './course02/index.js';
 import { course03Data } from './course03/index.js';
+import { course04Data } from './course04/index.js';
 
 export const CYBER_COURSES = [
   {
@@ -89,12 +90,14 @@ export const CYBER_COURSES = [
     ]
   },
   course02Data,
-  course03Data
+  course03Data,
+  course04Data
 ];
 
 export const CYBER_INTRO_COURSE_01 = CYBER_COURSES[0];
 export const CYBER_NET_COURSE_02 = CYBER_COURSES[1];
 export const CYBER_ADMIN_COURSE_03 = CYBER_COURSES[2];
+export const CYBER_PYTHON_COURSE_04 = CYBER_COURSES[3];
 
 export const CYBER_LEARNING_PATHS = [
   {
@@ -141,5 +144,22 @@ export const CYBER_LEARNING_PATHS = [
     featured: true,
     skills: ['Kernel Rings & Syscalls', 'POSIX Permissions & ACLs', 'Defensive Bash Scripting', 'systemd Timers', 'Windows Registry & Persistence', 'SIDs, UAC & Tokens', 'NTFS Permissions & Shares', 'PowerShell 7 Object Pipelines', 'Windows Event Forwarding', 'Kerberos & Group Policy (LSDOU)', 'CIS Benchmark Hardening', 'Lynis Automated Audits'],
     course_ids: ['crs_cyber_admin_03']
+  },
+  {
+    id: 'path_python_security',
+    division: 'cybersecurity',
+    slug: 'python-for-cybersecurity-automation-track',
+    title: 'Python Security Automation & Defensive Tooling Track',
+    category: 'Security Automation & Defensive Engineering',
+    difficulty: 'Beginner',
+    estimated_weeks: 10,
+    total_hours: 100,
+    courses_count: 1,
+    rating: 4.98,
+    enrolled_count: 1280,
+    card_variant: 'variant-01',
+    short_desc: 'Master defensive Python security engineering from core types and path/subprocess confinement to streaming HMAC verification, FIM baselines, unittest suites, and the rkloga 2.0 capstone.',
+    milestone_cert: 'Certified Cybersecurity Python Automation Associate (CCPAA)',
+    course_ids: ['crs_cyber_python_04']
   }
 ];

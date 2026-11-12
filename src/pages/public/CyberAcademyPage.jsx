@@ -64,9 +64,11 @@ export default function CyberAcademyPage() {
       'crs_cyber_intro_01', 
       'crs_cyber_net_02', 
       'crs_cyber_admin_03',
+      'crs_cyber_python_04',
       'introduction-to-cybersecurity',
       'computer-networking-for-cybersecurity',
-      'linux-and-windows-system-administration'
+      'linux-and-windows-system-administration',
+      'python-for-cybersecurity'
     ]);
 
     const list = CYBER_COURSES.map((cc) => ({

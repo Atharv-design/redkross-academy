@@ -11,6 +11,7 @@ import {
 import { FileUploadProgressBar } from '../../../components/application/file-upload/FileUploadProgressBar';
 import { renderMarkdownToHtml } from '../../../utils/markdownParser';
 import { MODULE_1_BLOCK_NOTES } from '../../../services/db/module1BlockNotes';
+import LessonLabResourcesBar from './LessonLabResourcesBar';
 
 const BlockNoteLessonViewer = React.lazy(() => import('../../../components/student/BlockNoteLessonViewer'));
 const ExamCBTInterface = React.lazy(() => import('../../../components/student/ExamCBTInterface'));
@@ -221,6 +222,8 @@ function LessonContentPanel({
                   </div>
                 </div>
               )}
+
+              <LessonLabResourcesBar labResources={activeLesson.lab_resources} />
             </div>
           )}
 

@@ -1,0 +1,22 @@
+0. working folder created: True
+1. line 1: 2026-11-07T10:01:02Z sshd[811]: Failed password for asha fro...
+1. line 2: 2026-11-07T10:01:09Z sshd[811]: Failed password for invalid ...
+1. line 4: 2026-11-07T10:03:10Z sshd[817]: Failed password for asha fro...
+   size: 422 bytes; lines: 5
+2. bytes: b'Pune - caf\xc3\xa9\n' | decoded: 'Pune - caf\xe9'
+   ascii decode fails: UnicodeDecodeError
+3. rows: 3 | high criticality: ['web-01', 'hr-portal']
+4. asha,"'=HYPERLINK(""http://example.com"",""click"")"
+5. ['brute_force', 'new_admin'] | total events: 8
+   first alert has 'user'? False -> n/a
+   invalid JSON: Expecting property name enclosed in double quotes
+6. 10:01:02 asha 203.0.113.7 50122
+6. 10:01:09 admin 203.0.113.7 50130
+6. 10:03:10 asha 198.51.100.23 40001
+   findall IPs: ['10.20.4.17', '198.51.100.23', '203.0.113.7']
+   greedy: <a><b> | lazy: <a>
+7. n=18: 0.009 s
+7. n=20: 0.031 s
+7. n=22: 0.125 s
+   simple pattern n=22: 0.000004 s
+8. cleaned up: True

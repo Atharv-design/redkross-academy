@@ -163,7 +163,7 @@ class MockEngine {
     try {
       const dynamicState = {
         _initialized: true,
-        _curriculum_version: db._curriculum_version || '2026.11.11.v24_c01_c02_academic_enhancement',
+        _curriculum_version: db._curriculum_version || '2026.11.11.v26_c04_strict_no_references',
         users: db.users || [],
         enrolments: db.enrolments || [],
         credentials: db.credentials || [],
@@ -188,7 +188,7 @@ class MockEngine {
     if (forceReset || !safeStorage.getItem(STORAGE_KEY)) {
       const initialDb = {
         _initialized: true,
-        _curriculum_version: '2026.11.11.v24_c01_c02_academic_enhancement',
+        _curriculum_version: '2026.11.11.v26_c04_strict_no_references',
         users: INITIAL_USERS,
         learning_paths: INITIAL_LEARNING_PATHS,
         courses: INITIAL_COURSES,
@@ -210,7 +210,7 @@ class MockEngine {
 
   syncCurriculumFromDisk(forceReset = false) {
     const db = this.getDb();
-    db._curriculum_version = '2026.11.11.v24_c01_c02_academic_enhancement';
+    db._curriculum_version = '2026.11.11.v26_c04_strict_no_references';
     this.saveDb(db, { type: 'CURRICULUM_SYNCED', payload: { version: db._curriculum_version } });
     return db;
   }
@@ -244,7 +244,7 @@ class MockEngine {
 
       let modified = false;
 
-      const CURRICULUM_VERSION = '2026.11.11.v24_c01_c02_academic_enhancement';
+      const CURRICULUM_VERSION = '2026.11.11.v26_c04_strict_no_references';
       if (parsed._curriculum_version !== CURRICULUM_VERSION) {
         parsed._curriculum_version = CURRICULUM_VERSION;
         modified = true;
@@ -1226,6 +1226,12 @@ class MockEngine {
       found = (db.enrolments || []).find((e) => e.course_id === 'crs_cyber_admin_03');
       if (!found) {
         return this.enrolStudent('usr_student_01', 'crs_cyber_admin_03');
+      }
+    }
+    if (!found && (enrolmentId === 'crs_cyber_python_04' || enrolmentId === 'python-for-cybersecurity' || enrolmentId === 'enr_student_python_04')) {
+      found = (db.enrolments || []).find((e) => e.course_id === 'crs_cyber_python_04');
+      if (!found) {
+        return this.enrolStudent('usr_student_01', 'crs_cyber_python_04');
       }
     }
     return found;

@@ -543,6 +543,50 @@ export default async function handler(req, res) {
       });
     }
 
+    if (!activeCourses.some(c => c.id === 'crs_cyber_python_04' || c.slug === 'python-for-cybersecurity')) {
+      activeCourses.push({
+        id: 'crs_cyber_python_04',
+        slug: 'python-for-cybersecurity',
+        title: 'Python for Cybersecurity',
+        version: '1.0',
+        category: 'Security Automation & Defensive Engineering',
+        difficulty: 'Beginner',
+        price: 0,
+        cert_price: 0,
+        estimated_duration: '10 Weeks',
+        estimated_weeks: 10,
+        total_hours: 100,
+        rating: 4.98,
+        enrolled_count: 1280,
+        milestone_cert: 'Certified Cybersecurity Python Automation Associate (CCPAA)',
+        short_desc: 'Practical Python security engineering from first principles to a tested CLI log analysis utility. Master core Python data structures, secure exception and supply-chain venv hygiene (--require-hashes), ReDoS-safe regular expressions and CSV/JSON safety, path-traversal and subprocess injection prevention, localhost TCP/TLS networking and binary struct parsing, streaming SHA-256 and HMAC-SHA256 telemetry, tamper-evident FIM and alert pipelines, and unittest-verified rkloga 2.0 engineering.',
+        overview: 'Python is the most widely used language in cybersecurity operations: analysts parse authentication logs and extract indicators of compromise with it, engineers automate endpoint integrity checks, incident responders build portable triage utilities, and enterprise SIEM/SOAR platforms expose Python APIs. This course teaches real software programming—not fragile copy-pasted snippets—from foundational types and control flow to an engineered, documented, unit-tested command-line log analysis utility (rkloga 2.0). Every technical example is execution-tested on CPython using the standard library and strictly scoped local environments (127.0.0.1).',
+        skills: [
+          'Python Security Foundations',
+          'Secure Dependency & venv Pinning',
+          'CSV Formula & ReDoS Defense',
+          'Path Traversal & Subprocess Safety',
+          'Loopback Sockets, TLS & struct',
+          'Streaming SHA-256 & HMAC Verification',
+          'UTC Log Parsing & IOC Extraction',
+          'Signed File Integrity Monitoring',
+          'Rule Suppression & XSS Sanitization',
+          'unittest Suites & CLI Exit Contracts',
+          'Bandit/mypy CI & pyproject.toml',
+          'rkloga 2.0 Log Analysis Engineering'
+        ],
+        lead_author: {
+          name: 'RedKross Security Engineering Faculty',
+          title: 'Defensive Security Automation & Applied Cryptography',
+          role: 'Director of Security Automation, RedKross Research Foundation',
+          avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=256&q=80'
+        },
+        total_tokens_reward: 2000,
+        card_variant: 'variant-01',
+        created_at: new Date().toISOString()
+      });
+    }
+
     return json(res, {
       courses: activeCourses,
       public_catalog_enabled: isCatalogEnabled

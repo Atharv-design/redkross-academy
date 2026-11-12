@@ -75,6 +75,10 @@ export const apiClient = {
         const admin03 = mockEngine.getCourseSummary('crs_cyber_admin_03') || mockEngine.getCourseById('crs_cyber_admin_03');
         if (admin03) courses.push(admin03);
       }
+      if (!courses.some((c) => c.id === 'crs_cyber_python_04' || c.slug === 'python-for-cybersecurity')) {
+        const python04 = mockEngine.getCourseSummary('crs_cyber_python_04') || mockEngine.getCourseById('crs_cyber_python_04');
+        if (python04) courses.push(python04);
+      }
       return {
         courses,
         public_catalog_enabled: data.public_catalog_enabled,

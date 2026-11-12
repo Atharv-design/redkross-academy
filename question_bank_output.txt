@@ -1,0 +1,45 @@
+﻿--- STARTING COMPREHENSIVE QUESTION BANK & SAMPLING ENGINE TEST SUITE ---
+[PASS] Module 1 question bank contains exactly 200 questions (Found 200)
+[PASS] Module 1 has exactly 100 Medium questions (Found 100)
+[PASS] Module 1 has exactly 100 Difficult questions (Found 100)
+[PASS] Module 1 has 0 Easy/recall questions (Found 0)
+[PASS] Module 1 all 200 questions have valid IDs, 4 options, valid correct index, and explanation
+[PASS] Module 2 question bank contains exactly 200 questions (Found 200)
+[PASS] Module 2 has exactly 100 Medium questions (Found 100)
+[PASS] Module 2 has exactly 100 Difficult questions (Found 100)
+[PASS] Module 2 has 0 Easy/recall questions (Found 0)
+[PASS] Module 2 all 200 questions have valid IDs, 4 options, valid correct index, and explanation
+[PASS] Module 3 question bank contains exactly 200 questions (Found 200)
+[PASS] Module 3 has exactly 100 Medium questions (Found 100)
+[PASS] Module 3 has exactly 100 Difficult questions (Found 100)
+[PASS] Module 3 has 0 Easy/recall questions (Found 0)
+[PASS] Module 3 all 200 questions have valid IDs, 4 options, valid correct index, and explanation
+[PASS] Module 4 question bank contains exactly 200 questions (Found 200)
+[PASS] Module 4 has exactly 100 Medium questions (Found 100)
+[PASS] Module 4 has exactly 100 Difficult questions (Found 100)
+[PASS] Module 4 has 0 Easy/recall questions (Found 0)
+[PASS] Module 4 all 200 questions have valid IDs, 4 options, valid correct index, and explanation
+[PASS] Module 5 question bank contains exactly 200 questions (Found 200)
+[PASS] Module 5 has exactly 100 Medium questions (Found 100)
+[PASS] Module 5 has exactly 100 Difficult questions (Found 100)
+[PASS] Module 5 has 0 Easy/recall questions (Found 0)
+[PASS] Module 5 all 200 questions have valid IDs, 4 options, valid correct index, and explanation
+[PASS] Module 6 question bank contains exactly 200 questions (Found 200)
+[PASS] Module 6 has exactly 100 Medium questions (Found 100)
+[PASS] Module 6 has exactly 100 Difficult questions (Found 100)
+[PASS] Module 6 has 0 Easy/recall questions (Found 0)
+[PASS] Module 6 all 200 questions have valid IDs, 4 options, valid correct index, and explanation
+[PASS] Total question bank count across Modules 1-6 is exactly 1,200 (Found 1200)
+[PASS] getRandomModuleQuestions(1, 20) returned exactly 20 questions
+[PASS] Sampled 20 questions have balanced 10 Medium and 10 Difficult questions (M:10, D:10)
+[PASS] getRandomModuleQuestions(6, 20) returned exactly 20 questions for Module 6
+[PASS] Module 6 sampled questions have balanced 10 Medium and 10 Difficult (M:10, D:10)
+[PASS] All sampled question options match ExamCBTInterface schema ({ id, text, is_correct }) with exactly one correct answer
+[PASS] Subsequent module sample runs have different question orders (non-deterministic shuffle)
+[PASS] getRandomFinalExamQuestions(50) returned exactly 50 questions
+[PASS] getRandomFinalExamQuestions(60) returned exactly 60 questions
+[PASS] Final Exam (60 Qs) cleanly samples exactly 10 questions from each of the 6 modules (M1:10, M2:10, M3:10, M4:10, M5:10, M6:10)
+[PASS] Option shuffling accurately preserves the correct answer text ('Policy Enforcement Point (PEP)') regardless of randomized option position
+
+--- TEST RUN SUMMARY: 41 PASSED, 0 FAILED ---
+=== ALL QUESTION BANK & SAMPLING TESTS PASSED WITH 100% SUCCESS ===
