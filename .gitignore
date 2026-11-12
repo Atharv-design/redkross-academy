@@ -39,6 +39,7 @@ scripts/*.txt
 scripts/*.json
 
 # Agent, Tool & MCP Configs
+AGENTS.md
 .claude/
 .serena/
 .omc/
