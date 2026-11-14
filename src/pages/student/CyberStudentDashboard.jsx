@@ -33,6 +33,7 @@ import CyberShaderBackground from '../../components/ui/CyberShaderBackground';
 import CyberDivisionWatermark from '../../components/cyber/CyberDivisionWatermark';
 import CyberAcademyNavbar from '../../components/cyber/CyberAcademyNavbar';
 import Footer from '../../components/common/Footer';
+import CyberLabDesktopWindow from '../../components/student/CyberLabDesktopWindow';
 import { mockEngine } from '../../services/db/mockEngine';
 import { useAuth } from '../../services/auth/authContext';
 import { CYBER_COURSES } from '../../services/db/cyberCourses';
@@ -51,6 +52,8 @@ export default function CyberStudentDashboard() {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
 
+  const [isLabOpen, setIsLabOpen] = useState(false);
+  const [isLabMinimized, setIsLabMinimized] = useState(false);
   const [copiedHash, setCopiedHash] = useState(null);
 
   const [stats, setStats] = useState({
@@ -95,6 +98,11 @@ export default function CyberStudentDashboard() {
     navigator.clipboard?.writeText(hash);
     setCopiedHash(id);
     setTimeout(() => setCopiedHash(null), 2000);
+  };
+
+  const handleLaunchLab = () => {
+    setIsLabOpen(true);
+    setIsLabMinimized(false);
   };
 
   const sampleVerificationHash = '3a7f8b9c2e1d0f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a';
@@ -242,7 +250,7 @@ export default function CyberStudentDashboard() {
                   CYBER_COURSES[0];
                 const progress = mockEngine.getCourseProgress(enr.id) || { percentage: 0 };
                 const completedCount = (enr.completed_mandatory_lessons || []).length;
-                const totalLessons = course.modules?.reduce((acc, m) => acc + (m.lessons?.length || 0), 0) || 78;
+                const totalLessons = course?.modules?.reduce((acc, m) => acc + (m.lessons?.length || 0), 0) || 78;
 
                 return (
                   <div
@@ -260,20 +268,20 @@ export default function CyberStudentDashboard() {
                           </span>
                         </div>
                         <h3 className="text-lg sm:text-xl font-bold font-royal text-white">
-                          {(course.title || '').replace(/^Course\s*\d+:\s*/i, '')}
+                          {(course?.title || 'Cybersecurity Defense Track').replace(/^Course\s*\d+:\s*/i, '')}
                         </h3>
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
                         <Link
-                          to={`/student/course/${course.id}`}
+                          to={`/student/course/${course?.id || enr.course_id}`}
                           className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#FF7A00] to-[#E56A00] text-black font-mono font-bold text-xs hover:brightness-110 transition-all shadow-[0_0_15px_rgba(255,122,0,0.35)] flex items-center gap-1.5"
                         >
                           <Play className="w-3.5 h-3.5" />
                           <span>Enter Classroom</span>
                         </Link>
                         <Link
-                          to={`/academy/cybersecurity/courses/${course.slug || course.id}`}
+                          to={`/academy/cybersecurity/courses/${course?.slug || course?.id || enr.course_id}`}
                           className="px-3.5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 font-mono text-xs transition-colors flex items-center gap-1.5"
                         >
                           <span>Syllabus</span>
@@ -436,6 +444,17 @@ export default function CyberStudentDashboard() {
           )}
         </section>
       </main>
+
+      {/* Kali CyberLab V3 Desktop Modal Window */}
+      {isLabOpen && (
+        <CyberLabDesktopWindow
+          isOpen={isLabOpen}
+          onClose={() => setIsLabOpen(false)}
+          isMinimized={isLabMinimized}
+          onMinimize={() => setIsLabMinimized(true)}
+          onRestore={() => setIsLabMinimized(false)}
+        />
+      )}
 
       {/* Cyber In-Branch Footer */}
       <Footer />
