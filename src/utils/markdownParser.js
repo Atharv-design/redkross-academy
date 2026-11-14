@@ -57,6 +57,15 @@ function escapeHtml(str = '') {
     .replace(/>/g, '&gt;');
 }
 
+function escapeAttr(str = '') {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 function katexStrictHandler(errorCode) {
   return errorCode === 'unknownSymbol' || errorCode === 'symbolNotInFont' ? 'ignore' : 'warn';
 }
@@ -286,6 +295,8 @@ export function renderMarkdownToHtml(markdown = '', options = {}) {
   // =========================================================================
   const codeBlocks = [];
   const inlineCodes = [];
+  const inlineCodeTexts = [];
+  const figureBlocks = [];
 
   // 1-pre. Structured Math Steps Blocks (:::math-steps ... :::)
   html = html.replace(/:::math-steps[^\S\r\n]*(.*?)\r?\n([\s\S]*?):::/gi, (match, title, body) => {
@@ -366,6 +377,7 @@ export function renderMarkdownToHtml(markdown = '', options = {}) {
   html = html.replace(/`([^`\n]+)`/g, (match, code) => {
     const clean = escapeHtml(code);
     const token = `@@@INLINECODE_${inlineCodes.length}@@@`;
+    inlineCodeTexts.push(code);
     inlineCodes.push(`<code class="px-1.5 py-0.5 rounded bg-[#11141D] border border-white/10 font-mono text-xs sm:text-[13px] text-[#E2D9CE] font-normal break-words">${clean}</code>`);
     return token;
   });
@@ -384,13 +396,13 @@ export function renderMarkdownToHtml(markdown = '', options = {}) {
   // STEP 2: MARKDOWN IMAGES & FIGURES (PROCESSED BEFORE KATEX)
   // Ensures alt attributes are clean text and cannot leak raw HTML or quotes
   // =========================================================================
-  html = html.replace(/!\[(.*?)\]\((.*?)\)(?:\s*\n+\*([^*]+)\*)?/g, (match, alt, src, trailingCaption) => {
+  html = html.replace(/!\[(.*?)\]\((.*?)\)(?:\s*\n+[*_]+(?!\s)([^\r\n]+?)(?<!\s)[*_]+(?=[ \t]*(?:\r?\n|$)))?/g, (match, alt, src, trailingCaption) => {
     const cleanSrc = src.trim();
     const resolvedSrc = CHAPTER_1_IMAGES && CHAPTER_1_IMAGES[cleanSrc] ? CHAPTER_1_IMAGES[cleanSrc] : cleanSrc;
     const rawCaption = (trailingCaption && trailingCaption.trim()) || (alt && alt.trim()) || '';
 
-    // Sanitize alt attribute: remove all HTML tags, raw math delimiters, and encode double quotes
-    const plainAlt = rawCaption
+    // Sanitize alt attribute: remove HTML tags & raw math, restore inline-code tokens as plain text, escape attributes
+    let plainAlt = rawCaption
       .replace(/<[^>]+>/g, '')
       .replace(/\$([^$]+)\$/g, '$1')
       .replace(/\\\(|\\\)/g, '')
@@ -398,13 +410,27 @@ export function renderMarkdownToHtml(markdown = '', options = {}) {
       .replace(/\\times/g, 'x')
       .replace(/\\to/g, '->')
       .replace(/\\quad/g, ' ')
-      .replace(/"/g, '&quot;')
+      .replace(/@@@INLINECODE_(\d+)@@@/g, (m, idx) => {
+        const i = parseInt(idx, 10);
+        return inlineCodeTexts[i] !== undefined ? inlineCodeTexts[i] : '';
+      })
+      .replace(/@@@[A-Z]+_\d+@@@/g, '')
+      .replace(/[*_~`]/g, '')
       .trim() || 'Technical Diagram';
 
-    return `<figure class="my-5 w-full overflow-hidden rounded-2xl border border-[#FF7A00]/30 shadow-[0_8px_30px_rgba(0,0,0,0.6)] bg-black/40">
+    const safeAlt = escapeAttr(plainAlt);
+
+    // Format visible caption: preserve inline typography (**bold**, *italic*, ~~strike~~)
+    const formattedCaption = rawCaption
+      .replace(/\*\*(.+?)\*\*/g, '<strong class="font-bold text-white">$1</strong>')
+      .replace(/(?<!\*)\*([^*]+?)\*(?!\*)/g, '<em class="italic text-[#E2D9CE]/90">$1</em>')
+      .replace(/~~(.+?)~~/g, '<del class="line-through text-[#8C7A6B]">$1</del>');
+
+    const token = `@@@FIGURE_${figureBlocks.length}@@@`;
+    figureBlocks.push(`<figure class="my-5 w-full overflow-hidden rounded-2xl border border-[#FF7A00]/30 shadow-[0_8px_30px_rgba(0,0,0,0.6)] bg-black/40">
       <img
         src="${resolvedSrc}"
-        alt="${plainAlt}"
+        alt="${safeAlt}"
         class="w-full h-auto block rounded-t-2xl cursor-pointer hover:scale-[1.003] transition-transform duration-300"
         loading="lazy"
         decoding="async"
@@ -412,19 +438,22 @@ export function renderMarkdownToHtml(markdown = '', options = {}) {
       />
       <div style="display:none;" class="p-6 sm:p-8 bg-[#0B0D14] border-b border-[#FF7A00]/20 rounded-t-2xl text-center space-y-2.5">
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF7A00]/15 border border-[#FF7A00]/40 text-[#FFA439] text-xs font-mono font-bold uppercase">
-          <span>TECHNICAL BLUEPRINT // ${plainAlt}</span>
+          <span>TECHNICAL BLUEPRINT // ${escapeHtml(plainAlt)}</span>
         </div>
-        <p class="text-xs sm:text-sm text-slate-300 font-sans max-w-xl mx-auto leading-relaxed">${rawCaption || 'Defensive architecture reference diagram.'}</p>
+        <p class="text-xs sm:text-sm text-slate-300 font-sans max-w-xl mx-auto leading-relaxed">${formattedCaption || 'Defensive architecture reference diagram.'}</p>
       </div>
-      ${rawCaption ? `<figcaption class="py-2.5 px-4 text-center text-xs font-mono text-[#A3907C] border-t border-[#FF7A00]/20 bg-[#0B0907] flex items-center justify-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FF7A00]/80"></span><span>${rawCaption}</span></figcaption>` : ''}
-    </figure>`;
+      ${rawCaption ? `<figcaption class="py-2.5 px-4 text-center text-xs font-mono text-[#A3907C] border-t border-[#FF7A00]/20 bg-[#0B0907] flex items-center justify-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FF7A00]/80"></span><span>${formattedCaption}</span></figcaption>` : ''}
+    </figure>`);
+
+    return `\n\n${token}\n\n`;
   });
 
   // 2b. Malformed Image Syntax Fallback: handles !(url) or ![path]
   html = html.replace(/(?:!\[\]\(|!!\(|!\()([^)]+\.(?:jpg|jpeg|png|webp|svg|gif))\)/gi, (match, src) => {
     const cleanSrc = src.trim();
     const resolvedSrc = CHAPTER_1_IMAGES && CHAPTER_1_IMAGES[cleanSrc] ? CHAPTER_1_IMAGES[cleanSrc] : cleanSrc;
-    return `<figure class="my-5 w-full overflow-hidden rounded-2xl border border-[#FF7A00]/30 shadow-[0_8px_30px_rgba(0,0,0,0.6)] bg-black/40">
+    const token = `@@@FIGURE_${figureBlocks.length}@@@`;
+    figureBlocks.push(`<figure class="my-5 w-full overflow-hidden rounded-2xl border border-[#FF7A00]/30 shadow-[0_8px_30px_rgba(0,0,0,0.6)] bg-black/40">
       <img
         src="${resolvedSrc}"
         alt="Technical Reference Diagram"
@@ -433,7 +462,8 @@ export function renderMarkdownToHtml(markdown = '', options = {}) {
         decoding="async"
         onerror="if(this.src.endsWith('.png')){this.src=this.src.replace(/\\.png$/,'.svg');}else{this.onerror=null;this.style.display='none';}"
       />
-    </figure>`;
+    </figure>`);
+    return `\n\n${token}\n\n`;
   });
 
   // =========================================================================
@@ -477,8 +507,8 @@ export function renderMarkdownToHtml(markdown = '', options = {}) {
 
   // 3c. Inline Equations: $...$ (strict math tokens, excluding currency or shell vars)
   html = html.replace(/(?<![0-9a-zA-Z\\\$])\$([^\s\$][^\$\r\n]*?[^\s\$]|[^\s\$])\$(?![0-9a-zA-Z\$])/g, (match, eq) => {
-    // Exclude shielded code blocks or inline code spans
-    if (eq.includes('@@@CODEBLOCK_') || eq.includes('@@@INLINECODE_')) return match;
+    // Exclude shielded code blocks, figures, or inline code spans
+    if (eq.includes('@@@CODEBLOCK_') || eq.includes('@@@INLINECODE_') || eq.includes('@@@FIGURE_')) return match;
     // Exclude shell syntax, regex matches (=~), command/param expansions, redirections, or raw HTML tags
     if (/(=~|\$\(|\$\{|<<|>>|>&|<&|<\(|>\(|\/dev\/|<\s*\/?[a-zA-Z][a-zA-Z0-9-]*(?:\s+[^>]*)?>|<!--)/.test(eq)) return match;
     // Allow quotes strictly inside LaTeX text/font commands (e.g. \text{"admin"}), rejecting bare shell quotes
@@ -685,7 +715,8 @@ export function renderMarkdownToHtml(markdown = '', options = {}) {
         trimmed.startsWith('@@@CODEBLOCK_') ||
         trimmed.startsWith('@@@CALLOUT_') ||
         trimmed.startsWith('@@@MERMAID_') ||
-        trimmed.startsWith('@@@MATHSTEPS_')
+        trimmed.startsWith('@@@MATHSTEPS_') ||
+        trimmed.startsWith('@@@FIGURE_')
       ) {
         return trimmed;
       }
@@ -694,17 +725,21 @@ export function renderMarkdownToHtml(markdown = '', options = {}) {
     .join('\n\n');
 
   // =========================================================================
-  // STEP 11: RESTORE SHIELDED CODE BLOCKS & INLINE CODES
+  // STEP 11: RESTORE SHIELDED FIGURES, CODE BLOCKS & INLINE CODES
   // =========================================================================
+  figureBlocks.forEach((fig, idx) => {
+    html = html.replace(new RegExp(`@@@FIGURE_${idx}@@@`, 'g'), () => fig);
+  });
+
   codeBlocks.forEach((block, idx) => {
-    html = html.replace(`@@@CODEBLOCK_${idx}@@@`, block);
-    html = html.replace(`@@@CALLOUT_${idx}@@@`, block);
-    html = html.replace(`@@@MERMAID_${idx}@@@`, block);
-    html = html.replace(`@@@MATHSTEPS_${idx}@@@`, block);
+    html = html.replace(new RegExp(`@@@CODEBLOCK_${idx}@@@`, 'g'), () => block);
+    html = html.replace(new RegExp(`@@@CALLOUT_${idx}@@@`, 'g'), () => block);
+    html = html.replace(new RegExp(`@@@MERMAID_${idx}@@@`, 'g'), () => block);
+    html = html.replace(new RegExp(`@@@MATHSTEPS_${idx}@@@`, 'g'), () => block);
   });
 
   inlineCodes.forEach((code, idx) => {
-    html = html.replace(`@@@INLINECODE_${idx}@@@`, code);
+    html = html.replace(new RegExp(`@@@INLINECODE_${idx}@@@`, 'g'), () => code);
   });
 
   return html;
