@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="653" height="271" viewBox="0 0 653 271" role="img" aria-labelledby="t d">
+<title id="t">C08-M07-F1: Escalation and decision flow</title>
+<desc id="d">A flow from SOC analyst to incident lead, who branches to IT operations, legal, communications and forensics, with all decisions recorded in one incident log.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C08-M07-F1  Escalation and decision flow</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  SOC analyst --declares (criteria met)--&gt; incident lead</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">       |                                       |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">       | evidence export, timeline             +--&gt; IT ops: containment</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">       v                                       +--&gt; legal: CERT-In (6 h),</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  case record (facts vs hypotheses)            |    DPDP, regulators</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                               +--&gt; comms / executives</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                               +--&gt; forensics (Course 09)</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  all decisions + times --&gt; single incident log</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="223" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C08-M07-F1. The SOC declares and escalates; the incident lead coordinates</text>
+<text x="20" y="239" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">containment, legal, communications and forensics.</text>
+</svg>

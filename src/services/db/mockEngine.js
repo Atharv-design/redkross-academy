@@ -2399,94 +2399,109 @@ class MockEngine {
     };
   }
 
+  /**
+   * Per-quiz lock state. The server (/api/assessment) is authoritative; this reads the
+   * local mirror written by applyServerAssessmentStatus(). A lock on one quiz never
+   * locks other quizzes, and no course is exempt from lockouts.
+   */
   isExamLocked(enrolmentId, quizId) {
-    if (!enrolmentId) return { isLocked: false, remainingHours: 0, remainingMinutes: 0, lockedUntil: null };
+    const none = { isLocked: false, remainingHours: 0, remainingMinutes: 0, lockedUntil: null };
+    if (!enrolmentId || !quizId) return none;
     const db = this.getDb();
-    const enrolment = (db.enrolments || []).find((e) => e.id === enrolmentId);
-
-    // Course 2 and Course 3 Inspection Mode: bypass lockout for Course 2 & 3 units
-    const isBypassCourse = enrolment?.course_id === 'crs_cyber_net_02' ||
-      enrolment?.course_id === 'crs_cyber_admin_03' ||
-      (quizId && (
-        quizId.startsWith('quiz_mod_c2_') || 
-        quizId.startsWith('quiz_mod_c3_') || 
-        quizId === 'exam_cyber_net_final' || 
-        quizId === 'exam_cyber_admin_final' || 
-        quizId === 'exam_final_c02' || 
-        quizId === 'exam_final_c03' || 
-        quizId.includes('c2_') || 
-        quizId.includes('c3_') || 
-        quizId.includes('c02') ||
-        quizId.includes('c03') ||
-        quizId.includes('net_') ||
-        quizId.includes('admin_')
-      ));
-    if (isBypassCourse) {
-      return { isLocked: false, remainingHours: 0, remainingMinutes: 0, lockedUntil: null };
-    }
-    const now = new Date();
-    let maxLockDate = null;
-    let maxLockIso = null;
-
-    const considerDate = (dateStr) => {
-      if (!dateStr) return;
-      const d = new Date(dateStr);
-      if (!isNaN(d.getTime()) && d > now) {
-        if (!maxLockDate || d > maxLockDate) {
-          maxLockDate = d;
-          maxLockIso = typeof dateStr === 'string' ? dateStr : d.toISOString();
-        }
-      }
-    };
-
-    if (quizId && db.quiz_retry_windows) {
-      const windowKey = `${enrolmentId}_${quizId}`;
-      considerDate(db.quiz_retry_windows[windowKey]?.locked_until);
-    }
-
-    considerDate(enrolment?.exam_lockout_until);
-
-    if (db.quiz_retry_windows) {
-      for (const w of Object.values(db.quiz_retry_windows)) {
-        if (w && w.enrolment_id === enrolmentId) {
-          considerDate(w.locked_until);
-        }
-      }
-    }
-
-    if (db.exam_violation_events) {
-      for (const ev of db.exam_violation_events) {
-        if (ev && ev.enrolment_id === enrolmentId) {
-          considerDate(ev.locked_until);
-        }
-      }
-    }
-
-    if (enrolmentId && quizId) {
-      considerDate(safeStorage.getItem(`rk_proctor_lock_${enrolmentId}_${quizId}`));
-    }
-    if (enrolmentId) {
-      considerDate(safeStorage.getItem(`rk_proctor_lock_${enrolmentId}`));
-    }
-    if (enrolment?.cadet_id) {
-      considerDate(safeStorage.getItem(`rk_proctor_lock_${enrolment.cadet_id}`));
-    }
-
-    if (!maxLockDate) {
-      return { isLocked: false, remainingHours: 0, remainingMinutes: 0, lockedUntil: null };
-    }
-
-    const diffMs = maxLockDate.getTime() - now.getTime();
-    const remainingHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const remainingMinutes = Math.max(1, Math.ceil((diffMs % (1000 * 60 * 60)) / (1000 * 60)));
-
+    const lockedUntil = db.quiz_retry_windows?.[`${enrolmentId}_${quizId}`]?.locked_until;
+    const until = lockedUntil ? new Date(lockedUntil) : null;
+    if (!until || isNaN(until.getTime()) || until <= new Date()) return none;
+    const diffMs = until.getTime() - Date.now();
     return {
       isLocked: true,
-      lockedUntil: maxLockIso,
-      remainingHours,
-      remainingMinutes,
-      diffMs
+      lockedUntil: until.toISOString(),
+      remainingHours: Math.floor(diffMs / 3600000),
+      remainingMinutes: Math.max(1, Math.ceil((diffMs % 3600000) / 60000)),
+      diffMs,
     };
+  }
+
+  /**
+   * Mirrors the server's assessment record (GET/POST /api/assessment) into the local
+   * enrolment so existing UI (outline, dashboards, course home) shows server truth.
+   */
+  applyServerAssessmentStatus(enrolmentId, status) {
+    if (!enrolmentId || !status) return;
+    const db = this.getDb();
+    const enrolment = (db.enrolments || []).find((e) => e.id === enrolmentId);
+    if (!enrolment) return;
+
+    enrolment.passed_quizzes = [...(status.passed_quizzes || [])];
+    enrolment.quiz_scores = { ...(enrolment.quiz_scores || {}), ...(status.scores || {}) };
+    enrolment.final_assessment_passed = Boolean(status.final_passed);
+    if (status.final_passed && status.scores && status.final_quiz_id) {
+      enrolment.final_assessment_score = status.scores[status.final_quiz_id];
+    }
+    enrolment.exam_lockout_until = null;
+
+    // passed module quizzes count their module's lessons as completed (same rule as before)
+    const course = (db.courses || []).find((c) => c.id === enrolment.course_id);
+    if (!Array.isArray(enrolment.completed_mandatory_lessons)) enrolment.completed_mandatory_lessons = [];
+    for (const mod of course?.modules || []) {
+      if (mod.quiz && enrolment.passed_quizzes.includes(mod.quiz.id)) {
+        for (const l of mod.lessons || []) {
+          if (!enrolment.completed_mandatory_lessons.includes(l.id)) enrolment.completed_mandatory_lessons.push(l.id);
+        }
+      }
+    }
+
+    db.quiz_retry_windows = db.quiz_retry_windows || {};
+    for (const key of Object.keys(db.quiz_retry_windows)) {
+      if (key.startsWith(`${enrolmentId}_`)) delete db.quiz_retry_windows[key];
+    }
+    for (const [quizId, a] of Object.entries(status.attempts || {})) {
+      db.quiz_retry_windows[`${enrolmentId}_${quizId}`] = {
+        enrolment_id: enrolmentId,
+        quiz_id: quizId,
+        window_number: 1,
+        attempts_used: a.used || 0,
+        locked_until: a.locked_until || null,
+      };
+    }
+    try {
+      safeStorage.removeItem(`rk_proctor_lock_${enrolmentId}`);
+      for (const quizId of Object.keys(status.attempts || {})) safeStorage.removeItem(`rk_proctor_lock_${enrolmentId}_${quizId}`);
+    } catch {}
+
+    if (status.credential) {
+      const c = status.credential;
+      db.credentials = db.credentials || [];
+      const existing = db.credentials.find((x) => x.verification_id === c.verification_id);
+      const record = {
+        ...c,
+        user_id: enrolment.user_id,
+        course_id: c.course_id || enrolment.course_id,
+        type: c.credential_type || 'Course Certificate',
+        issue_date: c.issue_date ? String(c.issue_date).split('T')[0] : null,
+        source: 'server',
+      };
+      if (existing) Object.assign(existing, record);
+      else db.credentials.push(record);
+      enrolment.credential_id = record.id;
+    }
+
+    this.saveDb(db, { type: 'QUIZ_ATTEMPT_RECORDED', payload: { enrolmentId, source: 'server' } });
+  }
+
+  /** Adds server-recorded lesson completions to the local enrolment. */
+  mergeServerLessonCompletions(enrolmentId, lessonIds = []) {
+    const db = this.getDb();
+    const enrolment = (db.enrolments || []).find((e) => e.id === enrolmentId);
+    if (!enrolment || !lessonIds.length) return;
+    if (!Array.isArray(enrolment.completed_mandatory_lessons)) enrolment.completed_mandatory_lessons = [];
+    let added = 0;
+    for (const id of lessonIds) {
+      if (!enrolment.completed_mandatory_lessons.includes(id)) {
+        enrolment.completed_mandatory_lessons.push(id);
+        added++;
+      }
+    }
+    if (added) this.saveDb(db, { type: 'LESSON_COMPLETED', payload: { enrolmentId, source: 'server' } });
   }
 
   getLockoutRemaining(enrolmentId, quizId) {

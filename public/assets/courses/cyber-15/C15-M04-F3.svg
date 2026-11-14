@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="636" height="203" viewBox="0 0 636 203" role="img" aria-labelledby="t d">
+<title id="t">C15-M04-F3: Password hashing cost (lab machine, one core)</title>
+<desc id="d">Bars comparing about two million guesses per second for SHA-256 with 24 for scrypt and 5 for PBKDF2.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C15-M04-F3  Password hashing cost (lab machine, one core)</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  sha256          |##############################| ~1,980,414 guesses/s</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  scrypt 2^14     |#                             | ~24 guesses/s</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  pbkdf2 600k     |#                             | ~5 guesses/s</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  (log-scale intent: slow hashes are ~5 orders of magnitude slower)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C15-M04-F3. Guess rates for fast versus slow password hashing</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">(execution-tested; machine-specific).</text>
+</svg>

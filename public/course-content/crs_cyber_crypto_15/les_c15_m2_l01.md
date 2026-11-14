@@ -1,0 +1,3 @@
+A block cipher is a keyed permutation on fixed-size blocks. AES (FIPS 197) uses 128-bit blocks with 128-, 192- or 256-bit keys, and is the dominant standard. Modern CPUs accelerate it in hardware (AES-NI and ARMv8 cryptographic extensions), and that hardware support also helps avoid timing side channels. A block cipher alone encrypts exactly one block, so real data needs a mode of operation and, for most modes, a nonce or IV.
+
+**Older ciphers to avoid:** DES (56-bit key, brute-forceable), 3DES (64-bit block, deprecated) and RC4 (biased stream cipher, prohibited in TLS). They appear in legacy systems and audit findings.

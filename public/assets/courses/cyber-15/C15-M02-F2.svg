@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="670" height="204" viewBox="0 0 670 204" role="img" aria-labelledby="t d">
+<title id="t">C15-M02-F2: AEAD inputs and outputs</title>
+<desc id="d">A box receiving a key, nonce, associated data and plaintext, producing ciphertext and a tag; decryption returns plaintext only if nothing changed.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C15-M02-F2  AEAD inputs and outputs</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  key ---+</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  nonce -+--&gt; [ AES-GCM / ChaCha20-Poly1305 ] --&gt; ciphertext || 16-byte tag</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  AAD ---+          (encrypt + authenticate)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  plaintext --+</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  decrypt: same key, nonce, AAD -&gt; plaintext   |  any change -&gt; InvalidTag</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C15-M02-F2. An AEAD authenticates ciphertext and associated data together.</text>
+</svg>

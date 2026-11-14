@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="661" height="220" viewBox="0 0 661 220" role="img" aria-labelledby="t d">
+<title id="t">C21-M04-F1: RBAC objects and scope</title>
+<desc id="d">Diagram showing a Role bound by a RoleBinding, and a ClusterRole bound either by a RoleBinding for one namespace or by a ClusterRoleBinding for all namespaces, with a note that rights are a union.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C21-M04-F1  RBAC objects and scope</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   Role (ns kestrel) -----------&gt; RoleBinding (ns kestrel) --&gt; subjects</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   ClusterRole ---------------+-&gt; RoleBinding (ns X)   = rules in X only</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                              +-&gt; ClusterRoleBinding    = rules everywhere</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   subjects: User | Group | ServiceAccount (ns/name)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   effective rights = UNION of all bindings (no deny rules)</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C21-M04-F1. Where a grant applies depends on the binding type, not only the</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">role type.</text>
+</svg>

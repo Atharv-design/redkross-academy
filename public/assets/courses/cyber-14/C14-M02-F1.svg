@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="644" height="322" viewBox="0 0 644 322" role="img" aria-labelledby="t d">
+<title id="t">C14-M02-F1: A disciplined open-source inquiry</title>
+<desc id="d">A vertical flow from a requirement through planning, inquiry, collection, preservation, verification, minimisation and analysis to judgments.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C14-M02-F1  A disciplined open-source inquiry</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   requirement (SIR-1.1)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   plan: sources, tools, personal data, legal check, stop criteria</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        |</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   online inquiry -&gt; preliminary assessment -&gt; collection (passive)</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        |                                            |</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        |                       preservation: file + SHA-256 + log entry</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        |                                            |</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   verification (dates, provenance, consistency) &lt;---+</text>
+<text x="20" y="213" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        |</text>
+<text x="20" y="230" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   minimisation -&gt; analysis -&gt; graded, cited judgments</text>
+<text x="20" y="247" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="274" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C14-M02-F1. From requirement to judgment, with preservation, verification</text>
+<text x="20" y="290" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">and minimisation built in.</text>
+</svg>

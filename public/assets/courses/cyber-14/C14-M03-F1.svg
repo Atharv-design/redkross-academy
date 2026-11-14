@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="745" height="288" viewBox="0 0 745 288" role="img" aria-labelledby="t d">
+<title id="t">C14-M03-F1: The disciplined MONSOON LANTERN cluster</title>
+<desc id="d">Five lure domains hang from one certificate; three addresses link some of them, one address adds a sixth domain; notes mark the shared hosting address and name server as excluded.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C14-M03-F1  The disciplined MONSOON LANTERN cluster</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                         cert d2588691531e (strong)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">            +-----------+-----------+------------+------------+</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   portal-nilgiri-  claims-nilgiri-  nilgiri-policy-  nilgirimutual-  nm-invoice-</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   claims           help             renewal          docs            share</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">      |                                 |                |</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   198.51.100.77                    198.51.100.78    203.0.113.45 -- secure-nilgiri-</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                                     (in window)      login</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   192.0.2.10: shared hosting (lure briefly; 4 old tenants) -&gt; monitor only</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   ns1.cheap-dns-host: 11 domains -&gt; no pivot</text>
+<text x="20" y="213" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="240" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C14-M03-F1. Strong certificate links, window-limited address links, and shared nodes</text>
+<text x="20" y="256" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">excluded from pivoting.</text>
+</svg>

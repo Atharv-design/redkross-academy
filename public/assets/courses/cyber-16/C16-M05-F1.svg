@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="187" viewBox="0 0 720 187" role="img" aria-labelledby="t d">
+<title id="t">C16-M05-F1: The Android security model</title>
+<desc id="d">Per-app sandboxes with private data, permission-gated shared resources, and exportable components.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C16-M05-F1  The Android security model</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   [ app A sandbox ]   [ app B sandbox ]   (per-app UID; kernel-enforced)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     private data        private data       &lt;- private FROM OTHER APPS by default</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   shared resources (network, camera, location) -&gt; gated by PERMISSIONS</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   components may be EXPORTED -&gt; callable by other apps (risk if sensitive)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C16-M05-F1. App sandboxing, permissions and component exposure [C16-M05-R1].</text>
+</svg>

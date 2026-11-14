@@ -1,31 +1,26 @@
-import { sql, json, cors } from './_db.js';
+import { sql, json, cors, serverError } from './_db.js';
+import { requireUser } from './_auth.js';
 
+/** GET /api/wallet - the caller's token ledger (admins may pass ?userId= to inspect another account). */
 export default async function handler(req, res) {
   if (cors(req, res)) return;
-
+  if (req.method !== 'GET') return json(res, { error: 'Method not allowed' }, 405);
   try {
-    const { userId } = req.query;
-
-    if (!userId) {
-      return json(res, { error: 'userId parameter required' }, 400);
-    }
-
+    const ctx = await requireUser(req, res);
+    if (!ctx) return;
+    const target = ctx.isAdmin && req.query?.userId ? String(req.query.userId) : ctx.user.id;
     const ledger = await sql`
-      SELECT * FROM reward_ledger 
-      WHERE user_id = ${userId} 
-      ORDER BY created_at DESC
+      SELECT id, amount, COALESCE(transaction_type, 'reward') AS transaction_type, description, created_at
+      FROM reward_ledger WHERE user_id = ${target} ORDER BY created_at DESC LIMIT 500
     `;
-
-    const totalBalance = ledger.reduce((sum, item) => sum + (parseInt(item.amount) || 0), 0);
-
+    const amounts = ledger.map((l) => parseInt(l.amount, 10) || 0);
     return json(res, {
-      balance: Math.max(0, totalBalance),
-      total_earned: ledger.filter((l) => l.amount > 0).reduce((sum, item) => sum + (parseInt(item.amount) || 0), 0),
-      total_spent: Math.abs(ledger.filter((l) => l.amount < 0).reduce((sum, item) => sum + (parseInt(item.amount) || 0), 0)),
-      transactions: ledger
+      balance: Math.max(0, amounts.reduce((a, b) => a + b, 0)),
+      total_earned: amounts.filter((a) => a > 0).reduce((a, b) => a + b, 0),
+      total_spent: Math.abs(amounts.filter((a) => a < 0).reduce((a, b) => a + b, 0)),
+      transactions: ledger,
     });
   } catch (error) {
-    console.error('API /wallet error:', error);
-    return json(res, { error: error.message || 'Internal server error' }, 500);
+    return serverError(res, error, 'api/wallet');
   }
 }

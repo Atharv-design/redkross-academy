@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="678" height="220" viewBox="0 0 678 220" role="img" aria-labelledby="t d">
+<title id="t">C07-M04-F1: Zero-trust allowed-flow matrix</title>
+<desc id="d">The lab&#x27;s allowed-flow matrix with the six permitted flows and the forbidden flows that are denied by default.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C07-M04-F1  Zero-trust allowed-flow matrix</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   permitted (all else DENIED by default):</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     internet -&gt; dmz :443     user -&gt; dmz :443</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     dmz -&gt; app :8080         app -&gt; db :5432</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     mgmt -&gt; app :22          mgmt -&gt; db :22</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   denied: user-&gt;db, internet-&gt;db, dmz-&gt;db, user-&gt;mgmt (not listed = denied)</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C07-M04-F1. A zero-trust segmentation policy lists only permitted flows;</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">everything else is denied [C07-M04-R1].</text>
+</svg>

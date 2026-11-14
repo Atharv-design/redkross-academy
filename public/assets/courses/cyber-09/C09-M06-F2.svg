@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="670" height="203" viewBox="0 0 670 203" role="img" aria-labelledby="t d">
+<title id="t">C09-M06-F2: Proving a file crossed the network</title>
+<desc id="d">Two hash computations, one on the server file and one on the file carved from the capture, produce the same value; a third hash protects the capture file itself.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C09-M06-F2  Proving a file crossed the network</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  server file customers.csv --sha256--&gt; 04e8f300...a226ec</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                                 ||  equal</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  pcap --export-objects http--&gt; customers.csv --sha256--&gt; 04e8f300...a226ec</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  pcap file itself --sha256--&gt; 6e2cf6fe...528a21 (integrity of the capture)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C09-M06-F2. Matching hashes link the carved file to the original</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">(execution-tested values).</text>
+</svg>

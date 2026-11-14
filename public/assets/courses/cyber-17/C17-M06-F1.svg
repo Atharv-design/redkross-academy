@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="653" height="187" viewBox="0 0 653 187" role="img" aria-labelledby="t d">
+<title id="t">C17-M06-F1: Audit lifecycle</title>
+<desc id="d">A loop from planning through fieldwork, findings, reporting, management response, remediation, re-testing and closure, feeding the next audit plan.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C17-M06-F1  Audit lifecycle</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  plan (scope, criteria, risk) -&gt; fieldwork (evidence, tests) -&gt; findings</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     -&gt; report -&gt; management response -&gt; remediation -&gt; re-test -&gt; close</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     ^                                                               |</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     +------------------- annual audit plan updated &lt;-----------------+</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C17-M06-F1. From planning to validated closure.</text>
+</svg>

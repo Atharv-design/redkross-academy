@@ -1,22 +1,44 @@
+import crypto from 'crypto';
 import { Sandbox } from '@e2b/code-interpreter';
+import { cors } from './_db.js';
+import { json } from './_db.js';
+import { verifyRequest, userIdForUid } from './_auth.js';
 
 export const config = {
   maxDuration: 60 // Allow extended duration on supported tiers
 };
 
-const E2B_API_KEY = process.env.E2B_API_KEY || 'e2b_5fc00ac1e618b9585a1d3e997c4f2dc61fc03ca3';
+// Environment only. Without a key the endpoint serves the built-in simulator.
+const E2B_API_KEY = process.env.E2B_API_KEY || '';
+const MAX_COMMAND_LENGTH = 2000;
+
+// Sandbox handles given to the browser are "<sandboxId>.<hmac(user, sandboxId)>", so a
+// learner can only ever drive sandboxes created for their own account.
+function handleKey() {
+  return process.env.E2B_HANDLE_SECRET || process.env.CREDENTIAL_SIGNING_SECRET || '';
+}
+function wrapHandle(userId, id) {
+  const key = handleKey();
+  if (!key || id.startsWith('local_vm_')) return id;
+  return `${id}.${crypto.createHmac('sha256', key).update(`${userId}|${id}`).digest('hex').slice(0, 32)}`;
+}
+function unwrapHandle(userId, handle) {
+  if (!handle || typeof handle !== 'string') return null;
+  if (handle.startsWith('local_vm_')) return handle;
+  const dot = handle.lastIndexOf('.');
+  if (dot < 0 || !handleKey()) return null;
+  const id = handle.slice(0, dot);
+  return wrapHandle(userId, id) === handle ? id : null;
+}
 const MAX_STDOUT_BYTES = 100 * 1024; // 100 KB safety cap
 
 export default async function handler(req, res) {
-  // Always ensure JSON headers
+  if (cors(req, res)) return;
   res.setHeader('Content-Type', 'application/json');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
+  // a verified Firebase ID token is required; sandboxes are bound to that account
+  const identity = await verifyRequest(req);
+  if (!identity) return json(res, { error: 'Authentication required' }, 401);
+  const ctx = { user: { id: userIdForUid(identity.uid) } };
 
   const startTime = Date.now();
   let body = {};
@@ -33,15 +55,18 @@ export default async function handler(req, res) {
     body = {};
   }
 
-  const { action = 'exec', command = '', sandboxId, sessionId = 'session_default' } = body;
-  const cleanCmd = (command || '').trim();
+  const { action = 'exec', command = '', sessionId = 'session_default' } = body;
+  const sandboxId = unwrapHandle(ctx.user.id, body.sandboxId);
+  const cleanCmd = String(command || '').trim().slice(0, MAX_COMMAND_LENGTH);
+  const realE2B = Boolean(E2B_API_KEY);
 
   try {
     // ----------------- ACTION: CREATE -----------------
     if (action === 'create') {
       let createdSandboxId = `sandbox_${Date.now()}`;
       try {
-        const sandbox = await Sandbox.create({ apiKey: E2B_API_KEY });
+        if (!realE2B) throw new Error('E2B not configured');
+        const sandbox = await Sandbox.create({ apiKey: E2B_API_KEY, metadata: { owner: ctx.user.id } });
         createdSandboxId = sandbox.sandboxId || createdSandboxId;
       } catch (err) {
         // Fallback local simulated sandbox id
@@ -49,7 +74,7 @@ export default async function handler(req, res) {
       }
       return res.status(200).json({
         success: true,
-        sandboxId: createdSandboxId,
+        sandboxId: wrapHandle(ctx.user.id, createdSandboxId),
         status: 'created',
         executionTimeMs: Date.now() - startTime
       });
@@ -116,15 +141,16 @@ export default async function handler(req, res) {
 
     // Attempt Real E2B Execution with Fast 8s Timeout
     try {
+      if (!realE2B) throw new Error('E2B not configured - using simulator');
       let sandbox;
       if (sandboxId && !sandboxId.startsWith('local_vm_')) {
         try {
           sandbox = await Sandbox.connect(sandboxId, { apiKey: E2B_API_KEY });
         } catch (connErr) {
-          sandbox = await Sandbox.create({ apiKey: E2B_API_KEY, timeoutMs: 300000 });
+          sandbox = await Sandbox.create({ apiKey: E2B_API_KEY, timeoutMs: 300000, metadata: { owner: ctx.user.id } });
         }
       } else {
-        sandbox = await Sandbox.create({ apiKey: E2B_API_KEY, timeoutMs: 300000 });
+        sandbox = await Sandbox.create({ apiKey: E2B_API_KEY, timeoutMs: 300000, metadata: { owner: ctx.user.id } });
       }
 
       const execution = await sandbox.commands.run(cleanCmd, {
@@ -140,7 +166,7 @@ export default async function handler(req, res) {
 
       return res.status(200).json({
         success: true,
-        sandboxId: sandbox.sandboxId,
+        sandboxId: wrapHandle(ctx.user.id, sandbox.sandboxId),
         command: cleanCmd,
         stdout,
         stderr,

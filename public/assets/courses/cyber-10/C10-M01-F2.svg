@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="695" height="204" viewBox="0 0 695 204" role="img" aria-labelledby="t d">
+<title id="t">C10-M01-F2: The delivery-and-execution lifecycle</title>
+<desc id="d">The five lifecycle stages with examples under each and the analyst&#x27;s task of locating a sample within the chain.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C10-M01-F2  The delivery-and-execution lifecycle</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   delivery -&gt; execution -&gt; installation(persistence) -&gt; C2 -&gt; actions</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">      |            |              |                       |        |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   phishing     user/vuln     autostart/service       beacon   steal/encrypt</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   drive-by     autostart     scheduled task          (T1071)  /spread</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   analysis: locate the sample in this chain; find the stages before and after</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C10-M01-F2. The malware lifecycle from arrival to objective [C10-M01-R2].</text>
+</svg>

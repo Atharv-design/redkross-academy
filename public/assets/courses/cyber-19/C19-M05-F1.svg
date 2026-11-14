@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="686" height="186" viewBox="0 0 686 186" role="img" aria-labelledby="t d">
+<title id="t">C19-M05-F1: Lateral movement across trust boundaries</title>
+<desc id="d">A path of hops across trust boundaries toward a goal, each hop a detection chance.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C19-M05-F1  Lateral movement across trust boundaries</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   foothold (wks) --hop--&gt; server --hop--&gt; identity system (goal)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">      each hop crosses a trust boundary (account / host / domain trust)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">      each hop touches authentication + network telemetry =&gt; detection chance</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="138" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C19-M05-F1. Lateral movement crosses trust boundaries, each a detection</text>
+<text x="20" y="154" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">opportunity [C19-M05-R1].</text>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="678" height="186" viewBox="0 0 678 186" role="img" aria-labelledby="t d">
+<title id="t">C10-M07-F1: Disassembly and decompilation</title>
+<desc id="d">Bytes becoming exact disassembly and approximate decompilation, used together.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C10-M07-F1  Disassembly and decompilation</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   bytes -&gt; DISASSEMBLY (assembly, exact, verbose)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">         -&gt; DECOMPILATION (C-like pseudocode, readable, approximate)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   use decompiler for overview; check disassembly for subtle/obfuscated code</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="138" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C10-M07-F1. Disassembly is exact; decompilation is readable; use both</text>
+<text x="20" y="154" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">[C10-M07-R1].</text>
+</svg>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="502" height="220" viewBox="0 0 502 220" role="img" aria-labelledby="t d">
+<title id="t">C16-M05-F3: Model lessons to MASVS categories</title>
+<desc id="d">A mapping of Android security-model concerns to MASVS control groups.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C16-M05-F3  Model lessons to MASVS categories</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   storage choices        -&gt; MASVS-STORAGE</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   keys/crypto            -&gt; MASVS-CRYPTO</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   permissions/components/WebView -&gt; MASVS-PLATFORM</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   cleartext/TLS          -&gt; MASVS-NETWORK</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   debuggable/backup      -&gt; MASVS-CODE / MASVS-STORAGE</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C16-M05-F3. The platform model maps onto the OWASP MASVS</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">categories [C16-M05-R2].</text>
+</svg>

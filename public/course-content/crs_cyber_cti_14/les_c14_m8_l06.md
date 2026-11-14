@@ -1,0 +1,5 @@
+- Send each product through the channel its marking allows, to named recipients; record who received what.
+- Publish updates as new versions that state what changed.
+- Ask a small number of feedback questions: was it timely, relevant, actionable; what did you do with it?
+- Track actions taken against the recommendations and report progress at the review-by date.
+- Retire products when superseded, so stale advice does not circulate.

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="670" height="203" viewBox="0 0 670 203" role="img" aria-labelledby="t d">
+<title id="t">C06-M06-F3: Path traversal and canonicalisation</title>
+<desc id="d">A comparison of the vulnerable download that joins input to a base path and the hardened version that resolves the real path and confines it to the base directory.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C06-M06-F3  Path traversal and canonicalisation</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   /download?file=../app.py</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   vuln:  open(join(base, &quot;../app.py&quot;)) -&gt; escapes base -&gt; returns source</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   fixed: real = realpath(join(base, name)); serve only if real within base</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">          else 403; better: map an id to a known file, no user path at all</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C06-M06-F3. Path traversal escapes the intended directory; canonicalising and</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">confining the path prevents it [C06-M06-R4].</text>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="611" height="203" viewBox="0 0 611 203" role="img" aria-labelledby="t d">
+<title id="t">C13-M08-F3: Report structure</title>
+<desc id="d">The six numbered sections of the audit report plus an appendix of raw evidence.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C13-M08-F3  Report structure</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   1 Scope &amp; authorisation   4 Actions taken (control, before/after)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   2 Method (tools, loop)    5 Findings after (closure, re-test)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   3 Findings before         6 Residual risk &amp; forward plan</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   appendix: raw tool output and exit codes</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C13-M08-F3. A six-part report with evidence in an appendix, written for</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">both a technical reviewer and leadership.</text>
+</svg>

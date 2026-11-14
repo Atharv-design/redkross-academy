@@ -1,0 +1,6 @@
+- Every finding becomes a regression probe.
+- Re-run the suite on every change of model, model version, prompt, retrieval content, tools or defences (Module 6 release gate).
+- Record model digest, prompt version, sampling settings, seeds and results; keep result files (probe_results.json) as evidence.
+- Track trends per category over releases.
+- Rotate and expand probes; avoid tuning the system only to pass a fixed set (overfitting).
+- Monitor production signals that correspond to probes (canary hits, blocked tool calls, filter hits) - Module 3 L06.

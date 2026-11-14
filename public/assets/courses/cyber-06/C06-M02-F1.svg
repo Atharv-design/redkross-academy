@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="670" height="254" viewBox="0 0 670 254" role="img" aria-labelledby="t d">
+<title id="t">C06-M02-F1: Attack surface and trust boundary</title>
+<desc id="d">A diagram showing categories of untrusted input on the left crossing a central trust boundary to reach trusted sinks on the right, with the definition of a weakness.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C06-M02-F1  Attack surface and trust boundary</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   untrusted inputs -&gt;  | TRUST BOUNDARY |  -&gt; trusted sinks</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   URL path / query     |                |     SQL query</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   form / JSON body     |   server-side  |     HTML output</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   headers / cookies    |   validation,  |     file system</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   file uploads         |   authz,       |     outbound request</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                        |   encoding     |     session store</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   weakness = untrusted input reaching a sink across an un-guarded boundary</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="206" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C06-M02-F1. The attack surface is where input enters; weakness is input reaching</text>
+<text x="20" y="222" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">a sink across an unguarded trust boundary.</text>
+</svg>

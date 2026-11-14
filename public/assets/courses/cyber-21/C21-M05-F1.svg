@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="628" height="254" viewBox="0 0 628 254" role="img" aria-labelledby="t d">
+<title id="t">C21-M05-F1: The Kestrel namespace after segmentation</title>
+<desc id="d">Inside a namespace box, frontend connects to api on port 8080, batch is blocked from api, all pods may reach DNS, and the API server is blocked.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C21-M05-F1  The Kestrel namespace after segmentation</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   +------------------- namespace kestrel (default deny) ------------+</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   |                                                                 |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   |  [frontend] --TCP 8080 allowed--&gt; [api x2]                      |</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   |  [batch] ------------X----------&gt; [api]     (no allow rule)     |</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   |     |  all pods --UDP/TCP 53--&gt; kube-system/kube-dns            |</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   |     +------X------&gt; kubernetes API server   (not needed)        |</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   +-----------------------------------------------------------------+</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="206" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C21-M05-F1. Default deny plus two allow policies leave exactly the flows</text>
+<text x="20" y="222" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">the application needs.</text>
+</svg>

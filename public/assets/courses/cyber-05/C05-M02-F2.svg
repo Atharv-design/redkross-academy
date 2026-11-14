@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="602" height="220" viewBox="0 0 602 220" role="img" aria-labelledby="t d">
+<title id="t">C05-M02-F2: An asset inventory entry</title>
+<desc id="d">A single inventory entry showing the asset, its scope, evidence, testing implication and confidence.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C05-M02-F2  An asset inventory entry</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   asset       : /invoice (object endpoint, ?id=)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   scope       : in scope (127.0.0.1:8099)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   evidence    : robots.txt + GET / ; confirmed by request</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   type/impl.  : object reference -&gt; test access control (Module 5)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   confidence  : validated</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C05-M02-F2. Every inventory entry carries evidence, scope and a testing</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">implication.</text>
+</svg>

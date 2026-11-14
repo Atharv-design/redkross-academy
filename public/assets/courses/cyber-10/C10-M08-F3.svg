@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="628" height="187" viewBox="0 0 628 187" role="img" aria-labelledby="t d">
+<title id="t">C10-M08-F3: From report to action</title>
+<desc id="d">How each report section maps to a defensive action - scoping, blocking, hunting, deploying detections.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C10-M08-F3  From report to action</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   behaviour summary -&gt; responders scope + remediate persistence</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   IOCs              -&gt; block (C2) + hunt (logs) + alert (host IOCs)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   detection coverage-&gt; deploy validated YARA + EDR rules</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   recommendations   -&gt; specific, prioritised, evidence-backed actions</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C10-M08-F3. The report turns analysis into defensive action [C10-M08-R2].</text>
+</svg>

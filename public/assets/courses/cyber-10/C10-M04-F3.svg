@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="728" height="204" viewBox="0 0 728 204" role="img" aria-labelledby="t d">
+<title id="t">C10-M04-F3: The contained harness</title>
+<desc id="d">The harness building a sandbox and sink, running the simulator through its behaviours, capturing events and discarding the sandbox.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C10-M04-F3  The contained harness</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   behaviour.py: sandbox dir + loopback sink(127.0.0.1)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     -&gt; run rksim.py in sandbox</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        mutex -&gt; drop file -&gt; write Run key(sandbox reg) -&gt; beacon to sink</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     -&gt; capture events + sink data -&gt; summarise -&gt; DISCARD sandbox</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   intended C2 198.51.100.23:8443 (documentation range) only LOGGED, not contacted</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C10-M04-F3. Safe detonation: sandbox, loopback sink, capture, discard; no real egress.</text>
+</svg>

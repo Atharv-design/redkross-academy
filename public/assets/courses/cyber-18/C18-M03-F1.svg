@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="686" height="220" viewBox="0 0 686 220" role="img" aria-labelledby="t d">
+<title id="t">C18-M03-F1: Direct and indirect injection paths</title>
+<desc id="d">Direct text from the user and indirect text from content sources both reach the context; indirect text can arrive during a benign user&#x27;s request.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C18-M03-F1  Direct and indirect injection paths</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  user ---- direct text -------------------+</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                            v</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  web / docs / e-mail --(retrieval/tools)--&gt; CONTEXT -&gt; model -&gt; output/tools</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  (content authors)        indirect           ^</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                       benign user&#x27;s question</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C18-M03-F1. Indirect injection reaches the model through content, often during a</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">benign user&#x27;s request.</text>
+</svg>

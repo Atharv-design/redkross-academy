@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="703" height="187" viewBox="0 0 703 187" role="img" aria-labelledby="t d">
+<title id="t">C10-M04-F1: Static versus dynamic analysis</title>
+<desc id="d">A comparison of static (capability) and dynamic (behaviour) analysis and their complementary order.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C10-M04-F1  Static versus dynamic analysis</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   static  : no execution -&gt; CAPABILITY (imports) + indicators (strings)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   dynamic : controlled execution -&gt; BEHAVIOUR (files/registry/process/network)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   static first (understand + de-risk) -&gt; dynamic (confirm + observe)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   dynamic also unpacks: packed code decrypts itself in memory to run</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C10-M04-F1. Static shows capability; dynamic shows behaviour; use both [C10-M04-R1].</text>
+</svg>

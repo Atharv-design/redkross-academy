@@ -2,14 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   ChevronLeft,
-  Bookmark
+  Bookmark,
+  AlertTriangle
 } from 'lucide-react';
 import { mockEngine } from '../../../services/db/mockEngine';
 import { apiClient } from '../../../services/apiClient';
 import { socketClient } from '../../../services/socket/socketClient';
 import { useAuth } from '../../../services/auth/authContext';
 import { resolvePdfUrl } from '../../../services/db/assetStorage';
-import { getOrGenerateQuizQuestions, clearQuizSessionQuestions } from '../../../services/db/questionBanks/questionBankEngine.js';
 import CockpitToolStrip from '../../../components/student/CockpitToolStrip';
 import PsychologyToolStrip from '../../../components/student/PsychologyToolStrip';
 
@@ -33,6 +33,31 @@ const triggerConfetti = (options) => {
     fire(options);
   }).catch(() => {});
 };
+
+/** Server attempts view -> the shape the existing UI components expect. */
+function toAttemptsStatus(a, isPassed = false) {
+  const lockedUntil = a?.locked_until || null;
+  const diffMs = lockedUntil ? new Date(lockedUntil).getTime() - Date.now() : 0;
+  return {
+    attemptsUsed: a?.used || 0,
+    attemptsRemaining: a ? a.remaining : 3,
+    maxAttempts: a?.max || 3,
+    isLocked: Boolean(lockedUntil && diffMs > 0),
+    lockedUntil,
+    remainingHours: diffMs > 0 ? Math.floor(diffMs / 3600000) : 0,
+    remainingMinutes: diffMs > 0 ? Math.max(1, Math.ceil((diffMs % 3600000) / 60000)) : 0,
+    isPassed,
+  };
+}
+
+function countdownFrom(iso) {
+  const diffMs = Math.max(0, new Date(iso).getTime() - Date.now());
+  return {
+    hours: Math.floor(diffMs / 3600000),
+    minutes: Math.floor((diffMs % 3600000) / 60000),
+    seconds: Math.floor((diffMs % 60000) / 1000),
+  };
+}
 
 export default function LessonPlayerPage() {
   const { enrolmentId } = useParams();
@@ -128,6 +153,12 @@ export default function LessonPlayerPage() {
   const [quizSubmitted, setQuizSubmitted] = useState(false);
   const [quizResult, setQuizResult] = useState(null);
   const [quizSessionNonce, setQuizSessionNonce] = useState(0);
+  // server-issued assessment session: { quizId, sessionId, questions, expiresAt, meta }
+  const [assessment, setAssessment] = useState(null);
+  const [assessmentState, setAssessmentState] = useState({ loading: false, error: null });
+  const [isSubmittingAssessment, setIsSubmittingAssessment] = useState(false);
+  const [issuedCredential, setIssuedCredential] = useState(null);
+  const [, setLessonContentTick] = useState(0);
   const [examTimeRemaining, setExamTimeRemaining] = useState(null);
   const [attemptsStatus, setAttemptsStatus] = useState(() => {
     try {
@@ -159,6 +190,8 @@ export default function LessonPlayerPage() {
   const [certCadetNotes, setCertCadetNotes] = useState('');
   const [hasAcknowledgedExamRules, setHasAcknowledgedExamRules] = useState({});
   const [onScreenAlert, setOnScreenAlert] = useState(null); // { title: string, message: string, type?: 'warning' | 'error' | 'info' }
+
+  const submitLockRef = useRef(null); // session id currently being / already submitted
 
   const showCustomAlert = (title, message, type = 'warning') => {
     setOnScreenAlert({ title, message, type });
@@ -278,15 +311,51 @@ export default function LessonPlayerPage() {
 
   const activeQuiz = React.useMemo(() => {
     if (!baseQuiz) return null;
-    const isFinal = activeUnit?.type === 'final_exam';
-    const modNum = activeUnit?.moduleIndex !== undefined ? activeUnit.moduleIndex + 1 : 1;
-    const dynamicQuestions = getOrGenerateQuizQuestions(enrolmentId, baseQuiz.id, modNum, isFinal, course?.id);
+    const session = assessment && assessment.quizId === baseQuiz.id ? assessment : null;
     return {
       ...baseQuiz,
-      total_questions: dynamicQuestions.length,
-      questions: dynamicQuestions
+      passing_score: session?.meta?.passing_score ?? baseQuiz.passing_score,
+      total_questions: session ? session.questions.length : baseQuiz.total_questions,
+      questions: session ? session.questions : [],
+      session_id: session?.sessionId || null
     };
-  }, [baseQuiz?.id, activeUnit?.type, activeUnit?.moduleIndex, enrolmentId, quizSessionNonce, course?.id]);
+  }, [baseQuiz?.id, assessment, quizSessionNonce]);
+
+  // Lesson bodies for library courses are fetched on demand from content_url
+  useEffect(() => {
+    const les = activeLesson;
+    if (!les || les.content || !les.content_url) return;
+    let cancelled = false;
+    fetch(les.content_url)
+      .then((r) => (r.ok ? r.text() : Promise.reject(new Error(String(r.status)))))
+      .then((text) => {
+        // an SPA fallback returns index.html for missing files: never render that as a lesson
+        if (/^\s*<!doctype html/i.test(text)) throw new Error('not found');
+        if (!cancelled) {
+          les.content = text;
+          les.content_error = false;
+          setLessonContentTick((t) => t + 1);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          les.content_error = true;
+          setLessonContentTick((t) => t + 1);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [activeLesson?.id]);
+
+  const displayLesson = activeLesson && activeLesson.content_url && !activeLesson.content
+    ? {
+        ...activeLesson,
+        content: activeLesson.content_error
+          ? '> [!WARNING] Lesson unavailable\n> This lesson could not be loaded. Check your connection and reload the page.'
+          : '*Loading lesson...*'
+      }
+    : activeLesson;
 
   const isLessonCompleted = activeLesson
     ? (currentEnrolment?.completed_mandatory_lessons || enrolment?.completed_mandatory_lessons || []).includes(activeLesson.id)
@@ -296,10 +365,104 @@ export default function LessonPlayerPage() {
     : false;
   const isAssignment = activeLesson?.type === 'assignment';
 
+  const syncServerStatus = React.useCallback(async () => {
+    if (!course?.id || !enrolmentId) return null;
+    try {
+      const { ok, data } = await apiClient.getAssessmentStatus(course.id);
+      if (!ok) return null;
+      mockEngine.applyServerAssessmentStatus(enrolmentId, data);
+      const updated = mockEngine.getEnrolment(enrolmentId);
+      if (updated) setCurrentEnrolment({ ...updated });
+      setProgressData(mockEngine.getCourseProgress(enrolmentId));
+      return data;
+    } catch (err) {
+      console.warn('Assessment status sync failed:', err?.message);
+      return null;
+    }
+  }, [course?.id, enrolmentId]);
+
+  useEffect(() => {
+    if (!course?.id || !enrolmentId || !currentUser) return;
+    let cancelled = false;
+    (async () => {
+      await syncServerStatus();
+      try {
+        const { ok, data } = await apiClient.getLessonProgress(course.id);
+        if (!ok || cancelled) return;
+        const serverDone = data.completed_lessons || [];
+        mockEngine.mergeServerLessonCompletions(enrolmentId, serverDone);
+        // one-time upload of progress that was only saved in this browser
+        const localDone = mockEngine.getEnrolment(enrolmentId)?.completed_mandatory_lessons || [];
+        const missing = localDone.filter((id) => !serverDone.includes(id));
+        if (missing.length) apiClient.recordLessonProgress(course.id, missing).catch(() => {});
+        const updated = mockEngine.getEnrolment(enrolmentId);
+        if (updated) setCurrentEnrolment({ ...updated });
+        setProgressData(mockEngine.getCourseProgress(enrolmentId));
+      } catch {}
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [course?.id, enrolmentId, currentUser?.id]);
+
   const isExamUnit = (activeUnit?.type === 'quiz' || activeUnit?.type === 'final_exam') && !!activeQuiz;
   const isExamRulesAcknowledged = activeQuiz ? !!hasAcknowledgedExamRules[activeQuiz.id] : false;
   const showExamRulesGate = isExamUnit && !isQuizPassed && !quizSubmitted && !isLockoutActive && !isExamRulesAcknowledged;
-  const isExamActive = isExamUnit && !isQuizPassed && !quizSubmitted;
+  // Lockdown (no navigation) only while an attempt is actually running: not before it
+  // starts, not on the results screen, not after a forfeit or during a cooldown.
+  const isExamActive =
+    isExamUnit && !!assessment && assessment.quizId === activeQuiz?.id && !quizSubmitted && !isLockoutActive && isExamRulesAcknowledged;
+
+  const [assessmentStartNonce, setAssessmentStartNonce] = useState(0);
+  useEffect(() => {
+    if (!activeQuiz || !course?.id || !isExamRulesAcknowledged || isQuizPassed || quizSubmitted || isLockoutActive) return;
+    if (assessment?.quizId === activeQuiz.id) return;
+    let cancelled = false;
+    setAssessmentState({ loading: true, error: null });
+    apiClient
+      .startAssessment(course.id, activeQuiz.id)
+      .then(async ({ ok, status, data }) => {
+        if (cancelled) return;
+        if (ok) {
+          setAssessment({
+            quizId: activeQuiz.id,
+            sessionId: data.session_id,
+            questions: (data.questions || []).map((q) => ({ ...q, question: q.text })),
+            expiresAt: data.expires_at,
+            meta: data.quiz
+          });
+          setQuizAnswers({});
+          const serverNow = data.server_time ? new Date(data.server_time).getTime() : Date.now();
+          setExamTimeRemaining(Math.max(0, Math.round((new Date(data.expires_at).getTime() - serverNow) / 1000)));
+          setAttemptsStatus(toAttemptsStatus(data.attempts));
+          setAssessmentState({ loading: false, error: null });
+          return;
+        }
+        if (status === 423 && data.attempts?.locked_until) {
+          setAttemptsStatus(toAttemptsStatus(data.attempts));
+          setIsLockoutActive(true);
+          setLockoutCountdown(countdownFrom(data.attempts.locked_until));
+          setAssessmentState({ loading: false, error: null });
+        } else if (status === 409 && data.already_passed) {
+          setAssessmentState({ loading: false, error: null });
+        } else if (status === 403 && data.error === 'FINAL_LOCKED') {
+          setAssessmentState({ loading: false, error: 'The final assessment unlocks after you pass every module assessment.' });
+        } else if (status === 401) {
+          setAssessmentState({ loading: false, error: 'Your session has expired. Please sign in again to take this assessment.' });
+        } else {
+          setAssessmentState({ loading: false, error: 'The assessment could not be started. Please try again.' });
+        }
+        await syncServerStatus();
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setAssessmentState({ loading: false, error: 'Could not reach the assessment service. Check your connection and try again.' });
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [activeQuiz?.id, course?.id, isExamRulesAcknowledged, isQuizPassed, quizSubmitted, isLockoutActive, assessmentStartNonce]);
 
   // Automatically collapse outline sidebar whenever on an active exam unit
   useEffect(() => {
@@ -417,9 +580,10 @@ export default function LessonPlayerPage() {
     if (activeQuiz) {
       setQuizSubmitted((prev) => (prev !== isQuizPassed ? isQuizPassed : prev));
       if (isQuizPassed && (!quizResult || quizResult.quizId !== activeQuiz.id)) {
+        const recordedScore = (currentEnrolment || enrolment)?.quiz_scores?.[activeQuiz.id];
         setQuizResult({
           quizId: activeQuiz.id,
-          score: 100,
+          score: typeof recordedScore === 'number' ? recordedScore : 100,
           totalQuestions: activeQuiz.questions?.length || (activeUnit?.type === 'final_exam' ? 50 : 20),
           correctCount: activeQuiz.questions?.length || (activeUnit?.type === 'final_exam' ? 50 : 20),
           isPassed: true
@@ -439,51 +603,46 @@ export default function LessonPlayerPage() {
     }
   }, [isExamUnit, isQuizPassed, quizSubmitted]);
 
-  const triggerProctorViolation = (violationType) => {
-    if (quizSubmitted || isLockoutActive || !activeQuiz) return;
-    if (!hasAcknowledgedExamRules[activeQuiz.id] && !isQuizPassed) return;
-
+  const handleForfeitExam = async (reason = 'PROCTOR_VIOLATION') => {
+    const quizId = activeQuiz?.id;
+    if (!assessment || assessment.quizId !== quizId) return;
+    // A strike that lands after the answers were submitted (e.g. leaving fullscreen
+    // on the results screen) must not wipe the graded result.
+    if (quizSubmitted || submitLockRef.current === assessment.sessionId) return;
+    let result = { ok: false, data: {} };
     try {
-      const targetQuizId = activeQuiz?.id || activeUnit?.id;
-
-      const forfeitResult = mockEngine.forfeitQuizAttempt({
-        enrolmentId,
-        quizId: targetQuizId,
-        reason: `PROCTOR_VIOLATION: ${violationType}`
-      });
-
-      if (forfeitResult) {
-        setAttemptsStatus(forfeitResult);
-        if (forfeitResult.isLocked) {
-          setIsLockoutActive(true);
-          setLockoutCountdown({
-            hours: forfeitResult.remainingHours || 23,
-            minutes: forfeitResult.remainingMinutes || 59,
-            seconds: 59
-          });
-          showCustomAlert('PROCTORING VIOLATION (24H COOLDOWN)', 'Tab switch detected during active examination. All 3 evaluation attempts have been exhausted. A 24-hour examination cooldown is now enforced.', 'error');
-        } else {
-          showCustomAlert('PROCTORING WARNING', `Tab switch detected. 1 attempt has been deducted. You have ${forfeitResult.attemptsRemaining} of 3 attempts remaining.`, 'warning');
-        }
-      }
-    } catch (e) {
-      console.error('Proctoring enforcement error:', e);
+      result = await apiClient.forfeitAssessment(assessment.sessionId, reason);
+    } catch {}
+    if (!result.ok && result.status === 409) {
+      // the attempt was already closed (submitted or expired): just refresh
+      await syncServerStatus();
+      return;
     }
-  };
-
-  useEffect(() => {
-    if (!activeQuiz || quizSubmitted || isLockoutActive) return;
-    if (!hasAcknowledgedExamRules[activeQuiz.id] && !isQuizPassed) return;
-
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        triggerProctorViolation('TAB_SWITCH_ATTEMPT');
+    setAssessment(null);
+    setQuizAnswers({});
+    setQuizResult(null);
+    setQuizSubmitted(false);
+    setHasAcknowledgedExamRules((prev) => ({ ...prev, [quizId]: false }));
+    await syncServerStatus();
+    if (result.ok && result.data.attempts) {
+      setAttemptsStatus(toAttemptsStatus(result.data.attempts));
+      if (result.data.attempts.locked_until) {
+        setIsLockoutActive(true);
+        setLockoutCountdown(countdownFrom(result.data.attempts.locked_until));
       }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [activeQuiz?.id, quizSubmitted, isLockoutActive]);
+    }
+    const reasons = String(reason || '')
+      .replace(/^THREE_STRIKES:\s*/, '')
+      .split(' | ')
+      .map((x) => x.trim())
+      .filter(Boolean);
+    showCustomAlert(
+      'Attempt ended: 3 proctoring strikes',
+      (reasons.length ? reasons.map((x) => '- ' + x).join('\n') + '\n\n' : '') +
+        'A 24-hour cooldown now applies to this assessment.',
+      'error'
+    );
+  };
 
   const loadAssignmentSubmission = () => {
     if (!enrolmentId) return;
@@ -531,11 +690,11 @@ export default function LessonPlayerPage() {
 
     if (unit.type === 'final_exam') {
       if (!isFinalExamUnlocked) {
-        showCustomAlert('Final Assessment Locked', 'You must complete all prior course modules and score >= 80% on each knowledge check.', 'warning');
+        showCustomAlert('Final Assessment Locked', 'Pass every module assessment to unlock the final assessment.', 'warning');
         return;
       }
     } else if (unit.moduleIndex > 0 && !isModuleUnlocked(unit.moduleIndex)) {
-      showCustomAlert(`Module ${unit.moduleIndex + 1} Locked`, `You must pass the Module ${unit.moduleIndex} Knowledge Check (>= 80%) to unlock.`, 'warning');
+      showCustomAlert(`Module ${unit.moduleIndex + 1} Locked`, `Pass the Module ${unit.moduleIndex} assessment (${course?.modules?.[unit.moduleIndex - 1]?.quiz?.passing_score || 80}% or higher) to unlock.`, 'warning');
       return;
     }
 
@@ -587,6 +746,7 @@ export default function LessonPlayerPage() {
     setSavingProgress(true);
     try {
       mockEngine.recordLessonCompletion(enrolmentId, activeLesson.id);
+      if (course?.id) apiClient.recordLessonProgress(course.id, activeLesson.id).catch(() => {});
       const updatedEnr = mockEngine.getEnrolment(enrolmentId);
       if (updatedEnr) {
         setCurrentEnrolment({ ...updatedEnr });
@@ -724,73 +884,81 @@ export default function LessonPlayerPage() {
     setQuizAnswers((prev) => ({ ...prev, [questionId]: optionId }));
   };
 
-  const handleSubmitQuiz = (e) => {
+  const handleSubmitQuiz = async (e) => {
     e?.preventDefault();
-    if (isLockoutActive || mockEngine.isExamLocked(enrolmentId, activeQuiz?.id).isLocked) {
-      showCustomAlert('Examination Locked', 'A 24-hour proctoring security ban is actively in effect. Submissions are rejected.', 'error');
+    if (isSubmittingAssessment || quizSubmitted) return;
+    if (!activeQuiz || !assessment || assessment.quizId !== activeQuiz.id) return;
+    if (submitLockRef.current === assessment.sessionId) return;
+    submitLockRef.current = assessment.sessionId;
+
+    setIsSubmittingAssessment(true);
+    let result = { ok: false, status: 0, data: {} };
+    try {
+      result = await apiClient.submitAssessment(assessment.sessionId, quizAnswers);
+    } catch {}
+    setIsSubmittingAssessment(false);
+
+    if (!result.ok) {
+      if (result.status !== 409) submitLockRef.current = null; // allow a retry after a network error
+      if (result.status === 409) {
+        setAssessment(null);
+        await syncServerStatus();
+        showCustomAlert('Attempt already closed', 'This attempt was already submitted or expired. Your result has been refreshed.', 'warning');
+      } else {
+        showCustomAlert('Submission not recorded', 'We could not reach the assessment service. Your answers are still here - check your connection and submit again.', 'error');
+      }
       return;
     }
-    if (!activeQuiz || !activeQuiz.questions?.length) return;
 
-    let correctCount = 0;
-    const questions = activeQuiz.questions;
-    questions.forEach((q) => {
-      const selectedOptId = quizAnswers[q.id];
-      const correctOpt = q.options?.find((opt) => opt.is_correct);
-      if (selectedOptId && correctOpt && selectedOptId === correctOpt.id) {
-        correctCount += 1;
-      }
-    });
+    const data = result.data;
+    const reviewById = Object.fromEntries((data.review || []).map((r) => [r.question_id, r]));
+    setAssessment((prev) =>
+      prev
+        ? {
+            ...prev,
+            questions: prev.questions.map((q) => {
+              const r = reviewById[q.id];
+              if (!r) return q;
+              return {
+                ...q,
+                is_answer_correct: r.is_correct,
+                explanation: r.explanation || '',
+                options: (q.options || []).map((o) => ({ ...o, is_correct: r.correct_option_id ? o.id === r.correct_option_id : undefined }))
+              };
+            })
+          }
+        : prev
+    );
 
-    const scorePct = Math.round((correctCount / questions.length) * 100);
-    const passingScore = activeQuiz.passing_score || 80;
-    const isPassed = scorePct >= passingScore;
-
+    const scorePct = data.score_percentage;
+    const passingScore = data.passing_score;
+    const isPassed = Boolean(data.is_passed);
     setQuizResult({
       quizId: activeQuiz.id,
       score: scorePct,
-      correctCount,
-      totalQuestions: questions.length,
-      isPassed
+      score_percentage: scorePct,
+      percentage: scorePct,
+      correctCount: data.correct_count,
+      totalQuestions: data.total_questions,
+      isPassed,
+      is_passed: isPassed,
+      late: data.late,
+      topicsToReview: data.topics_to_review || []
     });
     setQuizSubmitted(true);
-
-    const updatedStatus = mockEngine.recordQuizAttemptSubmission({
-      enrolmentId,
-      quizId: activeQuiz.id,
-      scorePercentage: scorePct,
-      isPassed
-    });
-    setAttemptsStatus(updatedStatus);
-
-    if (updatedStatus.isLocked) {
+    setAttemptsStatus(toAttemptsStatus(data.attempts, isPassed));
+    if (data.attempts?.locked_until) {
       setIsLockoutActive(true);
-      setLockoutCountdown({
-        hours: updatedStatus.remainingHours || 23,
-        minutes: updatedStatus.remainingMinutes || 59,
-        seconds: 59
-      });
+      setLockoutCountdown(countdownFrom(data.attempts.locked_until));
+    }
+    if (data.late) {
+      showCustomAlert('Time limit exceeded', 'This attempt was submitted after the time limit and could not count as a pass.', 'warning');
     }
 
-    const refreshedEnrolment = mockEngine.getEnrolment(enrolmentId);
-    if (refreshedEnrolment) {
-      setCurrentEnrolment({ ...refreshedEnrolment });
-    }
+    await syncServerStatus();
+    refreshBalance();
 
     if (isPassed) {
-      const currentMod = course?.modules?.find(
-        (m) => m.quiz?.id === activeQuiz.id || m.id === activeUnit?.moduleId
-      );
-      if (currentMod && currentMod.lessons) {
-        currentMod.lessons.forEach((l) => {
-          mockEngine.recordLessonCompletion(enrolmentId, l.id);
-        });
-        const refetched = mockEngine.getEnrolment(enrolmentId);
-        if (refetched) {
-          setCurrentEnrolment({ ...refetched });
-        }
-      }
-
       triggerConfetti({
         particleCount: 120,
         spread: 80,
@@ -799,29 +967,23 @@ export default function LessonPlayerPage() {
       });
 
       if (activeUnit?.type === 'final_exam') {
-        const db = mockEngine.getDb();
-        const enr = db.enrolments.find((e) => e.id === enrolmentId);
-        if (enr) {
-          enr.final_assessment_score = scorePct;
-          enr.final_assessment_passed = isPassed;
-          mockEngine.saveDb(db);
-        }
+        setIssuedCredential(data.credential || null);
         setCertRequestModalOpen(true);
       } else {
         const currentModIdx =
           activeUnit?.moduleIndex ??
           course?.modules?.findIndex((m) => m.quiz?.id === activeQuiz.id) ??
           0;
-        const totalModules = course?.modules?.length || 0;
-        const isLastModule = currentModIdx >= totalModules - 1;
+        const quizModules = (course?.modules || []).map((m, i) => ({ m, i })).filter(({ m }) => m.quiz);
+        const isLastQuizModule = quizModules.length > 0 && quizModules[quizModules.length - 1].i === currentModIdx;
 
-        if (isLastModule) {
+        if (isLastQuizModule) {
           const finalExamUnit = allUnits.find((u) => u.type === 'final_exam');
           setUnlockCelebrationModal({
             isOpen: true,
             type: 'final_round',
             unlockedModuleIndex: null,
-            unlockedModuleName: 'Final Comprehensive Certification Assessment (50 MCQs)',
+            unlockedModuleName: `Final Assessment (${course?.final_assessment?.total_questions || ''} MCQs)`,
             score: scorePct,
             passingScore,
             nextUnitId: finalExamUnit?.id || null
@@ -845,9 +1007,6 @@ export default function LessonPlayerPage() {
         }
       }
     }
-
-    setProgressData(mockEngine.getCourseProgress(enrolmentId));
-    refreshBalance();
   };
 
   const handleRetakeExam = () => {
@@ -869,7 +1028,7 @@ export default function LessonPlayerPage() {
     setQuizAnswers({});
     setQuizResult(null);
     if (activeQuiz?.id) {
-      clearQuizSessionQuestions(enrolmentId, activeQuiz.id, course?.id);
+      setAssessment(null);
       try {
         localStorage.removeItem(`rk_exam_deadline_${enrolmentId || 'cadet'}_${activeQuiz.id}`);
         localStorage.removeItem(`rk_exam_buffer_${enrolmentId || 'cadet'}_${activeQuiz.id}`);
@@ -944,36 +1103,8 @@ export default function LessonPlayerPage() {
     });
   };
 
-  const handleSubmitCertificateRequest = async () => {
-    try {
-      mockEngine.requestCertificate(enrolmentId, certCadetNotes);
-      const studentName = currentUser?.name || currentUser?.full_name || 'Cadet Candidate';
-      const cadetId = currentUser?.cadet_id || enrolment?.cadet_id || 'RK-UNKNOWN';
-
-      apiClient.requestCertificate({
-        enrolment_id: enrolmentId,
-        course_id: course?.id,
-        user_id: currentUser?.id || enrolment?.user_id,
-        cadet_id: cadetId,
-        notes: certCadetNotes
-      }).catch(console.warn);
-
-      socketClient.emit('certificate:requested', {
-        enrolmentId,
-        courseId: course?.id,
-        courseTitle: course?.title,
-        cadetId,
-        studentName,
-        score: quizResult?.percentage || 90
-      });
-
-      setCertRequestSubmitted(true);
-      setTimeout(() => {
-        setCertRequestModalOpen(false);
-      }, 3500);
-    } catch (e) {
-      alert('Certificate request failed: ' + e.message);
-    }
+  const handleSubmitCertificateRequest = () => {
+    setCertRequestModalOpen(false);
   };
 
   const isCurrentUnitBookmarked = Boolean(bookmarkedUnits[activeUnit?.id]);
@@ -1077,7 +1208,7 @@ export default function LessonPlayerPage() {
             {/* Content Panel (Notes, Markdown, Assignment, CBT Exam) */}
             <LessonContentPanel
               activeUnit={activeUnit}
-              activeLesson={activeLesson}
+              activeLesson={displayLesson}
               activeQuiz={activeQuiz}
               activeTab={activeTab}
               setActiveTab={setActiveTab}
@@ -1104,6 +1235,10 @@ export default function LessonPlayerPage() {
               isLockoutActive={isLockoutActive}
               lockoutCountdown={lockoutCountdown}
               onReturnToReview={() => handleSelectUnit(allUnits[0])}
+              assessmentState={assessmentState}
+              onRetryAssessmentStart={() => setAssessmentStartNonce((n) => n + 1)}
+              onForfeitExam={handleForfeitExam}
+              isSubmittingAssessment={isSubmittingAssessment}
             />
 
             {/* Bottom Prev / Next Navigation Bar - suppressed during exam */}
@@ -1170,6 +1305,7 @@ export default function LessonPlayerPage() {
         currentUser={currentUser}
         enrolment={enrolment}
         quizResult={quizResult}
+        credential={issuedCredential}
         certRequestSubmitted={certRequestSubmitted}
         certCadetNotes={certCadetNotes}
         setCertCadetNotes={setCertCadetNotes}

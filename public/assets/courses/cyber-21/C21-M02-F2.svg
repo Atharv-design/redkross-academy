@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="628" height="254" viewBox="0 0 628 254" role="img" aria-labelledby="t d">
+<title id="t">C21-M02-F2: The image pipeline with gates</title>
+<desc id="d">A left-to-right pipeline from Dockerfile to deploy with checks listed under lint, build, scan and gate, and a second line showing base-image updates triggering rebuild and rescan.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C21-M02-F2  The image pipeline with gates</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   Dockerfile --lint--&gt; build --SBOM--&gt; scan --gate--&gt; push --&gt; deploy</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">       |                  |               |       |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     RK-D01..06     pinned base,    findings  fixable CRIT/HIGH? BLOCK</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                    no secrets      + date    secret? BLOCK</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                              exception valid? PASS</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                              (owner, reason, expiry)</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   base digest updated --&gt; automatic rebuild --&gt; rescan --&gt; gate</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="206" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C21-M02-F2. Lint, build, SBOM, scan and gate stages, plus the rebuild loop</text>
+<text x="20" y="222" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">that keeps pinned bases current.</text>
+</svg>

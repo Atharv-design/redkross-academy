@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="653" height="204" viewBox="0 0 653 204" role="img" aria-labelledby="t d">
+<title id="t">C22-M07-F1: Claim, argument, evidence</title>
+<desc id="d">Three stacked boxes: claim, argument and evidence, with a segmentation example.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C22-M07-F1  Claim, argument, evidence</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  CLAIM      web tier cannot reach data tier</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  ARGUMENT   deny-by-default policy between segments</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     |</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  EVIDENCE   connectivity matrix: web -&gt; db NO CONNECTION (dated, hashed)</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C22-M07-F1. Assurance links a testable claim to evidence through an argument.</text>
+</svg>

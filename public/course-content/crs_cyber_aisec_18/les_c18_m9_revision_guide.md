@@ -1,0 +1,12 @@
+| Term | Meaning |
+|---|---|
+| Theme 1 | Foundations (M01): AI apps are software plus a probabilistic, learned component that reads all context as potential instruction; lifecycle; assets; the context window as a trust boundary; OWASP LLM Top 10 2025, NIST AI RMF (26 January 2023), AI 600-1 (26 July 2024), AI 100-2 E2025 (March 2025); defender's threat-model rows ending in probes; the March 2023 redis-py exposure. |
+| Theme 2 | Architecture (M02): tokens and context; roles are conventions; sampling and seeds; RAG with authorisation before ranking; structured output and tools executed by the application; agents; retrieval trace (ACL removed C200's record; planted page retrieved for refund questions); Greshake et al. 2023. |
+| Theme 3 | Prompt injection (M03): direct and indirect; prompt-level defences are probabilistic; content controls; layered defences; measured results (hardened 0/5 on P2-P6; naive canary 6/30; prompt-only no reliable improvement); Slack AI report 2024. |
+| Theme 4 | Data and privacy (M04): exposure routes; training versus retrieval; ingestion audit; P4 5/5 -> 0/5 only with ACL; governance and privacy law; Garante and ChatGPT 2023. |
+| Theme 5 | Output and tools (M05): output as untrusted input; link/image leakage (P6); excessive agency (naive refunds on another customer's order); deterministic tool policy with 7 unit tests; misinformation; Air Canada 2024. |
+| Theme 6 | Supply chain (M06): AI-BOM; provenance; safe formats; pinning; poisoning; integrity is not safety; supply_check.py; JFrog 2024. |
+| Theme 7 | Red teaming (M07): authorised, objective-driven evaluation; RoE; safe probes; Wilson intervals (0/5 -> up to 43%); rule of three; regression; reporting; Microsoft lessons 2025. |
+| Theme 8 | Capstone (M08): scope, evidence pack, failure-path register (FP-1 to FP-5), mitigations, residual risk, report, governance; EU AI Act (Regulation (EU) 2024/1689, 13 June 2024). |
+
+**Key verified facts:** OWASP LLM 2025 list LLM01 Prompt Injection ... LLM10 Unbounded Consumption; NIST AI RMF 1.0 released 26 January 2023; AI 600-1 released 26 July 2024; NIST AI 100-2 E2025 published March 2025; Greshake et al. first submitted 23 February 2023; JFrog reported about 100 malicious model instances on 27 February 2024; Microsoft's red-teaming paper submitted 13 January 2025 covers over 100 products; the EU AI Act is dated 13 June 2024 and was published on 12 July 2024. All lab numbers are for qwen3:4b on one machine on 2026-11-08.

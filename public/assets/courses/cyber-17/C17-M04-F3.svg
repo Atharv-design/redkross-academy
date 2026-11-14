@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="653" height="170" viewBox="0 0 653 170" role="img" aria-labelledby="t d">
+<title id="t">C17-M04-F3: Lab exception register results</title>
+<desc id="d">Three exceptions with their check results: one procedurally valid but high risk, one failing three checks, and one lacking approval.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C17-M04-F3  Lab exception register results</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  EX-01 terminal server  valid on paper   -&gt; high-scrutiny path (MFA gap)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  EX-02 label printers   EXPIRED + no compensating + low approver</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  EX-03 archive NAS      no approver -&gt; not an exception, non-compliance</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="138" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C17-M04-F3. Execution-tested register check results and their interpretation.</text>
+</svg>

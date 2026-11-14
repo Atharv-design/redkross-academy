@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="695" height="187" viewBox="0 0 695 187" role="img" aria-labelledby="t d">
+<title id="t">C22-M02-F3: Privileged access tiers</title>
+<desc id="d">Three tiers from identity and infrastructure roots to user devices, with stronger controls at higher tiers.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C22-M02-F3  Privileged access tiers</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  TIER 0  IdP, PKI, cloud org root, hypervisors  -&gt; PAW + FIDO2 + JIT + record</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  TIER 1  servers, databases, apps                -&gt; PAM JIT + MFA + record</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  TIER 2  user devices                            -&gt; helpdesk tools, MFA</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  credentials never flow from higher to lower-trust devices</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C22-M02-F3. Tiered administration with controls per tier.</text>
+</svg>

@@ -1,0 +1,19 @@
+This course teaches wireless and mobile security from the defender's seat and entirely offline. Every lab tool reviews a configuration, a static artifact or captured/synthetic data you own - nothing transmits over the air, scans a third-party network, or calls an external API. The unifying principles: assume the radio and network are HOSTILE and encrypt; treat the mobile CLIENT as UNTRUSTED and enforce security SERVER-SIDE; VERIFY controls with enforcing FAIL-to-PASS evidence; and work only within an AUTHORISED, OFFLINE, DO-NO-HARM scope.
+
+**Module 1 (Wireless foundations):** Wi-Fi is a shared radio medium, so anyone in range can receive frames - security comes from encryption, not from the medium. Threats include eavesdropping, rogue APs and evil twins (an AP impersonating a legitimate SSID). roguescan.py compares observed APs to an authorised inventory to flag evil-twins by SSID-on-unknown-BSSID.
+
+**Module 2 (Wi-Fi protection):** use WPA3 (or WPA2 with AES-CCMP) with PMF; never WEP/TKIP/WPS; set a strong passphrase or 802.1X; protect the AP admin interface and firmware; isolate and segment guests. wifireview.py reviews a WLAN configuration against these, failing an insecure config and passing a hardened one.
+
+**Module 3 (Wireless assessment):** a defensive wireless assessment inventories authorised APs, detects rogues/evil-twins, and reviews configuration - all passive or against your own network. roguescan.py's evil-twin detection is the detective half; wifireview.py is the configuration half.
+
+**Module 4 (Bluetooth security):** Bluetooth/BLE risks come from weak pairing (Just Works gives no MITM protection), legacy pairing, discoverability and default PINs. Use Secure Connections, authenticated pairing for sensitive uses, non-discoverable mode and minimal services (NIST SP 800-121 Rev.2). btreview.py reviews a Bluetooth configuration FAIL -> PASS.
+
+**Module 5 (Mobile architecture):** the platform security model - app sandbox, permissions, protected per-app storage, component exporting, and the keystore - is the foundation. Weakening the defaults (external storage, exported components, cleartext, debuggable/backup) causes most mobile weaknesses. The OWASP MASVS categorises them (STORAGE/CRYPTO/AUTH/NETWORK/PLATFORM/CODE/RESILIENCE/PRIVACY).
+
+Module 6 (Mobile app testing): STATIC inspection reads the manifest, config and code without running the app; DYNAMIC testing observes a running app on a controlled device. INSECURE DATA HANDLING (secrets in external storage/logs, hardcoded secrets, weak crypto, cleartext, leaky platform features) is the main weakness class. mobilecheck.py statically reviews the demo app -> 16 findings, 9 HIGH, by MASVS.
+
+Module 7 (Mobile API security): the app is an UNTRUSTED PUBLIC CLIENT, so the API is the real boundary. Require validated, short-lived, revocable tokens; TLS everywhere; per-object authorisation server-side (broken object-level authorisation is the top API risk); rate limiting; minimal data; generic errors (OWASP API Security Top 10). apicheck.py reviews a backend config FAIL -> PASS.
+
+**Module 8 (Capstone):** integrate wireless, Bluetooth, app and API into one authorised, offline assessment. review.py enforces the three configuration control domains (Wi-Fi, Bluetooth, API) FAIL -> PASS (3/3) and reports the detective findings (16 app, 2 evil-twin APs). Present scope, findings by area, enforcing evidence, remediation mapped to a secure baseline, and verification.
+
+**Key tool-to-module map (lab):** roguescan.py (M01, M03); wifireview.py (M02, M03); btreview.py (M04); demo_app + mobilecheck.py (M05, M06); apicheck.py (M07); review.py (M08). Standards verified at source 2026-11-08: OWASP MASVS (8 categories, 24 controls) and MASTG; OWASP API Security Top 10; NIST SP 800-121 Rev.2 (Bluetooth); NIST SP 800-153 (WLAN); Wi-Fi Alliance WPA3 (mandatory for certified, PMF required for new devices).

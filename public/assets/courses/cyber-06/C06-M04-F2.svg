@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="661" height="203" viewBox="0 0 661 203" role="img" aria-labelledby="t d">
+<title id="t">C06-M04-F2: IDOR in the lab</title>
+<desc id="d">A flow showing a user changing an order id to read another user&#x27;s order in the vulnerable app, and the ownership check that returns 403 in the hardened app.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C06-M04-F2  IDOR in the lab</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   asha logs in -&gt; GET /account?id=1001 (asha&#x27;s order)  OK</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   asha changes -&gt; GET /account?id=1002 (ravi&#x27;s order)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   vuln:  SELECT ... WHERE id=1002           -&gt; returns ravi&#x27;s data (IDOR)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   fixed: SELECT ... WHERE id=1002 AND owner == session_user -&gt; 403</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C06-M04-F2. IDOR: lookup by client id with no ownership check exposes another</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">user&#x27;s object; the fix enforces ownership [C06-M04-R2].</text>
+</svg>

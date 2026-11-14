@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="602" height="254" viewBox="0 0 602 254" role="img" aria-labelledby="t d">
+<title id="t">C09-M04-F2: From socket to process</title>
+<desc id="d">A chain from a /proc/net/tcp line, decoded to 127.0.0.1 port 8443, through the socket inode to a file descriptor of PID 7, the python3 listener.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C09-M04-F2  From socket to process</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  /proc/net/tcp: 0100007F:20FB  state 0A  inode 321697</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                         |                        |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">            127.0.0.1:8443 (decoded)              v</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                  /proc/7/fd/N -&gt; socket:[321697]</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                                  |</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                                  v</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                  PID 7 python3 -m http.server 8443</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="206" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C09-M04-F2. Linking a listening socket to its process via the socket</text>
+<text x="20" y="222" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">inode (execution-tested values).</text>
+</svg>

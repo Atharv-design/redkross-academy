@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="611" height="254" viewBox="0 0 611 254" role="img" aria-labelledby="t d">
+<title id="t">C14-M01-F3: Likelihood scale and separate confidence</title>
+<desc id="d">A horizontal scale from 0 to 99 percent divided into seven labelled bands, and an example judgment showing the likelihood term and the separate confidence sentence.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C14-M01-F3  Likelihood scale and separate confidence</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   0%   5%    20%      45% 55%      80%    95% 99%</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   |----|------|--------|---|--------|------|---|</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">    almost very unlikely even likely  very  almost</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">    no     un-          chance        likely certain</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">    chance likely</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   &quot;X is very likely active now. Confidence: moderate. [RPT-004]&quot;</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">          ^ likelihood (event)        ^ confidence (basis), separate</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="206" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C14-M01-F3. The ICD 203 likelihood bands, with confidence stated in its</text>
+<text x="20" y="222" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">own sentence.</text>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="703" height="203" viewBox="0 0 703 203" role="img" aria-labelledby="t d">
+<title id="t">C06-M05-F1: One root cause, two cures</title>
+<desc id="d">A diagram showing untrusted data reaching a SQL string (cured by parameterisation) or HTML output (cured by output encoding), under the shared rule to keep data as data.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C06-M05-F1  One root cause, two cures</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   ROOT CAUSE: untrusted DATA interpreted as CODE/markup</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     input -&gt; SQL string   =&gt; SQL injection   =&gt; cure: parameterise (bind data)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     input -&gt; HTML output  =&gt; cross-site scr. =&gt; cure: encode output (as text)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   keep data as data; never let input cross into the code/markup channel</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C06-M05-F1. Injection and XSS share a root cause and have matching cures:</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">parameterisation and output encoding.</text>
+</svg>

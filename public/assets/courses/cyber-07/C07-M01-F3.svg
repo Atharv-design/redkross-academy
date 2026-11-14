@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="686" height="186" viewBox="0 0 686 186" role="img" aria-labelledby="t d">
+<title id="t">C07-M01-F3: Defence in depth layers</title>
+<desc id="d">A stack of independent network defence layers from the perimeter firewall through segmentation, IDS/IPS, host firewalls, authentication and monitoring.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C07-M01-F3  Defence in depth layers</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   perimeter firewall -&gt; internal segmentation -&gt; IDS/IPS at boundaries</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   -&gt; host firewalls -&gt; strong remote/mgmt auth -&gt; monitoring (sees the rest)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   attacker must defeat several independent layers; monitoring watches all</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="138" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C07-M01-F3. Independent layered controls contain compromise and feed monitoring</text>
+<text x="20" y="154" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">[C07-M01-R1].</text>
+</svg>

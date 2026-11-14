@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="644" height="186" viewBox="0 0 644 186" role="img" aria-labelledby="t d">
+<title id="t">C14-M07-F3: From gap to use case</title>
+<desc id="d">A chain from a missing data component through collection, detection rules and hunts to tested coverage, and a branch for external monitoring.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C14-M07-F3  From gap to use case</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   gap (missing data component) --&gt; collection use case --&gt; data arrives</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        --&gt; detection rule + test --&gt; hunt --&gt; tested coverage</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   BLIND resource development --&gt; external monitoring (Module 3)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="138" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C14-M07-F3. Gaps become a backlog of collection, detection and monitoring</text>
+<text x="20" y="154" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">work.</text>
+</svg>

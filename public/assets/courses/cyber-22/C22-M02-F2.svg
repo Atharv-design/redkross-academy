@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="153" viewBox="0 0 720 153" role="img" aria-labelledby="t d">
+<title id="t">C22-M02-F2: Authentication strength ladder</title>
+<desc id="d">A ladder from password to FIDO2 with numeric strengths used by the lab policy, noting that restricted resources need the top level.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C22-M02-F2  Authentication strength ladder</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  password (1) &lt; SMS/voice &lt; TOTP (2) &lt; push+number match (2) &lt; FIDO2/passkey (3)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  restricted resources require 3 (lab policy); medium risk adds +1</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="121" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C22-M02-F2. Relative phishing resistance and the lab policy&#x27;s strength values.</text>
+</svg>

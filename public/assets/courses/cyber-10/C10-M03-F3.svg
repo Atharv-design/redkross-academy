@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="695" height="203" viewBox="0 0 695 203" role="img" aria-labelledby="t d">
+<title id="t">C10-M03-F3: Imports as capability</title>
+<desc id="d">Imported APIs grouped by capability - files, memory, persistence, fingerprint, network - with the caveat about capability versus proof.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C10-M03-F3  Imports as capability</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   KERNEL32: CreateFile/WriteFile (files)  VirtualAlloc (exec memory/unpack)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   ADVAPI32: RegSetValueEx (persistence)   KERNEL32: CreateMutex (fingerprint)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   WS2_32  : WSAStartup/connect/send (network/C2)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   caveat: imports show CAPABILITY, not proof; packed malware hides them</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C10-M03-F3. The specimen&#x27;s imports map to capability; imports are not proof of</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">behaviour [C10-M03-R3].</text>
+</svg>

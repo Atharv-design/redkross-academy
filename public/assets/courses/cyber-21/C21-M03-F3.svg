@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="628" height="237" viewBox="0 0 628 237" role="img" aria-labelledby="t d">
+<title id="t">C21-M03-F3: Desired state and reconciliation</title>
+<desc id="d">A Deployment owns a ReplicaSet that owns two pods; deleting one triggers creation of a replacement; a note says manual pod edits are reverted.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C21-M03-F3  Desired state and reconciliation</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   Git / kubectl --&gt; Deployment api (replicas: 2)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                        | owns</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                        v</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                     ReplicaSet api-89dcf95d6 --owns--&gt; pod A, pod B</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   delete pod A  --&gt;  controller sees 1 of 2  --&gt;  creates pod C</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   edit pod by hand --&gt; template unchanged --&gt; next rollout reverts it</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="189" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C21-M03-F3. Controllers continually restore the declared state; changes</text>
+<text x="20" y="205" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">must be made at the right level.</text>
+</svg>

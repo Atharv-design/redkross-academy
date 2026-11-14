@@ -1,0 +1,5 @@
+- Errors. Return generic messages to clients. Log details server-side with a correlation ID. Never show stack traces in production.
+- Logging. Log security events (logins, failures, permission denials, admin actions) with user, UTC time and outcome. Never log passwords, tokens or full card numbers. Redact before writing.
+- Secure defaults. Debug off, minimum TLS 1.2, strict security headers, and features disabled until configured (Module 6).
+- Cryptography. Use high-level, vetted libraries. Never invent algorithms. Use secrets, not random, for tokens.
+- Concurrency and limits. Bound input sizes, use timeouts on outbound calls, and paginate queries.

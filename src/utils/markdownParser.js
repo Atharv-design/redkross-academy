@@ -370,6 +370,16 @@ export function renderMarkdownToHtml(markdown = '', options = {}) {
     return token;
   });
 
+  // 1d. Neutralise raw HTML in prose. Lesson text is injected with innerHTML, so a
+  // literal tag in course text (e.g. an XSS example in a web-security lesson, or a
+  // placeholder such as /proc/<pid>/maps) must render as text, not as markup.
+  // Only a few attribute-free formatting tags are passed through.
+  html = html.replace(/<(?=[A-Za-z\/!?])/g, (lt, offset, full) => {
+    const rest = full.slice(offset, offset + 12);
+    if (/^<\/?(br|sub|sup|kbd|mark|u|em|strong|b|i|small)\s*\/?>/i.test(rest)) return lt;
+    return '&lt;';
+  });
+
   // =========================================================================
   // STEP 2: MARKDOWN IMAGES & FIGURES (PROCESSED BEFORE KATEX)
   // Ensures alt attributes are clean text and cannot leak raw HTML or quotes

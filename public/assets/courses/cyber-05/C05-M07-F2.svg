@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="594" height="220" viewBox="0 0 594 220" role="img" aria-labelledby="t d">
+<title id="t">C05-M07-F2: Persistence is a detection target, not a tester action</title>
+<desc id="d">Attacker persistence mechanisms mapped to detection advice, with a note that the ethical tester establishes none.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C05-M07-F2  Persistence is a detection target, not a tester action</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   attacker persistence        defender detection (tester advises)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   new admin account       -&gt;  alert on account creation</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   scheduled task          -&gt;  monitor unexpected scheduled jobs</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   changed startup/service -&gt;  baseline + alert on changes</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   ETHICAL TESTER establishes NONE of these</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C05-M07-F2. The tester understands persistence to advise detection,</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">never to plant access.</text>
+</svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="628" height="237" viewBox="0 0 628 237" role="img" aria-labelledby="t d">
+<title id="t">C09-M05-F3: USB activity reconstruction</title>
+<desc id="d">Device identifiers from USBSTOR and MountedDevices connect through first-install logs and ShellBags to LNK files whose volume serial matches the USB device.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C09-M05-F3  USB activity reconstruction</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  USBSTOR (vendor/product/serial) --&gt; MountedDevices (drive letter E:)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        |                                     |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  setupapi.dev.log (first install)     ShellBags (E:\Designs browsed)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        |                                     |</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        +--------&gt; LNK files (volume serial = USB volume) &lt;---------+</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                         =&gt; files opened from the device</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="189" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C09-M05-F3. Linking a USB device to files opened from it through serial</text>
+<text x="20" y="205" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">numbers and drive letters.</text>
+</svg>

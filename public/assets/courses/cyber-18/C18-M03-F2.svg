@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="392" height="254" viewBox="0 0 392 254" role="img" aria-labelledby="t d">
+<title id="t">C18-M03-F2: Lab results by configuration</title>
+<desc id="d">A table of failure counts for five probes under three configurations, plus canary leakage counts.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C18-M03-F2  Lab results by configuration</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">              naive  prompt_only  hardened</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  P2 direct    3/5     3/5          0/5</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  P3 indirect  1/5     2/5          0/5</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  P4 data      5/5     5/5          0/5</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  P5 agency    5/5     2/5          0/5</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  P6 output    3/5     2/5          0/5</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  canary in any answer: 6/30  6/30  0/30</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="206" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C18-M03-F2. Deterministic layers, not</text>
+<text x="20" y="222" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">wording, drove failures to zero.</text>
+</svg>

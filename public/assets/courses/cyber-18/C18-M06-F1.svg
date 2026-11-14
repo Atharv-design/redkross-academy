@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="695" height="187" viewBox="0 0 695 187" role="img" aria-labelledby="t d">
+<title id="t">C18-M06-F1: AI supply chain</title>
+<desc id="d">Datasets, packages, model files, knowledge-base content and prompts flow through approval points into the application.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C18-M06-F1  AI supply chain</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  datasets -&gt; training/fine-tune -&gt; model files -&gt; registry (approved, pinned)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  packages + runtime ------------------------------^          |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  KB content -&gt; ingestion audit -&gt; index ---------------&gt; application</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  prompts/config (Git) ----------------------------------^</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C18-M06-F1. Every arrow is a point for provenance and verification.</text>
+</svg>

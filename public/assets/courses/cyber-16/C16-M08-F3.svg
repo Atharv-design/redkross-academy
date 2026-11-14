@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="602" height="221" viewBox="0 0 602 221" role="img" aria-labelledby="t d">
+<title id="t">C16-M08-F3: The capstone deliverable</title>
+<desc id="d">Six parts of the capstone assessment deliverable.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C16-M08-F3  The capstone deliverable</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   1 scope + authorisation (authorised, offline, do no harm)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   2 method + tools (lab reviewers)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   3 findings by area (Wi-Fi / BT / app / API / rogue) + severity</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   4 enforcing evidence (FAIL -&gt; PASS for 3 control domains)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   5 remediation -&gt; secure baseline ; verification (re-run to PASS)</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   6 summary (decision-makers) + detail (engineers)</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="189" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C16-M08-F3. The structure of the capstone assessment deliverable.</text>
+</svg>

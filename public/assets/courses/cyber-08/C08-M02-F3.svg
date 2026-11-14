@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="644" height="187" viewBox="0 0 644 187" role="img" aria-labelledby="t d">
+<title id="t">C08-M02-F3: Same instant, two clocks</title>
+<desc id="d">An IST and a UTC timestamp both mapping to the same UTC instant, with a warning about naive timestamps.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C08-M02-F3  Same instant, two clocks</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  firewall (IST)  11:42+05:30  --\</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                  &gt;  06:12Z  (same instant)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  proxy (UTC)     06:12+00:00  --/</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  naive &quot;11:42&quot; (no offset) -&gt; cannot compare safely -&gt; fix at ingestion</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C08-M02-F3. Converting to UTC aligns events from different time zones.</text>
+</svg>

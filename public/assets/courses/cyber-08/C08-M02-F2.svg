@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="670" height="187" viewBox="0 0 670 187" role="img" aria-labelledby="t d">
+<title id="t">C08-M02-F2: Collection pipeline</title>
+<desc id="d">A left-to-right pipeline from source through collection, encrypted transport, parsing and normalisation, hot and cold storage, with a note on health checks.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C08-M02-F2  Collection pipeline</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  [Source] -&gt; [Agent/syslog/API] -&gt; [Encrypted, buffered transport]</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     -&gt; [Parse + normalise (UTC)] -&gt; [Hot store: search] -&gt; [Cold store:</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        retention 180+ days]</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  Health checks at every stage: source silent? queue backlog? parse errors?</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C08-M02-F2. Pipeline stages from source to retention with health monitoring.</text>
+</svg>

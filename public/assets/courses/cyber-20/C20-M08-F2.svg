@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="569" height="238" viewBox="0 0 569 238" role="img" aria-labelledby="t d">
+<title id="t">C20-M08-F2: Capstone deliverables and their evidence</title>
+<desc id="d">A two-column table pairing each capstone deliverable with the files that evidence it.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C20-M08-F2  Capstone deliverables and their evidence</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   deliverable            evidence file(s)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   detection pack         pack/manifest.txt, release_report.txt</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   coverage before/after  coverage_output.txt (+ your re-run)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   validation             purple_output.txt</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   hunts                  hunt_output.txt, seeded validation</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   playbook design        soar_output.txt, your design</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   executive summary      traces to all of the above</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="206" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C20-M08-F2. Every deliverable is backed by an output file.</text>
+</svg>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="686" height="254" viewBox="0 0 686 254" role="img" aria-labelledby="t d">
+<title id="t">C12-M08-F1: The lab release pipeline</title>
+<desc id="d">Gates run in three container images and on the host, each writing a result file; a report script reads them and decides whether the release is approved or blocked.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C12-M08-F1  The lab release pipeline</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  python:3.12-slim:  tests -&gt; semgrep --error -&gt; pip-audit -&gt; SBOM + licences</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  gitleaks:          secret scan (app/)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  host:              tar artefact</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  cosign:            sign -&gt; verify</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        every step writes out/&lt;gate&gt;.rc + JSON</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                           |</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                 release_report.py --&gt; DECISION: APPROVED / BLOCKED</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="206" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C12-M08-F1. Containers run the gates; results are collected and the report</text>
+<text x="20" y="222" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">computes the decision (execution-tested).</text>
+</svg>

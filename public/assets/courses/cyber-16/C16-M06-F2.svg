@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="661" height="220" viewBox="0 0 661 220" role="img" aria-labelledby="t d">
+<title id="t">C16-M06-F2: Forms of insecure data handling</title>
+<desc id="d">Five forms of insecure data handling mapped to MASVS categories.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C16-M06-F2  Forms of insecure data handling</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   secrets in external storage / logs / unprotected db   -&gt; MASVS-STORAGE</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   hardcoded secrets                                      -&gt; MASVS-CRYPTO</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   weak crypto (DES/ECB/RC4/MD5, hardcoded key)           -&gt; MASVS-CRYPTO</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   cleartext transmission / no TLS validation            -&gt; MASVS-NETWORK</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   leaky WebView / backups / screenshots                 -&gt; MASVS-PLATFORM</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C16-M06-F2. The forms of insecure data handling and their MASVS categories</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">[C16-M06-R1].</text>
+</svg>

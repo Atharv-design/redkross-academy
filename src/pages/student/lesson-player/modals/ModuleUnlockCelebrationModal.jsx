@@ -32,7 +32,7 @@ export default function ModuleUnlockCelebrationModal({
               All the best, Cadet! 🎖️
             </p>
             <p className="text-xs text-[#E2D9CE] font-mono leading-relaxed pt-1">
-              Phenomenal execution! You have conquered all operational modules of the curriculum. The comprehensive Final Certification Examination (50 MCQs) is now unlocked.
+              Phenomenal execution! You have conquered all operational modules of the curriculum. The comprehensive final assessment is now unlocked.
             </p>
           </div>
         ) : (

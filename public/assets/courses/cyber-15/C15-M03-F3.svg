@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="644" height="203" viewBox="0 0 644 203" role="img" aria-labelledby="t d">
+<title id="t">C15-M03-F3: Authenticated ephemeral key exchange</title>
+<desc id="d">A client and server exchange ephemeral public keys, the server signs its share with its certificate key, the client verifies, and both derive session keys and discard ephemeral keys.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C15-M03-F3  Authenticated ephemeral key exchange</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  client: eph key c  --- c.pub ---&gt;  server: eph key s</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  client  &lt;--- s.pub + signature(s.pub..., server cert key) --- server</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  client verifies signature with certificate (Module 5)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  both: shared = X25519(...) -&gt; HKDF(info) -&gt; session keys; discard c, s</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C15-M03-F3. Ephemeral exchange gives forward secrecy; the server&#x27;s signature</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">prevents substitution.</text>
+</svg>

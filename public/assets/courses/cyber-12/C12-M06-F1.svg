@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="661" height="237" viewBox="0 0 661 237" role="img" aria-labelledby="t d">
+<title id="t">C12-M06-F1: Secret delivery without secrets in code</title>
+<desc id="d">Configuration in git contains only a secret reference; the service uses its workload identity to fetch the value from a secrets manager that logs access and supports rotation.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C12-M06-F1  Secret delivery without secrets in code</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  config (in git): DB_PASSWORD=secretref:prod/shipments/db</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">          |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  service starts --(workload identity)--&gt; SECRETS MANAGER --(audit log)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">          |                                   | returns current version</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">          &#x27;&lt;----------------------------------&#x27;</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  rotation: manager issues new version -&gt; service re-reads on auth failure</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="189" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C12-M06-F1. Configuration holds references. The running service fetches secret</text>
+<text x="20" y="205" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">values using its own identity.</text>
+</svg>

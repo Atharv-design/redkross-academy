@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="594" height="220" viewBox="0 0 594 220" role="img" aria-labelledby="t d">
+<title id="t">C16-M03-F1: The wireless assessment process</title>
+<desc id="d">The assessment steps from scoping through review and detection to reporting, all from configuration and scan data.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C16-M03-F1  The wireless assessment process</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   scope+authorise -&gt; inventory (SSIDs/BSSIDs + baseline)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     -&gt; configuration review (per AP vs baseline)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     -&gt; rogue/evil-twin detection (observed vs inventory)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     -&gt; report (findings + remediation) -&gt; re-test</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   all from DATA (config + scan) - no transmission by the assessor</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C16-M03-F1. The wireless assessment process, performed from data</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">[C16-M03-R1].</text>
+</svg>

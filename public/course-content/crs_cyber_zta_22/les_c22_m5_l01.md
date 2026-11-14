@@ -1,0 +1,7 @@
+- Authenticate every request (OIDC access tokens for users; mTLS or workload tokens between services); validate token issuer, audience, expiry and signature with keys scoped to that issuer (the Storm-0558 lesson).
+- Authorise at the service, per object (Course 12 M03), using a central policy library or service for consistency (Module 3 PDP concept).
+- Minimal APIs: expose only needed operations; schema validation at the gateway and service; versioned interfaces.
+- Secure defaults (Course 12 M06): deny unknown fields, no debug, safe error messages.
+- Secrets and keys via workload identity and KMS, never in code.
+- Idempotent, rate-limited operations; timeouts and circuit breakers (availability is a security property).
+- Audit logging of security events at the service level (Module 6).

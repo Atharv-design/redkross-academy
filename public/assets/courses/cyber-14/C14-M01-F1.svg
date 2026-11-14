@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="619" height="271" viewBox="0 0 619 271" role="img" aria-labelledby="t d">
+<title id="t">C14-M01-F1: The intelligence lifecycle</title>
+<desc id="d">A cycle of six labelled phases from direction through collection, processing, analysis, dissemination and feedback back to direction, with short notes under three phases.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C14-M01-F1  The intelligence lifecycle</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">          +--------------&gt; 1 Direction (requirements) ---------+</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">          |                                                    v</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   6 Feedback                                          2 Collection</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">          ^                                                    |</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">          |                                                    v</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   5 Dissemination &lt;--- 4 Analysis &amp; production &lt;--- 3 Processing</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     (TLP-marked,          (grading, judgments,        (normalise,</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">      per consumer)         calibrated language)        de-duplicate)</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="223" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C14-M01-F1. Six phases, each with an owner; feedback changes the</text>
+<text x="20" y="239" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">requirements.</text>
+</svg>

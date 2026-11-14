@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="661" height="204" viewBox="0 0 661 204" role="img" aria-labelledby="t d">
+<title id="t">C11-M05-F2: Lab timeline</title>
+<desc id="d">A timeline of five events by one identity: a login without MFA, denied calls, a new key for another user, a public bucket policy and logging stopped.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C11-M05-F2  Lab timeline</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  06:41 ConsoleLogin MFAUsed=No            (old-integration, 203.0.113.77)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  06:44 8 x AccessDenied ListAccounts</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  06:46 CreateAccessKey for ci-bot</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  06:48 PutBucketPolicy Principal &quot;*&quot;</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  06:52 StopLogging tl-org-trail</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C11-M05-F2. Five detections from one identity in eleven minutes.</text>
+</svg>

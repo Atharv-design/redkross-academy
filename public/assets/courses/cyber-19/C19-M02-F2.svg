@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="594" height="203" viewBox="0 0 594 203" role="img" aria-labelledby="t d">
+<title id="t">C19-M02-F2: ATT&amp;CK tactics as an emulation path</title>
+<desc id="d">A sequence of ATT&amp;CK tactics forming the emulation path.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C19-M02-F2  ATT&amp;CK tactics as an emulation path</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   Recon(TA0043) -&gt; Credential Access(TA0006) -&gt; Discovery(TA0007)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     -&gt; Lateral Movement(TA0008) -&gt; Command and Control(TA0011)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     -&gt; Collection(TA0009)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   each step = one chosen technique, mapped to a detection</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C19-M02-F2. An emulation plan as a path through ATT&amp;CK tactics</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">[C19-M02-R1].</text>
+</svg>

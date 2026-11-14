@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="485" height="187" viewBox="0 0 485 187" role="img" aria-labelledby="t d">
+<title id="t">C17-M02-F1: The risk management cycle</title>
+<desc id="d">A loop from context through identification, analysis, evaluation and treatment, back via monitoring, with communication throughout.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C17-M02-F1  The risk management cycle</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  context -&gt; identify -&gt; analyse -&gt; evaluate -&gt; treat</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     ^                                            |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     +------- monitor &amp; review &lt;-------------------+</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">              (communicate &amp; consult throughout)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C17-M02-F1. Risk management as a continuous loop.</text>
+</svg>

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="737" height="305" viewBox="0 0 737 305" role="img" aria-labelledby="t d">
+<title id="t">C08-M01-F1: Tiered SOC structure</title>
+<desc id="d">Telemetry sources feed SIEM and EDR alerts into case management; Tier 1 escalates to Tier 2 and Tier 3; feedback arrows return from higher tiers to Tier 1; a SOC lead oversees metrics and stakeholders.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C08-M01-F1  Tiered SOC structure</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   [Telemetry: endpoint | network | identity | cloud]</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                       |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                    [SIEM / EDR alerts] --&gt; [Case management]</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                       |</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   TIER 1 triage -- escalate --&gt; TIER 2 investigation -- escalate --&gt; TIER 3</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   (validate, enrich,            (scope, contain,           (hunt, malware,</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">    close FPs)                    coordinate IT)             forensics, detections)</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">         ^                               |                          |</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">         +---- tuning &amp; playbook feedback &lt;-------------------------+</text>
+<text x="20" y="213" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   SOC lead: metrics, quality, stakeholders, regulators (CERT-In)</text>
+<text x="20" y="230" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="257" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C08-M01-F1. Telemetry feeds alerts into case management; tiers escalate upward and feed</text>
+<text x="20" y="273" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">improvements back.</text>
+</svg>

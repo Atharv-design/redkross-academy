@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="653" height="170" viewBox="0 0 653 170" role="img" aria-labelledby="t d">
+<title id="t">C17-M07-F2: Scoring with critical items (lab)</title>
+<desc id="d">Two bars comparing 17 of 19 for one vendor that passed critical items with 7 of 19 for one that failed two critical items, noting that critical failures override totals.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C17-M07-F2  Scoring with critical items (lab)</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  RouteOpt     ################# 17/19  critical OK   -&gt; approve</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  QuickPrint   #######            7/19  V2,V4 FAIL    -&gt; reject/remediate</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  rule: any critical fail overrides the total score</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="138" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C17-M07-F2. Weighted scores and critical-fail overrides (execution-tested).</text>
+</svg>

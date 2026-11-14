@@ -1,0 +1,3 @@
+A business logic flaw is a weakness in the application's WORKFLOW or RULES, not in its input handling: the input is valid and the code runs as written, but the sequence or rule can be abused to reach an unintended, advantageous state.
+
+**Examples:** applying a single-use coupon many times; submitting a negative quantity to get a refund; skipping a payment step by calling a later endpoint directly; or trusting a client-supplied price (the lab's hidden-field example from Module 1). These flaws evade input validation and scanners because nothing is "malformed"; only knowledge of the intended workflow reveals the abuse. They map variously to OWASP A04:2025 (insecure design) and the broken-access-control category depending on the flaw [R4].

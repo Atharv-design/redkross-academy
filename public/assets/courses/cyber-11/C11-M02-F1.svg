@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="712" height="238" viewBox="0 0 712 238" role="img" aria-labelledby="t d">
+<title id="t">C11-M02-F1: AWS policy evaluation (core)</title>
+<desc id="d">A flowchart: explicit deny leads to deny; otherwise an allow leads to allow; otherwise implicit deny.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C11-M02-F1  AWS policy evaluation (core)</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  request -&gt; any explicit Deny matches? --yes--&gt; DENY (explicit)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                 | no</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                 v</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">             any Allow matches (within SCPs/boundaries)? --no--&gt; DENY (implicit)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                 | yes</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                 v</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">               ALLOW</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="206" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C11-M02-F1. Explicit deny wins; without an allow the request is implicitly denied.</text>
+</svg>

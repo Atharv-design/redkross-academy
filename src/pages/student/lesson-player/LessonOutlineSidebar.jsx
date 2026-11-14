@@ -79,7 +79,7 @@ export default function LessonOutlineSidebar({
                 onClick={() => {
                   if (!isUnlocked) {
                     if (onShowNotice) {
-                      onShowNotice(`Module ${modIdx + 1} Locked`, `You must complete all lessons and pass the Module ${modIdx} Knowledge Check (>= 80%) to unlock.`);
+                      onShowNotice(`Module ${modIdx + 1} Locked`, `Pass the Module ${modIdx} assessment (${course?.modules?.[modIdx - 1]?.quiz?.passing_score || 80}% or higher) to unlock.`);
                     }
                     return;
                   }
@@ -287,7 +287,7 @@ export default function LessonOutlineSidebar({
                 onClick={() => {
                   if (!isFinalUnlocked) {
                     if (onShowNotice) {
-                      onShowNotice('Final Assessment Locked', 'You must complete all prior course modules and score >= 80% on each knowledge check.');
+                      onShowNotice('Final Assessment Locked', 'Pass every module assessment to unlock the final assessment.');
                     }
                     return;
                   }
@@ -317,7 +317,7 @@ export default function LessonOutlineSidebar({
                     <Shield className="w-4 h-4 flex-shrink-0" />
                   )}
                   <span className="truncate font-bold">
-                    Final Certification Exam (50 MCQs)
+                    Final Assessment ({course.final_assessment.total_questions || 50} MCQs)
                   </span>
                 </div>
                 <span

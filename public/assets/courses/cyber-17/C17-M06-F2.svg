@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="678" height="186" viewBox="0 0 678 186" role="img" aria-labelledby="t d">
+<title id="t">C17-M06-F2: Sample versus full population (lab)</title>
+<desc id="d">Three bars showing a population with four exceptions, a sample that found none, and a full test that found all four.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C17-M06-F2  Sample versus full population (lab)</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  population 240  [....x.........x.........x...........x.....]  4 exceptions</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  sample 25       [ s  s s s    s  s  s s ...               ]  0 found</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  full test       [ every item checked                       ]  4 found</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="138" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C17-M06-F2. A clean sample missed exceptions that full-population testing found</text>
+<text x="20" y="154" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">(execution-tested).</text>
+</svg>

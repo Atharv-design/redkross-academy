@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="644" height="186" viewBox="0 0 644 186" role="img" aria-labelledby="t d">
+<title id="t">C15-M02-F1: ECB versus an AEAD</title>
+<desc id="d">Three rows showing four plaintext blocks, three of them identical; ECB output repeats the same three blocks, while GCM output is all different.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C15-M02-F1  ECB versus an AEAD</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  plaintext blocks :  [P-R-1] [P-R-1] [P-R-1] [UNIQUE]</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  ECB ciphertext   :  [3ce7 ] [3ce7 ] [3ce7 ] [0c77 ]   repeats visible</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  GCM ciphertext   :  [6d94 ] [2644 ] [7f6a ] [d976 ]   no repeats + tag</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="138" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C15-M02-F1. ECB preserves repetition; GCM does not (execution-tested</text>
+<text x="20" y="154" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">values).</text>
+</svg>

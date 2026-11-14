@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="619" height="220" viewBox="0 0 619 220" role="img" aria-labelledby="t d">
+<title id="t">C05-M03-F2: Reading status codes</title>
+<desc id="d">A key mapping HTTP status codes to what they mean for enumeration, noting that methods must also be enumerated.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C05-M03-F2  Reading status codes</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   200  exists / returns data      -&gt; map it, plan tests</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   403  exists but restricted      -&gt; access-control interest</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   400  exists, needs a parameter  -&gt; input/logic interest</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   404  absent                     -&gt; rule out</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   (also enumerate METHODS: /login is 404 to GET but exists for POST)</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C05-M03-F2. Status codes classify endpoints; enumerate methods as well as</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">paths.</text>
+</svg>

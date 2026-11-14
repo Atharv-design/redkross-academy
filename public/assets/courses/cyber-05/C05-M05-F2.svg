@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="661" height="237" viewBox="0 0 661 237" role="img" aria-labelledby="t d">
+<title id="t">C05-M05-F2: Minimal proof versus harmful exploitation</title>
+<desc id="d">A contrast between reading one record to prove an IDOR and harmfully dumping the whole database, which adds no proof.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C05-M05-F2  Minimal proof versus harmful exploitation</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   finding: broken access control (IDOR)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   MINIMAL proof   : read ONE record you should not  -&gt; confirms it</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   HARMFUL overreach: dump the whole database         -&gt; no more proof,</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                                         real harm + legal</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                                         exposure</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   professional rule: stop at the minimum that proves the finding</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="189" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C05-M05-F2. Prove with the smallest safe action; overreach adds harm, not</text>
+<text x="20" y="205" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">proof.</text>
+</svg>

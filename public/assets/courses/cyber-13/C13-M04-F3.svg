@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="644" height="186" viewBox="0 0 644 186" role="img" aria-labelledby="t d">
+<title id="t">C13-M04-F3: Clean source - manage only from something cleaner</title>
+<desc id="d">A privileged-access workstation managing Tier 0 is allowed; an ordinary laptop managing Tier 0 is not, with the clean-source rule stated.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C13-M04-F3  Clean source - manage only from something cleaner</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   PAW (hardened, no mail/web) --manages--&gt; Tier 0 (DCs)      OK</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   ordinary laptop (mail, web) --manages--&gt; Tier 0 (DCs)      NOT OK</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   rule: the controlling system must be &gt;= the trust of what it controls</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="138" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C13-M04-F3. The clean-source principle: you cannot securely manage Tier 0</text>
+<text x="20" y="154" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">from a machine exposed to commodity attacks.</text>
+</svg>

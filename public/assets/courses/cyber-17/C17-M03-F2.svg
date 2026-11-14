@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="611" height="220" viewBox="0 0 611 220" role="img" aria-labelledby="t d">
+<title id="t">C17-M03-F2: Unified control set mapping</title>
+<desc id="d">A single control branching to a CSF category, ISO controls, regulatory requirements and register risks.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C17-M03-F2  Unified control set mapping</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  TL-04 MFA ----------+--&gt; CSF PR.AA</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                      +--&gt; ISO 27001 Annex A (access/authentication)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                      +--&gt; regulator requirement (as applicable)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                      +--&gt; risk R03, R01</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  one owner, one test, one evidence set -&gt; many requirements</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C17-M03-F2. One internal control mapped to frameworks, regulations and</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">risks.</text>
+</svg>

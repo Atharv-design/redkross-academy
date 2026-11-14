@@ -1,54 +1,58 @@
-import { sql, json, cors } from './_db.js';
-import { verifyCredentialSignature, signCredential } from './_crypto.js';
+import { sql, json, cors, serverError } from './_db.js';
+import { verifyCredentialSignature } from './_crypto.js';
 
+/**
+ * GET /api/verify?id=<verification id> - public credential verification.
+ * Returns only the fields printed on the certificate (no user id, no email).
+ * Unsigned or tampered records are reported as NOT verified; signatures are never
+ * back-filled here, because that would make any row inserted into the table look
+ * authentic.
+ */
 export default async function handler(req, res) {
   if (cors(req, res)) return;
+  if (req.method !== 'GET') return json(res, { error: 'Method not allowed' }, 405);
 
   try {
-    const { id } = req.query;
-
-    if (!id) {
-      return json(res, { error: 'Verification ID required' }, 400);
+    const raw = String(req.query?.id || '').trim();
+    if (!raw || raw.length > 64 || !/^[A-Za-z0-9_-]+$/.test(raw)) {
+      return json(res, { found: false, error: 'A valid verification ID is required' }, 400);
     }
 
-    // Clean input ID
-    const cleanId = id.trim();
-
-    const credentials = await sql`
-      SELECT * FROM credentials 
-      WHERE LOWER(verification_id) = LOWER(${cleanId}) OR id = ${cleanId}
-      LIMIT 1
+    const rows = await sql`
+      SELECT * FROM credentials WHERE UPPER(verification_id) = UPPER(${raw}) LIMIT 1
     `;
-
-    if (!credentials || credentials.length === 0) {
+    if (!rows.length) {
       return json(res, { found: false, message: 'No credential matches this verification identifier.' }, 404);
     }
-
-    const cred = credentials[0];
-
-    // Ensure digital signature exists (backfill signature if older record)
-    if (!cred.digital_signature) {
-      cred.digital_signature = signCredential(cred);
-      // Persist signature asynchronously
-      sql`UPDATE credentials SET digital_signature = ${cred.digital_signature} WHERE id = ${cred.id}`.catch(console.error);
-    }
-
-    // Verify cryptographic signature integrity
-    const verificationProof = verifyCredentialSignature(cred);
+    const cred = rows[0];
+    const proof = verifyCredentialSignature(cred);
+    const revoked = String(cred.status || '').toLowerCase() === 'revoked';
 
     return json(res, {
       found: true,
-      credential: cred,
+      credential: {
+        verification_id: cred.verification_id,
+        student_name: cred.student_name,
+        course_id: cred.course_id,
+        course_title: cred.course_title,
+        credential_title: cred.credential_title,
+        credential_type: cred.credential_type || cred.type,
+        issue_date: cred.issue_date,
+        expiration_date: cred.expiration_date,
+        grade_percentage: cred.grade_percentage,
+        status: cred.status,
+        skills_validated: cred.skills_validated,
+        verification_url: cred.verification_url,
+      },
       cryptographic_verification: {
-        verified: verificationProof.verified,
+        verified: proof.verified && !revoked,
         algorithm: 'HMAC-SHA256',
-        signature: cred.digital_signature,
-        status: verificationProof.verified ? 'VERIFIED_AUTHENTIC' : 'SIGNATURE_INVALID',
-        verified_at: new Date().toISOString()
-      }
+        status: revoked ? 'REVOKED' : proof.verified ? 'VERIFIED_AUTHENTIC' : 'SIGNATURE_INVALID',
+        reason: revoked ? 'REVOKED' : proof.reason || null,
+        verified_at: new Date().toISOString(),
+      },
     });
   } catch (error) {
-    console.error('API /verify error:', error);
-    return json(res, { error: error.message || 'Internal server error' }, 500);
+    return serverError(res, error, 'api/verify');
   }
 }

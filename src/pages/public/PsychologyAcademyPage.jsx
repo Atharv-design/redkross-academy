@@ -27,8 +27,39 @@ import { apiClient } from '../../services/apiClient';
 import { socketClient } from '../../services/socket/socketClient';
 import { useAuth } from '../../services/auth/authContext';
 
+function AvailabilityBadge({ access, courseId }) {
+  const s = access?.settings?.[courseId];
+  if (!s) return null;
+  const unlocked = access.is_admin || (access.unlocked_course_ids || []).includes(courseId);
+  let text = null;
+  let cls = '';
+  if (s.visibility === 'COMING_SOON' && !unlocked) {
+    text = 'Coming soon';
+    cls = 'bg-sky-500/90 text-white';
+  } else if (unlocked && (s.price_inr > 0 || s.visibility === 'HIDDEN')) {
+    text = 'Unlocked for you';
+    cls = 'bg-emerald-500/90 text-black';
+  } else if (s.price_inr > 0) {
+    text = `₹${Number(s.price_inr).toLocaleString('en-IN')}`;
+    cls = 'bg-amber-400/95 text-black';
+  }
+  if (!text) return null;
+  return <span className={`absolute -top-3 left-6 z-30 px-3 py-1 rounded-full text-xs font-bold shadow-lg ${cls}`}>{text}</span>;
+}
+
+/** Hidden courses are listed only for students who have them unlocked. */
+function visibleIn(access, courseId) {
+  const s = access?.settings?.[courseId];
+  if (!s || s.visibility !== 'HIDDEN') return true;
+  return Boolean(access.is_admin || (access.unlocked_course_ids || []).includes(courseId));
+}
+
 export default function PsychologyAcademyPage() {
   const { currentUser } = useAuth();
+  const [access, setAccess] = useState(null);
+  useEffect(() => {
+    apiClient.getCatalogAccess({ fresh: true }).then(setAccess);
+  }, [currentUser?.id]);
   const [courses, setCourses] = useState([]);
   const [learningPaths, setLearningPaths] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -318,14 +349,11 @@ export default function PsychologyAcademyPage() {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                {courses.map((course, idx) => (
-                  <PsychologyThemedCard
-                    key={course.id}
-                    course={course}
-                    variant={idx + 1}
-                    idx={idx}
-                    ctaText="Explore Course"
-                  />
+                {courses.filter((course) => visibleIn(access, course.id)).map((course, idx) => (
+                  <div key={course.id} className="relative">
+                    <AvailabilityBadge access={access} courseId={course.id} />
+                    <PsychologyThemedCard course={course} variant={idx + 1} idx={idx} ctaText="Explore Course" />
+                  </div>
                 ))}
               </div>
             )}

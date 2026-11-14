@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="695" height="170" viewBox="0 0 695 170" role="img" aria-labelledby="t d">
+<title id="t">C20-M03-F2: Regular versus human connection gaps</title>
+<desc id="d">Two timelines of connection marks; the first is evenly spaced, the second irregular, with the CV values given.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C20-M03-F2  Regular versus human connection gaps</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   WS-07 -&gt; 198.51.100.23   |  |  |  |  |  |  |  |  |  |   gaps ~300s, CV 0.08</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   user browsing            | |      |   ||        |    |  gaps vary, CV ~1</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                            time ------------------------------------&gt;</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="138" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C20-M03-F2. Clockwork check-ins have a low coefficient of variation.</text>
+</svg>

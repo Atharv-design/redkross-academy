@@ -59,9 +59,13 @@ class SocketClient {
       if (typeof socketFactory === 'function') {
         this.socket = socketFactory(socketUrl, {
           autoConnect: true,
+          // Keep retrying through tunnel reconnects; jitter spreads a whole batch's
+          // reconnects over time instead of all clients hitting the server at once.
           reconnection: true,
-          reconnectionAttempts: 3,
-          reconnectionDelay: 2000,
+          reconnectionAttempts: Infinity,
+          reconnectionDelay: 1500,
+          reconnectionDelayMax: 30000,
+          randomizationFactor: 0.5,
           transports: ['websocket']
         });
 

@@ -1,0 +1,4 @@
+- Log for each request: retrieved document IDs, input-filter hits, tool proposals and decisions, output-filter hits (BanyanBot returns all of these).
+- Alert on: canary or secret patterns in output (should be zero), tool denials for cross-customer actions, repeated input-filter hits from one user, documents frequently associated with denials.
+- Respond: quarantine the suspected document from the index, review its source, re-run the probe suite, notify affected users if data was exposed, and add a regression probe.
+- Report injection weaknesses in vendor AI products through their disclosure programmes.

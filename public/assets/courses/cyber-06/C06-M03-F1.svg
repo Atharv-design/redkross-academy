@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="670" height="220" viewBox="0 0 670 220" role="img" aria-labelledby="t d">
+<title id="t">C06-M03-F1: Weak versus strong session token</title>
+<desc id="d">A comparison of the lab&#x27;s weak session token (base64 of the username, no cookie attributes) against the hardened random token with protective cookie attributes.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C06-M03-F1  Weak versus strong session token</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   WEAK (lab vuln)                 STRONG (lab hardened)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   session=base64(username)        session=secrets.token_urlsafe(24)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   reversible + forgeable          random + unforgeable</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   no HttpOnly/Secure/SameSite     HttpOnly; Secure(HTTPS); SameSite=Strict</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   server trusts the value         server looks up a server-side session</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C06-M03-F1. The weak token encodes identity and is forgeable; the strong token</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">is random, server-side and protected [C06-M03-R1].</text>
+</svg>

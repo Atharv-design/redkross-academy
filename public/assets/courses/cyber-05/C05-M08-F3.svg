@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="611" height="187" viewBox="0 0 611 187" role="img" aria-labelledby="t d">
+<title id="t">C05-M08-F3: The retest proves closure</title>
+<desc id="d">The retest showing all findings open on the vulnerable target and all closed on the hardened one.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C05-M08-F3  The retest proves closure</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   vulnerable target (8099)  -&gt; retest -&gt; 0 of 4 closed (all OPEN)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   client remediates / hardened target (8100)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   hardened target (8100)    -&gt; retest -&gt; 4 of 4 closed (all CLOSED)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   before/after = documented proof the fixes work</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C05-M08-F3. The before/after retest is the engagement&#x27;s proof of value.</text>
+</svg>

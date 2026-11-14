@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="644" height="220" viewBox="0 0 644 220" role="img" aria-labelledby="t d">
+<title id="t">C13-M06-F2: Three control-aligned detections</title>
+<desc id="d">Authentication telemetry feeding three detections - failed-logon bursts, weak encryption types and privileged-logon sources - each linked to a control.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C13-M06-F2  Three control-aligned detections</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   telemetry (JSON 4624 events)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        |--&gt; count failures per account  --&gt; burst  (guessing / lockout)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        |--&gt; read passwordType           --&gt; RC4/DES where AES expected</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        +--&gt; group OK logons by account  --&gt; Tier 0 source != PAW?</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   each detection maps to a control: lockout, AES-only, tier model</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C13-M06-F2. auth_monitor.py computes three detections, each tied to a</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">control from earlier modules.</text>
+</svg>

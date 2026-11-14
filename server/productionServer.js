@@ -16,12 +16,13 @@
 
 import express from 'express';
 import { createServer } from 'http';
-import { Server as SocketIOServer } from 'socket.io';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
-import { sql } from '../api/_db.js';
+import { sql, isOriginAllowed } from '../api/_db.js';
+import { attachSocketHub } from './socketHub.js';
+import { createRateLimiter } from './rateLimit.js';
 
 dotenv.config();
 
@@ -32,6 +33,9 @@ const PORT = parseInt(process.env.PORT || '3000', 10);
 const HOST = process.env.HOST || '0.0.0.0';
 
 const app = express();
+// Behind Cloudflare/nginx set TRUST_PROXY (e.g. 1) so req.ip is the real client address.
+// Never trust X-Forwarded-For blindly: it is attacker-controlled and would defeat rate limiting.
+app.set('trust proxy', process.env.TRUST_PROXY ? (Number(process.env.TRUST_PROXY) || process.env.TRUST_PROXY) : 'loopback');
 const httpServer = createServer(app);
 
 // -----------------------------------------------------------------------------
@@ -65,26 +69,11 @@ app.use((req, res, next) => {
 // -----------------------------------------------------------------------------
 // 2. CORS RESTRICTION LAYER
 // -----------------------------------------------------------------------------
-const ALLOWED_ORIGINS = [
-  'https://academy.redkross.org.in',
-  'https://redkross-academy.vercel.app',
-  'http://localhost:5173',
-  'http://127.0.0.1:5173',
-  'http://localhost:3000',
-  'http://127.0.0.1:3000'
-];
-
-function isOriginAllowed(origin) {
-  if (!origin) return true; // Server-to-server, cURL, or local tools
-  if (ALLOWED_ORIGINS.includes(origin)) return true;
-  if (/^https:\/\/redkross-academy.*\.vercel\.app$/.test(origin)) return true;
-  return false;
-}
-
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  if (isOriginAllowed(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin || '*');
+  if (origin && isOriginAllowed(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
   }
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
@@ -97,57 +86,36 @@ app.use((req, res, next) => {
 });
 
 // -----------------------------------------------------------------------------
-// 3. IN-MEMORY SLIDING WINDOW RATE LIMITER (Zero external dependencies)
+// 3. RATE LIMITING (per user + per IP; see server/rateLimit.js)
 // -----------------------------------------------------------------------------
-const rateLimitBuckets = new Map();
+// Traffic arrives through cloudflared on 127.0.0.1, so the client IP comes from
+// CF-Connecting-IP. A whole college batch can share one NAT IP, so the per-IP
+// ceilings are very high and the real limits are per user; IPs sending many
+// rejected (401) tokens are blocked. Load-tested: 500 students, one IP, one exam.
+app.use('/api', createRateLimiter({ name: 'api', perUser: 180, perAnonIp: 300, perIp: 30000, perIpRejected: 120 }));
+app.use(
+  ['/api/auth', '/api/redeem', '/api/proctor', '/api/assessment', '/api/violation', '/api/send-email', '/api/support-tickets', '/api/e2b'],
+  createRateLimiter({
+    name: 'strict',
+    perUser: 40,
+    perAnonIp: 30,
+    perIp: 15000,
+    perIpRejected: 60,
+    message: 'Too many attempts. Please wait a moment and try again.',
+  })
+);
 
-function createRateLimiter({ windowMs = 60000, max = 120, message = 'Rate limit exceeded' }) {
-  return (req, res, next) => {
-    // Exclude static assets
-    if (!req.path.startsWith('/api/')) return next();
-
-    const ip = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress || 'unknown-ip';
-    const key = `${ip}:${req.path.startsWith('/api/auth') || req.path.startsWith('/api/quiz') ? 'strict' : 'general'}`;
-    const now = Date.now();
-
-    let record = rateLimitBuckets.get(key);
-    if (!record || now - record.resetTime > windowMs) {
-      record = { count: 1, resetTime: now };
-      rateLimitBuckets.set(key, record);
-    } else {
-      record.count += 1;
-    }
-
-    if (record.count > max) {
-      return res.status(429).json({
-        error: message,
-        retryAfterSeconds: Math.ceil((record.resetTime + windowMs - now) / 1000)
-      });
-    }
-
+// Minimal API access log (no IPs, no query strings, no bodies): method, path, status, duration.
+if (process.env.ACCESS_LOG !== '0') {
+  app.use('/api', (req, res, next) => {
+    const t0 = process.hrtime.bigint();
+    res.on('finish', () => {
+      const ms = Number(process.hrtime.bigint() - t0) / 1e6;
+      console.log(`[api] ${req.method} ${req.baseUrl}${req.path} ${res.statusCode} ${ms.toFixed(1)}ms`);
+    });
     next();
-  };
+  });
 }
-
-// Clean up stale rate-limiting buckets every 5 minutes
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, record] of rateLimitBuckets.entries()) {
-    if (now - record.resetTime > 120000) {
-      rateLimitBuckets.delete(key);
-    }
-  }
-}, 300000);
-
-// Global API rate limit: 120 requests/min
-app.use('/api', createRateLimiter({ windowMs: 60000, max: 120, message: 'Too many requests. Please slow down.' }));
-
-// Stricter rate limit for authentication & exam evaluation: 30 requests/min
-app.use(['/api/auth', '/api/quiz', '/api/violation'], createRateLimiter({
-  windowMs: 60000,
-  max: 30,
-  message: 'Security threshold exceeded. High-frequency operations rate-limited.'
-}));
 
 // Request body parser with scoped limits (2MB general, 25MB for assignments)
 app.use(express.json({ limit: '2mb' }));
@@ -156,60 +124,16 @@ app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 // -----------------------------------------------------------------------------
 // 4. HARDENED REAL-TIME SOCKET.IO SERVER (Scoped rooms & CORS protection)
 // -----------------------------------------------------------------------------
-const io = new SocketIOServer(httpServer, {
-  cors: {
-    origin: (origin, callback) => {
-      if (isOriginAllowed(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('CORS blocked: Origin not authorized for WebSocket connection.'));
-      }
-    },
-    methods: ['GET', 'POST'],
-    credentials: true
-  }
-});
+const io = attachSocketHub(httpServer);
 
-io.on('connection', (socket) => {
-  // Secure Room Subscriptions with sanitize check
-  socket.on('join:room', (room) => {
-    if (typeof room === 'string' && /^[a-zA-Z0-9_\-:]+$/.test(room)) {
-      socket.join(room);
-    }
-  });
-
-  // Proctoring telemetry: scope strictly to relevant exam session and proctors
-  socket.on('exam:violation', (data) => {
-    if (data && data.enrolmentId) {
-      io.to(`exam:${data.enrolmentId}`).to('admin:proctoring').emit('exam:violation', data);
-    }
-  });
-
-  // Assignments telemetry: scope to student and admin reviewers
-  socket.on('assignment:submit', (data) => {
-    io.to('admin:assignments').emit('assignment:submit', data);
-  });
-  socket.on('assignment:evaluated', (data) => {
-    if (data && data.userId) {
-      io.to(`user:${data.userId}`).emit('assignment:evaluated', data);
-    }
-  });
-
-  // Certificates telemetry: scope strictly to student and credentials desk
-  socket.on('certificate:request', (data) => {
-    io.to('admin:credentials').emit('certificate:request', data);
-  });
-  socket.on('certificate:dispatch', (data) => {
-    if (data && data.userId) {
-      io.to(`user:${data.userId}`).emit('certificate:dispatch', data);
-    }
-  });
-  socket.on('certificate:revoke', (data) => {
-    if (data && data.userId) {
-      io.to(`user:${data.userId}`).emit('certificate:revoke', data);
-    }
-  });
-});
+// Proctoring snapshot retention (default 90 days): purge daily
+const purgeProctorSnapshots = () =>
+  import('../api/proctor.js')
+    .then((m) => m.purgeOldSnapshots())
+    .then((n) => n && console.log(`[proctor] cleared ${n} expired snapshots`))
+    .catch((e) => console.warn('[proctor] snapshot purge skipped:', e.message));
+setTimeout(purgeProctorSnapshots, 60 * 1000).unref();
+setInterval(purgeProctorSnapshots, 24 * 60 * 60 * 1000).unref();
 
 // -----------------------------------------------------------------------------
 // 5. HEALTH & READINESS PROBES (/healthz, /readyz)
@@ -220,7 +144,8 @@ app.get(['/healthz', '/api/health'], async (req, res) => {
     try {
       await sql`SELECT 1 as ping`;
     } catch (err) {
-      dbStatus = `degraded (${err.message})`;
+      dbStatus = 'degraded';
+      console.error('[healthz] database check failed:', err.message);
     }
 
     res.status(200).json({
@@ -232,7 +157,7 @@ app.get(['/healthz', '/api/health'], async (req, res) => {
       timestamp: new Date().toISOString()
     });
   } catch (error) {
-    res.status(500).json({ status: 'error', message: error.message });
+    res.status(500).json({ status: 'error' });
   }
 });
 
@@ -250,7 +175,6 @@ app.get(['/readyz', '/api/ready'], async (req, res) => {
   } catch (err) {
     res.status(503).json({
       status: 'not_ready',
-      reason: err.message,
       timestamp: new Date().toISOString()
     });
   }
@@ -262,9 +186,16 @@ app.get(['/readyz', '/api/ready'], async (req, res) => {
 const apiDir = path.join(__dirname, '../api');
 const apiRoutes = [
   'admin',
+  'assessment',
+  'avatar',
+  'catalog',
+  'manage',
+  'proctor',
+  'profile',
+  'redeem',
   'auth',
   'courses',
-    'e2b',
+  'e2b',
   'enrol',
   'learning-paths',
   'progress',
@@ -289,7 +220,7 @@ for (const route of apiRoutes) {
       } catch (err) {
         console.error(`[API Error] /api/${route}:`, err);
         if (!res.headersSent) {
-          res.status(500).json({ error: 'Internal Server Error', details: err.message });
+          res.status(500).json({ error: 'Internal Server Error' });
         }
       }
     });
@@ -307,7 +238,7 @@ app.all('/api/learning-paths', async (req, res) => {
   } catch (err) {
     console.error('[API Error] /api/learning-paths:', err);
     if (!res.headersSent) {
-      res.status(500).json({ error: 'Internal Server Error', details: err.message });
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 });
@@ -316,11 +247,24 @@ app.all('/api/learning-paths', async (req, res) => {
 // -----------------------------------------------------------------------------
 const distDir = path.join(__dirname, '../dist');
 if (fs.existsSync(distDir)) {
+  // Cache policy, written so Cloudflare can serve almost everything from its edge:
+  //  - Vite build output with a content hash in the name: cache for a year (immutable)
+  //  - other images/media/lab kits: 7 days at the edge, 1 day in browsers
+  //  - lesson markdown: 1 hour (content fixes show up quickly)
+  //  - index.html: never cached (it points at the current hashed bundles)
+  const HASHED = /[-.][A-Za-z0-9_-]{8,}.(js|css|woff2?)$/;
   app.use(express.static(distDir, {
-    maxAge: '1d',
+    etag: true,
     setHeaders: (res, filePath) => {
-      if (filePath.endsWith('.html')) {
-        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      const p = filePath.split(path.sep).join('/');
+      if (p.endsWith('.html')) {
+        res.setHeader('Cache-Control', 'no-cache');
+      } else if (p.includes('/assets/') && HASHED.test(p)) {
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      } else if (p.includes('/course-content/')) {
+        res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=3600');
+      } else {
+        res.setHeader('Cache-Control', 'public, max-age=86400, s-maxage=604800');
       }
     }
   }));

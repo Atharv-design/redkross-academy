@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="686" height="187" viewBox="0 0 686 187" role="img" aria-labelledby="t d">
+<title id="t">C08-M05-F3: Reading a match</title>
+<desc id="d">A table of four match outcomes ranging from strong evidence to unknown, depending on confidence, expiry and telemetry.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C08-M05-F3  Reading a match</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  MATCH + high confidence + current + context fits  -&gt; strong evidence</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  MATCH + low confidence  + expired + shared infra  -&gt; weak; do not act alone</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  NO MATCH + telemetry present                      -&gt; not seen (this IOC)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  NO MATCH + telemetry absent (no hashes collected) -&gt; unknown</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C08-M05-F3. Four outcomes of IOC matching and what each means.</text>
+</svg>

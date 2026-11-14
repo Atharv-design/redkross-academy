@@ -1,0 +1,7 @@
+- Schedule evidence collection (daily or on every change) and alert on any regression.
+- Run drift detection continuously; prefer GitOps reconciliation.
+- Track Kubernetes, runtime and add-on versions against advisories; subscribe to the Kubernetes security announcements and to every add-on's advisories.
+- Rebuild images on base updates and re-run gates (Module 2).
+- Review RBAC and accepted risks on a fixed cycle; expire exceptions.
+- Re-test after every Kubernetes upgrade: defaults change.
+- Exercise incident response for the cluster at least yearly, including secret rotation at scale.

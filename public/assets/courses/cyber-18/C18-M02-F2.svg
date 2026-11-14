@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="628" height="170" viewBox="0 0 628 170" role="img" aria-labelledby="t d">
+<title id="t">C18-M02-F2: Who executes a tool call</title>
+<desc id="d">The model proposes a tool call; the application validates, checks policy, executes with the user&#x27;s authority, logs, and returns the result.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C18-M02-F2  Who executes a tool call</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  model: proposes {&quot;name&quot;:&quot;issue_refund&quot;,&quot;args&quot;:{...}}</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  app:   validate args -&gt; policy check (owner, limits) -&gt; execute with</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">         user&#x27;s authority -&gt; log -&gt; result back to context</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="138" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C18-M02-F2. The model proposes; the application decides.</text>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="661" height="203" viewBox="0 0 661 203" role="img" aria-labelledby="t d">
+<title id="t">C12-M07-F2: SLSA Build levels (v1.2)</title>
+<desc id="d">A list of four SLSA Build levels from no provenance to a hardened platform, marking the lab example at level 1.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C12-M07-F2  SLSA Build levels (v1.2)</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  L0  no provenance</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  L1  provenance exists (unsigned or self-generated)      &lt;- lab example</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  L2  signed provenance from a hosted build platform</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  L3  hardened platform: isolated builds, signing secret out of user steps</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C12-M07-F2. SLSA Build track levels, with the lab&#x27;s teaching provenance at the</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">L1 style [C12-M07-R3].</text>
+</svg>

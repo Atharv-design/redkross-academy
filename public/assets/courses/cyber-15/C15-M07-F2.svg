@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="678" height="187" viewBox="0 0 678 187" role="img" aria-labelledby="t d">
+<title id="t">C15-M07-F2: Nonce strategy decision</title>
+<desc id="d">Four situations mapped to nonce strategies: per-record keys with random nonces, rotation or extended or misuse-resistant modes for high volume, counters for a single writer, and deterministic nonces for signatures.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C15-M07-F2  Nonce strategy decision</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  per-record key (envelope)?  -&gt; random nonce, reuse practically impossible</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  shared key, high volume?    -&gt; rotate by count, or XChaCha20, or GCM-SIV</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  single writer, durable state? -&gt; counter nonce (never restore/clone state)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  signatures (ECDSA)?         -&gt; RFC 6979 deterministic or Ed25519</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C15-M07-F2. Choosing a nonce strategy by design context.</text>
+</svg>

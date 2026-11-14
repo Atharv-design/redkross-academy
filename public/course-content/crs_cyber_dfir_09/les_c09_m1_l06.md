@@ -1,0 +1,5 @@
+- Authority. Have written authorisation stating the scope (devices, accounts, dates, questions). Employers may examine company systems under policy, but personal devices and accounts need consent or lawful process.
+- Proportionality. Collect what the questions require. Avoid browsing personal content that is out of scope. If you meet unrelated potentially illegal material, stop and escalate per policy and law.
+- Objectivity. Your duty is to the facts, not to the client's preferred answer. Report limitations and alternative explanations.
+- Confidentiality. Store evidence securely. Share on a need-to-know basis. Protect privileged communications where legal counsel directs.
+- Competence and honesty. Do not overstate. "Consistent with" and "proves" mean very different things (Module 8).

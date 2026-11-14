@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="619" height="306" viewBox="0 0 619 306" role="img" aria-labelledby="t d">
+<title id="t">C20-M08-F1: Release gates</title>
+<desc id="d">A vertical chain of four gates, each of which can block the release, ending with a manifest, a release report and staged deployment.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C20-M08-F1  Release gates</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   candidate pack</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   G1 unit tests ---- fail --&gt; BLOCKED</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        | pass</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   G2 ATT&amp;CK tags --- fail --&gt; BLOCKED</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        | pass</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   G3 purple replay vs previous pack --- regression --&gt; BLOCKED</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        | pass</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   G4 FP budget (exceptions need owner + ticket) --- over --&gt; BLOCKED</text>
+<text x="20" y="213" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        | pass</text>
+<text x="20" y="230" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   manifest (sha256) + release report --&gt; staged deployment</text>
+<text x="20" y="247" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="274" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C20-M08-F1. Four gates in sequence, then a verifiable release.</text>
+</svg>

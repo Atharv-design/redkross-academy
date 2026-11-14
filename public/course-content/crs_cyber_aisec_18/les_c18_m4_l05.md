@@ -1,0 +1,7 @@
+- Inventory: datasets, indexes, logs and models with owners and classification (Module 1 asset inventory).
+- Data lineage: which data trained or feeds which model and index.
+- Quality and provenance: source, licence, consent, review status (Module 6 for supply chain).
+- Access: least privilege to datasets and indexes; separate environments.
+- Retention and deletion schedules for each store.
+- Integrity: manifests and hashes for curated data (supply_check.py detects changes to kb/ - Module 6).
+- Review: privacy impact assessment before launch and on major changes.

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="661" height="187" viewBox="0 0 661 187" role="img" aria-labelledby="t d">
+<title id="t">C17-M07-F3: Exposure through fourth parties</title>
+<desc id="d">A chain from the organisation to its payroll provider to a file-transfer product, showing that a vulnerability there exposes the organisation&#x27;s data.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C17-M07-F3  Exposure through fourth parties</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  Tamarind -&gt; payroll provider -&gt; file-transfer product (e.g. MOVEit-type)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                   |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                 vulnerability -&gt; your data exposed without your systems</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                   being touched</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C17-M07-F3. A vendor&#x27;s own suppliers and products can expose your data.</text>
+</svg>

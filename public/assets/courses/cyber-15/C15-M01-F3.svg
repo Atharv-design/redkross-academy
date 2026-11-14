@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="602" height="203" viewBox="0 0 602 203" role="img" aria-labelledby="t d">
+<title id="t">C15-M01-F3: Entropy scale</title>
+<desc id="d">A horizontal scale from 13 bits for a PIN to 256 bits for an AES-256 key, indicating that higher values are beyond brute force.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C15-M01-F3  Entropy scale</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  bits   13      38        78        128             256</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">         PIN   8 lower  12 mixed  random key      AES-256 key</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">         |------|---------|---------|----------------|</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">         seconds  hours    out of reach for brute force (classical)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C15-M01-F3. Approximate entropy of common secrets (values from the</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">execution-tested lab; time labels are qualitative).</text>
+</svg>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="678" height="254" viewBox="0 0 678 254" role="img" aria-labelledby="t d">
+<title id="t">C15-M08-F1: rkcrypt encryption flow</title>
+<desc id="d">A passphrase and random salt feed scrypt to make a key; AES-256-GCM encrypts the plaintext with the header as associated data, producing header, ciphertext and tag.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C15-M08-F1  rkcrypt encryption flow</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  passphrase --+</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  random salt -+--&gt; scrypt(N=2^17,r=8,p=1) --&gt; 32-byte key</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                                   |</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  header = RKC1|kdf|log2n|r|p|salt|nonce (36 B) ---+---&gt; AES-256-GCM(key,</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  plaintext ------------------------------------------&gt;   nonce, AAD=header)</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                                   |</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  output file = header || ciphertext || 16-byte tag</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="206" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C15-M08-F1. Passphrase and salt derive the key; the header is authenticated as</text>
+<text x="20" y="222" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">associated data.</text>
+</svg>

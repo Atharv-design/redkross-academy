@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="586" height="220" viewBox="0 0 586 220" role="img" aria-labelledby="t d">
+<title id="t">C10-M04-F2: The four monitoring channels</title>
+<desc id="d">Process, file, registry and network channels with examples, correlated into one behaviour story.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C10-M04-F2  The four monitoring channels</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   PROCESS : spawn/inject/terminate (T1055 injection)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   FILE    : create/modify/delete (drops, encryption)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   REGISTRY: keys/values (persistence, config, disabled defences)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   NETWORK : DNS + connections (C2 beacon, download, exfil)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   correlate the four into a behaviour story</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C10-M04-F2. The four channels of dynamic monitoring, correlated</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">[C10-M04-R2].</text>
+</svg>

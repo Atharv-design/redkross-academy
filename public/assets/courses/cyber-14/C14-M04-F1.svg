@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="661" height="272" viewBox="0 0 661 272" role="img" aria-labelledby="t d">
+<title id="t">C14-M04-F1: A Diamond event (E3)</title>
+<desc id="d">A diamond with adversary at the top, capability on the right, victim at the bottom and infrastructure on the left, filled with the lab values, and a meta-feature line beneath.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C14-M04-F1  A Diamond event (E3)</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                    ADVERSARY: unknown</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                     /                \</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   INFRASTRUCTURE:                     CAPABILITY:</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   nilgiri-policy-renewal,             lure page, payload download,</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   198.51.100.78, 203.0.113.45,        HTTPS POSTs (6)</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   198.51.100.77                     /</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                     \                /</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                    VICTIM: u017 at 10.40.3.57 (Nilgiri finance)</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   meta: 2026-10-28 10:12-10:55 UTC | phase: delivery/C2 | result: contact</text>
+<text x="20" y="213" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="240" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C14-M04-F1. The four core features and meta-features of the 28 October event.</text>
+</svg>

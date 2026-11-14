@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="678" height="203" viewBox="0 0 678 203" role="img" aria-labelledby="t d">
+<title id="t">C06-M06-F2: SSRF and the server&#x27;s network position</title>
+<desc id="d">A diagram showing the server fetching attacker-chosen internal or metadata URLs, with the fix of a default-deny allowlist and blocked internal address ranges.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C06-M06-F2  SSRF and the server&#x27;s network position</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   attacker -&gt; app /fetch?url=&lt;attacker choice&gt;</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   app (inside network) fetches: internal service | 169.254.169.254 metadata</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   returns contents the attacker could not reach directly  (SSRF)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   fixed: default-deny allowlist + block private/loopback/link-local ranges</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C06-M06-F2. SSRF abuses the server&#x27;s reach into internal and metadata endpoints;</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">default-deny allowlisting and range blocking prevent it [C06-M06-R3].</text>
+</svg>

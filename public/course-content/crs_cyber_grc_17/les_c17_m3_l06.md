@@ -1,0 +1,4 @@
+- Current and Target Profiles: for each relevant CSF outcome, record today's state and the target, prioritised by risk. The difference is the roadmap.
+- Maturity models (for example CMMI-style 0-5 scales, C2M2 for energy) help show progress. Define each level with observable criteria.
+- Certification shows that an ISMS meets the standard within its scope, at audit time. It does not prove that the organisation is secure. Check the certificate scope: an "ISO 27001 certified" vendor may have certified only one data centre.
+- Compliance is not security. Controls can pass audits and still fail against real attackers if tests are superficial. Combine frameworks with threat-informed testing (Courses 08, 19, 20).

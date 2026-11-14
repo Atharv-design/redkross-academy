@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="644" height="220" viewBox="0 0 644 220" role="img" aria-labelledby="t d">
+<title id="t">C13-M08-F1: The capstone deliverable</title>
+<desc id="d">A flow from building the lab through hardening and evidence capture to a structured audit report.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C13-M08-F1  The capstone deliverable</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   BUILD (contained lab) --&gt; HARDEN (checklist, each tied to a control)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                   |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                   v</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   AUDIT REPORT &lt;-- EVIDENCE (before/after tool output, exit code)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     scope | method | before | actions | after | residual + forward plan</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C13-M08-F1. The capstone produces a hardened lab and a report whose findings</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">are closed and re-tested.</text>
+</svg>

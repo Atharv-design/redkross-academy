@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="686" height="203" viewBox="0 0 686 203" role="img" aria-labelledby="t d">
+<title id="t">C17-M05-F2: Dependency check (lab)</title>
+<desc id="d">A tree under the dispatch process listing three dependencies with their recovery times; the courier API exceeds the process target.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C17-M05-F2  Dependency check (lab)</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  dispatch (RTO 8h)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">    +-- shipment DB   RTO 6h   OK</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">    +-- identity SSO  RTO 4h   OK</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">    +-- courier API   RTO 12h  GAP (&gt; 8h) -&gt; manual workaround / 2nd provider</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C17-M05-F2. One dependency prevents the dispatch RTO from being met</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">(execution-tested check).</text>
+</svg>

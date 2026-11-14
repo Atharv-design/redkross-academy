@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="644" height="237" viewBox="0 0 644 237" role="img" aria-labelledby="t d">
+<title id="t">C07-M02-F1: First-match evaluation</title>
+<desc id="d">A trace of a user-to-database flow through an ordered ruleset, matching an over-broad rule and being allowed before later rules are reached.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C07-M02-F1  First-match evaluation</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   flow: user -&gt; db tcp/5432</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   rule 0 internet-&gt;dmz:443   no match</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   rule 1 dmz-&gt;app:8080       no match</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   rule 2 app-&gt;db:5432        no match</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   rule 3 user-&gt;any:1-65535   MATCH -&gt; ALLOW  (over-broad; decides here)</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   (later rules never consulted)</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="189" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C07-M02-F1. First-match: the first matching rule decides; a broad early rule</text>
+<text x="20" y="205" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">overrides narrower later ones [C07-M02-R1].</text>
+</svg>

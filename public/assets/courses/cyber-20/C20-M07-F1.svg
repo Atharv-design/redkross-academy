@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="653" height="323" viewBox="0 0 653 323" role="img" aria-labelledby="t d">
+<title id="t">C20-M07-F1: The purple-team validation loop</title>
+<desc id="d">A loop from ATT&amp;CK priorities to a test plan, replay, results, root cause, tuning with tests, regression and release, with a retest when the environment changes.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C20-M07-F1  The purple-team validation loop</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   ATT&amp;CK priorities --&gt; test plan (variants from docs)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                              |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                              v</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   replay synthetic telemetry --&gt; rules --&gt; DETECTED / MISSED</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                               |</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                         root cause: logic | telemetry | parsing | sensor</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                               |</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                       tune in branch --&gt; unit tests --&gt; replay again</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                               |</text>
+<text x="20" y="213" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                         regression on reference day (hits unchanged?)</text>
+<text x="20" y="230" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                               |</text>
+<text x="20" y="247" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                            release (Module 8) --&gt; retest on change</text>
+<text x="20" y="264" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="291" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C20-M07-F1. Validate, diagnose, tune, regress, release.</text>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="203" viewBox="0 0 720 203" role="img" aria-labelledby="t d">
+<title id="t">C16-M02-F2: Personal vs Enterprise</title>
+<desc id="d">Personal versus Enterprise authentication modes and when to use each.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C16-M02-F2  Personal vs Enterprise</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   PERSONAL (PSK/SAE) : one shared secret; simple; home/small/guest</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   ENTERPRISE (802.1X): per-user/device auth via RADIUS+EAP; revocable;</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                        accountable; CORPORATE</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   corporate -&gt; WPA3-Enterprise; guest/small -&gt; WPA3-Personal (strong passphrase)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C16-M02-F2. Personal shares one secret; Enterprise authenticates each identity</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">[C16-M02-R1].</text>
+</svg>

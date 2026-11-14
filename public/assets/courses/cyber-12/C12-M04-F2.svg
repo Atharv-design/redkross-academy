@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="695" height="221" viewBox="0 0 695 221" role="img" aria-labelledby="t d">
+<title id="t">C12-M04-F2: SAST in the pipeline</title>
+<desc id="d">A flow from the IDE to a pull-request scan whose non-zero exit blocks the merge until fixed or justifiably suppressed, followed by nightly full scans and backlog triage.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C12-M04-F2  SAST in the pipeline</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  developer IDE (fast rules) --&gt; pull request: semgrep --error on changed code</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">       --&gt; exit 1? --yes--&gt; block, show finding inline --&gt; fix / justified</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                                             suppression</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">              | no</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">              v</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">         merge --&gt; nightly full scan --&gt; backlog triage (owner, SLA)</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="189" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C12-M04-F2. Where SAST runs and how its exit code controls the merge.</text>
+</svg>

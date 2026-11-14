@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="712" height="255" viewBox="0 0 712 255" role="img" aria-labelledby="t d">
+<title id="t">C12-M02-F1: DFD of the shipment service</title>
+<desc id="d">A data-flow diagram with the customer, the shipment API process, the database and log stores, a notifier process calling a courier API, and a CI/CD process fetching from a package index, with four labelled trust boundaries.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C12-M02-F1  DFD of the shipment service</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                 B1 (internet)            B2</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  [Customer] ==HTTPS==&gt; ( P1 shipment API ) ---SQL/TLS---&gt; [= D1 shipments DB =]</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                              |      \</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                              |       &#x27;----&gt; [= D2 logs =]</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                              v</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                      ( P2 notifier ) ==HTTPS/B3==&gt; [Courier API]</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  build time:  ( P3 CI/CD ) ==B4==&gt; [Package index]</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  legend: [ ] external entity  ( ) process  [= =] data store  B = trust boundary</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="223" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C12-M02-F1. The shipment service with runtime and build-time trust boundaries.</text>
+</svg>

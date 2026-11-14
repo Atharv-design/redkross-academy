@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="686" height="221" viewBox="0 0 686 221" role="img" aria-labelledby="t d">
+<title id="t">C10-M07-F2: The Ghidra workflow</title>
+<desc id="d">The Ghidra workflow from import and auto-analysis through orientation, reading, following logic and extraction.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C10-M07-F2  The Ghidra workflow</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   import -&gt; auto-analyse (disasm + functions + CFG + decompile)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     -&gt; orient (entry point + imports)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     -&gt; find functions calling interesting APIs (net/crypto/process/registry)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     -&gt; read + rename + comment (build a map)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     -&gt; follow logic (decrypt config, trigger, C2)</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     -&gt; extract (keys, config, C2, algorithm)</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="189" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C10-M07-F2. The Ghidra RE workflow: orient, read, follow, extract [C10-M07-R2].</text>
+</svg>

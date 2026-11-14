@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="661" height="272" viewBox="0 0 661 272" role="img" aria-labelledby="t d">
+<title id="t">C20-M06-F2: The gate decision</title>
+<desc id="d">A decision chain: idempotency check, dry-run check, approval check, rate-limit check, then execution and audit.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C20-M06-F2  The gate decision</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   step --&gt; already done? --yes--&gt; SKIP</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">              | no</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">            dry-run? --yes--&gt; WOULD-RUN / WOULD-WAIT</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">              | no</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">            approvers &gt;= need (tier0: 2 distinct, else 1)? --no--&gt; BLOCKED</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">              | yes</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">            containment cap reached? --yes--&gt; BLOCKED-RATE-LIMIT</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">              | no</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">            run connector --&gt; audit log</text>
+<text x="20" y="213" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="240" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C20-M06-F2. The order of checks in soar.py&#x27;s decide().</text>
+</svg>

@@ -1,0 +1,5 @@
+- Instructions and data share one channel. An LLM receives a single sequence of tokens; the system prompt, the user's message and retrieved documents are all text. The model has no reliable built-in way to tell which text is authoritative (Modules 2-3).
+- Behaviour is probabilistic. The same input can give different outputs; controls must be evaluated statistically, over many runs (Module 7).
+- Behaviour is learned. Training data and fine-tuning shape what the model does, so data provenance is a security property (Module 6).
+- Outputs are often trusted by other components (browsers, databases, tools), which turns model mistakes into system actions (Module 5).
+- Classic security still dominates: authentication, authorisation, data protection, logging, supply chain and secure coding apply to every AI component - as the March 2023 case shows.

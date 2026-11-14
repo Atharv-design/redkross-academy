@@ -28,8 +28,39 @@ import { socketClient } from '../../services/socket/socketClient';
 import { useAuth } from '../../services/auth/authContext';
 import { CYBER_COURSES } from '../../services/db/cyberCourses';
 
+function AvailabilityBadge({ access, courseId }) {
+  const s = access?.settings?.[courseId];
+  if (!s) return null;
+  const unlocked = access.is_admin || (access.unlocked_course_ids || []).includes(courseId);
+  let text = null;
+  let cls = '';
+  if (s.visibility === 'COMING_SOON' && !unlocked) {
+    text = 'Coming soon';
+    cls = 'bg-sky-500/90 text-white';
+  } else if (unlocked && (s.price_inr > 0 || s.visibility === 'HIDDEN')) {
+    text = 'Unlocked for you';
+    cls = 'bg-emerald-500/90 text-black';
+  } else if (s.price_inr > 0) {
+    text = `₹${Number(s.price_inr).toLocaleString('en-IN')}`;
+    cls = 'bg-amber-400/95 text-black';
+  }
+  if (!text) return null;
+  return <span className={`absolute -top-3 left-6 z-30 px-3 py-1 rounded-full text-xs font-bold shadow-lg ${cls}`}>{text}</span>;
+}
+
+/** Hidden courses are listed only for students who have them unlocked. */
+function visibleIn(access, courseId) {
+  const s = access?.settings?.[courseId];
+  if (!s || s.visibility !== 'HIDDEN') return true;
+  return Boolean(access.is_admin || (access.unlocked_course_ids || []).includes(courseId));
+}
+
 export default function CyberAcademyPage() {
   const { currentUser } = useAuth();
+  const [access, setAccess] = useState(null);
+  useEffect(() => {
+    apiClient.getCatalogAccess({ fresh: true }).then(setAccess);
+  }, [currentUser?.id]);
   const [courses, setCourses] = useState([]);
   const [learningPaths, setLearningPaths] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -60,16 +91,8 @@ export default function CyberAcademyPage() {
 
   const cyberCoursesList = useMemo(() => {
     // Strictly canonical cybersecurity courses only
-    const ALLOWED_CYBER_IDS = new Set([
-      'crs_cyber_intro_01', 
-      'crs_cyber_net_02', 
-      'crs_cyber_admin_03',
-      'crs_cyber_python_04',
-      'introduction-to-cybersecurity',
-      'computer-networking-for-cybersecurity',
-      'linux-and-windows-system-administration',
-      'python-for-cybersecurity'
-    ]);
+    // Every course in the canonical cyber catalog (01-04 hand-built, 05-22 from the course library)
+    const ALLOWED_CYBER_IDS = new Set(CYBER_COURSES.flatMap((c) => [c.id, c.slug]));
 
     const list = CYBER_COURSES.map((cc) => ({
       ...cc,
@@ -97,8 +120,10 @@ export default function CyberAcademyPage() {
       });
     }
 
-    return list.filter((c) => ALLOWED_CYBER_IDS.has(c.id) || ALLOWED_CYBER_IDS.has(c.slug));
-  }, [courses]);
+    return list
+      .filter((c) => ALLOWED_CYBER_IDS.has(c.id) || ALLOWED_CYBER_IDS.has(c.slug))
+      .filter((c) => visibleIn(access, c.id));
+  }, [courses, access]);
 
   const masterCourse = cyberCoursesList[0];
   const masterTrack = masterCourse;
@@ -296,11 +321,10 @@ export default function CyberAcademyPage() {
             {/* Responsive 2x2 Grid: Course 01, Course 02 & Course 03 with uniform heights */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto items-stretch">
               {cyberCoursesList.map((courseItem, idx) => (
-                <CyberLearningCard 
-                  key={courseItem.id || courseItem.slug || idx} 
-                  course={courseItem} 
-                  idx={idx} 
-                />
+                <div key={courseItem.id || courseItem.slug || idx} className="relative">
+                  <AvailabilityBadge access={access} courseId={courseItem.id} />
+                  <CyberLearningCard course={courseItem} idx={idx} />
+                </div>
               ))}
             </div>
           </section>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="670" height="187" viewBox="0 0 670 187" role="img" aria-labelledby="t d">
+<title id="t">C11-M06-F3: Triage of findings</title>
+<desc id="d">Four severity bands with examples.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C11-M06-F3  Triage of findings</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  CRITICAL  internet exposure (SSH/RDP, public DB, public storage, TLS 1.0)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  HIGH      encryption, versioning, deletion protection, logging</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  MEDIUM    resilience options (replication, Multi-AZ)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  LOW/INFO  monitoring extras (performance insights) - accept or fix</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C11-M06-F3. Not all failed checks are equal.</text>
+</svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="695" height="237" viewBox="0 0 695 237" role="img" aria-labelledby="t d">
+<title id="t">C09-M02-F1: Acquisition with a write blocker</title>
+<desc id="d">A suspect disk connects through a write blocker to a forensic workstation, which writes an image, a hash and a log to a separate evidence drive.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C09-M02-F1  Acquisition with a write blocker</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  [suspect disk] --SATA/USB--&gt; [WRITE BLOCKER] --USB--&gt; [forensic workstation]</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                 reads pass                    |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                 writes refused                v</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                              imager -&gt; image file on wiped</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                                       evidence drive</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                                       + SHA-256 + log</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="189" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C09-M02-F1. The write blocker passes reads and blocks writes between the suspect</text>
+<text x="20" y="205" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">disk and the workstation.</text>
+</svg>

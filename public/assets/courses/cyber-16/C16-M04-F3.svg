@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="728" height="187" viewBox="0 0 728 187" role="img" aria-labelledby="t d">
+<title id="t">C16-M04-F3: Bluetooth hardening checklist</title>
+<desc id="d">A checklist of Bluetooth device-hardening settings.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C16-M04-F3  Bluetooth hardening checklist</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   [x] authenticated association (not Just Works)  [x] LE Secure Connections</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   [x] discoverable on-demand/limited (not always) [x] no default/fixed PIN</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   [x] maximum encryption key size (16 bytes)      [x] review/prune bonded devices</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   [x] disable BT when unused; patch firmware</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C16-M04-F3. A Bluetooth/BLE device-hardening checklist [C16-M04-R2].</text>
+</svg>

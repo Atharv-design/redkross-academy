@@ -303,14 +303,30 @@ export default function Navbar() {
                           <User className="w-4 h-4 text-[#FFA439]" />
                           <span>Student Portal</span>
                         </Link>
-                        {cadetId && (
+                        <Link
+                          to="/student/profile"
+                          onClick={() => setShowProfileMenu(false)}
+                          className="flex items-center gap-2 px-4 py-2 text-slate-300 hover:text-[#FFA439] hover:bg-[#1B2530] transition-colors"
+                        >
+                          <Award className="w-4 h-4 text-[#FF7A00]" />
+                          <span>My Profile &amp; Certificates</span>
+                        </Link>
+                        <Link
+                          to="/join"
+                          onClick={() => setShowProfileMenu(false)}
+                          className="flex items-center gap-2 px-4 py-2 text-slate-300 hover:text-[#FFA439] hover:bg-[#1B2530] transition-colors"
+                        >
+                          <Coins className="w-4 h-4 text-[#FF7A00]" />
+                          <span>Redeem a Code</span>
+                        </Link>
+                        {['admin', 'super_admin'].includes(currentUser?.role) && (
                           <Link
-                            to={`/verify/${cadetId}`}
+                            to="/admin"
                             onClick={() => setShowProfileMenu(false)}
-                            className="flex items-center gap-2 px-4 py-2 text-slate-300 hover:text-[#FFA439] hover:bg-[#1B2530] transition-colors"
+                            className="flex items-center gap-2 px-4 py-2 text-[#FFA439] hover:bg-[#1B2530] transition-colors"
                           >
-                            <Award className="w-4 h-4 text-[#FF7A00]" />
-                            <span>My Verified Dossier</span>
+                            <User className="w-4 h-4" />
+                            <span>Admin Console</span>
                           </Link>
                         )}
                         <Link

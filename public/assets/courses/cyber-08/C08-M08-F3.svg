@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="619" height="186" viewBox="0 0 619 186" role="img" aria-labelledby="t d">
+<title id="t">C08-M08-F3: Shift report structure</title>
+<desc id="d">A sequence of seven report sections from headline to pending decisions.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C08-M08-F3  Shift report structure</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  1 Headline  -&gt;  2 Active incidents (status, next step)  -&gt;  3 Queue</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  -&gt;  4 Hunts  -&gt;  5 Platform health  -&gt;  6 Handover actions (owners)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  -&gt;  7 Pending decisions</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="138" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C08-M08-F3. The seven sections of a SOC shift report, most important</text>
+<text x="20" y="154" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">first.</text>
+</svg>

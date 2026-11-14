@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="644" height="220" viewBox="0 0 644 220" role="img" aria-labelledby="t d">
+<title id="t">C08-M06-F3: Storyline mapped to tactics</title>
+<desc id="d">A left-to-right chain of tactics with technique IDs for the phishing path, a separate credential-access path for the VPN spray, and log clearing under Defense Impairment.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C08-M06-F3  Storyline mapped to tactics</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  Initial Access   Execution     C2          Persistence    Exfiltration</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  T1566.001 ----&gt;  T1204.002 --&gt; T1071.001 -&gt; T1136.001 ---&gt; T1567.002?</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                   T1059.001                  T1098.007</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  Credential Access: T1110.003 --&gt; Initial Access: T1078/T1133 (gopal)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  Defense Impairment: T1685.005 (log cleared)</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C08-M06-F3. The Banyan storyline mapped to ATT&amp;CK v20.1 tactics and</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">techniques.</text>
+</svg>

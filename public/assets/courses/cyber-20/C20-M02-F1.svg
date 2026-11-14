@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="644" height="323" viewBox="0 0 644 323" role="img" aria-labelledby="t d">
+<title id="t">C20-M02-F1: The WS-07 process tree</title>
+<desc id="d">A tree with explorer at the root and three Word processes below it; one Word process starts PowerShell, which starts whoami, net, schtasks and tar, each labelled with its behaviour.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C20-M02-F1  The WS-07 process tree</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   explorer.exe (user07)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     +-- WINWORD.EXE  Invoice_Nov.docm</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     |     |</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     |     +-- powershell.exe -EncodedCommand ...      [Office -&gt; shell]</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     |           |</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     |           +-- whoami.exe /groups                [discovery]</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     |           +-- net.exe group &quot;Domain Admins&quot;     [discovery]</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     |           +-- schtasks.exe /Create ...          [persistence]</text>
+<text x="20" y="213" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     |           +-- tar.exe ... \\FS-01\Finance\Q4    [collection]</text>
+<text x="20" y="230" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     |</text>
+<text x="20" y="247" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     +-- WINWORD.EXE  (normal)    +-- WINWORD.EXE (normal)</text>
+<text x="20" y="264" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="291" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C20-M02-F1. One malicious branch among normal activity.</text>
+</svg>

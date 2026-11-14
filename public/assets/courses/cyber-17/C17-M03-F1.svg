@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="678" height="203" viewBox="0 0 678 203" role="img" aria-labelledby="t d">
+<title id="t">C17-M03-F1: CSF 2.0 Functions</title>
+<desc id="d">Govern is shown above a sequence of Identify, Protect, Detect, Respond and Recover, with category counts 6, 3, 5, 2, 4 and 2.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C17-M03-F1  CSF 2.0 Functions</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                       +-----------+</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                       |  GOVERN   |  (GV: 6 categories)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                       +-----------+</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     IDENTIFY (3) -&gt; PROTECT (5) -&gt; DETECT (2) -&gt; RESPOND (4) -&gt; RECOVER (2)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C17-M03-F1. Govern sits across the other five Functions; category counts from</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">CSWP 29.</text>
+</svg>

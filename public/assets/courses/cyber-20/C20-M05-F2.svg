@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="678" height="204" viewBox="0 0 678 204" role="img" aria-labelledby="t d">
+<title id="t">C20-M05-F2: Data requirements decide what &quot;nothing found&quot; means</title>
+<desc id="d">Bars showing the Security log on 4 of 16 hosts and Sysmon on 16 of 16, with the resulting precise statement of what the hunt can conclude.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C20-M05-F2  Data requirements decide what &quot;nothing found&quot; means</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   fleet 16 hosts  [##############  ]</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   Security 4698   [####            ]  4/16  -&gt; H1 primary covers 25%</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   Sysmon proc     [################] 16/16  -&gt; fallback (schtasks.exe only)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   statement: &quot;no other suspicious tasks on 4 hosts; no schtasks.exe</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">               creation on 16 hosts; other creation methods unseen on 12&quot;</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C20-M05-F2. Coverage bars for each data source behind a hunt conclusion.</text>
+</svg>

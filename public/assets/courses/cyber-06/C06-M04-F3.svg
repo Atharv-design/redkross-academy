@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="619" height="203" viewBox="0 0 619 203" role="img" aria-labelledby="t d">
+<title id="t">C06-M04-F3: Broken function-level control in the lab</title>
+<desc id="d">A comparison of the vulnerable admin check that trusts a client-supplied role cookie against the hardened check that requires an authenticated admin session.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C06-M04-F3  Broken function-level control in the lab</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   GET /admin with Cookie: role=admin (no real admin session)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   vuln:  if cookie role == admin -&gt; show all users   (trusts client)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   fixed: if session.role == admin -&gt; show; else 403  (trusts server)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   rule: decide from the authenticated session, deny by default</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C06-M04-F3. The vulnerable /admin trusts a client cookie; the fix</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">requires a server-side admin session.</text>
+</svg>

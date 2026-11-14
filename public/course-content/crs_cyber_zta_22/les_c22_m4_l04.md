@@ -1,0 +1,5 @@
+- TLS 1.2+/1.3 for all external traffic and, per tenet 2, internal traffic as well (Course 15 M06).
+- mTLS for service-to-service identity (service mesh or platform certificates with short lifetimes, automated rotation).
+- Private connectivity to cloud services (private endpoints/links) to keep data-plane traffic off the internet; combine with identity controls.
+- Site-to-site VPN or SD-WAN for branches where needed, with segmentation at both ends.
+- Certificate lifecycle automation is a prerequisite at scale (47-day public certificates by 2029; Course 15 M06).

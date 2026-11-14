@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="636" height="186" viewBox="0 0 636 186" role="img" aria-labelledby="t d">
+<title id="t">C19-M08-F1: The engagement pipeline</title>
+<desc id="d">A pipeline from the RoE gate through emulation and gap analysis to two reports.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C19-M08-F1  The engagement pipeline</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   RoE gate -&gt; validated in-scope plan -&gt; emulate (isolated) + evidence</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     -&gt; map to telemetry/containment -&gt; purple-team gap analysis</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     -&gt; EXECUTIVE + TECHNICAL reports (evidence-traced)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="138" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C19-M08-F1. The whole engagement as a bounded, evidenced pipeline to two</text>
+<text x="20" y="154" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">reports.</text>
+</svg>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="653" height="288" viewBox="0 0 653 288" role="img" aria-labelledby="t d">
+<title id="t">C20-M02-F2: Joining process and identity telemetry</title>
+<desc id="d">Two columns of timestamped events, endpoint on the left and identity on the right, with connecting lines where the scheduled task and the file-share access correspond.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C20-M02-F2  Joining process and identity telemetry</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   SYSMON (WS-07)                         SECURITY (DC-01 / FS-01)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   10:42 Word -&gt; PowerShell</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   10:43 discovery</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   10:47 schtasks /Create  ------------  10:47 4698 task created (WS-07)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                          12:10 4625 x6 svc-print src .17</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                          12:11 4624 svc-print @ FS-01</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   12:14 tar \\FS-01\Finance  ---------- (same source, same window)</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                          12:40 1102 log cleared (WS-07)</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">            join keys: host &lt;-&gt; IpAddress 10.20.1.17, user, time</text>
+<text x="20" y="213" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="240" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C20-M02-F2. Process and identity events tell one story when joined on host,</text>
+<text x="20" y="256" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">address, user and time.</text>
+</svg>

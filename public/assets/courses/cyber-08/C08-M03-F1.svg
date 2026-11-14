@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="678" height="305" viewBox="0 0 678 305" role="img" aria-labelledby="t d">
+<title id="t">C08-M03-F1: SIEM data flow</title>
+<desc id="d">Four raw formats flow into parsing, then normalisation and enrichment, then storage, which feeds search, correlation, dashboards and alerts.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C08-M03-F1  SIEM data flow</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  [syslog] [JSON API] [Windows XML] [CSV]</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">       \       |          |        /</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        +--&gt; PARSE (fields, time zone) --&gt; NORMALISE (ECS/OCSF names)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                     | parse errors -&gt; health dashboard</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                     v</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">              ENRICH (asset, user, geo, intel) --&gt; INDEX / STORE (hot, cold)</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                     |</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        +------------+-------------+----------------+</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        v            v             v                v</text>
+<text x="20" y="213" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     SEARCH     CORRELATION    DASHBOARDS     ALERTS -&gt; CASES</text>
+<text x="20" y="230" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="257" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C08-M03-F1. Raw logs are parsed, normalised, enriched and stored, then used for</text>
+<text x="20" y="273" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">searches, correlation, dashboards and alerts.</text>
+</svg>

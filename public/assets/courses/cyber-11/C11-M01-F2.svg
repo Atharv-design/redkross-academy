@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="762" height="220" viewBox="0 0 762 220" role="img" aria-labelledby="t d">
+<title id="t">C11-M01-F2: Control plane and data plane</title>
+<desc id="d">Administrators and pipelines call authenticated APIs on the control plane, which is logged; users and services use the data plane, which has separate access logs.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C11-M01-F2  Control plane and data plane</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  admin / pipeline --API (authenticated)--&gt; CONTROL PLANE --&gt; creates/changes</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                              | logged by CloudTrail /       resources</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                              | Activity log</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  users / services --requests--&gt; DATA PLANE (objects, queries, web requests)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                   | logged by data-event / access logs</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C11-M01-F2. The control plane manages resources; the data plane serves data; each has its own</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">logs.</text>
+</svg>

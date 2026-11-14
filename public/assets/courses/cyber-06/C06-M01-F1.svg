@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="686" height="237" viewBox="0 0 686 237" role="img" aria-labelledby="t d">
+<title id="t">C06-M01-F1: The browser-server trust boundary</title>
+<desc id="d">A two-box diagram showing an untrusted browser exchanging HTTP requests and responses with a trusted server, with the rule that security is enforced server-side.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C06-M01-F1  The browser-server trust boundary</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   [ BROWSER (untrusted) ]      request (method, headers, cookie, body)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     user + any attacker   --------------------------------------------&gt;</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     controls everything   &lt;--------------------------------------------</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     here                        response (status, headers, body)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                            [ SERVER (trusted) - enforces ALL security here ]</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   rule: client-side checks are for UX; security is enforced server-side</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="189" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C06-M01-F1. The trust boundary: the client is untrusted, so every security</text>
+<text x="20" y="205" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">decision is enforced on the server [C06-M01-R1].</text>
+</svg>

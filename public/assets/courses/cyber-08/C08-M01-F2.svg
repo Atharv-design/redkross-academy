@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="703" height="305" viewBox="0 0 703 305" role="img" aria-labelledby="t d">
+<title id="t">C08-M01-F2: Alert lifecycle</title>
+<desc id="d">A flow from generation through queueing, triage and investigation, branching to true positive, benign true positive, false positive and inconclusive, each leading to an action and then closure with feedback.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C08-M01-F2  Alert lifecycle</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  [Generated] -&gt; [Queued/prioritised] -&gt; [Triage] -&gt; [Investigate]</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                                          |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                     +------------------+-----------------+--------+</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                     v                  v                 v        v</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">               True positive   Benign true pos.   False positive  Inconclusive</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                     |                  |                 |        |</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">               [Escalate -&gt; incident]  [Close + note]  [Close + TUNE] [Monitor]</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                     \__________________|_________________|________/</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                        v</text>
+<text x="20" y="213" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                               [Closure + feedback]</text>
+<text x="20" y="230" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="257" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C08-M01-F2. Alerts move through triage and investigation to one of four dispositions,</text>
+<text x="20" y="273" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">each feeding closure and improvement.</text>
+</svg>

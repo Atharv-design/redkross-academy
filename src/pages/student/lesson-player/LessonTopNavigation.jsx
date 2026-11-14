@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, Zap, ShieldAlert, ShieldCheck } from 'lucide-react';
+import { Menu, Zap, ShieldAlert, ShieldCheck, ArrowLeft, LayoutDashboard } from 'lucide-react';
 
 export default function LessonTopNavigation({
   sidebarOpen,
@@ -29,6 +29,17 @@ export default function LessonTopNavigation({
             </button>
           )}
 
+          {!isExamActive && course?.id && (
+            <Link
+              to={`/student/course/${course.id}`}
+              className="flex items-center gap-1.5 px-2.5 py-2 rounded-xl border border-white/15 bg-black/60 text-xs font-mono text-[#E2D9CE] hover:text-white hover:border-[#FF7A00]/50 transition-all flex-shrink-0"
+              title="Back to the course page"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span className="hidden sm:inline">Course</span>
+            </Link>
+          )}
+
           <div className="truncate text-xs font-mono min-w-0">
             <span className="text-[#A3907C] hidden md:inline">
               {isExamActive ? 'Assessment / ' : 'Course / '}
@@ -53,13 +64,15 @@ export default function LessonTopNavigation({
             </div>
           ) : (
             <>
+              <Link
+                to={String(course?.id || '').startsWith('crs_psych') ? '/academy/psychology/student' : '/academy/cybersecurity/student'}
+                className="flex items-center gap-1.5 px-2.5 py-2 rounded-xl border border-white/15 bg-black/60 text-xs font-mono text-[#E2D9CE] hover:text-white hover:border-[#FF7A00]/50 transition-all"
+                title="My dashboard"
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                <span className="hidden lg:inline">Dashboard</span>
+              </Link>
               <div className="hidden sm:flex items-center space-x-4 text-xs font-mono">
-                <Link
-                  to={`/student/course/${course?.id}?tab=course`}
-                  className="text-[#FFA439] hover:underline font-bold"
-                >
-                  Course
-                </Link>
                 <Link
                   to={`/student/course/${course?.id}?tab=progress`}
                   className="text-[#E2D9CE] hover:text-[#FFA439] transition-colors"

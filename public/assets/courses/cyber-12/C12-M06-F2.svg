@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="653" height="203" viewBox="0 0 653 203" role="img" aria-labelledby="t d">
+<title id="t">C12-M06-F2: Why deletion is not removal</title>
+<desc id="d">Three commits, with the key added in the middle commit and removed in the latest; the working tree is clean but history still contains the key.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C12-M06-F2  Why deletion is not removal</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  7ee7864 initial            (clean)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  6e1981d add config         (KEY ADDED)   &lt;- gitleaks history finding</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  e935d02 move to env        (key removed) &lt;- working tree scan: no leaks</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  anyone with a clone still has 6e1981d</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C12-M06-F2. The lab repository&#x27;s history: the key persists in an earlier</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">commit (execution-tested).</text>
+</svg>

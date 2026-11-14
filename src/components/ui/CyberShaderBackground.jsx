@@ -1,6 +1,7 @@
 /* eslint-disable */
 
 import React, { useEffect, useRef } from 'react';
+import { shouldAnimateBackground } from '../../utils/motion';
 
 const VERTEX_SHADER_SRC = `
 attribute vec2 position;
@@ -144,18 +145,23 @@ export default function CyberShaderBackground({
     opacity = 0.40,
     className = ""
 }) {
-    const canvasRef = useRef(null);
+    const containerRef = useRef(null);
     const animFrameRef = useRef(null);
 
     useEffect(() => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
+        const container = containerRef.current;
+        if (!container || !shouldAnimateBackground()) return;
+        // Each run owns its canvas, so releasing the GL context on cleanup can never
+        // break a later run (React may re-run effects on the same element).
+        const canvas = document.createElement('canvas');
+        canvas.className = 'w-full h-full block';
+        container.appendChild(canvas);
 
         const gl = canvas.getContext('webgl', { alpha: true, antialias: false, powerPreference: 'low-power' })
             || canvas.getContext('experimental-webgl');
 
         if (!gl) {
-            console.warn('WebGL not supported for CyberShaderBackground');
+            canvas.remove();
             return;
         }
 
@@ -174,7 +180,10 @@ export default function CyberShaderBackground({
         const vertShader = compileShader(gl.VERTEX_SHADER, VERTEX_SHADER_SRC);
         const fragShader = compileShader(gl.FRAGMENT_SHADER, FRAGMENT_SHADER_SRC);
 
-        if (!vertShader || !fragShader) return;
+        if (!vertShader || !fragShader) {
+            canvas.remove();
+            return;
+        }
 
         const program = gl.createProgram();
         gl.attachShader(program, vertShader);
@@ -183,6 +192,7 @@ export default function CyberShaderBackground({
 
         if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
             console.error('Program link error:', gl.getProgramInfoLog(program));
+            canvas.remove();
             return;
         }
 
@@ -251,16 +261,18 @@ export default function CyberShaderBackground({
 
         const startTime = performance.now();
 
-        const render = () => {
-            const currentTime = (performance.now() - startTime) * 0.001;
+        let lastDraw = 0;
+        const render = (now) => {
+            animFrameRef.current = requestAnimationFrame(render);
+            if (now - lastDraw < 33) return; // ~30 fps is plenty for an ambient background
+            lastDraw = now;
+            const currentTime = (now - startTime) * 0.001;
 
             gl.uniform2f(uResolution, canvas.width, canvas.height);
             gl.uniform2f(uMouse, mouseX, mouseY);
             gl.uniform1f(uTime, currentTime);
 
             gl.drawArrays(gl.TRIANGLES, 0, 6);
-
-            animFrameRef.current = requestAnimationFrame(render);
         };
 
         animFrameRef.current = requestAnimationFrame(render);
@@ -275,20 +287,20 @@ export default function CyberShaderBackground({
                 gl.deleteShader(fragShader);
                 gl.deleteTexture(texture);
                 gl.deleteBuffer(positionBuffer);
+                // Release the GPU context now; browsers cap live WebGL contexts (~16) and
+                // drop the oldest when exceeded, which shows up as flicker after navigation.
+                gl.getExtension('WEBGL_lose_context')?.loseContext();
             } catch (e) {}
+            canvas.remove();
         };
     }, []);
 
     return (
         <div
+            ref={containerRef}
             aria-hidden="true"
             className={`fixed inset-0 pointer-events-none z-0 overflow-hidden select-none ${className}`}
             style={{ opacity }}
-        >
-            <canvas
-                ref={canvasRef}
-                className="w-full h-full block"
-            />
-        </div>
+        />
     );
 }

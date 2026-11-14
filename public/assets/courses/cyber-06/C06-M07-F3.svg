@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="661" height="203" viewBox="0 0 661 203" role="img" aria-labelledby="t d">
+<title id="t">C06-M07-F3: The unifying principle</title>
+<desc id="d">A diagram stating that all advanced risks reduce to the untrusted-client principle enforced server-side.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C06-M07-F3  The unifying principle</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   every advanced risk reduces to one rule:</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     the CLIENT (browser or API consumer) is UNTRUSTED</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     the SERVER enforces security + business rules from trustworthy state</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   XXE, deserialization, logic, API: all are &quot;stopped trusting the client&quot;</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C06-M07-F3. The advanced risks share the course&#x27;s single principle: do not</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">trust the client; enforce on the server.</text>
+</svg>

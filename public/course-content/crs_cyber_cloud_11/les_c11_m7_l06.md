@@ -1,0 +1,6 @@
+- Least-privilege roles limit what a compromised workload can do.
+- Network controls: private subnets, egress allowlists (Module 3).
+- Runtime protection: provider services (GuardDuty runtime monitoring, Defender for Containers/Servers) or CWPP agents detect suspicious processes, unexpected outbound connections and container drift.
+- Immutable deployments: replace rather than patch in place; detect changes to running containers.
+- Telemetry: workload logs and runtime findings to the SIEM; alert on use of workload credentials from outside their expected network (Module 5).
+- Kubernetes-specific controls (admission, Pod Security, network policies) are covered in Course 21.

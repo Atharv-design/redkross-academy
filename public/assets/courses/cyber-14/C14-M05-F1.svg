@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="636" height="373" viewBox="0 0 636 373" role="img" aria-labelledby="t d">
+<title id="t">C14-M05-F1: The Pyramid of Pain</title>
+<desc id="d">A pyramid with hash values at the base, then IP addresses, domain names, network and host artefacts, tools and TTPs at the apex.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C14-M05-F1  The Pyramid of Pain</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                 /\</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                /TTPs\           tough for the adversary to change</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">               /------\</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">              /  Tools \</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">             /----------\</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">            / Network &amp;  \</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">           / host artefacts\</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">          /----------------\</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">         /  Domain names    \</text>
+<text x="20" y="213" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        /--------------------\</text>
+<text x="20" y="230" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">       /    IP addresses      \</text>
+<text x="20" y="247" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">      /------------------------\</text>
+<text x="20" y="264" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     /      Hash values         \   trivial for the adversary to change</text>
+<text x="20" y="281" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">    /____________________________\</text>
+<text x="20" y="298" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="325" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C14-M05-F1. Indicator types by the pain their denial causes the adversary</text>
+<text x="20" y="341" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">(after Bianco, 2013).</text>
+</svg>

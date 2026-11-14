@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="619" height="203" viewBox="0 0 619 203" role="img" aria-labelledby="t d">
+<title id="t">C10-M03-F1: The static analysis trio</title>
+<desc id="d">Three static tools feeding type/hashes/entropy, indicators, and capability into a combined hypothesis with no execution.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C10-M03-F1  The static analysis trio</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   triage  -&gt; type (magic bytes) + hashes (IOCs) + entropy (packing?)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   strings -&gt; URLs/IPs/paths/registry/mutex (indicators + leads)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   peinfo  -&gt; sections + IMPORTS (capability)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   combine -&gt; static hypothesis + IOCs, with NOTHING executed</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C10-M03-F1. Triage, strings and PE structure combine into a static</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">hypothesis [C10-M03-R1].</text>
+</svg>

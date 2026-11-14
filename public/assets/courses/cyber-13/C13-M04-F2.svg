@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="628" height="220" viewBox="0 0 628 220" role="img" aria-labelledby="t d">
+<title id="t">C13-M04-F2: From the tier model to the Enterprise Access Model</title>
+<desc id="d">A mapping from the three legacy tiers to the control, management, data/workload, user-access and app-access planes.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C13-M04-F2  From the tier model to the Enterprise Access Model</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   Legacy tier model        Enterprise Access Model</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   Tier 0  ----------------&gt; Control plane (expanded; cloud + on-prem)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   Tier 1  ----------------&gt; Management plane + Data/Workload plane</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   Tier 2  ----------------&gt; User access + App access</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   same discipline: no downward exposure of higher-plane credentials</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C13-M04-F2. The access model keeps the tier discipline and names cloud and</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">on-premises assets more precisely [C13-M04-R1].</text>
+</svg>

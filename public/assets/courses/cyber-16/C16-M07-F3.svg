@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="653" height="221" viewBox="0 0 653 221" role="img" aria-labelledby="t d">
+<title id="t">C16-M07-F3: The API review, FAIL to PASS</title>
+<desc id="d">The API review failing on an insecure config and passing on a hardened one.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C16-M07-F3  The API review, FAIL to PASS</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   insecure config  -&gt; no auth, non-expiring tokens, cleartext, no authz,</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                       no rate limit, verbose errors, excess data</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                       =&gt; 7 findings, 5 HIGH, FAIL</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   apply controls   -&gt; validated/expiring tokens, TLS, per-request authz,</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                       rate limit, generic errors, minimal data</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   hardened config  -&gt; 0 findings, PASS</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="189" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C16-M07-F3. Hardening moves the API review from FAIL to PASS [C16-M07-R4].</text>
+</svg>

@@ -1,0 +1,6 @@
+- Passphrase quality determines real-world security. scrypt slows guessing (Module 4) but cannot rescue "Tamarind2026".
+- Sharing: send the file and the passphrase through different channels, for example the file by email and the passphrase by phone or a password manager share.
+- Recovery: a lost passphrase means lost data. That is by design. Keep escrow procedures for business-critical data, such as a second encrypted copy under an organisational key in a KMS (envelope encryption, Module 2).
+- Rotation: re-encrypt periodically or when a passphrase may be exposed.
+- Integrity records: record the SHA-256 of plaintext and ciphertext in chain-of-custody logs (Course 09).
+- Larger programmes: for regular, multi-user encryption, prefer managed solutions (KMS envelope encryption, platform file encryption, established tools) over a custom utility. The capstone is a learning and reference artefact.

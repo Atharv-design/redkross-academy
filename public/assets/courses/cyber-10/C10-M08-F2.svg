@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="695" height="204" viewBox="0 0 695 204" role="img" aria-labelledby="t d">
+<title id="t">C10-M08-F2: Honest classification</title>
+<desc id="d">The three parts of an honest classification - classification, confidence with reasons, and limitations.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C10-M08-F2  Honest classification</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   CLASSIFICATION: what it is + does (dropper that persists and beacons)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   CONFIDENCE    : high/medium/low + WHY (corroboration, reproduced behaviour)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   LIMITATIONS   : what you could NOT determine (packed sections, untriggered</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                   paths, one run, time) - a strength, not a weakness</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   never overstate certainty</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C10-M08-F2. Classification with explicit confidence and limitations [C10-M08-R1].</text>
+</svg>

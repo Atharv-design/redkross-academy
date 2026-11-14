@@ -7,7 +7,6 @@ import {
   BookOpen, Coins, Sparkles, ArrowRight, Layers, ShieldCheck,
   Download, Loader2
 } from 'lucide-react';
-import { mockEngine } from '../../services/db/mockEngine';
 import { apiClient } from '../../services/apiClient';
 import RedKrossOfficialCertificate from '../../components/certificate/RedKrossOfficialCertificate';
 import { downloadCertificatePdf } from '../../utils/pdfGenerator';
@@ -18,6 +17,7 @@ export default function VerifyCredentialPage() {
   const [searchId, setSearchId] = useState(id || '');
   const [credential, setCredential] = useState(null);
   const [dossier, setDossier] = useState(null);
+  const [lookupError, setLookupError] = useState(null);
   const [hasSearched, setHasSearched] = useState(false);
   const [loading, setLoading] = useState(false);
   const [downloadingPdf, setDownloadingPdf] = useState(false);
@@ -39,50 +39,45 @@ export default function VerifyCredentialPage() {
   };
 
   useEffect(() => {
-    const targetId = id || 'RK-89421';
-    setSearchId(targetId);
-    lookupRecord(targetId);
-
-    const unsubscribe = mockEngine.subscribe((event) => {
-      if (
-        event.type === 'CREDENTIAL_MUTATED' ||
-        event.type === 'USER_UPDATED' ||
-        event.type === 'TOKEN_MUTATED' ||
-        event.type === 'DB_MUTATED'
-      ) {
-        lookupRecord(targetId);
-      }
-    });
-
-    return () => unsubscribe();
+    // nothing is looked up until someone enters an ID (no demo record is shown as if real)
+    if (id) {
+      setSearchId(id);
+      lookupRecord(id);
+    }
   }, [id]);
 
+  /**
+   * Verification is answered ONLY by the server registry (/api/verify). Data stored in
+   * this browser is never consulted: it can be edited by anyone and would let a forged
+   * record "verify" on the forger's own screen.
+   */
   const lookupRecord = async (targetId) => {
     if (!targetId) return;
     setLoading(true);
     setCredential(null);
     setDossier(null);
-
+    setLookupError(null);
     try {
-      const cadetDossier = mockEngine.getCadetDossier(targetId);
-      if (cadetDossier) {
-        setDossier(cadetDossier);
-        setHasSearched(true);
-        setLoading(false);
-        return;
-      }
-
       const res = await apiClient.verifyCredential(targetId);
-      if (res && res.found) {
-        setCredential(res.credential);
-      } else {
-        const local = mockEngine.getCredentialByVerificationId(targetId);
-        setCredential(local || null);
+      if (res && res.found && res.credential) {
+        const proof = res.cryptographic_verification || {};
+        const cred = { ...res.credential, verification: proof };
+        if (proof.status === 'REVOKED') {
+          cred.revoked = true;
+          cred.revocation_kind = 'revoked';
+          cred.revocation_reason = cred.revocation_reason || 'This certificate has been revoked by RedKross Academy.';
+        } else if (!proof.verified) {
+          cred.revoked = true;
+          cred.revocation_kind = 'invalid';
+          cred.revocation_reason = 'This record failed cryptographic verification. It was not issued as shown and must not be trusted.';
+        }
+        setCredential(cred);
+      } else if (res?.unavailable) {
+        setLookupError(res.message);
       }
       setHasSearched(true);
     } catch (e) {
-      const local = mockEngine.getCredentialByVerificationId(targetId);
-      setCredential(local || null);
+      setLookupError('The verification service is temporarily unavailable. Please try again shortly.');
       setHasSearched(true);
     } finally {
       setLoading(false);
@@ -109,7 +104,7 @@ export default function VerifyCredentialPage() {
             Public Academic Verification Registry
           </h1>
           <p className="text-[#94A3B8] text-xs sm:text-sm">
-            Authenticate the cryptographic validity of any RedKross Academy Cadet ID (e.g. <strong className="text-white font-mono">RK-89421</strong>) or individual diploma certificate.
+            Check that a RedKross Academy certificate is genuine by entering the verification ID printed on it.
           </p>
         </div>
 
@@ -120,7 +115,7 @@ export default function VerifyCredentialPage() {
               <Hash className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#94A3B8]" />
               <input
                 type="text"
-                placeholder="Enter Cadet ID (RK-89421) or Certificate ID"
+                placeholder="Enter certificate verification ID (e.g. RK-C05-AB12-CD34)"
                 value={searchId}
                 onChange={(e) => setSearchId(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 rounded-xl ultra-glass-input text-xs sm:text-sm text-white placeholder-[#64748B] font-mono focus:outline-none uppercase tracking-wider"
@@ -337,19 +332,19 @@ export default function VerifyCredentialPage() {
 
               <div className="space-y-2">
                 <div className="inline-block px-3 py-1 rounded-full bg-red-500/15 text-red-400 border border-red-500/40 text-xs font-mono font-bold tracking-wider uppercase">
-                  CREDENTIAL REVOKED & NULLIFIED
+                  {credential.revocation_kind === 'invalid' ? 'VERIFICATION FAILED' : 'CREDENTIAL REVOKED & NULLIFIED'}
                 </div>
                 <h2 className="text-2xl font-royal font-bold text-white tracking-wide">
-                  This Certificate Has Been Cancelled
+                  {credential.revocation_kind === 'invalid' ? 'This Certificate Could Not Be Verified' : 'This Certificate Has Been Cancelled'}
                 </h2>
                 <p className="text-xs text-slate-300 max-w-lg mx-auto leading-relaxed font-mono">
-                  The certificate credential <strong className="text-white font-mono">{credential.id || credential.verification_id}</strong> is officially revoked by RedKross Academy and is not valid for professional authentication.
+                  The certificate <strong className="text-white font-mono">{credential.verification_id || credential.id}</strong> is not valid for professional authentication.
                 </p>
               </div>
 
               {credential.revocation_reason && (
                 <div className="p-4 rounded-xl bg-red-950/40 border border-red-500/40 text-xs font-mono text-red-300 max-w-md mx-auto text-left space-y-1">
-                  <div className="text-[10px] uppercase text-red-400 font-bold tracking-wider">Formal Revocation Reason:</div>
+                  <div className="text-[10px] uppercase text-red-400 font-bold tracking-wider">{credential.revocation_kind === 'invalid' ? 'Reason:' : 'Formal Revocation Reason:'}</div>
                   <div className="text-slate-200">{credential.revocation_reason}</div>
                   {credential.revoked_at && (
                     <div className="text-[10px] text-slate-400 pt-1">
@@ -442,42 +437,25 @@ export default function VerifyCredentialPage() {
               <div className="p-4 rounded-xl bg-[#1B2530]/60 border border-[#263440] space-y-1">
                 <div className="text-[10px] text-[#94A3B8] uppercase tracking-wider">Issuance & Validity</div>
                 <div className="text-xs font-semibold text-white">
-                  Issued: {credential.issue_date || credential.issued_at || '2026-10-15'}
+                  Issued: {String(credential.issue_date || credential.issued_at || '-').split('T')[0]}
                 </div>
-                <div className="text-[11px] text-[#FF7A00] font-bold">Grade Achieved: {credential.grade_percentage || credential.grade || '95%'}</div>
+                <div className="text-[11px] text-[#FF7A00] font-bold">Grade Achieved: {credential.grade_percentage != null ? `${Math.round(Number(credential.grade_percentage))}%` : '-'}</div>
               </div>
             </div>
 
-            {/* Link to Cadet's Full Verified Dossier */}
-            <div className="p-4 rounded-xl bg-[#1B2530]/40 border border-[#263440] flex items-center justify-between">
-              <div>
-                <span className="text-xs font-bold text-white font-lora block">
-                  Want to verify all achievements for this cadet?
-                </span>
-                <span className="text-[10px] font-mono text-[#8BA2B5]">
-                  View full cumulative dossier including course progression and token awards.
-                </span>
-              </div>
-              <button
-                onClick={() => {
-                  const targetQuery = credential.cadet_id || credential.student_name || 'RK-89421';
-                  navigate(`/verify/${targetQuery}`);
-                  lookupRecord(targetQuery);
-                }}
-                className="px-4 py-2 bg-[#FF7A00] text-[#071018] font-bold text-xs rounded-lg hover:bg-[#52d674] flex items-center space-x-1.5 font-mono shadow-sm"
-              >
-                <span>View Cadet Dossier</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
           </div>
           )
         ) : hasSearched && !loading ? (
           <div className="glass-card rounded-2xl p-12 text-center space-y-4">
             <AlertTriangle className="w-12 h-12 text-[#F59E0B] mx-auto" />
-            <h3 className="font-royal text-xl font-bold text-white">Record Not Found</h3>
-            <p className="text-xs text-[#94A3B8] max-w-sm mx-auto">
-              No matching Cadet ID or credential was found for identifier <span className="text-white font-mono">{searchId}</span>. Please verify the ID or check your Cadet Operator Portal.
+            <h3 className="font-royal text-xl font-bold text-white">{lookupError ? 'Verification Unavailable' : 'Record Not Found'}</h3>
+            <p className="text-xs text-[#94A3B8] max-w-sm mx-auto" role="status">
+              {lookupError || (
+                <>
+                  No certificate matches <span className="text-white font-mono">{searchId}</span>. Check the verification ID
+                  printed on the certificate (for example RK-C05-AB12-CD34).
+                </>
+              )}
             </p>
           </div>
         ) : null}

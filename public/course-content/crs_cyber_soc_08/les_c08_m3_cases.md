@@ -1,0 +1,5 @@
+## Customer audit logging in the 2023 Exchange Online intrusion ------------------------------------------------------------------------- Context: the US Cyber Safety Review Board's report on the 2023 Microsoft Exchange Online intrusion by the actor tracked as Storm-0558 (Course 01 Module 6) is widely cited for the role of logging in detection: public reporting and the CSRB describe the intrusion being detected by a US government customer using its own audit logging, rather than by the provider [C08-M03-R2]. SIEM lessons: ingest cloud and SaaS audit logs; build correlation on unusual access patterns; ensure logging licences/settings provide the fields needed. (Detailed log names and licensing specifics are not restated here; see the CSRB report.)
+
+
+
+## (FICTIONAL TEACHING SCENARIO): The parser update ------------------------------------------------------------------------ This scenario is fictional. A vendor changed its VPN log format; the SIEM parser stopped extracting user names. Brute-force rules keyed on user.name silently stopped firing for a month. A parse-failure dashboard would have shown the change on day one.

@@ -1,0 +1,7 @@
+- Organisation trail in AWS (all accounts, all regions) delivered to a log-archive account bucket with Object Lock or restricted delete, SSE-KMS and log file validation.
+- Azure: diagnostic settings at management-group/subscription scope via Azure Policy, sending Activity and resource logs to a central Log Analytics workspace and archive storage.
+- Entra and Microsoft 365 logs exported to the SIEM.
+- Separate administrators: production administrators cannot change the log archive (SCPs deny StopLogging/DeleteTrail).
+- Retention: at least the legal minimum (CERT-In directions require 180 days for Indian entities, Course 01) and typically a year or more.
+- Time: all timestamps in UTC; SIEM normalises fields.
+- Health: alert if a log source stops delivering (Course 22 Module 6).

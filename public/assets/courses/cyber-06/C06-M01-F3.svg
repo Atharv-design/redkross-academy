@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="670" height="203" viewBox="0 0 670 203" role="img" aria-labelledby="t d">
+<title id="t">C06-M01-F3: Stateless HTTP plus cookies equals sessions</title>
+<desc id="d">A flow showing login creating a session cookie that the browser returns on each request so the server can identify the user, with the safety requirements listed.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C06-M01-F3  Stateless HTTP plus cookies equals sessions</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   login  -&gt; server creates session, returns Set-Cookie: session=ID</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   browser stores ID, sends Cookie: session=ID on EVERY later request</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   server looks up ID -&gt; knows the user -&gt; identity across requests</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   safety: ID must be random + unforgeable; cookie HttpOnly/Secure/SameSite</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C06-M01-F3. Cookies carry a session identifier that turns a stateless protocol</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">into an authenticated session [C06-M01-R2].</text>
+</svg>

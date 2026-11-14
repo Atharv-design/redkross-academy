@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="670" height="220" viewBox="0 0 670 220" role="img" aria-labelledby="t d">
+<title id="t">C09-M02-F3: Master and working copies</title>
+<desc id="d">A source is acquired to a master copy in sealed storage, from which two verified working copies are made for analysis.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C09-M02-F3  Master and working copies</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  source --acquire--&gt; MASTER (golden, sealed storage, verified)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                         |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                         +--copy+verify--&gt; WORKING COPY 1 (analysis)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                         +--copy+verify--&gt; WORKING COPY 2 (second examiner)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  any change to a working copy -&gt; new hash -&gt; documented; master untouched</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C09-M02-F3. Analysis happens on verified working copies; the master is never</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">used directly.</text>
+</svg>

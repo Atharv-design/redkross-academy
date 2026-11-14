@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="712" height="187" viewBox="0 0 712 187" role="img" aria-labelledby="t d">
+<title id="t">C19-M06-F2: C2 network indicators</title>
+<desc id="d">Three classes of C2 network indicators and their telemetry.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C19-M06-F2  C2 network indicators</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   PERIODICITY : regular machine-like check-ins to one destination (beacon)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   DESTINATION : single/rare/new destination; not matching business need</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   PROTOCOL    : normal protocol used oddly (DNS carrying data; odd HTTP timing)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   =&gt; read from flow / proxy / DNS logs</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C19-M06-F2. The network indicators C2 produces [C19-M06-R2].</text>
+</svg>

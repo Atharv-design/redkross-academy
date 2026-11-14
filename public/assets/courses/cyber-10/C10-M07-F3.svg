@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="686" height="237" viewBox="0 0 686 237" role="img" aria-labelledby="t d">
+<title id="t">C10-M07-F3: Common malware code patterns</title>
+<desc id="d">Six common malware code patterns with the APIs that mark them and their ATT&amp;CK techniques.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C10-M07-F3  Common malware code patterns</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   decrypt config : XOR/transform loop over a blob + key  (reveals C2)  T1027</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   dynamic APIs   : LoadLibrary/GetProcAddress (hide imports)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   trigger checks : date/locale/domain/VM gate behaviour</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   persistence    : write Run key / service / task        T1547.001</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   injection      : alloc + write + remote thread          T1055</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   C2 beacon      : build URL/host + connect + send        T1071</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="189" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C10-M07-F3. Recurring malware code patterns and their ATT&amp;CK techniques</text>
+<text x="20" y="205" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">[C10-M07-R3].</text>
+</svg>

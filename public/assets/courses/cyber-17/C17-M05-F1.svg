@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="619" height="187" viewBox="0 0 619 187" role="img" aria-labelledby="t d">
+<title id="t">C17-M05-F1: MTD, RTO and RPO on a timeline</title>
+<desc id="d">A timeline showing the RPO before the disruption, the recovery period up to the RTO, and the MTD as the outer limit, with the rules RTO at most MTD and backup interval at most RPO.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C17-M05-F1  MTD, RTO and RPO on a timeline</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  last good data      disruption                      RTO       MTD</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">       |&lt;---- RPO ----&gt;|&lt;------- recovery ------------&gt;|.........|</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">       (max data loss) t0                     (service back)  (limit)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  rule: RTO &lt;= MTD; backup/replication interval &lt;= RPO</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C17-M05-F1. RPO looks back from the disruption; RTO and MTD look forward.</text>
+</svg>

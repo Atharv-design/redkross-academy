@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="636" height="220" viewBox="0 0 636 220" role="img" aria-labelledby="t d">
+<title id="t">C21-M02-F1: Where image findings come from</title>
+<desc id="d">Four stacked rows - base layer, pip layer, copy layer and configuration - each annotated with the findings it caused in the weak image and, where applicable, the hardened image.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C21-M02-F1  Where image findings come from</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   layer 1  base OS packages ........ 353 findings (bad) / 203 (good13)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   layer 2  pip install requests .... 23 findings (bad) / 0 (good13)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   layer 3  COPY app/ (incl .env) ... secret on disk, not detected</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   config   ENV DB_PASSWORD ......... visible in docker history</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">            USER (unset) ............ runs as root</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C21-M02-F1. Findings and defects traced to the layer or configuration field</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">that introduced them.</text>
+</svg>

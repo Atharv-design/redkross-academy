@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="670" height="237" viewBox="0 0 670 237" role="img" aria-labelledby="t d">
+<title id="t">C21-M07-F1: The supply chain and its controls</title>
+<desc id="d">A left-to-right chain from source to cluster with the main control for each stage written beneath it.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C21-M07-F1  The supply chain and its controls</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   source --&gt; dependencies --&gt; build --&gt; artefact --&gt; registry --&gt; cluster</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     |            |              |          |            |           |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   review      pin, SBOM     hosted,     sign +      immutable   admission:</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   2FA         scan          isolated,   attest      tags, push  allowlist,</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                             provenance  (digest)    rights      digest,</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                                                 verify sig</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="189" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C21-M07-F1. Each link in the chain has its own control; each control depends on</text>
+<text x="20" y="205" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">the previous link.</text>
+</svg>

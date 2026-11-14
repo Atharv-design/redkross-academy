@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="586" height="255" viewBox="0 0 586 255" role="img" aria-labelledby="t d">
+<title id="t">C14-M08-F1: Anatomy of the flash brief</title>
+<desc id="d">A boxed template listing marking, BLUF, key judgments, actions, gaps and sources in order.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C14-M08-F1  Anatomy of the flash brief</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   +------------------------------------------------------------+</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   | TLP:AMBER | title | date | review-by                      |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   | BLUF (2-3 sentences: what, so what, now what)              |</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   | KEY JUDGMENTS  likelihood term. Confidence: X. [sources]   |</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   | RECOMMENDED ACTIONS  action - owner - PIR - time frame     |</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   | INTELLIGENCE GAPS  what we do not know, planned collection |</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   | SOURCES  ID, source, grade, date (-&gt; collection log)       |</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   +------------------------------------------------------------+</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="223" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C14-M08-F1. The sections of the model brief, top to bottom.</text>
+</svg>

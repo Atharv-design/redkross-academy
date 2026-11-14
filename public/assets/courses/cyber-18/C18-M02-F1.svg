@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="695" height="170" viewBox="0 0 695 170" role="img" aria-labelledby="t d">
+<title id="t">C18-M02-F1: RAG pipeline with access control</title>
+<desc id="d">Documents are audited and indexed with ACLs; queries are filtered by the user&#x27;s ACL before ranking and placed in the context.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C18-M02-F1  RAG pipeline with access control</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  ingest: docs -&gt; audit (ACL, PII, imported text) -&gt; chunks + ACL -&gt; index</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  query (user U) -&gt; filter chunks by U&#x27;s ACL -&gt; rank top-k -&gt; context -&gt; model</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  delete doc -&gt; delete its chunks</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="138" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C18-M02-F1. Authorise before ranking; audit before indexing.</text>
+</svg>

@@ -1,0 +1,12 @@
+| Term | Meaning |
+|---|---|
+| Theme 1 | Cloud architecture (M01): NIST SP 800-145 characteristics, service and deployment models; AWS and Azure hierarchies; landing zones; shared responsibility (identity, data and logging always customer); control versus data plane; defender's threat model tables; ChaosDB (August 2021). |
+| Theme 2 | Identity and access (M02): principals; explicit deny > allow > implicit deny; Azure RBAC roles and scopes; the Bool versus BoolIfExists MFA trap with access keys; SCPs, boundaries, PIM; sensitive permissions (PassRole); review of risky identities; Midnight Blizzard (2023-24). |
+| Theme 3 | Network security (M03): routing defines public subnets; security groups, NACLs, NSGs; private endpoints; egress control; IMDSv2 (PUT token, 401, X-Forwarded-For rejection, hop limit 1); Capital One (2019). |
+| Theme 4 | Data protection (M04): access layers; Block Public Access (four settings); SSE-S3 default since 5 January 2023; customer-managed keys and custody; versioning, soft delete, immutability, isolated backups; Toyota Connected (2013-2023). |
+| Theme 5 | Cloud visibility (M05): CloudTrail (90-day event history), Azure Activity log (90 days), Entra and Purview logs; protected central logging; five lab detections; logs that must be enabled (SearchQueryInitiated); Storm-0558 and expanded logs. |
+| Theme 6 | Configuration security (M06): misconfiguration patterns; CSPM; checkov 21 passed / 32 failed; scanner blind spots; guardrails; verify by re-scan (0/12 -> 12/12) and by effect; Power Apps (August 2021). |
+| Theme 7 | Workload security (M07): minimal non-root images; DS-0002, DS-0026, DS-0031; serverless roles; secrets managers; workload identity and OIDC federation; scanner exclusions; CircleCI (2022-23). |
+| Theme 8 | Response and capstone (M08): preparation; analysis questions; deactivate keys, deny older sessions (aws:TokenIssueTime), quarantine security group, snapshots and tags; recovery from isolated backups; Code Spaces (2014); reference architecture. |
+
+**Key verified facts:** SSE-S3 base encryption for new uploads from 5 January 2023; CloudTrail event history 90 days of management events; Azure Activity log 90 days; IMDSv2 token lifetime up to six hours and default hop limit 1; Microsoft detected the Midnight Blizzard attack on 12 January 2024; the State Department SOC flagged Storm-0558 activity on 15 June 2023; the OCC's Capital One penalty was USD 80 million (6 August 2020); UpGuard reported 38 million Power Apps records (23 August 2021); NIST SP 800-61 Rev. 3 was published in April 2025.

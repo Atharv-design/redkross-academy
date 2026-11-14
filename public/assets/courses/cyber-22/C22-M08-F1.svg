@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="602" height="221" viewBox="0 0 602 221" role="img" aria-labelledby="t d">
+<title id="t">C22-M08-F1: Tamarind zero trust reference architecture</title>
+<desc id="d">A user and device reach an application through a gateway enforcement point that asks a policy decision point; identity, endpoint and threat signals feed the decision point; all components send telemetry to an immutable store and SIEM.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C22-M08-F1  Tamarind zero trust reference architecture</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  user+device --&gt; PEP (gateway) --&gt; application --&gt; data (CMK, FLE)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">       |              ^                  |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">       v              | decision         v</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     IdP, EDR --&gt; PDP (policy as code) &lt;-- threat intel</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">       \              |                 /</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        +---&gt; telemetry pipeline -&gt; immutable store -&gt; SIEM / M1-M5</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="189" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C22-M08-F1. Signals feed the PDP; PEPs enforce; everything is logged.</text>
+</svg>

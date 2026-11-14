@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="594" height="356" viewBox="0 0 594 356" role="img" aria-labelledby="t d">
+<title id="t">C08-M05-F1: The Pyramid of Pain</title>
+<desc id="d">A six-level pyramid with hash values at the base, then IP addresses, domain names, network and host artifacts, tools, and TTPs at the top, with difficulty for the adversary rising from trivial to tough.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C08-M05-F1  The Pyramid of Pain</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                      /\</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                     /  \      TTPs                  (tough)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                    /----\</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                   / Tools \                         (challenging)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                  /--------\</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                 / Network &amp;\  host artifacts        (annoying)</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                /------------\</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">               / Domain names \                      (simple)</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">              /----------------\</text>
+<text x="20" y="213" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">             /  IP addresses    \                    (easy)</text>
+<text x="20" y="230" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">            /--------------------\</text>
+<text x="20" y="247" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">           /     Hash values      \                  (trivial)</text>
+<text x="20" y="264" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">          /------------------------\</text>
+<text x="20" y="281" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="308" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C08-M05-F1. Bianco&#x27;s Pyramid of Pain: indicators higher up cost the</text>
+<text x="20" y="324" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">adversary more to change [C08-M05-R1].</text>
+</svg>

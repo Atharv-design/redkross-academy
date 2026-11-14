@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="653" height="203" viewBox="0 0 653 203" role="img" aria-labelledby="t d">
+<title id="t">C06-M04-F1: Authentication versus authorisation</title>
+<desc id="d">A diagram contrasting authentication (who you are) with authorisation (what you may do), split into object-level and function-level checks.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C06-M04-F1  Authentication versus authorisation</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   AUTHENTICATION: who are you?      -&gt; verified by login/session</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   AUTHORISATION : what may you do?  -&gt; object check: own this record?</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                        function check: hold this role?</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   broken access control = missing object or function check (server-side)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C06-M04-F1. Authentication and authorisation are distinct; broken access</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">control is a missing authorisation check.</text>
+</svg>

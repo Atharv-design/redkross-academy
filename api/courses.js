@@ -1,4 +1,5 @@
-import { sql, json, cors } from './_db.js';
+import { sql, json, cors, serverError } from './_db.js';
+import { optionalUser } from './_auth.js';
 
 /**
  * Course Catalog API Endpoint (Phase 2, Phase 3, Phase 7, Phase 9)
@@ -20,31 +21,10 @@ export default async function handler(req, res) {
     `;
     const isCatalogEnabled = settings.length > 0 ? (settings[0].value === true || settings[0].value === 'true') : true;
 
-    // Check authorization header for super_admin bypass (e.g. for Admin Course Management)
-    const authHeader = req.headers.authorization;
-    let isAdmin = false;
-    let tokenUserId = null;
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      tokenUserId = authHeader.replace('Bearer ', '').trim();
-      if (tokenUserId.startsWith('{')) {
-        try {
-          const parsed = JSON.parse(tokenUserId);
-          tokenUserId = parsed.id || tokenUserId;
-        } catch {}
-      }
-      if (tokenUserId === 'usr_super_admin_dev' || tokenUserId === 'usr_admin') {
-        isAdmin = true;
-      } else {
-        try {
-          const userCheck = await sql`SELECT role FROM users WHERE id = ${tokenUserId} LIMIT 1`;
-          if (userCheck.length > 0 && userCheck[0].role === 'super_admin') {
-            isAdmin = true;
-          }
-        } catch (authErr) {
-          console.warn('Auth check fallback in api/courses:', authErr);
-        }
-      }
-    }
+    // Admin capabilities only for a verified Firebase ID token whose user has an admin role
+    const authCtx = await optionalUser(req);
+    const isAdmin = Boolean(authCtx?.isAdmin);
+    const tokenUserId = authCtx?.user?.id || null;
 
         // Handle Learning Paths if requested via /api/learning-paths or query
     if ((req.url && req.url.includes('learning-paths')) || (req.query && req.query.type === 'learning_paths')) {
@@ -418,12 +398,23 @@ export default async function handler(req, res) {
         course.final_exam.questions = feQuestions;
       }
 
+      // Answer keys never leave the server for non-admins (grading happens in /api/assessment)
+      if (!isAdmin) {
+        const strip = (qs = []) =>
+          qs.forEach((q) => {
+            delete q.explanation;
+            (q.options || []).forEach((o) => delete o.is_correct);
+          });
+        (course.modules || []).forEach((m) => m.quiz && strip(m.quiz.questions));
+        if (course.final_exam) strip(course.final_exam.questions);
+      }
+
       return json(res, { course, public_catalog_enabled: isCatalogEnabled });
     }
 
     // 5. List courses: STRICT Phase 3.1 & 3.3 Check
     // If public catalog is disabled and requester is not authenticated Super Admin, return empty list!
-    if (!isCatalogEnabled && !isAdmin && preview !== 'admin') {
+    if (!isCatalogEnabled && !isAdmin) {
       return json(res, {
         courses: [],
         public_catalog_enabled: false,
@@ -593,6 +584,6 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error('API /courses error:', error);
-    return json(res, { error: error.message || 'Internal server error' }, 500);
+    return serverError(res, error, 'api/courses');
   }
 }

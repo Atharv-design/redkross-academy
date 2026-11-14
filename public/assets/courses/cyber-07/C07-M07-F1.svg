@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="678" height="220" viewBox="0 0 678 220" role="img" aria-labelledby="t d">
+<title id="t">C07-M07-F1: Packet capture versus flow telemetry</title>
+<desc id="d">A comparison of full packet capture and flow telemetry by detail, size, privacy and use case.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C07-M07-F1  Packet capture versus flow telemetry</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   PACKET CAPTURE: full content; deep detail; large; privacy-heavy; targeted</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   FLOW (NetFlow/IPFIX): metadata only (src,dst,ports,proto,bytes,time);</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                         compact; network-wide; privacy-preserving; pattern</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                         detection</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   use flow for breadth, packet capture for deep dives</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C07-M07-F1. Flow telemetry scales for pattern detection; packet capture gives</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">deep detail when needed [C07-M07-R1].</text>
+</svg>

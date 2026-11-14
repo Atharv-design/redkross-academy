@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="695" height="203" viewBox="0 0 695 203" role="img" aria-labelledby="t d">
+<title id="t">C06-M05-F3: XSS contexts and the encoding fix</title>
+<desc id="d">A diagram of reflected, stored and DOM XSS contexts with the shared fix of contextual output encoding, CSP and HttpOnly cookies.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C06-M05-F3  XSS contexts and the encoding fix</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   reflected: /search?q=&lt;script&gt; -&gt; echoed into response -&gt; runs (via link)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   stored:    review body=&lt;script&gt; -&gt; saved -&gt; runs for every viewer</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   DOM:       client JS writes input into page unsafely</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   fix: encode untrusted output for its context (html.escape) + CSP + HttpOnly</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C06-M05-F3. The three XSS contexts and the output-encoding (plus CSP) defence</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">[C06-M05-R4].</text>
+</svg>

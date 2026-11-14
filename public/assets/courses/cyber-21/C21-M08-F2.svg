@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="628" height="323" viewBox="0 0 628 323" role="img" aria-labelledby="t d">
+<title id="t">C21-M08-F2: Before and after</title>
+<desc id="d">A table of ten controls with PASS or FAIL for the default and hardened clusters and the total score for each.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C21-M08-F2  Before and after</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   control                      default rk-k3s   hardened rk-k3s-hard</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   C01 anonymous rejected            PASS             PASS</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   C02 encryption at rest            FAIL             PASS</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   C03 audit logging                 FAIL             PASS</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   C04 PSS cluster default           FAIL             PASS</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   C05 namespaces restricted         FAIL             PASS</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   C06 default-deny                  FAIL             PASS</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   C07 RBAC                          PASS             PASS (after fix)</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   C08 admission bound               FAIL             PASS</text>
+<text x="20" y="213" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   C09 live workloads                FAIL             PASS (after fix)</text>
+<text x="20" y="230" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   C10 digests                       FAIL             PASS</text>
+<text x="20" y="247" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   score                             2/10             10/10</text>
+<text x="20" y="264" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="291" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C21-M08-F2. Evidence results for the two lab clusters.</text>
+</svg>

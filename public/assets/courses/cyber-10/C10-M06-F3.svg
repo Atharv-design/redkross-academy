@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="653" height="186" viewBox="0 0 653 186" role="img" aria-labelledby="t d">
+<title id="t">C10-M06-F3: Control flow and the exit(0) stub</title>
+<desc id="d">Control-flow constructs - sequence, branch, loop, call/return - and the specimen&#x27;s linear exit(0) sequence.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C10-M06-F3  Control flow and the exit(0) stub</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   sequence -&gt; branch(jz/jnz after cmp) -&gt; loop(backward jmp) -&gt; call/ret</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   group instructions into BASIC BLOCKS -&gt; control-flow graph (CFG)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   ELF stub (straight line): mov edi,0 ; mov eax,60 ; syscall  =&gt; exit(0)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="138" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C10-M06-F3. Control-flow building blocks and the specimen&#x27;s straight-line</text>
+<text x="20" y="154" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">exit(0) [C10-M06-R3].</text>
+</svg>

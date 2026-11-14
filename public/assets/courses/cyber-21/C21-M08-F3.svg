@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="577" height="271" viewBox="0 0 577 271" role="img" aria-labelledby="t d">
+<title id="t">C21-M08-F3: One digest, all the evidence</title>
+<desc id="d">A running pod points to its image digest, which branches to SBOM, scan and gate, provenance, signature and admission evidence.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C21-M08-F3  One digest, all the evidence</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                    running pod (kestrel/api-...)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                               |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                   image sha256:07dc...bfa77</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        +---------+------------+-------------+-------------+</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        |         |            |             |             |</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     SBOM     scan + gate   provenance   signature    admission</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   (39 comp)  (Trivy, date) (builder,    (cosign key)  decision</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                             base digest)               (policy)</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="223" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C21-M08-F3. The image digest links runtime evidence to build and</text>
+<text x="20" y="239" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">supply-chain evidence.</text>
+</svg>

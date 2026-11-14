@@ -1,0 +1,7 @@
+Design principles for the release pipeline (LAB_ASSETS/C12/release):
+
+- Every gate writes its result. Each step records its exit code to a .rc file and its details (JSON) to an output folder, and the script continues, so the report shows all gates, not just the first failure. The decision is computed at the end: release only if every gate passed.
+- Tools run in disposable containers with pinned images, so results are reproducible and the build host stays clean.
+- Tooling is kept separate from the product. The first run of the lab pipeline installed cyclonedx-bom and pip-licenses into the release environment. The SBOM then reported 42 components and the licence review listed tool dependencies, such as defusedxml and fqdn, that do not ship. After moving the tools outside the release environment, the SBOM listed 7 components (execution-tested). An SBOM must describe what ships, not the scanner.
+- Permission boundaries between containers. The first cosign run failed with "open cosign.key: permission denied", because the output folder was created by a root process in another container, and the cosign image runs as a non-root user. Creating the folder on the host fixed it (execution-tested). Small details like this decide whether a pipeline is reliable.
+- Secrets: the signing key is generated for the lab and deleted after signing. In production, a KMS or keyless signing with the pipeline's OIDC identity is used (Module 7).

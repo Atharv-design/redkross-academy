@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="644" height="237" viewBox="0 0 644 237" role="img" aria-labelledby="t d">
+<title id="t">C09-M08-F3: From observation to finding</title>
+<desc id="d">Two observations combine into a transfer finding rated &quot;is shown by&quot;, while the question of who controlled the account is marked &quot;cannot determine&quot;.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C09-M08-F3  From observation to finding</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  OBSERVATION  HTTP 200 for /backup/customers.csv to 172.31.0.20 (E1)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">       +       carved file SHA-256 = server file SHA-256 (E1, E2)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">       v</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  FINDING      customers.csv was transferred to 172.31.0.20 at 05:51:40Z</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">               (&quot;is shown by&quot;)</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">       x       who controlled the deploy account? -&gt; &quot;cannot determine&quot;</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="189" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C09-M08-F3. Combining observations into a finding, and marking what the</text>
+<text x="20" y="205" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">evidence does not show.</text>
+</svg>

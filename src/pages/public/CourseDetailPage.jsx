@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { mockEngine } from '../../services/db/mockEngine';
 import { apiClient } from '../../services/apiClient';
+import { useCourseAvailability, AccessCodeModal, AccessNotice } from '../../components/courses/CourseAccess';
 import { useAuth } from '../../services/auth/authContext';
 import { getEcosystemLinks } from '../../utils/ecosystemLinks';
 
@@ -42,11 +43,9 @@ export default function CourseDetailPage() {
   const [course, setCourse] = useState(mockEngine.getCourseBySlug(slug) || mockEngine.getCourseById(slug));
   const [expandedModules, setExpandedModules] = useState({ 0: true, 1: true });
   const [showGrantModal, setShowGrantModal] = useState(false);
-  const [couponCode, setCouponCode] = useState('');
-  const [grantSuccess, setGrantSuccess] = useState(false);
-  const [grantError, setGrantError] = useState('');
   const [enrolling, setEnrolling] = useState(false);
   const [cancelling, setCancelling] = useState(false);
+  const availability = useCourseAvailability(course?.id);
 
   useEffect(() => {
     if (slug) {
@@ -96,6 +95,11 @@ export default function CourseDetailPage() {
       return;
     }
 
+    if (availability.comingSoon) return;
+    if (availability.needsCode) {
+      setShowGrantModal(true);
+      return;
+    }
     setEnrolling(true);
     const userMetadata = {
       email: currentUser.email,
@@ -104,7 +108,11 @@ export default function CourseDetailPage() {
     };
 
     try {
-      await apiClient.enrol(currentUser.id, course.id, userMetadata);
+      const enr = await apiClient.enrol(currentUser.id, course.id, userMetadata);
+      if (enr?.locked) {
+        if (enr.reason !== 'COMING_SOON') setShowGrantModal(true);
+        return;
+      }
       refreshBalance();
       navigate(`/student/course/${course.id}`);
     } catch (err) {
@@ -142,36 +150,6 @@ export default function CourseDetailPage() {
     }
   };
 
-  const handleApplyCoupon = async (e) => {
-    e.preventDefault();
-    if (!currentUser) {
-      setShowGrantModal(false);
-      navigate('/login', { state: { from: { pathname: `/courses/${slug || course.id}` } } });
-      return;
-    }
-    if (couponCode.trim().toUpperCase() === 'GRANT100' || couponCode.trim().toUpperCase() === 'REDKROSS2026') {
-      setGrantSuccess(true);
-      setGrantError('');
-      const userMetadata = {
-        email: currentUser.email,
-        full_name: currentUser.full_name || currentUser.displayName,
-        cadet_id: currentUser.cadet_id
-      };
-      try {
-        await apiClient.enrol(currentUser.id, course.id, userMetadata);
-        refreshBalance();
-      } catch (e) {
-        mockEngine.enrolStudent(currentUser.id, course.id);
-        refreshBalance();
-      }
-      setTimeout(() => {
-        setShowGrantModal(false);
-        navigate(`/student/course/${course.id}`);
-      }, 1200);
-    } else {
-      setGrantError('Invalid or expired coupon/grant code. Try "GRANT100"');
-    }
-  };
 
   const rawObjectives = (course.what_you_will_learn && course.what_you_will_learn.length > 0)
     ? course.what_you_will_learn
@@ -413,7 +391,7 @@ export default function CourseDetailPage() {
                 <span className="text-[10px] font-mono uppercase tracking-wider text-[#A3907C] font-bold">Access & Tuition</span>
                 <div className="flex items-baseline gap-2">
                   <span className="font-royal text-3xl font-extrabold text-white">
-                    {course.price === 0 ? 'Free Access' : `₹${course.price?.toLocaleString('en-IN')}`}
+                    {availability.loading ? '…' : availability.comingSoon ? 'Coming soon' : availability.unlocked ? 'Unlocked for you' : availability.price_inr > 0 ? `₹${availability.price_inr.toLocaleString('en-IN')}` : 'Free Access'}
                   </span>
                   <span className="text-xs font-mono text-[#FF7A00] font-semibold">
                     100% Curriculum
@@ -424,6 +402,7 @@ export default function CourseDetailPage() {
                 </p>
               </div>
 
+              <AccessNotice availability={availability} />
               {/* ================= Primary CTA: Login / Enroll Catch ================= */}
               <div className="space-y-3">
                 {!currentUser ? (
@@ -495,7 +474,7 @@ export default function CourseDetailPage() {
                   className="w-full py-2.5 rounded-xl bg-[#1A1208] hover:bg-[#0c2d20] border border-[#FF7A00]/25 text-xs font-mono text-[#FF7A00] flex items-center justify-center gap-2 transition-colors cursor-pointer"
                 >
                   <Gift className="w-4 h-4" />
-                  <span>Apply Academic Grant / Coupon</span>
+                  <span>Have an access code?</span>
                 </button>
               </div>
 
@@ -584,45 +563,7 @@ export default function CourseDetailPage() {
       </div>
 
       {/* Grant / Coupon Modal */}
-      {showGrantModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
-          <div className="cyber-glass-card rounded-2xl p-6 sm:p-8 max-w-md w-full space-y-4 border border-[#FF7A00]/40 shadow-[0_0_40px_rgba(255,122,0,0.2)]">
-            <h3 className="font-royal text-lg font-bold text-white flex items-center gap-2">
-              <Gift className="w-5 h-5 text-[#FF7A00]" />
-              <span>Apply Academic Grant / Coupon</span>
-            </h3>
-            <p className="text-xs text-[#E2D9CE]">
-              Enter your student sponsorship token or promotional coupon code to activate immediate sponsored enrollment.
-            </p>
-            <form onSubmit={handleApplyCoupon} className="space-y-4">
-              <input
-                type="text"
-                placeholder="Enter Code (e.g. GRANT100)"
-                value={couponCode}
-                onChange={(e) => setCouponCode(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-[#080705] border border-[#FF7A00]/30 text-sm text-white font-mono uppercase focus:outline-none focus:border-[#FF7A00]"
-              />
-              {grantError && <div className="text-xs text-rose-400 font-mono">{grantError}</div>}
-              {grantSuccess && <div className="text-xs text-[#FF7A00] font-mono">Grant Verified! Enrolling...</div>}
-              <div className="flex justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowGrantModal(false)}
-                  className="px-4 py-2 rounded-xl bg-[#0a2318] text-xs font-mono text-slate-300 border border-[#FF7A00]/20 cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-xl bg-[#FF7A00] text-[#071018] font-royal font-bold text-xs cursor-pointer shadow-[0_0_15px_rgba(255,122,0,0.3)]"
-                >
-                  Redeem
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <AccessCodeModal open={showGrantModal} onClose={() => setShowGrantModal(false)} course={course} priceInr={availability.price_inr} />
     </div>
   );
 }

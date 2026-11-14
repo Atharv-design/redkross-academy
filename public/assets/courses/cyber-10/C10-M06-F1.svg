@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="586" height="237" viewBox="0 0 586 237" role="img" aria-labelledby="t d">
+<title id="t">C10-M06-F1: PE and ELF side by side</title>
+<desc id="d">A comparison of PE and ELF for magic, entry point, code region, addressing and imports.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C10-M06-F1  PE and ELF side by side</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   concept        PE (Windows)              ELF (Linux)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   magic          MZ ... PE\0\0             7F 45 4C 46 (\x7fELF)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   entry          AddressOfEntryPoint       e_entry</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   code region    .text section             PT_LOAD segment (R+X)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   addresses      RVA from image base       virtual address</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   imports        import table (by DLL)     dynamic symbols</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="189" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C10-M06-F1. PE and ELF share concepts: magic, entry point, code</text>
+<text x="20" y="205" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">region, addresses, imports [C10-M06-R1][C10-M06-R2].</text>
+</svg>

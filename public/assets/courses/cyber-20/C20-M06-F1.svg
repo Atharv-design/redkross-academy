@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="678" height="238" viewBox="0 0 678 238" role="img" aria-labelledby="t d">
+<title id="t">C20-M06-F1: The automation ladder</title>
+<desc id="d">Three rungs from fully automated at the bottom to manual at the top, with examples, and an arrow showing irreversibility increasing upwards.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C20-M06-F1  The automation ladder</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   rung 3  MANUAL (automation prepares)   tier-0 assets, mass actions,</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                          destructive, legal/regulatory</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   rung 2  AUTOMATE + APPROVAL            isolate workstation, disable user,</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                          block indicator</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   rung 1  FULLY AUTOMATED                enrich, dedupe, case, collect,</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                          notify</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">           ^ irreversibility and blast radius increase upwards</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="206" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C20-M06-F1. Place each step by reversibility and blast radius.</text>
+</svg>

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="628" height="390" viewBox="0 0 628 390" role="img" aria-labelledby="t d">
+<title id="t">C21-M03-F1: Cluster components and trust</title>
+<desc id="d">A control-plane box containing the API server, etcd, scheduler and controller manager sits above two node boxes, each with kubelet, container runtime and network components; arrows show watches from nodes and calls from the API server to kubelets.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C21-M03-F1  Cluster components and trust</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   users / CI / controllers</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">            | HTTPS (authn -&gt; authz -&gt; admission)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">            v</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   +------------------ control plane ------------------+</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   |  kube-apiserver &lt;---- mTLS ----&gt; etcd (all state, |</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   |    ^      ^                       secrets)        |</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   |    |      +-- scheduler, controller-manager       |</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   +----|----------------------------------------------+</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        | watch / report                    API -&gt; kubelet :10250</text>
+<text x="20" y="213" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        v                                   (logs, exec, port-forward)</text>
+<text x="20" y="230" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   +-------- node --------+   +-------- node --------+</text>
+<text x="20" y="247" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   | kubelet -&gt; containerd|   | kubelet -&gt; containerd|</text>
+<text x="20" y="264" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   |  -&gt; runc -&gt; pods     |   |  -&gt; runc -&gt; pods     |</text>
+<text x="20" y="281" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   | CNI / kube-proxy     |   | CNI / kube-proxy     |</text>
+<text x="20" y="298" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   +----------------------+   +----------------------+</text>
+<text x="20" y="315" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="342" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C21-M03-F1. The API server is the hub; etcd holds all state; kubelets act</text>
+<text x="20" y="358" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">on nodes and expose their own API.</text>
+</svg>

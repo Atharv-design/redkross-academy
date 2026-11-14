@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="686" height="220" viewBox="0 0 686 220" role="img" aria-labelledby="t d">
+<title id="t">C05-M08-F2: A finding entry</title>
+<desc id="d">A single finding entry showing CVSS, evidence, impact, remediation and retest.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C05-M08-F2  A finding entry</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   F1 [Critical CVSS 9.8] Default administrator credential</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">      evidence    : admin/admin -&gt; administrator role (timestamp)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">      impact      : full admin takeover of the application</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">      remediation : remove default; unique strong credential; MFA; rate limit</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">      retest      : verify.py must report &#x27;not present&#x27;</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C05-M08-F2. Every finding carries evidence, impact, specific remediation and a</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">retest step.</text>
+</svg>

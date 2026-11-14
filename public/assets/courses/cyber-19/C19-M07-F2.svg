@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="602" height="186" viewBox="0 0 602 186" role="img" aria-labelledby="t d">
+<title id="t">C19-M07-F2: Coverage and gaps</title>
+<desc id="d">Four detected techniques and three gaps from seven emulated.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C19-M07-F2  Coverage and gaps</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   emulated: 7 techniques</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   detected: T1595, T1078, T1021, T1071        -&gt; 4/7 coverage</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   gaps    : T1087, T1550, T1005               -&gt; engineer + retest</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="138" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C19-M07-F2. Detection coverage and the gaps from the lab exercise</text>
+<text x="20" y="154" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">[C19-M07-R3].</text>
+</svg>

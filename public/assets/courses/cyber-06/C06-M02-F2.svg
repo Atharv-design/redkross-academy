@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="695" height="237" viewBox="0 0 695 237" role="img" aria-labelledby="t d">
+<title id="t">C06-M02-F2: From map to plan</title>
+<desc id="d">A table mapping lab endpoints and parameters to the sink they reach, the hypothesised weakness, and the module that verifies it.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C06-M02-F2  From map to plan</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   endpoint + param  --&gt;  sink            --&gt;  hypothesised weakness -&gt; module</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   /search q              SQL + HTML            SQLi + reflected XSS     M05</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   /account id            object lookup         IDOR                     M04</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   /download file         file system           path traversal           M06</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   /fetch url             outbound request      SSRF                      M06</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   (cookie) session       identity              weak session             M03</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="189" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C06-M02-F2. Classifying each entry point by its sink turns the map into a</text>
+<text x="20" y="205" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">verification plan.</text>
+</svg>

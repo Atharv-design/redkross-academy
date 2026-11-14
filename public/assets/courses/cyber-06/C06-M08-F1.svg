@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="678" height="203" viewBox="0 0 678 203" role="img" aria-labelledby="t d">
+<title id="t">C06-M08-F1: The end-to-end workflow and the lab tools</title>
+<desc id="d">A pipeline from authorisation through mapping, verification, scoring, reporting, remediation and retesting, with code review alongside, ending in proven closure.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C06-M08-F1  The end-to-end workflow and the lab tools</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   authorise(scope.md) -&gt; map(map.py) -&gt; verify(findings.py) -&gt;</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   score(cvss.py) -&gt; report(report.py) -&gt; remediate(app_fixed.py) -&gt;</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   retest(retest.py)  | code review(codereview.py) runs alongside verify/fix</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   closure = retest proves the finding is gone</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C06-M08-F1. The OWASP-aligned workflow mapped to the lab tools, ending in</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">retest-proven closure [C06-M08-R1].</text>
+</svg>

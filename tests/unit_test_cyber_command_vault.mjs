@@ -8,6 +8,11 @@ import {
   getCommandsForModule
 } from '../src/data/cybersecurityCommandVault.js';
 import e2bHandler from '../api/e2b.js';
+import { setTokenVerifier } from '../api/_auth.js';
+
+// the sandbox endpoint requires a verified identity; stub token verification for unit tests
+setTokenVerifier(async (t) => (t === 'test-token' ? { uid: 'vault_test_user', email: 'vault@example.com', email_verified: true } : null));
+const AUTH = { authorization: 'Bearer test-token' };
 
 console.log('--- STARTING COMPREHENSIVE CYBERSECURITY COMMAND VAULT & TERMINAL TESTING ---');
 
@@ -110,7 +115,7 @@ it('CockpitTerminalPanel.jsx integrates CommandVaultModal and Ctrl+K listener', 
 
 // 4. E2B Backend Lab Suite
 it('api/e2b.js responds to labs action with full suite metadata', async () => {
-  const req = { method: 'POST', body: { action: 'labs' } };
+  const req = { method: 'POST', headers: AUTH, body: { action: 'labs' } };
   let statusCode = 0;
   let resData = null;
   const res = {
@@ -129,11 +134,19 @@ it('api/e2b.js responds to labs action with full suite metadata', async () => {
   assert(resData.labSuite.cliTools.includes('/usr/local/bin/rk-vault'));
 });
 
+// 4b. Anonymous callers cannot use sandboxes
+it('api/e2b.js rejects unauthenticated requests', async () => {
+  let statusCode = 0;
+  const res = { setHeader() {}, status(c) { statusCode = c; return this; }, json() { return this; }, end() {} };
+  await e2bHandler({ method: 'POST', headers: {}, body: { action: 'exec', command: 'id' } }, res);
+  assert.strictEqual(statusCode, 401);
+});
+
 // 5. Fallback Shell Security Commands
 it('api/e2b.js fallback shell supports nmap, dig, whois, rk-vault', async () => {
   const testCommands = ['nmap 127.0.0.1', 'dig redkross.org.in', 'whois redkross.org.in', 'rk-vault list', 'rk-lab start'];
   for (const cmd of testCommands) {
-    const req = { method: 'POST', body: { action: 'exec', command: cmd, sandboxId: 'local_vm_test' } };
+    const req = { method: 'POST', headers: AUTH, body: { action: 'exec', command: cmd, sandboxId: 'local_vm_test' } };
     let resData = null;
     const res = {
       setHeader() {},

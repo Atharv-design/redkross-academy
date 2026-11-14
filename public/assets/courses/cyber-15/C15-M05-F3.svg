@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="703" height="186" viewBox="0 0 703 186" role="img" aria-labelledby="t d">
+<title id="t">C15-M05-F3: Sign and verify</title>
+<desc id="d">A message is hashed and signed; a recipient hashes the received message and verifies with the public key, whose ownership is established by a certificate chain to a trusted root.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C15-M05-F3  Sign and verify</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  message --hash--&gt; digest --sign(private key)--&gt; signature</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  message&#x27; --hash--&gt; digest&#x27; --verify(public key, signature)--&gt; valid / invalid</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  trust in public key &lt;- certificate &lt;- issuer &lt;- ... &lt;- trusted root</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="138" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C15-M05-F3. Signature verification proves integrity and origin; certificates</text>
+<text x="20" y="154" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">establish whose key it is.</text>
+</svg>

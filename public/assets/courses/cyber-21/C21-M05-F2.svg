@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="619" height="322" viewBox="0 0 619 322" role="img" aria-labelledby="t d">
+<title id="t">C21-M05-F2: Pod Security levels</title>
+<desc id="d">A four-row table listing the Privileged, Baseline and Restricted levels and additional organisation rules with their main controls.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C21-M05-F2  Pod Security levels</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   Privileged  | anything goes</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   ------------+-----------------------------------------------------</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   Baseline    | no privileged, no hostPath, no host namespaces,</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">               | no added dangerous capabilities</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   ------------+-----------------------------------------------------</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   Restricted  | baseline + runAsNonRoot + allowPrivilegeEscalation</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">               | false + seccomp RuntimeDefault/Localhost + drop ALL</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">               | + limited volume types</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   ------------+-----------------------------------------------------</text>
+<text x="20" y="213" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   Beyond      | readOnlyRootFilesystem, limits, no token automount,</text>
+<text x="20" y="230" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   (your rules)| custom seccomp/AppArmor, user namespaces</text>
+<text x="20" y="247" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="274" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C21-M05-F2. Each level adds controls to the one above it; your own</text>
+<text x="20" y="290" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">policies add more.</text>
+</svg>

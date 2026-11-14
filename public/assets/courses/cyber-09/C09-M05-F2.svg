@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="619" height="203" viewBox="0 0 619 203" role="img" aria-labelledby="t d">
+<title id="t">C09-M05-F2: Artefact strength for &quot;program X ran&quot;</title>
+<desc id="d">A ranked list from stronger evidence (process creation logs, Prefetch, BAM, UserAssist) to weaker (Amcache, ShimCache), advising combining sources.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C09-M05-F2  Artefact strength for &quot;program X ran&quot;</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  stronger  Sysmon 1 / 4688 (if enabled)  Prefetch  BAM  UserAssist</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     |      Amcache (presence; often execution)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  weaker    ShimCache (Windows 10+: presence, not proof of execution)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  combine at least two independent sources for a confident finding</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C09-M05-F2. Relative strength of execution evidence (from documentation;</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">behaviour varies by Windows version).</text>
+</svg>

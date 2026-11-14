@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="728" height="186" viewBox="0 0 728 186" role="img" aria-labelledby="t d">
+<title id="t">C17-M04-F1: Policy-to-evidence chain</title>
+<desc id="d">A chain from policy through standard, procedure, control, evidence, test and report, with exceptions branching from the standard into the risk register.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C17-M04-F1  Policy-to-evidence chain</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  POLICY -&gt; STANDARD -&gt; PROCEDURE -&gt; CONTROL -&gt; EVIDENCE -&gt; TEST -&gt; REPORT</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                \                                  ^</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                 +--&gt; EXCEPTION (approved, compensated, expiring) -&gt; RISK REGISTER</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="138" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C17-M04-F1. Each requirement can be traced to evidence; exceptions link to the risk</text>
+<text x="20" y="154" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">register.</text>
+</svg>

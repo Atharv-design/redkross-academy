@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="636" height="305" viewBox="0 0 636 305" role="img" aria-labelledby="t d">
+<title id="t">C21-M01-F3: Isolation-breaking options</title>
+<desc id="d">A vertical chain from code execution in a container to control of the node, with five branches naming privileged mode, host namespaces, the Docker socket, writable host paths and added capabilities or disabled seccomp.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C21-M01-F3  Isolation-breaking options</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   code execution in a container</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        +-- privileged: true ............ all caps + all devices</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        +-- hostPID / hostNetwork ....... host processes / host network</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        +-- docker.sock mounted ......... start any container = root</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        +-- hostPath &quot;/&quot; writable ....... edit host files</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        +-- cap SYS_ADMIN, seccomp off .. kernel attack surface</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        |</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        v</text>
+<text x="20" y="213" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   control of the node --&gt; other workloads, secrets, credentials</text>
+<text x="20" y="230" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="257" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C21-M01-F3. The short paths from a compromised container to the host - each</text>
+<text x="20" y="273" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">is a configuration choice that can be refused.</text>
+</svg>

@@ -19,7 +19,11 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_3RwIaSv9ptBg@ep-proud-flower-a5ho5vpv-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require';
+const DATABASE_URL = process.env.DATABASE_URL;
+if (!DATABASE_URL) {
+  console.error('DATABASE_URL is not set. Export it (never hard-code credentials in source).');
+  process.exit(1);
+}
 
 async function runMigrations() {
   console.log('====================================================');
@@ -52,6 +56,15 @@ async function runMigrations() {
 
     await client.query(sqlScript);
     console.log('?" DDL schema execution completed successfully.');
+
+    // Incremental, idempotent migrations in lexical (date-prefixed) order
+    const migrationsDir = path.join(__dirname, 'migrations');
+    if (fs.existsSync(migrationsDir)) {
+      for (const file of fs.readdirSync(migrationsDir).filter((f) => f.endsWith('.sql')).sort()) {
+        console.log(`Applying migration ${file}...`);
+        await client.query(fs.readFileSync(path.join(migrationsDir, file), 'utf8'));
+      }
+    }
 
     // Query information_schema to verify created tables
     const res = await client.query(`

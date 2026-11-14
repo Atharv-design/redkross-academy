@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="670" height="204" viewBox="0 0 670 204" role="img" aria-labelledby="t d">
+<title id="t">C11-M08-F3: Secure reference architecture</title>
+<desc id="d">An organisation with guardrails containing security, backup, production, non-production and forensic accounts, with cross-cutting identity, CI, posture and detection controls.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C11-M08-F3  Secure reference architecture</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  Org guardrails (SCP / Azure Policy)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   |-- security + log archive (immutable)   |-- backup account (vault lock)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   |-- prod: WAF/ALB -&gt; private app (roles, IMDSv2) -&gt; private data (CMK)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   |-- non-prod      |-- forensic account (IR)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  SSO + MFA + PIM | OIDC CI | CSPM + IaC gates | SIEM + native detection</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C11-M08-F3. The course controls in one architecture.</text>
+</svg>

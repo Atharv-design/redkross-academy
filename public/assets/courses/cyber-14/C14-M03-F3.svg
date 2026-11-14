@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="670" height="187" viewBox="0 0 670 187" role="img" aria-labelledby="t d">
+<title id="t">C14-M03-F3: Is this address blockable?</title>
+<desc id="d">A decision tree asking how many domains use an address and whether its records fall in the campaign window, leading to block, monitor or investigate.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C14-M03-F3  Is this address blockable?</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   address --&gt; how many domains on it now? (pDNS)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                 many --&gt; shared/CDN --&gt; block the DOMAIN, monitor the IP</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                 few  --&gt; in campaign window? --&gt; yes --&gt; block with expiry</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                              --&gt; no  --&gt; investigate</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C14-M03-F3. A simple decision path before blocking an address.</text>
+</svg>

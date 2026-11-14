@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="602" height="236" viewBox="0 0 602 236" role="img" aria-labelledby="t d">
+<title id="t">C15-M06-F3: Certificate validity reductions (SC-081v3)</title>
+<desc id="d">A list of maximum validity periods decreasing from 398 days to 200, 100 and 47 days on specified dates, with a note to automate renewal.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C15-M06-F3  Certificate validity reductions (SC-081v3)</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  398 days (before Mar 2026)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  200 days  from 15 Mar 2026  &lt;- in effect (Nov 2026)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  100 days  from 15 Mar 2027</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   47 days  from 15 Mar 2029</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  =&gt; automate issuance and renewal (ACME), inventory every endpoint</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C15-M06-F3. The staged reduction of maximum public TLS certificate</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">validity (intermediate dates per secondary reporting; confirm against the</text>
+<text x="20" y="204" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Baseline Requirements).</text>
+</svg>

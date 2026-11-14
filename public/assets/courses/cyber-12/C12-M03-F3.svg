@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="678" height="220" viewBox="0 0 678 220" role="img" aria-labelledby="t d">
+<title id="t">C12-M03-F3: Object-level authorisation decision</title>
+<desc id="d">A flow that rejects invalid IDs, returns the same not-found response for missing or other users&#x27; records, and otherwise returns the record.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C12-M03-F3  Object-level authorisation decision</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  valid tracking id? --no--&gt; 400 validation error</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">         | yes</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  record exists AND owner == user? --no--&gt; &quot;not found&quot; (same for both cases)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">         | yes</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  return record (encoded on output)</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C12-M03-F3. The reference service&#x27;s decision for a shipment read</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">(execution-tested logic).</text>
+</svg>

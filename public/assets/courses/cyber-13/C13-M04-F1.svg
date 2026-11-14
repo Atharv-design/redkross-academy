@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="602" height="288" viewBox="0 0 602 288" role="img" aria-labelledby="t d">
+<title id="t">C13-M04-F1: The tier model and the forbidden path</title>
+<desc id="d">Three stacked tiers from domain controllers at the top to workstations at the bottom, with a note forbidding use of a Tier 0 credential on lower tiers.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C13-M04-F1  The tier model and the forbidden path</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   Tier 0  DCs, Domain Admins      &lt;== control of the directory</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">      |  admin flows DOWN only</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">      v</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   Tier 1  servers, server admins</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">      |</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">      v</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   Tier 2  workstations, help desk, staff</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   FORBIDDEN: a Tier 0 credential used on a Tier 1 or Tier 2 system</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">              (exposes domain control where attackers land first)</text>
+<text x="20" y="213" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="240" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C13-M04-F1. Administration flows downward; higher-tier credentials are</text>
+<text x="20" y="256" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">never exposed on lower-tier systems.</text>
+</svg>

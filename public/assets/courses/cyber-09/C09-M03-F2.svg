@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="686" height="203" viewBox="0 0 686 203" role="img" aria-labelledby="t d">
+<title id="t">C09-M03-F2: What deletion changes (FAT)</title>
+<desc id="d">Before-and-after rows showing the directory entry first byte changed to E5 and the FAT entry set to free, while the data cluster content is unchanged.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C09-M03-F2  What deletion changes (FAT)</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  BEFORE  dir entry: &quot;CUSTOM~1CSV&quot; size=36 first_cluster=N   FAT[N]=EOF</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">          data cluster N: &quot;export of customer list...&quot;</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  AFTER   dir entry: 0xE5&quot;USTOM~1CSV&quot; size=36 first_cluster=N FAT[N]=0 (free)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">          data cluster N: &quot;export of customer list...&quot;  &lt;- still there</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C09-M03-F2. FAT deletion marks the name and frees the cluster but leaves content</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">until it is overwritten (consistent with the execution-tested recovery).</text>
+</svg>

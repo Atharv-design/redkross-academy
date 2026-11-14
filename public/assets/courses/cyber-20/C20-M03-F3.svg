@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="653" height="221" viewBox="0 0 653 221" role="img" aria-labelledby="t d">
+<title id="t">C20-M03-F3: Anatomy of a Suricata rule</title>
+<desc id="d">The lab rule annotated in three parts: the action, the header with protocol, addresses, ports and direction, and the options with buffers, content and metadata.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C20-M03-F3  Anatomy of a Suricata rule</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   alert  http any any -&gt; any any  ( msg:...; flow:...; http.uri;</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   -----  ----------------------     content:&quot;/backup/&quot;; startswith;</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   ACTION HEADER: proto src sport     sid:9200001; rev:1; )</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                  dir dst dport      ----------------------------------</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                      OPTIONS: sticky buffer + content,</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                      metadata (msg, classtype, sid, rev)</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="189" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C20-M03-F3. Action, header and options [C20-M03-R2].</text>
+</svg>

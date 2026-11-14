@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="686" height="203" viewBox="0 0 686 203" role="img" aria-labelledby="t d">
+<title id="t">C07-M06-F3: Rogue and evil-twin APs and detection</title>
+<desc id="d">A diagram defining rogue and evil-twin access points and how an approved-AP inventory detects them.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C07-M06-F3  Rogue and evil-twin APs and detection</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   ROGUE AP  : unauthorised AP on the network (bypasses controls)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   EVIL TWIN : fake AP mimicking a real SSID (lures users)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   detection : approved-AP inventory (SSID/BSSID) ; flag anything not listed,</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">               or an approved SSID from an unexpected BSSID (evil twin)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C07-M06-F3. Rogue and evil-twin APs and detection against an approved-AP</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">inventory.</text>
+</svg>

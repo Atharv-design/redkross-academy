@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="552" height="220" viewBox="0 0 552 220" role="img" aria-labelledby="t d">
+<title id="t">C08-M03-F2: Correlating by a shared entity</title>
+<desc id="d">A timeline for one IP showing eight VPN failures, a success and a firewall drop, concluding they form one attack sequence.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C08-M03-F2  Correlating by a shared entity</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  source.ip = 203.0.113.66</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   06:42:00-06:42:49Z  VPN failures x8 (8 users)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   06:46:00Z           VPN success (gopal)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   06:46:21Z           Firewall DROP to 10.40.0.5:3389</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   =&gt; one actor, multiple sources: spray -&gt; access -&gt; probing</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C08-M03-F2. Normalised source.ip links VPN and firewall events</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">into one story.</text>
+</svg>

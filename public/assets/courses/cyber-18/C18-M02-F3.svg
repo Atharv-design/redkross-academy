@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="712" height="153" viewBox="0 0 712 153" role="img" aria-labelledby="t d">
+<title id="t">C18-M02-F3: Retrieval with and without ACL (lab, P4)</title>
+<desc id="d">Two retrieval results for the same question; only the naive one includes the other customer&#x27;s record.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C18-M02-F3  Retrieval with and without ACL (lab, P4)</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  naive    C100 asks about C200 -&gt; [customer_C200, customer_C100, refund_policy]</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  hardened C100 asks about C200 -&gt; [customer_C100, refund_policy, outage]</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="121" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C18-M02-F3. With ACLs, the other customer&#x27;s record never enters the context.</text>
+</svg>

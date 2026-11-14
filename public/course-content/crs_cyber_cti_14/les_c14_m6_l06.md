@@ -1,0 +1,6 @@
+- Agreements: membership terms of ISACs and communities define what may be shared, re-shared and attributed to whom.
+- Minimisation: share indicators and behaviour, not victims' personal data (Module 2); sightings may reveal your own compromise - mark them accordingly or share them anonymously through a trusted party.
+- Licences: commercial feed content often may not be redistributed; the provenance labels on each indicator ("feed:vendor") make this checkable.
+- Quality: share validated objects with confidence and validity, and correct or revoke what turns out to be wrong.
+- Feedback: return sightings and false positives to producers; this is what makes communities improve.
+- Access control: authenticate every client, scope collections by role and log access.

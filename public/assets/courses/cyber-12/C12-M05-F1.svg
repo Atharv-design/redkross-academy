@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="611" height="254" viewBox="0 0 611 254" role="img" aria-labelledby="t d">
+<title id="t">C12-M05-F1: Direct versus transitive coverage</title>
+<desc id="d">Two boxes compare three manifest pins with six resolved packages, including three transitive ones, showing a manifest-only SBOM misses half of them.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C12-M05-F1  Direct versus transitive coverage</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  requirements.txt (manifest)       resolved environment</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  +------------------+              +------------------------------+</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  | requests 2.25.0  |  resolves -&gt; | requests, urllib3, PyYAML    |</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  | urllib3 1.26.4   |              | + idna, chardet, certifi     |</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  | PyYAML 6.0.1     |              |   (transitive)               |</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  +------------------+              +------------------------------+</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  SBOM from manifest: 3 components  SBOM/SCA from environment: 6</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="206" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C12-M05-F1. An SBOM built from the manifest missed the transitive</text>
+<text x="20" y="222" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">packages that the scan and licence listing found (execution-tested).</text>
+</svg>

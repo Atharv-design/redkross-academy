@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="653" height="203" viewBox="0 0 653 203" role="img" aria-labelledby="t d">
+<title id="t">C07-M01-F1: The reference zone architecture</title>
+<desc id="d">A zone diagram showing internet and users reaching the DMZ over HTTPS, the DMZ reaching the app, the app reaching the database, and management reaching app and database over SSH, with forbidden flows listed.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C07-M01-F1  The reference zone architecture</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   INTERNET ==443==&gt; [ DMZ/web ] ==8080==&gt; [ APP ] ==5432==&gt; [ DATABASE ]</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   USERS   ==443==&gt; [ DMZ/web ]                         (crown jewel)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   MGMT    ==22===&gt; [ APP ] and [ DATABASE ]   (controlled admin only)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   denied by default: user-&gt;db, internet-&gt;db, dmz-&gt;db, user-&gt;mgmt</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C07-M01-F1. Trust zones and permitted flows; the database is reachable only</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">from app and management [C07-M01-R2].</text>
+</svg>

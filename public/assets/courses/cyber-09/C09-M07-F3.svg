@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="644" height="254" viewBox="0 0 644 254" role="img" aria-labelledby="t d">
+<title id="t">C09-M07-F3: Containment timing decision</title>
+<desc id="d">A decision tree: active damage leads to immediate containment; otherwise complete scoping leads to coordinated containment; incomplete scoping requires a recorded risk decision.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C09-M07-F3  Containment timing decision</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  active damage (encryption, exfiltration, safety)? --yes--&gt; contain NOW</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">            | no</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  scoping complete? --yes--&gt; coordinated containment of all footholds</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">            | no</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  risk of waiting acceptable? (lead + legal decide, record it)</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">            |yes                         | no</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   short observation + preserve     contain now, continue scoping</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="206" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C09-M07-F3. When to contain immediately and when a short, recorded delay may</text>
+<text x="20" y="222" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">be justified.</text>
+</svg>

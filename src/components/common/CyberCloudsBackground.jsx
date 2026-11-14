@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import CLOUDS from 'vanta/dist/vanta.clouds.min';
+import { shouldAnimateBackground } from '../../utils/motion';
 
 /**
  * CyberCloudsBackground
@@ -10,17 +11,20 @@ import CLOUDS from 'vanta/dist/vanta.clouds.min';
  * - Seamlessly blended volumetric amber vapors drifting over pure black canvas (0% green, 0% red)
  */
 export default function CyberCloudsBackground() {
-  const [vantaEffect, setVantaEffect] = useState(null);
   const vantaRef = useRef(null);
 
+  // One effect per mount, destroyed on unmount. (Tracking it in state leaked a
+  // second WebGL renderer whenever the effect ran twice, e.g. React StrictMode.)
   useEffect(() => {
-    if (!vantaEffect && vantaRef.current) {
+    if (!vantaRef.current || !shouldAnimateBackground()) return undefined;
+    let effect = null;
+    {
       try {
         if (typeof window !== 'undefined') {
           window.THREE = THREE;
         }
 
-        const effect = (CLOUDS.default || CLOUDS)({
+        effect = (CLOUDS.default || CLOUDS)({
           el: vantaRef.current,
           THREE: THREE,
           mouseControls: true,
@@ -38,22 +42,19 @@ export default function CyberCloudsBackground() {
           speed: 0.85                  // Atmospheric drift
         });
 
-        setVantaEffect(effect);
       } catch (err) {
         console.warn('Vanta.js initialization warning:', err.message);
       }
     }
 
     return () => {
-      if (vantaEffect) {
-        try {
-          vantaEffect.destroy();
-        } catch (e) {
-          console.warn('Vanta cleanup error:', e);
-        }
+      try {
+        effect?.destroy();
+      } catch (e) {
+        console.warn('Vanta cleanup error:', e);
       }
     };
-  }, [vantaEffect]);
+  }, []);
 
   return (
     <div 

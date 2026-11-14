@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="644" height="220" viewBox="0 0 644 220" role="img" aria-labelledby="t d">
+<title id="t">C21-M03-F2: The request path</title>
+<desc id="d">A chain from request through TLS, authentication, authorisation and admission to validation and an etcd write, with notes on 401 and 403 outcomes and a return arrow to watchers.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C21-M03-F2  The request path</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   request --&gt; TLS --&gt; authentication --&gt; authorisation --&gt; admission</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                         |  401 if none     |  403 if        mutating -&gt;</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                         |  (or anonymous)  |  denied        validating</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                                                 |</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                       watchers notified &lt;-- etcd write &lt;-- schema check</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C21-M03-F2. Every API request passes the same stages; each stage is a</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">control point.</text>
+</svg>

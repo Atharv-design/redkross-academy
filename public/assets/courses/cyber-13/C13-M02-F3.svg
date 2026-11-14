@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="628" height="170" viewBox="0 0 628 170" role="img" aria-labelledby="t d">
+<title id="t">C13-M02-F3: LDAP bind choices</title>
+<desc id="d">Three LDAP bind options ranked from a cleartext simple bind to protect, through a TLS-protected simple bind, to the preferred GSSAPI bind that uses a Kerberos ticket.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C13-M02-F3  LDAP bind choices</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   simple bind + no TLS   : DN + password in CLEARTEXT   (avoid)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   simple bind + LDAPS    : DN + password inside TLS      (acceptable)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   SASL/GSSAPI (Kerberos) : uses the TGT, NO password     (preferred)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="138" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C13-M02-F3. Prefer SASL/GSSAPI; never send a simple bind without TLS.</text>
+</svg>

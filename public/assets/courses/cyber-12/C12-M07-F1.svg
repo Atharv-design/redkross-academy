@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="653" height="237" viewBox="0 0 653 237" role="img" aria-labelledby="t d">
+<title id="t">C12-M07-F1: Pipeline trust chain</title>
+<desc id="d">A chain from a reviewed commit through an ephemeral runner and build to a signed artefact with provenance, stored in a registry and verified at a deploy gate.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C12-M07-F1  Pipeline trust chain</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  reviewed commit (branch protection, CODEOWNERS)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     --&gt; ephemeral runner (least-privilege token, OIDC)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        --&gt; build (pinned actions, hashed deps, tests, SCA)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">           --&gt; artefact + signature + provenance (subject = sha256)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">              --&gt; registry</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                 --&gt; deploy gate: verify signature + provenance -&gt; deploy</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="189" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C12-M07-F1. Each link in the chain is protected, and the deploy gate verifies</text>
+<text x="20" y="205" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">before release.</text>
+</svg>

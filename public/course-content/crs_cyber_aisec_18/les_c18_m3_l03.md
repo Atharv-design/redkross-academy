@@ -1,0 +1,5 @@
+- Inventory sources and label trust: internal reviewed, internal unreviewed, external imported, user-supplied.
+- Ingestion audit: scan imported content for text addressed to AI systems and for injection phrases; route hits to human review rather than silently indexing them (kb_audit.py, Module 4).
+- Sanitise conservatively: strip hidden markup and comments from imported HTML; remove lines addressed to assistants (BanyanBot's sanitise defence - pattern based and therefore incomplete).
+- Scope retrieval: the less untrusted content in context, the less influence; do not retrieve imported pages for account-action requests.
+- Provenance in the context: label each document's source so that the application (not just the model) knows what is untrusted.

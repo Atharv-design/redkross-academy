@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="619" height="203" viewBox="0 0 619 203" role="img" aria-labelledby="t d">
+<title id="t">C15-M04-F1: Hash properties</title>
+<desc id="d">Four rows describing pre-image, second pre-image and collision resistance, and an avalanche example where 127 of 256 bits changed.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C15-M04-F1  Hash properties</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  pre-image:        h  --&gt; find any m?           infeasible</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  second pre-image: m1 --&gt; find m2, H(m2)=H(m1)?  infeasible</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  collision:        find any m1 != m2 with equal hash?  ~2^(n/2) work</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  avalanche:        &quot;...567&quot; vs &quot;...568&quot; -&gt; 127/256 bits differ (lab)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C15-M04-F1. The three resistance properties and the avalanche effect</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">(execution-tested value).</text>
+</svg>

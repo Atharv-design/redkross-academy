@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="703" height="288" viewBox="0 0 703 288" role="img" aria-labelledby="t d">
+<title id="t">C08-M08-F1: Hypothesis-driven hunt loop</title>
+<desc id="d">A flow from hypothesis sources to a hypothesis, a data check that can end in a telemetry gap, analysis techniques, and three outcomes: finding, new detection or recorded negative.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C08-M08-F1  Hypothesis-driven hunt loop</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   intel / ATT&amp;CK gap / incident --&gt; HYPOTHESIS --&gt; data requirements met?</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                                        |no -&gt; telemetry gap</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                                        v yes</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                        search / stack / statistics / pivot</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                                        |</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                         +------------------+-----------+-------------+</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                         v                  v                         v</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                     finding -&gt;         new detection -&gt;        negative -&gt;</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                     escalate (M07)     engineer (M06)          record &amp; repeat</text>
+<text x="20" y="213" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="240" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C08-M08-F1. A hunt starts with a hypothesis, checks data, applies techniques and ends</text>
+<text x="20" y="256" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">in one of four recorded outcomes.</text>
+</svg>

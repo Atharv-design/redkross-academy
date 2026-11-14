@@ -1,6 +1,22 @@
 import crypto from 'crypto';
 
-const SIGNING_SECRET = process.env.CREDENTIAL_SIGNING_SECRET || 'redkross_academy_tamperproof_signing_key_2026_default';
+/**
+ * Credential signing. CREDENTIAL_SIGNING_SECRET must be a long random value
+ * (e.g. `openssl rand -hex 32`) kept only on the server. There is deliberately no
+ * fallback: a default secret in source would let anyone mint "verified" credentials.
+ */
+function signingSecret() {
+  const secret = process.env.CREDENTIAL_SIGNING_SECRET;
+  if (!secret || secret.length < 32) {
+    throw new Error('CREDENTIAL_SIGNING_SECRET is not configured (min 32 chars)');
+  }
+  return secret;
+}
+
+export function isSigningConfigured() {
+  const secret = process.env.CREDENTIAL_SIGNING_SECRET;
+  return Boolean(secret && secret.length >= 32);
+}
 
 /**
  * Computes canonical payload digest string from verified credential attributes
@@ -21,10 +37,7 @@ export function computeCredentialPayload(cred) {
  */
 export function signCredential(cred) {
   const payload = computeCredentialPayload(cred);
-  return crypto
-    .createHmac('sha256', SIGNING_SECRET)
-    .update(payload)
-    .digest('hex');
+  return crypto.createHmac('sha256', signingSecret()).update(payload).digest('hex');
 }
 
 /**
@@ -34,22 +47,30 @@ export function verifyCredentialSignature(cred) {
   if (!cred || !cred.digital_signature) {
     return { verified: false, reason: 'MISSING_SIGNATURE' };
   }
-
-  const expected = signCredential(cred);
+  if (!/^[0-9a-f]{64}$/i.test(cred.digital_signature)) {
+    return { verified: false, reason: 'MALFORMED_SIGNATURE' };
+  }
   try {
+    const expected = signCredential(cred);
     const a = Buffer.from(cred.digital_signature, 'hex');
     const b = Buffer.from(expected, 'hex');
     if (a.length !== b.length) {
       return { verified: false, reason: 'SIGNATURE_LENGTH_MISMATCH' };
     }
     const isValid = crypto.timingSafeEqual(a, b);
-    return {
-      verified: isValid,
-      algorithm: 'HMAC-SHA256',
-      signature: cred.digital_signature,
-      digest: expected
-    };
+    return { verified: isValid, reason: isValid ? null : 'SIGNATURE_MISMATCH', algorithm: 'HMAC-SHA256' };
   } catch (err) {
-    return { verified: false, reason: 'VERIFICATION_EXCEPTION', error: err.message };
+    console.error('[credential verify]', err.message);
+    return { verified: false, reason: 'VERIFICATION_UNAVAILABLE' };
   }
+}
+
+const B32 = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no I/O/0/1 to avoid transcription errors
+
+/** e.g. RK-C05-7KQ2-M9XA: course tag + 40 bits of CSPRNG output. */
+export function newVerificationId(courseTag = 'RK') {
+  const bytes = crypto.randomBytes(8);
+  let out = '';
+  for (let i = 0; i < 8; i++) out += B32[bytes[i] % 32];
+  return `RK-${courseTag}-${out.slice(0, 4)}-${out.slice(4)}`;
 }

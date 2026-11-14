@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="602" height="288" viewBox="0 0 602 288" role="img" aria-labelledby="t d">
+<title id="t">C09-M01-F1: The forensic process (NIST SP 800-86)</title>
+<desc id="d">Four boxes in sequence, collection, examination, analysis and reporting, preceded by questions and authority, with a loop from reporting back to collection for new questions.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C09-M01-F1  The forensic process (NIST SP 800-86)</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  questions &amp; authority</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">         |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">         v</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  COLLECTION --&gt; EXAMINATION --&gt; ANALYSIS --&gt; REPORTING</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  (acquire,      (parse,          (correlate,   (findings, methods,</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   hash, label)   extract,         answer        limitations)</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                  filter)          questions)</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">         ^                                            |</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">         +---------- new questions / sources ---------+</text>
+<text x="20" y="213" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="240" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C09-M01-F1. The four phases of the forensic process, driven by</text>
+<text x="20" y="256" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">questions and iterated as findings emerge [C09-M01-R1].</text>
+</svg>

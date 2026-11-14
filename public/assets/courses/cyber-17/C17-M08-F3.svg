@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="611" height="237" viewBox="0 0 611 237" role="img" aria-labelledby="t d">
+<title id="t">C17-M08-F3: Toolkit outputs to decisions</title>
+<desc id="d">Six toolkit results each paired with the management decision it calls for.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C17-M08-F3  Toolkit outputs to decisions</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  R04 acceptance expired   -&gt; renew (CEO) or fund replacement</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  CSF 15/22                -&gt; roadmap for 7 gap categories</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  EX-02 invalid            -&gt; enforce rules / remediate printers</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  courier API 12h &gt; 8h     -&gt; workaround or second provider</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  4 leavers active         -&gt; automate deprovisioning (high finding)</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  QuickPrint critical fail -&gt; remediate or replace vendor</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="189" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C17-M08-F3. Each execution-tested toolkit result mapped to the decision</text>
+<text x="20" y="205" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">it requires.</text>
+</svg>

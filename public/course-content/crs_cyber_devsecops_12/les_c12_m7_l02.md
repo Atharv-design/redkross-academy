@@ -1,0 +1,5 @@
+- Least-privilege tokens. Grant the automatic CI token the minimum permissions needed, with read-only contents by default, and raise them per job only where needed. GitHub's hardening guide recommends this for GITHUB_TOKEN [R1].
+- OIDC federation instead of stored cloud keys (Module 6). The job receives a signed identity token, and the cloud role's trust policy accepts it only for a specific repository, branch or environment. This removes long-lived secrets from CI [R1].
+- Separate roles per stage and environment. The build role can push to the artefact registry but not deploy. The production deploy role is usable only from the protected main branch, with an approval environment.
+- Human access. Use MFA for source control and CI administrators, and limit who can change pipeline settings and secrets.
+- Audit. Review pipeline and role activity in CI audit logs and cloud audit logs.

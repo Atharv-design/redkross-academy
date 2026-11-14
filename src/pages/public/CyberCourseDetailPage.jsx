@@ -43,6 +43,7 @@ import { mockEngine } from '../../services/db/mockEngine';
 import { apiClient } from '../../services/apiClient';
 import { useAuth } from '../../services/auth/authContext';
 import { CYBER_COURSES, CYBER_LEARNING_PATHS } from '../../services/db/cyberCourses';
+import { useCourseAvailability, AccessCodeModal, AccessNotice, priceLabel } from '../../components/courses/CourseAccess';
 
 /**
  * CyberCourseDetailPage — Dedicated Cybersecurity In-Branch Course View
@@ -62,9 +63,6 @@ export default function CyberCourseDetailPage() {
   const [expandedModules, setExpandedModules] = useState({ 0: true, 1: true });
   const [enrolling, setEnrolling] = useState(false);
   const [showGrantModal, setShowGrantModal] = useState(false);
-  const [couponCode, setCouponCode] = useState('');
-  const [grantSuccess, setGrantSuccess] = useState(false);
-  const [grantError, setGrantError] = useState('');
 
   const [course, setCourse] = useState(() => {
     return (
@@ -127,6 +125,8 @@ export default function CyberCourseDetailPage() {
     setExpandedModules({});
   };
 
+  const availability = useCourseAvailability(course?.id);
+
   const handleEnrol = async () => {
     if (!currentUser) {
       navigate(`/login?redirect=/academy/cybersecurity/courses/${course.slug}`);
@@ -134,7 +134,16 @@ export default function CyberCourseDetailPage() {
     }
     try {
       setEnrolling(true);
-      const enr = mockEngine.enrolStudent(currentUser.id, course.id);
+      if (availability.comingSoon) return;
+      if (availability.needsCode) {
+        setShowGrantModal(true);
+        return;
+      }
+      const enr = await apiClient.enrol(currentUser.id, course.id);
+      if (enr?.locked) {
+        if (enr.reason !== 'COMING_SOON') setShowGrantModal(true);
+        return;
+      }
       if (enr) {
         navigate(`/student/course/${course.id}`);
       }
@@ -148,28 +157,14 @@ export default function CyberCourseDetailPage() {
   const handleCancelEnrolment = () => {
     if (window.confirm("Are you sure you want to cancel your free enrolment for this course?")) {
       if (enrolment?.id) {
-        mockEngine.deleteEnrolment?.(enrolment.id);
-        window.location.reload();
+        apiClient
+          .cancelEnrolment(enrolment.id, currentUser.id, course.id)
+          .catch(() => mockEngine.deleteEnrolment?.(enrolment.id))
+          .finally(() => window.location.reload());
       }
     }
   };
 
-  const handleApplyCoupon = (e) => {
-    e.preventDefault();
-    if (couponCode.trim().toUpperCase() === 'GRANT100' || couponCode.trim().toUpperCase() === 'REDKROSS2026') {
-      setGrantSuccess(true);
-      setGrantError('');
-      if (currentUser) {
-        mockEngine.enrolStudent(currentUser.id, course.id);
-      }
-      setTimeout(() => {
-        setShowGrantModal(false);
-        navigate(`/student/course/${course.id}`);
-      }, 1200);
-    } else {
-      setGrantError('Invalid or expired grant/coupon code. Try "GRANT100"');
-    }
-  };
 
   const totalLessonsCount = useMemo(() => {
     if (!course?.modules) return 78;
@@ -261,12 +256,10 @@ export default function CyberCourseDetailPage() {
                       ? '6 Knowledge Checks + Final'
                       : course.id === 'crs_cyber_net_02' || course.slug === 'computer-networking-for-cybersecurity'
                       ? '8 Quizzes + Final'
-                      : `${course.modules?.length || 8} Quizzes + Final`}
+                      : `${(course.modules || []).filter((m) => m.quiz).length || 8} Quizzes + Final`}
                   </div>
                   <div className="text-[10px] text-slate-400">
-                    {course.id === 'crs_cyber_intro_01' || course.slug === 'introduction-to-cybersecurity' || course.id === 'crs_cyber_python_04' || course.slug === 'python-for-cybersecurity'
-                      ? '60-MCQ Proctored Final'
-                      : '50-MCQ Proctored Final'}
+                    {`${course.final_assessment?.total_questions || 50}-MCQ Proctored Final`}
                   </div>
                 </div>
               </div>
@@ -349,7 +342,7 @@ export default function CyberCourseDetailPage() {
                 </span>
                 <div className="flex items-baseline gap-2.5">
                   <span className="font-royal text-3xl font-extrabold text-white">
-                    Free Access
+                    {availability.loading ? '…' : priceLabel(availability) === 'Free' ? 'Free Access' : priceLabel(availability)}
                   </span>
                   <span className="text-xs font-mono text-[#FF7A00] font-bold">
                     100% Curriculum
@@ -359,6 +352,8 @@ export default function CyberCourseDetailPage() {
                   Start learning immediately. Certificate exam unlocked after completion of all core units.
                 </p>
               </div>
+
+              <AccessNotice availability={availability} />
 
               {/* Action Buttons: Enrolled vs Unenrolled */}
               <div className="space-y-2.5">
@@ -387,7 +382,7 @@ export default function CyberCourseDetailPage() {
                       className="w-full py-2.5 px-4 rounded-xl bg-black/60 border border-[#FF7A00]/30 text-slate-200 hover:text-white hover:border-[#FFA439] font-mono text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <Gift className="w-3.5 h-3.5 text-[#FFA439]" />
-                      <span>Apply Academic Grant / Coupon</span>
+                      <span>Have an access code?</span>
                     </button>
                   </>
                 ) : (
@@ -395,11 +390,19 @@ export default function CyberCourseDetailPage() {
                     <button
                       type="button"
                       onClick={handleEnrol}
-                      disabled={enrolling}
+                      disabled={enrolling || availability.comingSoon}
                       className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#FF7A00] to-[#E56A00] text-black font-mono font-bold text-xs hover:brightness-110 shadow-[0_0_20px_rgba(255,122,0,0.4)] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 text-center"
                     >
                       <Zap className="w-4 h-4 text-black" />
-                      <span>{enrolling ? 'INITIALIZING CADET ID...' : 'Instant Enrolment (Free Track)'}</span>
+                      <span>
+                        {enrolling
+                          ? 'ENROLLING...'
+                          : availability.comingSoon
+                          ? 'Coming Soon'
+                          : availability.needsCode
+                          ? 'Unlock with Access Code'
+                          : 'Enrol Now (Free)'}
+                      </span>
                     </button>
 
                     <button
@@ -408,7 +411,7 @@ export default function CyberCourseDetailPage() {
                       className="w-full py-2.5 px-4 rounded-xl bg-black/60 border border-[#FF7A00]/30 text-slate-200 hover:text-white hover:border-[#FFA439] font-mono text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <Gift className="w-3.5 h-3.5 text-[#FFA439]" />
-                      <span>Apply Academic Grant / Coupon</span>
+                      <span>Have an access code?</span>
                     </button>
                   </>
                 )}
@@ -1159,45 +1162,7 @@ export default function CyberCourseDetailPage() {
       <Footer />
 
       {/* Grant / Coupon Modal */}
-      {showGrantModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
-          <div className="p-6 sm:p-8 rounded-2xl bg-[#0E0C09]/95 border border-[#FF7A00]/50 shadow-[0_0_40px_rgba(255,122,0,0.25)] max-w-md w-full space-y-4">
-            <h3 className="font-royal text-lg font-bold text-white flex items-center gap-2">
-              <Gift className="w-5 h-5 text-[#FF7A00]" />
-              <span>Apply Academic Grant / Coupon</span>
-            </h3>
-            <p className="text-xs text-slate-300 font-sans leading-relaxed">
-              Enter your student sponsorship token or promotional coupon code to activate immediate sponsored enrollment.
-            </p>
-            <form onSubmit={handleApplyCoupon} className="space-y-4">
-              <input
-                type="text"
-                placeholder="Enter Code (e.g. GRANT100)"
-                value={couponCode}
-                onChange={(e) => setCouponCode(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-black border border-[#FF7A00]/40 text-sm text-white font-mono uppercase focus:outline-none focus:border-[#FFA439]"
-              />
-              {grantError && <div className="text-xs text-rose-400 font-mono">{grantError}</div>}
-              {grantSuccess && <div className="text-xs text-[#FFA439] font-mono">Grant Verified! Enrolling...</div>}
-              <div className="flex justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowGrantModal(false)}
-                  className="px-4 py-2 rounded-xl bg-black text-xs font-mono text-slate-300 border border-white/20 hover:text-white cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#FF7A00] to-[#E56A00] text-black font-royal font-bold text-xs cursor-pointer shadow-[0_0_15px_rgba(255,122,0,0.4)] hover:brightness-110"
-                >
-                  Redeem
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <AccessCodeModal open={showGrantModal} onClose={() => setShowGrantModal(false)} course={course} priceInr={availability.price_inr} />
     </div>
   );
 }

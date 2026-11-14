@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="712" height="186" viewBox="0 0 712 186" role="img" aria-labelledby="t d">
+<title id="t">C19-M06-F1: C2 at the network boundary</title>
+<desc id="d">A beacon crossing a network boundary monitored by egress controls.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C19-M06-F1  C2 at the network boundary</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   compromised host --beacon (periodic)--&gt; [ network boundary ] --&gt; C2 server</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                             ^ egress filter + proxy + flow logs</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   C2 must cross the boundary repeatedly =&gt; detection + containment point</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="138" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C19-M06-F1. C2 must cross the network boundary, where it can be detected and contained</text>
+<text x="20" y="154" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">[C19-M06-R1].</text>
+</svg>

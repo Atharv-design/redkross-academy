@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="678" height="272" viewBox="0 0 678 272" role="img" aria-labelledby="t d">
+<title id="t">C14-M07-F1: ATT&amp;CK&#x27;s detection model</title>
+<desc id="d">A technique linked from a detection strategy, which links to analytics and their data components, compared with the organisation&#x27;s inventory to give a coverage grade.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C14-M07-F1  ATT&amp;CK&#x27;s detection model</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   technique T1053.005 &lt;--detects-- detection strategy (DET....)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                        |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                        +--&gt; analytic (Windows)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                        |      log sources --&gt; data</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                        |      components: Process Creation,</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                        |      Scheduled Job Creation, ...</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                        +--&gt; analytic (Linux) ...</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   our inventory: Process Creation, Command Execution, ... (6)</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   compare --&gt; COVERED / PARTIAL / BLIND</text>
+<text x="20" y="213" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="240" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C14-M07-F1. From technique to the data needed to see it.</text>
+</svg>

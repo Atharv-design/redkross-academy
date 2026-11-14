@@ -10,6 +10,26 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: ci_runner
+          POSTGRES_PASSWORD: ci_password
+          POSTGRES_DB: ci_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ci_runner -d ci_db"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+
+    env:
+      DATABASE_URL: "postgresql://ci_runner:ci_password@127.0.0.1:5432/ci_db"
+      TEST_DATABASE_URL: "postgresql://ci_runner:ci_password@127.0.0.1:5432/ci_db"
+      CREDENTIAL_SIGNING_SECRET: "ci-only-signing-secret-not-used-anywhere-else-0000"
+      VITE_FIREBASE_API_KEY: "ci_test_key"
+      VITE_FIREBASE_PROJECT_ID: "academy-redkross"
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -23,34 +43,20 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Run Pre-Flight Environment Audit
+      - name: Pre-Flight Environment Audit
         run: node scripts/verify-env.js
-        env:
-          DATABASE_URL: "postgresql://ci_runner:ci_password@127.0.0.1:5432/ci_db?sslmode=disable"
-          VITE_FIREBASE_API_KEY: "ci_test_key"
-          VITE_FIREBASE_PROJECT_ID: "redkross-academy"
 
-      - name: Run Student Feature & Integrity Tests
+      - name: Apply schema and migrations
+        run: node scripts/runMigrations.js
+
+      - name: Unit tests and library integrity
         run: npm test
 
-      - name: Production Build Compilation
+      - name: API security and assessment tests (real Postgres)
+        run: npm run test:api
+
+      - name: Production Build
         run: npm run build
 
-      - name: Audit Build Output for Accidental Secret Leakage
-        run: |
-          node -e "
-          const fs = require('fs');
-          if (!fs.existsSync('dist/assets')) {
-            console.error('dist/assets directory missing');
-            process.exit(1);
-          }
-          const files = fs.readdirSync('dist/assets').filter(f => f.endsWith('.js'));
-          for (const f of files) {
-            const content = fs.readFileSync('dist/assets/' + f, 'utf8');
-            if (content.includes('npg_') || content.includes('re_g3UrKFjkF')) {
-              console.error('FAIL: Leaked secret string detected in client asset bundle:', f);
-              process.exit(1);
-            }
-          }
-          console.log('PASS: Client distribution bundle is completely sanitized.');
-          "
+      - name: Audit client bundle (no answer keys, no secrets)
+        run: npm run audit:bundle

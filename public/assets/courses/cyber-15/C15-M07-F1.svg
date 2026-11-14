@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="203" viewBox="0 0 560 203" role="img" aria-labelledby="t d">
+<title id="t">C15-M07-F1: Why nonce reuse breaks stream encryption</title>
+<desc id="d">Equations showing two ciphertexts made with the same keystream, their XOR equalling the XOR of the plaintexts, and recovery of the second plaintext from the first.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C15-M07-F1  Why nonce reuse breaks stream encryption</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  C1 = P1 XOR KS(key, nonce)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  C2 = P2 XOR KS(key, nonce)      (same nonce!)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  C1 XOR C2 = P1 XOR P2           (keystream cancels)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  know P1  -&gt;  P2 = (C1 XOR C2) XOR P1     &lt;- lab recovered P2</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C15-M07-F1. With a repeated nonce the keystream cancels and</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">plaintexts leak (execution-tested).</text>
+</svg>

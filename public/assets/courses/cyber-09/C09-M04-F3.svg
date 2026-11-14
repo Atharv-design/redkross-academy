@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="602" height="220" viewBox="0 0 602 220" role="img" aria-labelledby="t d">
+<title id="t">C09-M04-F3: Indicators of a masquerading process</title>
+<desc id="d">A two-column comparison listing parent PID, executable link, command line and deleted status for a genuine kernel thread and the suspicious process.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C09-M04-F3  Indicators of a masquerading process</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  genuine [kworker]          vs        suspicious &quot;kworker&quot; (PID 8)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  ppid 2 (kthreadd)                    ppid 1</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  no exe link                          exe=/tmp/kworker</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  no command line                      cmd=/tmp/kworker 600</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  -                                    exe -&gt; (deleted)</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C09-M04-F3. Comparing a genuine kernel worker thread with the lab&#x27;s</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">masquerading process.</text>
+</svg>

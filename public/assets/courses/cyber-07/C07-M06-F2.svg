@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="678" height="203" viewBox="0 0 678 203" role="img" aria-labelledby="t d">
+<title id="t">C07-M06-F2: Personal versus enterprise authentication</title>
+<desc id="d">A comparison of personal pre-shared-key authentication and enterprise per-user 802.1X authentication.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C07-M06-F2  Personal versus enterprise authentication</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   PERSONAL (PSK): one shared passphrase; hard to revoke; offline-guessable</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                   (WPA2) -&gt; small/guest networks with a strong key</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   ENTERPRISE (802.1X/EAP): per-user credentials/certs via RADIUS; revocable</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                   -&gt; corporate wireless</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C07-M06-F2. Enterprise 802.1X authenticates individuals; use it for corporate</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">wireless [C07-M06-R3].</text>
+</svg>

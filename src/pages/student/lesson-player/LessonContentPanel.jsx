@@ -44,7 +44,11 @@ function LessonContentPanel({
   handleRetakeExam,
   isLockoutActive,
   lockoutCountdown,
-  onReturnToReview
+  onReturnToReview,
+  assessmentState,
+  onRetryAssessmentStart,
+  onForfeitExam,
+  isSubmittingAssessment
 }) {
   const memoizedHtml = React.useMemo(() => {
     return renderMarkdownToHtml(activeLesson?.content || 'Defensive laboratory briefing and operational objectives.');
@@ -321,7 +325,30 @@ function LessonContentPanel({
       )}
 
       {/* 2. EVALUATION & EXAMINATION ENGINE (CBT FORMAT) */}
-      {(activeUnit?.type === 'quiz' || activeUnit?.type === 'final_exam') && activeQuiz && (
+      {(activeUnit?.type === 'quiz' || activeUnit?.type === 'final_exam') && activeQuiz &&
+        !quizSubmitted && !isLockoutActive && !(activeQuiz.questions || []).length && (assessmentState?.loading || assessmentState?.error) && (
+        <div className="p-8 rounded-2xl border border-[#FF7A00]/25 bg-black/50 text-center space-y-4" role="status" aria-live="polite">
+          {assessmentState?.loading ? (
+            <p className="text-sm font-mono text-[#FFA439] animate-pulse">Preparing your assessment...</p>
+          ) : (
+            <>
+              <p className="text-sm text-rose-300 font-mono">{assessmentState.error}</p>
+              {onRetryAssessmentStart && (
+                <button
+                  type="button"
+                  onClick={onRetryAssessmentStart}
+                  className="px-5 py-2.5 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-bold text-xs font-mono"
+                >
+                  Try again
+                </button>
+              )}
+            </>
+          )}
+        </div>
+      )}
+
+      {(activeUnit?.type === 'quiz' || activeUnit?.type === 'final_exam') && activeQuiz &&
+        ((activeQuiz.questions || []).length > 0 || quizSubmitted || isLockoutActive) && (
         <React.Suspense fallback={<div className="p-8 text-center text-sm font-mono text-[#65F58A] animate-pulse">Initializing CBT Examination Suite...</div>}>
           <ExamCBTInterface
             quiz={activeQuiz}
@@ -335,6 +362,8 @@ function LessonContentPanel({
             isSubmitted={quizSubmitted}
             submissionResult={quizResult}
             onRetakeExam={handleRetakeExam}
+            onForfeitExam={onForfeitExam}
+            isSubmitting={isSubmittingAssessment}
             isLockoutActive={isLockoutActive}
             lockoutCountdown={lockoutCountdown}
           />

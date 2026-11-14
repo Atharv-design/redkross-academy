@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="661" height="203" viewBox="0 0 661 203" role="img" aria-labelledby="t d">
+<title id="t">C10-M02-F2: Provenance and hashing</title>
+<desc id="d">Bytes hashed to a fingerprint recorded with source and authorisation, the avalanche effect, and the exact-copy limitation.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C10-M02-F2  Provenance and hashing</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   sample bytes --sha256--&gt; fixed fingerprint (e.g. 5f51d1...af51)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   record: sha256 + md5 + sha1 + source + time + authorisation</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   one byte changes -&gt; every hash changes (avalanche)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   hash = identity + IOC + integrity proof (but catches EXACT copies only)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C10-M02-F2. Hashing anchors provenance; it identifies exact files, not variants</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">[C10-M02-R2].</text>
+</svg>

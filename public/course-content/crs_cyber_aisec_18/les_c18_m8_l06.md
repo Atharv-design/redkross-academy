@@ -1,0 +1,4 @@
+- Release gate (Module 6) adopted in CI.
+- Production monitoring of canary hits, blocked tool calls and filter hits, with owners and runbooks.
+- Incident response: what to do if a failure path is seen in production (quarantine content, disable tools, notify).
+- Review cadence: re-assess on major changes and at least annually; map to the organisation's AI governance (NIST AI RMF Govern function) and legal obligations.

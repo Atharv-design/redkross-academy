@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="170" viewBox="0 0 720 170" role="img" aria-labelledby="t d">
+<title id="t">C07-M03-F2: Signatures versus anomalies</title>
+<desc id="d">A contrast of signature-based detection (precise, misses novel) and anomaly-based detection (catches novel, more false positives), recommending both.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C07-M03-F2  Signatures versus anomalies</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   SIGNATURE: match KNOWN bad pattern   -&gt; precise, low FP, misses novel</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   ANOMALY  : deviation from NORMAL     -&gt; catches novel, more FP, needs baseline</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   use BOTH: signatures for known threats, anomalies for the unknown</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="138" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C07-M03-F2. The two detection approaches are complementary [C07-M03-R1].</text>
+</svg>

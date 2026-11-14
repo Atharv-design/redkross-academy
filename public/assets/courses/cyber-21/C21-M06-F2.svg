@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="653" height="204" viewBox="0 0 653 204" role="img" aria-labelledby="t d">
+<title id="t">C21-M06-F2: Policy as code like software</title>
+<desc id="d">A rule box linked to three test cases, with a release pipeline and three consumers: CI, admission and the capstone.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C21-M06-F2  Policy as code like software</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   rule P05 runAsNonRoot  &lt;-- tests: t01 compliant (none)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                     t05 violating (P05 ...)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                     t06 container overrides pod (P05)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   policy repo CI: run tests -&gt; version -&gt; release</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   consumers: CI on manifests | admission (same intent in CEL) | capstone</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C21-M06-F2. A rule, its tests and its consumers.</text>
+</svg>

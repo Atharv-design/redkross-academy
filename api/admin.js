@@ -1,5 +1,8 @@
-import { sql, json, cors } from './_db.js';
+import { sql, json, cors, serverError } from './_db.js';
 import { dispatchWebhook } from './_webhooks.js';
+import { requireAdmin, audit } from './_auth.js';
+import { getCourseSpec } from './_lib/courseRegistry.js';
+import { issueCredential } from './_lib/learning.js';
 
 /**
  * Super Admin Management & Operations Endpoint (Phase 4 & Phase 5)
@@ -9,34 +12,10 @@ export default async function handler(req, res) {
   if (cors(req, res)) return;
 
   try {
-    // RBAC validation: verify requester has super_admin role in Neon DB
-    const authHeader = req.headers.authorization;
-    let isAdmin = false;
-    let adminUserId = null;
-
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      adminUserId = authHeader.replace('Bearer ', '').trim();
-      if (adminUserId === 'usr_super_admin_dev' || adminUserId === 'usr_admin_01') {
-        isAdmin = true;
-        adminUserId = 'usr_admin_01';
-      } else {
-        const userCheck = await sql`
-          SELECT id, role, email FROM users 
-          WHERE id = ${adminUserId}
-          LIMIT 1
-        `;
-        if (userCheck.length > 0 && userCheck[0].role === 'super_admin') {
-          isAdmin = true;
-          adminUserId = userCheck[0].id;
-        }
-      }
-    }
-
-    if (!isAdmin) {
-      return json(res, {
-        error: 'Forbidden: Administrative clearance required. No active Super Admin identity verified.'
-      }, 403);
-    }
+    // RBAC: verified Firebase ID token + admin role in the database (or ADMIN_EMAILS bootstrap)
+    const adminCtx = await requireAdmin(req, res);
+    if (!adminCtx) return;
+    const adminUserId = adminCtx.user.id;
 
     // Handle administrative mutation actions
     if (req.method === 'POST') {
@@ -92,6 +71,10 @@ export default async function handler(req, res) {
         await sql`DELETE FROM quiz_attempts WHERE enrolment_id IN (SELECT id FROM enrolments WHERE user_id = ${user_id})`;
         await sql`DELETE FROM quiz_retry_windows WHERE enrolment_id IN (SELECT id FROM enrolments WHERE user_id = ${user_id})`;
         await sql`DELETE FROM lesson_progress WHERE enrolment_id IN (SELECT id FROM enrolments WHERE user_id = ${user_id})`;
+        await sql`DELETE FROM assessment_sessions WHERE user_id = ${user_id}`;
+        await sql`DELETE FROM assessment_windows WHERE user_id = ${user_id}`;
+        await sql`DELETE FROM assessment_passes WHERE user_id = ${user_id}`;
+        await sql`DELETE FROM lesson_completions WHERE user_id = ${user_id}`;
         await sql`DELETE FROM credentials WHERE user_id = ${user_id}`;
         await sql`DELETE FROM enrolments WHERE user_id = ${user_id}`;
         await sql`DELETE FROM reward_ledger WHERE user_id = ${user_id}`;
@@ -133,43 +116,26 @@ export default async function handler(req, res) {
       }
 
       if (action === 'FORCE_ISSUE_CREDENTIAL' || action === 'DISPATCH_CREDENTIAL') {
-        const { id, verification_id, user_id, course_id, credential_title, grade_percentage, type } = body;
-        const verificationId = verification_id || `RK-${Math.random().toString(36).substr(2, 4).toUpperCase()}-${Math.random().toString(36).substr(2, 4).toUpperCase()}`;
-        const credId = id || `cred_${Date.now()}`;
-        await sql`
-          INSERT INTO credentials (id, verification_id, user_id, course_id, credential_title, type, grade_percentage, status, created_at)
-          VALUES (${credId}, ${verificationId}, ${user_id}, ${course_id}, ${credential_title || 'Certified Cybersecurity Specialist'}, ${type || 'Executive Certification'}, ${grade_percentage || 100}, 'Active', NOW())
-          ON CONFLICT (id) DO UPDATE SET status = 'Active', updated_at = NOW()
+        // Admin override: issues the same HMAC-signed credential as passing the final exam.
+        const { user_id, course_id, grade_percentage, reason } = body;
+        const spec = await getCourseSpec(String(course_id || ''));
+        const target = await sql`SELECT * FROM users WHERE id = ${String(user_id || '')} LIMIT 1`;
+        if (!spec || !target.length) return json(res, { error: 'Unknown user or course' }, 404);
+        const grade = Math.max(0, Math.min(100, Math.round(Number(grade_percentage) || 100)));
+        const { credential, created } = await issueCredential(target[0], spec, grade, `admin:${adminUserId}`);
+        await audit(adminUserId, 'CREDENTIAL_FORCE_ISSUED', 'credentials', credential.id, { user_id, course_id, grade, reason: reason || null, created });
+        return json(res, { success: true, created, credential_id: credential.id, verification_id: credential.verification_id });
+      }
+
+      if (action === 'REVOKE_CREDENTIAL') {
+        const { verification_id, reason } = body;
+        const rows = await sql`
+          UPDATE credentials SET status = 'Revoked', updated_at = NOW()
+          WHERE UPPER(verification_id) = UPPER(${String(verification_id || '')}) RETURNING id
         `;
-        await sql`
-          INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
-          VALUES (${`aud_${Date.now()}`}, ${adminUserId}, 'CREDENTIAL_DISPATCHED', 'credentials', ${credId}, ${`Dispatched official credential ${verificationId} to student ${user_id}`}, NOW())
-        `;
-
-        // Asynchronously dispatch n8n Certificate & LinkedIn automation
-        (async () => {
-          try {
-            const userRes = await sql`SELECT full_name, email FROM users WHERE id = ${user_id} LIMIT 1`;
-            const courseRes = await sql`SELECT title FROM courses WHERE id = ${course_id} LIMIT 1`;
-            const uObj = userRes[0] || {};
-            const cObj = courseRes[0] || {};
-
-            dispatchWebhook('credential.dispatched', {
-              credentialId: credId,
-              verificationId,
-              userId: user_id,
-              studentName: uObj.full_name || 'Cadet Operator',
-              email: uObj.email,
-              courseTitle: cObj.title || credential_title || 'Defensive Cyber Curriculum',
-              credentialTitle: credential_title || cObj.title || 'Certified Cybersecurity Specialist',
-              gradePercentage: grade_percentage || 100
-            });
-          } catch (hookErr) {
-            console.warn('[Webhook Hook Error]:', hookErr.message);
-          }
-        })();
-
-        return json(res, { success: true, credential_id: credId, verification_id: verificationId });
+        if (!rows.length) return json(res, { error: 'Credential not found' }, 404);
+        await audit(adminUserId, 'CREDENTIAL_REVOKED', 'credentials', rows[0].id, { verification_id, reason: reason || null });
+        return json(res, { success: true });
       }
 
       if (action === 'GRADE_ASSIGNMENT') {
@@ -327,7 +293,6 @@ export default async function handler(req, res) {
       public_catalog_enabled: publicCatalogEnabled
     });
   } catch (error) {
-    console.error('API /admin error:', error);
-    return json(res, { error: error.message || 'Internal server error' }, 500);
+    return serverError(res, error, 'api/admin');
   }
 }

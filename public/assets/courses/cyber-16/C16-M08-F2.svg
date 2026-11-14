@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="602" height="220" viewBox="0 0 602 220" role="img" aria-labelledby="t d">
+<title id="t">C16-M08-F2: The consolidated review</title>
+<desc id="d">Three enforced control domains and two sets of detective findings.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C16-M08-F2  The consolidated review</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   enforcing (FAIL-&gt;PASS):  Wi-Fi  10/6HIGH -&gt; 0   PASS</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                            BT      6/3HIGH -&gt; 0   PASS</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                            API     7/5HIGH -&gt; 0   PASS      =&gt; 3/3</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   detective (to fix):      app    16 findings, 9 HIGH</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                            rogue   2 evil-twin APs</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C16-M08-F2. The consolidated review: enforcing evidence plus detective</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">findings [C16-M08-R4].</text>
+</svg>

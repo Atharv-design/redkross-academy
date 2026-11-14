@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="670" height="339" viewBox="0 0 670 339" role="img" aria-labelledby="t d">
+<title id="t">C08-M04-F1: Triage decision flow</title>
+<desc id="d">A flowchart where an alert is read, enriched and validated, then branches to false positive (tune), benign true positive (document) or true positive (group and escalate); unclear cases escalate after a time box.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C08-M04-F1  Triage decision flow</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  ALERT --&gt; read rule &amp; entities --&gt; enrich (asset, identity, IP, history)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                          |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                          v</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                        validate with raw events / ask owner</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                       /                  |                    \</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">               refuted (FP)     authorised (BTP)          corroborated (TP)</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                   |                    |                         |</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">            tune / record         document &amp; close     group related alerts</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                                                  |</text>
+<text x="20" y="213" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                                       escalate as incident</text>
+<text x="20" y="230" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                                                  |</text>
+<text x="20" y="247" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                       unclear after time box -&gt; escalate</text>
+<text x="20" y="264" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="291" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C08-M04-F1. A triage flow from alert to disposition, with time-boxed escalation</text>
+<text x="20" y="307" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">for unclear cases.</text>
+</svg>

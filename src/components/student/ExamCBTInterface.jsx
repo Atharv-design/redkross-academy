@@ -17,11 +17,13 @@ import {
   Wifi,
   WifiOff,
   ShieldAlert,
-  Camera
+  Camera,
+  CameraOff
 } from 'lucide-react';
 import ProctorCameraFeed from './ProctorCameraFeed';
-import { clearQuizSessionQuestions } from '../../services/db/questionBanks/questionBankEngine';
-import { mockEngine } from '../../services/db/mockEngine';
+import ExamWatermark from './proctor/ExamWatermark';
+import { useAuth } from '../../services/auth/authContext';
+import { apiClient } from '../../services/apiClient';
 
 /**
  * RedKross Academy - Enhanced CBT Examination Console
@@ -36,6 +38,8 @@ export default function ExamCBTInterface({
   answers = {},
   onSelectAnswer,
   onSubmitExam,
+  onForfeitExam,
+  isSubmitting = false,
   isSubmitted = false,
   submissionResult = null,
   onRetakeExam,
@@ -198,10 +202,27 @@ export default function ExamCBTInterface({
     // Muted: User explicitly requested no beep-beep sound; visual on-screen modal warning used instead
   }, []);
 
+  // ----------------- PROCTORING EVIDENCE (server) -----------------
+  const { currentUser } = useAuth();
+  const [phoneVisible, setPhoneVisible] = useState(false);
+  const [proctorNotice, setProctorNotice] = useState(null);
+  const reportProctor = useCallback(
+    (kind, detail, snapshot) => {
+      if (!quiz?.session_id) return;
+      apiClient
+        .request('/proctor', { method: 'POST', body: { session_id: quiz.session_id, kind, detail, snapshot } })
+        .catch(() => {});
+    },
+    [quiz?.session_id]
+  );
+
   // ----------------- PROCTOR FOCUS & VIOLATION DETECTION -----------------
-  const triggerFocusViolation = useCallback((reason) => {
+  const strikeReasonsRef = useRef([]);
+  const triggerFocusViolation = useCallback((reason, { report = true } = {}) => {
     if (isSubmitted || isLockoutActive) return;
     playWarningBeep();
+    if (report) reportProctor('focus', reason);
+    strikeReasonsRef.current = [...strikeReasonsRef.current, reason || 'Proctoring rule broken'];
 
     setFocusStrikes((prev) => {
       const nextStrike = prev + 1;
@@ -214,34 +235,43 @@ export default function ExamCBTInterface({
         // Strike 3: Terminate immediately with 24-hour lockout
         setStrikeModal({
           strikeNumber: 3,
-          reason: 'STRIKE 3 OF 3: Multiple window focus / fullscreen violations detected. Exam session has been forfeited and a mandatory 24-Hour Lockout is enforced.'
+          reason: `STRIKE 3 OF 3: ${reason || 'Proctoring rule broken.'} The attempt has been forfeited and a 24-hour lockout applies.`
         });
         exitFullscreenMode();
-        // Record proctor violation in engine
-        mockEngine.recordProctorViolation({
-          enrolmentId,
-          quizId: quiz?.id || 'exam_violation',
-          cadetId: 'CADET_LOCKOUT',
-          studentName: 'Student Cadet',
-          violationType: 'FULLSCREEN_OR_TAB_SWITCH_3_STRIKES',
-          details: reason || 'Exited fullscreen or switched tabs 3 times.'
-        });
-        // Force submit with 0 score / failed status
+        // Strike 3: the server forfeits the attempt and applies the 24-hour lock
         setTimeout(() => {
-          onSubmitExam();
+          if (onForfeitExam) onForfeitExam(`THREE_STRIKES: ${strikeReasonsRef.current.slice(-3).join(' | ')}`);
+          else onSubmitExam();
         }, 1500);
       } else {
         setStrikeModal({
           strikeNumber: nextStrike,
           reason: nextStrike === 1
-            ? 'STRIKE 1 OF 3: Window focus lost or fullscreen exited. You must remain in fullscreen mode throughout the exam.'
-            : 'STRIKE 2 OF 3: FINAL WARNING! One more tab switch or fullscreen exit will forfeit your exam and lock you out for 24 hours.'
+            ? `STRIKE 1 OF 3: ${reason || 'Proctoring rule broken.'}`
+            : `STRIKE 2 OF 3 - FINAL WARNING: ${reason || 'Proctoring rule broken.'} One more strike forfeits this attempt and locks the exam for 24 hours.`
         });
       }
 
       return nextStrike;
     });
-  }, [isSubmitted, isLockoutActive, enrolmentId, quiz?.id, onSubmitExam, playWarningBeep]);
+  }, [isSubmitted, isLockoutActive, enrolmentId, quiz?.id, onSubmitExam, playWarningBeep, reportProctor]);
+
+  // On-device detections from the camera feed
+  const handleProctorSignal = useCallback(
+    (kind, { detail, snapshot } = {}) => {
+      if (isSubmitted || isLockoutActive) return;
+      reportProctor(kind, detail, snapshot);
+      if (kind === 'phone') {
+        triggerFocusViolation('A mobile phone was detected in the camera view. Phones are not allowed during the exam.', { report: false });
+      } else if (kind === 'multiple_faces') {
+        triggerFocusViolation('Another person was detected in the camera view. The exam must be taken alone.', { report: false });
+      } else if (kind === 'looking_away') {
+        setProctorNotice('Keep your eyes on the exam screen. Looking away repeatedly is flagged for review.');
+        setTimeout(() => setProctorNotice(null), 6000);
+      }
+    },
+    [isSubmitted, isLockoutActive, reportProctor, triggerFocusViolation]
+  );
 
   // ----------------- FACE PRESENCE TELEMETRY & WARNINGS -----------------
   const [faceStatus, setFaceStatus] = useState({
@@ -486,7 +516,6 @@ export default function ExamCBTInterface({
       localStorage.removeItem(deadlineKey);
       localStorage.removeItem(bufferKey);
       localStorage.removeItem(`rk_exam_strikes_${enrolmentId || 'cadet'}_${quiz?.id || 'exam'}`);
-      clearQuizSessionQuestions(enrolmentId, quiz?.id);
     } catch {}
     if (onRetakeExam) {
       onRetakeExam();
@@ -596,7 +625,7 @@ export default function ExamCBTInterface({
                 <p className="text-xs font-mono mt-1 opacity-90 leading-relaxed">
                   {isPassed
                     ? 'Congratulations! You have verified operational competence for this curriculum milestone.'
-                    : `Required standard: ${passingScore}% passing score. Review the rationales below and prepare for retake.`}
+                    : `Required standard: ${passingScore}% passing score. Correct answers are shown once you pass - revisit the topics below before your next attempt.`}
                 </p>
               </div>
             </div>
@@ -642,6 +671,17 @@ export default function ExamCBTInterface({
           </div>
         </div>
 
+        {!isPassed && Array.isArray(submissionResult.topicsToReview) && submissionResult.topicsToReview.length > 0 && (
+          <div className="p-5 rounded-xl border border-[#FF7A00]/30 bg-black/50 space-y-2">
+            <h4 className="text-xs font-mono uppercase tracking-wider text-[#FFA439]">Topics to revisit</h4>
+            <ul className="list-disc pl-5 text-sm text-slate-200 space-y-1">
+              {submissionResult.topicsToReview.map((t) => (
+                <li key={t}>{t}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         {/* Detailed Question Explanations */}
         <div className="space-y-4">
           <h4 className="text-sm font-mono uppercase tracking-wider text-[#A3907C] flex items-center gap-2">
@@ -653,7 +693,10 @@ export default function ExamCBTInterface({
             {questions.map((q, idx) => {
               const selectedOptId = answers[q.id];
               const correctOpt = q.options?.find((opt) => opt.is_correct);
-              const isCorrect = selectedOptId && correctOpt && selectedOptId === correctOpt.id;
+              // server-graded result when available; answers are only revealed after a pass
+              const isCorrect = typeof q.is_answer_correct === 'boolean'
+                ? q.is_answer_correct
+                : Boolean(selectedOptId && correctOpt && selectedOptId === correctOpt.id);
 
               return (
                 <div
@@ -938,6 +981,8 @@ export default function ExamCBTInterface({
           <ProctorCameraFeed
             isActive={!isSubmitted && !isLockoutActive}
             onFaceStatusChange={handleFaceStatusChange}
+            onSignal={handleProctorSignal}
+            onPhoneVisibleChange={setPhoneVisible}
             onFaceAbsentWarning={(duration) => {
               if (duration >= 8.0) {
                 triggerFocusViolation('Candidate face absent from camera frame for over 8 seconds.');
@@ -951,7 +996,22 @@ export default function ExamCBTInterface({
       <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left 8 Cols: Question Prompt & Option Cards */}
         <div className="lg:col-span-8 space-y-5">
-          <div className="p-6 sm:p-8 rounded-2xl bg-[#0E0C09] border border-[#FF7A00]/20 space-y-6 shadow-xl">
+          <div className="relative p-6 sm:p-8 rounded-2xl bg-[#0E0C09] border border-[#FF7A00]/20 space-y-6 shadow-xl">
+            <ExamWatermark name={currentUser?.full_name} cadetId={currentUser?.cadet_id} sessionId={quiz?.session_id} />
+            {phoneVisible && !isSubmitted && (
+              <div className="absolute inset-0 z-20 rounded-2xl bg-black/70 backdrop-blur-xl flex items-center justify-center p-6 text-center">
+                <div className="space-y-2">
+                  <ShieldAlert className="w-8 h-8 text-rose-400 mx-auto" />
+                  <p className="text-sm font-semibold text-rose-200">Phone detected</p>
+                  <p className="text-xs text-slate-300">Questions are hidden while a phone is in view. Put it away to continue.</p>
+                </div>
+              </div>
+            )}
+            {proctorNotice && (
+              <div className="relative z-30 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs text-amber-100">
+                {proctorNotice}
+              </div>
+            )}
             {/* Question Index & Category */}
             <div className="flex items-center justify-between border-b border-white/10 pb-3">
               <span className="text-xs font-mono text-[#A3907C]">
@@ -1110,7 +1170,7 @@ export default function ExamCBTInterface({
             className="w-full py-3 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-bold text-xs font-mono uppercase tracking-wider transition-all shadow-[0_0_15px_rgba(255,122,0,0.3)] flex items-center justify-center gap-2 cursor-pointer"
           >
             <CheckCircle2 className="w-4 h-4" />
-            <span>{isFinalExam ? 'Final Submit & Finish (50 Marks)' : 'Final Submit & Finish Exam'}</span>
+            <span>{isSubmitting ? 'Submitting...' : isFinalExam ? `Final Submit & Finish (${totalQuestions} Marks)` : 'Final Submit & Finish Exam'}</span>
           </button>
         </div>
       </div>
@@ -1165,7 +1225,7 @@ export default function ExamCBTInterface({
               }}
               className="w-full py-3 rounded-xl bg-[#FF7A00] text-[#071018] font-bold text-xs font-mono tracking-wider cursor-pointer"
             >
-              {isFinalExam ? 'Final Submit & Finish (50 Marks)' : 'Final Submit & Finish Exam'}
+              {isSubmitting ? 'Submitting...' : isFinalExam ? `Final Submit & Finish (${totalQuestions} Marks)` : 'Final Submit & Finish Exam'}
             </button>
           </div>
         </div>
@@ -1224,7 +1284,7 @@ export default function ExamCBTInterface({
                 onClick={handleInternalSubmit}
                 className="px-5 py-2.5 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-bold text-xs font-mono transition-all shadow-[0_0_15px_rgba(255,122,0,0.4)] cursor-pointer"
               >
-                {isFinalExam ? 'Final Submit & Finish (50 Marks)' : 'Final Submit & Finish Exam'}
+                {isSubmitting ? 'Submitting...' : isFinalExam ? `Final Submit & Finish (${totalQuestions} Marks)` : 'Final Submit & Finish Exam'}
               </button>
             </div>
           </div>

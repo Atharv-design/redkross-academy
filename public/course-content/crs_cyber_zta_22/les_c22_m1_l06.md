@@ -1,0 +1,3 @@
+Architecture decision records (ADRs) capture: context, decision, alternatives considered, consequences (including security), status, date, and owner. They let future teams understand why, for example, a legacy system sits behind a gateway rather than being rebuilt.
+
+**Legacy constraints are normal:** unsupported operating systems, applications that require flat networks, vendors without modern authentication. Design transition architectures: wrap legacy with enforcement points (Module 3), isolate it (Module 4), compensate with monitoring (Module 6), and set retirement dates in the roadmap (Module 8) - while recording residual risk in the register (Course 17).

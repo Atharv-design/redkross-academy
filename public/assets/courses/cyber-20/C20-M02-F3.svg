@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="619" height="187" viewBox="0 0 619 187" role="img" aria-labelledby="t d">
+<title id="t">C20-M02-F3: Response controls by disruption</title>
+<desc id="d">A scale from low to high disruption listing the triage package, kill or quarantine, block, account actions, isolation and reimage, with three principles beneath.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C20-M02-F3  Response controls by disruption</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   low  | triage package  -&gt; kill/quarantine -&gt; block indicator</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        | -&gt; disable/reset account (+ revoke sessions)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">        | -&gt; isolate host (EDR channel kept) -&gt; reimage</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   high | evidence first, identity and host together, approval scaled</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C20-M02-F3. Escalating endpoint response controls.</text>
+</svg>

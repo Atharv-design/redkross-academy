@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="686" height="186" viewBox="0 0 686 186" role="img" aria-labelledby="t d">
+<title id="t">C10-M01-F3: Levels of analysis (cheapest first)</title>
+<desc id="d">Four analysis levels in order of cost with the principle of escalating only as needed.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C10-M01-F3  Levels of analysis (cheapest first)</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   triage/automated  -&gt; static (no execution) -&gt; dynamic (sandbox) -&gt; reverse</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   fast, scalable       safe, info-rich          real behaviour       deepest</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   use the cheapest level that answers the question; escalate only as needed</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="138" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C10-M01-F3. Analysis escalates from cheap triage to deep reverse engineering</text>
+<text x="20" y="154" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">[C10-M01-R1].</text>
+</svg>

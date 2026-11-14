@@ -1,0 +1,5 @@
+- Track every finding with owner, due date and status. Escalate overdue items to the committee (Module 1).
+- Validate closure. The auditor re-tests before closing, because management saying "done" is not evidence.
+- Report to the audit committee: themes, high findings, overdue items and repeat findings, which indicate systemic issues.
+- Feed findings into the risk register (residual risk adjustments) and the control set (design changes).
+- Communicate positive results too, such as controls tested effective, so the board sees assurance coverage.

@@ -1,0 +1,5 @@
+- Eradicate: remove all persistence found in analysis (keys, users, roles, policies, OAuth apps, scheduled functions, modified images); rotate every secret the identity could read.
+- Recover: rebuild workloads from known-good IaC and images rather than cleaning them; restore data from isolated, immutable backups (Module 4); verify configuration with posture scans (Module 6) before reconnecting.
+- Monitor: heightened monitoring of the affected identities and resources for weeks.
+- Notify: regulators and affected individuals according to law (CERT-In, DPDP Act; Course 01 Module 7) - with legal advice.
+- Learn: a blameless review that produces owned actions: guardrails, detections, runbook changes and architecture changes.

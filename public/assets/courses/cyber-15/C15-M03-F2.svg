@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="661" height="170" viewBox="0 0 661 170" role="img" aria-labelledby="t d">
+<title id="t">C15-M03-F2: Key sizes for about 128-bit security</title>
+<desc id="d">A bar chart comparing 422 bytes for RSA-3072, 91 bytes for P-256 and 44 bytes for Ed25519 public keys.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C15-M03-F2  Key sizes for about 128-bit security</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  RSA-3072 public key   |##########################################| 422 B</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  P-256 public key      |#########|                                   91 B</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  Ed25519 public key    |####|                                        44 B</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="138" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C15-M03-F2. Encoded public-key sizes from the execution-tested lab.</text>
+</svg>

@@ -128,9 +128,11 @@ export default function CyberLearningCard({
       };
     }
     return {
-      learningGoal: item.overview || 'Master foundational security and defense architecture.',
+      learningGoal: item.short_desc || item.overview || 'Master foundational security and defense architecture.',
       whatYoullLearnText: Array.isArray(item.what_you_will_learn) ? item.what_you_will_learn.slice(0, 2).join(' ') : 'Practical defense protocols, threat analysis, and security controls.',
-      whoItsForText: 'Students, security practitioners, and infrastructure engineers.',
+      whoItsForText: Array.isArray(item.intended_audience) && item.intended_audience[0]
+        ? (item.intended_audience[0].length > 220 ? `${item.intended_audience[0].slice(0, 217)}...` : item.intended_audience[0])
+        : 'Students, security practitioners, and infrastructure engineers.',
       prereqText: Array.isArray(item.prerequisites) ? item.prerequisites[0] : 'Standard computer with internet connectivity and modern browser.'
     };
   }, [item]);

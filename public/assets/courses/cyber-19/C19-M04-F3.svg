@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="678" height="187" viewBox="0 0 678 187" role="img" aria-labelledby="t d">
+<title id="t">C19-M04-F3: Privilege boundaries</title>
+<desc id="d">Three privilege tiers with the rule to keep high-value credentials off lower tiers.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C19-M04-F3  Privilege boundaries</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   [ Tier 0 : domain/identity control ]  &lt;- keep credentials OFF lower tiers</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   [ Tier 1 : servers ]</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   [ Tier 2 : workstations ]</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   assess: escalation paths, tiering, least privilege; monitor crossings</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C19-M04-F3. Privilege boundaries and tiering to assess and monitor [C19-M04-R2].</text>
+</svg>

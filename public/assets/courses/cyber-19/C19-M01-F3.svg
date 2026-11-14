@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="703" height="187" viewBox="0 0 703 187" role="img" aria-labelledby="t d">
+<title id="t">C19-M01-F3: Deconfliction</title>
+<desc id="d">A deconfliction loop between red and blue teams.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C19-M01-F3  Deconfliction</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   red team action --(operator tag + shared ticket)--&gt; blue team</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">      &quot;is this you?&quot; --------- confirm in seconds --------&gt; yes/no</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   with deconfliction : test distinguished from real incident</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   without            : test triggers real IR, or a real attack hides behind it</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C19-M01-F3. Deconfliction lets defenders tell a test from a real attack [C19-M01-R4].</text>
+</svg>

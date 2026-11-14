@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="653" height="203" viewBox="0 0 653 203" role="img" aria-labelledby="t d">
+<title id="t">C06-M08-F3: Closure proven by retest</title>
+<desc id="d">A summary showing all ten weaknesses present on the vulnerable app, none on the hardened app, and all ten confirmed closed by retest.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C06-M08-F3  Closure proven by retest</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   vuln app 8200:  10 / 10 weaknesses PRESENT</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   fixed app 8201:  0 / 10 weaknesses present</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   retest result:  10 / 10 CLOSED  (each present on 8200, absent on 8201)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   a finding is closed only when the retest proves it</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C06-M08-F3. The retest proves every finding closed - the evidence that risk</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">was reduced.</text>
+</svg>

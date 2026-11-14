@@ -12,6 +12,8 @@ import { module6Data } from './curriculum/module6.js';
 import { course02Data } from './course02/index.js';
 import { course03Data } from './course03/index.js';
 import { course04Data } from './course04/index.js';
+// Courses 05-22, generated from the course library by scripts/import_library_courses.mjs
+import { LIBRARY_COURSES } from './library/libraryCourses.generated.js';
 
 export const CYBER_COURSES = [
   {
@@ -91,13 +93,56 @@ export const CYBER_COURSES = [
   },
   course02Data,
   course03Data,
-  course04Data
+  course04Data,
+  ...LIBRARY_COURSES
 ];
 
 export const CYBER_INTRO_COURSE_01 = CYBER_COURSES[0];
 export const CYBER_NET_COURSE_02 = CYBER_COURSES[1];
 export const CYBER_ADMIN_COURSE_03 = CYBER_COURSES[2];
 export const CYBER_PYTHON_COURSE_04 = CYBER_COURSES[3];
+
+
+// Phase paths for the library courses (sequence taken from the course library blueprint).
+// Hours are the sum of each course's published study time.
+const libraryHours = (ids) => LIBRARY_COURSES.filter((c) => ids.includes(c.id)).reduce((a, c) => a + (c.total_hours || 0), 0);
+const PHASE_PATHS = [
+  {
+    id: 'path_phase2_core_security',
+    slug: 'core-security-skills-track',
+    title: 'Phase 2: Core Security Skills Track',
+    short_desc: 'Authorised testing, web and network security, SOC operations, digital forensics and malware analysis - the core skills every security professional needs.',
+    difficulty: 'Intermediate',
+    course_ids: ['crs_cyber_pentest_05', 'crs_cyber_websec_06', 'crs_cyber_netsec_07', 'crs_cyber_soc_08', 'crs_cyber_dfir_09', 'crs_cyber_malware_10'],
+    skills: ['Authorised Penetration Testing', 'OWASP Top 10:2025', 'Network Defence', 'SOC Triage', 'DFIR', 'Malware Analysis'],
+  },
+  {
+    id: 'path_phase3_specialisation',
+    slug: 'security-specialisation-track',
+    title: 'Phase 3: Specialisation Track',
+    short_desc: 'Cloud, DevSecOps, Active Directory, threat intelligence, applied cryptography and wireless/mobile security.',
+    difficulty: 'Advanced',
+    course_ids: ['crs_cyber_cloud_11', 'crs_cyber_devsecops_12', 'crs_cyber_ad_13', 'crs_cyber_cti_14', 'crs_cyber_crypto_15', 'crs_cyber_wireless_16'],
+    skills: ['Cloud Security', 'DevSecOps', 'Active Directory', 'Threat Intelligence', 'Applied Cryptography', 'Mobile Security'],
+  },
+  {
+    id: 'path_phase4_professional',
+    slug: 'professional-and-leadership-track',
+    title: 'Phase 4: Professional & Leadership Track',
+    short_desc: 'Governance and compliance, AI security, adversary emulation, detection engineering, Kubernetes security and zero trust architecture.',
+    difficulty: 'Advanced',
+    course_ids: ['crs_cyber_grc_17', 'crs_cyber_aisec_18', 'crs_cyber_redteam_19', 'crs_cyber_blueteam_20', 'crs_cyber_k8s_21', 'crs_cyber_zta_22'],
+    skills: ['GRC', 'AI Security', 'Adversary Emulation', 'Threat Hunting', 'Kubernetes Security', 'Zero Trust'],
+  },
+].map((p) => ({
+  division: 'cybersecurity',
+  featured: false,
+  courses_count: p.course_ids.length,
+  total_hours: libraryHours(p.course_ids),
+  estimated_weeks: Math.ceil(libraryHours(p.course_ids) / 10),
+  milestone_cert: `RedKross track completion: ${p.title.replace(/^Phase d: /, '')}`,
+  ...p,
+}));
 
 export const CYBER_LEARNING_PATHS = [
   {
@@ -161,5 +206,6 @@ export const CYBER_LEARNING_PATHS = [
     short_desc: 'Master defensive Python security engineering from core types and path/subprocess confinement to streaming HMAC verification, FIM baselines, unittest suites, and the rkloga 2.0 capstone.',
     milestone_cert: 'Certified Cybersecurity Python Automation Associate (CCPAA)',
     course_ids: ['crs_cyber_python_04']
-  }
+  },
+  ...PHASE_PATHS
 ];

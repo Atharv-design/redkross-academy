@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="186" viewBox="0 0 720 186" role="img" aria-labelledby="t d">
+<title id="t">C19-M06-F3: Detect and contain C2</title>
+<desc id="d">Detection, containment and safe emulation for C2.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C19-M06-F3  Detect and contain C2</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   DETECT  : beacon-interval analysis over flow/proxy -&gt; alert</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   CONTAIN : egress deny-by-default + proxy inspection + block the indicator</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   EMULATE : beacon to a LAB SINK on the range (no real egress) to test detection</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="138" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C19-M06-F3. Detect the beacon, contain the egress, emulate only to a lab sink</text>
+<text x="20" y="154" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">[C19-M06-R4].</text>
+</svg>

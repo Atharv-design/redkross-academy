@@ -1,0 +1,5 @@
+## Target, 2013 - alerts without effective response ----------------------------------------------------------------------- Context: the US Senate Commerce Committee majority staff analysis of the 2013 Target breach (Course 01 Module 1) reported that Target appears to have failed to respond to multiple automated warnings from its intrusion detection software [C08-M01-R2]. SOC lessons: alert routing, prioritisation and accountable response are as important as detection technology; tier responsibilities and escalation paths must be clear; metrics should reveal unacknowledged high-severity alerts.
+
+
+
+## (FICTIONAL TEACHING SCENARIO): The 2 a.m. handover gap ---------------------------------------------------------------------------- This scenario is fictional. At an MSSP serving a fictional retailer, the night analyst escalated a suspected ransomware precursor by chat to a colleague who had already left. No case was opened. The morning shift found encrypted file servers. Fix: escalation only through the case system with acknowledgement, on-call rotas, handover checklists, and alerts on unacknowledged critical cases.

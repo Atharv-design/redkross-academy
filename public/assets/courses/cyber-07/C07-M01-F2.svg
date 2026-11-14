@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="686" height="186" viewBox="0 0 686 186" role="img" aria-labelledby="t d">
+<title id="t">C07-M01-F2: Default-deny inverts the posture</title>
+<desc id="d">A comparison of the permissive allow-unless-blocked posture against the secure deny-unless-allowed posture at the network layer.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C07-M01-F2  Default-deny inverts the posture</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   allow-unless-blocked (BAD):  everything flows; you chase exceptions</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   deny-unless-allowed (GOOD):  nothing flows; you permit only what is needed</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   firewall ends with &quot;deny all&quot;; segmentation permits only listed flows</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="138" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C07-M01-F2. Default-deny and least privilege turn &quot;block what is bad&quot; into &quot;allow</text>
+<text x="20" y="154" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">only what is needed&quot; [C07-M01-R3].</text>
+</svg>

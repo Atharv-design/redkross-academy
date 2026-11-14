@@ -1,0 +1,5 @@
+- Say which level you are claiming ("we assess these events form one campaign" is not "we assess actor X is responsible").
+- Give likelihood and, separately, confidence, and list alternative hypotheses with the evidence that would change your view.
+- Cite public names as "overlaps with reporting on X by vendor Y" rather than adopting the name as fact.
+- Do not repeat attribution claims from weak sources (RPT-003, E5) even to dismiss them in the headline; place them in the analysis with their grade.
+- Separate consumer needs: the SOC needs behaviour and indicators; the board needs risk and likely intent; legal teams need evidence standards.

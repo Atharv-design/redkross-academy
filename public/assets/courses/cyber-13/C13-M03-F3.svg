@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="670" height="186" viewBox="0 0 670 186" role="img" aria-labelledby="t d">
+<title id="t">C13-M03-F3: Default policy versus a fine-grained PSO</title>
+<desc id="d">Two rows contrasting the 7-character domain default for ordinary users with the 25-character PSO for the service account.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C13-M03-F3  Default policy versus a fine-grained PSO</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   Domain default policy      : min length 7   -&gt; ordinary users (asha...)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   ServiceAccountPSO (prec 50): min length 25  -&gt; legacy-svc (service acct)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   result: one directory, two password standards, applied where needed</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="138" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C13-M03-F3. A PSO applies stronger rules to sensitive accounts without changing</text>
+<text x="20" y="154" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">everyone&#x27;s policy.</text>
+</svg>

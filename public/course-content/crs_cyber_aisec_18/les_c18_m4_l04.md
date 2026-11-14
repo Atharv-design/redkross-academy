@@ -1,0 +1,5 @@
+- Prompts and outputs are personal data when they relate to identifiable people; classify conversation logs accordingly.
+- Retain only as long as needed (abuse investigation, quality) and restrict access; redact or tokenise identifiers in analytics copies.
+- Users paste secrets and personal data into assistants: provide approved tools, DLP controls and guidance; block unapproved AI services where policy requires.
+- Vendor terms: does the provider use your prompts for training? Where is data processed and stored? How long is it kept? Can it be deleted? Is there a data processing agreement?
+- Local models (as in the lab) keep data on your infrastructure but move responsibility for security and patching to you.

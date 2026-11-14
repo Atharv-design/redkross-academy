@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="619" height="169" viewBox="0 0 619 169" role="img" aria-labelledby="t d">
+<title id="t">C12-M08-F2: Tooling contaminating the SBOM</title>
+<desc id="d">Two lines comparing an SBOM of 42 components when tools were installed in the release environment with 7 components when they were kept outside.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C12-M08-F2  Tooling contaminating the SBOM</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  release env + tools installed  -&gt;  SBOM: 42 components (wrong)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  release env only, tools outside -&gt; SBOM:  7 components (what ships)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="121" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C12-M08-F2. Separating build tools from the product environment corrected</text>
+<text x="20" y="137" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">the SBOM (execution-tested).</text>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="636" height="204" viewBox="0 0 636 204" role="img" aria-labelledby="t d">
+<title id="t">C21-M07-F2: Why tags are not enough</title>
+<desc id="d">Two moments in time show the tag pointing first to the signed digest and then to an unsigned one, while the signed digest still verifies.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C21-M07-F2  Why tags are not enough</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   time 1: tag 1.0.0 --&gt; sha256:07dc...  [signed]  verify by tag: OK</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   time 2: push rebuild as 1.0.0</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">           tag 1.0.0 --&gt; sha256:a58c...  [unsigned] verify by tag: FAIL</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                         sha256:07dc...  [signed]  verify by digest: OK</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   deployment by digest 07dc... runs the reviewed build at any time</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C21-M07-F2. Signatures follow digests; tags can move.</text>
+</svg>

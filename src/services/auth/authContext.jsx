@@ -31,8 +31,7 @@ export function AuthProvider({ children }) {
     }
 
     try {
-      const token = await firebaseUser.getIdToken();
-      localStorage.setItem('redkross_academy_auth_token', token);
+      localStorage.removeItem('redkross_academy_auth_token');
       localStorage.setItem('redkross_academy_active_user', firebaseUser.uid);
 
       const cadetUser = mockEngine.getOrCreateCadetUser({
@@ -79,48 +78,15 @@ export function AuthProvider({ children }) {
   };
 
   useEffect(() => {
-    // Super admin access disabled: clean up any legacy dev admin flags
     try {
       localStorage.removeItem('redkross_academy_dev_admin');
+      localStorage.removeItem('redkross_academy_dev_cadet');
+      localStorage.removeItem('redkross_academy_auth_token');
     } catch {}
-
-    const savedDevCadet = localStorage.getItem('redkross_academy_dev_cadet');
-    if (savedDevCadet) {
-      try {
-        const parsed = JSON.parse(savedDevCadet);
-        setCurrentUser(parsed);
-        setTokenBalance(parsed.token_balance || 150);
-        setIsLoading(false);
-        return;
-      } catch (e) {
-        localStorage.removeItem('redkross_academy_dev_cadet');
-      }
-    }
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (localStorage.getItem('redkross_academy_dev_admin') === 'true' || localStorage.getItem('redkross_academy_dev_cadet')) {
-        return;
-      }
       await syncFirebaseUser(firebaseUser);
     });
-
-    try {
-      const db = mockEngine.getDb();
-      if (Array.isArray(db.users)) {
-        db.users
-          .filter((u) => u.email && (u.role === 'student' || !u.role || u.role === 'cadet'))
-          .forEach((u) => {
-            apiClient.syncUser({
-              uid: u.id,
-              email: u.email,
-              full_name: u.full_name || u.name,
-              avatar: u.avatar,
-              cadet_id: u.cadet_id
-            }).catch(() => {});
-          });
-      }
-    } catch {}
-
     return () => unsubscribe();
   }, []);
 
@@ -128,7 +94,7 @@ export function AuthProvider({ children }) {
     if (!currentUser) return;
 
     const unsubSocketStatus = socketClient.on('user:status_changed', (payload) => {
-      if (!payload?.userId || payload.userId === currentUser.id) {
+      if (payload?.userId && payload.userId === currentUser.id) {
         const isSuspended = payload.status === 'SUSPENDED';
         setCurrentUser((prev) =>
           prev ? { ...prev, status: payload.status, is_suspended: isSuspended } : prev
@@ -137,7 +103,7 @@ export function AuthProvider({ children }) {
     });
 
     const unsubSocketToken = socketClient.on('token:adjusted', (payload) => {
-      if (!payload?.userId || payload.userId === currentUser.id) {
+      if (payload?.userId && payload.userId === currentUser.id) {
         if (typeof payload.newBalance === 'number') {
           setTokenBalance(payload.newBalance);
         }
@@ -145,7 +111,7 @@ export function AuthProvider({ children }) {
     });
 
     const unsubSocketPurged = socketClient.on('user:purged', (payload) => {
-      if (!payload?.userId || payload.userId === currentUser.id || payload.email?.toLowerCase() === currentUser.email?.toLowerCase()) {
+      if (payload?.userId && payload.userId === currentUser.id) {
         logout();
         alert('This cadet account has been permanently purged by RedKross Academy Administration.');
       }
@@ -189,88 +155,6 @@ export function AuthProvider({ children }) {
       unsubscribe();
     };
   }, [currentUser]);
-
-  const devLoginAsCadet = (cadetData = {}) => {
-    const email = cadetData.email || 'student@redkross.org.in';
-    const uid = cadetData.uid || cadetData.id || 'usr_student_01';
-    const studentUser = mockEngine.getOrCreateCadetUser({
-      uid,
-      email,
-      full_name: cadetData.displayName || cadetData.full_name || 'Atharv Sharma',
-      avatar: cadetData.photoURL || cadetData.avatar
-    });
-
-    localStorage.removeItem('redkross_academy_dev_admin');
-    localStorage.setItem('redkross_academy_dev_cadet', JSON.stringify(studentUser));
-    localStorage.setItem('redkross_academy_active_user', studentUser.id);
-    localStorage.setItem('redkross_academy_auth_token', 'mock_dev_cadet_token_' + Date.now());
-    setCurrentUser(studentUser);
-    setTokenBalance(studentUser.token_balance || 150);
-    setIsLoading(false);
-    return studentUser;
-  };
-
-  const loginWithSelectedGoogleAccount = async (account) => {
-    setAuthError(null);
-    setIsLoading(true);
-    const email = (account.email || '').trim().toLowerCase();
-    const displayName = account.name || account.displayName || email.split('@')[0] || 'Cadet Operator';
-    const avatar = account.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=101923&color=65F58A&bold=true`;
-    const uid = account.uid || 'usr_google_' + Math.random().toString(36).substring(2, 9);
-
-    const cadet = devLoginAsCadet({
-      uid,
-      email,
-      displayName,
-      photoURL: avatar
-    });
-
-    try {
-      const serverUser = await apiClient.syncUser({
-        uid,
-        email,
-        full_name: displayName,
-        avatar,
-        cadet_id: cadet.cadet_id
-      });
-      if (serverUser) {
-        setCurrentUser((prev) => ({
-          ...prev,
-          ...serverUser,
-          cadet_id: serverUser.cadet_id || cadet.cadet_id
-        }));
-        if (typeof serverUser.token_balance === 'number') {
-          setTokenBalance(serverUser.token_balance);
-        }
-      }
-    } catch (e) {
-      console.warn('Backend sync note:', e.message);
-    }
-
-    setIsLoading(false);
-    return cadet;
-  };
-
-  const devLoginAsAdmin = () => {
-    const adminUser = {
-      id: 'usr_super_admin_dev',
-      email: 'admin@redkross.org.in',
-      full_name: 'Lead Super Admin',
-      role: 'super_admin',
-      headline: 'Chief Defensive Director & Institutional Proctor',
-      avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=256&q=80',
-      streak_days: 42,
-      timezone: 'Asia/Kolkata',
-    };
-    localStorage.removeItem('redkross_academy_dev_cadet');
-    localStorage.setItem('redkross_academy_dev_admin', 'true');
-    localStorage.setItem('redkross_academy_active_user', adminUser.id);
-    localStorage.setItem('redkross_academy_auth_token', 'mock_dev_admin_token_' + Date.now());
-    setCurrentUser(adminUser);
-    setTokenBalance(9999);
-    setIsLoading(false);
-    return adminUser;
-  };
 
   const loginWithGoogle = async () => {
     setAuthError(null);
@@ -354,6 +238,7 @@ export function AuthProvider({ children }) {
     <AuthContext.Provider
       value={{
         currentUser,
+        setCurrentUser,
         isSuspended,
         tokenBalance,
         refreshBalance,
@@ -361,9 +246,6 @@ export function AuthProvider({ children }) {
         loginWithEmail,
         registerWithEmail,
         logout,
-        devLoginAsAdmin,
-        devLoginAsCadet,
-        loginWithSelectedGoogleAccount,
         isLoading,
         authError
       }}

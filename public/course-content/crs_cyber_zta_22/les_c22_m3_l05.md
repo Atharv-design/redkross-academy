@@ -1,0 +1,3 @@
+CISA ZTMM v2.0 (April 2023) organises zero trust into five pillars - Identity; Devices; Networks; Applications and Workloads; Data - with three cross-cutting capabilities: Visibility and Analytics; Automation and Orchestration; Governance. Each pillar progresses from a Traditional starting point through Initial and Advanced to Optimal [R2].
+
+**Uses:** assess current state per pillar; set targets; plan roadmaps (Module 8). Pillars can advance at different speeds, but cross-pillar integration (e.g., device posture feeding identity decisions) is needed to reach higher stages. Map ZTMM progress to CSF 2.0 profiles (Course 17 M03) for governance reporting.

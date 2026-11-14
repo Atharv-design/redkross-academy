@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="695" height="237" viewBox="0 0 695 237" role="img" aria-labelledby="t d">
+<title id="t">C08-M02-F1: Telemetry families</title>
+<desc id="d">Three columns of sources - endpoint, network and identity/cloud - with arrows into a collection pipeline and SIEM.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C08-M02-F1  Telemetry families</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   ENDPOINT                 NETWORK                  IDENTITY / CLOUD</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   Windows Security/System  firewall, proxy (284)    AD/IdP sign-ins, MFA</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   Sysmon (33), PowerShell  DNS, flow (NetFlow)      VPN (10)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   EDR, auditd, journal     IDS/NDR, packets         CloudTrail / Activity Log</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">          \                       |                         /</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">           +---------&gt; collection pipeline -&gt; SIEM &lt;-------+</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="189" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C08-M02-F1. Endpoint, network and identity telemetry feed the SIEM (course dataset</text>
+<text x="20" y="205" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">counts in brackets).</text>
+</svg>

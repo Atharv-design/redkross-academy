@@ -1,0 +1,5 @@
+- Minimise: do not train or fine-tune on personal or confidential data unless the purpose requires it; prefer retrieval for facts that change or that need access control (training has no per-user ACL).
+- Lawful basis and purpose: personal data used for training needs a lawful basis and transparency (the Garante case).
+- De-identify and test: remove direct identifiers; test for reproduction of sensitive strings with canary records planted in the training set (in a controlled exercise).
+- Deletion: once trained, data is hard to remove; record which datasets trained which model versions so you can retrain or retire.
+- Poisoning (Module 6) is also a data-quality problem.

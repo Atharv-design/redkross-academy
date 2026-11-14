@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="670" height="186" viewBox="0 0 670 186" role="img" aria-labelledby="t d">
+<title id="t">C17-M04-F2: Exception lifecycle</title>
+<desc id="d">A sequence from request to risk assessment, compensating controls, approval, registration and monitoring, ending at expiry with remediation, renewal or escalation.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C17-M04-F2  Exception lifecycle</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  request -&gt; risk assessment -&gt; compensating controls -&gt; approval (level by</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  risk) -&gt; register -&gt; monitor -&gt; expiry: remediate | renew (justified) |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  escalate</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="138" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C17-M04-F2. Exceptions are assessed, compensated, approved, monitored and</text>
+<text x="20" y="154" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">closed.</text>
+</svg>

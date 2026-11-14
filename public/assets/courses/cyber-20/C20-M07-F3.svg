@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="636" height="221" viewBox="0 0 636 221" role="img" aria-labelledby="t d">
+<title id="t">C20-M07-F3: ATT&amp;CK 20.1 tactic change</title>
+<desc id="d">The former Defense Evasion tactic splitting into Stealth and Defense Impairment, with two examples of revoked techniques and their replacements.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C20-M07-F3  ATT&amp;CK 20.1 tactic change</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   earlier ATT&amp;CK versions        Enterprise ATT&amp;CK 20.1</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   TA0005 Defense Evasion   ---&gt;   TA0005 Stealth (hide, appear normal)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                            \--&gt;   TA0112 Defense Impairment (break</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                   security tooling and pipelines)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   T1070.001 Clear Windows Event Logs  -&gt; revoked-by T1685.005</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   T1562.001 Disable or Modify Tools   -&gt; revoked-by T1685</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="189" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C20-M07-F3. Tags must follow revocations [C20-M07-R2].</text>
+</svg>

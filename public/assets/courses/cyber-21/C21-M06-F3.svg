@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="628" height="221" viewBox="0 0 628 221" role="img" aria-labelledby="t d">
+<title id="t">C21-M06-F3: Three kinds of drift</title>
+<desc id="d">Two columns compare declared and live configuration and label each row as changed, missing or unmanaged.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C21-M06-F3  Three kinds of drift</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   Git (declared)                     cluster (live)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   Deployment api replicas 2   &lt;--&gt;   replicas 4             CHANGED</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   readOnlyRootFilesystem true &lt;--&gt;   false                  CHANGED</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   NetworkPolicy api-ingress   &lt;--&gt;   (absent)               MISSING</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   (absent)                    &lt;--&gt;   RoleBinding reporting- UNMANAGED</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                      admin</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="189" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C21-M06-F3. Drift found in the lab after a simulated hotfix.</text>
+</svg>

@@ -57,3 +57,10 @@ database-security-review.md
 docs/superpowers/
 
 
+
+# MediaPipe wasm runtime is copied from node_modules at build time
+public/vendor/mediapipe/wasm/
+
+# Course files the app serves must be committed despite the generic rules above
+!public/downloads/labs/*.zip
+!public/assets/courses/**/labs/**/*_output.txt

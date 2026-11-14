@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="670" height="187" viewBox="0 0 670 187" role="img" aria-labelledby="t d">
+<title id="t">C11-M07-F2: Lab scan results</title>
+<desc id="d">Four scan targets with their findings.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C11-M07-F2  Lab scan results</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  Dockerfile        3 failures: DS-0002 HIGH, DS-0026 LOW, DS-0031 CRITICAL</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  app_config.py     AWS doc example key: not flagged (excluded)</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  settings.py       format-valid fictional key: 2 CRITICAL</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  python:3.12-slim  HIGH 104, CRITICAL 3, 58 fixable (2026-11-07)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C11-M07-F2. Execution-tested trivy 0.76.2 results.</text>
+</svg>

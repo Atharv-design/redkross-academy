@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="544" height="220" viewBox="0 0 544 220" role="img" aria-labelledby="t d">
+<title id="t">C11-M01-F3: Landing zone</title>
+<desc id="d">An organisation containing security, infrastructure, production, non-production and sandbox accounts, with guardrails and central identity applied across them.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C11-M01-F3  Landing zone</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  Organisation / tenant (guardrails: SCPs, Azure Policy)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">    |-- Security: log archive (immutable), security tooling</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">    |-- Infrastructure: networking, shared services</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">    |-- Workloads-Prod   |-- Workloads-NonProd   |-- Sandbox</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  central identity (SSO) into every account/subscription</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C11-M01-F3. Separate accounts or subscriptions with</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">organisation-level guardrails and central logging.</text>
+</svg>

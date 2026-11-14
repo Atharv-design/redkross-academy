@@ -2,9 +2,31 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
+/**
+ * Answer keys must never reach the browser: assessments are graded by /api/assessment,
+ * which imports these same source files directly in Node (unaffected by this plugin).
+ * Strips quoted answer fields from course data and question-bank modules at build time.
+ */
+const ANSWER_DATA_FILE = /[\\/]src[\\/]services[\\/]db[\\/](curriculum|questionBanks|course0\d[\\/](modules|quizzes))[\\/][^\\/]+\.js$/;
+function stripAnswerKeys() {
+  return {
+    name: 'rk-strip-answer-keys',
+    enforce: 'pre',
+    transform(code, id) {
+      if (!ANSWER_DATA_FILE.test(id)) return null;
+      const out = code
+        .replace(/"(correct|correct_index)"\s*:\s*\d+\s*,?/g, '')
+        .replace(/"is_correct"\s*:\s*(true|false)\s*,?/g, '')
+        .replace(/"explanation"\s*:\s*"(?:[^"\\]|\\.)*"\s*,?/g, '');
+      return { code: out, map: null };
+    },
+  };
+}
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
+    stripAnswerKeys(),
     react({
       include: '**/*.{jsx,tsx,js,ts}',
     }),
@@ -42,6 +64,9 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
+          if (/services[\\/]db[\\/]library[\\/]/.test(id)) {
+            return 'curriculum-library';
+          }
           if (id.includes('course04')) {
             return 'curriculum-course04';
           }

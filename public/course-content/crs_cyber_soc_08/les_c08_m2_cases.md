@@ -1,0 +1,5 @@
+## Equifax, 2017 - a telemetry blind spot -------------------------------------------------------------- Context: the US GAO reported that at Equifax a device used to inspect network traffic had a misconfiguration caused by an expired digital certificate, which allowed encrypted traffic to pass without inspection for about ten months; after the certificate was updated and inspection restarted, administrators recognised signs of intrusion [C08-M02-R2]. SOC lessons: monitor the health of telemetry sources and sensors as critically as the alerts they produce; certificate expiry is a telemetry risk; "no alerts" may mean "no visibility".
+
+
+
+## (FICTIONAL TEACHING SCENARIO): The one-hour offset ------------------------------------------------------------------------- This scenario is fictional. During an investigation at a fictional insurer, firewall logs (local time, no offset recorded) and EDR logs (UTC) were merged without conversion. The team concluded the attacker exfiltrated data before the phishing email arrived - impossible. After normalising to UTC the sequence made sense. Fix: normalise at ingestion and record time zones.

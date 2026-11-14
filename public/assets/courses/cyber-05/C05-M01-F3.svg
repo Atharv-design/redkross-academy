@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="628" height="221" viewBox="0 0 628 221" role="img" aria-labelledby="t d">
+<title id="t">C05-M01-F3: What a scope and RoE must contain</title>
+<desc id="d">Two columns listing the required contents of a scope and of rules of engagement, signed before activity begins.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C05-M01-F3  What a scope and RoE must contain</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   SCOPE                         RULES OF ENGAGEMENT</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   + in-scope targets            + permitted / forbidden techniques</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   + EXPLICIT out-of-scope       + test windows</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   + accounts / data allowed     + notify / escalate / STOP conditions</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                 + data handling + contacts</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   signed by an authorised owner BEFORE any activity</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="189" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C05-M01-F3. The mandatory elements of scope and rules of engagement.</text>
+</svg>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="636" height="220" viewBox="0 0 636 220" role="img" aria-labelledby="t d">
+<title id="t">C05-M03-F1: From inventory to exposure map</title>
+<desc id="d">The asset inventory is enumerated to produce an exposure map of live services, endpoints and versions.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C05-M03-F1  From inventory to exposure map</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   inventory (Module 2)  --enumerate--&gt;  exposure map</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     hosts/endpoints        TCP up?          service: up on 8099</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">     (predicted)            endpoints?       /admin 403 (restricted)</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                            versions?        /invoice 400 (needs param)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                             banner NilgiriPortal/0.9</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="172" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C05-M03-F1. Enumeration tests the inventory&#x27;s predictions and produces a</text>
+<text x="20" y="188" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">map of actual exposure.</text>
+</svg>

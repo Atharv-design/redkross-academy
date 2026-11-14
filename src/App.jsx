@@ -41,24 +41,31 @@ const StudentDashboard = lazy(() => import('./pages/student/StudentDashboard'));
 const CyberStudentDashboard = lazy(() => import('./pages/student/CyberStudentDashboard'));
 const PsychologyStudentDashboard = lazy(() => import('./pages/student/PsychologyStudentDashboard'));
 const LessonPlayerPage = lazy(() => import('./pages/student/LessonPlayerPage'));
-const QuizAssessmentPage = lazy(() => import('./pages/student/QuizAssessmentPage'));
+const QuizRedirect = lazy(() => import('./pages/student/AssessmentRedirect').then((m) => ({ default: m.QuizRedirect })));
 const TokenWalletPage = lazy(() => import('./pages/student/TokenWalletPage'));
-const FinalCertificationPage = lazy(() => import('./pages/student/FinalCertificationPage'));
+const FinalExamRedirect = lazy(() => import('./pages/student/AssessmentRedirect').then((m) => ({ default: m.FinalExamRedirect })));
 const CourseHomePage = lazy(() => import('./pages/student/CourseHomePage'));
 
-// Admin Pages
-const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'));
-const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage'));
-const AdminCoursesPage = lazy(() => import('./pages/admin/AdminCoursesPage'));
-const AdminQuizzesPage = lazy(() => import('./pages/admin/AdminQuizzesPage'));
-const AdminAssignmentsPage = lazy(() => import('./pages/admin/AdminAssignmentsPage'));
-const AdminCertificatesPage = lazy(() => import('./pages/admin/AdminCertificatesPage'));
-const AdminStudentsPage = lazy(() => import('./pages/admin/AdminStudentsPage'));
-const AdminEnrollmentsPage = lazy(() => import('./pages/admin/AdminEnrollmentsPage'));
-const AdminAnalyticsPage = lazy(() => import('./pages/admin/AdminAnalyticsPage'));
-const AdminAuditLogsPage = lazy(() => import('./pages/admin/AdminAuditLogsPage'));
-const AdminSettingsPage = lazy(() => import('./pages/admin/AdminSettingsPage'));
-const AdminProfilePage = lazy(() => import('./pages/admin/AdminProfilePage'));
+// Admin console (server-backed; see src/pages/admin/console)
+const ConsoleLayout = lazy(() => import('./pages/admin/console/ConsoleLayout'));
+const OverviewPage = lazy(() => import('./pages/admin/console/OverviewPage'));
+const StudentsPage = lazy(() => import('./pages/admin/console/StudentsPage'));
+const StudentDetailPage = lazy(() => import('./pages/admin/console/StudentDetailPage'));
+const BatchesPage = lazy(() => import('./pages/admin/console/BatchesPage'));
+const BatchDetailPage = lazy(() => import('./pages/admin/console/BatchDetailPage'));
+const CodesPage = lazy(() => import('./pages/admin/console/CodesPage'));
+const ProctoringPage = lazy(() => import('./pages/admin/console/ProctoringPage'));
+const consolePage = (name) => lazy(() => import('./pages/admin/console/ManagePages').then((m) => ({ default: m[name] })));
+const AdminCoursesPage = consolePage('CoursesPage');
+const NameRequestsPage = consolePage('NameRequestsPage');
+const CertificatesPage = consolePage('CertificatesPage');
+const TicketsPage = consolePage('TicketsPage');
+const AuditPage = consolePage('AuditPage');
+const AdminsPage = consolePage('AdminsPage');
+
+// Student profile and batch registration links
+const ProfilePage = lazy(() => import('./pages/student/ProfilePage'));
+const JoinPage = lazy(() => import('./pages/student/JoinPage'));
 
 function PublicLayout() {
   return (
@@ -152,42 +159,48 @@ export default function App() {
               }
             />
             <Route
+              path="student/profile"
+              element={
+                <ProtectedRoute>
+                  <ProfilePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="join" element={<JoinPage />} />
+            <Route path="join/:code" element={<JoinPage />} />
+            <Route
               path="student/final-exam/:enrolmentId"
               element={
                 <ProtectedRoute>
-                  <FinalCertificationPage />
+                  <FinalExamRedirect />
                 </ProtectedRoute>
               }
             />
           </Route>
 
-          {/* Dedicated Desktop-Only Admin Dashboard (min-w-[1280px], fixed 260px sidebar & 64px header) */}
+          {/* Admin console: one place to run the academy (server-authorised) */}
           <Route
             path="admin"
             element={
               <AdminRoute>
-                <AdminLayout />
+                <ConsoleLayout />
               </AdminRoute>
             }
           >
-            <Route index element={<AdminDashboardPage />} />
-            <Route path="dashboard" element={<AdminDashboardPage />} />
+            <Route index element={<OverviewPage />} />
+            <Route path="students" element={<StudentsPage />} />
+            <Route path="students/:id" element={<StudentDetailPage />} />
+            <Route path="batches" element={<BatchesPage />} />
+            <Route path="batches/:id" element={<BatchDetailPage />} />
+            <Route path="codes" element={<CodesPage />} />
             <Route path="courses" element={<AdminCoursesPage />} />
-            <Route path="quizzes" element={<AdminQuizzesPage />} />
-            <Route path="assignments" element={<AdminAssignmentsPage />} />
-            <Route path="certificates" element={<AdminCertificatesPage />} />
-            <Route path="students" element={<AdminStudentsPage />} />
-            <Route path="enrollments" element={<AdminEnrollmentsPage />} />
-            <Route path="analytics" element={<AdminAnalyticsPage />} />
-            <Route path="audit-logs" element={<AdminAuditLogsPage />} />
-            <Route path="settings" element={<AdminSettingsPage />} />
-            <Route path="profile" element={<AdminProfilePage />} />
-
-            {/* Legacy Aliases & Redirects */}
-            <Route path="crm" element={<Navigate to="/admin/students" replace />} />
-            <Route path="incidents" element={<Navigate to="/admin/audit-logs" replace />} />
-            <Route path="builder" element={<Navigate to="/admin/courses" replace />} />
-            <Route path="audit" element={<Navigate to="/admin/audit-logs" replace />} />
+            <Route path="proctoring" element={<ProctoringPage />} />
+            <Route path="name-requests" element={<NameRequestsPage />} />
+            <Route path="certificates" element={<CertificatesPage />} />
+            <Route path="tickets" element={<TicketsPage />} />
+            <Route path="audit" element={<AuditPage />} />
+            <Route path="admins" element={<AdminsPage />} />
+            <Route path="*" element={<Navigate to="/admin" replace />} />
           </Route>
 
           {/* Full-Screen Focus Modes */}
@@ -203,7 +216,7 @@ export default function App() {
             path="student/quiz/:enrolmentId/:quizId"
             element={
               <ProtectedRoute>
-                <QuizAssessmentPage />
+                <QuizRedirect />
               </ProtectedRoute>
             }
           />

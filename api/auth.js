@@ -1,144 +1,70 @@
-﻿import { sql, json, cors } from './_db.js';
+﻿import { sql, json, cors, serverError } from './_db.js';
+import { verifyRequest, resolveUser, isAdminUser, audit } from './_auth.js';
 import { dispatchWebhook } from './_webhooks.js';
 
-function generateDeterministicCadetId(email = '', uid = '') {
-  const seed = `${(email || '').toLowerCase()}::${uid || ''}`;
-  let hash = 2166136261;
-  for (let i = 0; i < seed.length; i++) {
-    hash ^= seed.charCodeAt(i);
-    hash = Math.imul(hash, 16777619);
-  }
-  const num = (Math.abs(hash) % 90000) + 10000;
-  return `RK-CADET-${num}`;
-}
-
 /**
- * Authentication & Session Synchronization Endpoint (Phase 2 & Phase 5)
- * Securely synchronizes Firebase authenticated identity with Neon PostgreSQL.
- * Defaults new accounts to role: 'student' (Strict Phase 4.2 compliance: No auto-elevation).
+ * POST /api/auth - session sync.
+ * Identity (uid, email) comes ONLY from the verified Firebase ID token. The body may
+ * carry display fields (full_name, avatar) and nothing else is honoured.
  */
 export default async function handler(req, res) {
   if (cors(req, res)) return;
-
-  if (req.method !== 'POST') {
-    return json(res, { error: 'Method not allowed' }, 405);
-  }
+  if (req.method !== 'POST') return json(res, { error: 'Method not allowed' }, 405);
 
   try {
-    const { uid, email, full_name, avatar, cadet_id } = req.body || {};
+    const identity = await verifyRequest(req);
+    if (!identity) return json(res, { error: 'Authentication required' }, 401);
 
-    if (!uid || !email) {
-      return json(res, { error: 'Missing required authentication identity fields' }, 400);
-    }
+    const banned = await sql`SELECT 1 FROM system_settings WHERE key = ${`banned_email_${identity.email}`} LIMIT 1`;
+    if (banned.length) return json(res, { error: 'This account has been closed.' }, 403);
 
-    const normalizedEmail = email.trim().toLowerCase();
-    const studentName = full_name || normalizedEmail.split('@')[0] || 'Cadet Operator';
-    let assignedCadetId = cadet_id || generateDeterministicCadetId(normalizedEmail, uid);
-
-    // Query user in Neon DB by ID OR by normalized email
-    const existing = await sql`
-      SELECT id, email, full_name, avatar, headline, role, cadet_id, status, streak_days, token_balance, created_at
-      FROM users 
-      WHERE id = ${uid} OR LOWER(email) = ${normalizedEmail}
-      LIMIT 1
-    `;
+    const body = req.body || {};
+    const profile = {
+      full_name: typeof body.full_name === 'string' ? body.full_name.slice(0, 120) : undefined,
+      avatar: typeof body.avatar === 'string' && /^https:\/\//.test(body.avatar) ? body.avatar.slice(0, 500) : undefined,
+    };
 
     let user;
-
-    if (existing && existing.length > 0) {
-      user = existing[0];
-      const targetCadetId = user.cadet_id || assignedCadetId;
-
-      await sql`
-        UPDATE users 
-        SET full_name = COALESCE(${studentName}, full_name),
-            avatar = COALESCE(${avatar}, avatar),
-            status = 'ACTIVE',
-            cadet_id = COALESCE(cadet_id, ${targetCadetId}),
-            updated_at = NOW()
-        WHERE id = ${user.id}
-      `;
-
-      user.full_name = studentName || user.full_name;
-      user.avatar = avatar || user.avatar;
-      user.status = 'ACTIVE';
-      user.cadet_id = targetCadetId;
-    } else {
-      // Check for collision on cadet_id
-      const checkCadet = await sql`SELECT id FROM users WHERE cadet_id = ${assignedCadetId} LIMIT 1`;
-      if (checkCadet.length > 0) {
-        assignedCadetId = `RK-CADET-${Math.floor(10000 + Math.random() * 90000)}`;
-      }
-
-      const newId = uid.startsWith('usr_') ? uid : `usr_${uid.replace(/[^a-zA-Z0-9_]/g, '_').substring(0, 30)}`;
-
-      const inserted = await sql`
-        INSERT INTO users (
-          id, email, full_name, avatar, headline, role, cadet_id, status, streak_days, token_balance, created_at, updated_at
-        )
-        VALUES (
-          ${newId},
-          ${normalizedEmail},
-          ${studentName},
-          ${avatar || null},
-          'Cadet Defensive Operator',
-          'student',
-          ${assignedCadetId},
-          'ACTIVE',
-          1,
-          150,
-          NOW(),
-          NOW()
-        )
-        RETURNING id, email, full_name, avatar, headline, role, cadet_id, status, streak_days, token_balance, created_at
-      `;
-      user = inserted[0];
-
-      // Give new student initial welcome tokens in ledger
-      try {
-        const rewardId = `rw_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
-        await sql`
-          INSERT INTO reward_ledger (id, user_id, amount, transaction_type, description, idempotency_key, created_at)
-          VALUES (
-            ${rewardId},
-            ${user.id},
-            150,
-            'welcome_grant',
-            'Initial Cadet registration and enrolment bounty',
-            ${'welcome_' + user.id},
-            NOW()
-          )
-          ON CONFLICT (idempotency_key) DO NOTHING
-        `;
-      } catch (rwErr) {
-        console.warn('Welcome grant note:', rwErr.message);
-      }
-
-      // Asynchronously trigger registration webhook to n8n from contact@redkross.org.in
-      await dispatchWebhook('user.registered', {
-        userId: user.id,
-        email: user.email,
-        studentEmail: user.email,
-        fullName: user.full_name,
-        cadetId: user.cadet_id,
-        from: 'contact@redkross.org.in',
-        to: user.email,
-        tokenBalance: 150
-      });
+    try {
+      user = await resolveUser(identity, { create: true, profile });
+    } catch (err) {
+      if (err.status) return json(res, { error: err.message }, err.status);
+      throw err;
     }
 
-    // Fetch live token balance
-    let balance = 150;
-    try {
-      const balanceResult = await sql`
-        SELECT COALESCE(SUM(amount), 150) as balance 
-        FROM reward_ledger 
-        WHERE user_id = ${user.id}
+    if (user.__created) {
+      await sql`
+        INSERT INTO reward_ledger (id, user_id, amount, transaction_type, description, idempotency_key, created_at)
+        VALUES (${`rw_welcome_${user.id}`}, ${user.id}, 150, 'welcome_grant', 'Welcome grant on registration', ${`welcome_${user.id}`}, NOW())
+        ON CONFLICT (idempotency_key) DO NOTHING
+      `.catch((e) => console.warn('[auth] welcome grant:', e.message));
+      await audit(user.id, 'USER_REGISTERED', 'users', user.id, identity.email);
+      dispatchWebhook('user.registered', {
+        userId: user.id,
+        email: user.email,
+        fullName: user.full_name,
+        cadetId: user.cadet_id,
+        tokenBalance: 150,
+      });
+    } else {
+      // The profile page owns name and photo after sign-up: a sign-in only fills gaps
+      // (it must never overwrite a name the student edited, or one an admin approved).
+      const rows = await sql`
+        UPDATE users
+        SET full_name = CASE WHEN COALESCE(TRIM(full_name), '') = '' THEN COALESCE(${profile.full_name || null}, full_name) ELSE full_name END,
+            avatar = COALESCE(avatar, ${profile.avatar || null}),
+            last_seen_at = NOW()
+        WHERE id = ${user.id}
+        RETURNING full_name, avatar
       `;
-      if (balanceResult.length > 0 && balanceResult[0].balance !== null) {
-        balance = parseInt(balanceResult[0].balance, 10);
+      if (rows[0]) {
+        user.full_name = rows[0].full_name;
+        user.avatar = rows[0].avatar;
       }
-    } catch {}
+    }
+
+    const balanceRows = await sql`SELECT COALESCE(SUM(amount), 0) AS balance FROM reward_ledger WHERE user_id = ${user.id}`;
+    const balance = parseInt(balanceRows[0]?.balance ?? 0, 10) || 0;
 
     return json(res, {
       user: {
@@ -147,16 +73,15 @@ export default async function handler(req, res) {
         full_name: user.full_name,
         avatar: user.avatar,
         headline: user.headline,
-        role: user.role,
+        role: isAdminUser(user, identity) ? (user.role === 'student' ? 'admin' : user.role) : 'student',
         cadet_id: user.cadet_id,
         status: user.status || 'ACTIVE',
         streak_days: user.streak_days || 1,
         created_at: user.created_at,
-        token_balance: balance
-      }
+        token_balance: balance,
+      },
     });
   } catch (error) {
-    console.error('API /auth error:', error);
-    return json(res, { error: error.message || 'Authentication error' }, 500);
+    return serverError(res, error, 'api/auth');
   }
 }

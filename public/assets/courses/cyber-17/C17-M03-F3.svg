@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="325" height="253" viewBox="0 0 325 253" role="img" aria-labelledby="t d">
+<title id="t">C17-M03-F3: Lab coverage by Function</title>
+<desc id="d">A bar per Function showing covered categories: Govern 4 of 6, Identify 2 of 3, Protect 4 of 5, Detect 2 of 2, Respond 2 of 4 and Recover 1 of 2, totalling 15 of 22.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C17-M03-F3  Lab coverage by Function</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  GV  ####..   4/6</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  ID  ##.      2/3</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  PR  ####.    4/5</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  DE  ##       2/2</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  RS  ##..     2/4</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  RC  #.       1/2     total 15/22</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="189" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C17-M03-F3. CSF category</text>
+<text x="20" y="205" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">coverage for Tamarind&#x27;s 12 controls</text>
+<text x="20" y="221" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">(execution-tested).</text>
+</svg>

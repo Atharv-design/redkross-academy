@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="762" height="203" viewBox="0 0 762 203" role="img" aria-labelledby="t d">
+<title id="t">C12-M03-F2: Unsafe and safe forms</title>
+<desc id="d">A table pairing unsafe SQL, command, HTML and password-hashing code with the safe equivalent for each.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C12-M03-F2  Unsafe and safe forms</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  SQL      unsafe: execute(f&quot;... &#x27;{name}&#x27;&quot;)      safe: execute(&quot;... ?&quot;, (name,))</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  command  unsafe: run(f&quot;tar {p}&quot;, shell=True)    safe: run([&quot;tar&quot;,&quot;czf&quot;,o,&quot;--&quot;,p])</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  HTML     unsafe: f&quot;&lt;p&gt;{note}&lt;/p&gt;&quot;               safe: f&quot;&lt;p&gt;{html.escape(note)}&lt;/p&gt;&quot;</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  hash     unsafe: md5(pw)                        safe: scrypt(pw, salt=random16, ...)</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C12-M03-F2. Four common unsafe patterns and their safe replacements, matching the Module 4</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">SAST rules.</text>
+</svg>

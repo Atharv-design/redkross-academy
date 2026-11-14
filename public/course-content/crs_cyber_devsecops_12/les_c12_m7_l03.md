@@ -1,0 +1,6 @@
+- Branch protection: required reviews and status checks (the Module 1 gates) before merging to main.
+- CODEOWNERS for pipeline files, so changes to .github/workflows or equivalents need platform or security approval.
+- Untrusted contributions. Workflows triggered by pull requests from forks should run with read-only permissions and no secrets. GitHub advises avoiding the pull_request_target trigger unless necessary [R1].
+- Untrusted input in scripts. Values such as pull-request titles or branch names must not be pasted directly into inline shell scripts. Pass them through environment variables, as GitHub's guidance recommends [R1], the same "keep data separate from code" principle as Module 3.
+- Runners. Use ephemeral runners that are fresh for each job. Restrict self-hosted runners to trusted repositories and isolate them from production networks. Never use them for public fork pull requests.
+- Logs. Mask secrets and avoid printing environment variables. The Codecov case shows why environment contents matter.

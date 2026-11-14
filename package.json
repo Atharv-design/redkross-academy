@@ -6,15 +6,20 @@
   "scripts": {
     "dev": "vite",
     "server": "node server/productionServer.js",
-    "build": "node --max-old-space-size=4096 node_modules/vite/bin/vite.js build",
+    "build": "node scripts/prepare_proctor_assets.mjs && node --max-old-space-size=4096 node_modules/vite/bin/vite.js build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "build:curriculum": "node scripts/build_cyber_curriculum.js",
-    "test": "node tests/unit_test_student_features.mjs",
+    "test": "node tests/unit_test_rate_limit.mjs && node tests/unit_test_student_features.mjs && node tests/unit_test_cyber_command_vault.mjs && node scripts/check_library_import.mjs",
     "check:env": "node scripts/verify-env.js",
     "db:migrate": "node scripts/runMigrations.js",
     "db:seed": "node scripts/seedDatabase.js",
-    "start:prod": "node server/productionServer.js"
+    "start:prod": "node server/productionServer.js",
+    "test:api": "node tests/api_security_and_assessment.test.mjs && node tests/api_admin_cohorts_codes.test.mjs && node tests/api_proctoring.test.mjs",
+    "audit:bundle": "node scripts/audit_client_bundle.mjs",
+    "import:library": "node scripts/import_library_courses.mjs",
+    "check:library": "node scripts/check_library_import.mjs",
+    "prepare:proctor": "node scripts/prepare_proctor_assets.mjs"
   },
   "dependencies": {
     "@blocknote/core": "^0.57.0",
@@ -23,6 +28,7 @@
     "@e2b/code-interpreter": "^2.9.0",
     "@mantine/core": "^9.7.4",
     "@mantine/hooks": "^9.7.4",
+    "@mediapipe/tasks-vision": "1.2.0",
     "@neondatabase/serverless": "^1.2.0",
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",

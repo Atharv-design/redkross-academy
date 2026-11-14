@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="670" height="203" viewBox="0 0 670 203" role="img" aria-labelledby="t d">
+<title id="t">C05-M06-F1: The exploit lifecycle and where the ethical tester stops</title>
+<desc id="d">The lifecycle from discovery through proof of impact, with the ethical tester stopping before the attacker&#x27;s later stages.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C05-M06-F1  The exploit lifecycle and where the ethical tester stops</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   Discovery -&gt; Verification -&gt; PROOF OF IMPACT -&gt; | (ethical tester STOPS)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                                   |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   attacker would continue:  weaponise -&gt; deliver -&gt; actions on objectives</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   ethical tester: demonstrate consequence, do not pursue it</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="155" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C05-M06-F1. The ethical tester proves impact and stops where an attacker would</text>
+<text x="20" y="171" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">press on.</text>
+</svg>

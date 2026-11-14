@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="636" height="305" viewBox="0 0 636 305" role="img" aria-labelledby="t d">
+<title id="t">C21-M06-F1: The IaC lifecycle and its artefacts</title>
+<desc id="d">A flow from Git through init, scanning, plan, approval and apply to infrastructure, with state stored in an encrypted backend and a loop from infrastructure back to a drift report.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="32" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#8b0000">C21-M06-F1  The IaC lifecycle and its artefacts</text>
+<text x="20" y="60" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   .tf / YAML in Git --&gt; init (providers, lock file)</text>
+<text x="20" y="77" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">          |                       |</text>
+<text x="20" y="94" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">          v                       v</text>
+<text x="20" y="111" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">       scan + policy  --&gt;  plan (JSON, resolved) --&gt; policy on plan</text>
+<text x="20" y="128" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                  |</text>
+<text x="20" y="145" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                       approval --+--&gt; apply --&gt; infrastructure</text>
+<text x="20" y="162" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                          |</text>
+<text x="20" y="179" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                     state (secrets!) -&gt; encrypted,</text>
+<text x="20" y="196" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">                                                         locked backend</text>
+<text x="20" y="213" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">   infrastructure --refresh / diff--&gt; drift report --&gt; reconcile/adopt</text>
+<text x="20" y="230" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="14" fill="#111111" xml:space="preserve">  </text>
+<text x="20" y="257" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">Figure C21-M06-F1. Where configuration, plan, state and drift fit, and where each</text>
+<text x="20" y="273" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#333333">check applies.</text>
+</svg>
