@@ -13,6 +13,9 @@
 import { sql, json, cors, serverError } from './_db.js';
 import { requireUser, audit } from './_auth.js';
 import { checkCourseAccess } from './_lib/access.js';
+import proctorHandler from './_proctor.js';
+import violationHandler from './_violation.js';
+import quizHandler from './_quiz.js';
 import {
   getCourseSpec,
   findQuiz,
@@ -284,6 +287,15 @@ async function forfeit(ctx, body, res) {
 }
 
 export default async function handler(req, res) {
+  if (req.query?.route === 'proctor' || (req.url && req.url.includes('/api/proctor'))) {
+    return proctorHandler(req, res);
+  }
+  if (req.query?.route === 'violation' || (req.url && req.url.includes('/api/violation'))) {
+    return violationHandler(req, res);
+  }
+  if (req.query?.route === 'quiz' || (req.url && req.url.includes('/api/quiz'))) {
+    return quizHandler(req, res);
+  }
   if (cors(req, res)) return;
   try {
     const ctx = await requireUser(req, res);

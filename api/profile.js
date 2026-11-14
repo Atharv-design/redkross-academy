@@ -2,6 +2,7 @@ import { sql, json, cors, serverError } from './_db.js';
 import { requireUser, audit } from './_auth.js';
 import { publicCredential, randomId } from './_lib/learning.js';
 import { courseCatalog, grantedCourseIds } from './_lib/access.js';
+import avatarHandler from './_avatar.js';
 
 /**
  * /api/profile - the signed-in student's own profile.
@@ -119,6 +120,9 @@ async function loadProfile(userId) {
 }
 
 export default async function handler(req, res) {
+  if (req.query?.avatar || (req.url && req.url.includes('/api/avatar'))) {
+    return avatarHandler(req, res);
+  }
   if (cors(req, res)) return;
   try {
     const ctx = await requireUser(req, res);

@@ -4,6 +4,7 @@ import { getCourseSpec } from './_lib/courseRegistry.js';
 import { ensureEnrolment, awardTokens } from './_lib/learning.js';
 import { dispatchWebhook } from './_webhooks.js';
 import { checkCourseAccess } from './_lib/access.js';
+import redeemHandler from './_redeem.js';
 
 /**
  * /api/enrol - the caller's own enrolments only (identity from the ID token).
@@ -12,6 +13,9 @@ import { checkCourseAccess } from './_lib/access.js';
  *   DELETE { course_id }      cancel my enrolment in a free course
  */
 export default async function handler(req, res) {
+  if (req.query?.action === 'redeem' || (req.url && req.url.includes('/api/redeem'))) {
+    return redeemHandler(req, res);
+  }
   if (cors(req, res)) return;
   try {
     const ctx = await requireUser(req, res);

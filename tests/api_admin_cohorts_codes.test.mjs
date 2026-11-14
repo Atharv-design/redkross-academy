@@ -18,11 +18,13 @@ process.env.ADMIN_EMAILS = '';
 delete process.env.N8N_WEBHOOK_URL;
 delete process.env.RESEND_API_KEY;
 
+import fs from 'fs';
 const { sql } = await import('../api/_db.js');
 const { setTokenVerifier } = await import('../api/_auth.js');
 const handlers = {};
 for (const name of ['auth', 'manage', 'redeem', 'enrol', 'catalog', 'profile', 'avatar', 'assessment']) {
-  handlers[name] = (await import(`../api/${name}.js`)).default;
+  const importName = fs.existsSync(new URL(`../api/${name}.js`, import.meta.url)) ? name : `_${name}`;
+  handlers[name] = (await import(`../api/${importName}.js`)).default;
 }
 
 const RUN = Date.now().toString(36);

@@ -209,10 +209,12 @@ const apiRoutes = [
 
 for (const route of apiRoutes) {
   const filePath = path.join(apiDir, `${route}.js`);
-  if (fs.existsSync(filePath)) {
+  const altPath = path.join(apiDir, `_${route}.js`);
+  const targetName = fs.existsSync(filePath) ? route : fs.existsSync(altPath) ? `_${route}` : null;
+  if (targetName) {
     app.all(`/api/${route}`, async (req, res, next) => {
       try {
-        const module = await import(`../api/${route}.js`);
+        const module = await import(`../api/${targetName}.js`);
         if (typeof module.default === 'function') {
           return await module.default(req, res);
         }

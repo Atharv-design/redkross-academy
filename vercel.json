@@ -1,6 +1,38 @@
 {
   "rewrites": [
     {
+      "source": "/api/learning-paths",
+      "destination": "/api/courses.js?type=learning_paths"
+    },
+    {
+      "source": "/api/catalog",
+      "destination": "/api/courses.js?type=catalog"
+    },
+    {
+      "source": "/api/avatar",
+      "destination": "/api/profile.js?avatar=true"
+    },
+    {
+      "source": "/api/redeem",
+      "destination": "/api/enrol.js?action=redeem"
+    },
+    {
+      "source": "/api/proctor",
+      "destination": "/api/assessment.js?route=proctor"
+    },
+    {
+      "source": "/api/violation",
+      "destination": "/api/assessment.js?route=violation"
+    },
+    {
+      "source": "/api/quiz",
+      "destination": "/api/assessment.js?route=quiz"
+    },
+    {
+      "source": "/api/admin",
+      "destination": "/api/manage.js?route=admin"
+    },
+    {
       "source": "/((?!api/.*).*)",
       "destination": "/index.html"
     }

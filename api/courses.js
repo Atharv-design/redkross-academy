@@ -1,5 +1,6 @@
 import { sql, json, cors, serverError } from './_db.js';
 import { optionalUser } from './_auth.js';
+import catalogHandler from './_catalog.js';
 
 /**
  * Course Catalog API Endpoint (Phase 2, Phase 3, Phase 7, Phase 9)
@@ -10,6 +11,9 @@ import { optionalUser } from './_auth.js';
  * - Stores & preserves card_variant persistently in Neon PostgreSQL.
  */
 export default async function handler(req, res) {
+  if (req.query?.type === 'catalog' || (req.url && req.url.includes('/api/catalog'))) {
+    return catalogHandler(req, res);
+  }
   if (cors(req, res)) return;
 
   try {

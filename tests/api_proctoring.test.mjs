@@ -12,10 +12,14 @@ process.env.NODE_ENV = 'test';
 process.env.CREDENTIAL_SIGNING_SECRET = 'test-secret-'.padEnd(48, 'x');
 process.env.ADMIN_EMAILS = '';
 
+import fs from 'fs';
 const { sql } = await import('../api/_db.js');
 const { setTokenVerifier } = await import('../api/_auth.js');
 const handlers = {};
-for (const name of ['auth', 'assessment', 'proctor', 'manage']) handlers[name] = (await import(`../api/${name}.js`)).default;
+for (const name of ['auth', 'assessment', 'proctor', 'manage']) {
+  const importName = fs.existsSync(new URL(`../api/${name}.js`, import.meta.url)) ? name : `_${name}`;
+  handlers[name] = (await import(`../api/${importName}.js`)).default;
+}
 
 const RUN = Date.now().toString(36);
 const people = {

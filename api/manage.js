@@ -1,5 +1,6 @@
 import { sql, json, cors, serverError } from './_db.js';
 import { requireAdmin, audit } from './_auth.js';
+import adminHandler from './_admin.js';
 import { getCourseSpec } from './_lib/courseRegistry.js';
 import { issueCredential, publicCredential, randomId, publicBaseUrl } from './_lib/learning.js';
 import {
@@ -949,6 +950,9 @@ const ACTIONS = {
 };
 
 export default async function handler(req, res) {
+  if (req.query?.route === 'admin' || (req.url && req.url.includes('/api/admin'))) {
+    return adminHandler(req, res);
+  }
   if (cors(req, res)) return;
   try {
     const ctx = await requireAdmin(req, res);
