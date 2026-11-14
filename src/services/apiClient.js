@@ -9,29 +9,76 @@ import { auth } from './auth/firebase';
 
 const API_BASE = '/api';
 
+// In-memory cache & deduplication layers (Priority 1 API Optimization)
+const _publicCache = new Map();
+const _inflightGetRequests = new Map();
+const PUBLIC_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+let _cachedToken = null;
+let _cachedTokenUid = null;
+let _tokenExpiry = 0;
+
 export const apiClient = {
-  /** Fresh Firebase ID token for the signed-in user (the SDK refreshes it automatically). */
-  async authHeaders() {
+  /** Cached, fresh Firebase ID token for the signed-in user, strictly scoped by UID. */
+  async authHeaders(forceFresh = false) {
     try {
       const user = auth.currentUser;
-      if (user) return { Authorization: `Bearer ${await user.getIdToken()}` };
+      if (!user) {
+        _cachedToken = null;
+        _cachedTokenUid = null;
+        _tokenExpiry = 0;
+        return {};
+      }
+      const now = Date.now();
+      if (!forceFresh && _cachedToken && _cachedTokenUid === user.uid && now < _tokenExpiry) {
+        return { Authorization: `Bearer ${_cachedToken}` };
+      }
+      const token = await user.getIdToken(forceFresh);
+      _cachedToken = token;
+      _cachedTokenUid = user.uid;
+      _tokenExpiry = now + 4 * 60 * 1000; // 4 minutes safe TTL
+      return { Authorization: `Bearer ${token}` };
     } catch (err) {
       console.warn('Could not obtain ID token:', err?.message);
     }
     return {};
   },
 
-  /** JSON request helper: never throws for HTTP errors; returns { ok, status, data }. */
-  async request(path, { method = 'GET', body, query } = {}) {
+  /** JSON request helper: with GET in-flight deduplication scoped by user identity. Returns { ok, status, data }. */
+  async request(path, { method = 'GET', body, query, bypassDedupe = false } = {}) {
     const qs = query ? `?${new URLSearchParams(query).toString()}` : '';
-    const res = await fetch(`${API_BASE}${path}${qs}`, {
-      method,
-      headers: { ...(body ? { 'Content-Type': 'application/json' } : {}), ...(await this.authHeaders()) },
-      body: body ? JSON.stringify(body) : undefined,
-    });
-    const isJson = (res.headers.get('content-type') || '').includes('application/json');
-    const data = isJson ? await res.json().catch(() => ({})) : {};
-    return { ok: res.ok, status: res.status, data };
+    const isGet = method.toUpperCase() === 'GET';
+    const uid = auth.currentUser?.uid || 'anon';
+    const dedupeKey = `${uid}:${path}${qs}`;
+
+    if (isGet && !bypassDedupe && _inflightGetRequests.has(dedupeKey)) {
+      return _inflightGetRequests.get(dedupeKey);
+    }
+
+    const execRequest = async () => {
+      const headers = {
+        ...(body ? { 'Content-Type': 'application/json' } : {}),
+        ...(await this.authHeaders())
+      };
+      const res = await fetch(`${API_BASE}${path}${qs}`, {
+        method,
+        headers,
+        body: body ? JSON.stringify(body) : undefined,
+      });
+      const isJson = (res.headers.get('content-type') || '').includes('application/json');
+      const data = isJson ? await res.json().catch(() => ({})) : {};
+      return { ok: res.ok, status: res.status, data };
+    };
+
+    if (isGet && !bypassDedupe) {
+      const promise = execRequest().finally(() => {
+        _inflightGetRequests.delete(dedupeKey);
+      });
+      _inflightGetRequests.set(dedupeKey, promise);
+      return promise;
+    }
+
+    return execRequest();
   },
 
   // ---------------- profile, access codes, catalog availability ----------------
@@ -70,8 +117,15 @@ export const apiClient = {
     this._catalogCache = { at: now, value };
     return value;
   },
-  clearCatalogCache() {
+  clearCache() {
+    _publicCache.clear();
+    _inflightGetRequests.clear();
     this._catalogCache = null;
+    _cachedToken = null;
+    _tokenExpiry = 0;
+  },
+  clearCatalogCache() {
+    this.clearCache();
   },
 
   // ---------------- admin console (/api/manage) ----------------
@@ -79,6 +133,7 @@ export const apiClient = {
     return this.request('/manage', { query: { resource, ...query } });
   },
   adminAction(action, payload = {}) {
+    this.clearCache();
     return this.request('/manage', { method: 'POST', body: { action, ...payload } });
   },
   /** Downloads an admin CSV export through the authenticated API. */
@@ -145,7 +200,17 @@ export const apiClient = {
     }
   },
 
-  async getCourses(preview = false) {
+  async getCourses(preview = false, fresh = false) {
+    const cacheKey = `courses:${preview ? 'preview' : 'public'}`;
+    const now = Date.now();
+    if (!fresh && _publicCache.has(cacheKey)) {
+      const entry = _publicCache.get(cacheKey);
+      const ttl = entry.isFallback ? 30000 : PUBLIC_CACHE_TTL;
+      if (now - entry.at < ttl) {
+        return entry.value;
+      }
+    }
+
     try {
       const url = preview ? `${API_BASE}/courses?preview=admin` : `${API_BASE}/courses`;
       const res = await fetch(url, {
@@ -171,19 +236,23 @@ export const apiClient = {
         const python04 = mockEngine.getCourseSummary('crs_cyber_python_04') || mockEngine.getCourseById('crs_cyber_python_04');
         if (python04) courses.push(python04);
       }
-      return {
+      const result = {
         courses,
         public_catalog_enabled: data.public_catalog_enabled,
         message: data.message
       };
+      _publicCache.set(cacheKey, { at: now, value: result });
+      return result;
     } catch (err) {
       console.warn('Fallback to local engine for getCourses:', err.message);
       const isPublic = mockEngine.isPublicCatalogEnabled();
-      return {
+      const fallbackResult = {
         courses: preview || isPublic ? mockEngine.getCourses() : [],
         public_catalog_enabled: isPublic,
         message: 'Courses will be out soon'
       };
+      _publicCache.set(cacheKey, { at: now, value: fallbackResult, isFallback: true });
+      return fallbackResult;
     }
   },
   async getCoursesByDivision(division, preview = false) {
@@ -325,23 +394,37 @@ export const apiClient = {
     }
   },
 
-  async getLearningPaths() {
+  async getLearningPaths(fresh = false) {
+    const cacheKey = 'learning_paths';
+    const now = Date.now();
+    if (!fresh && _publicCache.has(cacheKey)) {
+      const entry = _publicCache.get(cacheKey);
+      const ttl = entry.isFallback ? 30000 : PUBLIC_CACHE_TTL;
+      if (now - entry.at < ttl) {
+        return entry.value;
+      }
+    }
+
     try {
       const res = await fetch(`${API_BASE}/courses?type=learning_paths`);
       if (!res.ok) throw new Error('API fetch failed');
       const data = await res.json();
-      return {
+      const result = {
         learning_paths: data.learning_paths || [],
         public_catalog_enabled: data.public_catalog_enabled,
         message: data.message
       };
+      _publicCache.set(cacheKey, { at: now, value: result });
+      return result;
     } catch (err) {
       console.warn('Fallback to local engine for getLearningPaths:', err.message);
-      return {
+      const fallbackResult = {
         learning_paths: mockEngine.getLearningPaths(),
         public_catalog_enabled: false,
         message: 'Courses will be out soon'
       };
+      _publicCache.set(cacheKey, { at: now, value: fallbackResult, isFallback: true });
+      return fallbackResult;
     }
   },
   async getCoursesByDivision(division, preview = false) {

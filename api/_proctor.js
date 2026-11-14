@@ -17,6 +17,7 @@ export const KINDS = {
   looking_away: 'medium',
   focus: 'medium',
   periodic: 'info',
+  heartbeat: 'info',
 };
 const MAX_EVENTS_PER_SESSION = 300;
 const MAX_SNAPSHOTS_PER_SESSION = 40;
@@ -40,6 +41,16 @@ export default async function handler(req, res) {
     `;
     const session = rows[0];
     if (!session) return json(res, { error: 'Session not found' }, 404);
+
+    // Keep session alive via heartbeat
+    await sql`
+      UPDATE assessment_sessions SET last_heartbeat_at = NOW()
+      WHERE id = ${session.id}
+    `;
+
+    if (kind === 'heartbeat') {
+      return json(res, { success: true, heartbeat: true });
+    }
 
     const [counts] = await sql`
       SELECT COUNT(*)::int AS events, COUNT(snapshot)::int AS snapshots

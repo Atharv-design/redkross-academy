@@ -116,10 +116,10 @@ export default function HomePage() {
       {/* 2. DUAL-DIVISION GATEWAY SHOWCASE (Symmetrical Split Layout with Staggered Scroll) */}
       <section id="academies" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative scroll-mt-28">
         <motion.div 
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          viewport={{ once: true, margin: '100px 0px' }}
+          transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
           className="text-center max-w-3xl mx-auto mb-10"
         >
           <span className="text-[11px] font-mono tracking-widest text-[#FFA439] uppercase">
@@ -134,10 +134,10 @@ export default function HomePage() {
           
           {/* PILLAR 1: CYBERSECURITY ACADEMY CARD (Glides in from Left on Scroll) */}
           <motion.div 
-            initial={{ opacity: 0, x: -45, y: 25 }}
+            initial={{ opacity: 0, x: -30, y: 16 }}
             whileInView={{ opacity: 1, x: 0, y: 0 }}
-            viewport={{ once: true, amount: 0.15 }}
-            transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true, margin: '100px 0px' }}
+            transition={{ duration: 0.45, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
             className="relative overflow-hidden rounded-3xl p-7 sm:p-9 flex flex-col justify-between bg-gradient-to-b from-[#1A130C]/90 via-[#0D1219]/90 to-[#070A0F]/95 backdrop-blur-2xl border border-[#FF7A00]/35 hover:border-[#FFA439]/80 transition-all duration-500 shadow-2xl shadow-black/80 hover:shadow-[0_0_45px_rgba(255,122,0,0.25)] group select-none min-h-[480px]"
             onMouseEnter={() => setIsHoveredCyber(true)}
             onMouseLeave={() => setIsHoveredCyber(false)}
@@ -251,10 +251,10 @@ export default function HomePage() {
 
           {/* PILLAR 2: PSYCHOLOGY ACADEMY CARD (Glides in from Right on Scroll) */}
           <motion.div 
-            initial={{ opacity: 0, x: 45, y: 25 }}
+            initial={{ opacity: 0, x: 30, y: 16 }}
             whileInView={{ opacity: 1, x: 0, y: 0 }}
-            viewport={{ once: true, amount: 0.15 }}
-            transition={{ duration: 0.7, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true, margin: '100px 0px' }}
+            transition={{ duration: 0.45, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             className="relative overflow-hidden rounded-3xl p-7 sm:p-9 flex flex-col justify-between bg-gradient-to-b from-[#1A130C]/90 via-[#0D1219]/90 to-[#070A0F]/95 backdrop-blur-2xl border border-[#FF7A00]/35 hover:border-[#FFA439]/80 transition-all duration-500 shadow-2xl shadow-black/80 hover:shadow-[0_0_45px_rgba(255,122,0,0.25)] group select-none min-h-[480px]"
             onMouseEnter={() => setIsHoveredPsych(true)}
             onMouseLeave={() => setIsHoveredPsych(false)}
@@ -373,10 +373,10 @@ export default function HomePage() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <motion.div 
-            initial={{ opacity: 0, y: 35 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true, margin: '100px 0px' }}
+            transition={{ duration: 0.4, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
             className="p-6 rounded-2xl bg-gradient-to-b from-[#18120B]/80 via-[#0C1017]/80 to-[#06090E]/90 border border-[#FF7A00]/25 backdrop-blur-xl hover:border-[#FFA439]/60 transition-all duration-300 shadow-xl shadow-black/60 hover:shadow-[0_0_25px_rgba(255,122,0,0.2)] group"
           >
             <div className="w-10 h-10 rounded-xl bg-[#FF7A00]/15 border border-[#FF7A00]/40 flex items-center justify-center text-[#FFA439] mb-3.5 shadow-[0_0_12px_rgba(255,122,0,0.25)] group-hover:scale-105 transition-transform">
@@ -389,10 +389,10 @@ export default function HomePage() {
           </motion.div>
 
           <motion.div 
-            initial={{ opacity: 0, y: 35 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.6, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true, margin: '100px 0px' }}
+            transition={{ duration: 0.4, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             className="p-6 rounded-2xl bg-gradient-to-b from-[#18120B]/80 via-[#0C1017]/80 to-[#06090E]/90 border border-[#FF7A00]/25 backdrop-blur-xl hover:border-[#FFA439]/60 transition-all duration-300 shadow-xl shadow-black/60 hover:shadow-[0_0_25px_rgba(255,122,0,0.2)] group"
           >
             <div className="w-10 h-10 rounded-xl bg-[#FF7A00]/15 border border-[#FF7A00]/40 flex items-center justify-center text-[#FFA439] mb-3.5 shadow-[0_0_12px_rgba(255,122,0,0.25)] group-hover:scale-105 transition-transform">
@@ -405,10 +405,10 @@ export default function HomePage() {
           </motion.div>
 
           <motion.div 
-            initial={{ opacity: 0, y: 35 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.6, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true, margin: '100px 0px' }}
+            transition={{ duration: 0.4, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
             className="p-6 rounded-2xl bg-gradient-to-b from-[#18120B]/80 via-[#0C1017]/80 to-[#06090E]/90 border border-[#FF7A00]/25 backdrop-blur-xl hover:border-[#FFA439]/60 transition-all duration-300 shadow-xl shadow-black/60 hover:shadow-[0_0_25px_rgba(255,122,0,0.2)] group"
           >
             <div className="w-10 h-10 rounded-xl bg-[#FF7A00]/15 border border-[#FF7A00]/40 flex items-center justify-center text-[#FFA439] mb-3.5 shadow-[0_0_12px_rgba(255,122,0,0.25)] group-hover:scale-105 transition-transform">

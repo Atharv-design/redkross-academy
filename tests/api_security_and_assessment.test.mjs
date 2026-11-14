@@ -111,8 +111,12 @@ await sql`UPDATE users SET role = 'super_admin' WHERE id = ${bobId}`;
 r = await call('admin', { token: 'bob' });
 check(r.statusCode === 200 && Array.isArray(r.body.students), 'admin API allows a verified super_admin', r.statusCode);
 
+// Verify embargo behavior: ?preview=admin cannot bypass when catalog is disabled
+await sql`INSERT INTO system_settings (key, value, updated_at) VALUES ('public_catalog_enabled', 'false'::jsonb, NOW()) ON CONFLICT (key) DO UPDATE SET value = 'false'::jsonb`;
 r = await call('courses', { query: { preview: 'admin' } });
 check(r.statusCode === 200 && r.body.courses.length === 0, '?preview=admin no longer bypasses the catalog embargo', r.body);
+// Restore catalog to enabled
+await sql`UPDATE system_settings SET value = 'true'::jsonb WHERE key = 'public_catalog_enabled'`;
 
 // ---------------------------------------------------------------- assessments
 r = await call('assessment', { method: 'POST', body: { action: 'start', course_id: COURSE, quiz_id: 'quiz_c08_m1' } });
@@ -210,8 +214,11 @@ await call('support-tickets', { method: 'POST', body: { user_email: 'guest@examp
 r = await call('support-tickets', { token: 'alice' });
 check(r.body.tickets.length === 1 && r.body.tickets[0].user_email === people.alice.email, 'users only see their own tickets', r.body.tickets?.length);
 
+const savedKey = process.env.RESEND_API_KEY;
+delete process.env.RESEND_API_KEY;
 r = await call('send-email', { method: 'POST', body: { sender_email: 'x@example.com', message: 'hi', to: 'victim@example.com' } });
 check(r.statusCode === 503, 'send-email without mail config refuses (and never takes a caller-chosen recipient)', r.statusCode);
+if (savedKey) process.env.RESEND_API_KEY = savedKey;
 
 r = await call('quiz', { method: 'POST', body: { enrolment_id: 'x', quiz_id: 'y', answers: {}, user_id: aliceId } });
 check(r.statusCode === 410, 'legacy unauthenticated /api/quiz retired (410)', r.statusCode);

@@ -131,24 +131,54 @@ export default function ProctorCameraFeed({
     async function startCamera() {
       try {
         setCameraState('initializing');
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            // 640x480 so a phone anywhere in view has enough pixels for the detector
-            width: { ideal: 640, max: 1280 },
-            height: { ideal: 480, max: 720 },
-            facingMode: 'user'
+        
+        let stream;
+        const attempts = [
+          {
+            video: true,
+            audio: false
           },
-          audio: false
-        });
+          {
+            video: { width: { ideal: 640 }, height: { ideal: 480 } },
+            audio: false
+          },
+          {
+            video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' },
+            audio: false
+          }
+        ];
+
+        let lastErr = null;
+        for (let i = 0; i < attempts.length; i++) {
+          try {
+            stream = await navigator.mediaDevices.getUserMedia(attempts[i]);
+            if (stream) break;
+          } catch (e) {
+            lastErr = e;
+            console.warn(`[ProctorCamera] Attempt ${i + 1} fallback:`, e?.name || e);
+          }
+        }
+
+        if (!stream) {
+          throw lastErr || new Error('Camera stream could not be acquired');
+        }
 
         if (!isMounted) {
-          stream.getTracks().forEach((t) => t.stop());
+          stream.getTracks().forEach((t) => {
+            t.onended = null;
+            t.stop();
+          });
           return;
         }
 
         streamRef.current = stream;
         if (videoRef.current) {
+          videoRef.current.muted = true;
+          videoRef.current.defaultMuted = true;
           videoRef.current.srcObject = stream;
+          videoRef.current.onloadedmetadata = () => {
+            videoRef.current?.play().catch(() => {});
+          };
           videoRef.current.play().catch(() => {});
         }
         setCameraState('active');
@@ -169,7 +199,10 @@ export default function ProctorCameraFeed({
 
   const stopCamera = () => {
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current.getTracks().forEach((track) => {
+        track.onended = null;
+        track.stop();
+      });
       streamRef.current = null;
     }
     if (videoRef.current) {

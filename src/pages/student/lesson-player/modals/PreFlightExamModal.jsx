@@ -23,14 +23,19 @@ export default function PreFlightExamModal({
   onAcknowledge
 }) {
   const [cameraStatus, setCameraStatus] = useState('idle'); // 'idle' | 'requesting' | 'active' | 'denied'
+  const [cameraErrorMsg, setCameraErrorMsg] = useState('');
   const previewVideoRef = useRef(null);
   const streamRef = useRef(null);
+  const requestIdRef = useRef(0);
 
   // Stop camera tracks cleanly
   const stopCameraPreview = () => {
     if (streamRef.current) {
       try {
-        streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current.getTracks().forEach((track) => {
+          track.onended = null;
+          track.stop();
+        });
       } catch {}
       streamRef.current = null;
     }
@@ -39,35 +44,178 @@ export default function PreFlightExamModal({
     }
   };
 
+  // Robust multi-tier camera acquisition to support 100% of webcam hardware
+  const acquireWebcamStream = async () => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      const err = new Error('NOT_SUPPORTED');
+      err.name = 'NotSupportedError';
+      throw err;
+    }
+
+    // Tier 1: Universal unconstrained video (never fails with OverconstrainedError on any camera/driver)
+    // Tier 2: Standard desktop/laptop resolution bounds
+    // Tier 3: Soft ideal facingMode (for mobile/tablets)
+    const attempts = [
+      {
+        video: true,
+        audio: false
+      },
+      {
+        video: {
+          width: { ideal: 640 },
+          height: { ideal: 480 }
+        },
+        audio: false
+      },
+      {
+        video: {
+          width: { ideal: 640 },
+          height: { ideal: 480 },
+          facingMode: 'user'
+        },
+        audio: false
+      }
+    ];
+
+    let lastErr = null;
+    for (let i = 0; i < attempts.length; i++) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia(attempts[i]);
+        if (stream && stream.getVideoTracks().length > 0) {
+          return stream;
+        }
+      } catch (err) {
+        lastErr = err;
+        console.warn(`[PreFlight] Camera acquisition attempt ${i + 1} fallback:`, err?.name || err);
+      }
+    }
+
+    // Tier 4: Direct device enumeration fallback
+    try {
+      if (navigator.mediaDevices.enumerateDevices) {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDev = devices.find((d) => d.kind === 'videoinput');
+        if (videoDev && videoDev.deviceId) {
+          return await navigator.mediaDevices.getUserMedia({
+            video: { deviceId: { exact: videoDev.deviceId } },
+            audio: false
+          });
+        }
+      }
+    } catch (e) {
+      console.warn('[PreFlight] Camera device enumeration fallback failed:', e);
+    }
+
+    throw lastErr;
+  };
+
   // Request camera stream and attach to self-view preview
   const requestCameraAccess = async () => {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       setCameraStatus('denied');
+      setCameraErrorMsg('Camera access is not supported on this browser or requires an HTTPS / localhost connection.');
       return;
     }
+
+    const currentReqId = ++requestIdRef.current;
+
     try {
       setCameraStatus('requesting');
+      setCameraErrorMsg('');
       stopCameraPreview();
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          width: { ideal: 640, max: 1280 },
-          height: { ideal: 480, max: 720 },
-          facingMode: 'user'
-        },
-        audio: false
-      });
+
+      let stream;
+      try {
+        stream = await acquireWebcamStream();
+      } catch (err) {
+        // If device is busy or in use, retry once after a short cooloff
+        if (err?.name === 'NotReadableError' || err?.name === 'TrackStartError') {
+          console.warn('[PreFlight] Camera busy, retrying after cooloff...');
+          await new Promise((r) => setTimeout(r, 400));
+          stream = await acquireWebcamStream();
+        } else {
+          throw err;
+        }
+      }
+
+      // If another request was dispatched in the meantime, discard stale stream
+      if (currentReqId !== requestIdRef.current) {
+        try {
+          stream.getTracks().forEach((t) => t.stop());
+        } catch {}
+        return;
+      }
 
       streamRef.current = stream;
       if (previewVideoRef.current) {
+        previewVideoRef.current.muted = true;
+        previewVideoRef.current.defaultMuted = true;
         previewVideoRef.current.srcObject = stream;
+        previewVideoRef.current.onloadedmetadata = () => {
+          previewVideoRef.current?.play().catch(() => {});
+        };
         previewVideoRef.current.play().catch(() => {});
       }
+
+      const videoTrack = stream.getVideoTracks()[0];
+      if (videoTrack) {
+        videoTrack.onended = () => {
+          if (streamRef.current === stream) {
+            setCameraStatus('denied');
+            setCameraErrorMsg('Webcam connection was disconnected. Please reconnect your camera.');
+          }
+        };
+      }
+
       setCameraStatus('active');
     } catch (err) {
-      console.warn('[PreFlight] Camera permission was not granted:', err);
+      if (currentReqId !== requestIdRef.current) return;
+      console.warn('[PreFlight] Camera access failed:', err);
       setCameraStatus('denied');
+      if (err?.name === 'NotAllowedError' || err?.name === 'PermissionDeniedError') {
+        setCameraErrorMsg('Camera permission blocked in browser. Click the lock/camera icon in your address bar, set Camera to "Allow", and retry.');
+      } else if (err?.name === 'NotReadableError' || err?.name === 'TrackStartError') {
+        setCameraErrorMsg('Webcam is currently in use by another application (Zoom, Teams, Discord, or another tab). Close them and retry.');
+      } else if (err?.name === 'NotFoundError' || err?.name === 'DevicesNotFoundError') {
+        setCameraErrorMsg('No webcam detected. Please plug in or enable your camera.');
+      } else {
+        setCameraErrorMsg('Webcam could not be started. Check browser camera permissions and retry.');
+      }
     }
   };
+
+  // Ensure stream stays attached to video preview if component re-renders
+  useEffect(() => {
+    if (cameraStatus === 'active' && streamRef.current && previewVideoRef.current) {
+      if (previewVideoRef.current.srcObject !== streamRef.current) {
+        previewVideoRef.current.muted = true;
+        previewVideoRef.current.defaultMuted = true;
+        previewVideoRef.current.srcObject = streamRef.current;
+        previewVideoRef.current.play().catch(() => {});
+      }
+    }
+  }, [cameraStatus]);
+
+  // Listen to browser permission state changes (e.g. user toggles Allow in address bar)
+  useEffect(() => {
+    let permObj = null;
+    if (typeof navigator !== 'undefined' && navigator.permissions && navigator.permissions.query) {
+      navigator.permissions
+        .query({ name: 'camera' })
+        .then((perm) => {
+          permObj = perm;
+          perm.onchange = () => {
+            if (perm.state === 'granted' && isOpen && cameraStatus !== 'active') {
+              requestCameraAccess();
+            }
+          };
+        })
+        .catch(() => {});
+    }
+    return () => {
+      if (permObj) permObj.onchange = null;
+    };
+  }, [isOpen, cameraStatus]);
 
   // Attempt initial camera permission on modal open
   // Warm up the on-device proctoring models while the student does the camera check
@@ -126,7 +274,7 @@ export default function PreFlightExamModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-fadeIn select-none">
-      <div className="max-w-2xl w-full rounded-2xl p-6 sm:p-7 border border-[#FF7A00]/40 space-y-5 bg-[#0A0D12] shadow-[0_0_60px_rgba(255,122,0,0.18)] max-h-[96vh] overflow-y-auto custom-scrollbar relative">
+      <div className="max-w-2xl w-full rounded-2xl p-6 sm:p-7 border border-[#FF7A00]/40 space-y-5 bg-[#0A0A0A] shadow-[0_0_60px_rgba(255,122,0,0.18)] max-h-[96vh] overflow-y-auto custom-scrollbar relative">
         
         {/* Top Tactical Telemetry Bar */}
         <div className="flex items-center justify-between pb-3.5 border-b border-[#FF7A00]/25">
@@ -158,7 +306,7 @@ export default function PreFlightExamModal({
         </div>
 
         {/* Assessment Parameters Banner */}
-        <div className="p-3 rounded-xl bg-[#0F141C] border border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+        <div className="p-3 rounded-xl bg-[#0E0C09] border border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
           <div className="flex items-center gap-2 text-white font-medium truncate">
             <span className="text-[#8BA2B5]">Target:</span>
             <span className="text-[#FFA439] font-bold truncate">
@@ -178,7 +326,7 @@ export default function PreFlightExamModal({
         </div>
 
         {/* What is monitored (informed consent) */}
-        <div className="p-3 rounded-xl bg-[#0F141C] border border-white/10 text-xs text-slate-300 space-y-1.5">
+        <div className="p-3 rounded-xl bg-[#0E0C09] border border-white/10 text-xs text-slate-300 space-y-1.5">
           <div className="font-semibold text-white">How this exam is proctored</div>
           <ul className="list-disc pl-4 space-y-1">
             <li>Camera checks run on your device: a phone in view or another person counts as a strike; looking away for long is flagged for review.</li>
@@ -293,24 +441,33 @@ export default function PreFlightExamModal({
             {/* Fallback Viewport if Permission Denied or Idle */}
             {cameraStatus !== 'active' && (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/90 p-4 text-center space-y-2.5 z-10">
-                <div className="w-12 h-12 rounded-xl bg-rose-500/15 border border-rose-500/40 flex items-center justify-center text-rose-400">
-                  <CameraOff className="w-6 h-6" />
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                  cameraStatus === 'requesting'
+                    ? 'bg-amber-500/15 border border-amber-500/40 text-amber-400 animate-pulse'
+                    : 'bg-rose-500/15 border border-rose-500/40 text-rose-400'
+                }`}>
+                  {cameraStatus === 'requesting' ? (
+                    <RefreshCw className="w-6 h-6 animate-spin" />
+                  ) : (
+                    <CameraOff className="w-6 h-6" />
+                  )}
                 </div>
                 <div>
                   <span className="text-xs font-mono text-white font-bold block uppercase tracking-wider">
-                    Camera Permission Required
+                    {cameraStatus === 'requesting' ? 'Connecting Optical Sensor...' : 'Camera Permission Required'}
                   </span>
                   <p className="text-[11px] font-mono text-rose-200/90 max-w-sm mt-1 leading-relaxed">
-                    Anti-cheat proctoring requires active webcam presence to verify candidate identity. The examination cannot be started without camera authorization.
+                    {cameraErrorMsg || 'Anti-cheat proctoring requires active webcam presence to verify candidate identity. The examination cannot be started without camera authorization.'}
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={requestCameraAccess}
-                  className="px-4 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/50 text-xs font-mono font-bold flex items-center space-x-2 transition-all cursor-pointer shadow-lg"
+                  disabled={cameraStatus === 'requesting'}
+                  className="px-4 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/50 text-xs font-mono font-bold flex items-center space-x-2 transition-all cursor-pointer shadow-lg disabled:opacity-50"
                 >
-                  <RefreshCw className="w-3.5 h-3.5" />
-                  <span>Grant / Retry Camera Permission</span>
+                  <RefreshCw className={`w-3.5 h-3.5 ${cameraStatus === 'requesting' ? 'animate-spin' : ''}`} />
+                  <span>{cameraStatus === 'requesting' ? 'Requesting Camera...' : 'Grant / Retry Camera Permission'}</span>
                 </button>
               </div>
             )}
@@ -402,8 +559,8 @@ export default function PreFlightExamModal({
             disabled={cameraStatus !== 'active'}
             className={`w-full sm:w-auto px-6 py-3 rounded-xl font-bold font-mono text-xs flex items-center justify-center space-x-2 transition-all ${
               cameraStatus === 'active'
-                ? 'bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] shadow-[0_0_25px_rgba(255,122,0,0.45)] cursor-pointer'
-                : 'bg-[#151B24] text-[#8BA2B5] border border-white/10 opacity-50 cursor-not-allowed'
+                ? 'bg-[#FF7A00] hover:bg-[#FFA439] text-black shadow-[0_0_25px_rgba(255,122,0,0.45)] cursor-pointer'
+                : 'bg-[#14120E] text-[#8BA2B5] border border-white/10 opacity-50 cursor-not-allowed'
             }`}
           >
             {cameraStatus === 'active' ? (

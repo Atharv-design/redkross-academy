@@ -68,7 +68,8 @@ export default function StudentDashboard() {
 
   useEffect(() => {
     loadData();
-    const unsubscribe = mockEngine.subscribe(() => {
+    const unsubscribe = mockEngine.subscribe((event) => {
+      if (event?.type === 'PROGRESS_SAVED') return;
       loadData();
     });
     return () => unsubscribe();

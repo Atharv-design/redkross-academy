@@ -29,6 +29,71 @@ import { apiClient } from '../../services/apiClient';
  * RedKross Academy - Enhanced CBT Examination Console
  * Fullscreen Locked, Anti-Cheat 3-Strike Proctoring, Persistent Non-Resetting Timer & Offline Resilience
  */
+/**
+ * Dedicated isolated countdown component to prevent 1-second interval re-renders
+ * from re-rendering the massive parent CBT examination tree.
+ */
+const ExamCountdownBadge = React.memo(function ExamCountdownBadge({
+  deadlineKey,
+  isSubmitted,
+  isLockoutActive,
+  totalSecsFallback,
+  onExpire
+}) {
+  const [remainingTime, setRemainingTime] = useState(() => {
+    if (typeof window === 'undefined') return totalSecsFallback;
+    const savedDeadline = localStorage.getItem(deadlineKey);
+    if (savedDeadline) {
+      return Math.max(0, Math.floor((parseInt(savedDeadline, 10) - Date.now()) / 1000));
+    }
+    const newDeadline = Date.now() + totalSecsFallback * 1000;
+    try {
+      localStorage.setItem(deadlineKey, String(newDeadline));
+    } catch {}
+    return totalSecsFallback;
+  });
+
+  useEffect(() => {
+    if (isSubmitted || isLockoutActive) return;
+
+    const timer = setInterval(() => {
+      const savedDeadline = localStorage.getItem(deadlineKey);
+      if (!savedDeadline) return;
+
+      const remaining = Math.max(0, Math.floor((parseInt(savedDeadline, 10) - Date.now()) / 1000));
+      setRemainingTime(remaining);
+
+      if (remaining <= 0) {
+        clearInterval(timer);
+        if (typeof onExpire === 'function') onExpire();
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [deadlineKey, isSubmitted, isLockoutActive, onExpire]);
+
+  const formatTimer = (secs) => {
+    if (secs === null || secs === undefined || secs < 0) return '00:00';
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  };
+
+  const isLowTime = remainingTime < 300;
+
+  return (
+    <div className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-black/60 border border-[#FF7A00]/30 text-white font-mono">
+      <Clock className={`w-4 h-4 ${isLowTime ? 'text-rose-400 animate-pulse' : 'text-[#FF7A00]'}`} />
+      <div className="flex flex-col">
+        <span className="text-[9px] uppercase tracking-wider text-[#A3907C]">Time Remaining</span>
+        <span className={`text-base font-bold tabular-nums ${isLowTime ? 'text-rose-400 font-extrabold' : 'text-white'}`}>
+          {formatTimer(remainingTime)}
+        </span>
+      </div>
+    </div>
+  );
+});
+
 export default function ExamCBTInterface({
   quiz,
   enrolmentId,
@@ -72,22 +137,9 @@ export default function ExamCBTInterface({
   const deadlineKey = `rk_exam_deadline_${enrolmentId || 'cadet'}_${quiz?.id || 'exam'}`;
   const bufferKey = `rk_exam_buffer_${enrolmentId || 'cadet'}_${quiz?.id || 'exam'}`;
 
-  const [remainingTime, setRemainingTime] = useState(() => {
-    const isFifty = isFinalExam || (quiz?.questions?.length >= 50);
-    const defaultSecs = isFifty ? 3600 : 1800; // 50 marks = 60 min (3600s), 20 marks = 30 min (1800s)
-    if (typeof window === 'undefined') return defaultSecs;
-    const savedDeadline = localStorage.getItem(deadlineKey);
-    if (savedDeadline) {
-      const remaining = Math.max(0, Math.floor((parseInt(savedDeadline, 10) - Date.now()) / 1000));
-      return remaining;
-    }
-    const totalSecs = timerSeconds ?? (quiz?.time_limit_minutes ? quiz.time_limit_minutes * 60 : defaultSecs);
-    const newDeadline = Date.now() + totalSecs * 1000;
-    try {
-      localStorage.setItem(deadlineKey, String(newDeadline));
-    } catch {}
-    return totalSecs;
-  });
+  const isFifty = isFinalExam || (quiz?.questions?.length >= 50);
+  const defaultSecs = isFifty ? 3600 : 1800; // 50 marks = 60 min (3600s), 20 marks = 30 min (1800s)
+  const totalSecsFallback = timerSeconds ?? (quiz?.time_limit_minutes ? quiz.time_limit_minutes * 60 : defaultSecs);
 
   const questions = quiz?.questions || [];
   const totalQuestions = questions.length;
@@ -215,6 +267,19 @@ export default function ExamCBTInterface({
     },
     [quiz?.session_id]
   );
+
+  // Periodic proctor telemetry heartbeat (Phase 4 anti-cheating)
+  useEffect(() => {
+    if (!quiz?.session_id || isSubmitted || isLockoutActive) return;
+    const sendHeartbeat = () => {
+      apiClient
+        .request('/proctor', { method: 'POST', body: { session_id: quiz.session_id, kind: 'heartbeat' } })
+        .catch(() => {});
+    };
+    sendHeartbeat();
+    const interval = setInterval(sendHeartbeat, 20000);
+    return () => clearInterval(interval);
+  }, [quiz?.session_id, isSubmitted, isLockoutActive]);
 
   // ----------------- PROCTOR FOCUS & VIOLATION DETECTION -----------------
   const strikeReasonsRef = useRef([]);
@@ -435,33 +500,10 @@ export default function ExamCBTInterface({
     };
   }, [isSubmitted, isLockoutActive, checkFullscreen, triggerFocusViolation]);
 
-  // ----------------- EPOCH COUNTDOWN TIMER -----------------
-  useEffect(() => {
-    if (isSubmitted || isLockoutActive) return;
-
-    const timer = setInterval(() => {
-      const savedDeadline = localStorage.getItem(deadlineKey);
-      if (!savedDeadline) return;
-
-      const remaining = Math.max(0, Math.floor((parseInt(savedDeadline, 10) - Date.now()) / 1000));
-      setRemainingTime(remaining);
-
-      if (remaining <= 0) {
-        clearInterval(timer);
-        exitFullscreenMode();
-        onSubmitExam();
-      }
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [deadlineKey, isSubmitted, isLockoutActive, onSubmitExam]);
-
-  const formatTimer = (secs) => {
-    if (secs === null || secs === undefined || secs < 0) return '00:00';
-    const m = Math.floor(secs / 60);
-    const s = secs % 60;
-    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  };
+  const handleTimerExpired = useCallback(() => {
+    exitFullscreenMode();
+    onSubmitExam();
+  }, [exitFullscreenMode, onSubmitExam]);
 
   const handlePrevQuestion = () => {
     if (currentQuestionIndex > 0) {
@@ -656,7 +698,7 @@ export default function ExamCBTInterface({
                   <button
                     type="button"
                     onClick={handleInternalRetake}
-                    className="px-5 py-2.5 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-bold text-xs font-mono transition-all cursor-pointer shadow-[0_0_15px_rgba(255,122,0,0.4)] flex items-center space-x-2"
+                    className="px-5 py-2.5 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-black font-bold text-xs font-mono transition-all cursor-pointer shadow-[0_0_15px_rgba(255,122,0,0.4)] flex items-center space-x-2"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
                     <span>Retake Evaluation (New Randomized Question Set)</span>
@@ -773,7 +815,7 @@ export default function ExamCBTInterface({
 
   // ----------------- ACTIVE CBT EXAM VIEW -----------------
   return (
-    <div className="fixed inset-0 z-[100] bg-[#071018] overflow-y-auto p-4 sm:p-6 lg:p-8 select-none flex flex-col space-y-4">
+    <div className="fixed inset-0 z-[100] bg-black overflow-y-auto p-4 sm:p-6 lg:p-8 select-none flex flex-col space-y-4">
       {/* ----------------- OFFLINE RESILIENCE BANNER ----------------- */}
       {!isOnline && (
         <div className="w-full p-3 rounded-xl bg-amber-500/20 border border-amber-500/50 flex items-center justify-between text-xs font-mono text-amber-300 animate-pulse">
@@ -823,7 +865,7 @@ export default function ExamCBTInterface({
                 setFaceAbsentModal(false);
                 requestFullscreenLock();
               }}
-              className="w-full py-3.5 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-bold font-mono text-xs uppercase tracking-wider shadow-[0_0_20px_rgba(255,122,0,0.4)] transition-all cursor-pointer"
+              className="w-full py-3.5 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-black font-bold font-mono text-xs uppercase tracking-wider shadow-[0_0_20px_rgba(255,122,0,0.4)] transition-all cursor-pointer"
             >
               I Understand & Return to Exam
             </button>
@@ -859,7 +901,7 @@ export default function ExamCBTInterface({
             <button
               type="button"
               onClick={requestFullscreenLock}
-              className="w-full py-3.5 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-bold text-sm font-mono tracking-wider transition-all shadow-[0_0_20px_rgba(255,122,0,0.4)] cursor-pointer flex items-center justify-center space-x-2"
+              className="w-full py-3.5 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-black font-bold text-sm font-mono tracking-wider transition-all shadow-[0_0_20px_rgba(255,122,0,0.4)] cursor-pointer flex items-center justify-center space-x-2"
             >
               <Maximize2 className="w-4 h-4" />
               <span>Resume Fullscreen Exam</span>
@@ -871,7 +913,7 @@ export default function ExamCBTInterface({
       {/* ----------------- 3-STRIKE WARNING MODAL ----------------- */}
       {strikeModal && (
         <div className="fixed inset-0 z-[10001] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
-          <div className="max-w-md w-full rounded-2xl bg-[#071018] border-2 border-rose-500/70 p-6 space-y-5 shadow-2xl text-center">
+          <div className="max-w-md w-full rounded-2xl bg-black border-2 border-rose-500/70 p-6 space-y-5 shadow-2xl text-center">
             <div className="w-14 h-14 rounded-2xl bg-rose-500/20 border border-rose-500 flex items-center justify-center text-rose-400 mx-auto">
               <AlertTriangle className="w-8 h-8 animate-pulse" />
             </div>
@@ -907,7 +949,7 @@ export default function ExamCBTInterface({
               <button
                 type="button"
                 onClick={requestFullscreenLock}
-                className="w-full py-3 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-bold text-xs font-mono transition-all cursor-pointer shadow-lg"
+                className="w-full py-3 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-black font-bold text-xs font-mono transition-all cursor-pointer shadow-lg"
               >
                 Return to Fullscreen Exam
               </button>
@@ -958,17 +1000,15 @@ export default function ExamCBTInterface({
           </div>
         </div>
 
-        {/* Center: Live Epoch Countdown Timer */}
+        {/* Center: Live Epoch Countdown Timer (Isolated to prevent parent CBT tree re-renders) */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-black/60 border border-[#FF7A00]/30 text-white font-mono">
-            <Clock className={`w-4 h-4 ${remainingTime < 300 ? 'text-rose-400 animate-pulse' : 'text-[#FF7A00]'}`} />
-            <div className="flex flex-col">
-              <span className="text-[9px] uppercase tracking-wider text-[#A3907C]">Time Remaining</span>
-              <span className={`text-base font-bold tabular-nums ${remainingTime < 300 ? 'text-rose-400 font-extrabold' : 'text-white'}`}>
-                {formatTimer(remainingTime)}
-              </span>
-            </div>
-          </div>
+          <ExamCountdownBadge
+            deadlineKey={deadlineKey}
+            isSubmitted={isSubmitted}
+            isLockoutActive={isLockoutActive}
+            totalSecsFallback={totalSecsFallback}
+            onExpire={handleTimerExpired}
+          />
 
           {/* Attempts Badge */}
           <span className={`px-2.5 py-1 rounded-full text-[10px] font-mono font-bold border hidden lg:inline-block ${attemptBadge.className}`}>
@@ -1045,7 +1085,7 @@ export default function ExamCBTInterface({
                     onClick={() => handleSelectOption(opt.id)}
                     className={`w-full text-left p-4 rounded-xl border text-xs sm:text-sm font-mono flex items-center justify-between transition-all cursor-pointer ${
                       isSelected
-                        ? 'bg-[#FF7A00] text-[#071018] font-bold border-[#FF7A00] shadow-[0_0_15px_rgba(255,122,0,0.3)] scale-[1.01]'
+                        ? 'bg-[#FF7A00] text-black font-bold border-[#FF7A00] shadow-[0_0_15px_rgba(255,122,0,0.3)] scale-[1.01]'
                         : 'bg-black/50 text-slate-200 border-white/10 hover:border-[#FF7A00]/50 hover:bg-black/70'
                     }`}
                   >
@@ -1053,7 +1093,7 @@ export default function ExamCBTInterface({
                       <span
                         className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs border ${
                           isSelected
-                            ? 'bg-[#071018] text-[#FF7A00] border-[#071018]'
+                            ? 'bg-black text-[#FF7A00] border-black'
                             : 'bg-white/5 text-[#A3907C] border-white/10'
                         }`}
                       >
@@ -1065,7 +1105,7 @@ export default function ExamCBTInterface({
                     <div
                       className={`w-4 h-4 rounded-full border flex items-center justify-center ${
                         isSelected
-                          ? 'border-[#071018] bg-[#071018]'
+                          ? 'border-black bg-black'
                           : 'border-white/20'
                       }`}
                     >
@@ -1102,7 +1142,7 @@ export default function ExamCBTInterface({
                 <button
                   type="button"
                   onClick={handleNextQuestion}
-                  className="px-5 py-2.5 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-bold text-xs font-mono transition-all flex items-center gap-1.5 cursor-pointer shadow-md"
+                  className="px-5 py-2.5 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-black font-bold text-xs font-mono transition-all flex items-center gap-1.5 cursor-pointer shadow-md"
                 >
                   <span>{currentQuestionIndex === totalQuestions - 1 ? 'Review & Submit' : 'Next Question'}</span>
                   <ChevronRight className="w-3.5 h-3.5" />
@@ -1149,11 +1189,11 @@ export default function ExamCBTInterface({
                   onClick={() => setCurrentQuestionIndex(idx)}
                   className={`h-9 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer flex items-center justify-center border ${
                     isCurrent
-                      ? 'ring-2 ring-white ring-offset-2 ring-offset-[#071018] scale-105 z-10'
+                      ? 'ring-2 ring-white ring-offset-2 ring-offset-black scale-105 z-10'
                       : ''
                   } ${
                     isAnswered
-                      ? 'bg-[#FF7A00] text-[#071018] border-[#FF7A00] shadow-sm'
+                      ? 'bg-[#FF7A00] text-black border-[#FF7A00] shadow-sm'
                       : 'bg-rose-950/70 text-rose-300 border-rose-500/40 hover:bg-rose-900/50'
                   }`}
                 >
@@ -1167,7 +1207,7 @@ export default function ExamCBTInterface({
           <button
             type="button"
             onClick={() => setShowSubmitConfirmModal(true)}
-            className="w-full py-3 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-bold text-xs font-mono uppercase tracking-wider transition-all shadow-[0_0_15px_rgba(255,122,0,0.3)] flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full py-3 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-black font-bold text-xs font-mono uppercase tracking-wider transition-all shadow-[0_0_15px_rgba(255,122,0,0.3)] flex items-center justify-center gap-2 cursor-pointer"
           >
             <CheckCircle2 className="w-4 h-4" />
             <span>{isSubmitting ? 'Submitting...' : isFinalExam ? `Final Submit & Finish (${totalQuestions} Marks)` : 'Final Submit & Finish Exam'}</span>
@@ -1207,7 +1247,7 @@ export default function ExamCBTInterface({
                       isCurrent ? 'ring-2 ring-white ring-offset-2 ring-offset-black' : ''
                     } ${
                       isAnswered
-                        ? 'bg-[#FF7A00] text-[#071018] border-[#FF7A00]'
+                        ? 'bg-[#FF7A00] text-black border-[#FF7A00]'
                         : 'bg-rose-950/70 text-rose-300 border-rose-500/40'
                     }`}
                   >
@@ -1223,7 +1263,7 @@ export default function ExamCBTInterface({
                 setMobilePaletteOpen(false);
                 setShowSubmitConfirmModal(true);
               }}
-              className="w-full py-3 rounded-xl bg-[#FF7A00] text-[#071018] font-bold text-xs font-mono tracking-wider cursor-pointer"
+              className="w-full py-3 rounded-xl bg-[#FF7A00] text-black font-bold text-xs font-mono tracking-wider cursor-pointer"
             >
               {isSubmitting ? 'Submitting...' : isFinalExam ? `Final Submit & Finish (${totalQuestions} Marks)` : 'Final Submit & Finish Exam'}
             </button>
@@ -1234,7 +1274,7 @@ export default function ExamCBTInterface({
       {/* ----------------- SUBMISSION CONFIRMATION MODAL ----------------- */}
       {showSubmitConfirmModal && (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-[#071018] border border-[#FF7A00]/50 rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl">
+          <div className="bg-black border border-[#FF7A00]/50 rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl">
             <div className="flex items-center space-x-3 text-[#FF7A00]">
               <div className="w-10 h-10 rounded-xl bg-[#FF7A00]/15 border border-[#FF7A00]/30 flex items-center justify-center text-[#FF7A00]">
                 <Award className="w-6 h-6" />
@@ -1282,7 +1322,7 @@ export default function ExamCBTInterface({
               <button
                 type="button"
                 onClick={handleInternalSubmit}
-                className="px-5 py-2.5 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-bold text-xs font-mono transition-all shadow-[0_0_15px_rgba(255,122,0,0.4)] cursor-pointer"
+                className="px-5 py-2.5 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-black font-bold text-xs font-mono transition-all shadow-[0_0_15px_rgba(255,122,0,0.4)] cursor-pointer"
               >
                 {isSubmitting ? 'Submitting...' : isFinalExam ? `Final Submit & Finish (${totalQuestions} Marks)` : 'Final Submit & Finish Exam'}
               </button>
@@ -1294,7 +1334,7 @@ export default function ExamCBTInterface({
       {/* ----------------- OFFLINE PENDING SUBMISSION MODAL ----------------- */}
       {pendingOfflineSubmission && (
         <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="max-w-md w-full rounded-2xl bg-[#071018] border border-amber-500/60 p-6 space-y-4 shadow-2xl text-center">
+          <div className="max-w-md w-full rounded-2xl bg-black border border-amber-500/60 p-6 space-y-4 shadow-2xl text-center">
             <div className="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500 flex items-center justify-center text-amber-400 mx-auto">
               <WifiOff className="w-6 h-6 animate-pulse" />
             </div>

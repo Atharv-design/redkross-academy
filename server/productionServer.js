@@ -271,10 +271,13 @@ if (fs.existsSync(distDir)) {
     }
   }));
 
-  // Fallback all SPA routes to dist/index.html
+  // Fallback all SPA routes to dist/index.html (or redirect to Vite port 5173 in development to prevent dual-port confusion)
   app.use((req, res, next) => {
     if (req.path.startsWith('/api/') || req.path.startsWith('/socket.io/') || req.path.startsWith('/healthz') || req.path.startsWith('/readyz')) {
       return next();
+    }
+    if (process.env.DEV_ORCHESTRATED === 'true') {
+      return res.redirect(302, `http://localhost:5173${req.url}`);
     }
     res.sendFile(path.join(distDir, 'index.html'));
   });
@@ -282,6 +285,9 @@ if (fs.existsSync(distDir)) {
   app.use((req, res, next) => {
     if (req.path.startsWith('/api/') || req.path.startsWith('/socket.io/') || req.path.startsWith('/healthz') || req.path.startsWith('/readyz')) {
       return next();
+    }
+    if (process.env.DEV_ORCHESTRATED === 'true') {
+      return res.redirect(302, `http://localhost:5173${req.url}`);
     }
     res.status(200).send(`
       <!DOCTYPE html>

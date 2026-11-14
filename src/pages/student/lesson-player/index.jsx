@@ -663,7 +663,7 @@ export default function LessonPlayerPage() {
       }
     });
     const unsubMock = mockEngine.subscribe((event) => {
-      if (event.type === 'ASSIGNMENT_MUTATED' || event.type === 'DB_MUTATED') {
+      if (event.type === 'ASSIGNMENT_MUTATED' || event.type === 'ASSIGNMENT_EVALUATED') {
         loadAssignmentSubmission();
       }
     });
@@ -1111,7 +1111,7 @@ export default function LessonPlayerPage() {
 
   if (!enrolment || !course) {
     return (
-      <div className="min-h-screen bg-[#071018] py-24 text-center px-4 flex items-center justify-center font-lora">
+      <div className="min-h-screen bg-black py-24 text-center px-4 flex items-center justify-center font-lora">
         <div className="max-w-md p-8 rounded-2xl cyber-glass-card border border-[#FF7A00]/30 space-y-4">
           <h2 className="text-xl font-bold text-white">Enrolment Not Found</h2>
           <p className="text-xs text-[#E2D9CE] font-mono">
@@ -1119,7 +1119,7 @@ export default function LessonPlayerPage() {
           </p>
           <Link
             to="/student"
-            className="px-5 py-2.5 bg-[#FF7A00] rounded-xl text-[#071018] text-xs font-bold font-mono inline-flex items-center space-x-2"
+            className="px-5 py-2.5 bg-[#FF7A00] rounded-xl text-black text-xs font-bold font-mono inline-flex items-center space-x-2"
           >
             <ChevronLeft className="w-4 h-4" />
             <span>Return to Classroom</span>
@@ -1130,7 +1130,7 @@ export default function LessonPlayerPage() {
   }
 
   return (
-    <div className="w-full min-h-screen bg-[#06080C] text-[#F1F5F9] font-lora relative flex flex-col overflow-x-hidden">
+    <div className="w-full min-h-screen bg-black text-[#F1F5F9] font-lora relative flex flex-col overflow-x-hidden">
       {/* Pure CSS Lightweight Ambient Background (Zero GPU/WebGL overhead) */}
       <div
         className="fixed inset-0 pointer-events-none z-0 opacity-40"
@@ -1394,7 +1394,7 @@ export default function LessonPlayerPage() {
             <button
               type="button"
               onClick={() => setOnScreenAlert(null)}
-              className="w-full py-3 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-[#071018] font-bold font-mono text-xs uppercase tracking-wider shadow-[0_0_20px_rgba(255,122,0,0.4)] transition-all cursor-pointer"
+              className="w-full py-3 rounded-xl bg-[#FF7A00] hover:bg-[#FFA439] text-black font-bold font-mono text-xs uppercase tracking-wider shadow-[0_0_20px_rgba(255,122,0,0.4)] transition-all cursor-pointer"
             >
               Acknowledge & Continue
             </button>

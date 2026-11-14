@@ -81,12 +81,12 @@ export default function PsychologyThemedCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: false, amount: 0.15 }}
+      viewport={{ once: true, margin: '120px 0px' }}
       transition={{ 
-        duration: 0.45, 
-        delay: (idx % 3) * 0.08, 
+        duration: 0.35, 
+        delay: (idx % 3) * 0.05, 
         ease: [0.16, 1, 0.3, 1] 
       }}
       className={`relative overflow-hidden rounded-3xl p-6 sm:p-7 flex flex-col justify-between bg-black/35 backdrop-blur-2xl border border-[#FF7A00]/25 hover:border-[#FFA439]/60 transition-all duration-300 shadow-xl shadow-black/60 hover:shadow-[0_0_30px_rgba(255,122,0,0.25)] group select-none ${className}`}

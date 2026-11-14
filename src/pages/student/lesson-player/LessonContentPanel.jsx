@@ -16,6 +16,41 @@ import LessonLabResourcesBar from './LessonLabResourcesBar';
 const BlockNoteLessonViewer = React.lazy(() => import('../../../components/student/BlockNoteLessonViewer'));
 const ExamCBTInterface = React.lazy(() => import('../../../components/student/ExamCBTInterface'));
 
+let isMermaidInitialized = false;
+function ensureMermaidInitialized(mermaid) {
+  if (isMermaidInitialized) return;
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: 'dark',
+    themeVariables: {
+      darkMode: true,
+      background: '#070A0F',
+      primaryColor: '#1A1208',
+      primaryBorderColor: '#FF7A00',
+      primaryTextColor: '#E2D9CE',
+      lineColor: '#FF7A00',
+      textColor: '#E2D9CE',
+      fontSize: '13px',
+      fontFamily: 'Lora, serif',
+      actorBkg: '#1A1208',
+      actorBorder: '#FF7A00',
+      actorTextColor: '#FFA439',
+      actorLineColor: '#FF7A00',
+      signalColor: '#FF7A00',
+      signalTextColor: '#E2D9CE',
+      labelBoxBkgColor: '#1A1208',
+      labelBoxBorderColor: '#FF7A00',
+      labelTextColor: '#FFA439',
+      loopTextColor: '#E2D9CE',
+      noteBorderColor: '#FF7A00',
+      noteBkgColor: '#120E09',
+      noteTextColor: '#E2D9CE'
+    },
+    securityLevel: 'loose'
+  });
+  isMermaidInitialized = true;
+}
+
 function LessonContentPanel({
   activeUnit,
   activeLesson,
@@ -55,45 +90,19 @@ function LessonContentPanel({
   }, [activeLesson?.id, activeLesson?.content]);
 
   React.useEffect(() => {
-    if (typeof window !== 'undefined' && memoizedHtml) {
-      import('mermaid').then(({ default: mermaid }) => {
-        mermaid.initialize({
-          startOnLoad: false,
-          theme: 'dark',
-          themeVariables: {
-            darkMode: true,
-            background: '#070A0F',
-            primaryColor: '#1A1208',
-            primaryBorderColor: '#FF7A00',
-            primaryTextColor: '#E2D9CE',
-            lineColor: '#FF7A00',
-            textColor: '#E2D9CE',
-            fontSize: '13px',
-            fontFamily: 'Lora, serif',
-            actorBkg: '#1A1208',
-            actorBorder: '#FF7A00',
-            actorTextColor: '#FFA439',
-            actorLineColor: '#FF7A00',
-            signalColor: '#FF7A00',
-            signalTextColor: '#E2D9CE',
-            labelBoxBkgColor: '#1A1208',
-            labelBoxBorderColor: '#FF7A00',
-            labelTextColor: '#FFA439',
-            loopTextColor: '#E2D9CE',
-            noteBorderColor: '#FF7A00',
-            noteBkgColor: '#120E09',
-            noteTextColor: '#E2D9CE'
-          },
-          securityLevel: 'loose'
+    if (typeof window === 'undefined' || !memoizedHtml) return;
+    const hasMermaid = memoizedHtml.includes('class="mermaid"') || memoizedHtml.includes("class='mermaid'");
+    if (!hasMermaid) return;
+
+    import('mermaid').then(({ default: mermaid }) => {
+      ensureMermaidInitialized(mermaid);
+      const elements = document.querySelectorAll('.mermaid:not([data-processed="true"])');
+      if (elements.length > 0) {
+        mermaid.run({ nodes: elements }).catch((err) => {
+          console.warn('[Mermaid] render error:', err);
         });
-        const elements = document.querySelectorAll('.mermaid:not([data-processed="true"])');
-        if (elements.length > 0) {
-          mermaid.run({ nodes: elements }).catch((err) => {
-            console.warn('[Mermaid] render error:', err);
-          });
-        }
-      }).catch((err) => console.warn('[Mermaid] dynamic import error:', err));
-    }
+      }
+    }).catch((err) => console.warn('[Mermaid] dynamic import error:', err));
   }, [memoizedHtml]);
   return (
     <div className="w-full space-y-6">

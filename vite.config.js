@@ -15,9 +15,9 @@ function stripAnswerKeys() {
     transform(code, id) {
       if (!ANSWER_DATA_FILE.test(id)) return null;
       const out = code
-        .replace(/"(correct|correct_index)"\s*:\s*\d+\s*,?/g, '')
-        .replace(/"is_correct"\s*:\s*(true|false)\s*,?/g, '')
-        .replace(/"explanation"\s*:\s*"(?:[^"\\]|\\.)*"\s*,?/g, '');
+        .replace(/["']?(correct|correct_index|correctOptionId)["']?\s*:\s*(?:\d+|["'][^"']*["'])\s*,?/g, '')
+        .replace(/["']?is_correct["']?\s*:\s*(?:true|false)\s*,?/g, '')
+        .replace(/["']?explanation["']?\s*:\s*(?:'[^'\\]*(?:\\.[^'\\]*)*'|"[^"\\]*(?:\\.[^"\\]*)*"|`[^`\\]*(?:\\.[^`\\]*)*`)\s*,?/g, '');
       return { code: out, map: null };
     },
   };
@@ -98,6 +98,12 @@ export default defineConfig({
             }
             if (id.includes('lucide-react')) {
               return 'vendor-icons';
+            }
+            if (id.includes('jspdf') || id.includes('html2canvas')) {
+              return 'vendor-pdf';
+            }
+            if (id.includes('@blocknote') || id.includes('@mantine')) {
+              return 'vendor-blocknote';
             }
           }
         },

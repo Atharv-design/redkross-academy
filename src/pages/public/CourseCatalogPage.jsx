@@ -43,7 +43,16 @@ export default function CourseCatalogPage() {
 
     const unsubSocket = socketClient.on('course:mutation', fetchCatalog);
     const unsubEmbargo = socketClient.on('catalog:visibility', fetchCatalog);
-    const unsubMock = mockEngine.subscribe(fetchCatalog);
+    const unsubMock = mockEngine.subscribe((event) => {
+      if (
+        !event ||
+        event.type === 'COURSE_MUTATED' ||
+        event.type === 'CURRICULUM_SYNCED' ||
+        event.type === 'CATALOG_VISIBILITY_MUTATED'
+      ) {
+        fetchCatalog();
+      }
+    });
 
     return () => {
       if (typeof unsubSocket === 'function') unsubSocket();

@@ -212,10 +212,10 @@ export default function CyberAcademyPage() {
 
           {/* ================= 1. BRANCH OVERVIEW & MISSION ARCHITECTURE (BEFORE CURRICULUM) ================= */}
           <motion.section
-            initial={{ opacity: 0, y: 25 }}
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.15 }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true, margin: '100px 0px' }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             className="mb-20 space-y-8"
           >
             {/* Section Header */}
@@ -299,10 +299,10 @@ export default function CyberAcademyPage() {
           <section id="courses" className="mb-20">
             {/* Section Header */}
             <motion.div 
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              viewport={{ once: true, margin: '100px 0px' }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
               className="flex items-center justify-between mb-8 pb-3 border-b border-[#FF7A00]/25"
             >
               <div>
@@ -331,10 +331,10 @@ export default function CyberAcademyPage() {
 
           {/* ================= 3. TRANSPARENT STUDENT DASHBOARD LAUNCHER ================= */}
           <motion.section 
-            initial={{ opacity: 0, y: 25 }}
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true, margin: '100px 0px' }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             className="p-8 sm:p-10 rounded-3xl bg-black/35 backdrop-blur-2xl border border-[#FF7A00]/30 hover:border-[#FFA439]/60 relative overflow-hidden shadow-[0_0_40px_rgba(255,122,0,0.15)] transition-all"
           >
             <div className="absolute -right-10 -bottom-10 w-80 h-80 bg-[#FF7A00]/10 rounded-full blur-3xl pointer-events-none" />

@@ -19,8 +19,8 @@ export function publicBaseUrl() {
 export async function ensureCourseRow(spec, extra = {}) {
   const slug = extra.slug || spec.id.replace(/^crs_/, '').replace(/_/g, '-');
   await sql`
-    INSERT INTO courses (id, slug, title, category, difficulty, price, created_at, updated_at)
-    VALUES (${spec.id}, ${slug}, ${spec.title}, ${extra.category || 'Cybersecurity'}, ${extra.difficulty || 'Intermediate'}, 0, NOW(), NOW())
+    INSERT INTO courses (id, slug, title, category, difficulty, price, estimated_duration, lead_author, created_at, updated_at)
+    VALUES (${spec.id}, ${slug}, ${spec.title}, ${extra.category || 'Cybersecurity'}, ${extra.difficulty || 'Intermediate'}, 0, '40 Hours', '{}'::jsonb, NOW(), NOW())
     ON CONFLICT DO NOTHING
   `;
 }
@@ -31,8 +31,8 @@ export async function ensureEnrolment(user, spec, extra = {}) {
   if (existing.length) return { enrolment: existing[0], created: false };
   const id = randomId('enr');
   const rows = await sql`
-    INSERT INTO enrolments (id, user_id, course_id, status, enrolled_at)
-    VALUES (${id}, ${user.id}, ${spec.id}, 'Active', NOW())
+    INSERT INTO enrolments (id, user_id, course_id, course_version, status, enrolled_at)
+    VALUES (${id}, ${user.id}, ${spec.id}, ${spec.version || '1.0'}, 'Active', NOW())
     ON CONFLICT DO NOTHING
     RETURNING *
   `;

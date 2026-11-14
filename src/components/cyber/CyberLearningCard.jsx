@@ -166,12 +166,12 @@ export default function CyberLearningCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.15 }}
+      viewport={{ once: true, margin: '120px 0px' }}
       transition={{ 
-        duration: 0.45, 
-        delay: idx * 0.08, 
+        duration: 0.35, 
+        delay: (idx % 3) * 0.05, 
         ease: [0.16, 1, 0.3, 1] 
       }}
       className="w-full select-none"

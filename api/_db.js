@@ -2,6 +2,11 @@ import 'dotenv/config';
 import { neon } from '@neondatabase/serverless';
 import pg from 'pg';
 
+// Parse PostgreSQL DATE (1082) as plain ISO string 'YYYY-MM-DD' to prevent local timezone drift
+if (pg.types && typeof pg.types.setTypeParser === 'function') {
+  pg.types.setTypeParser(1082, (str) => str);
+}
+
 const DATABASE_URL = process.env.DATABASE_URL;
 
 // Fail on first use rather than at import, so handlers that never touch the database
